@@ -1,0 +1,36 @@
+#cr-replay-panel {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2147483647;
+  display: grid;
+  gap: 8px;
+  width: 220px;
+  padding: 14px;
+  border: 1px solid #d7b75d;
+  border-radius: 12px;
+  color: #fff;
+  background: #17191f;
+  box-shadow: 0 12px 36px rgb(0 0 0 / 35%);
+  font: 13px/1.35 system-ui, sans-serif;
+}
+
+#cr-replay-panel strong {
+  color: #ffd66b;
+}
+
+#cr-replay-panel button {
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  color: #17191f;
+  background: #ffd66b;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+#cr-replay-panel button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+

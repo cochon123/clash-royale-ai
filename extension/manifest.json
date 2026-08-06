@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "CR Replay Collector",
+  "version": "0.4.0",
+  "description": "Captures RoyaleAPI replay payloads without losing ability events.",
+  "permissions": ["alarms", "downloads", "storage", "tabs"],
+  "host_permissions": [
+    "https://royaleapi.com/*",
+    "http://127.0.0.1:8765/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://royaleapi.com/*"],
+      "js": ["page_hook.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://royaleapi.com/player/*",
+        "https://royaleapi.com/players/leaderboard*"
+      ],
+      "js": ["content.js"],
+      "css": ["style.css"],
+      "run_at": "document_start"
+    }
+  ]
+}

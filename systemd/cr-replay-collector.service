@@ -1,0 +1,13 @@
+[Unit]
+Description=Clash Royale replay ingest and crawl coordinator
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/cochon/Documents/mini-project/clash-royale-ai
+ExecStart=/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/cr-replays serve --raw-dir data/raw --db data/collector.sqlite3 --port 8765
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
