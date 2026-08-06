@@ -233,3 +233,9 @@ The trained checkpoint is published on Hugging Face:
 ```bash
 hf download Cochon123/clash-royale-winner-predictor --local-dir models/winner_predictor
 ```
+
+The replay corpus (~15k battles, 1.2 GB) is on Hugging Face as well:
+
+```bash
+hf download Cochon123/clash-royale-replays --repo-type dataset --local-dir data
+```

@@ -162,7 +162,7 @@ def collect_battles(
         else source.parent / "winner_battles_cache.pkl"
     )
 
-    file_count = sum(1 for _ in source.glob("*.json"))
+    file_count = sum(1 for _ in source.rglob("*.json"))
     if cache_file.exists():
         try:
             with cache_file.open("rb") as handle:
@@ -186,7 +186,7 @@ def collect_battles(
     seen_ids: set[str] = set()
     seen_hashes: set[str] = set()
 
-    for path in sorted(source.glob("*.json")):
+    for path in sorted(source.rglob("*.json")):
         try:
             replay = parse_replay(path)
         except (ReplayParseError, OSError, ValueError, TypeError):

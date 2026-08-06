@@ -122,7 +122,7 @@ class IngestStore:
                 "duplicates": self.duplicates,
                 "rejected": self.rejected,
                 "rate_limited": self.rate_limited,
-                "raw_files": sum(1 for _ in self.raw_dir.glob("*.json")),
+                "raw_files": sum(1 for _ in self.raw_dir.rglob("*.json")),
             }
 
 

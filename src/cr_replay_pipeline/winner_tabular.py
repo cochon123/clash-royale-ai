@@ -100,7 +100,7 @@ def build_official_elixir_cache(
         if cache_path is not None
         else source.parent / "official_elixir_cache.pkl"
     )
-    file_count = sum(1 for _ in source.glob("*.json"))
+    file_count = sum(1 for _ in source.rglob("*.json"))
     if cache_file.exists():
         try:
             with cache_file.open("rb") as handle:
@@ -120,7 +120,7 @@ def build_official_elixir_cache(
             pass
 
     stats: dict[str, Any] = {}
-    for index, path in enumerate(sorted(source.glob("*.json")), start=1):
+    for index, path in enumerate(sorted(source.rglob("*.json")), start=1):
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
             page = data["payload"]["html"]

@@ -161,7 +161,7 @@ class Frontier:
         records = 0
         sources: set[str] = set()
         participants: set[str] = set()
-        for path in Path(raw_dir).glob("*.json"):
+        for path in Path(raw_dir).rglob("*.json"):
             try:
                 record = json.loads(path.read_text(encoding="utf-8"))
             except (OSError, json.JSONDecodeError):

@@ -93,7 +93,7 @@ def clean_directory(
     report_path: str | Path | None = None,
 ) -> dict:
     source = Path(input_dir)
-    files = sorted(source.glob("*.json"))
+    files = sorted(source.rglob("*.json"))
     metadata = MetadataIndex.from_jsonl(metadata_path) if metadata_path else None
     roster = LEGACY_ROSTERS.get(legacy_roster) if legacy_roster else None
     if legacy_roster and roster is None:

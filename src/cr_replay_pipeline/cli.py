@@ -114,7 +114,7 @@ def build_parser() -> argparse.ArgumentParser:
 def _status(frontier: Frontier, raw_dir: str | None = None) -> dict:
     status = frontier.status()
     if raw_dir is not None:
-        status["raw_replays"] = sum(1 for _ in Path(raw_dir).glob("*.json"))
+        status["raw_replays"] = sum(1 for _ in Path(raw_dir).rglob("*.json"))
         players = status["players"]
         actionable = players["queued"] + players["leased"] + players["completed"]
         status["crawl_progress_percent"] = (

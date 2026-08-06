@@ -103,7 +103,7 @@ def normalize_battlelog_directory(
     input_dir: str | Path, output: str | Path
 ) -> dict:
     source = Path(input_dir)
-    files = sorted(source.glob("*.json"))
+    files = sorted(source.rglob("*.json"))
     unique = {}
     failures = []
     raw_battles = 0
