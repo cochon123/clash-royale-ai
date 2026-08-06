@@ -108,6 +108,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=100,
         help="Number of Extra Trees (the old --ensemble-size name remains an alias)",
     )
+
+    report_winner = commands.add_parser(
+        "report-winner",
+        help="Generate HTML training reports for winner prediction models",
+    )
+    report_winner.add_argument("--model-dir", default="models/winner_predictor")
+    report_winner.add_argument("--output-dir", default="reports")
     return parser
 
 
@@ -393,6 +400,11 @@ def main() -> None:
                 ensure_ascii=False,
             )
         )
+    elif args.command == "report-winner":
+        from .winner_report import render_winner_reports
+
+        paths = render_winner_reports(args.model_dir, args.output_dir)
+        print(json.dumps({"reports": [str(path) for path in paths]}, indent=2))
 
 
 if __name__ == "__main__":
