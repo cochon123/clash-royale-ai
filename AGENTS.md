@@ -19,6 +19,9 @@ a time stamp of when the model was created
 some curve like the loss, the accuracy and other one (depending on what the model is and where we could plot something)
 videos of the curves evolving if possible
 lesson learned if there are some
+do not use matplot lib inside the report, use native html graph and animation
+
+
 
 these are just minimum, the actual report should include more model specific stuff.
 diagram ,graphics, images. possibly interactive suff.

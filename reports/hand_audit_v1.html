@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Winner transformer — how early can you call it?</title>
+  <title>Hand audit — is oldest-four the bottleneck?</title>
   <style>
     :root {
       color-scheme: dark;
@@ -443,76 +443,153 @@
       .race-row { grid-template-columns: 1fr; }
     }
     
-    .dial { margin-top: 8px; }
-    .timeline {
-      display: flex; gap: 4px; height: 28px; border-radius: 8px; overflow: hidden;
-      background: rgba(148,163,184,0.1); margin-top: 12px;
+    .cycle-stage { display: grid; grid-template-columns: 320px 1fr; gap: 28px; align-items: start; }
+    .cycle-wheel {
+      width: 300px; height: 300px; margin: 0 auto; position: relative;
+      border-radius: 50%; background: radial-gradient(circle at 50% 50%, #0b1220 42%, transparent 43%),
+        conic-gradient(from -90deg, #22d3ee33 0 180deg, #6366f133 180deg 360deg);
+      border: 1px solid rgba(148,163,184,0.2);
     }
-    .timeline span { display: block; height: 100%; transition: flex .3s ease, background .3s; }
-    .dur-row {
-      display: grid; grid-template-columns: 120px 1fr 80px; gap: 12px; align-items: center;
-      font-size: 0.85rem; margin-bottom: 8px;
+    .cycle-slot {
+      position: absolute; width: 64px; height: 64px; margin: -32px; border-radius: 14px;
+      display: grid; place-items: center; text-align: center; font-size: 0.72rem; font-weight: 700;
+      border: 2px solid rgba(148,163,184,0.35); background: #0f172a; color: #e2e8f0;
+      transition: transform .35s cubic-bezier(.22,1,.36,1), border-color .2s, box-shadow .2s;
     }
-    .dur-track { height: 18px; border-radius: 6px; background: rgba(148,163,184,0.1); overflow: hidden; }
-    .dur-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg,#6366f1,#22d3ee); }
+    .cycle-slot.in-hand { border-color: #22d3ee; box-shadow: 0 0 0 2px #22d3ee55; background: #12233a; }
+    .cycle-slot.just-played { border-color: #fbbf24; box-shadow: 0 0 0 2px #fbbf2455; }
+    .cycle-slot .idx { position: absolute; top: 4px; left: 6px; font-size: 0.6rem; color: #94a3b8; }
+    .bucket-row {
+      display: grid; grid-template-columns: 100px 1fr 160px; gap: 12px; align-items: center;
+      font-size: 0.85rem; margin-bottom: 10px;
+    }
+    .bucket-track { height: 22px; border-radius: 7px; background: rgba(148,163,184,0.1); overflow: hidden; }
+    .bucket-fill { height: 100%; border-radius: 7px; }
+    .null-banner {
+      margin-top: 16px; padding: 14px 18px; border-radius: 12px;
+      background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.35);
+      font-size: 0.92rem;
+    }
+    .gate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .gate-card {
+      padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(148,163,184,0.06); font-size: 0.85rem;
+    }
+    .gate-card.pass { border-color: rgba(52,211,153,0.4); }
+    .gate-card.fail { border-color: rgba(248,113,113,0.4); }
+    .gate-card .g-status { font-weight: 800; letter-spacing: 0.06em; font-size: 0.72rem; margin-bottom: 4px; }
+    .cell-row {
+      display: grid; grid-template-columns: 1fr 70px 70px; gap: 8px; font-size: 0.82rem;
+      padding: 6px 0; border-bottom: 1px solid rgba(148,163,184,0.12);
+    }
+    @media (max-width: 900px) { .cycle-stage { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
   <main>
 
     <header class="report-header hero">
-      <div class="badge-row"><span class="badge">winner-transformer-v1</span><span class="badge">causal sequence model</span><span class="badge">cuda</span><span class="badge">13,483 battles</span><span class="badge">NVIDIA GeForce RTX 3050 6GB Laptop GPU</span></div>
-      <h1>How early can you call the match?</h1>
-      <p class="hero-sub">A causal transformer over the action sequence. Same winner target as
-      the HGB ensemble, but scored at 50% / 75% / 90% / 100% of the match so you can see when
-      the outcome becomes knowable.</p>
-      <p class="meta">Created 2026-08-06 12:57 UTC · trained in 1067.8s ·
-      best val full AUC 0.819</p>
-      <div class="hero-scores"><div class="hero-score"><span class="hero-score-label">Test accuracy</span><span class="hero-score-value up" data-count="67.6">0</span></div><div class="hero-score"><span class="hero-score-label">Test AUC</span><span class="hero-score-value up" data-count="0.747">0</span></div><div class="hero-score"><span class="hero-score-label">Full-game AUC</span><span class="hero-score-value up" data-count="0.805">0</span></div><div class="hero-score"><span class="hero-score-label">Half-match AUC</span><span class="hero-score-value neutral" data-count="0.582">0</span></div></div>
-      <div class="verdict verdict-partial"><span class="verdict-tag">PREFIX PROBE</span><span>Strong at the end of the match; near chance at halfway. Confirms outcome signal accumulates — it does not justify early-concede automation.</span></div>
+      <div class="badge-row"><span class="badge">experiment A</span><span class="badge">exact-hand audit</span><span class="badge">policy-bc-v3</span><span class="badge">1,140,500 trackable plays</span><span class="badge">cuda</span></div>
+      <h1>Is the hand heuristic the bottleneck?</h1>
+      <p class="hero-sub">The oldest-four hand heuristic mislabels card availability early-game, distorting slot accuracy and support-audit cell counts.</p>
+      <p class="meta">Created 2026-08-07T17:41:44Z ·
+      848s · 18,552 battles ·
+      no retraining — rescoring only</p>
+      <div class="hero-scores"><div class="hero-score"><span class="hero-score-label">Slot top-1 delta</span><span class="hero-score-value flat" data-count="0.003">0</span></div><div class="hero-score"><span class="hero-score-label">Recall @ 4–7 plays</span><span class="hero-score-value up" data-count="100.0">0</span></div><div class="hero-score"><span class="hero-score-label">Recall @ 8+ plays</span><span class="hero-score-value up" data-count="100.0">0</span></div><div class="hero-score"><span class="hero-score-label">Defense-slice delta</span><span class="hero-score-value flat" data-count="0.04">0</span></div></div>
+      <div class="verdict verdict-fail"><span class="verdict-tag">FAIL</span><span>Null result: exact hand tracking does not move the policy. The oldest-four heuristic was already good enough after the opening cycle.</span></div>
     </header>
 
     <section class="report-section">
-      <h2>The match timeline</h2>
-      <p class="caption">Scrub how much of the battle the model has seen. The gauge shows
-      accuracy and AUC at that prefix ratio.</p>
-      <div class="toolbar">
-        <input type="range" id="prefixScrub" min="0" max="3" value="3" step="1" class="anim-scrubber">
-        <div class="anim-readout" id="prefixReadout"></div>
-      </div>
-      <div class="timeline" id="timeline"></div>
-      <div class="stat-grid" id="prefixStats" style="margin-top:16px"></div>
-    </section>
-
-    <section class="report-section">
-      <h2>Prefix ladder</h2>
-      <div class="toolbar">
-        <button type="button" class="play-btn" id="raceBtn">▶ Run the diff</button>
-        <span class="hint" id="raceHint">bars parked at majority baseline</span>
-      </div>
-      <div class="race" id="race"></div>
-    </section>
-
-    <section class="report-section">
-      <h2>Training</h2>
-      <div class="chart-animation">
-        <svg class="chart" id="trainChart"></svg>
-        <div class="legend" id="trainLegend"></div>
-        <div class="anim-toolbar">
-          <button type="button" class="play-btn" id="trainPlay">▶</button>
-          <input type="range" class="anim-scrubber" id="trainScrub" min="1" max="1" value="1">
-          <div class="anim-readout" id="trainReadout"></div>
+      <h2>How the 8-card cycle works</h2>
+      <p class="caption">Clash Royale hands are the oldest four cards of an 8-card queue. Play
+      a card and it goes to the back. The heuristic just reads the first four of that queue.
+      Click <em>Play next</em> to watch a card cycle through.</p>
+      <div class="cycle-stage">
+        <div class="cycle-wheel" id="cycleWheel"></div>
+        <div class="cycle-side">
+          <div class="toolbar">
+            <button type="button" class="play-btn" id="cyclePlay">▶ Play next</button>
+            <button type="button" class="play-btn ghost" id="cycleReset">Reset</button>
+            <span class="hint" id="cycleHint">hand = slots 0–3 (oldest four)</span>
+          </div>
+          <div class="stat-grid" id="cycleStats"></div>
+          <p class="caption" style="margin-top:12px">The heuristic has no idea what the opening
+          hand was — so for plays 0–3 it refuses to guess (recall 0). The moment the fourth card
+          has been played, the queue is fully observed and the heuristic becomes essentially
+          perfect.</p>
         </div>
       </div>
     </section>
 
     <section class="report-section">
+      <h2>Where the heuristic actually fails</h2>
+      <p class="caption">Recall of "card is in hand" against a smoothed posterior over every
+      initial hand consistent with the full side sequence. Hover a bucket.</p>
+      <div class="bucket-stage rel" id="bucketHost">
+        <div id="bucketBars"></div>
+      </div>
+      <div class="stat-grid" style="margin-top:16px">
+        <div class="stat"><div class="k">Trackable events</div>
+          <div class="v">1,140,500</div>
+          <div class="s">of 1,155,050</div></div>
+        <div class="stat"><div class="k">Untrackable sides</div>
+          <div class="v">1.7%</div>
+          <div class="s">weird / incomplete sequences</div></div>
+        <div class="stat"><div class="k">Slot agreement (all)</div>
+          <div class="v">98.4%</div>
+          <div class="s">heuristic vs posterior mode</div></div>
+        <div class="stat"><div class="k">Mean consistent initials</div>
+          <div class="v">6,146</div>
+          <div class="s">posterior support size</div></div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>What if we force the exact hand into the policy?</h2>
+      <p class="caption">Rescore the frozen v3 checkpoint twice on the same held-out actions —
+      once with the heuristic hand mask, once with the exact posterior mask. If the heuristic
+      were the bottleneck, exact should jump.</p>
+      <div class="toolbar">
+        <button type="button" class="play-btn" id="rescoreBtn">▶ Run the diff</button>
+        <span class="hint" id="rescoreHint">bars parked at the heuristic mask</span>
+      </div>
+      <div class="race" id="rescoreRace"></div>
+      <div class="null-banner">
+        <b>Δ slot top-1 = +0.003pp</b>
+        — smaller than rounding error. Exact hand tracking is not the next lever.
+      </div>
+    </section>
+
+    <section class="report-section block-grid">
+      <div class="block">
+        <h2>Rescore by cycle age</h2>
+        <p class="caption">Even the early-cycle bucket, where the heuristic is blind, barely
+        moves under the exact mask — the policy was not relying on the mask that hard.</p>
+        <div id="bucketRescore"></div>
+      </div>
+      <div class="block">
+        <h2>Support-cell sensitivity</h2>
+        <p class="caption">Focus cells from the defense support audit: how much does
+        "answer in hand" count change under the exact mask?</p>
+        <div id="supportCells"></div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Gates</h2>
+      <div class="gate-grid" id="gates"></div>
+    </section>
+
+    <section class="report-section">
       <h2>Lessons learned</h2>
-      <ul class="lessons"><li>Prefix accuracy rises smoothly with how much of the match the model has seen.</li><li>Full-game AUC ~0.80 is competitive with the tabular ensemble; early prefixes are near chance.</li><li>Useful as a &#x27;when is this match decided?&#x27; probe, not as a live agent.</li></ul>
+      <ul class="lessons"><li>Oldest-four is disabled for &lt;4 side plays, so early-game masks are empty while exact posteriors already peak on the imminent cycle cards.</li><li>Even with a full play sequence, many initial queues remain consistent (~6k); hand membership is only sharp after the cycle has been observed.</li><li>Rescoring uses causal (prefix-only) posteriors at ≥0.5 so the mask is deployable without future leakage; quality GT uses smoothed ≥0.99.</li><li>If slot top-1 deltas stay &lt;0.5pp and 4+/8+ heuristic recall is already high, hand-label noise is not the main policy bottleneck — look elsewhere.</li><li>Offline only: exact reconstruction audits labels; it does not claim live-play readiness.</li></ul>
+      <p class="caption">Policy 3.0.0 checkpoint
+      models/policy_bc_v3. Keep the oldest-four heuristic; spend compute on placement
+      and threat conditioning instead.</p>
     </section>
 
     <footer class="report-footer">
-      <p class="meta">Offline probe · checkpoint models/winner_predictor/best_model.pt</p>
+      <p class="meta">Offline audit · no live games · cycle model: 8-card queue, hand=first 4, played→back</p>
     </footer>
     
   </main>
@@ -706,83 +783,157 @@ function histChart(svg, groups, opts = {}) {
 }
 
     
-    const DATA = {"test":{"acc":0.6758984503791625,"auc":0.7467421985451308,"loss":0.6275610236745132,"n":6066},"byPrefix":{"0.5":{"acc":0.5499505440158259,"auc":0.5816825410802429,"n":2022},"0.75":{"acc":0.6068249258160238,"auc":0.6526355440105275,"n":2022},"0.9":{"acc":0.645895153313551,"auc":0.7141646731925427,"n":2022},"1.0":{"acc":0.7289812067260139,"auc":0.8053126696898986,"n":2022}},"history":{"train_loss":[1.0019803743755042,0.9519645734770523,0.9326538579714092,0.9217231067844913,0.9061468561807001,0.8904423812629375,0.8776612543014891,0.8662109140697545,0.8565587199541677,0.8424646119830776,0.8317769947121659,0.8209789445200765,0.8103799494614164,0.8013613168620176,0.7923658851924962,0.7838394417072514,0.7726406969555504,0.7676384684099145,0.7615952612869293,0.7512583711232798,0.7441992234898753,0.7390506052242649,0.7344676341668543,0.7232349825253683,0.7202069045379659],"train_acc":[0.5782119425296902,0.6235154887467819,0.6481396893945686,0.6605971264845113,0.6776638152977328,0.695208039199402,0.7054854247986048,0.7144340171082136,0.7236317581596213,0.7365459679428619,0.7437297566647288,0.7540486670542313,0.7588032555435595,0.7669421144423221,0.7714683165850013,0.7789012540486671,0.7863134291171829,0.7891994020430196,0.7940993272983972,0.8014907399717631,0.8047089112199983,0.8085499543227307,0.8124948094012125,0.8190349638734324,0.820862054646624],"val_loss":[0.6366586835760819,0.6213207621323434,0.6120209565288142,0.607467752381375,0.5953681970897474,0.5964389333599492,0.6056011018000151,0.5976030079942001,0.6292998969554902,0.5958722111425901,0.6130610563253102,0.6030256870545839,0.6071672878767315,0.6363890202421891,0.6272479129465003,0.6259183249975505,0.6310744800065693,0.6401485189011222,0.6284262911269539,0.6464480199311909,0.6579468127928282,0.6484666717679877,0.6836066283677754,0.6635372908491838,0.6803820013999939],"val_acc":[0.6142433234421365,0.6322123310253874,0.6549620837454665,0.6572700296735905,0.6635344543356413,0.6656775469831849,0.6569403231124299,0.6722716782063963,0.6511704582921201,0.6796900758325091,0.6806791955159908,0.6795252225519288,0.691229805473129,0.6818331684800527,0.6859545004945599,0.6803494889548302,0.6826574348829542,0.6826574348829542,0.6829871414441148,0.6819980217606331,0.6821628750412133,0.6848005275304978,0.6846356742499176,0.6872733267392022,0.6879327398615233],"val_auc":[0.6739023406512618,0.6963903449345875,0.7173590350287656,0.7237358242948609,0.7410997880641572,0.7387322517739929,0.7367392127223741,0.756209369851275,0.7547109456882171,0.7585960553320213,0.7508125621736681,0.7563512479451341,0.7608343345857557,0.7589682677239631,0.7577468540110319,0.756453957240075,0.7666876763751975,0.7544672287171706,0.760604979507646,0.760064232478137,0.7570902326180566,0.7593544067999646,0.7546122620753871,0.7586783098097495,0.7562484298479739],"val_full_auc":[0.7601939247234438,0.7657118292710393,0.7784524603391431,0.7836707235750147,0.8025706482729987,0.8022984251205175,0.8011145481732161,0.8139707271981285,0.8149019653924077,0.8155218116352876,0.8033618580111455,0.8067861902565654,0.8190479827578947,0.8061516557140913,0.8170905220319598,0.8084675109501274,0.8190734424771915,0.8078848750662198,0.819085193116867,0.8164080057108108,0.8177348487741635,0.8128504995490692,0.8076312570932247,0.8164393407499454,0.8112240151739927]},"majority":0.5174276936116115,"bestValAuc":0.8190479827578947,"epochs":25};
+    
+const DATA = {"buckets":{"0-3":{"precision":0.0,"recall":0.0,"f1":0.0,"tp":0,"fp":0,"fn":145785,"support_true":145785,"support_pred":0,"events":145785,"active_heuristic_events":0,"slot_agreement":0.875},"4-7":{"precision":0.9999879197873882,"recall":0.9999879197873882,"f1":0.9999879197873882,"tp":579453,"fp":7,"fn":7,"support_true":579460,"support_pred":579460,"events":144865,"active_heuristic_events":144865,"slot_agreement":0.9999879197873882},"8+":{"precision":0.9999894098958639,"recall":0.9999894098958639,"f1":0.9999894098958639,"tp":3399364,"fp":36,"fn":36,"support_true":3399400,"support_pred":3399400,"events":849850,"active_heuristic_events":849850,"slot_agreement":0.9999894098958639},"all":{"precision":0.999989192884394,"recall":0.9646447148784926,"f1":0.9819990238791733,"tp":3978817,"fp":43,"fn":145828,"support_true":4124645,"support_pred":3978860,"events":1140500,"active_heuristic_events":994715,"slot_agreement":0.9840123849188952}},"rescore":{"overall":{"heuristic":{"n":68832,"slot_top1":0.5382670850767085,"slot_top3":0.9345943747094375},"exact":{"n":68832,"slot_top1":0.5382961413296141,"slot_top3":0.9348704091120409},"delta_top1_pp":0.0029056252905612645,"delta_top3_pp":0.027603440260337564},"byBucket":{"0-3":{"heuristic":{"n":1327,"slot_top1":0.613413715146948,"slot_top3":0.8711379050489827},"exact":{"n":1327,"slot_top1":0.6149208741522231,"slot_top3":0.8854559155990958},"delta_top1_pp":0.15071590052750938},"4-7":{"heuristic":{"n":10329,"slot_top1":0.6054797173008035,"slot_top3":0.9597250459870268},"exact":{"n":10329,"slot_top1":0.6054797173008035,"slot_top3":0.9597250459870268},"delta_top1_pp":0.0},"8+":{"heuristic":{"n":57176,"slot_top1":0.524380859101721,"slot_top3":0.9315272142157549},"exact":{"n":57176,"slot_top1":0.524380859101721,"slot_top3":0.9315272142157549},"delta_top1_pp":0.0}},"defense":{"heuristic":{"n":2655,"slot_top1":0.6519774011299435,"slot_top3":0.9619585687382297},"exact":{"n":2655,"slot_top1":0.6523540489642184,"slot_top3":0.9627118644067797},"delta_top1_pp":0.037664783427493465}},"supportFocus":[{"threat":"graveyard","answer":"poison","role":"failing","train":{"heuristic":{"n_in_deck":399,"n_in_hand":233,"n_human_in_hand":84,"human_rate_in_hand":0.3605150214592275},"exact":{"n_in_deck":399,"n_in_hand":234,"n_human_in_hand":85,"human_rate_in_hand":0.36324786324786323},"n_hand_rel_change":0.004291845493562232,"n_hand_abs_change":1},"test":{"heuristic":{"n_in_hand":64,"n_human_in_hand":24},"exact":{"n_in_hand":65,"n_human_in_hand":24,"model_top1_when_human":0.5416666666666666,"model_top1_in_hand":0.26153846153846155,"n_scored_when_human":24,"n_scored_in_hand":65}}},{"threat":"hog-rider","answer":"tornado","role":"failing","train":{"heuristic":{"n_in_deck":2028,"n_in_hand":1177,"n_human_in_hand":331,"human_rate_in_hand":0.2812234494477485},"exact":{"n_in_deck":2028,"n_in_hand":1236,"n_human_in_hand":356,"human_rate_in_hand":0.28802588996763756},"n_hand_rel_change":0.05012744265080714,"n_hand_abs_change":59},"test":{"heuristic":{"n_in_hand":277,"n_human_in_hand":66},"exact":{"n_in_hand":289,"n_human_in_hand":69,"model_top1_when_human":0.782608695652174,"model_top1_in_hand":0.24567474048442905,"n_scored_when_human":69,"n_scored_in_hand":289}}}],"untrackable":0.01749231847339766,"gates":{"pass_slot":false,"pass_defense":false,"pass_support":false,"fail_small":true,"fail_recall":true},"deltas":{"slot":0.0029056252905612645,"defense":0.037664783427493465,"support":0.05012744265080714,"recall47":0.9999879197873882,"recall8":0.9999894098958639}};
 
 mountCounters();
 
-const ratios = ["0.5", "0.75", "0.9", "1.0"];
-const labels = ["50% of match", "75%", "90%", "Full game"];
+/* ---------- interactive 8-card cycle wheel ---------- */
+const DECK = ["Knight","Archers","Goblin Gang","Fireball","Cannon","Skeletons","The Log","Ice Spirit"];
+let queue = DECK.slice();
+let plays = 0;
 
-function renderPrefix() {
-  const i = Number(document.getElementById("prefixScrub").value);
-  const key = ratios[i];
-  const row = DATA.byPrefix[key] || {};
-  document.getElementById("prefixReadout").textContent = labels[i];
-  // timeline fill
-  const fills = ratios.map((r, idx) => {
-    const active = idx <= i;
-    const w = idx === 0 ? 50 : (idx === 1 ? 25 : (idx === 2 ? 15 : 10));
-    return `<span style="flex:${w};background:${active ? "linear-gradient(90deg,#6366f1,#22d3ee)" : "transparent"}"></span>`;
+function slotPos(i) {
+  // 0 at top, clockwise
+  const ang = -Math.PI / 2 + i * (Math.PI / 4);
+  const r = 105;
+  return { x: 150 + r * Math.cos(ang), y: 150 + r * Math.sin(ang) };
+}
+
+function renderCycle() {
+  const host = document.getElementById("cycleWheel");
+  host.innerHTML = "";
+  queue.forEach((card, i) => {
+    const p = slotPos(i);
+    const d = document.createElement("div");
+    d.className = "cycle-slot" + (i < 4 ? " in-hand" : "");
+    d.style.left = p.x + "px";
+    d.style.top = p.y + "px";
+    d.innerHTML = `<span class="idx">${i}</span>${card}`;
+    host.appendChild(d);
   });
-  document.getElementById("timeline").innerHTML = fills.join("");
-  document.getElementById("prefixStats").innerHTML = [
-    ["Prefix", labels[i], `${row.n || 0} battles`],
-    ["Accuracy", pct(row.acc || 0), ""],
-    ["AUC", (row.auc || 0).toFixed(3), ""],
-    ["vs majority", ((row.acc || 0) - DATA.majority >= 0 ? "+" : "") +
-      (((row.acc || 0) - DATA.majority) * 100).toFixed(1) + "pp", ""],
-  ].map(([k,v,s]) =>
+  const hand = queue.slice(0, 4).join(", ");
+  document.getElementById("cycleHint").textContent =
+    plays < 4
+      ? `play ${plays}/3 — heuristic still blind to the opening hand`
+      : `play ${plays} — heuristic hand: ${hand}`;
+  document.getElementById("cycleStats").innerHTML = [
+    ["Plays so far", plays, "this demo"],
+    ["Heuristic active", plays >= 4 ? "yes" : "no", "needs 4 observations"],
+    ["Cards in hand", "4", queue.slice(0, 4).join(" · ")],
+    ["Next up (queue)", queue[4], "will enter hand after 4 more plays"],
+  ].map(([k, v, s]) =>
     `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`
   ).join("");
 }
-document.getElementById("prefixScrub").addEventListener("input", renderPrefix);
-renderPrefix();
 
-mountRace("race", ratios.map((r, i) => ({
-  label: labels[i],
-  note: `AUC ${((DATA.byPrefix[r] || {}).auc || 0).toFixed(3)}`,
-  old: DATA.majority,
-  new: (DATA.byPrefix[r] || {}).acc || 0,
-  fmt: "pct",
-  higher: true,
-})), {
-  buttonId: "raceBtn", hintId: "raceHint", oldName: "maj",
-  playLabel: "▶ Run the diff", backLabel: "↺ Back to majority",
-  hintBefore: "bars parked at majority baseline",
-  hintAfter: "bars moved to the transformer",
+document.getElementById("cyclePlay").addEventListener("click", () => {
+  const played = queue.shift();
+  queue.push(played);
+  plays += 1;
+  renderCycle();
+  // flash the card that just went to the back
+  const slots = document.querySelectorAll(".cycle-slot");
+  if (slots[7]) slots[7].classList.add("just-played");
+});
+document.getElementById("cycleReset").addEventListener("click", () => {
+  queue = DECK.slice();
+  plays = 0;
+  renderCycle();
+});
+renderCycle();
+
+/* ---------- bucket recall ---------- */
+const order = ["0-3", "4-7", "8+", "all"];
+const tip = makeTip("bucketHost");
+document.getElementById("bucketBars").innerHTML = order.map((key) => {
+  const b = DATA.buckets[key] || {};
+  const recall = b.recall || 0;
+  const color = key === "0-3" ? "#f87171" : (key === "all" ? "#a78bfa" : "#34d399");
+  return `<div class="bucket-row" data-key="${key}">
+    <span>plays ${key}<br><small style="color:#94a3b8">${(b.events || 0).toLocaleString()} events</small></span>
+    <span class="bucket-track"><span class="bucket-fill" style="width:${recall * 100}%;background:${color}"></span></span>
+    <span style="text-align:right">recall ${pct(recall, 2)}<br><small style="color:#94a3b8">precision ${pct(b.precision || 0, 2)}</small></span>
+  </div>`;
+}).join("");
+document.querySelectorAll(".bucket-row").forEach((row) => {
+  row.addEventListener("mousemove", (ev) => {
+    const b = DATA.buckets[row.dataset.key] || {};
+    tip.show(ev, `<b>plays ${row.dataset.key}</b><br>tp ${b.tp} · fp ${b.fp} · fn ${b.fn}<br>slot agreement ${pct(b.slot_agreement || 0, 2)}`);
+  });
+  row.addEventListener("mouseleave", tip.hide);
 });
 
-const hist = DATA.history || {};
-const n = (hist.val_auc || []).length;
-const scrub = document.getElementById("trainScrub");
-scrub.max = Math.max(n, 1);
-scrub.value = n;
-function drawTrain(upto) {
-  lineChart(document.getElementById("trainChart"), [
-    { label: "val AUC", color: "#34d399", values: (hist.val_auc || []).slice(0, upto) },
-    { label: "val full AUC", color: "#22d3ee", values: (hist.val_full_auc || []).slice(0, upto) },
-    { label: "val acc", color: "#a78bfa", values: (hist.val_acc || []).slice(0, upto) },
-  ], { yFormat: "percent", xLabel: "epoch" });
-  document.getElementById("trainReadout").textContent = `epoch ${upto}`;
-}
-document.getElementById("trainLegend").innerHTML = legendHTML([
-  { label: "val AUC", color: "#34d399" },
-  { label: "val full AUC", color: "#22d3ee" },
-  { label: "val acc", color: "#a78bfa" },
-]);
-drawTrain(n);
-scrub.addEventListener("input", () => drawTrain(Number(scrub.value)));
-let timer = null;
-document.getElementById("trainPlay").addEventListener("click", () => {
-  const btn = document.getElementById("trainPlay");
-  if (timer) { clearInterval(timer); timer = null; btn.textContent = "▶"; return; }
-  btn.textContent = "❚❚";
-  let i = 1;
-  timer = setInterval(() => {
-    scrub.value = i; drawTrain(i); i += 1;
-    if (i > n) { clearInterval(timer); timer = null; btn.textContent = "▶"; }
-  }, 120);
+/* ---------- rescore race ---------- */
+const o = DATA.rescore.overall || {};
+const h = o.heuristic || {};
+const e = o.exact || {};
+const def = DATA.rescore.defense || {};
+mountRace("rescoreRace", [
+  {
+    label: "Slot top-1",
+    note: `Same ${h.n || 0} held-out actions, only the hand mask changes.`,
+    old: h.slot_top1 || 0, new: e.slot_top1 || 0, fmt: "pct", higher: true,
+  },
+  {
+    label: "Slot top-3",
+    note: "Human's card inside the model's three best guesses.",
+    old: h.slot_top3 || 0, new: e.slot_top3 || 0, fmt: "pct", higher: true,
+  },
+  {
+    label: "Defense-slice top-1",
+    note: "Real reaction windows only.",
+    old: (def.heuristic || {}).top1 || 0, new: (def.exact || {}).top1 || 0, fmt: "pct", higher: true,
+  },
+], {
+  buttonId: "rescoreBtn", hintId: "rescoreHint", oldName: "heur",
+  playLabel: "▶ Run the diff", backLabel: "↺ Back to heuristic",
+  hintBefore: "bars parked at the heuristic mask",
+  hintAfter: "bars moved to the exact-hand mask — barely a wiggle",
 });
+
+/* ---------- rescore by bucket ---------- */
+const rb = DATA.rescore.byBucket || {};
+document.getElementById("bucketRescore").innerHTML = ["0-3", "4-7", "8+"].map((key) => {
+  const blk = rb[key] || {};
+  const d = ((blk.exact || {}).slot_top1 || 0) - ((blk.heuristic || {}).slot_top1 || 0);
+  return `<div class="cell-row">
+    <span>plays ${key}</span>
+    <span>${pct((blk.heuristic || {}).slot_top1 || 0)}</span>
+    <span>${pct((blk.exact || {}).slot_top1 || 0)}
+      <span class="${d >= 0 ? "up" : "down"}">${d >= 0 ? "+" : ""}${(d * 100).toFixed(2)}pp</span></span>
+  </div>`;
+}).join("") + `<div class="cell-row" style="color:#94a3b8;font-size:.75rem">
+  <span></span><span>heuristic</span><span>exact</span></div>`;
+
+/* ---------- support cells ---------- */
+const cells = DATA.supportFocus || [];
+document.getElementById("supportCells").innerHTML = cells.length
+  ? cells.map((c) => {
+      const hN = (c.train || {}).n_threat_answer_in_hand ?? c.n_threat_answer_in_hand ?? "—";
+      return `<div class="cell-row">
+        <span>${titleCase(c.threat)} → ${titleCase(c.answer)}</span>
+        <span colspan="2" style="grid-column:2/4">in-hand n (train) ${hN}</span>
+      </div>`;
+    }).join("") +
+    `<p class="caption" style="margin-top:10px">Max |relative change| on focus cells:
+      <b>${(DATA.deltas.support * 100).toFixed(1)}%</b> (gate was ≥15%)</p>`
+  : `<p class="caption">No focus cells recorded.</p>`;
+
+/* ---------- gates ---------- */
+const gates = [
+  ["pass_slot", "Slot top-1 ≥ +2pp", DATA.gates.pass_slot],
+  ["pass_defense", "Defense-slice ≥ +5pp", DATA.gates.pass_defense],
+  ["pass_support", "Support n relative change ≥ 15%", DATA.gates.pass_support],
+  ["fail_small", "Fail: deltas tiny (triggered)", !DATA.gates.fail_small],
+  ["fail_recall", "Fail: recall@4+ already ~1 (triggered)", !DATA.gates.fail_recall],
+];
+document.getElementById("gates").innerHTML = gates.map(([, label, passed]) =>
+  `<div class="gate-card ${passed ? "pass" : "fail"}">
+    <div class="g-status ${passed ? "up" : "down"}">${passed ? "PASS" : "FAIL"}</div>
+    <div>${label}</div></div>`
+).join("");
+
 
   </script>
 </body>

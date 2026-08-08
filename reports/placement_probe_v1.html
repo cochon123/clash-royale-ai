@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Winner transformer — how early can you call it?</title>
+  <title>Placement probe — does the card identity unlock where?</title>
   <style>
     :root {
       color-scheme: dark;
@@ -443,76 +443,132 @@
       .race-row { grid-template-columns: 1fr; }
     }
     
-    .dial { margin-top: 8px; }
-    .timeline {
-      display: flex; gap: 4px; height: 28px; border-radius: 8px; overflow: hidden;
-      background: rgba(148,163,184,0.1); margin-top: 12px;
+    .wire {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 720px;
     }
-    .timeline span { display: block; height: 100%; transition: flex .3s ease, background .3s; }
-    .dur-row {
-      display: grid; grid-template-columns: 120px 1fr 80px; gap: 12px; align-items: center;
+    .wire-col {
+      padding: 16px; border-radius: 14px; background: rgba(148,163,184,0.06);
+      border: 1px solid rgba(148,163,184,0.16); position: relative;
+    }
+    .wire-col h4 { margin: 0 0 12px; font-size: 0.78rem; letter-spacing: 0.1em; color: #94a3b8; }
+    .wire-box {
+      padding: 10px; border-radius: 10px; text-align: center; font-size: 0.85rem;
+      background: rgba(99,102,241,0.16); border: 1px solid rgba(148,163,184,0.25); margin-bottom: 8px;
+    }
+    .wire-box.place { background: rgba(148,163,184,0.1); }
+    .wire-box.live { border-color: #34d399; box-shadow: 0 0 0 1px #34d39955; }
+    .wire-note { font-size: 0.76rem; color: #94a3b8; text-align: center; margin-top: 8px; }
+    .wire-note.up { color: #6ee7b7; }
+    .wire-link {
+      position: absolute; left: 18%; right: 18%; bottom: 52px; height: 40px; width: 64%;
+    }
+    .ladder-stage { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
+    .ladder-step {
+      padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; cursor: pointer;
+      border: 1px solid rgba(148,163,184,0.16); background: rgba(148,163,184,0.05);
+      transition: border-color .2s, background .2s;
+    }
+    .ladder-step.active { border-color: #22d3ee; background: rgba(34,211,238,0.08); }
+    .ladder-step h4 { margin: 0 0 2px; font-size: 0.95rem; }
+    .ladder-step small { color: #94a3b8; font-size: 0.75rem; }
+    .ladder-step .nums { margin-top: 6px; font-variant-numeric: tabular-nums; font-size: 0.85rem; }
+    .lift-row {
+      display: grid; grid-template-columns: 160px 1fr 110px; gap: 12px; align-items: center;
       font-size: 0.85rem; margin-bottom: 8px;
     }
-    .dur-track { height: 18px; border-radius: 6px; background: rgba(148,163,184,0.1); overflow: hidden; }
-    .dur-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg,#6366f1,#22d3ee); }
+    .lift-track { position: relative; height: 20px; background: rgba(148,163,184,0.1); border-radius: 6px; }
+    .lift-table { position: absolute; top: 3px; height: 14px; border-radius: 4px; background: rgba(248,113,113,0.55); }
+    .lift-oracle { position: absolute; top: 3px; height: 14px; border-radius: 4px;
+      background: linear-gradient(90deg,#34d399,#22d3ee); opacity: 0.85; }
+    .gate-grid { display: grid; gap: 10px; }
+    .gate-card {
+      padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(148,163,184,0.06); font-size: 0.85rem;
+    }
+    .gate-card.pass { border-color: rgba(52,211,153,0.4); }
+    .gate-card.fail { border-color: rgba(248,113,113,0.4); }
+    .gate-card .g-status { font-weight: 800; letter-spacing: 0.06em; font-size: 0.72rem; margin-bottom: 4px; }
+    @media (max-width: 900px) {
+      .ladder-stage, .wire { grid-template-columns: 1fr; }
+    }
     </style>
 </head>
 <body>
   <main>
 
     <header class="report-header hero">
-      <div class="badge-row"><span class="badge">winner-transformer-v1</span><span class="badge">causal sequence model</span><span class="badge">cuda</span><span class="badge">13,483 battles</span><span class="badge">NVIDIA GeForce RTX 3050 6GB Laptop GPU</span></div>
-      <h1>How early can you call the match?</h1>
-      <p class="hero-sub">A causal transformer over the action sequence. Same winner target as
-      the HGB ensemble, but scored at 50% / 75% / 90% / 100% of the match so you can see when
-      the outcome becomes knowable.</p>
-      <p class="meta">Created 2026-08-06 12:57 UTC · trained in 1067.8s ·
-      best val full AUC 0.819</p>
-      <div class="hero-scores"><div class="hero-score"><span class="hero-score-label">Test accuracy</span><span class="hero-score-value up" data-count="67.6">0</span></div><div class="hero-score"><span class="hero-score-label">Test AUC</span><span class="hero-score-value up" data-count="0.747">0</span></div><div class="hero-score"><span class="hero-score-label">Full-game AUC</span><span class="hero-score-value up" data-count="0.805">0</span></div><div class="hero-score"><span class="hero-score-label">Half-match AUC</span><span class="hero-score-value neutral" data-count="0.582">0</span></div></div>
-      <div class="verdict verdict-partial"><span class="verdict-tag">PREFIX PROBE</span><span>Strong at the end of the match; near chance at halfway. Confirms outcome signal accumulates — it does not justify early-concede automation.</span></div>
+      <div class="badge-row"><span class="badge">placement-probe-v1</span><span class="badge">experiment B</span><span class="badge">frozen trunk policy-bc-v3</span><span class="badge">45,443 test plays</span><span class="badge">cuda</span></div>
+      <h1>Does the placement head need to know the card?</h1>
+      <p class="hero-sub">Zone ~39.5% / tile ~2.6% / XY MAE ~5719 because placement heads do not see which card is placed.</p>
+      <p class="meta">Created 2026-08-07T16:40:40Z ·
+      763.0s · probe params 127,526 ·
+      trunk frozen · 10 epochs</p>
+      <div class="hero-scores"><div class="hero-score"><span class="hero-score-label">Oracle zone</span><span class="hero-score-value up" data-count="52.5">0</span></div><div class="hero-score"><span class="hero-score-label">Oracle vs table</span><span class="hero-score-value up" data-count="30.1">0</span></div><div class="hero-score"><span class="hero-score-label">E2E vs v3</span><span class="hero-score-value down" data-count="0.9">0</span></div><div class="hero-score"><span class="hero-score-label">Oracle tile</span><span class="hero-score-value up" data-count="6.1">0</span></div></div>
+      <div class="verdict verdict-partial"><span class="verdict-tag">PARTIAL</span><span>Oracle card conditioning clearly helps placement (zone 52.5%, +30.1pp vs table). Missed: e2e zone only +0.9pp vs v3 (need ≥+3pp). Next offline: joint slot→placement training or teacher-forced card conditioning in a frozen-trunk head fine-tune — not live play.</span></div>
     </header>
 
     <section class="report-section">
-      <h2>The match timeline</h2>
-      <p class="caption">Scrub how much of the battle the model has seen. The gauge shows
-      accuracy and AUC at that prefix ratio.</p>
-      <div class="toolbar">
-        <input type="range" id="prefixScrub" min="0" max="3" value="3" step="1" class="anim-scrubber">
-        <div class="anim-readout" id="prefixReadout"></div>
-      </div>
-      <div class="timeline" id="timeline"></div>
-      <div class="stat-grid" id="prefixStats" style="margin-top:16px"></div>
+      <h2>The blind spot</h2>
+      <p class="caption">v3 decides the card and the place as two siblings hanging off the same
+      GRU state. The placement head never gets told which card won. This probe freezes that trunk
+      and asks: if we <em>did</em> tell it, how much would placement improve?</p>
+      <div class="wire" id="wire"></div>
     </section>
 
     <section class="report-section">
-      <h2>Prefix ladder</h2>
+      <h2>The ladder</h2>
+      <p class="caption">Four ways to place a card, scored on the same held-out plays. Scrub the
+      slider to climb from the dumbest baseline to the oracle upper bound.</p>
       <div class="toolbar">
-        <button type="button" class="play-btn" id="raceBtn">▶ Run the diff</button>
-        <span class="hint" id="raceHint">bars parked at majority baseline</span>
+        <input type="range" id="ladderScrub" min="0" max="3" value="0" step="1" class="anim-scrubber">
+        <div class="anim-readout" id="ladderReadout"></div>
       </div>
-      <div class="race" id="race"></div>
+      <div class="ladder-stage">
+        <div class="ladder-list" id="ladderList"></div>
+        <div class="ladder-arena rel" id="arenaHost">
+          <svg id="arena" class="arena"></svg>
+        </div>
+      </div>
+      <div class="stat-grid" id="ladderStats" style="margin-top:16px"></div>
     </section>
 
     <section class="report-section">
-      <h2>Training</h2>
-      <div class="chart-animation">
+      <h2>Which cards care the most</h2>
+      <p class="caption">Oracle zone accuracy minus the per-card majority table. Spells and
+      cycle cards with sharp placement conventions gain the most — The Log and Barbarian Barrel
+      nearly triple their table baseline.</p>
+      <div class="chip-row" id="sortChips" style="margin-bottom:12px">
+        <button type="button" class="chip active" data-sort="lift">by lift</button>
+        <button type="button" class="chip" data-sort="oracle">by oracle accuracy</button>
+        <button type="button" class="chip" data-sort="n">by sample size</button>
+      </div>
+      <div id="cardLift"></div>
+    </section>
+
+    <section class="report-section block-grid">
+      <div class="block">
+        <h2>Probe training</h2>
+        <p class="caption">Frozen trunk, trainable placement head only. Zone accuracy on the
+        validation set as the oracle card was taught.</p>
         <svg class="chart" id="trainChart"></svg>
         <div class="legend" id="trainLegend"></div>
-        <div class="anim-toolbar">
-          <button type="button" class="play-btn" id="trainPlay">▶</button>
-          <input type="range" class="anim-scrubber" id="trainScrub" min="1" max="1" value="1">
-          <div class="anim-readout" id="trainReadout"></div>
-        </div>
+      </div>
+      <div class="block">
+        <h2>Gates</h2>
+        <div class="gate-grid" id="gates"></div>
       </div>
     </section>
 
     <section class="report-section">
       <h2>Lessons learned</h2>
-      <ul class="lessons"><li>Prefix accuracy rises smoothly with how much of the match the model has seen.</li><li>Full-game AUC ~0.80 is competitive with the tabular ensemble; early prefixes are near chance.</li><li>Useful as a &#x27;when is this match decided?&#x27; probe, not as a live agent.</li></ul>
+      <ul class="lessons"><li>Per-card lookup control zone=22.4% is the number to beat for card-only placement.</li><li>Oracle probe zone=52.5% (+30.1pp vs table, +12.2pp vs frozen v3).</li><li>E2E conditioning on v3 slot-argmax card: zone=41.2% (+0.9pp vs v3).</li><li>Oracle XY MAE=4530 (gate ≤5000: met).</li><li>Oracle card conditioning clearly helps placement (zone 52.5%, +30.1pp vs table). Missed: e2e zone only +0.9pp vs v3 (need ≥+3pp). Next offline: joint slot→placement training or teacher-forced card conditioning in a frozen-trunk head fine-tune — not live play.</li></ul>
+      <p class="caption">This probe is why policy-bc-v4 jointly trains the slot and
+      card-conditioned placement heads instead of bolting a probe onto a frozen trunk.</p>
     </section>
 
     <footer class="report-footer">
-      <p class="meta">Offline probe · checkpoint models/winner_predictor/best_model.pt</p>
+      <p class="meta">Offline experiment only · live play blocked ·
+      See also: reports/policy_bc_v4_showcase.html</p>
     </footer>
     
   </main>
@@ -706,83 +762,256 @@ function histChart(svg, groups, opts = {}) {
 }
 
     
-    const DATA = {"test":{"acc":0.6758984503791625,"auc":0.7467421985451308,"loss":0.6275610236745132,"n":6066},"byPrefix":{"0.5":{"acc":0.5499505440158259,"auc":0.5816825410802429,"n":2022},"0.75":{"acc":0.6068249258160238,"auc":0.6526355440105275,"n":2022},"0.9":{"acc":0.645895153313551,"auc":0.7141646731925427,"n":2022},"1.0":{"acc":0.7289812067260139,"auc":0.8053126696898986,"n":2022}},"history":{"train_loss":[1.0019803743755042,0.9519645734770523,0.9326538579714092,0.9217231067844913,0.9061468561807001,0.8904423812629375,0.8776612543014891,0.8662109140697545,0.8565587199541677,0.8424646119830776,0.8317769947121659,0.8209789445200765,0.8103799494614164,0.8013613168620176,0.7923658851924962,0.7838394417072514,0.7726406969555504,0.7676384684099145,0.7615952612869293,0.7512583711232798,0.7441992234898753,0.7390506052242649,0.7344676341668543,0.7232349825253683,0.7202069045379659],"train_acc":[0.5782119425296902,0.6235154887467819,0.6481396893945686,0.6605971264845113,0.6776638152977328,0.695208039199402,0.7054854247986048,0.7144340171082136,0.7236317581596213,0.7365459679428619,0.7437297566647288,0.7540486670542313,0.7588032555435595,0.7669421144423221,0.7714683165850013,0.7789012540486671,0.7863134291171829,0.7891994020430196,0.7940993272983972,0.8014907399717631,0.8047089112199983,0.8085499543227307,0.8124948094012125,0.8190349638734324,0.820862054646624],"val_loss":[0.6366586835760819,0.6213207621323434,0.6120209565288142,0.607467752381375,0.5953681970897474,0.5964389333599492,0.6056011018000151,0.5976030079942001,0.6292998969554902,0.5958722111425901,0.6130610563253102,0.6030256870545839,0.6071672878767315,0.6363890202421891,0.6272479129465003,0.6259183249975505,0.6310744800065693,0.6401485189011222,0.6284262911269539,0.6464480199311909,0.6579468127928282,0.6484666717679877,0.6836066283677754,0.6635372908491838,0.6803820013999939],"val_acc":[0.6142433234421365,0.6322123310253874,0.6549620837454665,0.6572700296735905,0.6635344543356413,0.6656775469831849,0.6569403231124299,0.6722716782063963,0.6511704582921201,0.6796900758325091,0.6806791955159908,0.6795252225519288,0.691229805473129,0.6818331684800527,0.6859545004945599,0.6803494889548302,0.6826574348829542,0.6826574348829542,0.6829871414441148,0.6819980217606331,0.6821628750412133,0.6848005275304978,0.6846356742499176,0.6872733267392022,0.6879327398615233],"val_auc":[0.6739023406512618,0.6963903449345875,0.7173590350287656,0.7237358242948609,0.7410997880641572,0.7387322517739929,0.7367392127223741,0.756209369851275,0.7547109456882171,0.7585960553320213,0.7508125621736681,0.7563512479451341,0.7608343345857557,0.7589682677239631,0.7577468540110319,0.756453957240075,0.7666876763751975,0.7544672287171706,0.760604979507646,0.760064232478137,0.7570902326180566,0.7593544067999646,0.7546122620753871,0.7586783098097495,0.7562484298479739],"val_full_auc":[0.7601939247234438,0.7657118292710393,0.7784524603391431,0.7836707235750147,0.8025706482729987,0.8022984251205175,0.8011145481732161,0.8139707271981285,0.8149019653924077,0.8155218116352876,0.8033618580111455,0.8067861902565654,0.8190479827578947,0.8061516557140913,0.8170905220319598,0.8084675109501274,0.8190734424771915,0.8078848750662198,0.819085193116867,0.8164080057108108,0.8177348487741635,0.8128504995490692,0.8076312570932247,0.8164393407499454,0.8112240151739927]},"majority":0.5174276936116115,"bestValAuc":0.8190479827578947,"epochs":25};
+const XB = [0, 0.4, 0.6, 1];
+const YB = [0, 0.25, 0.45, 0.55, 1];
+const ZONE_LABELS = [
+  "own back left", "own back center", "own back right",
+  "own front left", "own front center", "own front right",
+  "river left", "river center", "river right",
+  "enemy left", "enemy center", "enemy right",
+];
+
+function towerOverlay(g, w, h, ox, oy, scale, opacity) {
+  const tw = w * 0.11;
+  const tower = (cx, cy, king, friendly) => {
+    const size = king ? tw * 1.35 : tw;
+    g.appendChild(el("rect", {
+      x: cx - size / 2, y: cy - size / 2, width: size, height: size, rx: 3 * scale,
+      fill: friendly ? "#1e3a8a" : "#7f1d1d",
+      stroke: friendly ? "#93c5fd" : "#fca5a5", "stroke-width": 1.2 * scale, opacity,
+    }));
+  };
+  tower(ox + w * 0.22, oy + h * 0.19, false, false);
+  tower(ox + w * 0.78, oy + h * 0.19, false, false);
+  tower(ox + w * 0.5, oy + h * 0.075, true, false);
+  tower(ox + w * 0.22, oy + h * 0.81, false, true);
+  tower(ox + w * 0.78, oy + h * 0.81, false, true);
+  tower(ox + w * 0.5, oy + h * 0.925, true, true);
+}
+
+function arenaBackdrop(g, w, h, ox, oy, scale) {
+  const rect = (x, y, ww, hh, attrs) =>
+    g.appendChild(el("rect", Object.assign({ x, y, width: ww, height: hh }, attrs)));
+  rect(ox, oy, w, h, { fill: "#0d1a2b", rx: 10 * scale });
+  rect(ox, oy, w, h * 0.5, { fill: "#991b1b", opacity: 0.28, rx: 10 * scale });
+  rect(ox, oy + h * 0.5, w, h * 0.5, { fill: "#1d4ed8", opacity: 0.22 });
+  rect(ox, oy + h * 0.465, w, h * 0.07, { fill: "#1d4ed8", opacity: 0.45 });
+  rect(ox + w * 0.16, oy + h * 0.455, w * 0.12, h * 0.09, { fill: "#7c5c33", opacity: 0.75 });
+  rect(ox + w * 0.72, oy + h * 0.455, w * 0.12, h * 0.09, { fill: "#7c5c33", opacity: 0.75 });
+  towerOverlay(g, w, h, ox, oy, scale, 0.85);
+}
+
+function zoneCenter(z) {
+  const col = z % 3, row = Math.floor(z / 3);
+  return [(XB[col] + XB[col + 1]) / 2, (YB[row] + YB[row + 1]) / 2];
+}
+
+/* draws the 12-zone bubble map; values are shares (or deltas when diverging) */
+function drawZoneBubbles(g, values, geom, opts = {}) {
+  const { xPx, yPx } = geom;
+  const diverging = !!opts.diverging;
+  const peak = Math.max(...values.map((v) => Math.abs(v)), 1e-6);
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 3; col++) {
+      const z = row * 3 + col;
+      const x0 = xPx(XB[col]), x1 = xPx(XB[col + 1]);
+      const y0 = yPx(YB[row + 1]), y1 = yPx(YB[row]);
+      const v = values[z];
+      const mag = Math.abs(v) / peak;
+      const fill = diverging ? (v >= 0 ? "#34d399" : "#f87171") : (opts.color || "#22d3ee");
+      const cell = el("rect", {
+        x: x0 + 1, y: y0 + 1, width: x1 - x0 - 2, height: y1 - y0 - 2, rx: 5,
+        fill: diverging ? fill : "#e2e8f0",
+        opacity: (diverging ? 0.04 + 0.16 * mag : 0.02 + 0.05 * mag).toFixed(3),
+        class: "zone-cell", stroke: "rgba(226,232,240,0.22)", "stroke-width": 1,
+      });
+      g.appendChild(cell);
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      const rmax = Math.min(x1 - x0, y1 - y0) * 0.44;
+      g.appendChild(el("circle", {
+        cx, cy, r: Math.max(9, Math.sqrt(mag) * rmax), fill, opacity: 0.62,
+        stroke: fill, "stroke-width": 1.5, "pointer-events": "none",
+      }));
+      g.appendChild(svgText(
+        { x: cx, y: cy + 4, "text-anchor": "middle", fill: "#04131f", "font-size": 11,
+          "font-weight": 800, "pointer-events": "none" },
+        diverging ? (v >= 0 ? "+" : "") + (v * 100).toFixed(1) : (v * 100).toFixed(0) + "%"));
+      if (opts.onHover) {
+        cell.addEventListener("mousemove", (ev) => opts.onHover(ev, z));
+        cell.addEventListener("mouseleave", () => opts.onLeave && opts.onLeave());
+      }
+    }
+  }
+}
+
+/* full arena with side captions; returns pixel mappers */
+function mountArena(svg, opts = {}) {
+  const W = opts.W || 300, H = opts.H || 470, PAD = 6, TOP = 20;
+  const AW = W - PAD * 2, AH = H - TOP - 22;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = "";
+  const g = el("g");
+  svg.appendChild(g);
+  arenaBackdrop(g, AW, AH, PAD, TOP, 1);
+  const geom = {
+    xPx: (nx) => PAD + nx * AW,
+    yPx: (ny) => TOP + (1 - ny) * AH,
+    W, H, PAD, TOP, AW, AH,
+  };
+  geom.captions = () => {
+    g.appendChild(svgText(
+      { x: PAD, y: 13, fill: "#fca5a5", "font-size": 11, "letter-spacing": "0.14em", "font-weight": 700 },
+      "ENEMY SIDE ↑"));
+    g.appendChild(svgText(
+      { x: PAD, y: H - 6, fill: "#93c5fd", "font-size": 11, "letter-spacing": "0.14em", "font-weight": 700 },
+      "YOUR SIDE ↓"));
+  };
+  return { g, geom };
+}
+
+    
+const DATA = {"ladder":[{"key":"table","label":"Per-card table","note":"Majority zone + mean XY for that card. No game state.","zone":0.22425896177629118,"tile":0.002178553352551548,"xy":7978.852080270296},{"key":"v3","label":"Frozen policy v3","note":"Card-blind placement heads \u2014 the status quo.","zone":0.40327443170565325,"tile":0.025614506084545473,"xy":5656.9287109375},{"key":"e2e","label":"E2E (v3 slot \u2192 probe)","note":"Probe sees the slot head's soft card pick, trunk frozen.","zone":0.4119666395264397,"tile":0.043108949673217,"xy":5611.14306640625},{"key":"oracle","label":"Oracle card","note":"Probe sees the true card. Upper bound for this architecture.","zone":0.5250313579649231,"tile":0.06135158330215875,"xy":4530.04443359375}],"cards":[{"card":"skeletons","card_id":107,"n":1934,"table_zone_acc":0.140641158221303,"oracle_zone_acc":0.39710444674250256,"lift_pp":25.64632885211996},{"card":"berserker","card_id":16,"n":1727,"table_zone_acc":0.18529241459177764,"oracle_zone_acc":0.45396641574985525,"lift_pp":26.86740011580776},{"card":"barbarian-barrel","card_id":10,"n":1489,"table_zone_acc":0.1524513096037609,"oracle_zone_acc":0.5896574882471457,"lift_pp":43.72061786433848},{"card":"the-log","card_id":113,"n":1331,"table_zone_acc":0.21412471825694968,"oracle_zone_acc":0.6626596543951916,"lift_pp":44.85349361382419},{"card":"electro-spirit","card_id":29,"n":1134,"table_zone_acc":0.15079365079365079,"oracle_zone_acc":0.4497354497354497,"lift_pp":29.894179894179896},{"card":"ice-spirit","card_id":64,"n":1084,"table_zone_acc":0.1448339483394834,"oracle_zone_acc":0.4381918819188192,"lift_pp":29.335793357933582},{"card":"valkyrie","card_id":117,"n":1068,"table_zone_acc":0.20411985018726592,"oracle_zone_acc":0.47846441947565543,"lift_pp":27.43445692883895},{"card":"hog-rider","card_id":61,"n":987,"table_zone_acc":0.4508611955420466,"oracle_zone_acc":0.7011144883485309,"lift_pp":25.02532928064842},{"card":"arrows","card_id":6,"n":984,"table_zone_acc":0.22357723577235772,"oracle_zone_acc":0.6310975609756098,"lift_pp":40.7520325203252},{"card":"fireball","card_id":36,"n":910,"table_zone_acc":0.1967032967032967,"oracle_zone_acc":0.5989010989010989,"lift_pp":40.21978021978022},{"card":"zap","card_id":124,"n":824,"table_zone_acc":0.18932038834951456,"oracle_zone_acc":0.5752427184466019,"lift_pp":38.592233009708735},{"card":"knight","card_id":68,"n":811,"table_zone_acc":0.18372379778051787,"oracle_zone_acc":0.44143033292231815,"lift_pp":25.77065351418003}],"history":[{"epoch":1,"train_loss":1.4788641887117726,"val_zone_acc":0.5118696971029146,"val_xy_mae":4907.10400390625,"val_tile_acc":0.04171978722468897},{"epoch":2,"train_loss":1.391506980186285,"val_zone_acc":0.5170791752758606,"val_xy_mae":4792.15576171875,"val_tile_acc":0.04785246406119488},{"epoch":3,"train_loss":1.3710121690764907,"val_zone_acc":0.5196949048226139,"val_xy_mae":4729.50830078125,"val_tile_acc":0.051874972523849296},{"epoch":4,"train_loss":1.358102469481239,"val_zone_acc":0.5208379126917835,"val_xy_mae":4740.34619140625,"val_tile_acc":0.05288609486965314},{"epoch":5,"train_loss":1.3487751848013827,"val_zone_acc":0.5229920429067569,"val_xy_mae":4649.15234375,"val_tile_acc":0.057436145425770434},{"epoch":6,"train_loss":1.3401636582012324,"val_zone_acc":0.5240910889348046,"val_xy_mae":4633.38720703125,"val_tile_acc":0.057677935551940916},{"epoch":7,"train_loss":1.3334136042484017,"val_zone_acc":0.5237833560469513,"val_xy_mae":4609.1826171875,"val_tile_acc":0.060359607860377196},{"epoch":8,"train_loss":1.3264321068460627,"val_zone_acc":0.523431661317976,"val_xy_mae":4608.51513671875,"val_tile_acc":0.06332703213610585},{"epoch":9,"train_loss":1.320771237121996,"val_zone_acc":0.5255198487712666,"val_xy_mae":4595.462890625,"val_tile_acc":0.06543720050995736},{"epoch":10,"train_loss":1.3149444524631944,"val_zone_acc":0.5227502527805864,"val_xy_mae":4588.79833984375,"val_tile_acc":0.06253571899591155}],"gates":{"oracle_zone_ge_45":true,"oracle_ge_3pp_over_table":true,"e2e_ge_3pp_over_v3":false,"oracle_xy_mae_le_5000":true,"hard_fail_oracle_lt_2pp_over_table":false},"deltas":{"oracle_vs_table":30.07723961886319,"e2e_vs_v3":0.8692207820786446,"oracle_vs_v3":12.175692625926981}};
 
 mountCounters();
 
-const ratios = ["0.5", "0.75", "0.9", "1.0"];
-const labels = ["50% of match", "75%", "90%", "Full game"];
+/* ---------- the blind-spot wire diagram ---------- */
+document.getElementById("wire").innerHTML = `
+  <div class="wire-col">
+    <h4>STATUS QUO (v3)</h4>
+    <div class="wire-box">GRU state</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="wire-box">card slot</div>
+      <div class="wire-box place">zone + xy</div>
+    </div>
+    <p class="wire-note">placement is card-blind</p>
+  </div>
+  <div class="wire-col">
+    <h4>THIS PROBE</h4>
+    <div class="wire-box">GRU state (frozen)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="wire-box">card (oracle / soft)</div>
+      <div class="wire-box place live">zone + xy probe</div>
+    </div>
+    <svg class="wire-link" viewBox="0 0 240 40" preserveAspectRatio="none">
+      <path d="M46,6 C46,34 194,34 194,8" fill="none" stroke="#34d399" stroke-width="2.5"
+            stroke-dasharray="6 5">
+        <animate attributeName="stroke-dashoffset" from="0" to="-22" dur="1.4s" repeatCount="indefinite"/>
+      </path>
+    </svg>
+    <p class="wire-note up">card identity → placement</p>
+  </div>`;
 
-function renderPrefix() {
-  const i = Number(document.getElementById("prefixScrub").value);
-  const key = ratios[i];
-  const row = DATA.byPrefix[key] || {};
-  document.getElementById("prefixReadout").textContent = labels[i];
-  // timeline fill
-  const fills = ratios.map((r, idx) => {
-    const active = idx <= i;
-    const w = idx === 0 ? 50 : (idx === 1 ? 25 : (idx === 2 ? 15 : 10));
-    return `<span style="flex:${w};background:${active ? "linear-gradient(90deg,#6366f1,#22d3ee)" : "transparent"}"></span>`;
+/* ---------- ladder ---------- */
+let rung = 0;
+const tip = makeTip("arenaHost");
+
+/* synthetic but distinctive zone distributions per rung, for the arena illustration */
+const ILLUS = {
+  table:  [0.02,0.04,0.02, 0.05,0.08,0.05, 0.18,0.02,0.18, 0.12,0.16,0.08],
+  v3:     [0.01,0.06,0.01, 0.07,0.07,0.06, 0.16,0.01,0.14, 0.12,0.17,0.12],
+  e2e:    [0.02,0.06,0.02, 0.07,0.07,0.06, 0.15,0.02,0.14, 0.12,0.16,0.11],
+  oracle: [0.03,0.06,0.03, 0.07,0.08,0.07, 0.14,0.04,0.13, 0.11,0.14,0.10],
+};
+
+function renderLadder() {
+  const list = document.getElementById("ladderList");
+  list.innerHTML = DATA.ladder.map((r, i) =>
+    `<div class="ladder-step ${i === rung ? "active" : ""}" data-i="${i}">
+       <h4>${r.label}</h4><small>${r.note}</small>
+       <div class="nums">zone <b>${pct(r.zone)}</b> · tile ${pct(r.tile)} · MAE ${Math.round(r.xy).toLocaleString()}</div>
+     </div>`).join("");
+  list.querySelectorAll(".ladder-step").forEach((el) => {
+    el.addEventListener("click", () => {
+      rung = Number(el.dataset.i);
+      document.getElementById("ladderScrub").value = rung;
+      renderLadder();
+    });
   });
-  document.getElementById("timeline").innerHTML = fills.join("");
-  document.getElementById("prefixStats").innerHTML = [
-    ["Prefix", labels[i], `${row.n || 0} battles`],
-    ["Accuracy", pct(row.acc || 0), ""],
-    ["AUC", (row.auc || 0).toFixed(3), ""],
-    ["vs majority", ((row.acc || 0) - DATA.majority >= 0 ? "+" : "") +
-      (((row.acc || 0) - DATA.majority) * 100).toFixed(1) + "pp", ""],
-  ].map(([k,v,s]) =>
+  const cur = DATA.ladder[rung];
+  document.getElementById("ladderReadout").textContent =
+    `${cur.label} · zone ${pct(cur.zone)} · tile ${pct(cur.tile)}`;
+  document.getElementById("ladderStats").innerHTML = [
+    ["Zone accuracy", pct(cur.zone), "of 12 zones"],
+    ["Within one tile", pct(cur.tile), "hardest target"],
+    ["XY MAE", Math.round(cur.xy).toLocaleString(), "API units"],
+    ["vs v3 zone", ((cur.zone - DATA.ladder[1].zone) * 100).toFixed(1) + "pp", "this rung"],
+  ].map(([k, v, s]) =>
     `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`
   ).join("");
+
+  const { g, geom } = mountArena(document.getElementById("arena"));
+  drawZoneBubbles(g, ILLUS[cur.key], geom, {
+    color: rung === 3 ? "#34d399" : (rung === 0 ? "#f87171" : "#22d3ee"),
+    onHover: (ev, z) => tip.show(ev, `<b>${ZONE_LABELS[z]}</b><br>illustrative share for ${cur.label}`),
+    onLeave: tip.hide,
+  });
+  geom.captions();
 }
-document.getElementById("prefixScrub").addEventListener("input", renderPrefix);
-renderPrefix();
-
-mountRace("race", ratios.map((r, i) => ({
-  label: labels[i],
-  note: `AUC ${((DATA.byPrefix[r] || {}).auc || 0).toFixed(3)}`,
-  old: DATA.majority,
-  new: (DATA.byPrefix[r] || {}).acc || 0,
-  fmt: "pct",
-  higher: true,
-})), {
-  buttonId: "raceBtn", hintId: "raceHint", oldName: "maj",
-  playLabel: "▶ Run the diff", backLabel: "↺ Back to majority",
-  hintBefore: "bars parked at majority baseline",
-  hintAfter: "bars moved to the transformer",
+document.getElementById("ladderScrub").addEventListener("input", (e) => {
+  rung = Number(e.target.value);
+  renderLadder();
 });
+renderLadder();
 
-const hist = DATA.history || {};
-const n = (hist.val_auc || []).length;
-const scrub = document.getElementById("trainScrub");
-scrub.max = Math.max(n, 1);
-scrub.value = n;
-function drawTrain(upto) {
+/* ---------- per-card lift ---------- */
+let sortKey = "lift";
+function renderCards() {
+  const cards = DATA.cards.slice().sort((a, b) => {
+    if (sortKey === "oracle") return b.oracle_zone_acc - a.oracle_zone_acc;
+    if (sortKey === "n") return b.n - a.n;
+    return b.lift_pp - a.lift_pp;
+  });
+  const maxZ = Math.max(...cards.map((c) => c.oracle_zone_acc), 0.1);
+  document.getElementById("cardLift").innerHTML = cards.map((c) =>
+    `<div class="lift-row">
+       <span>${titleCase(c.card)}<br><small style="color:#94a3b8">n=${c.n}</small></span>
+       <span class="lift-track">
+         <span class="lift-table" style="width:${(c.table_zone_acc / maxZ) * 100}%"></span>
+         <span class="lift-oracle" style="width:${(c.oracle_zone_acc / maxZ) * 100}%"></span>
+       </span>
+       <span style="text-align:right">${pct(c.oracle_zone_acc)}
+         <span class="up">+${c.lift_pp.toFixed(1)}pp</span></span>
+     </div>`).join("");
+}
+document.querySelectorAll("#sortChips .chip").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    document.querySelectorAll("#sortChips .chip").forEach((c) => c.classList.remove("active"));
+    chip.classList.add("active");
+    sortKey = chip.dataset.sort;
+    renderCards();
+  });
+});
+renderCards();
+
+/* ---------- training curve ---------- */
+const hist = DATA.history || [];
+if (hist.length) {
   lineChart(document.getElementById("trainChart"), [
-    { label: "val AUC", color: "#34d399", values: (hist.val_auc || []).slice(0, upto) },
-    { label: "val full AUC", color: "#22d3ee", values: (hist.val_full_auc || []).slice(0, upto) },
-    { label: "val acc", color: "#a78bfa", values: (hist.val_acc || []).slice(0, upto) },
+    { label: "val zone", color: "#34d399", values: hist.map((r) => r.val_zone_acc) },
+    { label: "val tile", color: "#22d3ee", values: hist.map((r) => r.val_tile_acc) },
   ], { yFormat: "percent", xLabel: "epoch" });
-  document.getElementById("trainReadout").textContent = `epoch ${upto}`;
+  document.getElementById("trainLegend").innerHTML = legendHTML([
+    { label: "val zone", color: "#34d399" },
+    { label: "val tile", color: "#22d3ee" },
+  ]);
 }
-document.getElementById("trainLegend").innerHTML = legendHTML([
-  { label: "val AUC", color: "#34d399" },
-  { label: "val full AUC", color: "#22d3ee" },
-  { label: "val acc", color: "#a78bfa" },
-]);
-drawTrain(n);
-scrub.addEventListener("input", () => drawTrain(Number(scrub.value)));
-let timer = null;
-document.getElementById("trainPlay").addEventListener("click", () => {
-  const btn = document.getElementById("trainPlay");
-  if (timer) { clearInterval(timer); timer = null; btn.textContent = "▶"; return; }
-  btn.textContent = "❚❚";
-  let i = 1;
-  timer = setInterval(() => {
-    scrub.value = i; drawTrain(i); i += 1;
-    if (i > n) { clearInterval(timer); timer = null; btn.textContent = "▶"; }
-  }, 120);
-});
+
+/* ---------- gates ---------- */
+const gateLabels = {
+  oracle_zone_ge_45: "Oracle zone ≥ 45%",
+  oracle_ge_3pp_over_table: "Oracle ≥ +3pp over table",
+  e2e_ge_3pp_over_v3: "E2E ≥ +3pp over v3",
+  oracle_xy_mae_le_5000: "Oracle XY MAE ≤ 5000",
+  hard_fail_oracle_lt_2pp_over_table: "Hard-fail: oracle <+2pp over table (inverted)",
+};
+document.getElementById("gates").innerHTML = Object.entries(DATA.gates).map(([k, v]) => {
+  const inverted = k.startsWith("hard_fail");
+  const passed = inverted ? !v : !!v;
+  return `<div class="gate-card ${passed ? "pass" : "fail"}">
+    <div class="g-status ${passed ? "up" : "down"}">${passed ? "PASS" : "FAIL"}</div>
+    <div>${gateLabels[k] || titleCase(k)}</div></div>`;
+}).join("");
+
 
   </script>
 </body>

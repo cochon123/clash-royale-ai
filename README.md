@@ -202,6 +202,127 @@ Replay actions alone do not contain the full live arena state (unit health,
 positions, targets, projectiles). They can train an action-sequence prior, but
 a strong real-time player still needs synchronized visual/game-state features.
 
+## Realism scorer
+
+Train a model that scores how likely a battle is a real human game versus a
+legal-but-random synthetic sequence (easy / medium / hard negatives):
+
+```bash
+cr-replays train-realism --input data/raw --trees 120
+cr-replays report-realism --model-dir models/realism_scorer --output-dir reports
+```
+
+This is fully offline: no live play required. The HTML report includes
+per-tier separation, overlapping score histograms, a scrubbable training
+curve, and a spot-the-fake quiz built from held-out battles.
+
+## Dual-phone lab
+
+Open a browser calibration lab when both USB phones are connected (Pixel 9 + Pixel 8 by default). Live low-latency H.264 mirrors (scrcpy-server → WebSocket → WebCodecs) with click/drag touch control, full-res screencap hand detection (auto ~1500ms after each play), and a TEST button that taps a card slot then a placement preset:
+
+```bash
+cr-replays phone-lab
+# or without auto-opening a tab:
+cr-replays phone-lab --no-open --port 8766
+
+# Click 6 placement landmarks on a live screenshot (matplotlib):
+# bridge left/right → my corner left/right → enemy corner left/right
+cr-replays phone-lab-calibrate --phone pixel9
+cr-replays phone-lab-calibrate --phone pixel8
+# then restart phone-lab so TEST uses the new points
+```
+
+Requires `adb` and the phones unlocked. Calibration JSON lives in `data/phone_lab/calibrations/` (seeded from the old dual-phone unified zones; scaled per device resolution). Hand detection uses the existing YOLO weights at `ClashRoyaleAI/models/yolo/card_detector.pt` — point at another checkpoint with `--yolo-model`.
+
+## Next-action policy (behavior cloning)
+
+Train a causal policy that predicts the next deck-slot, placement zone, and
+timing from action history. Evaluation stays offline: battle-level held-out
+metrics, frequency/cycle baselines, and realism-scored autoregressive rollouts.
+
+```bash
+cr-replays train-policy --input data/raw --epochs 25
+cr-replays train-policy --version 3 --input data/raw --epochs 25 --device cuda
+cr-replays train-policy --version 4 --input data/raw --epochs 25 --device cuda
+cr-replays report-policy --model-dir models/policy_bc_v4 --output-dir reports
+cr-replays predict-policy data/raw/SOME_BATTLE.json --prefix-events 20
+```
+
+`policy-bc-v2` uses per-card cycle features and a card-conditioned slot head.
+`policy-bc-v3` adds recent-opponent-threat features plus reaction-window
+upweighting (targets GY→poison / hog→tornado style misses).
+`policy-bc-v4` keeps v3 threat/reaction and jointly trains card-conditioned
+zone/XY heads (offline probe finding). The HTML report includes a live-play
+readiness checklist — treat it as suspect until rollout XY/initiative gates
+are fixed; only smoke-test on the real client after those pass.
+
+### Interactive showcase (v4 vs v3)
+
+Because each training run sees a different snapshot of the growing replay
+corpus, archived `report.json` numbers are not a fair head-to-head. The
+showcase rescores **both frozen checkpoints on the same held-out actions** and
+renders the result as an explorable page: a to-scale arena bubble map of where
+each model places cards, a per-card placement league table, a gallery of real
+plays v4 fixed, and a defense quiz you can play against v3 and v4.
+
+```bash
+cr-replays showcase-policy --device cuda --max-battles 700
+cr-replays report-showcase   # -> reports/policy_bc_v4_showcase.html
+```
+
+`showcase-policy` writes `reports/policy_showcase_v4.json`; pass
+`--new-policy-dir` / `--old-policy-dir` to compare any two checkpoints.
+
+### Interactive reports (not copy-pasted)
+
+Every model/experiment report has its own visual language via `report_kit.py`:
+
+| Report | What it's for | Distinctive visual |
+|---|---|---|
+| `policy_bc_v{2,3,4}.html` | BC policy versions | Version-specific architecture diagram (what that version added) |
+| `policy_bc_v4_showcase.html` | Fair v3↔v4 head-to-head | Arena lab + defense quiz |
+| `rollout_autopsy_v1.html` | Why rollouts collapse | 27×5 ablation recovery matrix |
+| `action_clock_v1.html` | Who acts next / when | Initiative conveyor + phase dial |
+| `placement_probe_v1.html` | Does card identity unlock placement? | Oracle ladder on an arena |
+| `hand_audit_v1.html` | Is oldest-four the bottleneck? | 8-card cycle wheel (null-result) |
+| `defense_support_audit_v*.html` | Is the answer even in the data? | Per-cell support funnel |
+| `defense_slice_v*.html` | Real reaction windows | Threat radar vs frequency |
+| `realism_scorer_v1.html` | Sequence realism judge | Spot-the-fake quiz |
+| `winner_hgb_v1.html` | Full-game winner judge | Risk–coverage dial |
+| `winner_transformer_v1.html` | Prefix winner probe | Match-timeline scrubber |
+
+### Matchup stress test
+
+Mine win-condition matchups that favor one side in the corpus, then run the
+same policy against itself on those decks and judge winners with the offline
+winner model:
+
+```bash
+cr-replays eval-matchups --games 48 --top-k 6
+```
+
+Results land in `reports/matchup_eval.json`.
+
+### Defense evals
+
+```bash
+# Real held-out reaction windows (no forced hand) — primary defense metric
+cr-replays eval-defense-slice --device cuda
+
+# Hard counterfactual probe: 1 strong + 3 weak in a cycle-consistent hand
+cr-replays eval-defense --trials 96 --output reports/defense_eval_fair.json
+
+# Data-support + natural-hand audit (decide if failing probe cells justify v3)
+cr-replays audit-defense-support --device cuda
+cr-replays report-defense-support
+```
+
+The support audit measures, per (threat, answer) cell, how often the answer
+appears in the defender's deck/hand after the threat on train, the human-use
+rate, and whether the policy picks it on test when humans naturally held it.
+Unsupported cells should be dropped from success gates; only
+`supported_but_model_fails` justifies policy v3 threat conditioning.
+
 ## Full-game winner model
 
 Train the strongest current full-game model with:
@@ -228,14 +349,18 @@ In addition to `hgb_ensemble.pkl` and `hgb_report.json`, training writes:
 - `confidence_training_stages.json`, recording every cumulative tree stage;
 - `accuracy_vs_confidence_training.mp4`, a Matplotlib animation of those stages.
 
-The trained checkpoint is published on Hugging Face:
+## Hugging Face artifacts
 
 ```bash
+# Full-game winner predictor
 hf download Cochon123/clash-royale-winner-predictor --local-dir models/winner_predictor
-```
 
-The replay corpus (~15k battles, 1.2 GB) is on Hugging Face as well:
+# Next-action policy (behavior cloning v4)
+hf download Cochon123/clash-royale-policy-bc-v4 --local-dir models/policy_bc_v4
 
-```bash
+# Realism scorer (real vs synthetic sequences)
+hf download Cochon123/clash-royale-realism-scorer --local-dir models/realism_scorer
+
+# Replay corpus
 hf download Cochon123/clash-royale-replays --repo-type dataset --local-dir data
 ```

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Winner transformer — how early can you call it?</title>
+  <title>Defense slice — real reaction windows</title>
   <style>
     :root {
       color-scheme: dark;
@@ -443,76 +443,98 @@
       .race-row { grid-template-columns: 1fr; }
     }
     
-    .dial { margin-top: 8px; }
-    .timeline {
-      display: flex; gap: 4px; height: 28px; border-radius: 8px; overflow: hidden;
-      background: rgba(148,163,184,0.1); margin-top: 12px;
+    .radar { width: 100%; max-width: 420px; height: auto; display: block; }
+    .radar-stage { display: grid; grid-template-columns: 420px 1fr; gap: 24px; align-items: center; }
+    .gate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .gate-card {
+      padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(148,163,184,0.06); font-size: 0.85rem;
     }
-    .timeline span { display: block; height: 100%; transition: flex .3s ease, background .3s; }
-    .dur-row {
-      display: grid; grid-template-columns: 120px 1fr 80px; gap: 12px; align-items: center;
-      font-size: 0.85rem; margin-bottom: 8px;
+    .gate-card.pass { border-color: rgba(52,211,153,0.4); }
+    .gate-card.fail { border-color: rgba(248,113,113,0.4); }
+    .gate-card .g-status { font-weight: 800; letter-spacing: 0.06em; font-size: 0.72rem; margin-bottom: 4px; }
+    .cost-row {
+      display: grid; grid-template-columns: 160px 1fr 90px; gap: 12px; align-items: center;
+      font-size: 0.85rem; margin-bottom: 10px;
     }
-    .dur-track { height: 18px; border-radius: 6px; background: rgba(148,163,184,0.1); overflow: hidden; }
-    .dur-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg,#6366f1,#22d3ee); }
+    .cost-track { position: relative; height: 22px; background: rgba(148,163,184,0.1); border-radius: 6px; }
+    .cost-human { position: absolute; top: 2px; height: 8px; border-radius: 4px; background: #f8fafc88; }
+    .cost-pred { position: absolute; top: 12px; height: 8px; border-radius: 4px;
+      background: linear-gradient(90deg,#34d399,#22d3ee); }
+    .fair-row {
+      display: grid; grid-template-columns: 1.2fr 80px 80px 1fr; gap: 10px; font-size: 0.82rem;
+      padding: 6px 0; border-bottom: 1px solid rgba(148,163,184,0.12);
+    }
+    @media (max-width: 900px) { .radar-stage { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
   <main>
 
     <header class="report-header hero">
-      <div class="badge-row"><span class="badge">winner-transformer-v1</span><span class="badge">causal sequence model</span><span class="badge">cuda</span><span class="badge">13,483 battles</span><span class="badge">NVIDIA GeForce RTX 3050 6GB Laptop GPU</span></div>
-      <h1>How early can you call the match?</h1>
-      <p class="hero-sub">A causal transformer over the action sequence. Same winner target as
-      the HGB ensemble, but scored at 50% / 75% / 90% / 100% of the match so you can see when
-      the outcome becomes knowable.</p>
-      <p class="meta">Created 2026-08-06 12:57 UTC · trained in 1067.8s ·
-      best val full AUC 0.819</p>
-      <div class="hero-scores"><div class="hero-score"><span class="hero-score-label">Test accuracy</span><span class="hero-score-value up" data-count="67.6">0</span></div><div class="hero-score"><span class="hero-score-label">Test AUC</span><span class="hero-score-value up" data-count="0.747">0</span></div><div class="hero-score"><span class="hero-score-label">Full-game AUC</span><span class="hero-score-value up" data-count="0.805">0</span></div><div class="hero-score"><span class="hero-score-label">Half-match AUC</span><span class="hero-score-value neutral" data-count="0.582">0</span></div></div>
-      <div class="verdict verdict-partial"><span class="verdict-tag">PREFIX PROBE</span><span>Strong at the end of the match; near chance at halfway. Confirms outcome signal accumulates — it does not justify early-concede automation.</span></div>
+      <div class="badge-row"><span class="badge">policy-bc-v2</span><span class="badge">defense slice</span><span class="badge">4,367 real windows</span><span class="badge">2026-08-07T01:36:58Z</span></div>
+      <h1>Defense on real reaction windows</h1>
+      <p class="hero-sub">Prefix is the real replay up to the human response. No synthetic warmup, no forced hand mask.</p>
+      <p class="meta">Split: test battles, seed=42 ·
+      max response 5.0s ·
+      threats: hog-rider, balloon, graveyard, golem</p>
+      <div class="hero-scores"><div class="hero-score"><span class="hero-score-label">Top-1</span><span class="hero-score-value up" data-count="53.4">0</span></div><div class="hero-score"><span class="hero-score-label">Top-3</span><span class="hero-score-value up" data-count="93.6">0</span></div><div class="hero-score"><span class="hero-score-label">vs frequency</span><span class="hero-score-value up" data-count="43.0">0</span></div><div class="hero-score"><span class="hero-score-label">Mean P(target)</span><span class="hero-score-value neutral" data-count="0.397">0</span></div></div>
+      <div class="verdict verdict-pass"><span class="verdict-tag">PASS</span><span>Defense-on-real-data looks usable; synthetic probe was likely overstated.</span></div>
     </header>
 
     <section class="report-section">
-      <h2>The match timeline</h2>
-      <p class="caption">Scrub how much of the battle the model has seen. The gauge shows
-      accuracy and AUC at that prefix ratio.</p>
+      <h2>Threat radar</h2>
+      <p class="caption">Each spoke is a win-condition threat. The outer ring is perfect top-1;
+      the filled wedge is the policy; the dashed ring is the online-frequency baseline.
+      Click a threat to pin its numbers.</p>
+      <div class="radar-stage">
+        <svg id="radar" viewBox="0 0 420 420" class="radar"></svg>
+        <div class="stat-grid" id="threatStats"></div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Policy vs frequency, per threat</h2>
+      <p class="caption">Hit <em>Run the diff</em> to watch each threat climb from the
+      frequency baseline to the policy.</p>
       <div class="toolbar">
-        <input type="range" id="prefixScrub" min="0" max="3" value="3" step="1" class="anim-scrubber">
-        <div class="anim-readout" id="prefixReadout"></div>
+        <button type="button" class="play-btn" id="threatRaceBtn">▶ Run the diff</button>
+        <span class="hint" id="threatRaceHint">bars parked at frequency baseline</span>
       </div>
-      <div class="timeline" id="timeline"></div>
-      <div class="stat-grid" id="prefixStats" style="margin-top:16px"></div>
+      <div class="race" id="threatRace"></div>
     </section>
 
-    <section class="report-section">
-      <h2>Prefix ladder</h2>
-      <div class="toolbar">
-        <button type="button" class="play-btn" id="raceBtn">▶ Run the diff</button>
-        <span class="hint" id="raceHint">bars parked at majority baseline</span>
+    <section class="report-section block-grid">
+      <div class="block">
+        <h2>Cheap answers (≤2 elixir)</h2>
+        <p class="caption">Tornado, skeletons, spirits — the fast cycle answers.
+        n = 892</p>
+        <div class="stat-grid" id="cheapStats"></div>
       </div>
-      <div class="race" id="race"></div>
-    </section>
-
-    <section class="report-section">
-      <h2>Training</h2>
-      <div class="chart-animation">
-        <svg class="chart" id="trainChart"></svg>
-        <div class="legend" id="trainLegend"></div>
-        <div class="anim-toolbar">
-          <button type="button" class="play-btn" id="trainPlay">▶</button>
-          <input type="range" class="anim-scrubber" id="trainScrub" min="1" max="1" value="1">
-          <div class="anim-readout" id="trainReadout"></div>
-        </div>
+      <div class="block">
+        <h2>Expensive answers (≥4 elixir)</h2>
+        <p class="caption">Valkyrie, inferno, PEKKA — the committed answers.
+        n = 2,353</p>
+        <div class="stat-grid" id="expStats"></div>
       </div>
     </section>
 
     <section class="report-section">
-      <h2>Lessons learned</h2>
-      <ul class="lessons"><li>Prefix accuracy rises smoothly with how much of the match the model has seen.</li><li>Full-game AUC ~0.80 is competitive with the tabular ensemble; early prefixes are near chance.</li><li>Useful as a &#x27;when is this match decided?&#x27; probe, not as a live agent.</li></ul>
+      <h2>Cost honesty</h2>
+      <p class="caption">Does the model dump cheap cards when the human spent big, or match
+      the spend? Bars compare mean predicted cost vs mean human response cost.</p>
+      <div id="costBars"></div>
+    </section>
+
+    <section class='report-section'><h2>Fair synthetic probe (optional)</h2><p class='caption'>Forced-hand counterfactuals — useful as a stress test, not the primary metric. Real windows above are the source of truth.</p><div id='fairBlock'></div></section>
+
+    <section class="report-section">
+      <h2>Gates</h2>
+      <div class="gate-grid" id="gates"></div>
     </section>
 
     <footer class="report-footer">
-      <p class="meta">Offline probe · checkpoint models/winner_predictor/best_model.pt</p>
+      <p class="meta">Offline evaluation · source reports/defense_slice_eval.json</p>
     </footer>
     
   </main>
@@ -706,83 +728,161 @@ function histChart(svg, groups, opts = {}) {
 }
 
     
-    const DATA = {"test":{"acc":0.6758984503791625,"auc":0.7467421985451308,"loss":0.6275610236745132,"n":6066},"byPrefix":{"0.5":{"acc":0.5499505440158259,"auc":0.5816825410802429,"n":2022},"0.75":{"acc":0.6068249258160238,"auc":0.6526355440105275,"n":2022},"0.9":{"acc":0.645895153313551,"auc":0.7141646731925427,"n":2022},"1.0":{"acc":0.7289812067260139,"auc":0.8053126696898986,"n":2022}},"history":{"train_loss":[1.0019803743755042,0.9519645734770523,0.9326538579714092,0.9217231067844913,0.9061468561807001,0.8904423812629375,0.8776612543014891,0.8662109140697545,0.8565587199541677,0.8424646119830776,0.8317769947121659,0.8209789445200765,0.8103799494614164,0.8013613168620176,0.7923658851924962,0.7838394417072514,0.7726406969555504,0.7676384684099145,0.7615952612869293,0.7512583711232798,0.7441992234898753,0.7390506052242649,0.7344676341668543,0.7232349825253683,0.7202069045379659],"train_acc":[0.5782119425296902,0.6235154887467819,0.6481396893945686,0.6605971264845113,0.6776638152977328,0.695208039199402,0.7054854247986048,0.7144340171082136,0.7236317581596213,0.7365459679428619,0.7437297566647288,0.7540486670542313,0.7588032555435595,0.7669421144423221,0.7714683165850013,0.7789012540486671,0.7863134291171829,0.7891994020430196,0.7940993272983972,0.8014907399717631,0.8047089112199983,0.8085499543227307,0.8124948094012125,0.8190349638734324,0.820862054646624],"val_loss":[0.6366586835760819,0.6213207621323434,0.6120209565288142,0.607467752381375,0.5953681970897474,0.5964389333599492,0.6056011018000151,0.5976030079942001,0.6292998969554902,0.5958722111425901,0.6130610563253102,0.6030256870545839,0.6071672878767315,0.6363890202421891,0.6272479129465003,0.6259183249975505,0.6310744800065693,0.6401485189011222,0.6284262911269539,0.6464480199311909,0.6579468127928282,0.6484666717679877,0.6836066283677754,0.6635372908491838,0.6803820013999939],"val_acc":[0.6142433234421365,0.6322123310253874,0.6549620837454665,0.6572700296735905,0.6635344543356413,0.6656775469831849,0.6569403231124299,0.6722716782063963,0.6511704582921201,0.6796900758325091,0.6806791955159908,0.6795252225519288,0.691229805473129,0.6818331684800527,0.6859545004945599,0.6803494889548302,0.6826574348829542,0.6826574348829542,0.6829871414441148,0.6819980217606331,0.6821628750412133,0.6848005275304978,0.6846356742499176,0.6872733267392022,0.6879327398615233],"val_auc":[0.6739023406512618,0.6963903449345875,0.7173590350287656,0.7237358242948609,0.7410997880641572,0.7387322517739929,0.7367392127223741,0.756209369851275,0.7547109456882171,0.7585960553320213,0.7508125621736681,0.7563512479451341,0.7608343345857557,0.7589682677239631,0.7577468540110319,0.756453957240075,0.7666876763751975,0.7544672287171706,0.760604979507646,0.760064232478137,0.7570902326180566,0.7593544067999646,0.7546122620753871,0.7586783098097495,0.7562484298479739],"val_full_auc":[0.7601939247234438,0.7657118292710393,0.7784524603391431,0.7836707235750147,0.8025706482729987,0.8022984251205175,0.8011145481732161,0.8139707271981285,0.8149019653924077,0.8155218116352876,0.8033618580111455,0.8067861902565654,0.8190479827578947,0.8061516557140913,0.8170905220319598,0.8084675109501274,0.8190734424771915,0.8078848750662198,0.819085193116867,0.8164080057108108,0.8177348487741635,0.8128504995490692,0.8076312570932247,0.8164393407499454,0.8112240151739927]},"majority":0.5174276936116115,"bestValAuc":0.8190479827578947,"epochs":25};
+    
+const DATA = {"overall":{"n":4367,"top1":0.5344630180902221,"top3":0.9358827570414472,"mean_P_target":0.39678843799238045,"freq_top1":0.10487749026791848,"freq_top3":0.35516372795969775,"mean_response_cost":3.616670483169224,"mean_pred_cost":3.751087703228761,"cheap_pred_rate":0.1481566292649416,"cheap_response_rate":0.2042592168536753,"mean_delay":2.075223265399588},"threats":[{"threat":"hog-rider","n":2387,"top1":0.5563468789275241,"top3":0.9392542940930038,"mean_P_target":0.406119769865551,"freq_top1":0.093841642228739,"freq_top3":0.3481357352325094,"mean_response_cost":3.5919564306661083,"mean_pred_cost":3.6803519061583576,"cheap_pred_rate":0.15374947633012148,"cheap_response_rate":0.20318391286133222,"mean_delay":2.0424801005446165},{"threat":"balloon","n":913,"top1":0.5180722891566265,"top3":0.9452354874041621,"mean_P_target":0.3929919313347663,"freq_top1":0.11829134720700986,"freq_top3":0.36801752464403065,"mean_response_cost":3.552026286966046,"mean_pred_cost":3.8039430449069003,"cheap_pred_rate":0.11281489594742607,"cheap_response_rate":0.20920043811610076,"mean_delay":2.1550930996714137},{"threat":"graveyard","n":602,"top1":0.4883720930232558,"top3":0.9102990033222591,"mean_P_target":0.37310365482892505,"freq_top1":0.11129568106312292,"freq_top3":0.36212624584717606,"mean_response_cost":3.473421926910299,"mean_pred_cost":3.5946843853820596,"cheap_pred_rate":0.21760797342192692,"cheap_response_rate":0.23920265780730898,"mean_delay":1.7941029900332222},{"threat":"golem","n":465,"top1":0.513978494623656,"top3":0.9333333333333333,"mean_P_target":0.38700469790967884,"freq_top1":0.12688172043010754,"freq_top3":0.35698924731182796,"mean_response_cost":4.055913978494623,"mean_pred_cost":4.212903225806452,"cheap_pred_rate":0.0989247311827957,"cheap_response_rate":0.15483870967741936,"mean_delay":2.4504301075268815}],"cheap":{"n":892,"top1":0.36995515695067266,"top3":0.9047085201793722,"mean_P_target":0.32099046488396926,"freq_top1":0.15695067264573992,"freq_top3":0.4517937219730942,"mean_response_cost":1.6065022421524664,"mean_pred_cost":2.7937219730941703,"cheap_pred_rate":0.4876681614349776,"cheap_response_rate":1.0,"mean_delay":1.730381165919282},"expensive":{"n":2353,"top1":0.5873353166170846,"top3":0.9494262643433914,"mean_P_target":0.4172092601712326,"freq_top1":0.08542286442838928,"freq_top3":0.32044198895027626,"mean_response_cost":4.672758181045474,"mean_pred_cost":4.314917127071824,"cheap_pred_rate":0.06289842753931152,"cheap_response_rate":0.0,"mean_delay":2.180450488737782},"gates":{"beats_online_frequency_by_5pp":true,"top1_at_least_40pct":true,"pass":true},"fair":{"byThreat":[{"threat":"hog-rider","scenarios":3,"mean_top1_strong":0.4131944444444444,"mean_P_strong":0.35642678126484234,"mean_chance":0.25,"beats_chance":true},{"threat":"balloon","scenarios":2,"mean_top1_strong":0.3645833333333333,"mean_P_strong":0.33942873932721607,"mean_chance":0.25,"beats_chance":true},{"threat":"graveyard","scenarios":2,"mean_top1_strong":0.09895833333333333,"mean_P_strong":0.1322362058322119,"mean_chance":0.25,"beats_chance":false},{"threat":"golem","scenarios":3,"mean_top1_strong":0.4201388888888889,"mean_P_strong":0.3797674444331763,"mean_chance":0.25,"beats_chance":true}],"scenarios":[{"scenario":"hog-vs-cannon","threat":"hog-rider","strong":"cannon","weak":["arrows","zap","ice-spirit"],"trials":96,"top1_strong":0.5833333333333334,"mean_P_strong_among_hand":0.5091510812051302,"chance":0.25,"lift_over_chance":0.2591510812051302,"beats_chance_top1":true,"wrong_pick_counts":{"ice-spirit":36,"zap":4},"note":"Hog left bridge; cannon is the real answer among chip spells/spirit.","example_hand_probs":{"arrows":0.14471694524555506,"ice-spirit":0.4106969630889729,"cannon":0.41399350233015336,"zap":0.03059258933431252}},{"scenario":"hog-vs-tesla","threat":"hog-rider","strong":"tesla","weak":["the-log","goblins","arrows"],"trials":96,"top1_strong":0.4166666666666667,"mean_P_strong_among_hand":0.3535925447106028,"chance":0.25,"lift_over_chance":0.10359254471060281,"beats_chance_top1":true,"wrong_pick_counts":{"goblins":36,"the-log":20},"note":"Hog right bridge; tesla vs log/goblins/arrows.","example_hand_probs":{"goblins":0.642751345616426,"the-log":0.21501174444257676,"tesla":0.12336425461473122,"arrows":0.018872655325262524}},{"scenario":"hog-vs-tornado","threat":"hog-rider","strong":"tornado","weak":["zap","skeletons","ice-spirit"],"trials":96,"top1_strong":0.23958333333333334,"mean_P_strong_among_hand":0.206536717878794,"chance":0.25,"lift_over_chance":-0.04346328212120601,"beats_chance_top1":false,"wrong_pick_counts":{"ice-spirit":37,"skeletons":36},"note":"Hog mid-bridge; tornado pull vs useless chip.","example_hand_probs":{"skeletons":0.6702862386967505,"zap":0.09226289559270302,"ice-spirit":0.1815876053765438,"tornado":0.055863260332995233}},{"scenario":"balloon-vs-musketeer","threat":"balloon","strong":"musketeer","weak":["skeletons","ice-spirit","the-log"],"trials":96,"top1_strong":0.4270833333333333,"mean_P_strong_among_hand":0.39196888113674766,"chance":0.25,"lift_over_chance":0.14196888113674766,"beats_chance_top1":true,"wrong_pick_counts":{"skeletons":25,"ice-spirit":16,"the-log":14},"note":"Balloon left; musketeer is the air answer.","example_hand_probs":{"skeletons":0.528812570370031,"the-log":0.1599574324373022,"ice-spirit":0.15184785456432423,"musketeer":0.15938214262732453}},{"scenario":"balloon-vs-executioner","threat":"balloon","strong":"executioner","weak":["goblins","zap","arrows"],"trials":96,"top1_strong":0.3020833333333333,"mean_P_strong_among_hand":0.2868885975176844,"chance":0.25,"lift_over_chance":0.03688859751768442,"beats_chance_top1":true,"wrong_pick_counts":{"goblins":33,"zap":20,"arrows":14},"note":"Balloon right; executioner vs ground chip.","example_hand_probs":{"zap":0.5342272955951276,"executioner":0.23591053698220257,"goblins":0.1925511031462707,"arrows":0.03731106427538623}},{"scenario":"graveyard-vs-poison","threat":"graveyard","strong":"poison","weak":["zap","ice-spirit","the-log"],"trials":96,"top1_strong":0.0,"mean_P_strong_among_hand":0.038405220970185845,"chance":0.25,"lift_over_chance":-0.21159477902981416,"beats_chance_top1":false,"wrong_pick_counts":{"the-log":48,"ice-spirit":44,"zap":4},"note":"GY on left tower; poison is the classic spell answer.","example_hand_probs":{"the-log":0.7788460754124971,"zap":0.11441617534249887,"poison":0.013901218323147436,"ice-spirit":0.09283653092084944}},{"scenario":"graveyard-vs-valkyrie","threat":"graveyard","strong":"valkyrie","weak":["skeletons","arrows","zap"],"trials":96,"top1_strong":0.19791666666666666,"mean_P_strong_among_hand":0.22606719069423797,"chance":0.25,"lift_over_chance":-0.023932809305762026,"beats_chance_top1":false,"wrong_pick_counts":{"skeletons":72,"zap":3,"arrows":2},"note":"GY on right tower; valkyrie splash vs weak swarm/spells.","example_hand_probs":{"skeletons":0.8203958207429196,"arrows":0.07007416308378411,"valkyrie":0.08835107871553889,"zap":0.02117893745675176}},{"scenario":"golem-vs-inferno-tower","threat":"golem","strong":"inferno-tower","weak":["skeletons","ice-spirit","archers"],"trials":96,"top1_strong":0.2604166666666667,"mean_P_strong_among_hand":0.24334903260420912,"chance":0.25,"lift_over_chance":-0.00665096739579088,"beats_chance_top1":false,"wrong_pick_counts":{"archers":37,"skeletons":21,"ice-spirit":13},"note":"Golem in back; inferno tower is the tank shredder.","example_hand_probs":{"ice-spirit":0.4284416839473779,"inferno-tower":0.2525306838590257,"archers":0.21933268687635177,"skeletons":0.09969494531623276}},{"scenario":"golem-vs-inferno-dragon","threat":"golem","strong":"inferno-dragon","weak":["goblins","zap","spear-goblins"],"trials":96,"top1_strong":0.6145833333333334,"mean_P_strong_among_hand":0.5008605970961284,"chance":0.25,"lift_over_chance":0.2508605970961284,"beats_chance_top1":true,"wrong_pick_counts":{"spear-goblins":23,"goblins":14},"note":"Golem back-left; inferno dragon vs weak ground chips.","example_hand_probs":{"goblins":0.3641442552262605,"spear-goblins":0.35154325090452593,"inferno-dragon":0.27129540296166516,"zap":0.013017090906535123}},{"scenario":"golem-vs-pekka","threat":"golem","strong":"pekka","weak":["skeletons","arrows","ice-spirit"],"trials":96,"top1_strong":0.3854166666666667,"mean_P_strong_among_hand":0.39509270359919135,"chance":0.25,"lift_over_chance":0.14509270359919135,"beats_chance_top1":true,"wrong_pick_counts":{"skeletons":33,"ice-spirit":26},"note":"Golem back-right; PEKKA vs cards that don't stop a golem.","example_hand_probs":{"pekka":0.8455118659986213,"arrows":0.02071701314445402,"skeletons":0.09531078027119196,"ice-spirit":0.03846034058472597}}],"overall":{}}};
 
 mountCounters();
 
-const ratios = ["0.5", "0.75", "0.9", "1.0"];
-const labels = ["50% of match", "75%", "90%", "Full game"];
+const threats = DATA.threats || [];
+let pinned = 0;
 
-function renderPrefix() {
-  const i = Number(document.getElementById("prefixScrub").value);
-  const key = ratios[i];
-  const row = DATA.byPrefix[key] || {};
-  document.getElementById("prefixReadout").textContent = labels[i];
-  // timeline fill
-  const fills = ratios.map((r, idx) => {
-    const active = idx <= i;
-    const w = idx === 0 ? 50 : (idx === 1 ? 25 : (idx === 2 ? 15 : 10));
-    return `<span style="flex:${w};background:${active ? "linear-gradient(90deg,#6366f1,#22d3ee)" : "transparent"}"></span>`;
+/* ---------- radar ---------- */
+(function drawRadar() {
+  const svg = document.getElementById("radar");
+  const cx = 210, cy = 210, R = 150;
+  const n = Math.max(threats.length, 3);
+  const angle = (i) => -Math.PI / 2 + (i / n) * Math.PI * 2;
+  const pt = (i, r) => [cx + R * r * Math.cos(angle(i)), cy + R * r * Math.sin(angle(i))];
+
+  // rings
+  [0.25, 0.5, 0.75, 1].forEach((r) => {
+    const pts = Array.from({ length: n }, (_, i) => pt(i, r).join(",")).join(" ");
+    svg.appendChild(el("polygon", {
+      points: pts, fill: "none", stroke: "rgba(148,163,184,0.18)", "stroke-width": 1,
+    }));
   });
-  document.getElementById("timeline").innerHTML = fills.join("");
-  document.getElementById("prefixStats").innerHTML = [
-    ["Prefix", labels[i], `${row.n || 0} battles`],
-    ["Accuracy", pct(row.acc || 0), ""],
-    ["AUC", (row.auc || 0).toFixed(3), ""],
-    ["vs majority", ((row.acc || 0) - DATA.majority >= 0 ? "+" : "") +
-      (((row.acc || 0) - DATA.majority) * 100).toFixed(1) + "pp", ""],
-  ].map(([k,v,s]) =>
+
+  // frequency baseline (dashed)
+  const freqPts = threats.map((t, i) => pt(i, t.freq_top1 || 0).join(",")).join(" ");
+  svg.appendChild(el("polygon", {
+    points: freqPts, fill: "rgba(248,113,113,0.08)", stroke: "#f87171",
+    "stroke-width": 1.5, "stroke-dasharray": "4 3",
+  }));
+
+  // policy
+  const polPts = threats.map((t, i) => pt(i, t.top1 || 0).join(",")).join(" ");
+  svg.appendChild(el("polygon", {
+    points: polPts, fill: "rgba(34,211,238,0.18)", stroke: "#22d3ee", "stroke-width": 2.2,
+  }));
+
+  threats.forEach((t, i) => {
+    const [x, y] = pt(i, 1.12);
+    const [dx, dy] = pt(i, t.top1 || 0);
+    svg.appendChild(el("circle", {
+      cx: dx, cy: dy, r: 5, fill: "#22d3ee", stroke: "#04131f", "stroke-width": 1.5,
+      class: "radar-dot", "data-i": i, style: "cursor:pointer",
+    }));
+    svg.appendChild(svgText({
+      x, y: y + 4, "text-anchor": "middle", fill: "#cbd5f5", "font-size": 12, "font-weight": 600,
+      style: "cursor:pointer",
+    }, titleCase(t.threat)));
+  });
+
+  svg.querySelectorAll("[data-i]").forEach((node) => {
+    node.addEventListener("click", () => { pinned = Number(node.dataset.i); renderThreatStats(); });
+  });
+  // also make labels clickable roughly by re-querying texts — skip, dots enough
+})();
+
+function renderThreatStats() {
+  const t = threats[pinned] || threats[0] || {};
+  document.getElementById("threatStats").innerHTML = [
+    ["Threat", titleCase(t.threat || "—"), `${(t.n || 0).toLocaleString()} windows`],
+    ["Policy top-1", pct(t.top1 || 0), "what we care about"],
+    ["Frequency top-1", pct(t.freq_top1 || 0), "online baseline"],
+    ["Lift", ((t.top1 || 0) - (t.freq_top1 || 0) >= 0 ? "+" : "") +
+      (((t.top1 || 0) - (t.freq_top1 || 0)) * 100).toFixed(1) + "pp", "policy − frequency"],
+    ["Top-3", pct(t.top3 || 0), "softer"],
+    ["Mean P(target)", (t.mean_P_target || 0).toFixed(3), "confidence on the human card"],
+    ["Mean delay", (t.mean_delay || 0).toFixed(2) + "s", "human response time"],
+    ["Cheap pred rate", pct(t.cheap_pred_rate || 0), "model plays ≤2 elixir"],
+  ].map(([k, v, s]) =>
     `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`
   ).join("");
 }
-document.getElementById("prefixScrub").addEventListener("input", renderPrefix);
-renderPrefix();
+renderThreatStats();
 
-mountRace("race", ratios.map((r, i) => ({
-  label: labels[i],
-  note: `AUC ${((DATA.byPrefix[r] || {}).auc || 0).toFixed(3)}`,
-  old: DATA.majority,
-  new: (DATA.byPrefix[r] || {}).acc || 0,
+/* ---------- threat race ---------- */
+mountRace("threatRace", threats.map((t) => ({
+  label: titleCase(t.threat),
+  note: `${(t.n || 0).toLocaleString()} windows · top-3 ${pct(t.top3 || 0)}`,
+  old: t.freq_top1 || 0,
+  new: t.top1 || 0,
   fmt: "pct",
   higher: true,
 })), {
-  buttonId: "raceBtn", hintId: "raceHint", oldName: "maj",
-  playLabel: "▶ Run the diff", backLabel: "↺ Back to majority",
-  hintBefore: "bars parked at majority baseline",
-  hintAfter: "bars moved to the transformer",
+  buttonId: "threatRaceBtn", hintId: "threatRaceHint", oldName: "freq",
+  playLabel: "▶ Run the diff", backLabel: "↺ Back to frequency",
+  hintBefore: "bars parked at frequency baseline",
+  hintAfter: "bars moved to the policy",
 });
 
-const hist = DATA.history || {};
-const n = (hist.val_auc || []).length;
-const scrub = document.getElementById("trainScrub");
-scrub.max = Math.max(n, 1);
-scrub.value = n;
-function drawTrain(upto) {
-  lineChart(document.getElementById("trainChart"), [
-    { label: "val AUC", color: "#34d399", values: (hist.val_auc || []).slice(0, upto) },
-    { label: "val full AUC", color: "#22d3ee", values: (hist.val_full_auc || []).slice(0, upto) },
-    { label: "val acc", color: "#a78bfa", values: (hist.val_acc || []).slice(0, upto) },
-  ], { yFormat: "percent", xLabel: "epoch" });
-  document.getElementById("trainReadout").textContent = `epoch ${upto}`;
+/* ---------- cost buckets ---------- */
+function fillCost(id, blk) {
+  document.getElementById(id).innerHTML = [
+    ["Top-1", pct(blk.top1 || 0), ""],
+    ["Top-3", pct(blk.top3 || 0), ""],
+    ["Mean P(target)", (blk.mean_P_target || 0).toFixed(3), ""],
+    ["Mean human cost", (blk.mean_response_cost || 0).toFixed(2) + "⚡", ""],
+    ["Mean pred cost", (blk.mean_pred_cost || 0).toFixed(2) + "⚡", ""],
+    ["Cheap pred rate", pct(blk.cheap_pred_rate || 0), "model ≤2⚡"],
+  ].map(([k, v, s]) =>
+    `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`
+  ).join("");
 }
-document.getElementById("trainLegend").innerHTML = legendHTML([
-  { label: "val AUC", color: "#34d399" },
-  { label: "val full AUC", color: "#22d3ee" },
-  { label: "val acc", color: "#a78bfa" },
-]);
-drawTrain(n);
-scrub.addEventListener("input", () => drawTrain(Number(scrub.value)));
-let timer = null;
-document.getElementById("trainPlay").addEventListener("click", () => {
-  const btn = document.getElementById("trainPlay");
-  if (timer) { clearInterval(timer); timer = null; btn.textContent = "▶"; return; }
-  btn.textContent = "❚❚";
-  let i = 1;
-  timer = setInterval(() => {
-    scrub.value = i; drawTrain(i); i += 1;
-    if (i > n) { clearInterval(timer); timer = null; btn.textContent = "▶"; }
-  }, 120);
-});
+fillCost("cheapStats", DATA.cheap || {});
+fillCost("expStats", DATA.expensive || {});
+
+const costMax = Math.max(
+  DATA.overall.mean_response_cost || 0, DATA.overall.mean_pred_cost || 0,
+  DATA.cheap.mean_response_cost || 0, DATA.cheap.mean_pred_cost || 0,
+  DATA.expensive.mean_response_cost || 0, DATA.expensive.mean_pred_cost || 0,
+  6,
+);
+document.getElementById("costBars").innerHTML = [
+  ["All windows", DATA.overall],
+  ["Cheap answers", DATA.cheap],
+  ["Expensive answers", DATA.expensive],
+].map(([label, blk]) =>
+  `<div class="cost-row">
+     <span>${label}<br><small style="color:#94a3b8">n=${(blk.n || 0).toLocaleString()}</small></span>
+     <span class="cost-track">
+       <span class="cost-human" style="width:${((blk.mean_response_cost || 0) / costMax) * 100}%"></span>
+       <span class="cost-pred" style="width:${((blk.mean_pred_cost || 0) / costMax) * 100}%"></span>
+     </span>
+     <span style="text-align:right;font-size:.78rem">hum ${(blk.mean_response_cost || 0).toFixed(1)}⚡
+       <br>pred ${(blk.mean_pred_cost || 0).toFixed(1)}⚡</span>
+   </div>`
+).join("") + `<div class="legend-row" style="margin-top:8px">
+  <span><i class="swatch bar" style="background:#f8fafc88"></i>human response cost</span>
+  <span><i class="swatch bar" style="background:#34d399"></i>model predicted cost</span>
+</div>`;
+
+/* ---------- fair probe ---------- */
+const fairHost = document.getElementById("fairBlock");
+if (fairHost) {
+  const sc = DATA.fair.scenarios || [];
+  fairHost.innerHTML = sc.length
+    ? sc.map((s) =>
+        `<div class="fair-row">
+           <span><b>${titleCase(s.scenario || s.strong || "")}</b>
+             <br><small style="color:#94a3b8">${titleCase(s.threat)} · strong ${titleCase(s.strong)}</small></span>
+           <span>${pct(s.top1_strong || 0)}</span>
+           <span>${(s.mean_P_strong_among_hand || 0).toFixed(2)}</span>
+           <span style="color:#94a3b8;font-size:.75rem">wrong: ${JSON.stringify(s.wrong_pick_counts || {})}</span>
+         </div>`
+      ).join("")
+    : "<p class='caption'>No fair-probe scenarios on disk for this run.</p>";
+}
+
+/* ---------- gates ---------- */
+document.getElementById("gates").innerHTML = Object.entries(DATA.gates || {}).map(([k, v]) => {
+  if (k === "pass") return "";
+  return `<div class="gate-card ${v ? "pass" : "fail"}">
+    <div class="g-status ${v ? "up" : "down"}">${v ? "PASS" : "FAIL"}</div>
+    <div>${titleCase(k)}</div></div>`;
+}).join("");
+
 
   </script>
 </body>

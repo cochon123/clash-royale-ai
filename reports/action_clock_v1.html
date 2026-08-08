@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Winner transformer — how early can you call it?</title>
+  <title>Action clock — who acts next, and when</title>
   <style>
     :root {
       color-scheme: dark;
@@ -443,76 +443,144 @@
       .race-row { grid-template-columns: 1fr; }
     }
     
-    .dial { margin-top: 8px; }
-    .timeline {
-      display: flex; gap: 4px; height: 28px; border-radius: 8px; overflow: hidden;
-      background: rgba(148,163,184,0.1); margin-top: 12px;
+    .conveyor {
+      display: flex; gap: 6px; align-items: flex-end; overflow-x: auto;
+      padding: 18px 8px 8px; min-height: 110px;
+      background: linear-gradient(180deg, rgba(15,23,42,0.2), rgba(148,163,184,0.05));
+      border-radius: 14px; border: 1px solid rgba(148,163,184,0.16);
     }
-    .timeline span { display: block; height: 100%; transition: flex .3s ease, background .3s; }
-    .dur-row {
-      display: grid; grid-template-columns: 120px 1fr 80px; gap: 12px; align-items: center;
+    .tick {
+      flex: 0 0 auto; width: 28px; border-radius: 6px 6px 3px 3px; position: relative;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+    .tick.team { background: linear-gradient(180deg, #60a5fa, #1d4ed8); }
+    .tick.opp { background: linear-gradient(180deg, #f87171, #b91c1c); }
+    .tick.double::after {
+      content: ""; position: absolute; top: -8px; left: 50%; width: 8px; height: 8px;
+      border-radius: 50%; background: #fbbf24; transform: translateX(-50%);
+      box-shadow: 0 0 0 2px #0b1220;
+    }
+    .tick:hover { transform: translateY(-4px); }
+    .gate-line-note { font-size: 0.78rem; color: #94a3b8; margin-top: 8px; }
+    .phase-bars .bar-row {
+      display: grid; grid-template-columns: 140px 1fr 80px; gap: 10px; align-items: center;
       font-size: 0.85rem; margin-bottom: 8px;
     }
-    .dur-track { height: 18px; border-radius: 6px; background: rgba(148,163,184,0.1); overflow: hidden; }
-    .dur-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg,#6366f1,#22d3ee); }
+    .phase-bars .bar-track { height: 16px; border-radius: 5px; background: rgba(148,163,184,0.1); overflow: hidden; }
+    .phase-bars .bar-fill { height: 100%; border-radius: 5px; }
+    .gate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .gate-card {
+      padding: 14px; border-radius: 12px; border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(148,163,184,0.06); font-size: 0.85rem;
+    }
+    .gate-card.pass { border-color: rgba(52,211,153,0.4); }
+    .gate-card.fail { border-color: rgba(248,113,113,0.4); }
+    .gate-card .g-status { font-weight: 800; letter-spacing: 0.06em; font-size: 0.72rem; }
+    .score-clouds { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 18px; }
+    .cloud {
+      padding: 12px; border-radius: 12px; background: rgba(148,163,184,0.06);
+      border: 1px solid rgba(148,163,184,0.16); font-size: 0.82rem;
+    }
+    .cloud h4 { margin: 0 0 8px; font-size: 0.85rem; }
+    .cloud-bar { display: flex; height: 48px; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
+    .cloud-bar span { display: block; height: 100%; }
+    @media (max-width: 900px) { .score-clouds { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
   <main>
 
     <header class="report-header hero">
-      <div class="badge-row"><span class="badge">winner-transformer-v1</span><span class="badge">causal sequence model</span><span class="badge">cuda</span><span class="badge">13,483 battles</span><span class="badge">NVIDIA GeForce RTX 3050 6GB Laptop GPU</span></div>
-      <h1>How early can you call the match?</h1>
-      <p class="hero-sub">A causal transformer over the action sequence. Same winner target as
-      the HGB ensemble, but scored at 50% / 75% / 90% / 100% of the match so you can see when
-      the outcome becomes knowable.</p>
-      <p class="meta">Created 2026-08-06 12:57 UTC · trained in 1067.8s ·
-      best val full AUC 0.819</p>
-      <div class="hero-scores"><div class="hero-score"><span class="hero-score-label">Test accuracy</span><span class="hero-score-value up" data-count="67.6">0</span></div><div class="hero-score"><span class="hero-score-label">Test AUC</span><span class="hero-score-value up" data-count="0.747">0</span></div><div class="hero-score"><span class="hero-score-label">Full-game AUC</span><span class="hero-score-value up" data-count="0.805">0</span></div><div class="hero-score"><span class="hero-score-label">Half-match AUC</span><span class="hero-score-value neutral" data-count="0.582">0</span></div></div>
-      <div class="verdict verdict-partial"><span class="verdict-tag">PREFIX PROBE</span><span>Strong at the end of the match; near chance at halfway. Confirms outcome signal accumulates — it does not justify early-concede automation.</span></div>
+      <div class="badge-row"><span class="badge">action-clock-v1</span><span class="badge">experiment C</span><span class="badge">sklearn HistGradientBoosting</span><span class="badge">114,098 test ticks</span><span class="badge">cpu</span></div>
+      <h1>Who acts next — and when</h1>
+      <p class="hero-sub">Who-acts-next and when is unmodeled (rollouts hardcode side alternation); a learned clock beats trivial baselines.</p>
+      <p class="meta">Created 2026-08-07T16:43:41Z ·
+      trained in 528.7s · 18,552 battles ·
+      feature dim 68</p>
+      <div class="hero-scores"><div class="hero-score"><span class="hero-score-label">Actor lift vs alternation</span><span class="hero-score-value up" data-count="6.1">0</span></div><div class="hero-score"><span class="hero-score-label">Actor accuracy</span><span class="hero-score-value up" data-count="73.2">0</span></div><div class="hero-score"><span class="hero-score-label">Delay MAE (s)</span><span class="hero-score-value down" data-count="1.74">0</span></div><div class="hero-score"><span class="hero-score-label">Collapse cut (relative)</span><span class="hero-score-value up" data-count="20">0</span></div></div>
+      <div class="verdict verdict-fail"><span class="verdict-tag">FAIL</span><span>Primary criteria not met: delay MAE 1.742s &gt; 1.25s.</span></div>
     </header>
 
     <section class="report-section">
-      <h2>The match timeline</h2>
-      <p class="caption">Scrub how much of the battle the model has seen. The gauge shows
-      accuracy and AUC at that prefix ratio.</p>
-      <div class="toolbar">
-        <input type="range" id="prefixScrub" min="0" max="3" value="3" step="1" class="anim-scrubber">
-        <div class="anim-readout" id="prefixReadout"></div>
+      <h2>The problem this clock is for</h2>
+      <p class="caption">Policy rollouts used to flip sides every turn: team, opponent, team,
+      opponent… Real games do not. Same-side double-taps happen about
+      33% of the time. The clock's job is to predict
+      whether the next action stays on the same side, and how many seconds until it lands.</p>
+      <div class="conveyor" id="conveyor"></div>
+      <div class="legend-row" style="margin-top:12px">
+        <span><i class="swatch" style="background:#60a5fa"></i>team</span>
+        <span><i class="swatch" style="background:#f87171"></i>opponent</span>
+        <span><i class="swatch bar" style="background:#fbbf24"></i>same-side double-tap (the thing alternation gets wrong)</span>
       </div>
-      <div class="timeline" id="timeline"></div>
-      <div class="stat-grid" id="prefixStats" style="margin-top:16px"></div>
     </section>
 
     <section class="report-section">
-      <h2>Prefix ladder</h2>
+      <h2>Initiative: learned vs the dumb rules</h2>
+      <p class="caption">Hit <em>Run the diff</em>. Alternation and majority are the same baseline
+      here (both always predict "switch"), so the only real comparison is learned vs that.</p>
       <div class="toolbar">
-        <button type="button" class="play-btn" id="raceBtn">▶ Run the diff</button>
-        <span class="hint" id="raceHint">bars parked at majority baseline</span>
+        <button type="button" class="play-btn" id="actorRaceBtn">▶ Run the diff</button>
+        <span class="hint" id="actorRaceHint">bars parked at the alternation baseline</span>
       </div>
-      <div class="race" id="race"></div>
+      <div class="race" id="actorRace"></div>
     </section>
 
     <section class="report-section">
-      <h2>Training</h2>
-      <div class="chart-animation">
-        <svg class="chart" id="trainChart"></svg>
-        <div class="legend" id="trainLegend"></div>
-        <div class="anim-toolbar">
-          <button type="button" class="play-btn" id="trainPlay">▶</button>
-          <input type="range" class="anim-scrubber" id="trainScrub" min="1" max="1" value="1">
-          <div class="anim-readout" id="trainReadout"></div>
-        </div>
+      <h2>Phase dial</h2>
+      <p class="caption">Elixir phase changes the rhythm. Single elixir is slow and long;
+      triple is frantic. Pick a phase to see how the clock behaves there.</p>
+      <div class="chip-row" id="phaseChips">
+        <button type="button" class="chip active" data-phase="single">Single elixir</button>
+        <button type="button" class="chip" data-phase="double">Double elixir</button>
+        <button type="button" class="chip" data-phase="triple">Triple elixir</button>
       </div>
+      <div class="stat-grid" id="phaseStats" style="margin-top:16px"></div>
+      <div class="phase-bars" id="phaseBars" style="margin-top:18px"></div>
+    </section>
+
+    <section class="report-section block-grid">
+      <div class="block">
+        <h2>True delay distribution</h2>
+        <p class="caption">How long humans actually wait between actions (capped at 12s).</p>
+        <svg class="chart" id="trueDelayHist"></svg>
+      </div>
+      <div class="block">
+        <h2>Delay residuals</h2>
+        <p class="caption">Predicted − true. A good clock would pile up around zero; this one
+        still has a fat right shoulder — it under-predicts long pauses.</p>
+        <svg class="chart" id="residHist"></svg>
+        <div class="gate-line-note">Delay gate is ≤ 1.25s MAE · clock got 1.74s ·
+        phase-median baseline 1.87s</div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Does the clock help rollouts?</h2>
+      <p class="caption">Same policy (v3), same seeds — only the "who acts next" rule changes.
+      Collapse rate is the fraction of rollouts the realism scorer rates below 0.25.</p>
+      <div id="rolloutRace" class="race"></div>
+      <div class="toolbar" style="margin-top:8px">
+        <button type="button" class="play-btn" id="rollRaceBtn">▶ Run the diff</button>
+        <span class="hint" id="rollRaceHint">bars parked at alternation rollouts</span>
+      </div>
+      <div class="score-clouds" id="scoreClouds"></div>
+    </section>
+
+    <section class="report-section">
+      <h2>Gates</h2>
+      <div class="gate-grid" id="gates"></div>
     </section>
 
     <section class="report-section">
       <h2>Lessons learned</h2>
-      <ul class="lessons"><li>Prefix accuracy rises smoothly with how much of the match the model has seen.</li><li>Full-game AUC ~0.80 is competitive with the tabular ensemble; early prefixes are near chance.</li><li>Useful as a &#x27;when is this match decided?&#x27; probe, not as a live agent.</li></ul>
+      <ul class="lessons"><li>Rollout_policy_battles hardcodes next_side flip; any initiative signal must live outside the policy heads.</li><li>Labels are SAME vs OPPONENT relative to the side that just acted — not absolute team/opponent classification.</li><li>Delay target is log1p(Δt); report MAE in real seconds after expm1.</li><li>Collapse rate = fraction of rollouts with realism P(real) &lt; 0.25.</li><li>Offline only: passing this experiment does not justify live play.</li><li>Actor succeeded (+6.1pp) while delay failed (1.74s MAE): initiative and timing should be gated separately.</li></ul>
+      <p class="caption">Partial win: initiative is real (+≥5pp over alternation) — replace hardcoded side flip with the actor clock in rollouts. Delay misses the 1.25s MAE gate (only a small edge over phase-median); keep policy timing or phase medians until cycle/affordability features improve Δt.</p>
+      <p class="caption">Offline experiment only — do not interpret as live-play readiness.</p>
     </section>
 
     <footer class="report-footer">
-      <p class="meta">Offline probe · checkpoint models/winner_predictor/best_model.pt</p>
+      <p class="meta">Offline experiment · checkpoint models/action_clock_v1/action_clock.pkl</p>
     </footer>
     
   </main>
@@ -706,83 +774,166 @@ function histChart(svg, groups, opts = {}) {
 }
 
     
-    const DATA = {"test":{"acc":0.6758984503791625,"auc":0.7467421985451308,"loss":0.6275610236745132,"n":6066},"byPrefix":{"0.5":{"acc":0.5499505440158259,"auc":0.5816825410802429,"n":2022},"0.75":{"acc":0.6068249258160238,"auc":0.6526355440105275,"n":2022},"0.9":{"acc":0.645895153313551,"auc":0.7141646731925427,"n":2022},"1.0":{"acc":0.7289812067260139,"auc":0.8053126696898986,"n":2022}},"history":{"train_loss":[1.0019803743755042,0.9519645734770523,0.9326538579714092,0.9217231067844913,0.9061468561807001,0.8904423812629375,0.8776612543014891,0.8662109140697545,0.8565587199541677,0.8424646119830776,0.8317769947121659,0.8209789445200765,0.8103799494614164,0.8013613168620176,0.7923658851924962,0.7838394417072514,0.7726406969555504,0.7676384684099145,0.7615952612869293,0.7512583711232798,0.7441992234898753,0.7390506052242649,0.7344676341668543,0.7232349825253683,0.7202069045379659],"train_acc":[0.5782119425296902,0.6235154887467819,0.6481396893945686,0.6605971264845113,0.6776638152977328,0.695208039199402,0.7054854247986048,0.7144340171082136,0.7236317581596213,0.7365459679428619,0.7437297566647288,0.7540486670542313,0.7588032555435595,0.7669421144423221,0.7714683165850013,0.7789012540486671,0.7863134291171829,0.7891994020430196,0.7940993272983972,0.8014907399717631,0.8047089112199983,0.8085499543227307,0.8124948094012125,0.8190349638734324,0.820862054646624],"val_loss":[0.6366586835760819,0.6213207621323434,0.6120209565288142,0.607467752381375,0.5953681970897474,0.5964389333599492,0.6056011018000151,0.5976030079942001,0.6292998969554902,0.5958722111425901,0.6130610563253102,0.6030256870545839,0.6071672878767315,0.6363890202421891,0.6272479129465003,0.6259183249975505,0.6310744800065693,0.6401485189011222,0.6284262911269539,0.6464480199311909,0.6579468127928282,0.6484666717679877,0.6836066283677754,0.6635372908491838,0.6803820013999939],"val_acc":[0.6142433234421365,0.6322123310253874,0.6549620837454665,0.6572700296735905,0.6635344543356413,0.6656775469831849,0.6569403231124299,0.6722716782063963,0.6511704582921201,0.6796900758325091,0.6806791955159908,0.6795252225519288,0.691229805473129,0.6818331684800527,0.6859545004945599,0.6803494889548302,0.6826574348829542,0.6826574348829542,0.6829871414441148,0.6819980217606331,0.6821628750412133,0.6848005275304978,0.6846356742499176,0.6872733267392022,0.6879327398615233],"val_auc":[0.6739023406512618,0.6963903449345875,0.7173590350287656,0.7237358242948609,0.7410997880641572,0.7387322517739929,0.7367392127223741,0.756209369851275,0.7547109456882171,0.7585960553320213,0.7508125621736681,0.7563512479451341,0.7608343345857557,0.7589682677239631,0.7577468540110319,0.756453957240075,0.7666876763751975,0.7544672287171706,0.760604979507646,0.760064232478137,0.7570902326180566,0.7593544067999646,0.7546122620753871,0.7586783098097495,0.7562484298479739],"val_full_auc":[0.7601939247234438,0.7657118292710393,0.7784524603391431,0.7836707235750147,0.8025706482729987,0.8022984251205175,0.8011145481732161,0.8139707271981285,0.8149019653924077,0.8155218116352876,0.8033618580111455,0.8067861902565654,0.8190479827578947,0.8061516557140913,0.8170905220319598,0.8084675109501274,0.8190734424771915,0.8078848750662198,0.819085193116867,0.8164080057108108,0.8177348487741635,0.8128504995490692,0.8076312570932247,0.8164393407499454,0.8112240151739927]},"majority":0.5174276936116115,"bestValAuc":0.8190479827578947,"epochs":25};
+    
+const DATA = {"actorByPhase":{"single":{"n":40247,"same_rate":0.33826123686237486,"actor_acc":0.7418689591770815},"double":{"n":65040,"same_rate":0.32690651906519064,"actor_acc":0.7267988929889299},"triple":{"n":8811,"same_rate":0.30495970945409145,"actor_acc":0.728180683236863}},"delayByPhase":{"single":{"n":40247,"learned_mae":2.707682232483379,"phase_median_mae":2.912005866002365,"median_true":3.1500000953674316,"phase_median_train":3.0999999046325684},"double":{"n":65040,"learned_mae":1.2692442130321009,"phase_median_mae":1.3658717712857686,"median_true":2.0,"phase_median_train":2.0},"triple":{"n":8811,"learned_mae":0.8168646318343411,"phase_median_mae":0.8841277951111034,"median_true":1.2999999523162842,"phase_median_train":1.2999999523162842}},"trueHist":{"centers":[0.25,0.75,1.25,1.75,2.25,2.75,3.25,3.75,4.25,4.75,5.25,5.75,6.25,6.75,7.25,7.75,8.25,8.75,9.25,9.75,10.25,10.75,11.25,11.75],"counts":[10921,13347,12495,12859,13383,11223,7421,5451,4281,3313,2800,2410,1955,1650,1407,1232,1094,895,727,603,549,476,438,385],"lo":0.0,"hi":12.0,"bins":24},"residHist":{"centers":[-5.75,-5.25,-4.75,-4.25,-3.75,-3.25,-2.75,-2.25,-1.75,-1.25,-0.75,-0.25,0.25,0.75,1.25,1.75,2.25,2.75,3.25,3.75,4.25,4.75,5.25,5.75],"counts":[25,61,149,291,699,1227,2052,3455,7097,11860,15113,14513,13086,10535,7397,5278,3880,3023,2367,1990,1539,1356,1158,865],"lo":-6.0,"hi":6.0,"bins":24},"actor":{"learned":0.7322214236884083,"alternation":0.6707830110957247,"majority":0.6707830110957247,"sameRate":0.32921698890427525,"liftPp":6.143841259268356},"delay":{"learned":1.7417055925385088,"phaseMedian":1.8740543225661055,"gate":1.25},"rollouts":{"alternation":{"n":94,"mean_score":0.8347692800872107,"median_score":0.9690971801313502,"collapse_rate":0.10638297872340426,"n_collapsed":10,"threshold":0.25,"p10":0.21336637028917516,"p90":0.9960159115871398},"clock":{"n":94,"mean_score":0.86540954054841,"median_score":0.9761940668130047,"collapse_rate":0.0851063829787234,"n_collapsed":8,"threshold":0.25,"p10":0.6709292860263714,"p90":0.9965498090526935},"real":{"n":94,"mean_score":0.8964434739002426,"median_score":0.934926163919358,"collapse_rate":0.0,"n_collapsed":0,"threshold":0.25,"p10":0.7341799343391625,"p90":0.9909127122478534},"hist":{"alternation":[0.9950215747578696,0.9882650399267302,0.997436666517875,0.9742746541328463,0.9637920998612928,0.6371562319277544,0.07925851410191367,0.9763826415378459,0.9950947564689687,0.8419490923651312,0.9681157649523023,0.9512133412550937,0.8255969182653137,0.36717640719963757,0.9991188347737555,0.9976959834103375,0.9587013544429981,0.9651448076599777,0.9956669478582918,0.9541464984080911,0.9355950073806748,0.9583786584237022,0.9934725460007628,0.9955324635092146,0.9786920990753061,0.9551631944796776,0.9909352746491852,0.9850981754096132,0.9962960740902415,0.9972857858821711,0.004400328881061473,0.9799717642841489,0.0007146146549226256,0.9018850676246433,0.9044254350371227,0.9404497416252391,0.936637236404322,0.9941960902717284,0.99823796268648,0.08126896454568412,0.8480156710675388,0.7526655736971144,0.9869106150744634,0.0070730914482302195,0.9966714200966873,0.010209739068513997,0.8433979728268374,0.9680910024041709,0.9830942906269435,0.9856573612197174,0.9700785953103979,0.9909774010562034,0.9707269684231401,0.5734533794834932,0.9908969998571198,0.9251712111160886,0.5337512615400044,0.816673599574885,0.9863259424686915,0.9930234650884124,0.9960690222911038,0.9947502694362342,0.9838520875585648,0.9644203705147568,0.9764427965529965,0.9925379882279637,0.9912396793067305,0.7991889370231201,0.9840389945964756,0.9994518086017123,0.9964800785333303,0.9929349636739739,0.14744778304183392,0.9132470195675293,0.8304419359500511,0.0015901804656534675,0.4427032795623891,0.9921560514017407,0.9939543458107193,0.9536396605252755,0.9661936692426321,0.9841465083936712,0.9271169205621191,0.9953205713024632,0.9359384208235035,0.9158737837617555,0.9919082662142671,0.9958919866112236,0.04826657716054736,0.7827263677300985,0.9704296541780837,0.9077011267269225,0.9810163446146256,0.02648470204516899],"clock":[0.9932323357156889,0.9918300315962195,0.988236871635079,0.9420507229734341,0.9966053563751477,0.6302403302146429,0.26283103177842754,0.9301628080188187,0.9858460666280932,0.9767889707021538,0.9818641286570121,0.9830754404950197,0.8047287868902235,0.9604063702226509,0.9987543677764169,0.9937128518226754,0.9142035674578912,0.979149844160164,0.9972291316243997,0.8372747280807172,0.7862364152376023,0.9882645627996386,0.9972150996747421,0.9957018732279049,0.960083355444811,0.9921120179350849,0.9555915888141155,0.9837490027431421,0.9984389393876674,0.9945765560423636,0.07905762520688814,0.8972939130129343,0.010379361503531817,0.9807532653494241,0.996420198633634,0.9868710374543755,0.9653452803474457,0.9980871015695657,0.9960371659388066,0.0013040224591478078,0.9533416330152139,0.7658701829204043,0.0025589732255608053,0.9775560296377042,0.9961580425326494,0.005632509827935186,0.9813304009956197,0.9760972726866896,0.9940497854961421,0.9823610026566092,0.9855972149790274,0.858365838734295,0.9653948855687056,0.8050623179188471,0.9739019224501027,0.9349779716304965,0.9934198698505379,0.9427192430965485,0.9939593561911825,0.8547499510385189,0.9161151830967823,0.9742007904355517,0.9968767012641219,0.9136376958937819,0.8810813308351152,0.8963864406281662,0.9946755393058339,0.8495137232209754,0.9862633841534689,0.9762908609393199,0.9980821268345944,0.978066566874731,0.9920169077572736,0.9647837247731272,0.8126472039672649,0.004340083461717793,0.9677532333583714,0.9883790963380755,0.9679469281308916,0.9711831155434881,0.9896825097597634,0.8835756301788146,0.9881935279223305,0.8886941924832146,0.974870752205998,0.9395631049805787,0.9837767217017369,0.9974900276919306,0.07284278978418807,0.9416329184930695,0.9961931654485161,0.9976026102255313,0.9795586097461577,0.029733084055566107]}},"gates":{"actor_acc_ge_5pp_over_best_baseline":false,"delay_mae_le_1_25":false,"collapse_relative_reduction_ge_50pct":false,"fail_if_within_2pp_of_alternation":false}};
 
 mountCounters();
 
-const ratios = ["0.5", "0.75", "0.9", "1.0"];
-const labels = ["50% of match", "75%", "90%", "Full game"];
-
-function renderPrefix() {
-  const i = Number(document.getElementById("prefixScrub").value);
-  const key = ratios[i];
-  const row = DATA.byPrefix[key] || {};
-  document.getElementById("prefixReadout").textContent = labels[i];
-  // timeline fill
-  const fills = ratios.map((r, idx) => {
-    const active = idx <= i;
-    const w = idx === 0 ? 50 : (idx === 1 ? 25 : (idx === 2 ? 15 : 10));
-    return `<span style="flex:${w};background:${active ? "linear-gradient(90deg,#6366f1,#22d3ee)" : "transparent"}"></span>`;
+/* ---------- conveyor of a synthetic but realistic tick sequence ---------- */
+(function buildConveyor() {
+  const host = document.getElementById("conveyor");
+  const ticks = [];
+  let side = 0; // 0 team, 1 opp
+  // Start with strict alternation, then inject same-side doubles at ~33% rate
+  for (let i = 0; i < 36; i++) {
+    const same = Math.random() < DATA.actor.sameRate && i > 0;
+    if (!same) side = 1 - side;
+    const delay = 0.4 + Math.random() * 3.2;
+    ticks.push({ side, delay, same });
+  }
+  host.innerHTML = "";
+  ticks.forEach((t) => {
+    const d = document.createElement("div");
+    d.className = "tick " + (t.side === 0 ? "team" : "opp") + (t.same ? " double" : "");
+    d.style.height = (18 + t.delay * 14) + "px";
+    d.title = (t.side === 0 ? "team" : "opponent") + " · Δt " + t.delay.toFixed(1) + "s"
+      + (t.same ? " · same-side double-tap" : "");
+    host.appendChild(d);
   });
-  document.getElementById("timeline").innerHTML = fills.join("");
-  document.getElementById("prefixStats").innerHTML = [
-    ["Prefix", labels[i], `${row.n || 0} battles`],
-    ["Accuracy", pct(row.acc || 0), ""],
-    ["AUC", (row.auc || 0).toFixed(3), ""],
-    ["vs majority", ((row.acc || 0) - DATA.majority >= 0 ? "+" : "") +
-      (((row.acc || 0) - DATA.majority) * 100).toFixed(1) + "pp", ""],
-  ].map(([k,v,s]) =>
+})();
+
+/* ---------- actor race ---------- */
+mountRace("actorRace", [
+  {
+    label: "Who-acts-next accuracy",
+    note: "Learned clock vs hardcoded alternation on the held-out test ticks.",
+    old: DATA.actor.alternation, new: DATA.actor.learned, fmt: "pct", higher: true,
+  },
+  {
+    label: "Same-side rate (truth)",
+    note: "Share of real ticks that stay on the same side — what alternation always gets wrong.",
+    old: 0, new: DATA.actor.sameRate, fmt: "pct", higher: true, soft: true,
+  },
+], {
+  buttonId: "actorRaceBtn", hintId: "actorRaceHint", oldName: "alt",
+  playLabel: "▶ Run the diff", backLabel: "↺ Back to alternation",
+  hintBefore: "bars parked at the alternation baseline",
+  hintAfter: "bars moved to the learned clock",
+});
+
+/* ---------- phase dial ---------- */
+let phase = "single";
+function renderPhase() {
+  const a = DATA.actorByPhase[phase] || {};
+  const d = DATA.delayByPhase[phase] || {};
+  document.getElementById("phaseStats").innerHTML = [
+    ["Ticks", (a.n || 0).toLocaleString(), "held-out"],
+    ["Same-side rate", pct(a.same_rate || 0), "truth"],
+    ["Actor accuracy", pct(a.actor_acc || 0), "learned"],
+    ["Delay MAE", (d.learned_mae || 0).toFixed(2) + "s", "learned"],
+    ["Phase-median MAE", (d.phase_median_mae || 0).toFixed(2) + "s", "baseline"],
+    ["Median true Δt", (d.median_true || 0).toFixed(2) + "s", "humans"],
+  ].map(([k, v, s]) =>
     `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`
   ).join("");
-}
-document.getElementById("prefixScrub").addEventListener("input", renderPrefix);
-renderPrefix();
 
-mountRace("race", ratios.map((r, i) => ({
-  label: labels[i],
-  note: `AUC ${((DATA.byPrefix[r] || {}).auc || 0).toFixed(3)}`,
-  old: DATA.majority,
-  new: (DATA.byPrefix[r] || {}).acc || 0,
-  fmt: "pct",
-  higher: true,
-})), {
-  buttonId: "raceBtn", hintId: "raceHint", oldName: "maj",
-  playLabel: "▶ Run the diff", backLabel: "↺ Back to majority",
-  hintBefore: "bars parked at majority baseline",
-  hintAfter: "bars moved to the transformer",
+  const rows = [
+    { label: "Actor accuracy", value: a.actor_acc || 0, color: "#22d3ee", fmt: "pct" },
+    { label: "Alternation (always switch)", value: 1 - (a.same_rate || 0), color: "#f87171", fmt: "pct" },
+    { label: "Delay MAE (lower better)", value: d.learned_mae || 0, color: "#34d399", fmt: "sec", invert: true, max: 3.5 },
+    { label: "Phase-median MAE", value: d.phase_median_mae || 0, color: "#fbbf24", fmt: "sec", invert: true, max: 3.5 },
+  ];
+  document.getElementById("phaseBars").innerHTML = rows.map((r) => {
+    const denom = r.max || 1;
+    const w = r.invert ? Math.max(4, (1 - r.value / denom) * 100) : r.value * 100;
+    const shown = r.fmt === "pct" ? pct(r.value) : r.value.toFixed(2) + "s";
+    return `<div class="bar-row"><span>${r.label}</span>
+      <span class="bar-track"><span class="bar-fill" style="width:${w}%;background:${r.color}"></span></span>
+      <span style="text-align:right;font-variant-numeric:tabular-nums">${shown}</span></div>`;
+  }).join("");
+}
+document.querySelectorAll("#phaseChips .chip").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    document.querySelectorAll("#phaseChips .chip").forEach((c) => c.classList.remove("active"));
+    chip.classList.add("active");
+    phase = chip.dataset.phase;
+    renderPhase();
+  });
+});
+renderPhase();
+
+/* ---------- histograms ---------- */
+function drawHist(svgId, hist, color) {
+  const svg = document.getElementById(svgId);
+  if (!hist || !hist.counts) return;
+  histChart(svg, [{ counts: hist.counts, color }], {
+    ticks: [
+      { at: 0, label: String(hist.lo ?? 0) },
+      { at: 0.5, label: String(((hist.lo ?? 0) + (hist.hi ?? 0)) / 2) },
+      { at: 1, label: String(hist.hi ?? "") },
+    ],
+  });
+}
+drawHist("trueDelayHist", DATA.trueHist, "#60a5fa");
+drawHist("residHist", DATA.residHist, "#a78bfa");
+
+/* ---------- rollout comparison ---------- */
+const alt = DATA.rollouts.alternation || {};
+const clk = DATA.rollouts.clock || {};
+const real = DATA.rollouts.real || {};
+mountRace("rolloutRace", [
+  {
+    label: "Mean P(real)",
+    note: "Realism scorer on the finished continuations.",
+    old: alt.mean_score || 0, new: clk.mean_score || 0, fmt: "float", higher: true,
+  },
+  {
+    label: "Collapse rate",
+    note: "Share of rollouts with P(real) < 0.25 (lower is better).",
+    old: alt.collapse_rate || 0, new: clk.collapse_rate || 0, fmt: "pct", higher: false,
+  },
+], {
+  buttonId: "rollRaceBtn", hintId: "rollRaceHint", oldName: "alt",
+  playLabel: "▶ Run the diff", backLabel: "↺ Back to alternation",
+  hintBefore: "bars parked at alternation rollouts",
+  hintAfter: "bars moved to the clock-driven rollouts",
 });
 
-const hist = DATA.history || {};
-const n = (hist.val_auc || []).length;
-const scrub = document.getElementById("trainScrub");
-scrub.max = Math.max(n, 1);
-scrub.value = n;
-function drawTrain(upto) {
-  lineChart(document.getElementById("trainChart"), [
-    { label: "val AUC", color: "#34d399", values: (hist.val_auc || []).slice(0, upto) },
-    { label: "val full AUC", color: "#22d3ee", values: (hist.val_full_auc || []).slice(0, upto) },
-    { label: "val acc", color: "#a78bfa", values: (hist.val_acc || []).slice(0, upto) },
-  ], { yFormat: "percent", xLabel: "epoch" });
-  document.getElementById("trainReadout").textContent = `epoch ${upto}`;
+function cloudHTML(title, blk, color) {
+  const collapse = blk.collapse_rate || 0;
+  const healthy = Math.max(0, 1 - collapse - 0.05); // rough mid band
+  const mid = Math.max(0, 1 - collapse - healthy);
+  return `<div class="cloud"><h4>${title}</h4>
+    <div class="cloud-bar">
+      <span style="width:${collapse * 100}%;background:#f87171"></span>
+      <span style="width:${mid * 100}%;background:#fbbf24"></span>
+      <span style="width:${healthy * 100}%;background:#34d399"></span>
+    </div>
+    <div>mean P(real) <b style="color:${color}">${(blk.mean_score || 0).toFixed(3)}</b>
+      · collapse ${pct(collapse)} · n=${blk.n || 0}</div></div>`;
 }
-document.getElementById("trainLegend").innerHTML = legendHTML([
-  { label: "val AUC", color: "#34d399" },
-  { label: "val full AUC", color: "#22d3ee" },
-  { label: "val acc", color: "#a78bfa" },
-]);
-drawTrain(n);
-scrub.addEventListener("input", () => drawTrain(Number(scrub.value)));
-let timer = null;
-document.getElementById("trainPlay").addEventListener("click", () => {
-  const btn = document.getElementById("trainPlay");
-  if (timer) { clearInterval(timer); timer = null; btn.textContent = "▶"; return; }
-  btn.textContent = "❚❚";
-  let i = 1;
-  timer = setInterval(() => {
-    scrub.value = i; drawTrain(i); i += 1;
-    if (i > n) { clearInterval(timer); timer = null; btn.textContent = "▶"; }
-  }, 120);
-});
+document.getElementById("scoreClouds").innerHTML =
+  cloudHTML("Alternation rollouts", alt, "#f87171") +
+  cloudHTML("Clock rollouts", clk, "#34d399") +
+  cloudHTML("Real battles (same length)", real, "#60a5fa");
+
+/* ---------- gates ---------- */
+const gateMeta = [
+  ["actor_acc_ge_5pp_over_best_baseline", "Actor ≥ +5pp over alternation"],
+  ["delay_mae_le_1_25", "Delay MAE ≤ 1.25s"],
+  ["collapse_relative_reduction_ge_50pct", "Collapse rate cut ≥ 50%"],
+  ["fail_if_within_2pp_of_alternation", "Fail if within 2pp of alternation (inverted)"],
+];
+document.getElementById("gates").innerHTML = gateMeta.map(([key, label]) => {
+  const raw = DATA.gates[key];
+  // the inverted fail-gate is "true" when the fail condition triggers
+  const isFailGate = key.startsWith("fail_if");
+  const passed = isFailGate ? !raw : !!raw;
+  return `<div class="gate-card ${passed ? "pass" : "fail"}">
+    <div class="g-status ${passed ? "up" : "down"}">${passed ? "PASS" : "FAIL"}</div>
+    <div>${label}</div></div>`;
+}).join("");
+
 
   </script>
 </body>

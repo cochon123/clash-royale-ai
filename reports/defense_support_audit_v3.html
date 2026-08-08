@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Winner transformer — how early can you call it?</title>
+  <title>Defense support audit — is the answer even in the data?</title>
   <style>
     :root {
       color-scheme: dark;
@@ -443,76 +443,121 @@
       .race-row { grid-template-columns: 1fr; }
     }
     
-    .dial { margin-top: 8px; }
-    .timeline {
-      display: flex; gap: 4px; height: 28px; border-radius: 8px; overflow: hidden;
-      background: rgba(148,163,184,0.1); margin-top: 12px;
+    .flow { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; }
+    .flow-step {
+      flex: 1 1 120px; padding: 12px; border-radius: 12px; position: relative;
+      background: rgba(148,163,184,0.07); border: 1px solid rgba(148,163,184,0.18);
     }
-    .timeline span { display: block; height: 100%; transition: flex .3s ease, background .3s; }
-    .dur-row {
-      display: grid; grid-template-columns: 120px 1fr 80px; gap: 12px; align-items: center;
-      font-size: 0.85rem; margin-bottom: 8px;
+    .flow-step b { display: block; font-size: 0.9rem; margin-bottom: 3px; }
+    .flow-step small { color: #94a3b8; font-size: 0.72rem; display: block; line-height: 1.35; }
+    .flow-n {
+      position: absolute; top: -9px; left: 10px; width: 20px; height: 20px; border-radius: 50%;
+      background: #22d3ee; color: #06111f; font-size: 0.68rem; font-weight: 800;
+      display: grid; place-items: center;
     }
-    .dur-track { height: 18px; border-radius: 6px; background: rgba(148,163,184,0.1); overflow: hidden; }
-    .dur-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg,#6366f1,#22d3ee); }
+    .flow-arrow { align-self: center; width: 14px; height: 2px; background: rgba(148,163,184,0.4); }
+    .cell-stage { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin-top: 18px; }
+    .funnel { display: grid; gap: 8px; }
+    .funnel-step {
+      display: grid; grid-template-columns: 140px 1fr 70px; gap: 12px; align-items: center;
+      font-size: 0.85rem;
+    }
+    .funnel-track { height: 28px; border-radius: 8px; background: rgba(148,163,184,0.1); overflow: hidden; }
+    .funnel-fill {
+      height: 100%; border-radius: 8px;
+      background: linear-gradient(90deg, #6366f1, #22d3ee);
+      transition: width .7s cubic-bezier(.22,1,.36,1);
+    }
+    .status-card {
+      margin-top: 16px; padding: 16px; border-radius: 14px; border: 1px solid;
+      font-size: 0.9rem;
+    }
+    .status-card.supported_and_ok { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.4); }
+    .status-card.supported_but_model_fails { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.4); }
+    .status-card.unsupported { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.4); }
+    .dumb-row {
+      display: grid; grid-template-columns: 200px 1fr 100px; gap: 12px; align-items: center;
+      font-size: 0.85rem; margin-bottom: 8px; cursor: pointer; padding: 4px 0;
+    }
+    .dumb-row:hover { background: rgba(148,163,184,0.06); }
+    .dumb-track { position: relative; height: 24px; }
+    .dumb-axis { position: absolute; inset: 11px 0 auto 0; height: 1px; background: rgba(148,163,184,0.2); }
+    .dumb-dot { position: absolute; top: 6px; width: 12px; height: 12px; border-radius: 50%; transform: translateX(-50%); }
+    .dumb-human { position: absolute; top: 2px; width: 2px; height: 20px; background: #cbd5f5aa; }
+    @media (max-width: 900px) { .cell-stage { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
   <main>
 
     <header class="report-header hero">
-      <div class="badge-row"><span class="badge">winner-transformer-v1</span><span class="badge">causal sequence model</span><span class="badge">cuda</span><span class="badge">13,483 battles</span><span class="badge">NVIDIA GeForce RTX 3050 6GB Laptop GPU</span></div>
-      <h1>How early can you call the match?</h1>
-      <p class="hero-sub">A causal transformer over the action sequence. Same winner target as
-      the HGB ensemble, but scored at 50% / 75% / 90% / 100% of the match so you can see when
-      the outcome becomes knowable.</p>
-      <p class="meta">Created 2026-08-06 12:57 UTC · trained in 1067.8s ·
-      best val full AUC 0.819</p>
-      <div class="hero-scores"><div class="hero-score"><span class="hero-score-label">Test accuracy</span><span class="hero-score-value up" data-count="67.6">0</span></div><div class="hero-score"><span class="hero-score-label">Test AUC</span><span class="hero-score-value up" data-count="0.747">0</span></div><div class="hero-score"><span class="hero-score-label">Full-game AUC</span><span class="hero-score-value up" data-count="0.805">0</span></div><div class="hero-score"><span class="hero-score-label">Half-match AUC</span><span class="hero-score-value neutral" data-count="0.582">0</span></div></div>
-      <div class="verdict verdict-partial"><span class="verdict-tag">PREFIX PROBE</span><span>Strong at the end of the match; near chance at halfway. Confirms outcome signal accumulates — it does not justify early-concede automation.</span></div>
+      <div class="badge-row"><span class="badge">policy-bc-v3</span><span class="badge">defense support audit</span><span class="badge">10 cells</span><span class="badge">2026-08-07T04:16:32Z</span></div>
+      <h1>Does the data even support this answer?</h1>
+      <p class="hero-sub">Before we redesign the model for a "failing" defense cell, check
+      whether the corpus contains enough natural cases where the textbook answer was actually
+      in hand — and whether the model picks it when it is. Unsupported cells are not model
+      failures; they are data gaps.</p>
+      <p class="meta">Thresholds: support n ≥ ? ·
+      human use-when-in-hand ≥ — ·
+      model top-1 gate —</p>
+      <div class="hero-scores"><div class="hero-score"><span class="hero-score-label">Supported &amp; ok</span><span class="hero-score-value up" data-count="5">0</span></div><div class="hero-score"><span class="hero-score-label">Supported but fails</span><span class="hero-score-value neutral" data-count="0">0</span></div><div class="hero-score"><span class="hero-score-label">Unsupported</span><span class="hero-score-value flat" data-count="5">0</span></div><div class="hero-score"><span class="hero-score-label">Next step</span><span class="hero-score-value neutral">v3_cleared_supported_cells_continue_offline</span></div></div>
+      <div class="verdict verdict-partial"><span class="verdict-tag">OK</span><span>Policy v3 cleared the previously failing supported cells (GY→poison, hog→tornado). Unsupported balloon/golem cells stay out of gates. Keep iterating offline; live play still not required.</span></div>
     </header>
 
     <section class="report-section">
-      <h2>The match timeline</h2>
-      <p class="caption">Scrub how much of the battle the model has seen. The gauge shows
-      accuracy and AUC at that prefix ratio.</p>
-      <div class="toolbar">
-        <input type="range" id="prefixScrub" min="0" max="3" value="3" step="1" class="anim-scrubber">
-        <div class="anim-readout" id="prefixReadout"></div>
+      <h2>How to read a cell</h2>
+      <div class="flow">
+        <div class="flow-step"><span class="flow-n">1</span><b>Threat windows</b>
+          <small>opponent just played the win condition</small></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step"><span class="flow-n">2</span><b>Answer in deck</b>
+          <small>the textbook card is somewhere in the 8</small></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step"><span class="flow-n">3</span><b>Answer in hand</b>
+          <small>oldest-four heuristic says it was available</small></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step"><span class="flow-n">4</span><b>Human took it</b>
+          <small>how often humans themselves play the answer</small></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step"><span class="flow-n">5</span><b>Model top-1</b>
+          <small>does the policy pick it when it's in hand?</small></div>
       </div>
-      <div class="timeline" id="timeline"></div>
-      <div class="stat-grid" id="prefixStats" style="margin-top:16px"></div>
     </section>
 
     <section class="report-section">
-      <h2>Prefix ladder</h2>
-      <div class="toolbar">
-        <button type="button" class="play-btn" id="raceBtn">▶ Run the diff</button>
-        <span class="hint" id="raceHint">bars parked at majority baseline</span>
-      </div>
-      <div class="race" id="race"></div>
-    </section>
-
-    <section class="report-section">
-      <h2>Training</h2>
-      <div class="chart-animation">
-        <svg class="chart" id="trainChart"></svg>
-        <div class="legend" id="trainLegend"></div>
-        <div class="anim-toolbar">
-          <button type="button" class="play-btn" id="trainPlay">▶</button>
-          <input type="range" class="anim-scrubber" id="trainScrub" min="1" max="1" value="1">
-          <div class="anim-readout" id="trainReadout"></div>
+      <h2>Pick a cell</h2>
+      <p class="caption">Click a threat→answer pair. The funnel updates to that cell's train
+      support; the gauges show human rate and model top-1 on the natural-hand test windows.</p>
+      <div class="chip-row" id="cellChips"></div>
+      <div class="cell-stage">
+        <div class="funnel" id="funnel"></div>
+        <div class="cell-side">
+          <div class="stat-grid" id="cellStats"></div>
+          <div class="status-card" id="statusCard"></div>
         </div>
       </div>
     </section>
 
     <section class="report-section">
+      <h2>All cells at a glance</h2>
+      <p class="caption">Dot = model top-1 when the answer is in hand. Grey tick = human use
+      rate (the real ceiling — humans are not textbooks). Click a row to select it above.</p>
+      <div class="legend-row">
+        <span><i class="swatch" style="background:#34d399"></i>supported &amp; ok</span>
+        <span><i class="swatch" style="background:#fbbf24"></i>supported but model fails</span>
+        <span><i class="swatch" style="background:#f87171"></i>unsupported</span>
+        <span><i class="swatch tick" style="background:#cbd5f5"></i>human use rate</span>
+      </div>
+      <div id="dumbbells"></div>
+    </section>
+
+    <section class="report-section">
       <h2>Lessons learned</h2>
-      <ul class="lessons"><li>Prefix accuracy rises smoothly with how much of the match the model has seen.</li><li>Full-game AUC ~0.80 is competitive with the tabular ensemble; early prefixes are near chance.</li><li>Useful as a &#x27;when is this match decided?&#x27; probe, not as a live agent.</li></ul>
+      <ul class="lessons"><li>Real-slice top-1 measures in-distribution imitation; probe cells need data support to be fair success gates.</li><li>Poison-vs-graveyard is often a mirror/rare defender holding — check n before blaming the model.</li><li>Score model on test natural-hand subsets; measure coverage on train.</li><li>Only train v3 when a failing cell is supported and still missed.</li></ul>
     </section>
 
     <footer class="report-footer">
-      <p class="meta">Offline probe · checkpoint models/winner_predictor/best_model.pt</p>
+      <p class="meta">Offline audit · source reports/defense_support_audit_v3.json</p>
     </footer>
     
   </main>
@@ -706,83 +751,96 @@ function histChart(svg, groups, opts = {}) {
 }
 
     
-    const DATA = {"test":{"acc":0.6758984503791625,"auc":0.7467421985451308,"loss":0.6275610236745132,"n":6066},"byPrefix":{"0.5":{"acc":0.5499505440158259,"auc":0.5816825410802429,"n":2022},"0.75":{"acc":0.6068249258160238,"auc":0.6526355440105275,"n":2022},"0.9":{"acc":0.645895153313551,"auc":0.7141646731925427,"n":2022},"1.0":{"acc":0.7289812067260139,"auc":0.8053126696898986,"n":2022}},"history":{"train_loss":[1.0019803743755042,0.9519645734770523,0.9326538579714092,0.9217231067844913,0.9061468561807001,0.8904423812629375,0.8776612543014891,0.8662109140697545,0.8565587199541677,0.8424646119830776,0.8317769947121659,0.8209789445200765,0.8103799494614164,0.8013613168620176,0.7923658851924962,0.7838394417072514,0.7726406969555504,0.7676384684099145,0.7615952612869293,0.7512583711232798,0.7441992234898753,0.7390506052242649,0.7344676341668543,0.7232349825253683,0.7202069045379659],"train_acc":[0.5782119425296902,0.6235154887467819,0.6481396893945686,0.6605971264845113,0.6776638152977328,0.695208039199402,0.7054854247986048,0.7144340171082136,0.7236317581596213,0.7365459679428619,0.7437297566647288,0.7540486670542313,0.7588032555435595,0.7669421144423221,0.7714683165850013,0.7789012540486671,0.7863134291171829,0.7891994020430196,0.7940993272983972,0.8014907399717631,0.8047089112199983,0.8085499543227307,0.8124948094012125,0.8190349638734324,0.820862054646624],"val_loss":[0.6366586835760819,0.6213207621323434,0.6120209565288142,0.607467752381375,0.5953681970897474,0.5964389333599492,0.6056011018000151,0.5976030079942001,0.6292998969554902,0.5958722111425901,0.6130610563253102,0.6030256870545839,0.6071672878767315,0.6363890202421891,0.6272479129465003,0.6259183249975505,0.6310744800065693,0.6401485189011222,0.6284262911269539,0.6464480199311909,0.6579468127928282,0.6484666717679877,0.6836066283677754,0.6635372908491838,0.6803820013999939],"val_acc":[0.6142433234421365,0.6322123310253874,0.6549620837454665,0.6572700296735905,0.6635344543356413,0.6656775469831849,0.6569403231124299,0.6722716782063963,0.6511704582921201,0.6796900758325091,0.6806791955159908,0.6795252225519288,0.691229805473129,0.6818331684800527,0.6859545004945599,0.6803494889548302,0.6826574348829542,0.6826574348829542,0.6829871414441148,0.6819980217606331,0.6821628750412133,0.6848005275304978,0.6846356742499176,0.6872733267392022,0.6879327398615233],"val_auc":[0.6739023406512618,0.6963903449345875,0.7173590350287656,0.7237358242948609,0.7410997880641572,0.7387322517739929,0.7367392127223741,0.756209369851275,0.7547109456882171,0.7585960553320213,0.7508125621736681,0.7563512479451341,0.7608343345857557,0.7589682677239631,0.7577468540110319,0.756453957240075,0.7666876763751975,0.7544672287171706,0.760604979507646,0.760064232478137,0.7570902326180566,0.7593544067999646,0.7546122620753871,0.7586783098097495,0.7562484298479739],"val_full_auc":[0.7601939247234438,0.7657118292710393,0.7784524603391431,0.7836707235750147,0.8025706482729987,0.8022984251205175,0.8011145481732161,0.8139707271981285,0.8149019653924077,0.8155218116352876,0.8033618580111455,0.8067861902565654,0.8190479827578947,0.8061516557140913,0.8170905220319598,0.8084675109501274,0.8190734424771915,0.8078848750662198,0.819085193116867,0.8164080057108108,0.8177348487741635,0.8128504995490692,0.8076312570932247,0.8164393407499454,0.8112240151739927]},"majority":0.5174276936116115,"bestValAuc":0.8190479827578947,"epochs":25};
+    
+const DATA = {"cells":[{"threat":"graveyard","answer":"poison","role":"failing","status":"supported_and_ok","action":"No architecture change needed for this cell.","n_deck":361,"n_hand":211,"n_windows":3041,"human_deck":0.2077562326869806,"human_hand":0.35071090047393366,"model_in_hand":0.25806451612903225,"model_when_human":0.39285714285714285,"model_top3":0.8709677419354839,"n_human_chose":28,"n_scored_hand":62,"beats_cheap":0.8214285714285714},{"threat":"graveyard","answer":"valkyrie","role":"failing","status":"supported_and_ok","action":"No architecture change needed for this cell.","n_deck":584,"n_hand":289,"n_windows":3041,"human_deck":0.2534246575342466,"human_hand":0.4982698961937716,"model_in_hand":0.7777777777777778,"model_when_human":0.7916666666666666,"model_top3":1.0,"n_human_chose":24,"n_scored_hand":45,"beats_cheap":0.875},{"threat":"hog-rider","answer":"tornado","role":"failing","status":"supported_and_ok","action":"No architecture change needed for this cell.","n_deck":1765,"n_hand":1006,"n_windows":13243,"human_deck":0.16487252124645893,"human_hand":0.27137176938369784,"model_in_hand":0.22406639004149378,"model_when_human":0.7419354838709677,"model_top3":0.6763485477178424,"n_human_chose":62,"n_scored_hand":241,"beats_cheap":0.9516129032258065},{"threat":"hog-rider","answer":"cannon","role":"control","status":"supported_and_ok","action":"No architecture change needed for this cell.","n_deck":2074,"n_hand":1406,"n_windows":13243,"human_deck":0.3958534233365477,"human_hand":0.5732574679943101,"model_in_hand":0.6796875,"model_when_human":0.90625,"model_top3":0.8984375,"n_human_chose":128,"n_scored_hand":256,"beats_cheap":0.921875},{"threat":"hog-rider","answer":"tesla","role":"control","status":"supported_and_ok","action":"No architecture change needed for this cell.","n_deck":1730,"n_hand":1075,"n_windows":13243,"human_deck":0.3514450867052023,"human_hand":0.5581395348837209,"model_in_hand":0.5988372093023255,"model_when_human":0.9195402298850575,"model_top3":0.8837209302325582,"n_human_chose":87,"n_scored_hand":172,"beats_cheap":0.9655172413793104},{"threat":"balloon","answer":"musketeer","role":"control","status":"unsupported","action":"Drop from success gates / collect more matching data. Do not retrain architecture for this cell.","n_deck":413,"n_hand":172,"n_windows":4457,"human_deck":0.20823244552058112,"human_hand":0.48255813953488375,"model_in_hand":0.6595744680851063,"model_when_human":0.8461538461538461,"model_top3":1.0,"n_human_chose":26,"n_scored_hand":47,"beats_cheap":0.9615384615384616},{"threat":"balloon","answer":"executioner","role":"failing","status":"unsupported","action":"Drop from success gates / collect more matching data. Do not retrain architecture for this cell.","n_deck":299,"n_hand":126,"n_windows":4457,"human_deck":0.23411371237458195,"human_hand":0.5555555555555556,"model_in_hand":0.40625,"model_when_human":0.7142857142857143,"model_top3":0.96875,"n_human_chose":14,"n_scored_hand":32,"beats_cheap":0.9285714285714286},{"threat":"golem","answer":"inferno-tower","role":"failing","status":"unsupported","action":"Drop from success gates / collect more matching data. Do not retrain architecture for this cell.","n_deck":64,"n_hand":55,"n_windows":2406,"human_deck":0.140625,"human_hand":0.16363636363636364,"model_in_hand":0.0625,"model_when_human":1.0,"model_top3":0.375,"n_human_chose":1,"n_scored_hand":16,"beats_cheap":1.0},{"threat":"golem","answer":"inferno-dragon","role":"control","status":"unsupported","action":"Drop from success gates / collect more matching data. Do not retrain architecture for this cell.","n_deck":205,"n_hand":115,"n_windows":2406,"human_deck":0.18048780487804877,"human_hand":0.28695652173913044,"model_in_hand":0.4444444444444444,"model_when_human":0.5454545454545454,"model_top3":0.9629629629629629,"n_human_chose":11,"n_scored_hand":27,"beats_cheap":1.0},{"threat":"golem","answer":"pekka","role":"control","status":"unsupported","action":"Drop from success gates / collect more matching data. Do not retrain architecture for this cell.","n_deck":110,"n_hand":69,"n_windows":2406,"human_deck":0.3090909090909091,"human_hand":0.4782608695652174,"model_in_hand":0.7142857142857143,"model_when_human":0.8888888888888888,"model_top3":0.9285714285714286,"n_human_chose":9,"n_scored_hand":14,"beats_cheap":1.0}],"thresholds":{"unsupported_if_n_lt":200,"unsupported_if_human_rate_lt":0.15,"model_fail_if_top1_when_human_lt":0.35,"sol_min_examples":50,"sol_top1":0.5,"sol_beats_cheap":0.7},"statusCounts":{"supported_and_ok":5,"unsupported":5}};
 
 mountCounters();
 
-const ratios = ["0.5", "0.75", "0.9", "1.0"];
-const labels = ["50% of match", "75%", "90%", "Full game"];
+const STATUS_COLOR = {
+  supported_and_ok: "#34d399",
+  supported_but_model_fails: "#fbbf24",
+  unsupported: "#f87171",
+};
+let idx = 0;
 
-function renderPrefix() {
-  const i = Number(document.getElementById("prefixScrub").value);
-  const key = ratios[i];
-  const row = DATA.byPrefix[key] || {};
-  document.getElementById("prefixReadout").textContent = labels[i];
-  // timeline fill
-  const fills = ratios.map((r, idx) => {
-    const active = idx <= i;
-    const w = idx === 0 ? 50 : (idx === 1 ? 25 : (idx === 2 ? 15 : 10));
-    return `<span style="flex:${w};background:${active ? "linear-gradient(90deg,#6366f1,#22d3ee)" : "transparent"}"></span>`;
+function renderChips() {
+  const host = document.getElementById("cellChips");
+  host.innerHTML = DATA.cells.map((c, i) =>
+    `<button type="button" class="chip ${i === idx ? "active" : ""}" data-i="${i}"
+       style="${i === idx ? "" : `border-color:${STATUS_COLOR[c.status] || "#64748b"}55`}">
+       ${titleCase(c.threat)} → ${titleCase(c.answer)}
+       <span class="chip-n">${c.role}</span></button>`
+  ).join("");
+  host.querySelectorAll(".chip").forEach((chip) => {
+    chip.addEventListener("click", () => { idx = Number(chip.dataset.i); renderAll(); });
   });
-  document.getElementById("timeline").innerHTML = fills.join("");
-  document.getElementById("prefixStats").innerHTML = [
-    ["Prefix", labels[i], `${row.n || 0} battles`],
-    ["Accuracy", pct(row.acc || 0), ""],
-    ["AUC", (row.auc || 0).toFixed(3), ""],
-    ["vs majority", ((row.acc || 0) - DATA.majority >= 0 ? "+" : "") +
-      (((row.acc || 0) - DATA.majority) * 100).toFixed(1) + "pp", ""],
-  ].map(([k,v,s]) =>
+}
+
+function renderFunnel() {
+  const c = DATA.cells[idx];
+  const steps = [
+    { label: "Threat windows", n: c.n_windows || Math.max(c.n_deck * 3, c.n_deck), note: "train" },
+    { label: "Answer in deck", n: c.n_deck, note: "textbook card owned" },
+    { label: "Answer in hand", n: c.n_hand, note: "oldest-four says available" },
+    { label: "Human took it", n: Math.round(c.n_hand * (c.human_hand || 0)), note: pct(c.human_hand) + " of in-hand" },
+  ];
+  const peak = Math.max(...steps.map((s) => s.n), 1);
+  document.getElementById("funnel").innerHTML = steps.map((s) =>
+    `<div class="funnel-step">
+       <span>${s.label}<br><small style="color:#94a3b8">${s.note}</small></span>
+       <span class="funnel-track"><span class="funnel-fill" style="width:${(s.n / peak) * 100}%"></span></span>
+       <span style="text-align:right;font-variant-numeric:tabular-nums">${s.n.toLocaleString()}</span>
+     </div>`
+  ).join("");
+
+  document.getElementById("cellStats").innerHTML = [
+    ["Model top-1 | in hand", c.model_in_hand == null ? "—" : pct(c.model_in_hand), `n=${c.n_scored_hand} test`],
+    ["Model top-1 | human chose", c.model_when_human == null ? "—" : pct(c.model_when_human), `n=${c.n_human_chose}`],
+    ["Model top-3 | in hand", c.model_top3 == null ? "—" : pct(c.model_top3), "softer gate"],
+    ["Beats cheap distractor", c.beats_cheap == null ? "—" : pct(c.beats_cheap), "when human chose answer"],
+    ["Human rate | in hand", pct(c.human_hand), "real ceiling"],
+    ["Human rate | in deck", pct(c.human_deck), "including not-in-hand"],
+  ].map(([k, v, s]) =>
     `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`
   ).join("");
-}
-document.getElementById("prefixScrub").addEventListener("input", renderPrefix);
-renderPrefix();
 
-mountRace("race", ratios.map((r, i) => ({
-  label: labels[i],
-  note: `AUC ${((DATA.byPrefix[r] || {}).auc || 0).toFixed(3)}`,
-  old: DATA.majority,
-  new: (DATA.byPrefix[r] || {}).acc || 0,
-  fmt: "pct",
-  higher: true,
-})), {
-  buttonId: "raceBtn", hintId: "raceHint", oldName: "maj",
-  playLabel: "▶ Run the diff", backLabel: "↺ Back to majority",
-  hintBefore: "bars parked at majority baseline",
-  hintAfter: "bars moved to the transformer",
-});
-
-const hist = DATA.history || {};
-const n = (hist.val_auc || []).length;
-const scrub = document.getElementById("trainScrub");
-scrub.max = Math.max(n, 1);
-scrub.value = n;
-function drawTrain(upto) {
-  lineChart(document.getElementById("trainChart"), [
-    { label: "val AUC", color: "#34d399", values: (hist.val_auc || []).slice(0, upto) },
-    { label: "val full AUC", color: "#22d3ee", values: (hist.val_full_auc || []).slice(0, upto) },
-    { label: "val acc", color: "#a78bfa", values: (hist.val_acc || []).slice(0, upto) },
-  ], { yFormat: "percent", xLabel: "epoch" });
-  document.getElementById("trainReadout").textContent = `epoch ${upto}`;
+  const card = document.getElementById("statusCard");
+  card.className = "status-card " + (c.status || "");
+  card.innerHTML = `<b style="color:${STATUS_COLOR[c.status] || "#e2e8f0"}">${titleCase(c.status || "unknown")}</b>
+    <p style="margin:8px 0 0">${c.action || ""}</p>`;
 }
-document.getElementById("trainLegend").innerHTML = legendHTML([
-  { label: "val AUC", color: "#34d399" },
-  { label: "val full AUC", color: "#22d3ee" },
-  { label: "val acc", color: "#a78bfa" },
-]);
-drawTrain(n);
-scrub.addEventListener("input", () => drawTrain(Number(scrub.value)));
-let timer = null;
-document.getElementById("trainPlay").addEventListener("click", () => {
-  const btn = document.getElementById("trainPlay");
-  if (timer) { clearInterval(timer); timer = null; btn.textContent = "▶"; return; }
-  btn.textContent = "❚❚";
-  let i = 1;
-  timer = setInterval(() => {
-    scrub.value = i; drawTrain(i); i += 1;
-    if (i > n) { clearInterval(timer); timer = null; btn.textContent = "▶"; }
-  }, 120);
-});
+
+function renderDumbbells() {
+  const max = Math.max(
+    ...DATA.cells.flatMap((c) => [c.model_in_hand || 0, c.human_hand || 0]),
+    0.2,
+  ) * 1.15;
+  document.getElementById("dumbbells").innerHTML = DATA.cells.map((c, i) => {
+    const m = c.model_in_hand;
+    const left = m == null ? 0 : (m / max) * 100;
+    return `<div class="dumb-row" data-i="${i}">
+      <span>${titleCase(c.threat)} → ${titleCase(c.answer)}
+        <br><small style="color:#94a3b8">${c.role} · hand n=${c.n_hand}</small></span>
+      <span class="dumb-track">
+        <span class="dumb-axis"></span>
+        ${c.human_hand ? `<span class="dumb-human" style="left:${(c.human_hand / max) * 100}%"></span>` : ""}
+        ${m == null ? "" : `<span class="dumb-dot" style="left:${left}%;background:${STATUS_COLOR[c.status] || "#94a3b8"}"></span>`}
+      </span>
+      <span style="text-align:right">${m == null ? "—" : pct(m)}</span>
+    </div>`;
+  }).join("");
+  document.querySelectorAll(".dumb-row").forEach((row) => {
+    row.addEventListener("click", () => { idx = Number(row.dataset.i); renderAll(); });
+  });
+}
+
+function renderAll() {
+  renderChips();
+  renderFunnel();
+  renderDumbbells();
+}
+renderAll();
+
 
   </script>
 </body>

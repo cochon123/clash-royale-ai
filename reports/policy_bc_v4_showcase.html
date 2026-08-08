@@ -1,0 +1,1340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PolicyBC v4 — what actually got better</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0f18;
+      --line: #1e293b;
+      --line-soft: #141c28;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(1.75rem, 3vw, 2.25rem);
+      letter-spacing: -0.03em;
+      font-weight: 650;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    p, li { color: var(--muted); margin: 0 0 10px; }
+    a { color: var(--accent); }
+    .report-header { padding-bottom: 28px; }
+    .report-header p { max-width: 720px; }
+    .meta { font-size: 0.92rem; color: #64748b; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .badge {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+    .badge + .badge::before {
+      content: "·";
+      margin-right: 8px;
+      color: #334155;
+    }
+    .report-section {
+      padding: 28px 0;
+      border-top: 1px solid var(--line-soft);
+    }
+    .report-section:first-of-type { border-top: none; padding-top: 0; }
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px 20px;
+    }
+    .kpi-label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .kpi-value {
+      display: block;
+      font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .block-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 36px 40px;
+    }
+    .block-wide { grid-column: 1 / -1; }
+    .chart-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
+    }
+    .chart-block {
+      width: 100%;
+    }
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+    }
+    svg.chart {
+      width: 100%;
+      height: auto;
+      min-height: 480px;
+      aspect-ratio: 1000 / 540;
+      display: block;
+      overflow: visible;
+    }
+    svg.chart-interactive .chart-lines polyline {
+      transition: stroke-width 0.15s ease, opacity 0.15s ease;
+    }
+    svg.chart-interactive:hover .chart-lines polyline {
+      stroke-width: 4.5;
+    }
+    .chart-tooltip {
+      position: absolute;
+      top: 12px;
+      left: 0;
+      min-width: 180px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: rgba(10, 15, 24, 0.94);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.12s ease, transform 0.12s ease;
+      z-index: 2;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    .chart-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .chart-tooltip-title {
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+    .chart-tooltip-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .chart-tooltip-row:last-child { margin-bottom: 0; }
+    .chart-tooltip-row strong {
+      margin-left: auto;
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+    .chart-tooltip-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      font-size: 14px;
+      color: #64748b;
+    }
+    .legend-interactive {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 10px;
+      border: 1px solid #243044;
+      border-radius: 999px;
+      background: transparent;
+      color: #94a3b8;
+      font: inherit;
+      font-size: 13px;
+      line-height: 1.2;
+      cursor: pointer;
+      transition: opacity 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .legend-item:hover {
+      border-color: #475569;
+      color: #cbd5e1;
+    }
+    .legend-item.is-on {
+      color: #e2e8f0;
+      border-color: #334155;
+    }
+    .legend-item.is-off {
+      opacity: 0.4;
+    }
+    .legend-item.is-off .legend-label {
+      text-decoration: line-through;
+    }
+    .legend-item.is-off .legend-preview {
+      opacity: 0.35;
+      border-top-color: #475569;
+    }
+    .legend-preview {
+      width: 16px;
+      border-top: 2px solid var(--legend-color, #64748b);
+      flex-shrink: 0;
+    }
+    .legend-item.legend-dashed .legend-preview {
+      border-top-style: dashed;
+    }
+    .legend-label {
+      white-space: nowrap;
+    }
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      margin-right: 6px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line-soft);
+      text-align: left;
+    }
+    th {
+      color: #64748b;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .diagram {
+      margin: 0;
+      padding: 0 0 0 16px;
+      border-left: 2px solid #334155;
+      background: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      color: #94a3b8;
+      white-space: pre-wrap;
+    }
+    .media {
+      width: 100%;
+      display: block;
+      border-radius: 6px;
+    }
+    .caption { font-size: 13px; color: #64748b; margin-top: 10px; }
+    .chart-animation {
+      width: 100%;
+    }
+    .anim-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px 18px;
+      margin-top: 20px;
+    }
+    .anim-btn {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid #334155;
+      background: #111827;
+      color: #e2e8f0;
+      font: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .anim-btn-icon {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .anim-btn:hover {
+      border-color: #60a5fa;
+      background: #172033;
+    }
+    .anim-icon {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+      display: block;
+    }
+    .anim-icon[hidden] {
+      display: none;
+    }
+    .anim-scrubber {
+      flex: 1 1 220px;
+      min-width: 180px;
+      accent-color: #60a5fa;
+      cursor: pointer;
+    }
+    .anim-readout {
+      flex: 1 1 100%;
+      font-size: 14px;
+      color: #94a3b8;
+      font-variant-numeric: tabular-nums;
+    }
+    .anim-readout strong {
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+    svg.chart-dual .chart-refline {
+      stroke-dasharray: 6 5;
+      opacity: 0.75;
+    }
+    .lessons { margin: 0; padding-left: 18px; }
+    .lessons li { margin-bottom: 10px; }
+    @media (max-width: 820px) {
+      .kpi-row, .block-grid, .chart-grid { grid-template-columns: 1fr; }
+    }
+    
+    .hero h1 { font-size: 2.6rem; letter-spacing: -0.02em; }
+    .hero-sub { font-size: 1.05rem; max-width: 70ch; color: #cbd5f5; }
+    .hero-scores { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; }
+    .hero-score {
+      display: flex; flex-direction: column; gap: 4px; padding: 12px 18px;
+      border-radius: 14px; background: rgba(148,163,184,0.08);
+      border: 1px solid rgba(148,163,184,0.18);
+    }
+    .hero-score-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; }
+    .hero-score-value { font-size: 1.9rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .hero-score-value.up { color: #34d399; }
+    .hero-score-value.down { color: #f87171; }
+
+    .play-btn {
+      background: linear-gradient(120deg, #6366f1, #22d3ee);
+      color: #06111f; border: 0; border-radius: 999px; padding: 9px 20px;
+      font-weight: 700; cursor: pointer; font-size: 0.9rem;
+    }
+    .play-btn:hover { filter: brightness(1.12); }
+    .race-toolbar { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .race-hint { color: #94a3b8; font-size: 0.85rem; }
+
+    .race { display: grid; gap: 12px; }
+    .race-row {
+      display: grid; grid-template-columns: 220px 1fr 132px; gap: 14px; align-items: center;
+    }
+    .race-name { font-size: 0.9rem; }
+    .race-name small { display: block; color: #94a3b8; font-size: 0.74rem; line-height: 1.3; }
+    .race-track {
+      position: relative; height: 26px; border-radius: 8px;
+      background: rgba(148,163,184,0.1); overflow: hidden;
+    }
+    .race-fill {
+      position: absolute; inset: 0 auto 0 0; width: 0%;
+      background: linear-gradient(90deg, #6366f1, #22d3ee);
+      transition: width 1.1s cubic-bezier(.22,1,.36,1);
+    }
+    .race-ghost {
+      position: absolute; top: 0; bottom: 0; width: 2px; background: #f8fafc88;
+    }
+    .race-ghost::after {
+      content: "v3"; position: absolute; top: -1px; left: 4px;
+      font-size: 0.62rem; color: #cbd5f5;
+    }
+    .wire-diagram { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; max-width: 760px; }
+    .wire-col {
+      position: relative; padding: 18px; border-radius: 16px;
+      background: rgba(148,163,184,0.06); border: 1px solid rgba(148,163,184,0.16);
+    }
+    .wire-title { font-size: 0.72rem; letter-spacing: 0.12em; color: #94a3b8; margin-bottom: 12px; }
+    .wire-box {
+      border-radius: 10px; padding: 10px 14px; text-align: center; font-size: 0.85rem;
+      background: rgba(99,102,241,0.18); border: 1px solid rgba(148,163,184,0.25);
+    }
+    .wire-box.gru { background: rgba(34,211,238,0.14); }
+    .wire-box.head { background: rgba(148,163,184,0.1); }
+    .wire-box.live { border-color: #34d399; box-shadow: 0 0 0 1px #34d39944; }
+    .wire-arrows { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; height: 26px; }
+    .wire-arrow { display: block; width: 2px; height: 100%; margin: 0 auto; background: linear-gradient(#22d3ee, transparent); }
+    .wire-heads { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .wire-link { position: absolute; left: 18px; right: 18px; bottom: 34px; height: 60px; width: calc(100% - 36px); }
+    .wire-flow { animation: wireDash 1.6s linear infinite; }
+    @keyframes wireDash { to { stroke-dashoffset: -22; } }
+    .wire-note { font-size: 0.76rem; color: #94a3b8; margin: 46px 0 0; text-align: center; }
+    .wire-note.up { color: #6ee7b7; }
+
+    .race-fill-soft { background: linear-gradient(90deg, #64748b, #94a3b8); }
+    .fair-tag {
+      display: inline-block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; padding: 2px 7px; border-radius: 999px; margin-left: 6px;
+      vertical-align: 2px;
+    }
+    .fair-tag.fair { background: rgba(52,211,153,0.18); color: #6ee7b7; }
+    .fair-tag.unfair { background: rgba(148,163,184,0.16); color: #cbd5f5; }
+    .race-val { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.9rem; }
+    .race-val b { display: block; }
+    .race-delta { font-size: 0.76rem; }
+    .up { color: #34d399; } .down { color: #f87171; } .flat { color: #94a3b8; }
+
+    .lab { display: grid; grid-template-columns: minmax(280px, 1fr) 360px; gap: 26px; align-items: start; }
+    .control-group { margin-bottom: 16px; }
+    .control-label {
+      display: block; font-size: 0.72rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #94a3b8; margin-bottom: 8px;
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .scroll-row { max-height: 176px; overflow-y: auto; padding-right: 4px; }
+    .chip {
+      background: rgba(148,163,184,0.1); border: 1px solid rgba(148,163,184,0.2);
+      color: #e2e8f0; border-radius: 999px; padding: 6px 13px; font-size: 0.82rem; cursor: pointer;
+    }
+    .chip:hover { border-color: #22d3ee88; }
+    .chip.active { background: linear-gradient(120deg, #6366f1, #22d3ee); color: #06111f; font-weight: 700; border-color: transparent; }
+    .chip .chip-n { opacity: 0.65; font-size: 0.72rem; margin-left: 5px; }
+    .switch { display: flex; gap: 9px; align-items: flex-start; font-size: 0.84rem; color: #cbd5f5; cursor: pointer; }
+    .lab-readout { margin-top: 18px; display: grid; gap: 10px; }
+    .readout-row { display: grid; grid-template-columns: 92px 1fr 60px; gap: 10px; align-items: center; font-size: 0.83rem; }
+    .readout-track { height: 10px; border-radius: 6px; background: rgba(148,163,184,0.12); overflow: hidden; }
+    .readout-fill { height: 100%; border-radius: 6px; transition: width .6s ease; }
+    .lab-arena { position: relative; }
+    .arena { width: 100%; height: auto; display: block; }
+    .zone-cell { cursor: crosshair; transition: opacity .25s ease; }
+    .arena-tip {
+      position: absolute; pointer-events: none; padding: 7px 10px; border-radius: 9px;
+      background: #0b1220ee; border: 1px solid rgba(148,163,184,0.3); font-size: 0.78rem;
+      transform: translate(-50%, -125%); white-space: nowrap; z-index: 5;
+    }
+
+    .league { display: grid; gap: 9px; }
+    .league-row { display: grid; grid-template-columns: 168px 1fr 118px; gap: 12px; align-items: center; font-size: 0.86rem; }
+    .league-bar { position: relative; height: 22px; background: rgba(148,163,184,0.1); border-radius: 7px; }
+    .league-seg { position: absolute; top: 3px; height: 16px; border-radius: 5px; }
+    .league-old { background: rgba(248,113,113,0.55); }
+    .league-new { background: linear-gradient(90deg,#34d399,#22d3ee); }
+    .league-tag { font-size: 0.7rem; color: #94a3b8; margin-left: 6px; }
+
+    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+    .fix-card {
+      background: rgba(148,163,184,0.06); border: 1px solid rgba(148,163,184,0.16);
+      border-radius: 14px; padding: 12px; transition: transform .2s ease, border-color .2s ease;
+    }
+    .fix-card:hover { transform: translateY(-4px); border-color: #34d39966; }
+    .fix-card h4 { margin: 0 0 2px; font-size: 0.85rem; }
+    .fix-card .meta { font-size: 0.7rem; margin: 0 0 8px; }
+    .mini-arena { width: 100%; height: auto; border-radius: 8px; }
+
+    .quiz-section { background: rgba(99,102,241,0.06); border-radius: 20px; }
+    .quiz { display: grid; gap: 16px; }
+    .quiz-card {
+      border: 1px solid rgba(148,163,184,0.2); border-radius: 18px; padding: 20px;
+      background: rgba(11,18,32,0.6);
+    }
+    .quiz-threat { font-size: 1.15rem; margin: 0 0 4px; }
+    .quiz-threat b { color: #f87171; }
+    .quiz-meta { color: #94a3b8; font-size: 0.82rem; margin: 0 0 16px; }
+    .hand { display: flex; flex-wrap: wrap; gap: 12px; }
+    .hand-card {
+      position: relative; min-width: 118px; padding: 14px 12px 12px; border-radius: 14px;
+      background: linear-gradient(160deg, rgba(99,102,241,0.25), rgba(34,211,238,0.12));
+      border: 1px solid rgba(148,163,184,0.25); cursor: pointer; text-align: left;
+      color: #e2e8f0; transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .hand-card:hover:not(:disabled) { transform: translateY(-5px); box-shadow: 0 10px 24px rgba(34,211,238,0.16); }
+    .hand-card:disabled { cursor: default; opacity: 0.92; }
+    .hand-card .cost {
+      position: absolute; top: -9px; right: -8px; width: 26px; height: 26px; border-radius: 50%;
+      background: #a855f7; color: #0b1220; font-weight: 800; font-size: 0.8rem;
+      display: grid; place-items: center; border: 2px solid #0b1220;
+    }
+    .hand-card .name { font-size: 0.88rem; font-weight: 600; }
+    .hand-card .tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px; min-height: 18px; }
+    .tag { font-size: 0.62rem; padding: 2px 7px; border-radius: 999px; font-weight: 700; letter-spacing: 0.03em; }
+    .tag-human { background: #f8fafc; color: #0b1220; }
+    .tag-v4 { background: #34d399; color: #06281c; }
+    .tag-v3 { background: #f87171; color: #2a0b0b; }
+    .tag-you { background: #22d3ee; color: #06111f; }
+    .hand-card.correct { border-color: #34d399; box-shadow: 0 0 0 2px #34d39955; }
+    .hand-card.wrong { border-color: #f87171; }
+    .quiz-stage { display: grid; grid-template-columns: 168px 1fr; gap: 22px; align-items: start; }
+    .quiz-board .mini-arena { width: 100%; }
+    .quiz-board .meta { font-size: 0.68rem; margin: 8px 0 0; line-height: 1.35; }
+    .quiz-verdict { margin-top: 14px; font-size: 0.9rem; min-height: 22px; }
+    .quiz-nav { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+    .dots { display: flex; gap: 6px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(148,163,184,0.3); }
+    .dot.done { background: #22d3ee; }
+    .dot.current { background: #f8fafc; }
+    .quiz-score { margin-top: 18px; display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
+    .score-pill { padding: 9px 16px; border-radius: 12px; background: rgba(148,163,184,0.1); }
+    .score-pill b { font-size: 1.15rem; }
+
+    .legend-row { display: flex; gap: 18px; font-size: 0.78rem; color: #cbd5f5; margin-bottom: 12px; }
+    .legend-row .swatch {
+      display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+      margin-right: 6px; vertical-align: -2px;
+    }
+    .legend-row .swatch.tick { width: 3px; height: 14px; border-radius: 1px; background: #cbd5f5aa; }
+    .dumbbells { display: grid; gap: 10px; }
+    .dumb-row { display: grid; grid-template-columns: 190px 1fr 96px; gap: 12px; align-items: center; font-size: 0.85rem; }
+    .dumb-track { position: relative; height: 26px; }
+    .dumb-line { position: absolute; top: 12px; height: 3px; border-radius: 2px; }
+    .dumb-dot { position: absolute; top: 7px; width: 13px; height: 13px; border-radius: 50%; transform: translateX(-50%); }
+    .dumb-old { background: #f87171; }
+    .dumb-new { background: #34d399; }
+    .dumb-human { position: absolute; top: 3px; width: 2px; height: 20px; background: #cbd5f5aa; }
+    .dumb-axis { position: absolute; inset: 12px 0 auto 0; height: 1px; background: rgba(148,163,184,0.15); }
+
+    .split-row { display: grid; grid-template-columns: 120px 1fr 108px; gap: 10px; align-items: center; font-size: 0.84rem; margin-bottom: 9px; }
+    .split-track { height: 18px; border-radius: 6px; background: rgba(148,163,184,0.1); position: relative; }
+    .split-old, .split-new { position: absolute; left: 0; height: 8px; border-radius: 4px; }
+    .split-old { top: 1px; background: rgba(248,113,113,0.6); }
+    .split-new { top: 9px; background: linear-gradient(90deg,#34d399,#22d3ee); }
+
+    @media (max-width: 900px) {
+      .lab { grid-template-columns: 1fr; }
+      .race-row { grid-template-columns: 1fr; }
+      .league-row, .dumb-row { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+  <main>
+    <header class="report-header hero">
+      <div class="badge-row">
+        <span class="badge">policy-bc-v4.0.0</span>
+        <span class="badge">vs v3.0.0</span>
+        <span class="badge">card-conditioned placement</span>
+        <span class="badge">6,356 held-out actions rescored</span>
+        <span class="badge">cuda</span>
+      </div>
+      <h1>What actually got better in v4</h1>
+      <p class="hero-sub">v3 knew <em>when</em> to defend. v4 also knows <em>where</em> to put the card,
+      because the placement heads finally get to see which card is being played.
+      Everything below is measured offline on held-out battles — click, scrub and play with it.</p>
+      <p class="meta">Showcase built 2026-08-08T02:50:48Z ·
+      700 battles · scored in 97.0s</p>
+      <div class="hero-scores">
+        <div class="hero-score">
+          <span class="hero-score-label">Zones fixed by v4</span>
+          <span class="hero-score-value up" data-count="740">0</span>
+        </div>
+        <div class="hero-score">
+          <span class="hero-score-label">Zones broken by v4</span>
+          <span class="hero-score-value down" data-count="526">0</span>
+        </div>
+        <div class="hero-score">
+          <span class="hero-score-label">Net placements gained</span>
+          <span class="hero-score-value up" data-count="214">0</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="report-section">
+      <h2>The one-wire change</h2>
+      <p class="caption">v3 asked the placement heads to guess a location from the game state alone,
+      before anything decided <em>which</em> card was going down. v4 feeds the chosen card's
+      embedding into those heads (teacher-forced 70% / model's own soft pick 30% during training),
+      so "where" finally knows "what". Hover the wire.</p>
+      <div class="wire-diagram">
+        <div class="wire-col">
+          <div class="wire-title">v3</div>
+          <div class="wire-box gru">GRU state</div>
+          <div class="wire-arrows">
+            <span class="wire-arrow"></span><span class="wire-arrow"></span>
+          </div>
+          <div class="wire-heads">
+            <div class="wire-box head">card slot</div>
+            <div class="wire-box head">zone + xy</div>
+          </div>
+          <p class="wire-note">placement is card-blind</p>
+        </div>
+        <div class="wire-col">
+          <div class="wire-title">v4</div>
+          <div class="wire-box gru">GRU state</div>
+          <div class="wire-arrows">
+            <span class="wire-arrow"></span><span class="wire-arrow"></span>
+          </div>
+          <div class="wire-heads">
+            <div class="wire-box head" id="wireSlot">card slot</div>
+            <div class="wire-box head live" id="wirePlace">zone + xy</div>
+          </div>
+          <svg class="wire-link" viewBox="0 0 240 60" preserveAspectRatio="none">
+            <path d="M46,10 C46,48 194,48 194,12" fill="none" stroke="#34d399" stroke-width="2.5"
+                  stroke-dasharray="6 5" class="wire-flow"/>
+          </svg>
+          <p class="wire-note up">card embedding → placement</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>The tale of the tape</h2>
+      <p class="caption">Hit <em>Run the diff</em> and watch each bar travel from v3 to v4.
+      The first five rows are the honest comparison: both frozen checkpoints replayed over the
+      <b>same 6,356 held-out actions</b> for this report. The last rows are copied
+      from each model's own training run — the replay dataset kept growing between them, so treat
+      those as indicative, not head-to-head.</p>
+      <div class="race-toolbar">
+        <button type="button" class="play-btn" id="raceBtn">▶ Run the diff</button>
+        <span class="race-hint" id="raceHint">bars are parked at v3</span>
+      </div>
+      <div class="race" id="race"></div>
+    </section>
+
+    <section class="report-section">
+      <h2>Arena lab</h2>
+      <p class="caption">Where do cards actually land? Pick a layer and a card. The grid is the
+      model's 12-zone placement space drawn to scale on the board — your side is at the bottom,
+      the river is the thin band in the middle.</p>
+      <div class="lab">
+        <div class="lab-controls">
+          <div class="control-group">
+            <span class="control-label">Layer</span>
+            <div class="chip-row" id="layerRow">
+              <button type="button" class="chip active" data-layer="human">Humans</button>
+              <button type="button" class="chip" data-layer="new">v4</button>
+              <button type="button" class="chip" data-layer="old">v3</button>
+              <button type="button" class="chip" data-layer="dnew">v4 − humans</button>
+              <button type="button" class="chip" data-layer="dver">v4 − v3</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <span class="control-label">Card</span>
+            <div class="chip-row scroll-row" id="cardRow"></div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="scatterToggle">
+            <span>show individual plays (white = human, amber = v4, line = error)</span>
+          </label>
+          <div class="lab-readout" id="labReadout"></div>
+        </div>
+        <div class="lab-arena">
+          <svg id="arena" viewBox="0 0 300 440" class="arena"></svg>
+          <div class="arena-tip" id="arenaTip" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Placement league table</h2>
+      <p class="caption">Zone accuracy per card, v3 → v4. Sorted by who gained the most from
+      telling the placement head which card it is holding.</p>
+      <div class="league" id="league"></div>
+    </section>
+
+    <section class="report-section">
+      <h2>Caught in the act</h2>
+      <p class="caption">Real held-out plays where v3 put the card in the wrong zone and v4 got it
+      right. White star = what the human did, red = v3, green = v4.</p>
+      <div class="gallery" id="gallery"></div>
+    </section>
+
+    <section class="report-section quiz-section">
+      <h2>Can you beat the bots?</h2>
+      <p class="caption">Real reaction windows from held-out battles: the opponent just committed a
+      win condition, these four cards were in hand. Pick what you would play, then see what the
+      human actually did — and what v3 and v4 said.</p>
+      <div class="quiz" id="quiz"></div>
+      <div class="quiz-score" id="quizScore"></div>
+    </section>
+
+    <section class="report-section">
+      <h2>Defense cells: v3 → v4</h2>
+      <p class="caption">Probability the model plays the textbook answer <em>when that answer is
+      naturally in hand</em>. Grey tick = how often humans themselves take the answer, which is the
+      real ceiling here — humans are not textbooks.</p>
+      <div class="legend-row">
+        <span><i class="swatch" style="background:#f87171"></i>v3</span>
+        <span><i class="swatch" style="background:#34d399"></i>v4</span>
+        <span><i class="swatch tick"></i>human use rate</span>
+      </div>
+      <div class="dumbbells" id="dumbbells"></div>
+    </section>
+
+    <section class="report-section block-grid">
+      <div class="block">
+        <h2>Under pressure vs. free time</h2>
+        <p class="caption">Reaction = acting within 5s of an opponent win condition.</p>
+        <div id="splitBars"></div>
+      </div>
+      <div class="block">
+        <h2>Placement spread</h2>
+        <p class="caption">Entropy of the zone distribution (bits). A model that mashes one zone
+        looks confident and plays badly; v4 is closer to the human spread.</p>
+        <div id="entropyBars"></div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Training, side by side</h2>
+      <p class="caption">Validation curves for both runs. Scrub the epoch slider to replay training.</p>
+      <div class="chart-animation">
+        <svg class="chart" id="trainChart"></svg>
+        <div class="legend" id="trainLegend"></div>
+        <div class="anim-toolbar">
+          <button type="button" class="play-btn" id="trainPlay">▶</button>
+          <input type="range" class="anim-scrubber" id="trainScrub" min="1" max="1" value="1" step="1">
+          <div class="anim-readout" id="trainReadout"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Lessons learned</h2>
+      <ul class="lessons">
+        <li>v4 keeps v3 threat conditioning + reaction upweight; adds jointly trained card-conditioned zone/XY heads.</li><li>Offline probe: oracle card conditioning lifted zone to ~52%; e2e on frozen argmax did not — so v4 trains placement with the trunk (70% teacher / 30% soft slot mix).</li><li>Hand-audit showed exact cycle reconstruction does not move slot accuracy — heuristic hand masks stay.</li><li>Rollout autopsy blamed XY for most collapses; judge v4 on zone/XY MAE and collapse rate, not the auto live-play flag.</li><li>Action-clock initiative (+6pp) is for rollout harness next — not baked into this checkpoint.</li>
+        <li>Card-conditioned placement moved zone accuracy 41.0%
+        → 44.4% (+3.4pp) on the same rescored
+        held-out actions, while slot accuracy also drifted +2.2pp — the two heads
+        did not fight each other.</li>
+        <li>Net 214 placements flipped to the human's zone
+        (740 fixed vs 526 broken), so the gain
+        is broad rather than one card carrying it.</li>
+      </ul>
+    </section>
+
+    <footer class="report-footer">
+      <p class="meta">Offline evaluation only. No live games were played to produce this report.
+      Full training report: <a href="policy_bc_v4.html">
+      policy_bc_v4.html</a></p>
+    </footer>
+  </main>
+  <script>
+    const DATA = {"show":{"created_at":"2026-08-08T02:50:48Z","new_model":{"dir":"models/policy_bc_v4","version":"4.0.0","card_conditioned_placement":true},"old_model":{"dir":"models/policy_bc_v3","version":"3.0.0","card_conditioned_placement":false},"compute":{"device":"cuda","battles_scored":700,"actions_scored":6356,"seconds":97.0},"zone_names":["own back left","own back center","own back right","own front left","own front center","own front right","river left","river center","river right","enemy left","enemy center","enemy right"],"overall":{"n":6356,"human_grid":[0.032724984266834484,0.05947136563876652,0.032095657646318436,0.07205789804908748,0.08134046570169919,0.06780994336060416,0.13483322844556325,0.03571428571428571,0.12728130899937068,0.11815607300188798,0.13325991189427314,0.105254877281309],"new_grid":[0.0184078036500944,0.06875393329137823,0.019981120201384518,0.0764631843926998,0.065764631843927,0.0763058527375708,0.1592196349905601,0.0039332913782252985,0.1342039018250472,0.12004405286343613,0.15591567023285086,0.10100692259282568],"old_grid":[0.014317180616740088,0.06403398363750787,0.012743864065449969,0.0764631843926998,0.06560730018879798,0.065764631843927,0.15418502202643172,0.0009439899307740718,0.15040906230333542,0.11847073631214601,0.16755821271239774,0.10950283196979232],"new_zone_acc":0.44398993077407173,"old_zone_acc":0.41032095657646317,"new_slot_acc":0.5473568281938326,"old_slot_acc":0.5254877281309,"new_slot_top3":0.9354940213971051,"old_slot_top3":0.9282567652611705,"new_xy_mae":5235.607340509912,"old_xy_mae":5646.048696328173,"new_tile_acc":0.04657016991818754,"old_tile_acc":0.028477029578351163,"zone_entropy_human":3.4273803724350906,"zone_entropy_new":3.2711482369437017,"zone_entropy_old":3.203768629973532},"cards":[{"card":"zap","label":"Zap","n":137,"cost":2,"is_wincon":false,"human_grid":[0.0364963503649635,0.014598540145985401,0.043795620437956206,0.16058394160583941,0.0072992700729927005,0.15328467153284672,0.051094890510948905,0.0,0.06569343065693431,0.1678832116788321,0.043795620437956206,0.25547445255474455],"new_grid":[0.014598540145985401,0.014598540145985401,0.0364963503649635,0.10948905109489052,0.021897810218978103,0.10948905109489052,0.10948905109489052,0.0,0.11678832116788321,0.17518248175182483,0.11678832116788321,0.17518248175182483],"old_grid":[0.029197080291970802,0.0364963503649635,0.021897810218978103,0.058394160583941604,0.014598540145985401,0.08029197080291971,0.18248175182481752,0.0,0.19708029197080293,0.13138686131386862,0.12408759124087591,0.12408759124087591],"new_zone_acc":0.40145985401459855,"old_zone_acc":0.31386861313868614,"scatter":[{"hx":0.8056,"hy":0.4531,"nx":0.6032,"ny":0.4263,"ox":0.4952,"oy":0.4625},{"hx":0.8056,"hy":0.4531,"nx":0.7707,"ny":0.5814,"ox":0.689,"oy":0.6213},{"hx":0.3056,"hy":0.4219,"nx":0.2641,"ny":0.5682,"ox":0.3258,"oy":0.5789},{"hx":0.25,"hy":0.2969,"nx":0.4093,"ny":0.5301,"ox":0.3815,"oy":0.5002},{"hx":0.8611,"hy":0.3594,"nx":0.7878,"ny":0.3297,"ox":0.699,"oy":0.3026},{"hx":0.6389,"hy":0.5781,"nx":0.4697,"ny":0.6858,"ox":0.4932,"oy":0.6092},{"hx":0.1944,"hy":0.2656,"nx":0.3416,"ny":0.6857,"ox":0.4829,"oy":0.7079},{"hx":0.3611,"hy":0.7344,"nx":0.247,"ny":0.7124,"ox":0.3044,"oy":0.5779},{"hx":0.1944,"hy":0.5469,"nx":0.2422,"ny":0.6882,"ox":0.2418,"oy":0.6725},{"hx":0.5278,"hy":0.6094,"nx":0.5914,"ny":0.4996,"ox":0.5664,"oy":0.3279},{"hx":0.4722,"hy":0.2031,"nx":0.4878,"ny":0.3686,"ox":0.5115,"oy":0.495},{"hx":0.5833,"hy":0.7969,"nx":0.5443,"ny":0.5856,"ox":0.5658,"oy":0.6962},{"hx":0.3611,"hy":0.2656,"nx":0.2953,"ny":0.3737,"ox":0.3022,"oy":0.4775},{"hx":0.5278,"hy":0.2031,"nx":0.3699,"ny":0.2271,"ox":0.4948,"oy":0.2277},{"hx":0.1944,"hy":0.6406,"nx":0.3232,"ny":0.5118,"ox":0.2979,"oy":0.5892},{"hx":0.3611,"hy":0.7344,"nx":0.2842,"ny":0.6891,"ox":0.3203,"oy":0.5187},{"hx":0.75,"hy":0.6719,"nx":0.6499,"ny":0.5557,"ox":0.5187,"oy":0.5055},{"hx":0.8611,"hy":0.3906,"nx":0.7556,"ny":0.4252,"ox":0.7643,"oy":0.4245},{"hx":0.25,"hy":0.6094,"nx":0.3327,"ny":0.6144,"ox":0.3275,"oy":0.6766},{"hx":0.25,"hy":0.2969,"nx":0.2646,"ny":0.4306,"ox":0.2674,"oy":0.4844},{"hx":0.8056,"hy":0.7344,"nx":0.4754,"ny":0.1564,"ox":0.4952,"oy":0.3691},{"hx":0.8056,"hy":0.3281,"nx":0.8095,"ny":0.3924,"ox":0.7472,"oy":0.3974},{"hx":0.6389,"hy":0.7344,"nx":0.5749,"ny":0.5128,"ox":0.6332,"oy":0.4216},{"hx":0.75,"hy":0.7031,"nx":0.5492,"ny":0.6481,"ox":0.5287,"oy":0.4962},{"hx":0.25,"hy":0.6406,"nx":0.2438,"ny":0.6078,"ox":0.2127,"oy":0.645},{"hx":0.3611,"hy":0.2031,"nx":0.4414,"ny":0.5922,"ox":0.3731,"oy":0.6238},{"hx":0.3056,"hy":0.2344,"nx":0.2701,"ny":0.3406,"ox":0.2747,"oy":0.4788},{"hx":0.5833,"hy":0.5781,"nx":0.4951,"ny":0.634,"ox":0.4874,"oy":0.5468},{"hx":0.25,"hy":0.3281,"nx":0.1912,"ny":0.2744,"ox":0.2638,"oy":0.2828},{"hx":0.75,"hy":0.3906,"nx":0.7902,"ny":0.4205,"ox":0.7702,"oy":0.3895},{"hx":0.1944,"hy":0.7344,"nx":0.3659,"ny":0.6718,"ox":0.3983,"oy":0.6706},{"hx":0.8056,"hy":0.6094,"nx":0.6784,"ny":0.6326,"ox":0.5314,"oy":0.672},{"hx":0.6389,"hy":0.5469,"nx":0.7693,"ny":0.5207,"ox":0.7346,"oy":0.5758},{"hx":0.8056,"hy":0.5781,"nx":0.7497,"ny":0.5045,"ox":0.7415,"oy":0.542},{"hx":0.1389,"hy":0.5781,"nx":0.3095,"ny":0.4319,"ox":0.3408,"oy":0.4404},{"hx":0.1389,"hy":0.3594,"nx":0.2781,"ny":0.3198,"ox":0.3199,"oy":0.334},{"hx":0.1944,"hy":0.2656,"nx":0.4054,"ny":0.4252,"ox":0.2518,"oy":0.4636},{"hx":0.1944,"hy":0.6094,"nx":0.269,"ny":0.3598,"ox":0.3293,"oy":0.5339},{"hx":0.8611,"hy":0.6406,"nx":0.7455,"ny":0.6987,"ox":0.7074,"oy":0.7305},{"hx":0.75,"hy":0.5781,"nx":0.6146,"ny":0.5154,"ox":0.6403,"oy":0.4897},{"hx":0.1944,"hy":0.5781,"nx":0.4055,"ny":0.6778,"ox":0.4558,"oy":0.5558},{"hx":0.1944,"hy":0.5469,"nx":0.4595,"ny":0.2085,"ox":0.3669,"oy":0.3125},{"hx":0.3611,"hy":0.6719,"nx":0.406,"ny":0.6116,"ox":0.4041,"oy":0.5845},{"hx":0.8056,"hy":0.4531,"nx":0.4077,"ny":0.4258,"ox":0.3943,"oy":0.4113},{"hx":0.8056,"hy":0.4219,"nx":0.5435,"ny":0.6563,"ox":0.5579,"oy":0.5471},{"hx":0.1944,"hy":0.4219,"nx":0.265,"ny":0.4911,"ox":0.2565,"oy":0.4914},{"hx":0.8056,"hy":0.2344,"nx":0.78,"ny":0.2254,"ox":0.7369,"oy":0.2051},{"hx":0.8056,"hy":0.2031,"nx":0.7507,"ny":0.2889,"ox":0.7539,"oy":0.2708},{"hx":0.8056,"hy":0.7656,"nx":0.6377,"ny":0.5643,"ox":0.6881,"oy":0.5991},{"hx":0.8056,"hy":0.7656,"nx":0.7245,"ny":0.6414,"ox":0.6692,"oy":0.615},{"hx":0.75,"hy":0.4844,"nx":0.472,"ny":0.5691,"ox":0.3953,"oy":0.6268},{"hx":0.25,"hy":0.2969,"nx":0.3067,"ny":0.515,"ox":0.2926,"oy":0.5479},{"hx":0.8056,"hy":0.5781,"nx":0.6074,"ny":0.7162,"ox":0.5151,"oy":0.7152},{"hx":0.6944,"hy":0.7031,"nx":0.5557,"ny":0.6636,"ox":0.6299,"oy":0.6945},{"hx":0.75,"hy":0.7031,"nx":0.4208,"ny":0.6286,"ox":0.4525,"oy":0.6532},{"hx":0.1944,"hy":0.2031,"nx":0.2027,"ny":0.1686,"ox":0.2371,"oy":0.2264},{"hx":0.8611,"hy":0.3594,"nx":0.6982,"ny":0.5042,"ox":0.703,"oy":0.4986},{"hx":0.9167,"hy":0.3594,"nx":0.571,"ny":0.4515,"ox":0.5021,"oy":0.5054},{"hx":0.1944,"hy":0.3906,"nx":0.2627,"ny":0.3926,"ox":0.283,"oy":0.4851},{"hx":0.8056,"hy":0.5156,"nx":0.6478,"ny":0.4906,"ox":0.681,"oy":0.4673},{"hx":0.8056,"hy":0.7031,"nx":0.8104,"ny":0.7158,"ox":0.746,"oy":0.6737},{"hx":0.8611,"hy":0.4531,"nx":0.7217,"ny":0.409,"ox":0.7549,"oy":0.4558},{"hx":0.4167,"hy":0.7031,"nx":0.2712,"ny":0.699,"ox":0.2797,"oy":0.4168},{"hx":0.6389,"hy":0.7031,"nx":0.497,"ny":0.649,"ox":0.4165,"oy":0.5176},{"hx":0.75,"hy":0.6406,"nx":0.7394,"ny":0.5816,"ox":0.755,"oy":0.6082},{"hx":0.8056,"hy":0.6406,"nx":0.7151,"ny":0.5611,"ox":0.7566,"oy":0.5698},{"hx":0.9167,"hy":0.1406,"nx":0.7137,"ny":0.2667,"ox":0.6633,"oy":0.4142},{"hx":0.6389,"hy":0.8594,"nx":0.6557,"ny":0.675,"ox":0.6883,"oy":0.6796},{"hx":0.25,"hy":0.7656,"nx":0.2891,"ny":0.3851,"ox":0.3783,"oy":0.3083},{"hx":0.6389,"hy":0.8594,"nx":0.6677,"ny":0.6512,"ox":0.6254,"oy":0.6354},{"hx":0.1389,"hy":0.6406,"nx":0.2282,"ny":0.7059,"ox":0.2403,"oy":0.5786},{"hx":0.75,"hy":0.5781,"nx":0.5595,"ny":0.6398,"ox":0.6415,"oy":0.5717},{"hx":0.5833,"hy":0.7969,"nx":0.5276,"ny":0.4614,"ox":0.5495,"oy":0.3599},{"hx":0.1944,"hy":0.2344,"nx":0.3433,"ny":0.6606,"ox":0.4578,"oy":0.6939},{"hx":0.1944,"hy":0.2969,"nx":0.2417,"ny":0.5992,"ox":0.2698,"oy":0.5626},{"hx":0.8056,"hy":0.2031,"nx":0.8378,"ny":0.6683,"ox":0.751,"oy":0.605},{"hx":0.75,"hy":0.2969,"nx":0.7719,"ny":0.2951,"ox":0.7448,"oy":0.472},{"hx":0.1944,"hy":0.7969,"nx":0.8,"ny":0.2772,"ox":0.7077,"oy":0.3076},{"hx":0.1944,"hy":0.5156,"nx":0.2406,"ny":0.6254,"ox":0.3298,"oy":0.6468},{"hx":0.6389,"hy":0.2656,"nx":0.5379,"ny":0.4436,"ox":0.5333,"oy":0.5359},{"hx":0.3611,"hy":0.3281,"nx":0.5115,"ny":0.6095,"ox":0.4776,"oy":0.5745},{"hx":0.1944,"hy":0.5469,"nx":0.2956,"ny":0.6151,"ox":0.2485,"oy":0.576},{"hx":0.75,"hy":0.5781,"nx":0.6847,"ny":0.6892,"ox":0.6822,"oy":0.6974},{"hx":0.6944,"hy":0.2656,"nx":0.6502,"ny":0.2764,"ox":0.5753,"oy":0.3891},{"hx":0.25,"hy":0.5781,"nx":0.6749,"ny":0.6335,"ox":0.5116,"oy":0.6521},{"hx":0.1944,"hy":0.7969,"nx":0.6858,"ny":0.3265,"ox":0.6407,"oy":0.4767},{"hx":0.3611,"hy":0.1719,"nx":0.6641,"ny":0.33,"ox":0.7028,"oy":0.4574},{"hx":0.8056,"hy":0.6406,"nx":0.6133,"ny":0.595,"ox":0.6633,"oy":0.6074},{"hx":0.3611,"hy":0.3594,"nx":0.4314,"ny":0.7414,"ox":0.4271,"oy":0.6046},{"hx":0.75,"hy":0.6094,"nx":0.7148,"ny":0.5313,"ox":0.7116,"oy":0.5972}]},{"card":"arrows","label":"Arrows","n":140,"cost":3,"is_wincon":false,"human_grid":[0.05,0.02857142857142857,0.02857142857142857,0.10714285714285714,0.02857142857142857,0.18571428571428572,0.02857142857142857,0.0,0.05714285714285714,0.29285714285714287,0.03571428571428571,0.15714285714285714],"new_grid":[0.02857142857142857,0.03571428571428571,0.03571428571428571,0.12142857142857143,0.02142857142857143,0.12142857142857143,0.11428571428571428,0.0,0.09285714285714286,0.24285714285714285,0.05714285714285714,0.12857142857142856],"old_grid":[0.02142857142857143,0.04285714285714286,0.02142857142857143,0.11428571428571428,0.007142857142857143,0.09285714285714286,0.11428571428571428,0.0,0.14285714285714285,0.22142857142857142,0.06428571428571428,0.15714285714285714],"new_zone_acc":0.4714285714285714,"old_zone_acc":0.4,"scatter":[{"hx":0.25,"hy":0.2344,"nx":0.2779,"ny":0.5458,"ox":0.3747,"oy":0.4419},{"hx":0.25,"hy":0.6406,"nx":0.4684,"ny":0.6614,"ox":0.5029,"oy":0.6326},{"hx":0.1944,"hy":0.7969,"nx":0.5664,"ny":0.7232,"ox":0.6297,"oy":0.7321},{"hx":0.1389,"hy":0.2656,"nx":0.3081,"ny":0.3015,"ox":0.2981,"oy":0.421},{"hx":0.6944,"hy":0.2656,"nx":0.5196,"ny":0.5599,"ox":0.5241,"oy":0.625},{"hx":0.8056,"hy":0.5781,"nx":0.4404,"ny":0.5804,"ox":0.4804,"oy":0.4123},{"hx":0.25,"hy":0.7344,"nx":0.3291,"ny":0.753,"ox":0.321,"oy":0.492},{"hx":0.6389,"hy":0.2656,"nx":0.5518,"ny":0.534,"ox":0.4549,"oy":0.5416},{"hx":0.75,"hy":0.4531,"nx":0.6997,"ny":0.4297,"ox":0.7259,"oy":0.4197},{"hx":0.6389,"hy":0.7656,"nx":0.6543,"ny":0.5172,"ox":0.7153,"oy":0.5906},{"hx":0.25,"hy":0.6719,"nx":0.3348,"ny":0.6978,"ox":0.4142,"oy":0.6981},{"hx":0.6389,"hy":0.2656,"nx":0.5383,"ny":0.6324,"ox":0.5737,"oy":0.6653},{"hx":0.3056,"hy":0.8594,"nx":0.2931,"ny":0.4174,"ox":0.2421,"oy":0.4465},{"hx":0.6944,"hy":0.7344,"nx":0.7146,"ny":0.5234,"ox":0.7044,"oy":0.4185},{"hx":0.75,"hy":0.4844,"nx":0.7539,"ny":0.5686,"ox":0.7637,"oy":0.6199},{"hx":0.75,"hy":0.3594,"nx":0.8067,"ny":0.4305,"ox":0.7019,"oy":0.3704},{"hx":0.3056,"hy":0.2969,"nx":0.2421,"ny":0.3528,"ox":0.2477,"oy":0.4546},{"hx":0.1944,"hy":0.4844,"nx":0.1609,"ny":0.5698,"ox":0.2172,"oy":0.5938},{"hx":0.25,"hy":0.6094,"nx":0.4406,"ny":0.8225,"ox":0.3405,"oy":0.6748},{"hx":0.75,"hy":0.6094,"nx":0.7226,"ny":0.6844,"ox":0.748,"oy":0.7345},{"hx":0.25,"hy":0.2031,"nx":0.1618,"ny":0.1775,"ox":0.2291,"oy":0.2038},{"hx":0.25,"hy":0.6719,"nx":0.3851,"ny":0.5646,"ox":0.3858,"oy":0.4413},{"hx":0.4167,"hy":0.6719,"nx":0.4043,"ny":0.7631,"ox":0.4306,"oy":0.6566},{"hx":0.6944,"hy":0.2656,"nx":0.6266,"ny":0.2951,"ox":0.6512,"oy":0.56},{"hx":0.75,"hy":0.5156,"nx":0.6338,"ny":0.2924,"ox":0.6595,"oy":0.3767},{"hx":0.8056,"hy":0.6719,"nx":0.6825,"ny":0.8665,"ox":0.6741,"oy":0.6684},{"hx":0.1944,"hy":0.6719,"nx":0.2393,"ny":0.6543,"ox":0.245,"oy":0.6526},{"hx":0.3056,"hy":0.6719,"nx":0.4347,"ny":0.4765,"ox":0.3938,"oy":0.536},{"hx":0.75,"hy":0.3281,"nx":0.768,"ny":0.2539,"ox":0.7283,"oy":0.3971},{"hx":0.1389,"hy":0.2031,"nx":0.2087,"ny":0.2762,"ox":0.1929,"oy":0.4053},{"hx":0.1944,"hy":0.7344,"nx":0.2061,"ny":0.6295,"ox":0.261,"oy":0.6902},{"hx":0.25,"hy":0.6719,"nx":0.3138,"ny":0.4048,"ox":0.3768,"oy":0.4941},{"hx":0.75,"hy":0.2969,"nx":0.473,"ny":0.3769,"ox":0.5014,"oy":0.4274},{"hx":0.4722,"hy":0.2344,"nx":0.7834,"ny":0.2466,"ox":0.6379,"oy":0.393},{"hx":0.1944,"hy":0.7031,"nx":0.2595,"ny":0.5972,"ox":0.3452,"oy":0.2928},{"hx":0.6944,"hy":0.7344,"nx":0.3519,"ny":0.4883,"ox":0.3527,"oy":0.5049},{"hx":0.8611,"hy":0.3906,"nx":0.7301,"ny":0.3712,"ox":0.7012,"oy":0.4733},{"hx":0.1944,"hy":0.6719,"nx":0.3021,"ny":0.3237,"ox":0.3525,"oy":0.4003},{"hx":0.3056,"hy":0.7344,"nx":0.2168,"ny":0.6919,"ox":0.2521,"oy":0.5758},{"hx":0.1944,"hy":0.3594,"nx":0.3921,"ny":0.5539,"ox":0.509,"oy":0.4807},{"hx":0.8056,"hy":0.7344,"nx":0.6868,"ny":0.6246,"ox":0.6228,"oy":0.6399},{"hx":0.8056,"hy":0.5469,"nx":0.6327,"ny":0.6075,"ox":0.6507,"oy":0.6855},{"hx":0.1389,"hy":0.5781,"nx":0.2621,"ny":0.6461,"ox":0.2406,"oy":0.6803},{"hx":0.8056,"hy":0.3906,"nx":0.6914,"ny":0.3934,"ox":0.6497,"oy":0.4095},{"hx":0.3056,"hy":0.7031,"nx":0.2772,"ny":0.5361,"ox":0.2539,"oy":0.5073},{"hx":0.8056,"hy":0.2969,"nx":0.6667,"ny":0.3353,"ox":0.624,"oy":0.3574},{"hx":0.3056,"hy":0.2656,"nx":0.2801,"ny":0.4722,"ox":0.3519,"oy":0.5837},{"hx":0.25,"hy":0.7344,"nx":0.1869,"ny":0.6418,"ox":0.2285,"oy":0.6344},{"hx":0.1944,"hy":0.6406,"nx":0.3148,"ny":0.6208,"ox":0.371,"oy":0.6158},{"hx":0.75,"hy":0.2969,"nx":0.6825,"ny":0.4152,"ox":0.7014,"oy":0.5262},{"hx":0.1944,"hy":0.7656,"nx":0.354,"ny":0.5739,"ox":0.3425,"oy":0.5989},{"hx":0.1944,"hy":0.2031,"nx":0.223,"ny":0.1782,"ox":0.2315,"oy":0.2197},{"hx":0.1944,"hy":0.7969,"nx":0.214,"ny":0.6481,"ox":0.2937,"oy":0.7039},{"hx":0.4722,"hy":0.0781,"nx":0.155,"ny":0.8191,"ox":0.2229,"oy":0.7345},{"hx":0.25,"hy":0.4844,"nx":0.2771,"ny":0.5858,"ox":0.3018,"oy":0.5229},{"hx":0.1944,"hy":0.2656,"nx":0.286,"ny":0.6367,"ox":0.2041,"oy":0.7255},{"hx":0.6389,"hy":0.3594,"nx":0.5753,"ny":0.3244,"ox":0.4678,"oy":0.4395},{"hx":0.1944,"hy":0.7031,"nx":0.4931,"ny":0.6484,"ox":0.3842,"oy":0.6905},{"hx":0.8056,"hy":0.3281,"nx":0.8177,"ny":0.3391,"ox":0.8322,"oy":0.3108},{"hx":0.6944,"hy":0.7344,"nx":0.738,"ny":0.6123,"ox":0.7473,"oy":0.4747},{"hx":0.1944,"hy":0.2969,"nx":0.2336,"ny":0.4179,"ox":0.2176,"oy":0.358},{"hx":0.8056,"hy":0.4844,"nx":0.4555,"ny":0.3681,"ox":0.6445,"oy":0.3822},{"hx":0.4722,"hy":0.3594,"nx":0.2844,"ny":0.3215,"ox":0.2751,"oy":0.4326},{"hx":0.6389,"hy":0.2969,"nx":0.7329,"ny":0.4547,"ox":0.779,"oy":0.5062},{"hx":0.8056,"hy":0.3594,"nx":0.7887,"ny":0.368,"ox":0.7249,"oy":0.4793},{"hx":0.6389,"hy":0.2031,"nx":0.3153,"ny":0.6096,"ox":0.4168,"oy":0.6367},{"hx":0.25,"hy":0.5781,"nx":0.412,"ny":0.3023,"ox":0.4566,"oy":0.3742},{"hx":0.6389,"hy":0.2656,"nx":0.7015,"ny":0.3722,"ox":0.5694,"oy":0.6114},{"hx":0.1389,"hy":0.3906,"nx":0.3293,"ny":0.5828,"ox":0.3414,"oy":0.5661},{"hx":0.8611,"hy":0.2656,"nx":0.6627,"ny":0.4723,"ox":0.6548,"oy":0.5354},{"hx":0.75,"hy":0.2969,"nx":0.6861,"ny":0.3877,"ox":0.7125,"oy":0.435},{"hx":0.25,"hy":0.4219,"nx":0.2784,"ny":0.5346,"ox":0.2396,"oy":0.6324},{"hx":0.6944,"hy":0.1094,"nx":0.6623,"ny":0.4998,"ox":0.7281,"oy":0.5398},{"hx":0.1389,"hy":0.7344,"nx":0.2656,"ny":0.6459,"ox":0.2499,"oy":0.5582},{"hx":0.1389,"hy":0.2031,"nx":0.3055,"ny":0.3563,"ox":0.2565,"oy":0.284},{"hx":0.75,"hy":0.7031,"nx":0.7215,"ny":0.5938,"ox":0.735,"oy":0.4587},{"hx":0.8056,"hy":0.7344,"nx":0.7546,"ny":0.6287,"ox":0.7801,"oy":0.4951},{"hx":0.75,"hy":0.7031,"nx":0.7967,"ny":0.7166,"ox":0.7486,"oy":0.5867},{"hx":0.3056,"hy":0.2656,"nx":0.2782,"ny":0.429,"ox":0.2836,"oy":0.5314},{"hx":0.4722,"hy":0.3281,"nx":0.5941,"ny":0.5822,"ox":0.5997,"oy":0.5152},{"hx":0.25,"hy":0.3281,"nx":0.214,"ny":0.6207,"ox":0.2238,"oy":0.6485},{"hx":0.75,"hy":0.7031,"nx":0.5109,"ny":0.527,"ox":0.5532,"oy":0.5828},{"hx":0.75,"hy":0.3281,"nx":0.636,"ny":0.4343,"ox":0.698,"oy":0.39},{"hx":0.8056,"hy":0.5156,"nx":0.6684,"ny":0.364,"ox":0.5826,"oy":0.4472},{"hx":0.6944,"hy":0.2656,"nx":0.5869,"ny":0.4407,"ox":0.5892,"oy":0.5875},{"hx":0.1944,"hy":0.5781,"nx":0.2247,"ny":0.7366,"ox":0.3092,"oy":0.7281},{"hx":0.1944,"hy":0.7031,"nx":0.2478,"ny":0.6071,"ox":0.2501,"oy":0.5637},{"hx":0.3611,"hy":0.3281,"nx":0.3269,"ny":0.3959,"ox":0.3131,"oy":0.4177},{"hx":0.3056,"hy":0.2969,"nx":0.4362,"ny":0.5964,"ox":0.45,"oy":0.5779},{"hx":0.25,"hy":0.5781,"nx":0.178,"ny":0.3753,"ox":0.2824,"oy":0.3176}]},{"card":"fireball","label":"Fireball","n":142,"cost":4,"is_wincon":false,"human_grid":[0.06338028169014084,0.014084507042253521,0.035211267605633804,0.15492957746478872,0.04225352112676056,0.13380281690140844,0.07042253521126761,0.014084507042253521,0.04929577464788732,0.20422535211267606,0.02112676056338028,0.19718309859154928],"new_grid":[0.02112676056338028,0.028169014084507043,0.0,0.11267605633802817,0.04225352112676056,0.09154929577464789,0.18309859154929578,0.007042253521126761,0.14084507042253522,0.1267605633802817,0.11971830985915492,0.1267605633802817],"old_grid":[0.007042253521126761,0.028169014084507043,0.014084507042253521,0.11267605633802817,0.04225352112676056,0.04929577464788732,0.19718309859154928,0.0,0.14084507042253522,0.1267605633802817,0.14084507042253522,0.14084507042253522],"new_zone_acc":0.43661971830985913,"old_zone_acc":0.36619718309859156,"scatter":[{"hx":0.75,"hy":0.2969,"nx":0.6647,"ny":0.7041,"ox":0.6796,"oy":0.6528},{"hx":0.8056,"hy":0.5156,"nx":0.5981,"ny":0.6527,"ox":0.6757,"oy":0.6839},{"hx":0.75,"hy":0.5781,"nx":0.7064,"ny":0.6111,"ox":0.727,"oy":0.6488},{"hx":0.8056,"hy":0.6719,"nx":0.7923,"ny":0.6386,"ox":0.7415,"oy":0.718},{"hx":0.8611,"hy":0.5781,"nx":0.6466,"ny":0.6829,"ox":0.7088,"oy":0.7079},{"hx":0.6389,"hy":0.2656,"nx":0.6326,"ny":0.4209,"ox":0.5966,"oy":0.6541},{"hx":0.8056,"hy":0.2656,"nx":0.7543,"ny":0.6179,"ox":0.7409,"oy":0.5385},{"hx":0.1944,"hy":0.5781,"nx":0.4158,"ny":0.6414,"ox":0.3888,"oy":0.6709},{"hx":0.1944,"hy":0.5156,"nx":0.4569,"ny":0.3233,"ox":0.4102,"oy":0.3524},{"hx":0.75,"hy":0.7031,"nx":0.6351,"ny":0.5587,"ox":0.5516,"oy":0.4494},{"hx":0.1944,"hy":0.2344,"nx":0.296,"ny":0.5904,"ox":0.265,"oy":0.4909},{"hx":0.25,"hy":0.2344,"nx":0.2884,"ny":0.4595,"ox":0.2465,"oy":0.4657},{"hx":0.1944,"hy":0.5781,"nx":0.4133,"ny":0.6523,"ox":0.4358,"oy":0.6363},{"hx":0.3611,"hy":0.4219,"nx":0.3857,"ny":0.3315,"ox":0.4685,"oy":0.3332},{"hx":0.25,"hy":0.7656,"nx":0.4302,"ny":0.5964,"ox":0.405,"oy":0.5005},{"hx":0.8056,"hy":0.5781,"nx":0.7024,"ny":0.7129,"ox":0.7085,"oy":0.5347},{"hx":0.25,"hy":0.2969,"nx":0.2833,"ny":0.3365,"ox":0.3215,"oy":0.3148},{"hx":0.1389,"hy":0.2031,"nx":0.3311,"ny":0.5775,"ox":0.2649,"oy":0.5758},{"hx":0.5833,"hy":0.1719,"nx":0.5253,"ny":0.2422,"ox":0.5422,"oy":0.3952},{"hx":0.25,"hy":0.8281,"nx":0.2444,"ny":0.566,"ox":0.2466,"oy":0.5196},{"hx":0.25,"hy":0.4844,"nx":0.4158,"ny":0.4492,"ox":0.3542,"oy":0.3876},{"hx":0.8056,"hy":0.6719,"nx":0.6842,"ny":0.5038,"ox":0.5506,"oy":0.362},{"hx":0.3611,"hy":0.4219,"nx":0.3428,"ny":0.5066,"ox":0.3002,"oy":0.5171},{"hx":0.6389,"hy":0.7656,"nx":0.7342,"ny":0.6371,"ox":0.7011,"oy":0.6969},{"hx":0.8056,"hy":0.7031,"nx":0.6013,"ny":0.5186,"ox":0.6221,"oy":0.385},{"hx":0.75,"hy":0.3594,"nx":0.7159,"ny":0.3405,"ox":0.777,"oy":0.4239},{"hx":0.6389,"hy":0.7344,"nx":0.2796,"ny":0.7119,"ox":0.3227,"oy":0.5418},{"hx":0.0833,"hy":0.9844,"nx":0.4983,"ny":0.4023,"ox":0.6067,"oy":0.4648},{"hx":0.1944,"hy":0.4531,"nx":0.2367,"ny":0.51,"ox":0.2518,"oy":0.501},{"hx":0.1944,"hy":0.2969,"nx":0.3418,"ny":0.5945,"ox":0.3392,"oy":0.4942},{"hx":0.25,"hy":0.8281,"nx":0.2148,"ny":0.8153,"ox":0.2112,"oy":0.7531},{"hx":0.75,"hy":0.7969,"nx":0.5805,"ny":0.2563,"ox":0.5827,"oy":0.3053},{"hx":0.8056,"hy":0.6094,"nx":0.5501,"ny":0.4941,"ox":0.5099,"oy":0.3409},{"hx":0.1944,"hy":0.7656,"nx":0.3417,"ny":0.6196,"ox":0.3605,"oy":0.6787},{"hx":0.8611,"hy":0.7656,"nx":0.5007,"ny":0.6472,"ox":0.6312,"oy":0.656},{"hx":0.75,"hy":0.5469,"nx":0.6998,"ny":0.547,"ox":0.6005,"oy":0.6585},{"hx":0.1944,"hy":0.5781,"nx":0.2356,"ny":0.5371,"ox":0.3292,"oy":0.6253},{"hx":0.25,"hy":0.5156,"nx":0.3745,"ny":0.5671,"ox":0.4113,"oy":0.6672},{"hx":0.8056,"hy":0.2656,"nx":0.4472,"ny":0.7155,"ox":0.4447,"oy":0.6868},{"hx":0.25,"hy":0.4531,"nx":0.428,"ny":0.5766,"ox":0.4379,"oy":0.7194},{"hx":0.1944,"hy":0.4844,"nx":0.2283,"ny":0.5412,"ox":0.2375,"oy":0.6297},{"hx":0.6944,"hy":0.7031,"nx":0.6676,"ny":0.4467,"ox":0.701,"oy":0.5227},{"hx":0.0833,"hy":0.8281,"nx":0.2446,"ny":0.6523,"ox":0.2967,"oy":0.5314},{"hx":0.25,"hy":0.4219,"nx":0.3382,"ny":0.6962,"ox":0.2859,"oy":0.6766},{"hx":0.75,"hy":0.5469,"nx":0.5287,"ny":0.5969,"ox":0.5557,"oy":0.6754},{"hx":0.25,"hy":0.7031,"nx":0.4023,"ny":0.3659,"ox":0.377,"oy":0.3925},{"hx":0.8056,"hy":0.6094,"nx":0.7667,"ny":0.6544,"ox":0.7379,"oy":0.6882},{"hx":0.8611,"hy":0.2031,"nx":0.7529,"ny":0.2695,"ox":0.731,"oy":0.5247},{"hx":0.3056,"hy":0.2656,"nx":0.4081,"ny":0.5868,"ox":0.3437,"oy":0.5048},{"hx":0.3056,"hy":0.4531,"nx":0.243,"ny":0.4772,"ox":0.3221,"oy":0.4638},{"hx":0.75,"hy":0.5781,"nx":0.7023,"ny":0.4316,"ox":0.6963,"oy":0.3744},{"hx":0.3056,"hy":0.7344,"nx":0.2713,"ny":0.6414,"ox":0.2623,"oy":0.5349},{"hx":0.5833,"hy":0.5469,"nx":0.7348,"ny":0.5804,"ox":0.6795,"oy":0.6441},{"hx":0.25,"hy":0.7969,"nx":0.324,"ny":0.7625,"ox":0.3665,"oy":0.3044},{"hx":0.25,"hy":0.2344,"nx":0.3326,"ny":0.2672,"ox":0.3153,"oy":0.3178},{"hx":0.1944,"hy":0.7344,"nx":0.241,"ny":0.4531,"ox":0.2375,"oy":0.4306},{"hx":0.8056,"hy":0.2969,"nx":0.7867,"ny":0.5442,"ox":0.7763,"oy":0.538},{"hx":0.8611,"hy":0.7969,"nx":0.7253,"ny":0.7011,"ox":0.7144,"oy":0.5441},{"hx":0.6944,"hy":0.2656,"nx":0.5945,"ny":0.6294,"ox":0.5363,"oy":0.6399},{"hx":0.4722,"hy":0.9844,"nx":0.6146,"ny":0.2971,"ox":0.5475,"oy":0.3021},{"hx":0.3611,"hy":0.7656,"nx":0.2422,"ny":0.6979,"ox":0.2435,"oy":0.5284},{"hx":0.4167,"hy":0.3281,"nx":0.4155,"ny":0.5877,"ox":0.3871,"oy":0.5067},{"hx":0.1944,"hy":0.2656,"nx":0.2361,"ny":0.3178,"ox":0.2691,"oy":0.5558},{"hx":0.75,"hy":0.5469,"nx":0.7243,"ny":0.6219,"ox":0.7308,"oy":0.6239},{"hx":0.8056,"hy":0.3906,"nx":0.7149,"ny":0.5973,"ox":0.6832,"oy":0.6534},{"hx":0.1944,"hy":0.7344,"nx":0.3533,"ny":0.5774,"ox":0.4437,"oy":0.5958},{"hx":0.6944,"hy":0.1719,"nx":0.5565,"ny":0.7942,"ox":0.5769,"oy":0.6798},{"hx":0.75,"hy":0.2969,"nx":0.7826,"ny":0.3174,"ox":0.7587,"oy":0.4581},{"hx":0.8611,"hy":0.3281,"nx":0.5765,"ny":0.6197,"ox":0.6578,"oy":0.5609},{"hx":0.8611,"hy":0.2969,"nx":0.5582,"ny":0.5425,"ox":0.6499,"oy":0.6226},{"hx":0.75,"hy":0.7344,"nx":0.5898,"ny":0.4027,"ox":0.5797,"oy":0.4387},{"hx":0.25,"hy":0.5781,"nx":0.2211,"ny":0.6407,"ox":0.2378,"oy":0.684},{"hx":0.75,"hy":0.7031,"nx":0.6891,"ny":0.5746,"ox":0.7146,"oy":0.5238},{"hx":0.5278,"hy":0.3594,"nx":0.5674,"ny":0.2626,"ox":0.5884,"oy":0.3032},{"hx":0.1944,"hy":0.4219,"nx":0.3213,"ny":0.2187,"ox":0.4038,"oy":0.3027},{"hx":0.3056,"hy":0.7031,"nx":0.3215,"ny":0.236,"ox":0.331,"oy":0.3485},{"hx":0.1944,"hy":0.7344,"nx":0.3472,"ny":0.6605,"ox":0.534,"oy":0.6803},{"hx":0.1944,"hy":0.5156,"nx":0.3735,"ny":0.4528,"ox":0.3436,"oy":0.4786},{"hx":0.8056,"hy":0.5469,"nx":0.7937,"ny":0.6257,"ox":0.7591,"oy":0.7157},{"hx":0.8056,"hy":0.7031,"nx":0.6363,"ny":0.6803,"ox":0.7034,"oy":0.6076},{"hx":0.8056,"hy":0.5469,"nx":0.6211,"ny":0.4392,"ox":0.5835,"oy":0.4858},{"hx":0.1944,"hy":0.6406,"nx":0.2481,"ny":0.6325,"ox":0.2244,"oy":0.6869},{"hx":0.3611,"hy":0.7344,"nx":0.5326,"ny":0.3708,"ox":0.5292,"oy":0.3071},{"hx":0.6944,"hy":0.7031,"nx":0.4517,"ny":0.2423,"ox":0.4611,"oy":0.3918},{"hx":0.8056,"hy":0.6406,"nx":0.6888,"ny":0.4508,"ox":0.6938,"oy":0.3793},{"hx":0.1944,"hy":0.4844,"nx":0.3517,"ny":0.4162,"ox":0.4412,"oy":0.3917},{"hx":0.25,"hy":0.2031,"nx":0.2196,"ny":0.2918,"ox":0.2842,"oy":0.5383},{"hx":0.3056,"hy":0.2969,"nx":0.275,"ny":0.4196,"ox":0.345,"oy":0.5044},{"hx":0.3056,"hy":0.2969,"nx":0.2419,"ny":0.3356,"ox":0.3489,"oy":0.4942},{"hx":0.1944,"hy":0.2344,"nx":0.2662,"ny":0.5921,"ox":0.4925,"oy":0.5653}]},{"card":"the-log","label":"The Log","n":185,"cost":2,"is_wincon":false,"human_grid":[0.043243243243243246,0.010810810810810811,0.0918918918918919,0.07027027027027027,0.016216216216216217,0.07567567567567568,0.1783783783783784,0.032432432432432434,0.23783783783783785,0.10810810810810811,0.032432432432432434,0.10270270270270271],"new_grid":[0.03783783783783784,0.032432432432432434,0.08648648648648649,0.07027027027027027,0.043243243243243246,0.08108108108108109,0.1837837837837838,0.005405405405405406,0.15135135135135136,0.0972972972972973,0.10270270270270271,0.10810810810810811],"old_grid":[0.016216216216216217,0.021621621621621623,0.05405405405405406,0.0918918918918919,0.10270270270270271,0.08648648648648649,0.16216216216216217,0.0,0.16756756756756758,0.12432432432432433,0.07027027027027027,0.10270270270270271],"new_zone_acc":0.572972972972973,"old_zone_acc":0.5243243243243243,"scatter":[{"hx":0.1944,"hy":0.4219,"nx":0.2435,"ny":0.4195,"ox":0.2507,"oy":0.3771},{"hx":0.8056,"hy":0.2344,"nx":0.5113,"ny":0.3933,"ox":0.6299,"oy":0.3196},{"hx":0.1944,"hy":0.4531,"nx":0.4511,"ny":0.3322,"ox":0.4115,"oy":0.3145},{"hx":0.3056,"hy":0.5469,"nx":0.5703,"ny":0.4729,"ox":0.5972,"oy":0.3393},{"hx":0.25,"hy":0.7344,"nx":0.7676,"ny":0.718,"ox":0.6187,"oy":0.5575},{"hx":0.8611,"hy":0.4531,"nx":0.6396,"ny":0.4054,"ox":0.6765,"oy":0.36},{"hx":0.8056,"hy":0.4531,"nx":0.6653,"ny":0.4136,"ox":0.7096,"oy":0.4068},{"hx":0.1944,"hy":0.5469,"nx":0.3976,"ny":0.6129,"ox":0.308,"oy":0.6774},{"hx":0.25,"hy":0.7344,"nx":0.4308,"ny":0.6262,"ox":0.3638,"oy":0.6747},{"hx":0.8611,"hy":0.5469,"nx":0.7115,"ny":0.632,"ox":0.6259,"oy":0.57},{"hx":0.6944,"hy":0.7656,"nx":0.6129,"ny":0.6524,"ox":0.729,"oy":0.6852},{"hx":0.8056,"hy":0.1406,"nx":0.782,"ny":0.1767,"ox":0.7471,"oy":0.2027},{"hx":0.5278,"hy":0.6406,"nx":0.5973,"ny":0.5155,"ox":0.6104,"oy":0.4476},{"hx":0.1944,"hy":0.7656,"nx":0.4656,"ny":0.7793,"ox":0.4507,"oy":0.7246},{"hx":0.4167,"hy":0.4531,"nx":0.3115,"ny":0.4114,"ox":0.3087,"oy":0.5541},{"hx":0.4167,"hy":0.4531,"nx":0.4715,"ny":0.3143,"ox":0.4773,"oy":0.3344},{"hx":0.1944,"hy":0.2031,"nx":0.426,"ny":0.3864,"ox":0.3609,"oy":0.3076},{"hx":0.8056,"hy":0.4531,"nx":0.5508,"ny":0.5971,"ox":0.5694,"oy":0.4708},{"hx":0.1944,"hy":0.2656,"nx":0.1879,"ny":0.2773,"ox":0.2347,"oy":0.3196},{"hx":0.1944,"hy":0.2344,"nx":0.181,"ny":0.2585,"ox":0.2426,"oy":0.3166},{"hx":0.8056,"hy":0.6719,"nx":0.7437,"ny":0.4958,"ox":0.6659,"oy":0.532},{"hx":0.8056,"hy":0.6094,"nx":0.7853,"ny":0.6177,"ox":0.7356,"oy":0.6236},{"hx":0.1389,"hy":0.5469,"nx":0.4164,"ny":0.7312,"ox":0.2809,"oy":0.6481},{"hx":0.4722,"hy":0.6406,"nx":0.4896,"ny":0.4731,"ox":0.4402,"oy":0.4596},{"hx":0.4167,"hy":0.6406,"nx":0.4057,"ny":0.6418,"ox":0.3813,"oy":0.6011},{"hx":0.4722,"hy":0.6406,"nx":0.4029,"ny":0.5978,"ox":0.3919,"oy":0.5555},{"hx":0.5833,"hy":0.3594,"nx":0.5631,"ny":0.4555,"ox":0.472,"oy":0.3637},{"hx":0.1944,"hy":0.2344,"nx":0.6411,"ny":0.4392,"ox":0.6002,"oy":0.3612},{"hx":0.8056,"hy":0.1719,"nx":0.6921,"ny":0.237,"ox":0.6535,"oy":0.3314},{"hx":0.1389,"hy":0.3281,"nx":0.2487,"ny":0.4298,"ox":0.279,"oy":0.4546},{"hx":0.6389,"hy":0.6719,"nx":0.6741,"ny":0.6816,"ox":0.7138,"oy":0.6913},{"hx":0.8056,"hy":0.3281,"nx":0.6981,"ny":0.381,"ox":0.6246,"oy":0.3546},{"hx":0.1944,"hy":0.8281,"nx":0.2157,"ny":0.7471,"ox":0.2669,"oy":0.7086},{"hx":0.3611,"hy":0.5469,"nx":0.226,"ny":0.5535,"ox":0.2581,"oy":0.5086},{"hx":0.8056,"hy":0.3906,"nx":0.603,"ny":0.3984,"ox":0.369,"oy":0.462},{"hx":0.1944,"hy":0.5469,"nx":0.2645,"ny":0.6231,"ox":0.2781,"oy":0.633},{"hx":0.8056,"hy":0.4531,"nx":0.3216,"ny":0.3474,"ox":0.395,"oy":0.3895},{"hx":0.1944,"hy":0.4531,"nx":0.215,"ny":0.385,"ox":0.3322,"oy":0.3664},{"hx":0.8056,"hy":0.4531,"nx":0.6994,"ny":0.4106,"ox":0.7351,"oy":0.4092},{"hx":0.1944,"hy":0.1406,"nx":0.1968,"ny":0.1503,"ox":0.3664,"oy":0.2409},{"hx":0.8056,"hy":0.1719,"nx":0.4484,"ny":0.1522,"ox":0.4388,"oy":0.2433},{"hx":0.25,"hy":0.2656,"nx":0.258,"ny":0.3045,"ox":0.3196,"oy":0.3199},{"hx":0.8056,"hy":0.5469,"nx":0.5571,"ny":0.6832,"ox":0.6152,"oy":0.675},{"hx":0.5833,"hy":0.5469,"nx":0.6593,"ny":0.5461,"ox":0.6267,"oy":0.5469},{"hx":0.25,"hy":0.5469,"nx":0.6316,"ny":0.3952,"ox":0.6169,"oy":0.4186},{"hx":0.1944,"hy":0.7031,"nx":0.2577,"ny":0.6976,"ox":0.3457,"oy":0.7141},{"hx":0.1944,"hy":0.7031,"nx":0.186,"ny":0.703,"ox":0.2188,"oy":0.668},{"hx":0.8056,"hy":0.3594,"nx":0.7252,"ny":0.4342,"ox":0.7121,"oy":0.4515},{"hx":0.8056,"hy":0.2969,"nx":0.192,"ny":0.3216,"ox":0.2786,"oy":0.3717},{"hx":0.8056,"hy":0.4531,"nx":0.65,"ny":0.439,"ox":0.6063,"oy":0.4452},{"hx":0.1944,"hy":0.7344,"nx":0.3136,"ny":0.6724,"ox":0.2909,"oy":0.712},{"hx":0.1944,"hy":0.5469,"nx":0.2697,"ny":0.5733,"ox":0.226,"oy":0.6383},{"hx":0.1389,"hy":0.5469,"nx":0.4534,"ny":0.5906,"ox":0.4884,"oy":0.5887},{"hx":0.8056,"hy":0.7969,"nx":0.7946,"ny":0.646,"ox":0.6997,"oy":0.6155},{"hx":0.1389,"hy":0.5781,"nx":0.1936,"ny":0.6514,"ox":0.289,"oy":0.714},{"hx":0.4722,"hy":0.7031,"nx":0.5217,"ny":0.7052,"ox":0.4189,"oy":0.6578},{"hx":0.75,"hy":0.5469,"nx":0.6681,"ny":0.6664,"ox":0.7,"oy":0.5782},{"hx":0.75,"hy":0.5469,"nx":0.5422,"ny":0.4709,"ox":0.5416,"oy":0.5597},{"hx":0.1944,"hy":0.1719,"nx":0.1667,"ny":0.1502,"ox":0.1908,"oy":0.2497},{"hx":0.8056,"hy":0.1719,"nx":0.7835,"ny":0.1521,"ox":0.6341,"oy":0.2475},{"hx":0.4167,"hy":0.4531,"nx":0.4553,"ny":0.4138,"ox":0.5179,"oy":0.403},{"hx":0.8056,"hy":0.5469,"nx":0.762,"ny":0.6019,"ox":0.7663,"oy":0.5347},{"hx":0.25,"hy":0.2969,"nx":0.3042,"ny":0.3682,"ox":0.3002,"oy":0.2975},{"hx":0.8056,"hy":0.6719,"nx":0.5965,"ny":0.6794,"ox":0.6372,"oy":0.7201},{"hx":0.1389,"hy":0.3594,"nx":0.2612,"ny":0.3659,"ox":0.2837,"oy":0.3758},{"hx":0.75,"hy":0.3594,"nx":0.4615,"ny":0.3549,"ox":0.5741,"oy":0.3698},{"hx":0.8056,"hy":0.3594,"nx":0.8019,"ny":0.3147,"ox":0.7427,"oy":0.3486},{"hx":0.75,"hy":0.7344,"nx":0.7721,"ny":0.6706,"ox":0.7733,"oy":0.6534},{"hx":0.5833,"hy":0.3594,"nx":0.6336,"ny":0.3438,"ox":0.6822,"oy":0.4258},{"hx":0.75,"hy":0.2656,"nx":0.7254,"ny":0.3649,"ox":0.5846,"oy":0.3236},{"hx":0.8056,"hy":0.2969,"nx":0.5108,"ny":0.1843,"ox":0.5986,"oy":0.2877},{"hx":0.75,"hy":0.4531,"nx":0.5027,"ny":0.3524,"ox":0.4857,"oy":0.3702},{"hx":0.8056,"hy":0.4531,"nx":0.512,"ny":0.4158,"ox":0.4538,"oy":0.4144},{"hx":0.25,"hy":0.4531,"nx":0.2477,"ny":0.4395,"ox":0.3125,"oy":0.4943},{"hx":0.75,"hy":0.4531,"nx":0.5773,"ny":0.3805,"ox":0.6477,"oy":0.3889},{"hx":0.1944,"hy":0.5469,"nx":0.342,"ny":0.5969,"ox":0.3202,"oy":0.618},{"hx":0.5833,"hy":0.1094,"nx":0.6332,"ny":0.2255,"ox":0.6033,"oy":0.2381},{"hx":0.6944,"hy":0.1406,"nx":0.7236,"ny":0.2244,"ox":0.801,"oy":0.2849},{"hx":0.6389,"hy":0.5469,"nx":0.5654,"ny":0.6638,"ox":0.5912,"oy":0.6312},{"hx":0.8056,"hy":0.4531,"nx":0.7392,"ny":0.6892,"ox":0.6864,"oy":0.4722},{"hx":0.75,"hy":0.6406,"nx":0.8145,"ny":0.5846,"ox":0.7795,"oy":0.6018},{"hx":0.8056,"hy":0.4531,"nx":0.4377,"ny":0.2861,"ox":0.441,"oy":0.3236},{"hx":0.8056,"hy":0.3906,"nx":0.5946,"ny":0.3052,"ox":0.4474,"oy":0.3407},{"hx":0.1944,"hy":0.4531,"nx":0.2809,"ny":0.4867,"ox":0.2202,"oy":0.3914},{"hx":0.1944,"hy":0.2969,"nx":0.2629,"ny":0.4,"ox":0.2343,"oy":0.3874},{"hx":0.1944,"hy":0.3281,"nx":0.2503,"ny":0.1838,"ox":0.286,"oy":0.3105},{"hx":0.25,"hy":0.4531,"nx":0.2618,"ny":0.4531,"ox":0.3256,"oy":0.53},{"hx":0.4167,"hy":0.4531,"nx":0.3052,"ny":0.48,"ox":0.279,"oy":0.4585},{"hx":0.1944,"hy":0.4531,"nx":0.2137,"ny":0.3035,"ox":0.2672,"oy":0.3842},{"hx":0.25,"hy":0.5781,"nx":0.3962,"ny":0.6277,"ox":0.3813,"oy":0.7014}]},{"card":"skeletons","label":"Skeletons","n":239,"cost":1,"is_wincon":false,"human_grid":[0.029288702928870293,0.05439330543933055,0.029288702928870293,0.0502092050209205,0.08786610878661087,0.06694560669456066,0.1087866108786611,0.1087866108786611,0.08786610878661087,0.12133891213389121,0.13807531380753138,0.11715481171548117],"new_grid":[0.012552301255230125,0.04602510460251046,0.016736401673640166,0.07112970711297072,0.11297071129707113,0.058577405857740586,0.12552301255230125,0.0,0.12133891213389121,0.14225941422594143,0.17573221757322174,0.11715481171548117],"old_grid":[0.012552301255230125,0.02510460251046025,0.012552301255230125,0.06694560669456066,0.09623430962343096,0.05439330543933055,0.15481171548117154,0.0041841004184100415,0.1087866108786611,0.1297071129707113,0.19246861924686193,0.14225941422594143],"new_zone_acc":0.3682008368200837,"old_zone_acc":0.34309623430962344,"scatter":[{"hx":0.75,"hy":0.4532,"nx":0.577,"ny":0.3835,"ox":0.5793,"oy":0.3526},{"hx":0.8056,"hy":0.5468,"nx":0.656,"ny":0.6137,"ox":0.6352,"oy":0.6308},{"hx":0.8056,"hy":0.5468,"nx":0.6356,"ny":0.5963,"ox":0.5588,"oy":0.6044},{"hx":0.4722,"hy":0.6093,"nx":0.6639,"ny":0.6413,"ox":0.708,"oy":0.6802},{"hx":0.4166,"hy":0.4219,"nx":0.5241,"ny":0.3995,"ox":0.579,"oy":0.4281},{"hx":0.8056,"hy":0.6093,"nx":0.7608,"ny":0.6867,"ox":0.7325,"oy":0.6994},{"hx":0.3055,"hy":0.7969,"nx":0.2878,"ny":0.6837,"ox":0.2575,"oy":0.6138},{"hx":0.2499,"hy":0.5469,"nx":0.62,"ny":0.6358,"ox":0.6202,"oy":0.6557},{"hx":0.0277,"hy":0.0469,"nx":0.4742,"ny":0.2115,"ox":0.5234,"oy":0.2826},{"hx":0.4722,"hy":0.4219,"nx":0.2776,"ny":0.3461,"ox":0.3234,"oy":0.31},{"hx":0.4722,"hy":0.3907,"nx":0.3855,"ny":0.4094,"ox":0.292,"oy":0.4507},{"hx":0.1944,"hy":0.2657,"nx":0.421,"ny":0.356,"ox":0.5004,"oy":0.3484},{"hx":0.8056,"hy":0.7031,"nx":0.3993,"ny":0.6416,"ox":0.3951,"oy":0.5895},{"hx":0.1388,"hy":0.5469,"nx":0.3077,"ny":0.5874,"ox":0.3482,"oy":0.6491},{"hx":0.1944,"hy":0.5468,"nx":0.285,"ny":0.7538,"ox":0.207,"oy":0.6625},{"hx":0.9722,"hy":0.9531,"nx":0.384,"ny":0.5681,"ox":0.4085,"oy":0.682},{"hx":0.1944,"hy":0.4531,"nx":0.5489,"ny":0.3693,"ox":0.6617,"oy":0.3628},{"hx":0.4722,"hy":0.4531,"nx":0.2557,"ny":0.3714,"ox":0.2778,"oy":0.3908},{"hx":0.1944,"hy":0.6406,"nx":0.6007,"ny":0.6131,"ox":0.6113,"oy":0.6279},{"hx":0.4166,"hy":0.6406,"nx":0.5458,"ny":0.6181,"ox":0.5433,"oy":0.6942},{"hx":0.6389,"hy":0.3906,"nx":0.5309,"ny":0.3606,"ox":0.5526,"oy":0.3295},{"hx":0.5278,"hy":0.9844,"nx":0.4305,"ny":0.9025,"ox":0.3855,"oy":0.666},{"hx":0.8056,"hy":0.3907,"nx":0.6308,"ny":0.4514,"ox":0.5619,"oy":0.4489},{"hx":0.8056,"hy":0.2969,"nx":0.388,"ny":0.3761,"ox":0.4426,"oy":0.4072},{"hx":0.4722,"hy":0.2656,"nx":0.6611,"ny":0.5035,"ox":0.6755,"oy":0.5072},{"hx":0.5278,"hy":0.5468,"nx":0.6137,"ny":0.6039,"ox":0.703,"oy":0.6747},{"hx":0.5278,"hy":0.0156,"nx":0.5474,"ny":0.1553,"ox":0.5736,"oy":0.2639},{"hx":0.8056,"hy":0.6406,"nx":0.5564,"ny":0.6553,"ox":0.6059,"oy":0.642},{"hx":0.4722,"hy":0.5469,"nx":0.4272,"ny":0.803,"ox":0.4168,"oy":0.7513},{"hx":0.9722,"hy":0.0469,"nx":0.6537,"ny":0.3055,"ox":0.7131,"oy":0.3319},{"hx":0.4166,"hy":0.5469,"nx":0.3702,"ny":0.6394,"ox":0.4116,"oy":0.6603},{"hx":0.3055,"hy":0.7344,"nx":0.3959,"ny":0.511,"ox":0.3897,"oy":0.4966},{"hx":0.1944,"hy":0.3282,"nx":0.5529,"ny":0.3712,"ox":0.5595,"oy":0.3496},{"hx":0.1944,"hy":0.6093,"nx":0.2245,"ny":0.6819,"ox":0.3098,"oy":0.6942},{"hx":0.1944,"hy":0.1407,"nx":0.4608,"ny":0.3752,"ox":0.391,"oy":0.3946},{"hx":0.1388,"hy":0.4531,"nx":0.2344,"ny":0.4321,"ox":0.2618,"oy":0.4789},{"hx":0.1944,"hy":0.5469,"nx":0.3282,"ny":0.653,"ox":0.2681,"oy":0.6879},{"hx":0.5278,"hy":0.7656,"nx":0.6542,"ny":0.5819,"ox":0.6783,"oy":0.5887},{"hx":0.2499,"hy":0.5781,"nx":0.3333,"ny":0.6443,"ox":0.3636,"oy":0.6602},{"hx":0.8056,"hy":0.7343,"nx":0.4983,"ny":0.6518,"ox":0.5776,"oy":0.7378},{"hx":0.4722,"hy":0.3594,"nx":0.3914,"ny":0.3942,"ox":0.3067,"oy":0.3007},{"hx":0.4166,"hy":0.2657,"nx":0.4668,"ny":0.3756,"ox":0.374,"oy":0.3663},{"hx":0.3611,"hy":0.6718,"nx":0.2449,"ny":0.6933,"ox":0.2421,"oy":0.6984},{"hx":0.0833,"hy":0.1719,"nx":0.3758,"ny":0.3978,"ox":0.3394,"oy":0.3263},{"hx":0.3055,"hy":0.5469,"nx":0.2952,"ny":0.587,"ox":0.2578,"oy":0.5536},{"hx":0.4166,"hy":0.3282,"nx":0.2396,"ny":0.291,"ox":0.2402,"oy":0.3013},{"hx":0.4722,"hy":0.4532,"nx":0.44,"ny":0.3263,"ox":0.465,"oy":0.2929},{"hx":0.4166,"hy":0.3281,"nx":0.291,"ny":0.5386,"ox":0.2868,"oy":0.3674},{"hx":0.5278,"hy":0.0156,"nx":0.6422,"ny":0.3257,"ox":0.6267,"oy":0.255},{"hx":0.4722,"hy":0.4532,"nx":0.5869,"ny":0.3781,"ox":0.6547,"oy":0.3646},{"hx":0.4722,"hy":0.5782,"nx":0.6408,"ny":0.3595,"ox":0.7106,"oy":0.3823},{"hx":0.5278,"hy":0.1719,"nx":0.526,"ny":0.4181,"ox":0.6144,"oy":0.466},{"hx":0.8056,"hy":0.2969,"nx":0.5763,"ny":0.3767,"ox":0.5799,"oy":0.3499},{"hx":0.9167,"hy":0.2032,"nx":0.7924,"ny":0.2248,"ox":0.712,"oy":0.2758},{"hx":0.4166,"hy":0.5469,"nx":0.5243,"ny":0.6986,"ox":0.5682,"oy":0.6879},{"hx":0.4722,"hy":0.7344,"nx":0.4907,"ny":0.6232,"ox":0.4539,"oy":0.7185},{"hx":0.5278,"hy":0.5469,"nx":0.3161,"ny":0.6136,"ox":0.2354,"oy":0.7056},{"hx":0.6389,"hy":0.7343,"nx":0.7194,"ny":0.7096,"ox":0.6577,"oy":0.7071},{"hx":0.6389,"hy":0.4532,"nx":0.5726,"ny":0.4241,"ox":0.5933,"oy":0.4313},{"hx":0.0833,"hy":0.4532,"nx":0.5194,"ny":0.3988,"ox":0.5869,"oy":0.4269},{"hx":0.5278,"hy":0.3281,"nx":0.4356,"ny":0.401,"ox":0.5202,"oy":0.4133},{"hx":0.0277,"hy":0.4219,"nx":0.3242,"ny":0.4458,"ox":0.3022,"oy":0.3901},{"hx":0.5278,"hy":0.3594,"nx":0.7706,"ny":0.3559,"ox":0.7774,"oy":0.3871},{"hx":0.3611,"hy":0.4531,"nx":0.3068,"ny":0.3639,"ox":0.3131,"oy":0.3235},{"hx":0.1944,"hy":0.3907,"nx":0.329,"ny":0.3623,"ox":0.3337,"oy":0.4109},{"hx":0.8056,"hy":0.2969,"nx":0.6597,"ny":0.3668,"ox":0.5153,"oy":0.5393},{"hx":0.6944,"hy":0.7656,"nx":0.3281,"ny":0.6793,"ox":0.4251,"oy":0.6667},{"hx":0.6389,"hy":0.8593,"nx":0.7011,"ny":0.5752,"ox":0.6444,"oy":0.7058},{"hx":0.4722,"hy":0.4219,"nx":0.4541,"ny":0.3881,"ox":0.4561,"oy":0.3179},{"hx":0.8056,"hy":0.2657,"nx":0.4335,"ny":0.3149,"ox":0.5085,"oy":0.3235},{"hx":0.1944,"hy":0.4531,"nx":0.3354,"ny":0.4027,"ox":0.4166,"oy":0.4225},{"hx":0.4166,"hy":0.5469,"nx":0.2424,"ny":0.6181,"ox":0.218,"oy":0.5168},{"hx":0.3611,"hy":0.5469,"nx":0.303,"ny":0.6155,"ox":0.2601,"oy":0.509},{"hx":0.4166,"hy":0.4531,"nx":0.2595,"ny":0.459,"ox":0.1948,"oy":0.5185},{"hx":0.4722,"hy":0.4531,"nx":0.392,"ny":0.2092,"ox":0.2984,"oy":0.3409},{"hx":0.0277,"hy":0.7969,"nx":0.148,"ny":0.7834,"ox":0.2277,"oy":0.7285},{"hx":0.5278,"hy":0.9844,"nx":0.3196,"ny":0.7005,"ox":0.3279,"oy":0.607},{"hx":0.5833,"hy":0.0156,"nx":0.47,"ny":0.2813,"ox":0.515,"oy":0.3391},{"hx":0.5833,"hy":0.1719,"nx":0.6889,"ny":0.3498,"ox":0.7382,"oy":0.3727},{"hx":0.9167,"hy":0.7969,"nx":0.63,"ny":0.6326,"ox":0.5882,"oy":0.664},{"hx":0.4166,"hy":0.5469,"nx":0.379,"ny":0.6575,"ox":0.3233,"oy":0.6709},{"hx":0.4722,"hy":0.4531,"nx":0.2081,"ny":0.2214,"ox":0.22,"oy":0.2787},{"hx":0.4722,"hy":0.0156,"nx":0.6676,"ny":0.2493,"ox":0.62,"oy":0.3314},{"hx":0.0833,"hy":0.1719,"nx":0.6907,"ny":0.2485,"ox":0.6532,"oy":0.3465},{"hx":0.4722,"hy":0.9843,"nx":0.6606,"ny":0.6765,"ox":0.6556,"oy":0.6883},{"hx":0.3611,"hy":0.9531,"nx":0.566,"ny":0.7271,"ox":0.5723,"oy":0.6477},{"hx":0.4166,"hy":0.6094,"nx":0.4862,"ny":0.5782,"ox":0.531,"oy":0.6469},{"hx":0.8056,"hy":0.5469,"nx":0.7084,"ny":0.6206,"ox":0.7403,"oy":0.6102},{"hx":0.4166,"hy":0.6093,"nx":0.6935,"ny":0.6239,"ox":0.7218,"oy":0.5844},{"hx":0.75,"hy":0.4531,"nx":0.697,"ny":0.3518,"ox":0.7185,"oy":0.3865}]},{"card":"hog-rider","label":"Hog Rider","n":123,"cost":4,"is_wincon":true,"human_grid":[0.0,0.008130081300813009,0.0,0.008130081300813009,0.016260162601626018,0.024390243902439025,0.44715447154471544,0.016260162601626018,0.4065040650406504,0.024390243902439025,0.024390243902439025,0.024390243902439025],"new_grid":[0.0,0.016260162601626018,0.0,0.008130081300813009,0.024390243902439025,0.024390243902439025,0.4146341463414634,0.0,0.36585365853658536,0.04878048780487805,0.06504065040650407,0.032520325203252036],"old_grid":[0.0,0.032520325203252036,0.0,0.04878048780487805,0.032520325203252036,0.008130081300813009,0.35772357723577236,0.0,0.3252032520325203,0.04878048780487805,0.10569105691056911,0.04065040650406504],"new_zone_acc":0.5609756097560976,"old_zone_acc":0.5365853658536586,"scatter":[{"hx":0.0833,"hy":0.5468,"nx":0.4233,"ny":0.5896,"ox":0.4435,"oy":0.672},{"hx":0.9167,"hy":0.4532,"nx":0.6974,"ny":0.4717,"ox":0.3527,"oy":0.3783},{"hx":0.0833,"hy":0.5468,"nx":0.1584,"ny":0.5646,"ox":0.2861,"oy":0.5459},{"hx":0.9167,"hy":0.5468,"nx":0.7901,"ny":0.583,"ox":0.6626,"oy":0.6345},{"hx":0.1388,"hy":0.5469,"nx":0.3261,"ny":0.6256,"ox":0.2782,"oy":0.6682},{"hx":0.9167,"hy":0.5469,"nx":0.5892,"ny":0.5778,"ox":0.6025,"oy":0.6012},{"hx":0.8056,"hy":0.3907,"nx":0.9358,"ny":0.4689,"ox":0.6316,"oy":0.4552},{"hx":0.0833,"hy":0.4532,"nx":0.3835,"ny":0.4705,"ox":0.3421,"oy":0.3975},{"hx":0.3611,"hy":0.4531,"nx":0.2296,"ny":0.4604,"ox":0.1972,"oy":0.4214},{"hx":0.8056,"hy":0.5469,"nx":0.6937,"ny":0.637,"ox":0.7641,"oy":0.6309},{"hx":0.8611,"hy":0.4532,"nx":0.8722,"ny":0.4723,"ox":0.6778,"oy":0.4682},{"hx":0.0833,"hy":0.4532,"nx":0.4009,"ny":0.4088,"ox":0.3085,"oy":0.3445},{"hx":0.9167,"hy":0.4531,"nx":0.3485,"ny":0.3891,"ox":0.4372,"oy":0.376},{"hx":0.9167,"hy":0.4531,"nx":0.8256,"ny":0.4344,"ox":0.6879,"oy":0.3394},{"hx":0.9167,"hy":0.4532,"nx":0.7119,"ny":0.3735,"ox":0.738,"oy":0.3542},{"hx":0.6944,"hy":0.5469,"nx":0.8551,"ny":0.5485,"ox":0.6983,"oy":0.5147},{"hx":0.9167,"hy":0.4532,"nx":0.7306,"ny":0.4244,"ox":0.6488,"oy":0.4048},{"hx":0.3611,"hy":0.5469,"nx":0.2244,"ny":0.5323,"ox":0.2529,"oy":0.5178},{"hx":0.8611,"hy":0.4532,"nx":0.7616,"ny":0.4535,"ox":0.461,"oy":0.3779},{"hx":0.0833,"hy":0.4532,"nx":0.3436,"ny":0.4085,"ox":0.3296,"oy":0.4035},{"hx":0.0833,"hy":0.5469,"nx":0.2547,"ny":0.5896,"ox":0.2967,"oy":0.573},{"hx":0.0833,"hy":0.5469,"nx":0.0886,"ny":0.562,"ox":0.247,"oy":0.5511},{"hx":0.0833,"hy":0.5468,"nx":0.3593,"ny":0.7966,"ox":0.4127,"oy":0.6787},{"hx":0.0833,"hy":0.4532,"nx":0.3744,"ny":0.3724,"ox":0.4523,"oy":0.3282},{"hx":0.9167,"hy":0.4532,"nx":0.4529,"ny":0.1753,"ox":0.5271,"oy":0.2583},{"hx":0.9167,"hy":0.4532,"nx":0.7957,"ny":0.4679,"ox":0.7692,"oy":0.4666},{"hx":0.0833,"hy":0.5468,"nx":0.3033,"ny":0.7045,"ox":0.2253,"oy":0.6397},{"hx":0.8056,"hy":0.5781,"nx":0.7493,"ny":0.5506,"ox":0.612,"oy":0.5335},{"hx":0.2499,"hy":0.4532,"nx":0.2001,"ny":0.6955,"ox":0.2494,"oy":0.4784},{"hx":0.1944,"hy":0.4532,"nx":0.2194,"ny":0.3645,"ox":0.2611,"oy":0.3578},{"hx":0.4722,"hy":0.0156,"nx":0.6981,"ny":0.3573,"ox":0.6077,"oy":0.3403},{"hx":0.9167,"hy":0.5469,"nx":0.8531,"ny":0.547,"ox":0.7838,"oy":0.5799},{"hx":0.0833,"hy":0.4531,"nx":0.4323,"ny":0.3779,"ox":0.4475,"oy":0.3029},{"hx":0.0833,"hy":0.5469,"nx":0.2807,"ny":0.5949,"ox":0.2956,"oy":0.6358},{"hx":0.0833,"hy":0.5469,"nx":0.3419,"ny":0.5985,"ox":0.3078,"oy":0.6508},{"hx":0.0833,"hy":0.4531,"nx":0.2565,"ny":0.5061,"ox":0.3152,"oy":0.4721},{"hx":0.9167,"hy":0.4532,"nx":0.8633,"ny":0.4333,"ox":0.726,"oy":0.4375},{"hx":0.8056,"hy":0.5468,"nx":0.7527,"ny":0.559,"ox":0.7,"oy":0.5849},{"hx":0.8611,"hy":0.5468,"nx":0.3602,"ny":0.5998,"ox":0.3577,"oy":0.481},{"hx":0.0833,"hy":0.4531,"nx":0.5077,"ny":0.3468,"ox":0.5412,"oy":0.3281},{"hx":0.3611,"hy":0.4531,"nx":0.2606,"ny":0.4608,"ox":0.3805,"oy":0.5008},{"hx":0.5833,"hy":0.4531,"nx":0.6724,"ny":0.4934,"ox":0.5618,"oy":0.4803},{"hx":0.9167,"hy":0.5469,"nx":0.427,"ny":0.5722,"ox":0.4322,"oy":0.6289},{"hx":0.9167,"hy":0.5469,"nx":0.7001,"ny":0.5275,"ox":0.572,"oy":0.6724},{"hx":0.9167,"hy":0.4531,"nx":0.861,"ny":0.4402,"ox":0.7446,"oy":0.3777},{"hx":0.9167,"hy":0.5469,"nx":0.7388,"ny":0.5578,"ox":0.6585,"oy":0.6368},{"hx":0.0833,"hy":0.4531,"nx":0.1982,"ny":0.693,"ox":0.2324,"oy":0.4573},{"hx":0.9167,"hy":0.5469,"nx":0.2878,"ny":0.5618,"ox":0.3445,"oy":0.6666},{"hx":0.8056,"hy":0.6406,"nx":0.5917,"ny":0.5529,"ox":0.6054,"oy":0.613},{"hx":0.0833,"hy":0.4532,"nx":0.2308,"ny":0.4184,"ox":0.3518,"oy":0.4801},{"hx":0.9167,"hy":0.5469,"nx":0.8208,"ny":0.5623,"ox":0.7416,"oy":0.6008},{"hx":0.9167,"hy":0.5468,"nx":0.4619,"ny":0.636,"ox":0.5322,"oy":0.6312},{"hx":0.5278,"hy":0.4532,"nx":0.7206,"ny":0.4445,"ox":0.7238,"oy":0.4768},{"hx":0.8611,"hy":0.4532,"nx":0.7503,"ny":0.5101,"ox":0.7858,"oy":0.4559},{"hx":0.8056,"hy":0.5468,"nx":0.4381,"ny":0.5902,"ox":0.5011,"oy":0.6669},{"hx":0.9167,"hy":0.4531,"nx":0.7209,"ny":0.4567,"ox":0.7146,"oy":0.3645},{"hx":0.9167,"hy":0.4531,"nx":0.51,"ny":0.3066,"ox":0.5424,"oy":0.2901},{"hx":0.9167,"hy":0.5781,"nx":0.7684,"ny":0.5501,"ox":0.7282,"oy":0.6004},{"hx":0.6389,"hy":0.5469,"nx":0.7642,"ny":0.651,"ox":0.4022,"oy":0.7081},{"hx":0.9167,"hy":0.4532,"nx":0.3095,"ny":0.3369,"ox":0.3035,"oy":0.2656},{"hx":0.9167,"hy":0.5469,"nx":0.7696,"ny":0.5744,"ox":0.7368,"oy":0.6361},{"hx":0.9167,"hy":0.5468,"nx":0.5214,"ny":0.6818,"ox":0.5045,"oy":0.6796},{"hx":0.0833,"hy":0.5468,"nx":0.5875,"ny":0.5673,"ox":0.5968,"oy":0.5951},{"hx":0.9167,"hy":0.5469,"nx":0.7698,"ny":0.5397,"ox":0.7626,"oy":0.4907},{"hx":0.0833,"hy":0.5468,"nx":0.2988,"ny":0.6846,"ox":0.221,"oy":0.6198},{"hx":0.9167,"hy":0.4531,"nx":0.1623,"ny":0.4434,"ox":0.4091,"oy":0.3687},{"hx":0.4166,"hy":0.6406,"nx":0.4998,"ny":0.4598,"ox":0.6219,"oy":0.4148},{"hx":0.0833,"hy":0.5469,"nx":0.8537,"ny":0.5572,"ox":0.6384,"oy":0.6151},{"hx":0.2499,"hy":0.5781,"nx":0.1512,"ny":0.5543,"ox":0.3204,"oy":0.5585},{"hx":0.0833,"hy":0.5469,"nx":0.3859,"ny":0.6489,"ox":0.4208,"oy":0.6404},{"hx":0.0833,"hy":0.4531,"nx":0.1774,"ny":0.4472,"ox":0.2073,"oy":0.3988},{"hx":0.8056,"hy":0.5468,"nx":0.6456,"ny":0.5982,"ox":0.6565,"oy":0.5071},{"hx":0.9167,"hy":0.5469,"nx":0.7606,"ny":0.6059,"ox":0.7781,"oy":0.5715},{"hx":0.4722,"hy":0.3906,"nx":0.4768,"ny":0.4311,"ox":0.3612,"oy":0.3706},{"hx":0.4722,"hy":0.3593,"nx":0.7299,"ny":0.5648,"ox":0.7124,"oy":0.597},{"hx":0.0833,"hy":0.5469,"nx":0.2255,"ny":0.5502,"ox":0.3445,"oy":0.6089},{"hx":0.0833,"hy":0.4532,"nx":0.1015,"ny":0.4604,"ox":0.4419,"oy":0.4754},{"hx":0.9167,"hy":0.4532,"nx":0.714,"ny":0.3952,"ox":0.739,"oy":0.3779},{"hx":0.0833,"hy":0.4532,"nx":0.1714,"ny":0.4391,"ox":0.3036,"oy":0.4014},{"hx":0.0833,"hy":0.4532,"nx":0.1585,"ny":0.4629,"ox":0.2391,"oy":0.4852},{"hx":0.1944,"hy":0.3907,"nx":0.239,"ny":0.4863,"ox":0.3238,"oy":0.4737},{"hx":0.9167,"hy":0.5469,"nx":0.7048,"ny":0.605,"ox":0.7394,"oy":0.6377},{"hx":0.0833,"hy":0.5468,"nx":0.2519,"ny":0.6208,"ox":0.2329,"oy":0.6645},{"hx":0.4166,"hy":0.6094,"nx":0.5009,"ny":0.5963,"ox":0.5669,"oy":0.672},{"hx":0.9167,"hy":0.5469,"nx":0.7814,"ny":0.5836,"ox":0.707,"oy":0.5783},{"hx":0.3055,"hy":0.5782,"nx":0.2491,"ny":0.4168,"ox":0.2487,"oy":0.3772},{"hx":0.0833,"hy":0.4531,"nx":0.304,"ny":0.4347,"ox":0.2939,"oy":0.4025},{"hx":0.9167,"hy":0.5469,"nx":0.5403,"ny":0.8172,"ox":0.617,"oy":0.674},{"hx":0.1944,"hy":0.5781,"nx":0.1001,"ny":0.5572,"ox":0.253,"oy":0.5581},{"hx":0.1388,"hy":0.4531,"nx":0.3163,"ny":0.3159,"ox":0.3351,"oy":0.3513}]},{"card":"ice-spirit","label":"Ice Spirit","n":144,"cost":1,"is_wincon":false,"human_grid":[0.034722222222222224,0.0625,0.0,0.0625,0.1527777777777778,0.08333333333333333,0.11805555555555555,0.11805555555555555,0.10416666666666667,0.05555555555555555,0.06944444444444445,0.1388888888888889],"new_grid":[0.0,0.05555555555555555,0.020833333333333332,0.09027777777777778,0.125,0.10416666666666667,0.1527777777777778,0.006944444444444444,0.1527777777777778,0.06944444444444445,0.13194444444444445,0.09027777777777778],"old_grid":[0.006944444444444444,0.04861111111111111,0.006944444444444444,0.08333333333333333,0.1111111111111111,0.08333333333333333,0.16666666666666666,0.013888888888888888,0.19444444444444445,0.0763888888888889,0.13194444444444445,0.0763888888888889],"new_zone_acc":0.4375,"old_zone_acc":0.4166666666666667,"scatter":[{"hx":0.6389,"hy":0.7344,"nx":0.5745,"ny":0.6658,"ox":0.4474,"oy":0.6891},{"hx":0.6389,"hy":0.2657,"nx":0.7179,"ny":0.3745,"ox":0.724,"oy":0.417},{"hx":0.9167,"hy":0.4532,"nx":0.6399,"ny":0.3109,"ox":0.6054,"oy":0.3064},{"hx":0.5833,"hy":0.6406,"nx":0.6679,"ny":0.6098,"ox":0.692,"oy":0.6724},{"hx":0.4722,"hy":0.6093,"nx":0.5189,"ny":0.6352,"ox":0.588,"oy":0.6995},{"hx":0.0277,"hy":0.3282,"nx":0.3156,"ny":0.3445,"ox":0.3134,"oy":0.3231},{"hx":0.0277,"hy":0.3282,"nx":0.3018,"ny":0.4156,"ox":0.3512,"oy":0.4362},{"hx":0.6944,"hy":0.5468,"nx":0.7089,"ny":0.6476,"ox":0.6745,"oy":0.5209},{"hx":0.5833,"hy":0.4532,"nx":0.5181,"ny":0.3668,"ox":0.5836,"oy":0.3762},{"hx":0.5833,"hy":0.4531,"nx":0.647,"ny":0.2966,"ox":0.5957,"oy":0.2884},{"hx":0.5278,"hy":0.5468,"nx":0.5744,"ny":0.6345,"ox":0.6124,"oy":0.6789},{"hx":0.4166,"hy":0.7968,"nx":0.5051,"ny":0.717,"ox":0.5691,"oy":0.7523},{"hx":0.3611,"hy":0.7343,"nx":0.274,"ny":0.6583,"ox":0.2673,"oy":0.6371},{"hx":0.4166,"hy":0.7031,"nx":0.4043,"ny":0.6313,"ox":0.3821,"oy":0.7095},{"hx":0.4722,"hy":0.0156,"nx":0.5367,"ny":0.2087,"ox":0.5506,"oy":0.286},{"hx":0.5278,"hy":0.4531,"nx":0.6316,"ny":0.4256,"ox":0.6976,"oy":0.3615},{"hx":0.9167,"hy":0.3281,"nx":0.789,"ny":0.3345,"ox":0.7235,"oy":0.3774},{"hx":0.9167,"hy":0.7344,"nx":0.7207,"ny":0.6308,"ox":0.7169,"oy":0.6328},{"hx":0.0833,"hy":0.1719,"nx":0.4894,"ny":0.2771,"ox":0.4851,"oy":0.3286},{"hx":0.5833,"hy":0.6093,"nx":0.2692,"ny":0.7071,"ox":0.2839,"oy":0.7053},{"hx":0.2499,"hy":0.3907,"nx":0.3335,"ny":0.3652,"ox":0.3619,"oy":0.3769},{"hx":0.4722,"hy":0.2656,"nx":0.2554,"ny":0.3129,"ox":0.3289,"oy":0.3084},{"hx":0.6944,"hy":0.2656,"nx":0.6253,"ny":0.3848,"ox":0.5534,"oy":0.4222},{"hx":0.2499,"hy":0.4531,"nx":0.3302,"ny":0.4086,"ox":0.3427,"oy":0.4253},{"hx":0.5833,"hy":0.5469,"nx":0.6526,"ny":0.611,"ox":0.5296,"oy":0.6213},{"hx":0.3611,"hy":0.2344,"nx":0.2361,"ny":0.3201,"ox":0.2842,"oy":0.3505},{"hx":0.4722,"hy":0.4219,"nx":0.2548,"ny":0.4041,"ox":0.2266,"oy":0.4878},{"hx":0.8056,"hy":0.3282,"nx":0.6437,"ny":0.2953,"ox":0.6064,"oy":0.3924},{"hx":0.5278,"hy":0.4219,"nx":0.5083,"ny":0.3728,"ox":0.5176,"oy":0.3478},{"hx":0.9722,"hy":0.7343,"nx":0.6582,"ny":0.6079,"ox":0.712,"oy":0.6093},{"hx":0.5833,"hy":0.2657,"nx":0.7199,"ny":0.421,"ox":0.6878,"oy":0.4975},{"hx":0.5833,"hy":0.3594,"nx":0.7724,"ny":0.4343,"ox":0.6883,"oy":0.4626},{"hx":0.0833,"hy":0.2969,"nx":0.4259,"ny":0.3926,"ox":0.427,"oy":0.4441},{"hx":0.5278,"hy":0.4219,"nx":0.5639,"ny":0.3178,"ox":0.6749,"oy":0.3719},{"hx":0.0833,"hy":0.2344,"nx":0.4257,"ny":0.3183,"ox":0.474,"oy":0.3408},{"hx":0.0277,"hy":0.4219,"nx":0.4216,"ny":0.3686,"ox":0.5183,"oy":0.3235},{"hx":0.9722,"hy":0.8593,"nx":0.5549,"ny":0.6457,"ox":0.5185,"oy":0.5587},{"hx":0.8056,"hy":0.8594,"nx":0.61,"ny":0.4538,"ox":0.6982,"oy":0.6518},{"hx":0.2499,"hy":0.4531,"nx":0.4119,"ny":0.3835,"ox":0.3531,"oy":0.3813},{"hx":0.4722,"hy":0.4219,"nx":0.4164,"ny":0.357,"ox":0.4357,"oy":0.3694},{"hx":0.1388,"hy":0.4531,"nx":0.6562,"ny":0.4109,"ox":0.5866,"oy":0.5119},{"hx":0.4722,"hy":0.3594,"nx":0.3554,"ny":0.3584,"ox":0.2455,"oy":0.4301},{"hx":0.5833,"hy":0.2657,"nx":0.3008,"ny":0.3739,"ox":0.2562,"oy":0.3507},{"hx":0.6944,"hy":0.6406,"nx":0.6128,"ny":0.6391,"ox":0.6407,"oy":0.6594},{"hx":0.5833,"hy":0.4219,"nx":0.632,"ny":0.3701,"ox":0.7374,"oy":0.3211},{"hx":0.8056,"hy":0.4531,"nx":0.7539,"ny":0.4565,"ox":0.7958,"oy":0.4692},{"hx":0.0833,"hy":0.7031,"nx":0.5879,"ny":0.3432,"ox":0.5577,"oy":0.5021},{"hx":0.0833,"hy":0.7031,"nx":0.2807,"ny":0.6827,"ox":0.351,"oy":0.7199},{"hx":0.4722,"hy":0.4219,"nx":0.2731,"ny":0.3685,"ox":0.2124,"oy":0.3357},{"hx":0.3611,"hy":0.2344,"nx":0.3553,"ny":0.3056,"ox":0.3291,"oy":0.3313},{"hx":0.75,"hy":0.6406,"nx":0.4709,"ny":0.6004,"ox":0.4145,"oy":0.5367},{"hx":0.3055,"hy":0.8593,"nx":0.5932,"ny":0.6112,"ox":0.5047,"oy":0.6985},{"hx":0.1388,"hy":0.5468,"nx":0.6052,"ny":0.4414,"ox":0.6172,"oy":0.5069},{"hx":0.8056,"hy":0.5468,"nx":0.6574,"ny":0.6558,"ox":0.6611,"oy":0.6164},{"hx":0.4722,"hy":0.7969,"nx":0.4664,"ny":0.6489,"ox":0.4496,"oy":0.7018},{"hx":0.4166,"hy":0.5468,"nx":0.478,"ny":0.674,"ox":0.5181,"oy":0.6972},{"hx":0.8056,"hy":0.4532,"nx":0.3786,"ny":0.3102,"ox":0.4242,"oy":0.3296},{"hx":0.4166,"hy":0.6407,"nx":0.4386,"ny":0.6804,"ox":0.4632,"oy":0.5792},{"hx":0.8056,"hy":0.7343,"nx":0.6655,"ny":0.5987,"ox":0.6885,"oy":0.5526},{"hx":0.4722,"hy":0.5469,"nx":0.2994,"ny":0.6187,"ox":0.2812,"oy":0.6603},{"hx":0.3055,"hy":0.5469,"nx":0.2791,"ny":0.5876,"ox":0.2647,"oy":0.482},{"hx":0.0833,"hy":0.2344,"nx":0.19,"ny":0.2716,"ox":0.2324,"oy":0.3333},{"hx":0.3611,"hy":0.5781,"nx":0.3659,"ny":0.6823,"ox":0.3854,"oy":0.6537},{"hx":0.4166,"hy":0.3281,"nx":0.3047,"ny":0.2921,"ox":0.3052,"oy":0.2496},{"hx":0.5278,"hy":0.3594,"nx":0.3808,"ny":0.3972,"ox":0.3517,"oy":0.3562},{"hx":0.9167,"hy":0.5469,"nx":0.491,"ny":0.5681,"ox":0.5511,"oy":0.5108},{"hx":0.9722,"hy":0.2969,"nx":0.47,"ny":0.3669,"ox":0.5654,"oy":0.2869},{"hx":0.0833,"hy":0.5468,"nx":0.3706,"ny":0.6504,"ox":0.4368,"oy":0.5878},{"hx":0.2499,"hy":0.8593,"nx":0.2267,"ny":0.558,"ox":0.2407,"oy":0.5451},{"hx":0.6389,"hy":0.2969,"nx":0.6239,"ny":0.2026,"ox":0.5774,"oy":0.2241},{"hx":0.6389,"hy":0.4219,"nx":0.5792,"ny":0.3242,"ox":0.5558,"oy":0.4096},{"hx":0.4722,"hy":0.0157,"nx":0.5191,"ny":0.1486,"ox":0.5465,"oy":0.2881},{"hx":0.6389,"hy":0.9843,"nx":0.3114,"ny":0.6055,"ox":0.3489,"oy":0.5675},{"hx":0.3611,"hy":0.4532,"nx":0.3386,"ny":0.3694,"ox":0.3261,"oy":0.46},{"hx":0.9167,"hy":0.6094,"nx":0.5382,"ny":0.632,"ox":0.5267,"oy":0.5625},{"hx":0.9167,"hy":0.7656,"nx":0.7078,"ny":0.6371,"ox":0.6493,"oy":0.6262},{"hx":0.5278,"hy":0.5469,"nx":0.6846,"ny":0.5865,"ox":0.6957,"oy":0.671},{"hx":0.4166,"hy":0.5469,"nx":0.3907,"ny":0.6212,"ox":0.2902,"oy":0.5987},{"hx":0.4722,"hy":0.5468,"nx":0.4471,"ny":0.6157,"ox":0.5083,"oy":0.6767},{"hx":0.1944,"hy":0.4531,"nx":0.3361,"ny":0.3391,"ox":0.4074,"oy":0.3495},{"hx":0.0277,"hy":0.2969,"nx":0.2591,"ny":0.4359,"ox":0.2595,"oy":0.457},{"hx":0.1944,"hy":0.9531,"nx":0.277,"ny":0.6236,"ox":0.263,"oy":0.6601},{"hx":0.1388,"hy":0.5469,"nx":0.2166,"ny":0.5555,"ox":0.3156,"oy":0.5354},{"hx":0.4166,"hy":0.5469,"nx":0.2262,"ny":0.5679,"ox":0.2422,"oy":0.523},{"hx":0.1388,"hy":0.5469,"nx":0.4832,"ny":0.4625,"ox":0.496,"oy":0.4214},{"hx":0.8611,"hy":0.7031,"nx":0.6103,"ny":0.574,"ox":0.6568,"oy":0.653},{"hx":0.0277,"hy":0.3282,"nx":0.5045,"ny":0.3151,"ox":0.48,"oy":0.4189},{"hx":0.4722,"hy":0.0156,"nx":0.5553,"ny":0.2842,"ox":0.5328,"oy":0.3633},{"hx":0.5278,"hy":0.2656,"nx":0.644,"ny":0.3,"ox":0.5822,"oy":0.2456},{"hx":0.5278,"hy":0.4531,"nx":0.5746,"ny":0.3651,"ox":0.621,"oy":0.3649}]},{"card":"barbarian-barrel","label":"Barbarian Barrel","n":164,"cost":2,"is_wincon":false,"human_grid":[0.03048780487804878,0.006097560975609756,0.04878048780487805,0.09146341463414634,0.036585365853658534,0.08536585365853659,0.17682926829268292,0.04878048780487805,0.12195121951219512,0.18292682926829268,0.024390243902439025,0.14634146341463414],"new_grid":[0.024390243902439025,0.03048780487804878,0.036585365853658534,0.0975609756097561,0.024390243902439025,0.10365853658536585,0.13414634146341464,0.0,0.0975609756097561,0.1951219512195122,0.10365853658536585,0.1524390243902439],"old_grid":[0.018292682926829267,0.018292682926829267,0.018292682926829267,0.10975609756097561,0.03048780487804878,0.12804878048780488,0.12195121951219512,0.0,0.0975609756097561,0.20121951219512196,0.13414634146341464,0.12195121951219512],"new_zone_acc":0.5304878048780488,"old_zone_acc":0.5121951219512195,"scatter":[{"hx":0.1944,"hy":0.7656,"nx":0.2118,"ny":0.7357,"ox":0.3462,"oy":0.6887},{"hx":0.1944,"hy":0.5469,"nx":0.4114,"ny":0.7043,"ox":0.4853,"oy":0.5962},{"hx":0.6944,"hy":0.6719,"nx":0.6713,"ny":0.6718,"ox":0.6843,"oy":0.6742},{"hx":0.4167,"hy":0.2969,"nx":0.4382,"ny":0.2796,"ox":0.4799,"oy":0.3539},{"hx":0.8056,"hy":0.8906,"nx":0.6431,"ny":0.7193,"ox":0.5025,"oy":0.6365},{"hx":0.75,"hy":0.5469,"nx":0.5384,"ny":0.8472,"ox":0.6061,"oy":0.603},{"hx":0.1944,"hy":0.7031,"nx":0.2196,"ny":0.6243,"ox":0.2727,"oy":0.64},{"hx":0.1944,"hy":0.5469,"nx":0.2982,"ny":0.6526,"ox":0.3191,"oy":0.6594},{"hx":0.1389,"hy":0.4219,"nx":0.2094,"ny":0.4233,"ox":0.2341,"oy":0.349},{"hx":0.75,"hy":0.3594,"nx":0.532,"ny":0.2851,"ox":0.6011,"oy":0.2781},{"hx":0.6944,"hy":0.5469,"nx":0.3837,"ny":0.5853,"ox":0.3626,"oy":0.6588},{"hx":0.5278,"hy":0.4531,"nx":0.7121,"ny":0.4885,"ox":0.7473,"oy":0.5144},{"hx":0.8056,"hy":0.1719,"nx":0.4488,"ny":0.2102,"ox":0.3063,"oy":0.1933},{"hx":0.3611,"hy":0.6406,"nx":0.5082,"ny":0.6985,"ox":0.4301,"oy":0.6394},{"hx":0.1944,"hy":0.6719,"nx":0.4411,"ny":0.6359,"ox":0.4883,"oy":0.6862},{"hx":0.75,"hy":0.5469,"nx":0.8206,"ny":0.6832,"ox":0.8041,"oy":0.6468},{"hx":0.25,"hy":0.6094,"nx":0.2629,"ny":0.6313,"ox":0.3547,"oy":0.7247},{"hx":0.25,"hy":0.6406,"nx":0.3265,"ny":0.5898,"ox":0.382,"oy":0.685},{"hx":0.3056,"hy":0.3281,"nx":0.2077,"ny":0.2745,"ox":0.2397,"oy":0.3901},{"hx":0.25,"hy":0.4531,"nx":0.2524,"ny":0.4159,"ox":0.3284,"oy":0.3638},{"hx":0.75,"hy":0.2031,"nx":0.7398,"ny":0.223,"ox":0.5058,"oy":0.2713},{"hx":0.6944,"hy":0.3594,"nx":0.4891,"ny":0.2672,"ox":0.5256,"oy":0.3},{"hx":0.1944,"hy":0.5469,"nx":0.2153,"ny":0.5524,"ox":0.2654,"oy":0.5387},{"hx":0.6389,"hy":0.3281,"nx":0.6849,"ny":0.3164,"ox":0.7146,"oy":0.3236},{"hx":0.75,"hy":0.2969,"nx":0.7114,"ny":0.3295,"ox":0.7196,"oy":0.3541},{"hx":0.1944,"hy":0.7031,"nx":0.4317,"ny":0.6578,"ox":0.3828,"oy":0.6969},{"hx":0.1944,"hy":0.5781,"nx":0.56,"ny":0.5992,"ox":0.5537,"oy":0.5732},{"hx":0.1944,"hy":0.6719,"nx":0.2152,"ny":0.5991,"ox":0.238,"oy":0.6248},{"hx":0.8056,"hy":0.5469,"nx":0.4182,"ny":0.6702,"ox":0.415,"oy":0.6645},{"hx":0.1944,"hy":0.6094,"nx":0.2941,"ny":0.6467,"ox":0.3324,"oy":0.7383},{"hx":0.8056,"hy":0.4531,"nx":0.6331,"ny":0.3167,"ox":0.6733,"oy":0.3992},{"hx":0.8056,"hy":0.4219,"nx":0.6587,"ny":0.2659,"ox":0.6699,"oy":0.3651},{"hx":0.75,"hy":0.4531,"nx":0.6365,"ny":0.3557,"ox":0.6375,"oy":0.3878},{"hx":0.4167,"hy":0.8281,"nx":0.3604,"ny":0.72,"ox":0.4757,"oy":0.7105},{"hx":0.4167,"hy":0.4531,"nx":0.222,"ny":0.4585,"ox":0.2715,"oy":0.5047},{"hx":0.8056,"hy":0.8594,"nx":0.5125,"ny":0.7825,"ox":0.4543,"oy":0.7478},{"hx":0.8056,"hy":0.1719,"nx":0.8105,"ny":0.1557,"ox":0.7535,"oy":0.2251},{"hx":0.8056,"hy":0.7031,"nx":0.6316,"ny":0.707,"ox":0.7155,"oy":0.7046},{"hx":0.1944,"hy":0.6406,"nx":0.3121,"ny":0.6515,"ox":0.3264,"oy":0.6908},{"hx":0.25,"hy":0.3594,"nx":0.3348,"ny":0.5054,"ox":0.2942,"oy":0.4215},{"hx":0.5278,"hy":0.5469,"nx":0.6881,"ny":0.5476,"ox":0.6669,"oy":0.3841},{"hx":0.8056,"hy":0.1406,"nx":0.6284,"ny":0.2244,"ox":0.676,"oy":0.2346},{"hx":0.75,"hy":0.3281,"nx":0.5985,"ny":0.3439,"ox":0.6006,"oy":0.3537},{"hx":0.8056,"hy":0.8281,"nx":0.7682,"ny":0.7814,"ox":0.6238,"oy":0.7214},{"hx":0.5278,"hy":0.7969,"nx":0.6433,"ny":0.7784,"ox":0.5594,"oy":0.688},{"hx":0.75,"hy":0.5469,"nx":0.7804,"ny":0.5723,"ox":0.8031,"oy":0.5761},{"hx":0.6944,"hy":0.2344,"nx":0.6605,"ny":0.3106,"ox":0.6813,"oy":0.3576},{"hx":0.1944,"hy":0.5469,"nx":0.3649,"ny":0.5639,"ox":0.3591,"oy":0.4887},{"hx":0.75,"hy":0.2969,"nx":0.7597,"ny":0.3707,"ox":0.7385,"oy":0.3294},{"hx":0.0833,"hy":0.4531,"nx":0.2571,"ny":0.5848,"ox":0.2339,"oy":0.5434},{"hx":0.1944,"hy":0.4531,"nx":0.1871,"ny":0.4202,"ox":0.2259,"oy":0.4294},{"hx":0.25,"hy":0.6406,"nx":0.261,"ny":0.6737,"ox":0.2381,"oy":0.6918},{"hx":0.8056,"hy":0.4531,"nx":0.7643,"ny":0.3958,"ox":0.8035,"oy":0.3648},{"hx":0.1944,"hy":0.2969,"nx":0.4242,"ny":0.3539,"ox":0.4466,"oy":0.36},{"hx":0.5278,"hy":0.9531,"nx":0.4279,"ny":0.7418,"ox":0.4497,"oy":0.7408},{"hx":0.8056,"hy":0.8281,"nx":0.5678,"ny":0.7801,"ox":0.6236,"oy":0.7805},{"hx":0.5278,"hy":0.1719,"nx":0.554,"ny":0.0955,"ox":0.5344,"oy":0.3537},{"hx":0.1389,"hy":0.2031,"nx":0.3392,"ny":0.3464,"ox":0.367,"oy":0.3733},{"hx":0.1944,"hy":0.3906,"nx":0.3071,"ny":0.3838,"ox":0.2223,"oy":0.392},{"hx":0.75,"hy":0.7344,"nx":0.6625,"ny":0.6016,"ox":0.6843,"oy":0.6152},{"hx":0.75,"hy":0.7031,"nx":0.6853,"ny":0.7002,"ox":0.7123,"oy":0.7139},{"hx":0.5278,"hy":0.2656,"nx":0.5542,"ny":0.3404,"ox":0.5811,"oy":0.278},{"hx":0.1944,"hy":0.4531,"nx":0.6582,"ny":0.3115,"ox":0.6572,"oy":0.3898},{"hx":0.1944,"hy":0.6719,"nx":0.2077,"ny":0.6722,"ox":0.3069,"oy":0.6936},{"hx":0.8611,"hy":0.5469,"nx":0.5546,"ny":0.5906,"ox":0.5293,"oy":0.6201},{"hx":0.1944,"hy":0.3281,"nx":0.1784,"ny":0.3025,"ox":0.2417,"oy":0.3477},{"hx":0.3056,"hy":0.5469,"nx":0.3941,"ny":0.6818,"ox":0.3336,"oy":0.6528},{"hx":0.1944,"hy":0.5469,"nx":0.1777,"ny":0.2334,"ox":0.2913,"oy":0.592},{"hx":0.1944,"hy":0.5469,"nx":0.1979,"ny":0.7798,"ox":0.2364,"oy":0.7052},{"hx":0.75,"hy":0.5469,"nx":0.8112,"ny":0.583,"ox":0.7225,"oy":0.5972},{"hx":0.1389,"hy":0.2656,"nx":0.3528,"ny":0.2821,"ox":0.4409,"oy":0.4186},{"hx":0.6389,"hy":0.4219,"nx":0.7159,"ny":0.3657,"ox":0.7189,"oy":0.3582},{"hx":0.3056,"hy":0.4219,"nx":0.4975,"ny":0.3767,"ox":0.5538,"oy":0.3661},{"hx":0.4722,"hy":0.5469,"nx":0.671,"ny":0.5903,"ox":0.6157,"oy":0.5603},{"hx":0.8611,"hy":0.8281,"nx":0.7081,"ny":0.7954,"ox":0.6912,"oy":0.7171},{"hx":0.8056,"hy":0.8906,"nx":0.8371,"ny":0.8557,"ox":0.6881,"oy":0.736},{"hx":0.4722,"hy":0.3594,"nx":0.5863,"ny":0.5619,"ox":0.6343,"oy":0.4894},{"hx":0.1944,"hy":0.5469,"nx":0.3253,"ny":0.822,"ox":0.3041,"oy":0.6902},{"hx":0.6944,"hy":0.6719,"nx":0.7654,"ny":0.7035,"ox":0.7793,"oy":0.7077},{"hx":0.8056,"hy":0.6406,"nx":0.8171,"ny":0.6836,"ox":0.7482,"oy":0.664},{"hx":0.25,"hy":0.4531,"nx":0.3357,"ny":0.3738,"ox":0.326,"oy":0.3986},{"hx":0.3056,"hy":0.7031,"nx":0.2146,"ny":0.6446,"ox":0.2365,"oy":0.6417},{"hx":0.3611,"hy":0.3594,"nx":0.2396,"ny":0.2729,"ox":0.2067,"oy":0.2842},{"hx":0.1944,"hy":0.2969,"nx":0.3136,"ny":0.3079,"ox":0.3261,"oy":0.3182},{"hx":0.8056,"hy":0.4531,"nx":0.4711,"ny":0.4326,"ox":0.4538,"oy":0.4268},{"hx":0.1944,"hy":0.2344,"nx":0.3701,"ny":0.3283,"ox":0.4515,"oy":0.3625},{"hx":0.1944,"hy":0.7969,"nx":0.2564,"ny":0.6558,"ox":0.2962,"oy":0.6618},{"hx":0.3056,"hy":0.6406,"nx":0.266,"ny":0.6575,"ox":0.399,"oy":0.6255},{"hx":0.75,"hy":0.8594,"nx":0.743,"ny":0.6755,"ox":0.666,"oy":0.6571},{"hx":0.25,"hy":0.7031,"nx":0.3052,"ny":0.7619,"ox":0.3415,"oy":0.7041}]},{"card":"electro-spirit","label":"Electro Spirit","n":129,"cost":1,"is_wincon":false,"human_grid":[0.015503875968992248,0.046511627906976744,0.031007751937984496,0.10852713178294573,0.10077519379844961,0.07751937984496124,0.14728682170542637,0.08527131782945736,0.09302325581395349,0.07751937984496124,0.16279069767441862,0.05426356589147287],"new_grid":[0.023255813953488372,0.05426356589147287,0.015503875968992248,0.08527131782945736,0.08527131782945736,0.10852713178294573,0.17829457364341086,0.007751937984496124,0.11627906976744186,0.06976744186046512,0.18604651162790697,0.06976744186046512],"old_grid":[0.007751937984496124,0.023255813953488372,0.015503875968992248,0.08527131782945736,0.06976744186046512,0.10077519379844961,0.24031007751937986,0.0,0.14728682170542637,0.06201550387596899,0.17054263565891473,0.07751937984496124],"new_zone_acc":0.4496124031007752,"old_zone_acc":0.4418604651162791,"scatter":[{"hx":0.1944,"hy":0.3282,"nx":0.3474,"ny":0.2752,"ox":0.305,"oy":0.2922},{"hx":0.9167,"hy":0.2344,"nx":0.6241,"ny":0.3596,"ox":0.5971,"oy":0.3557},{"hx":0.9167,"hy":0.5781,"nx":0.667,"ny":0.6264,"ox":0.6876,"oy":0.6883},{"hx":0.3611,"hy":0.4531,"nx":0.2752,"ny":0.553,"ox":0.2625,"oy":0.4625},{"hx":0.2499,"hy":0.2656,"nx":0.2374,"ny":0.3419,"ox":0.2498,"oy":0.4046},{"hx":0.1388,"hy":0.4532,"nx":0.3928,"ny":0.4309,"ox":0.3635,"oy":0.4805},{"hx":0.5278,"hy":0.6719,"nx":0.35,"ny":0.7672,"ox":0.2914,"oy":0.6795},{"hx":0.0833,"hy":0.8593,"nx":0.1508,"ny":0.7725,"ox":0.2493,"oy":0.7153},{"hx":0.8056,"hy":0.5468,"nx":0.683,"ny":0.5538,"ox":0.6707,"oy":0.5577},{"hx":0.5278,"hy":0.9843,"nx":0.6674,"ny":0.6008,"ox":0.6372,"oy":0.632},{"hx":0.6389,"hy":0.3907,"nx":0.4312,"ny":0.3444,"ox":0.521,"oy":0.3737},{"hx":0.9722,"hy":0.3594,"nx":0.7382,"ny":0.3669,"ox":0.6792,"oy":0.385},{"hx":0.4722,"hy":0.4219,"nx":0.5566,"ny":0.3775,"ox":0.5485,"oy":0.4062},{"hx":0.1388,"hy":0.2657,"nx":0.4041,"ny":0.2608,"ox":0.3815,"oy":0.2926},{"hx":0.0277,"hy":0.2969,"nx":0.4517,"ny":0.3723,"ox":0.4285,"oy":0.3555},{"hx":0.5278,"hy":0.5468,"nx":0.6613,"ny":0.6545,"ox":0.7396,"oy":0.6862},{"hx":0.5277,"hy":0.6406,"nx":0.4341,"ny":0.617,"ox":0.4596,"oy":0.5812},{"hx":0.1388,"hy":0.5469,"nx":0.2444,"ny":0.574,"ox":0.2851,"oy":0.5019},{"hx":0.6944,"hy":0.2031,"nx":0.6788,"ny":0.3665,"ox":0.5928,"oy":0.3907},{"hx":0.2499,"hy":0.4532,"nx":0.2414,"ny":0.4947,"ox":0.2226,"oy":0.487},{"hx":0.8056,"hy":0.4531,"nx":0.6479,"ny":0.5039,"ox":0.6297,"oy":0.4854},{"hx":0.8056,"hy":0.3594,"nx":0.5329,"ny":0.3106,"ox":0.6012,"oy":0.3259},{"hx":0.4722,"hy":0.9844,"nx":0.4274,"ny":0.8432,"ox":0.4218,"oy":0.7109},{"hx":0.5278,"hy":0.8281,"nx":0.2663,"ny":0.6537,"ox":0.2923,"oy":0.6354},{"hx":0.5833,"hy":0.2969,"nx":0.7064,"ny":0.359,"ox":0.7236,"oy":0.3258},{"hx":0.1388,"hy":0.4532,"nx":0.3227,"ny":0.3983,"ox":0.3009,"oy":0.4045},{"hx":0.3611,"hy":0.6093,"nx":0.4832,"ny":0.6547,"ox":0.5488,"oy":0.6726},{"hx":0.8056,"hy":0.5468,"nx":0.7377,"ny":0.547,"ox":0.6988,"oy":0.4807},{"hx":0.5278,"hy":0.4219,"nx":0.6689,"ny":0.3405,"ox":0.7543,"oy":0.3208},{"hx":0.2499,"hy":0.1407,"nx":0.3463,"ny":0.2784,"ox":0.3193,"oy":0.3688},{"hx":0.8056,"hy":0.3906,"nx":0.795,"ny":0.3197,"ox":0.7432,"oy":0.3758},{"hx":0.9722,"hy":0.3907,"nx":0.5562,"ny":0.3605,"ox":0.5484,"oy":0.3585},{"hx":0.4722,"hy":0.3282,"nx":0.2542,"ny":0.3661,"ox":0.2884,"oy":0.3746},{"hx":0.8056,"hy":0.4532,"nx":0.7691,"ny":0.4601,"ox":0.7087,"oy":0.4475},{"hx":0.1388,"hy":0.5468,"nx":0.2714,"ny":0.609,"ox":0.3349,"oy":0.6126},{"hx":0.4722,"hy":0.5468,"nx":0.4102,"ny":0.6173,"ox":0.3754,"oy":0.6815},{"hx":0.3611,"hy":0.9531,"nx":0.3884,"ny":0.6511,"ox":0.3664,"oy":0.7171},{"hx":0.5833,"hy":0.3282,"nx":0.6741,"ny":0.4084,"ox":0.6108,"oy":0.442},{"hx":0.4166,"hy":0.2969,"nx":0.6043,"ny":0.3625,"ox":0.6297,"oy":0.3252},{"hx":0.4722,"hy":0.3906,"nx":0.3416,"ny":0.358,"ox":0.354,"oy":0.3673},{"hx":0.4166,"hy":0.0157,"nx":0.5623,"ny":0.2928,"ox":0.595,"oy":0.4097},{"hx":0.2499,"hy":0.5468,"nx":0.2437,"ny":0.537,"ox":0.3049,"oy":0.5267},{"hx":0.5278,"hy":0.7656,"nx":0.5401,"ny":0.6361,"ox":0.5447,"oy":0.6562},{"hx":0.1944,"hy":0.2657,"nx":0.2163,"ny":0.2763,"ox":0.2772,"oy":0.2532},{"hx":0.0833,"hy":0.7969,"nx":0.2083,"ny":0.6459,"ox":0.2055,"oy":0.5974},{"hx":0.9167,"hy":0.3594,"nx":0.6934,"ny":0.3809,"ox":0.6304,"oy":0.3641},{"hx":0.2499,"hy":0.5781,"nx":0.3481,"ny":0.6216,"ox":0.2555,"oy":0.5037},{"hx":0.3055,"hy":0.5469,"nx":0.2603,"ny":0.5726,"ox":0.2864,"oy":0.5168},{"hx":0.4166,"hy":0.5468,"nx":0.4897,"ny":0.6072,"ox":0.4396,"oy":0.639},{"hx":0.5833,"hy":0.2656,"nx":0.6327,"ny":0.3593,"ox":0.6539,"oy":0.3572},{"hx":0.4166,"hy":0.6406,"nx":0.2768,"ny":0.4019,"ox":0.281,"oy":0.5825},{"hx":0.3055,"hy":0.4219,"nx":0.3717,"ny":0.4426,"ox":0.3093,"oy":0.5233},{"hx":0.1944,"hy":0.4532,"nx":0.2616,"ny":0.4731,"ox":0.2085,"oy":0.5017},{"hx":0.1388,"hy":0.5468,"nx":0.258,"ny":0.5131,"ox":0.2871,"oy":0.4942},{"hx":0.4722,"hy":0.4218,"nx":0.7018,"ny":0.3363,"ox":0.7014,"oy":0.4919},{"hx":0.0277,"hy":0.0469,"nx":0.4032,"ny":0.2756,"ox":0.4366,"oy":0.256},{"hx":0.0277,"hy":0.2969,"nx":0.2376,"ny":0.3999,"ox":0.2582,"oy":0.3704},{"hx":0.1944,"hy":0.5468,"nx":0.3964,"ny":0.6385,"ox":0.4128,"oy":0.6732},{"hx":0.4722,"hy":0.0157,"nx":0.3849,"ny":0.2748,"ox":0.3348,"oy":0.3614},{"hx":0.4722,"hy":0.9843,"nx":0.282,"ny":0.6523,"ox":0.2557,"oy":0.6328},{"hx":0.6944,"hy":0.6406,"nx":0.6481,"ny":0.6075,"ox":0.7321,"oy":0.5751},{"hx":0.0277,"hy":0.9219,"nx":0.7228,"ny":0.7097,"ox":0.5767,"oy":0.6614},{"hx":0.9167,"hy":0.5468,"nx":0.7165,"ny":0.6504,"ox":0.6924,"oy":0.6124},{"hx":0.6944,"hy":0.7031,"nx":0.7877,"ny":0.6735,"ox":0.7857,"oy":0.6509},{"hx":0.0833,"hy":0.5468,"nx":0.4738,"ny":0.6429,"ox":0.5437,"oy":0.6037},{"hx":0.8611,"hy":0.4531,"nx":0.3212,"ny":0.2899,"ox":0.3945,"oy":0.3571},{"hx":0.5278,"hy":0.0157,"nx":0.5275,"ny":0.1978,"ox":0.5339,"oy":0.2973},{"hx":0.4722,"hy":0.2969,"nx":0.4679,"ny":0.3364,"ox":0.3346,"oy":0.4064},{"hx":0.5833,"hy":0.6094,"nx":0.3795,"ny":0.6473,"ox":0.39,"oy":0.6506},{"hx":0.5833,"hy":0.6406,"nx":0.5633,"ny":0.636,"ox":0.6434,"oy":0.6729},{"hx":0.3611,"hy":0.8594,"nx":0.2666,"ny":0.6817,"ox":0.3037,"oy":0.6535},{"hx":0.4166,"hy":0.7031,"nx":0.2272,"ny":0.3961,"ox":0.2575,"oy":0.5254},{"hx":0.0277,"hy":0.9531,"nx":0.2382,"ny":0.417,"ox":0.2349,"oy":0.5844},{"hx":0.9167,"hy":0.4219,"nx":0.7546,"ny":0.3359,"ox":0.744,"oy":0.3802},{"hx":0.3611,"hy":0.5781,"nx":0.598,"ny":0.586,"ox":0.5204,"oy":0.6005},{"hx":0.8056,"hy":0.5469,"nx":0.5392,"ny":0.5806,"ox":0.5604,"oy":0.483},{"hx":0.1944,"hy":0.3281,"nx":0.3276,"ny":0.3821,"ox":0.2797,"oy":0.3811},{"hx":0.0833,"hy":0.4531,"nx":0.2395,"ny":0.3953,"ox":0.2463,"oy":0.4479},{"hx":0.2499,"hy":0.4531,"nx":0.4746,"ny":0.2215,"ox":0.4524,"oy":0.347},{"hx":0.5833,"hy":0.6094,"nx":0.6272,"ny":0.6317,"ox":0.6899,"oy":0.6336},{"hx":0.8056,"hy":0.4531,"nx":0.7601,"ny":0.3843,"ox":0.6618,"oy":0.3438},{"hx":0.4166,"hy":0.7031,"nx":0.3325,"ny":0.6163,"ox":0.3024,"oy":0.6624},{"hx":0.4166,"hy":0.7031,"nx":0.2661,"ny":0.6313,"ox":0.3067,"oy":0.6273},{"hx":0.4722,"hy":0.5781,"nx":0.4656,"ny":0.7198,"ox":0.3675,"oy":0.6347},{"hx":0.5278,"hy":0.9844,"nx":0.5504,"ny":0.8653,"ox":0.586,"oy":0.7535},{"hx":0.4166,"hy":0.4532,"nx":0.6464,"ny":0.3197,"ox":0.6824,"oy":0.3082},{"hx":0.1388,"hy":0.6094,"nx":0.3228,"ny":0.3378,"ox":0.2557,"oy":0.354},{"hx":0.5833,"hy":0.6093,"nx":0.3695,"ny":0.5593,"ox":0.377,"oy":0.5736},{"hx":0.1388,"hy":0.4532,"nx":0.4553,"ny":0.3819,"ox":0.449,"oy":0.3172},{"hx":0.5833,"hy":0.4531,"nx":0.5358,"ny":0.3726,"ox":0.5306,"oy":0.3406}]},{"card":"berserker","label":"Berserker","n":248,"cost":2,"is_wincon":false,"human_grid":[0.028225806451612902,0.04032258064516129,0.016129032258064516,0.05241935483870968,0.04838709677419355,0.056451612903225805,0.1814516129032258,0.03225806451612903,0.18548387096774194,0.10483870967741936,0.14516129032258066,0.10887096774193548],"new_grid":[0.012096774193548387,0.04032258064516129,0.008064516129032258,0.08870967741935484,0.03225806451612903,0.08870967741935484,0.1814516129032258,0.004032258064516129,0.10887096774193548,0.13306451612903225,0.14919354838709678,0.1532258064516129],"old_grid":[0.012096774193548387,0.04032258064516129,0.004032258064516129,0.08870967741935484,0.04435483870967742,0.07258064516129033,0.1532258064516129,0.0,0.13709677419354838,0.13306451612903225,0.1774193548387097,0.13709677419354838],"new_zone_acc":0.4435483870967742,"old_zone_acc":0.43951612903225806,"scatter":[{"hx":0.0833,"hy":0.5781,"nx":0.5271,"ny":0.6501,"ox":0.4273,"oy":0.6735},{"hx":0.2499,"hy":0.5468,"nx":0.2179,"ny":0.6086,"ox":0.3436,"oy":0.6878},{"hx":0.4722,"hy":0.9843,"nx":0.4793,"ny":0.7533,"ox":0.4868,"oy":0.6463},{"hx":0.5833,"hy":0.6718,"nx":0.5193,"ny":0.641,"ox":0.5271,"oy":0.619},{"hx":0.8056,"hy":0.5469,"nx":0.79,"ny":0.6151,"ox":0.7773,"oy":0.6172},{"hx":0.2499,"hy":0.4219,"nx":0.3883,"ny":0.4748,"ox":0.3807,"oy":0.5302},{"hx":0.1388,"hy":0.4532,"nx":0.4277,"ny":0.4053,"ox":0.3835,"oy":0.4483},{"hx":0.1944,"hy":0.5468,"nx":0.7595,"ny":0.6259,"ox":0.6389,"oy":0.6646},{"hx":0.8056,"hy":0.5781,"nx":0.6341,"ny":0.5925,"ox":0.5359,"oy":0.6752},{"hx":0.3611,"hy":0.2344,"nx":0.3021,"ny":0.3441,"ox":0.3187,"oy":0.381},{"hx":0.2499,"hy":0.4531,"nx":0.4863,"ny":0.3737,"ox":0.5088,"oy":0.435},{"hx":0.1944,"hy":0.5469,"nx":0.5078,"ny":0.5529,"ox":0.5258,"oy":0.5366},{"hx":0.5278,"hy":0.0156,"nx":0.4454,"ny":0.3001,"ox":0.5735,"oy":0.3248},{"hx":0.4722,"hy":0.7031,"nx":0.3803,"ny":0.6863,"ox":0.348,"oy":0.6644},{"hx":0.8056,"hy":0.4532,"nx":0.6147,"ny":0.3319,"ox":0.5885,"oy":0.417},{"hx":0.0833,"hy":0.1719,"nx":0.2129,"ny":0.2058,"ox":0.3105,"oy":0.2079},{"hx":0.0833,"hy":0.2032,"nx":0.3426,"ny":0.2678,"ox":0.3994,"oy":0.3221},{"hx":0.5278,"hy":0.6406,"nx":0.6894,"ny":0.6423,"ox":0.5606,"oy":0.6689},{"hx":0.5278,"hy":0.0156,"nx":0.5143,"ny":0.2717,"ox":0.5008,"oy":0.2402},{"hx":0.5278,"hy":0.5469,"nx":0.5538,"ny":0.6055,"ox":0.5129,"oy":0.6384},{"hx":0.1944,"hy":0.5469,"nx":0.2217,"ny":0.5573,"ox":0.2081,"oy":0.5181},{"hx":0.4166,"hy":0.6718,"nx":0.369,"ny":0.6924,"ox":0.4191,"oy":0.6949},{"hx":0.3611,"hy":0.4532,"nx":0.1881,"ny":0.3219,"ox":0.2732,"oy":0.338},{"hx":0.1944,"hy":0.2657,"nx":0.2374,"ny":0.2811,"ox":0.2781,"oy":0.3052},{"hx":0.5278,"hy":0.0157,"nx":0.5969,"ny":0.2412,"ox":0.6184,"oy":0.333},{"hx":0.1388,"hy":0.4532,"nx":0.6956,"ny":0.7209,"ox":0.6112,"oy":0.5325},{"hx":0.75,"hy":0.4531,"nx":0.5287,"ny":0.3487,"ox":0.5332,"oy":0.3147},{"hx":0.1944,"hy":0.4532,"nx":0.4415,"ny":0.4353,"ox":0.3959,"oy":0.3981},{"hx":0.5278,"hy":0.5781,"nx":0.4115,"ny":0.6257,"ox":0.4372,"oy":0.6571},{"hx":0.4166,"hy":0.7344,"nx":0.336,"ny":0.6689,"ox":0.3725,"oy":0.6175},{"hx":0.0833,"hy":0.5781,"nx":0.1851,"ny":0.6222,"ox":0.2161,"oy":0.6484},{"hx":0.5278,"hy":0.0156,"nx":0.3825,"ny":0.259,"ox":0.3876,"oy":0.4146},{"hx":0.1944,"hy":0.4531,"nx":0.2137,"ny":0.7489,"ox":0.3075,"oy":0.4935},{"hx":0.5278,"hy":0.3282,"nx":0.6392,"ny":0.2667,"ox":0.7253,"oy":0.282},{"hx":0.3611,"hy":0.6718,"nx":0.2733,"ny":0.6347,"ox":0.2697,"oy":0.5749},{"hx":0.1388,"hy":0.5468,"nx":0.2847,"ny":0.6444,"ox":0.2767,"oy":0.658},{"hx":0.6389,"hy":0.3594,"nx":0.5131,"ny":0.4562,"ox":0.508,"oy":0.3965},{"hx":0.0833,"hy":0.7969,"nx":0.394,"ny":0.6514,"ox":0.3072,"oy":0.5403},{"hx":0.4722,"hy":0.5469,"nx":0.3171,"ny":0.5897,"ox":0.2661,"oy":0.4998},{"hx":0.1944,"hy":0.3281,"nx":0.1995,"ny":0.3562,"ox":0.3227,"oy":0.2956},{"hx":0.8056,"hy":0.3594,"nx":0.3439,"ny":0.3394,"ox":0.459,"oy":0.2784},{"hx":0.8056,"hy":0.2656,"nx":0.7196,"ny":0.3668,"ox":0.7026,"oy":0.3568},{"hx":0.2499,"hy":0.3282,"nx":0.2317,"ny":0.3102,"ox":0.3224,"oy":0.3306},{"hx":0.5277,"hy":0.3594,"nx":0.4593,"ny":0.6469,"ox":0.5076,"oy":0.6882},{"hx":0.5278,"hy":0.0157,"nx":0.4891,"ny":0.2741,"ox":0.5333,"oy":0.3502},{"hx":0.0277,"hy":0.6719,"nx":0.3062,"ny":0.6219,"ox":0.3059,"oy":0.6618},{"hx":0.5278,"hy":0.9844,"nx":0.6223,"ny":0.7898,"ox":0.6586,"oy":0.6418},{"hx":0.6389,"hy":0.7656,"nx":0.6416,"ny":0.6767,"ox":0.6655,"oy":0.6718},{"hx":0.3055,"hy":0.7344,"nx":0.2827,"ny":0.6622,"ox":0.3857,"oy":0.6577},{"hx":0.4722,"hy":0.6093,"nx":0.4208,"ny":0.8027,"ox":0.3317,"oy":0.7153},{"hx":0.5278,"hy":0.8281,"nx":0.5093,"ny":0.5877,"ox":0.4486,"oy":0.5602},{"hx":0.3055,"hy":0.2344,"nx":0.3516,"ny":0.3661,"ox":0.4008,"oy":0.3668},{"hx":0.8056,"hy":0.3907,"nx":0.6231,"ny":0.4003,"ox":0.6342,"oy":0.361},{"hx":0.9167,"hy":0.4532,"nx":0.7254,"ny":0.519,"ox":0.7137,"oy":0.5233},{"hx":0.5278,"hy":0.8281,"nx":0.5966,"ny":0.7482,"ox":0.611,"oy":0.7302},{"hx":0.5833,"hy":0.4532,"nx":0.6414,"ny":0.3576,"ox":0.6901,"oy":0.3251},{"hx":0.6389,"hy":0.7031,"nx":0.3099,"ny":0.6883,"ox":0.3956,"oy":0.6781},{"hx":0.1944,"hy":0.5469,"nx":0.3757,"ny":0.3865,"ox":0.4163,"oy":0.4062},{"hx":0.75,"hy":0.7343,"nx":0.622,"ny":0.6247,"ox":0.5783,"oy":0.4916},{"hx":0.5278,"hy":0.9844,"nx":0.7107,"ny":0.5308,"ox":0.7227,"oy":0.5372},{"hx":0.8056,"hy":0.5469,"nx":0.7173,"ny":0.636,"ox":0.6854,"oy":0.7123},{"hx":0.4722,"hy":0.5469,"nx":0.3366,"ny":0.6267,"ox":0.3698,"oy":0.6718},{"hx":0.4166,"hy":0.5468,"nx":0.2625,"ny":0.4742,"ox":0.2527,"oy":0.5246},{"hx":0.8056,"hy":0.6719,"nx":0.7947,"ny":0.6258,"ox":0.6939,"oy":0.631},{"hx":0.8611,"hy":0.4532,"nx":0.6507,"ny":0.2102,"ox":0.5667,"oy":0.2225},{"hx":0.5833,"hy":0.6094,"nx":0.6253,"ny":0.671,"ox":0.5959,"oy":0.6738},{"hx":0.8056,"hy":0.4532,"nx":0.7537,"ny":0.4627,"ox":0.6904,"oy":0.4758},{"hx":0.8056,"hy":0.5468,"nx":0.7046,"ny":0.6011,"ox":0.5749,"oy":0.6495},{"hx":0.0833,"hy":0.7656,"nx":0.2437,"ny":0.7462,"ox":0.2284,"oy":0.7134},{"hx":0.6944,"hy":0.5469,"nx":0.4912,"ny":0.6808,"ox":0.5601,"oy":0.7153},{"hx":0.8611,"hy":0.5469,"nx":0.5788,"ny":0.6411,"ox":0.5107,"oy":0.6528},{"hx":0.2499,"hy":0.4531,"nx":0.5356,"ny":0.4025,"ox":0.5423,"oy":0.3758},{"hx":0.8056,"hy":0.5469,"nx":0.3546,"ny":0.5606,"ox":0.3989,"oy":0.5137},{"hx":0.3055,"hy":0.7656,"nx":0.3133,"ny":0.7291,"ox":0.3234,"oy":0.7398},{"hx":0.5833,"hy":0.9844,"nx":0.627,"ny":0.7327,"ox":0.5848,"oy":0.7255},{"hx":0.5278,"hy":0.7031,"nx":0.6416,"ny":0.6725,"ox":0.6665,"oy":0.6652},{"hx":0.4722,"hy":0.4532,"nx":0.4107,"ny":0.3627,"ox":0.497,"oy":0.3479},{"hx":0.1944,"hy":0.4532,"nx":0.238,"ny":0.4021,"ox":0.2469,"oy":0.4282},{"hx":0.0277,"hy":0.3594,"nx":0.3037,"ny":0.3355,"ox":0.3099,"oy":0.3826},{"hx":0.8056,"hy":0.5469,"nx":0.6531,"ny":0.6177,"ox":0.6235,"oy":0.6849},{"hx":0.0833,"hy":0.7344,"nx":0.6226,"ny":0.7391,"ox":0.6139,"oy":0.7372},{"hx":0.2499,"hy":0.6406,"nx":0.3202,"ny":0.6871,"ox":0.2753,"oy":0.7125},{"hx":0.4166,"hy":0.6719,"nx":0.5711,"ny":0.6386,"ox":0.5899,"oy":0.6129},{"hx":0.4166,"hy":0.7344,"nx":0.3889,"ny":0.6328,"ox":0.395,"oy":0.6921},{"hx":0.4722,"hy":0.4531,"nx":0.348,"ny":0.3846,"ox":0.3183,"oy":0.3982},{"hx":0.3611,"hy":0.4531,"nx":0.2466,"ny":0.4435,"ox":0.2263,"oy":0.4247},{"hx":0.8056,"hy":0.5469,"nx":0.5709,"ny":0.6273,"ox":0.5029,"oy":0.7671},{"hx":0.5278,"hy":0.9844,"nx":0.6933,"ny":0.5729,"ox":0.6603,"oy":0.6058},{"hx":0.3611,"hy":0.5781,"nx":0.4208,"ny":0.599,"ox":0.4402,"oy":0.6032},{"hx":0.1944,"hy":0.4532,"nx":0.3712,"ny":0.4015,"ox":0.3265,"oy":0.3472}]},{"card":"elite-barbarians","label":"Elite Barbarians","n":150,"cost":6,"is_wincon":false,"human_grid":[0.006666666666666667,0.03333333333333333,0.0,0.1,0.04,0.06666666666666667,0.2866666666666667,0.013333333333333334,0.19333333333333333,0.08666666666666667,0.08,0.09333333333333334],"new_grid":[0.006666666666666667,0.08666666666666667,0.006666666666666667,0.1,0.02666666666666667,0.04,0.21333333333333335,0.006666666666666667,0.13333333333333333,0.10666666666666667,0.16,0.11333333333333333],"old_grid":[0.013333333333333334,0.06666666666666667,0.0,0.09333333333333334,0.02,0.03333333333333333,0.20666666666666667,0.0,0.18,0.10666666666666667,0.16666666666666666,0.11333333333333333],"new_zone_acc":0.38666666666666666,"old_zone_acc":0.4266666666666667,"scatter":[{"hx":0.3611,"hy":0.3282,"nx":0.2078,"ny":0.3531,"ox":0.2395,"oy":0.3272},{"hx":0.8056,"hy":0.3907,"nx":0.4466,"ny":0.3665,"ox":0.3542,"oy":0.3584},{"hx":0.8056,"hy":0.6406,"nx":0.6459,"ny":0.6291,"ox":0.7964,"oy":0.6297},{"hx":0.5278,"hy":0.0157,"nx":0.5239,"ny":0.356,"ox":0.4561,"oy":0.3969},{"hx":0.5278,"hy":0.0157,"nx":0.4947,"ny":0.2938,"ox":0.4526,"oy":0.3463},{"hx":0.8611,"hy":0.5781,"nx":0.6303,"ny":0.6746,"ox":0.6346,"oy":0.7438},{"hx":0.5278,"hy":0.7031,"nx":0.626,"ny":0.6897,"ox":0.6802,"oy":0.682},{"hx":0.8056,"hy":0.7343,"nx":0.7037,"ny":0.6797,"ox":0.7291,"oy":0.6528},{"hx":0.4722,"hy":0.6406,"nx":0.5357,"ny":0.5553,"ox":0.6646,"oy":0.4747},{"hx":0.75,"hy":0.4531,"nx":0.7227,"ny":0.3598,"ox":0.6753,"oy":0.3972},{"hx":0.1944,"hy":0.4219,"nx":0.2505,"ny":0.3396,"ox":0.2063,"oy":0.3082},{"hx":0.1388,"hy":0.4531,"nx":0.5717,"ny":0.2937,"ox":0.6661,"oy":0.3135},{"hx":0.3055,"hy":0.1406,"nx":0.3341,"ny":0.3798,"ox":0.3639,"oy":0.3096},{"hx":0.5278,"hy":0.4531,"nx":0.3957,"ny":0.2991,"ox":0.4432,"oy":0.2398},{"hx":0.1388,"hy":0.5469,"nx":0.6802,"ny":0.5409,"ox":0.7388,"oy":0.5057},{"hx":0.5278,"hy":0.0156,"nx":0.4101,"ny":0.1464,"ox":0.4149,"oy":0.3314},{"hx":0.1388,"hy":0.4531,"nx":0.4124,"ny":0.2087,"ox":0.3876,"oy":0.432},{"hx":0.1944,"hy":0.3594,"nx":0.5057,"ny":0.1483,"ox":0.5057,"oy":0.3541},{"hx":0.8056,"hy":0.4532,"nx":0.7791,"ny":0.4073,"ox":0.7437,"oy":0.4065},{"hx":0.1944,"hy":0.4531,"nx":0.322,"ny":0.391,"ox":0.3173,"oy":0.3384},{"hx":0.1944,"hy":0.2969,"nx":0.3177,"ny":0.3767,"ox":0.3117,"oy":0.3511},{"hx":0.4722,"hy":0.2657,"nx":0.5214,"ny":0.4028,"ox":0.5005,"oy":0.394},{"hx":0.4722,"hy":0.6094,"nx":0.3254,"ny":0.597,"ox":0.357,"oy":0.7188},{"hx":0.1944,"hy":0.4531,"nx":0.5992,"ny":0.3367,"ox":0.5925,"oy":0.4158},{"hx":0.1944,"hy":0.3281,"nx":0.1752,"ny":0.3386,"ox":0.1979,"oy":0.3825},{"hx":0.8056,"hy":0.4531,"nx":0.3326,"ny":0.4268,"ox":0.309,"oy":0.4046},{"hx":0.0833,"hy":0.5469,"nx":0.2845,"ny":0.5469,"ox":0.2857,"oy":0.5551},{"hx":0.8056,"hy":0.5469,"nx":0.3058,"ny":0.5876,"ox":0.3242,"oy":0.5679},{"hx":0.1944,"hy":0.5469,"nx":0.2822,"ny":0.6129,"ox":0.3258,"oy":0.71},{"hx":0.4722,"hy":0.7031,"nx":0.47,"ny":0.6717,"ox":0.4686,"oy":0.74},{"hx":0.5278,"hy":0.3594,"nx":0.3721,"ny":0.3134,"ox":0.3719,"oy":0.3315},{"hx":0.4722,"hy":0.4532,"nx":0.5304,"ny":0.3977,"ox":0.5659,"oy":0.5082},{"hx":0.75,"hy":0.7343,"nx":0.6593,"ny":0.6479,"ox":0.7562,"oy":0.6674},{"hx":0.1944,"hy":0.4531,"nx":0.4761,"ny":0.4349,"ox":0.4498,"oy":0.4312},{"hx":0.8056,"hy":0.4531,"nx":0.5896,"ny":0.5911,"ox":0.5969,"oy":0.5609},{"hx":0.4722,"hy":0.3594,"nx":0.4807,"ny":0.3402,"ox":0.4479,"oy":0.5154},{"hx":0.75,"hy":0.5781,"nx":0.7244,"ny":0.6592,"ox":0.7174,"oy":0.7387},{"hx":0.8056,"hy":0.5781,"nx":0.7354,"ny":0.679,"ox":0.7825,"oy":0.6713},{"hx":0.9167,"hy":0.5469,"nx":0.4907,"ny":0.7582,"ox":0.4237,"oy":0.7487},{"hx":0.8611,"hy":0.2969,"nx":0.807,"ny":0.3104,"ox":0.6531,"oy":0.3007},{"hx":0.4166,"hy":0.2032,"nx":0.2454,"ny":0.3282,"ox":0.2101,"oy":0.3056},{"hx":0.8056,"hy":0.4219,"nx":0.6039,"ny":0.3867,"ox":0.4928,"oy":0.3289},{"hx":0.1944,"hy":0.5468,"nx":0.6566,"ny":0.4854,"ox":0.656,"oy":0.4749},{"hx":0.2499,"hy":0.3594,"nx":0.3013,"ny":0.5374,"ox":0.2727,"oy":0.5967},{"hx":0.4722,"hy":0.3906,"nx":0.5516,"ny":0.594,"ox":0.5753,"oy":0.5966},{"hx":0.8056,"hy":0.5468,"nx":0.6885,"ny":0.6553,"ox":0.6966,"oy":0.7053},{"hx":0.8056,"hy":0.5468,"nx":0.7961,"ny":0.6945,"ox":0.7637,"oy":0.6413},{"hx":0.1944,"hy":0.2969,"nx":0.3026,"ny":0.4739,"ox":0.2979,"oy":0.3564},{"hx":0.5833,"hy":0.9843,"nx":0.5213,"ny":0.8113,"ox":0.5186,"oy":0.7424},{"hx":0.1944,"hy":0.6093,"nx":0.2307,"ny":0.5817,"ox":0.2932,"oy":0.6535},{"hx":0.8056,"hy":0.5468,"nx":0.327,"ny":0.5656,"ox":0.3805,"oy":0.5483},{"hx":0.1944,"hy":0.4531,"nx":0.3783,"ny":0.2911,"ox":0.2697,"oy":0.3508},{"hx":0.8056,"hy":0.4532,"nx":0.3991,"ny":0.5974,"ox":0.4294,"oy":0.4035},{"hx":0.1944,"hy":0.5468,"nx":0.3374,"ny":0.7601,"ox":0.3417,"oy":0.6748},{"hx":0.4166,"hy":0.7968,"nx":0.3095,"ny":0.5156,"ox":0.3248,"oy":0.5587},{"hx":0.1944,"hy":0.5468,"nx":0.5721,"ny":0.6342,"ox":0.6127,"oy":0.5605},{"hx":0.1388,"hy":0.2969,"nx":0.1742,"ny":0.323,"ox":0.2051,"oy":0.3263},{"hx":0.1944,"hy":0.5469,"nx":0.6649,"ny":0.5081,"ox":0.6719,"oy":0.5354},{"hx":0.8056,"hy":0.4531,"nx":0.4281,"ny":0.4011,"ox":0.3751,"oy":0.4453},{"hx":0.4166,"hy":0.5781,"nx":0.3687,"ny":0.6671,"ox":0.3591,"oy":0.713},{"hx":0.75,"hy":0.7031,"nx":0.759,"ny":0.7056,"ox":0.726,"oy":0.7256},{"hx":0.8611,"hy":0.4531,"nx":0.7148,"ny":0.4489,"ox":0.6732,"oy":0.4363},{"hx":0.4722,"hy":0.0157,"nx":0.304,"ny":0.4528,"ox":0.3819,"oy":0.2699},{"hx":0.0833,"hy":0.7656,"nx":0.4633,"ny":0.7296,"ox":0.3825,"oy":0.7059},{"hx":0.4166,"hy":0.7343,"nx":0.4046,"ny":0.6908,"ox":0.4972,"oy":0.6685},{"hx":0.1944,"hy":0.2656,"nx":0.1953,"ny":0.2233,"ox":0.1763,"oy":0.2472},{"hx":0.1944,"hy":0.5156,"nx":0.3187,"ny":0.4117,"ox":0.311,"oy":0.4746},{"hx":0.1944,"hy":0.5469,"nx":0.561,"ny":0.898,"ox":0.5503,"oy":0.7522},{"hx":0.75,"hy":0.3593,"nx":0.5998,"ny":0.4537,"ox":0.6171,"oy":0.4905},{"hx":0.1388,"hy":0.2657,"nx":0.202,"ny":0.2817,"ox":0.299,"oy":0.3198},{"hx":0.8056,"hy":0.4531,"nx":0.377,"ny":0.305,"ox":0.333,"oy":0.342},{"hx":0.1944,"hy":0.4531,"nx":0.7454,"ny":0.7108,"ox":0.6498,"oy":0.5893},{"hx":0.5278,"hy":0.9843,"nx":0.4238,"ny":0.7776,"ox":0.3123,"oy":0.6999},{"hx":0.1944,"hy":0.5469,"nx":0.2984,"ny":0.5891,"ox":0.2685,"oy":0.5571},{"hx":0.1944,"hy":0.5469,"nx":0.2651,"ny":0.5194,"ox":0.2347,"oy":0.4808},{"hx":0.1944,"hy":0.5468,"nx":0.4831,"ny":0.7263,"ox":0.4513,"oy":0.7346},{"hx":0.8056,"hy":0.5468,"nx":0.6737,"ny":0.4408,"ox":0.6355,"oy":0.4456},{"hx":0.1388,"hy":0.5469,"nx":0.4903,"ny":0.7861,"ox":0.4384,"oy":0.7382},{"hx":0.1944,"hy":0.5469,"nx":0.2837,"ny":0.6247,"ox":0.3131,"oy":0.5591},{"hx":0.1944,"hy":0.5468,"nx":0.6827,"ny":0.6311,"ox":0.6613,"oy":0.596},{"hx":0.8056,"hy":0.3594,"nx":0.7437,"ny":0.6313,"ox":0.7149,"oy":0.6597},{"hx":0.6389,"hy":0.9218,"nx":0.6427,"ny":0.6632,"ox":0.6527,"oy":0.6365},{"hx":0.1944,"hy":0.5781,"nx":0.5268,"ny":0.6597,"ox":0.6519,"oy":0.6981},{"hx":0.75,"hy":0.4532,"nx":0.7071,"ny":0.4191,"ox":0.7445,"oy":0.4701},{"hx":0.1388,"hy":0.4532,"nx":0.468,"ny":0.2773,"ox":0.3962,"oy":0.3783},{"hx":0.1388,"hy":0.4219,"nx":0.3324,"ny":0.4136,"ox":0.2372,"oy":0.4201},{"hx":0.5278,"hy":0.9843,"nx":0.6029,"ny":0.6721,"ox":0.6509,"oy":0.7571},{"hx":0.8056,"hy":0.5469,"nx":0.6274,"ny":0.6272,"ox":0.636,"oy":0.6565},{"hx":0.1944,"hy":0.4531,"nx":0.2504,"ny":0.4225,"ox":0.244,"oy":0.4301},{"hx":0.3611,"hy":0.3594,"nx":0.2084,"ny":0.2771,"ox":0.1762,"oy":0.3142}]},{"card":"valkyrie","label":"Valkyrie","n":174,"cost":4,"is_wincon":false,"human_grid":[0.005747126436781609,0.034482758620689655,0.011494252873563218,0.07471264367816093,0.08620689655172414,0.06321839080459771,0.22413793103448276,0.005747126436781609,0.1724137931034483,0.08620689655172414,0.10344827586206896,0.13218390804597702],"new_grid":[0.022988505747126436,0.022988505747126436,0.011494252873563218,0.08045977011494253,0.08620689655172414,0.07471264367816093,0.1781609195402299,0.0,0.16666666666666666,0.09195402298850575,0.15517241379310345,0.10919540229885058],"old_grid":[0.022988505747126436,0.028735632183908046,0.022988505747126436,0.08620689655172414,0.07471264367816093,0.06896551724137931,0.14367816091954022,0.0,0.15517241379310345,0.1206896551724138,0.15517241379310345,0.1206896551724138],"new_zone_acc":0.4367816091954023,"old_zone_acc":0.4827586206896552,"scatter":[{"hx":0.3055,"hy":0.4532,"nx":0.5406,"ny":0.4973,"ox":0.4906,"oy":0.4379},{"hx":0.8056,"hy":0.4532,"nx":0.386,"ny":0.3712,"ox":0.335,"oy":0.3792},{"hx":0.2499,"hy":0.4532,"nx":0.7405,"ny":0.2697,"ox":0.676,"oy":0.3357},{"hx":0.4722,"hy":0.3282,"nx":0.3933,"ny":0.4654,"ox":0.3936,"oy":0.4548},{"hx":0.8056,"hy":0.4531,"nx":0.7667,"ny":0.4776,"ox":0.7694,"oy":0.5032},{"hx":0.4722,"hy":0.2344,"nx":0.6133,"ny":0.4094,"ox":0.5697,"oy":0.4499},{"hx":0.1944,"hy":0.4532,"nx":0.2735,"ny":0.3893,"ox":0.2766,"oy":0.3688},{"hx":0.8056,"hy":0.5781,"nx":0.7858,"ny":0.5978,"ox":0.7304,"oy":0.6744},{"hx":0.5277,"hy":0.3906,"nx":0.43,"ny":0.5161,"ox":0.4216,"oy":0.6088},{"hx":0.4722,"hy":0.0156,"nx":0.3471,"ny":0.1909,"ox":0.2875,"oy":0.3918},{"hx":0.1944,"hy":0.4531,"nx":0.4188,"ny":0.398,"ox":0.4771,"oy":0.3813},{"hx":0.75,"hy":0.6406,"nx":0.6547,"ny":0.706,"ox":0.6487,"oy":0.7272},{"hx":0.5278,"hy":0.7031,"nx":0.618,"ny":0.6794,"ox":0.7143,"oy":0.7007},{"hx":0.1944,"hy":0.2657,"nx":0.4343,"ny":0.3829,"ox":0.3441,"oy":0.5082},{"hx":0.1944,"hy":0.4532,"nx":0.447,"ny":0.3316,"ox":0.3331,"oy":0.3438},{"hx":0.5278,"hy":0.4532,"nx":0.7713,"ny":0.3511,"ox":0.6871,"oy":0.2951},{"hx":0.8056,"hy":0.3282,"nx":0.7045,"ny":0.3532,"ox":0.6524,"oy":0.2897},{"hx":0.4722,"hy":0.2969,"nx":0.4299,"ny":0.3336,"ox":0.2774,"oy":0.3403},{"hx":0.5277,"hy":0.6407,"nx":0.7234,"ny":0.3866,"ox":0.6944,"oy":0.3377},{"hx":0.9722,"hy":0.7343,"nx":0.5953,"ny":0.5789,"ox":0.623,"oy":0.5449},{"hx":0.0833,"hy":0.7343,"nx":0.4796,"ny":0.5872,"ox":0.4655,"oy":0.6398},{"hx":0.9722,"hy":0.8281,"nx":0.6194,"ny":0.6763,"ox":0.5535,"oy":0.6557},{"hx":0.2499,"hy":0.5469,"nx":0.5066,"ny":0.7007,"ox":0.5044,"oy":0.6902},{"hx":0.1944,"hy":0.5468,"nx":0.2253,"ny":0.578,"ox":0.3823,"oy":0.6166},{"hx":0.1944,"hy":0.5468,"nx":0.5593,"ny":0.5818,"ox":0.5039,"oy":0.6466},{"hx":0.1388,"hy":0.5468,"nx":0.2074,"ny":0.56,"ox":0.2443,"oy":0.6285},{"hx":0.75,"hy":0.3593,"nx":0.7825,"ny":0.2601,"ox":0.6776,"oy":0.3987},{"hx":0.8611,"hy":0.5469,"nx":0.5699,"ny":0.4421,"ox":0.6438,"oy":0.4452},{"hx":0.1944,"hy":0.4531,"nx":0.4813,"ny":0.4015,"ox":0.4298,"oy":0.4118},{"hx":0.1944,"hy":0.5469,"nx":0.3776,"ny":0.6978,"ox":0.3512,"oy":0.6385},{"hx":0.4166,"hy":0.9843,"nx":0.3781,"ny":0.6952,"ox":0.3973,"oy":0.5938},{"hx":0.8611,"hy":0.5468,"nx":0.758,"ny":0.4142,"ox":0.6923,"oy":0.5835},{"hx":0.6389,"hy":0.7031,"nx":0.5993,"ny":0.6497,"ox":0.5788,"oy":0.6582},{"hx":0.3055,"hy":0.2969,"nx":0.3345,"ny":0.3374,"ox":0.4064,"oy":0.359},{"hx":0.75,"hy":0.6719,"nx":0.6359,"ny":0.6513,"ox":0.6512,"oy":0.7045},{"hx":0.6389,"hy":0.6719,"nx":0.7446,"ny":0.5922,"ox":0.7131,"oy":0.6807},{"hx":0.6389,"hy":0.2657,"nx":0.8537,"ny":0.258,"ox":0.831,"oy":0.253},{"hx":0.1944,"hy":0.2657,"nx":0.1705,"ny":0.2508,"ox":0.1796,"oy":0.2524},{"hx":0.1944,"hy":0.5468,"nx":0.7231,"ny":0.6927,"ox":0.7723,"oy":0.6915},{"hx":0.4722,"hy":0.6407,"nx":0.6213,"ny":0.4343,"ox":0.6469,"oy":0.4258},{"hx":0.3611,"hy":0.5469,"nx":0.3765,"ny":0.6038,"ox":0.381,"oy":0.6807},{"hx":0.5278,"hy":0.0157,"nx":0.564,"ny":0.5262,"ox":0.5228,"oy":0.4156},{"hx":0.8056,"hy":0.2969,"nx":0.5144,"ny":0.3884,"ox":0.5848,"oy":0.3589},{"hx":0.4722,"hy":0.6407,"nx":0.5423,"ny":0.6314,"ox":0.5394,"oy":0.5347},{"hx":0.1944,"hy":0.6719,"nx":0.2173,"ny":0.6067,"ox":0.2215,"oy":0.6212},{"hx":0.8611,"hy":0.7031,"nx":0.8284,"ny":0.6074,"ox":0.8135,"oy":0.6727},{"hx":0.75,"hy":0.6094,"nx":0.8078,"ny":0.6683,"ox":0.7045,"oy":0.6489},{"hx":0.8056,"hy":0.6093,"nx":0.5933,"ny":0.4915,"ox":0.6234,"oy":0.6401},{"hx":0.1944,"hy":0.7343,"nx":0.2192,"ny":0.6628,"ox":0.2363,"oy":0.6476},{"hx":0.1388,"hy":0.5468,"nx":0.4246,"ny":0.6647,"ox":0.3108,"oy":0.6406},{"hx":0.2499,"hy":0.5469,"nx":0.2659,"ny":0.6368,"ox":0.2467,"oy":0.4489},{"hx":0.2499,"hy":0.7343,"nx":0.4587,"ny":0.5826,"ox":0.4848,"oy":0.6872},{"hx":0.8056,"hy":0.4531,"nx":0.7001,"ny":0.262,"ox":0.6875,"oy":0.2974},{"hx":0.1944,"hy":0.7344,"nx":0.2872,"ny":0.6848,"ox":0.3325,"oy":0.6882},{"hx":0.1944,"hy":0.7031,"nx":0.3131,"ny":0.6032,"ox":0.3904,"oy":0.6397},{"hx":0.1944,"hy":0.4531,"nx":0.2523,"ny":0.4355,"ox":0.2849,"oy":0.444},{"hx":0.75,"hy":0.4532,"nx":0.6517,"ny":0.4179,"ox":0.7345,"oy":0.3819},{"hx":0.1944,"hy":0.4532,"nx":0.2888,"ny":0.4101,"ox":0.2443,"oy":0.4105},{"hx":0.1388,"hy":0.2657,"nx":0.1908,"ny":0.2939,"ox":0.2072,"oy":0.2908},{"hx":0.4722,"hy":0.2657,"nx":0.4257,"ny":0.3497,"ox":0.3638,"oy":0.3924},{"hx":0.8056,"hy":0.4532,"nx":0.2714,"ny":0.3615,"ox":0.2985,"oy":0.4235},{"hx":0.6389,"hy":0.7344,"nx":0.5496,"ny":0.648,"ox":0.6257,"oy":0.7148},{"hx":0.8611,"hy":0.7343,"nx":0.6447,"ny":0.4975,"ox":0.5557,"oy":0.4548},{"hx":0.2499,"hy":0.4531,"nx":0.3378,"ny":0.3827,"ox":0.4024,"oy":0.3236},{"hx":0.6944,"hy":0.4531,"nx":0.3882,"ny":0.4337,"ox":0.4878,"oy":0.3734},{"hx":0.1944,"hy":0.4531,"nx":0.5997,"ny":0.3593,"ox":0.5773,"oy":0.3942},{"hx":0.2499,"hy":0.6406,"nx":0.264,"ny":0.5809,"ox":0.3136,"oy":0.5329},{"hx":0.0833,"hy":0.5468,"nx":0.2839,"ny":0.6128,"ox":0.23,"oy":0.6746},{"hx":0.4722,"hy":0.8281,"nx":0.3478,"ny":0.6147,"ox":0.2493,"oy":0.6443},{"hx":0.1944,"hy":0.4532,"nx":0.6239,"ny":0.7338,"ox":0.629,"oy":0.5401},{"hx":0.1944,"hy":0.4219,"nx":0.2006,"ny":0.349,"ox":0.2254,"oy":0.2936},{"hx":0.5278,"hy":0.9844,"nx":0.6112,"ny":0.6599,"ox":0.5818,"oy":0.6798},{"hx":0.9167,"hy":0.4532,"nx":0.3965,"ny":0.3228,"ox":0.4575,"oy":0.3284},{"hx":0.8056,"hy":0.3907,"nx":0.7838,"ny":0.446,"ox":0.781,"oy":0.3763},{"hx":0.3055,"hy":0.5468,"nx":0.2915,"ny":0.6131,"ox":0.2564,"oy":0.6656},{"hx":0.8056,"hy":0.7343,"nx":0.8225,"ny":0.7403,"ox":0.7732,"oy":0.7191},{"hx":0.8056,"hy":0.5468,"nx":0.8531,"ny":0.7606,"ox":0.7807,"oy":0.7149},{"hx":0.8056,"hy":0.5468,"nx":0.4212,"ny":0.7171,"ox":0.2793,"oy":0.7013},{"hx":0.3611,"hy":0.7031,"nx":0.3526,"ny":0.6356,"ox":0.3222,"oy":0.6544},{"hx":0.0833,"hy":0.8281,"nx":0.1539,"ny":0.8108,"ox":0.2536,"oy":0.7664},{"hx":0.9167,"hy":0.5468,"nx":0.6321,"ny":0.7282,"ox":0.6564,"oy":0.6697},{"hx":0.5278,"hy":0.6406,"nx":0.6313,"ny":0.7545,"ox":0.658,"oy":0.6924},{"hx":0.1944,"hy":0.5469,"nx":0.2929,"ny":0.6851,"ox":0.3506,"oy":0.6345},{"hx":0.1944,"hy":0.5468,"nx":0.5175,"ny":0.7607,"ox":0.5421,"oy":0.7113},{"hx":0.8056,"hy":0.4531,"nx":0.7058,"ny":0.4556,"ox":0.7351,"oy":0.3875},{"hx":0.8056,"hy":0.2656,"nx":0.4368,"ny":0.3216,"ox":0.4068,"oy":0.3158},{"hx":0.8056,"hy":0.4532,"nx":0.439,"ny":0.374,"ox":0.3862,"oy":0.3452},{"hx":0.4722,"hy":0.3594,"nx":0.6738,"ny":0.5237,"ox":0.7301,"oy":0.5243},{"hx":0.1944,"hy":0.5468,"nx":0.675,"ny":0.6308,"ox":0.6237,"oy":0.5551},{"hx":0.3055,"hy":0.5468,"nx":0.6206,"ny":0.5858,"ox":0.6039,"oy":0.5502}]}],"fix_gallery":[{"battle_id":"08VPPQ9R9J0L","card":"berserker","label":"Berserker","seconds":118.2,"true_zone":1,"old_zone":8,"new_zone":1,"true_xy":[0.5278,0.0157],"new_xy":[0.5969,0.2412],"old_xy":[0.6184,0.333],"is_reaction":false},{"battle_id":"088Y2C88L0VC","card":"inferno-dragon","label":"Inferno Dragon","seconds":62.6,"true_zone":8,"old_zone":5,"new_zone":8,"true_xy":[0.75,0.4531],"new_xy":[0.7884,0.3621],"old_xy":[0.7907,0.3832],"is_reaction":true},{"battle_id":"02CY800R9JJL","card":"goblin-gang","label":"Goblin Gang","seconds":58.0,"true_zone":10,"old_zone":9,"new_zone":10,"true_xy":[0.5278,0.6406],"new_xy":[0.4057,0.703],"old_xy":[0.3833,0.7048],"is_reaction":true},{"battle_id":"020YP0PCYCJP","card":"bomber","label":"Bomber","seconds":64.3,"true_zone":4,"old_zone":1,"new_zone":4,"true_xy":[0.4166,0.2657],"new_xy":[0.3134,0.2864],"old_xy":[0.2757,0.2848],"is_reaction":false},{"battle_id":"022YY2VCVPRJ","card":"barbarian-barrel","label":"Barbarian Barrel","seconds":162.1,"true_zone":3,"old_zone":4,"new_zone":3,"true_xy":[0.1944,0.2969],"new_xy":[0.4242,0.3539],"old_xy":[0.4466,0.36],"is_reaction":true},{"battle_id":"00RY9VJ8Y9CV","card":"firecracker","label":"Firecracker","seconds":108.2,"true_zone":1,"old_zone":4,"new_zone":1,"true_xy":[0.4722,0.1719],"new_xy":[0.3995,0.223],"old_xy":[0.3422,0.2924],"is_reaction":false},{"battle_id":"020YP0YYG8C0","card":"goblin-hut","label":"Goblin Hut","seconds":135.8,"true_zone":4,"old_zone":1,"new_zone":4,"true_xy":[0.4167,0.2969],"new_xy":[0.4568,0.2244],"old_xy":[0.4426,0.2288],"is_reaction":true},{"battle_id":"00UYP0QVY0VR","card":"arrows","label":"Arrows","seconds":271.9,"true_zone":11,"old_zone":8,"new_zone":11,"true_xy":[0.8056,0.7344],"new_xy":[0.7546,0.6287],"old_xy":[0.7801,0.4951],"is_reaction":false},{"battle_id":"08VPPQ9G2CC0","card":"cannon-cart","label":"Cannon Cart","seconds":280.8,"true_zone":10,"old_zone":8,"new_zone":10,"true_xy":[0.5278,0.6718],"new_xy":[0.6726,0.6769],"old_xy":[0.7492,0.5698],"is_reaction":true},{"battle_id":"00YYP028YY0Y","card":"knight","label":"Knight","seconds":41.6,"true_zone":8,"old_zone":11,"new_zone":8,"true_xy":[0.8056,0.5468],"new_xy":[0.7584,0.6076],"old_xy":[0.7027,0.6198],"is_reaction":false},{"battle_id":"02LY92YYQQ0Q","card":"giant-skeleton","label":"Giant Skeleton","seconds":260.6,"true_zone":9,"old_zone":8,"new_zone":9,"true_xy":[0.0277,0.9531],"new_xy":[0.5014,0.6275],"old_xy":[0.6154,0.533],"is_reaction":true},{"battle_id":"08LY2J9U9V80","card":"golden-knight","label":"Golden Knight","seconds":54.9,"true_zone":10,"old_zone":6,"new_zone":10,"true_xy":[0.4722,0.6719],"new_xy":[0.3112,0.68],"old_xy":[0.2753,0.6113],"is_reaction":false},{"battle_id":"00QYP2JPYLC0","card":"fireball","label":"Fireball","seconds":262.6,"true_zone":5,"old_zone":8,"new_zone":5,"true_xy":[0.75,0.2969],"new_xy":[0.7826,0.3174],"old_xy":[0.7587,0.4581],"is_reaction":false},{"battle_id":"08QPVYYUY2UJ","card":"giant-skeleton","label":"Giant Skeleton","seconds":150.1,"true_zone":1,"old_zone":4,"new_zone":1,"true_xy":[0.5278,0.0157],"new_xy":[0.6276,0.2983],"old_xy":[0.642,0.2605],"is_reaction":false},{"battle_id":"02GY99GQLG88","card":"furnace","label":"Furnace","seconds":45.0,"true_zone":1,"old_zone":5,"new_zone":1,"true_xy":[0.5833,0.1719],"new_xy":[0.6572,0.1409],"old_xy":[0.6321,0.2828],"is_reaction":false},{"battle_id":"000YYVP2QJ00","card":"battle-ram","label":"Battle Ram","seconds":81.3,"true_zone":6,"old_zone":8,"new_zone":6,"true_xy":[0.1944,0.4532],"new_xy":[0.4054,0.3881],"old_xy":[0.4828,0.4054],"is_reaction":false},{"battle_id":"092PPG2RYQPU","card":"goblin-gang","label":"Goblin Gang","seconds":168.7,"true_zone":6,"old_zone":5,"new_zone":6,"true_xy":[0.1388,0.4532],"new_xy":[0.4678,0.4133],"old_xy":[0.4943,0.3705],"is_reaction":false},{"battle_id":"02VY82LLVRQQ","card":"the-log","label":"The Log","seconds":103.8,"true_zone":5,"old_zone":4,"new_zone":5,"true_xy":[0.8056,0.3281],"new_xy":[0.6981,0.381],"old_xy":[0.6246,0.3546],"is_reaction":false}],"fix_counts":{"fixed":740,"regressed":526,"net":214},"scenarios":[{"battle_id":"020YP0YYG8C0","seconds":135.8,"threat":"golem","threat_label":"Golem","threat_delay":4.3,"threat_xy":[0.3611,0.9531],"human_xy":[0.4167,0.2969],"new_xy":[0.4568,0.2244],"hand":[{"slot":4,"card":"barbarian-barrel","label":"Barbarian Barrel","cost":2},{"slot":5,"card":"wizard","label":"Wizard","cost":5},{"slot":6,"card":"goblin-hut","label":"Goblin Hut","cost":5},{"slot":7,"card":"lightning","label":"Lightning","cost":6}],"human_slot":6,"human_card":"goblin-hut","new_slot":6,"old_slot":6,"new_slot_p":0.618,"human_zone":4,"new_zone":4},{"battle_id":"02QY8V9CJYJV","seconds":256.9,"threat":"hog-rider","threat_label":"Hog Rider","threat_delay":2.8,"threat_xy":[0.0833,0.5468],"human_xy":[0.3611,0.4531],"new_xy":[0.3068,0.3639],"hand":[{"slot":2,"card":"mighty-miner","label":"Mighty Miner","cost":4},{"slot":3,"card":"skeletons","label":"Skeletons","cost":1},{"slot":4,"card":"firecracker","label":"Firecracker","cost":3},{"slot":6,"card":"the-log","label":"The Log","cost":2}],"human_slot":3,"human_card":"skeletons","new_slot":3,"old_slot":3,"new_slot_p":0.677,"human_zone":6,"new_zone":3},{"battle_id":"020YP0LG2GRU","seconds":76.5,"threat":"pekka","threat_label":"Pekka","threat_delay":4.0,"threat_xy":[0.2499,0.5781],"human_xy":[0.1944,0.4219],"new_xy":[0.2722,0.3658],"hand":[{"slot":0,"card":"minions","label":"Minions","cost":3},{"slot":1,"card":"tornado","label":"Tornado","cost":3},{"slot":6,"card":"electro-giant","label":"Electro Giant","cost":7},{"slot":7,"card":"lightning","label":"Lightning","cost":6}],"human_slot":0,"human_card":"minions","new_slot":0,"old_slot":6,"new_slot_p":0.6469,"human_zone":3,"new_zone":6},{"battle_id":"020YP0L0JUGJ","seconds":100.0,"threat":"battle-ram","threat_label":"Battle Ram","threat_delay":5.0,"threat_xy":[0.4722,0.5781],"human_xy":[0.25,0.2969],"new_xy":[0.3101,0.4095],"hand":[{"slot":4,"card":"baby-dragon","label":"Baby Dragon","cost":4},{"slot":5,"card":"vines","label":"Vines","cost":3},{"slot":6,"card":"the-log","label":"The Log","cost":2},{"slot":7,"card":"tesla","label":"Tesla","cost":4}],"human_slot":6,"human_card":"the-log","new_slot":6,"old_slot":6,"new_slot_p":0.3878,"human_zone":3,"new_zone":3},{"battle_id":"082Y882VGGCG","seconds":63.9,"threat":"mortar","threat_label":"Mortar","threat_delay":2.5,"threat_xy":[0.1944,0.6094],"human_xy":[0.4722,0.2969],"new_xy":[0.4941,0.3495],"hand":[{"slot":3,"card":"fire-spirit","label":"Fire Spirit","cost":1},{"slot":4,"card":"ice-spirit","label":"Ice Spirit","cost":1},{"slot":6,"card":"skeleton-army","label":"Skeleton Army","cost":3},{"slot":7,"card":"skeleton-king","label":"Skeleton King","cost":4}],"human_slot":3,"human_card":"fire-spirit","new_slot":3,"old_slot":3,"new_slot_p":0.3596,"human_zone":4,"new_zone":4},{"battle_id":"02GY99GQYGRJ","seconds":155.1,"threat":"elixir-golem","threat_label":"Elixir Golem","threat_delay":3.2,"threat_xy":[0.4166,0.5781],"human_xy":[0.6389,0.7031],"new_xy":[0.2308,0.6487],"hand":[{"slot":1,"card":"mini-pekka","label":"Mini Pekka","cost":4},{"slot":4,"card":"elixir-collector","label":"Elixir Collector","cost":6},{"slot":5,"card":"golem","label":"Golem","cost":8},{"slot":7,"card":"battle-healer","label":"Battle Healer","cost":4}],"human_slot":4,"human_card":"elixir-collector","new_slot":1,"old_slot":1,"new_slot_p":0.7852,"human_zone":11,"new_zone":9},{"battle_id":"08YY2CQUYLPG","seconds":168.6,"threat":"balloon","threat_label":"Balloon","threat_delay":0.0,"threat_xy":[0.0833,0.5469],"human_xy":[0.1944,0.4219],"new_xy":[0.3412,0.2409],"hand":[{"slot":0,"card":"mother-witch","label":"Mother Witch","cost":4},{"slot":2,"card":"barbarians","label":"Barbarians","cost":5},{"slot":6,"card":"sparky","label":"Sparky","cost":6},{"slot":7,"card":"rage","label":"Rage","cost":2}],"human_slot":2,"human_card":"barbarians","new_slot":0,"old_slot":0,"new_slot_p":0.5191,"human_zone":3,"new_zone":1},{"battle_id":"080Y82U2QRLJ","seconds":162.8,"threat":"electro-giant","threat_label":"Electro Giant","threat_delay":1.7,"threat_xy":[0.1944,0.5468],"human_xy":[0.9167,0.4531],"new_xy":[0.3354,0.2751],"hand":[{"slot":1,"card":"skeleton-dragons","label":"Skeleton Dragons","cost":4},{"slot":2,"card":"bandit","label":"Bandit","cost":3},{"slot":3,"card":"battle-ram","label":"Battle Ram","cost":4},{"slot":4,"card":"zap","label":"Zap","cost":2}],"human_slot":3,"human_card":"battle-ram","new_slot":1,"old_slot":1,"new_slot_p":0.5587,"human_zone":8,"new_zone":0},{"battle_id":"02QY92R999PJ","seconds":127.1,"threat":"goblin-barrel","threat_label":"Goblin Barrel","threat_delay":0.3,"threat_xy":[0.1944,0.1719],"human_xy":[0.0833,0.2657],"new_xy":[0.211,0.3089],"hand":[{"slot":3,"card":"goblin-gang","label":"Goblin Gang","cost":3},{"slot":4,"card":"mini-pekka","label":"Mini Pekka","cost":4},{"slot":6,"card":"guards","label":"Guards","cost":3},{"slot":7,"card":"tornado","label":"Tornado","cost":3}],"human_slot":4,"human_card":"mini-pekka","new_slot":4,"old_slot":4,"new_slot_p":0.4017,"human_zone":3,"new_zone":3},{"battle_id":"00UYP0C292VL","seconds":138.1,"threat":"sparky","threat_label":"Sparky","threat_delay":1.0,"threat_xy":[0.5278,0.9844],"human_xy":[0.4722,0.6407],"new_xy":[0.6242,0.5054],"hand":[{"slot":2,"card":"rune-giant","label":"Rune Giant","cost":4},{"slot":3,"card":"inferno-dragon","label":"Inferno Dragon","cost":4},{"slot":4,"card":"lumberjack","label":"Lumberjack","cost":4},{"slot":6,"card":"poison","label":"Poison","cost":4}],"human_slot":2,"human_card":"rune-giant","new_slot":2,"old_slot":2,"new_slot_p":0.4333,"human_zone":10,"new_zone":8},{"battle_id":"090PPGLY00VG","seconds":86.8,"threat":"mega-knight","threat_label":"Mega Knight","threat_delay":5.0,"threat_xy":[0.1944,0.5468],"human_xy":[0.1944,0.4531],"new_xy":[0.2809,0.4867],"hand":[{"slot":1,"card":"electro-spirit","label":"Electro Spirit","cost":1},{"slot":2,"card":"valkyrie","label":"Valkyrie","cost":4},{"slot":4,"card":"the-log","label":"The Log","cost":2},{"slot":7,"card":"zap","label":"Zap","cost":2}],"human_slot":4,"human_card":"the-log","new_slot":1,"old_slot":2,"new_slot_p":0.2831,"human_zone":6,"new_zone":6},{"battle_id":"028YPLQ2RJ0Y","seconds":196.7,"threat":"hog-rider","threat_label":"Hog Rider","threat_delay":2.0,"threat_xy":[0.8611,0.5469],"human_xy":[0.8611,0.4532],"new_xy":[0.8701,0.3685],"hand":[{"slot":3,"card":"hog-rider","label":"Hog Rider","cost":4},{"slot":4,"card":"mega-knight","label":"Mega Knight","cost":7},{"slot":5,"card":"firecracker","label":"Firecracker","cost":3},{"slot":7,"card":"arrows","label":"Arrows","cost":3}],"human_slot":4,"human_card":"mega-knight","new_slot":4,"old_slot":4,"new_slot_p":0.9469,"human_zone":8,"new_zone":5}],"splits":{"reaction":{"n":1102,"new_slot_acc":0.6279491833030852,"old_slot_acc":0.6061705989110708,"new_zone_acc":0.5689655172413793,"old_zone_acc":0.5317604355716878},"non_reaction":{"n":5254,"new_slot_acc":0.5304529881994671,"old_slot_acc":0.5085649029311001,"new_zone_acc":0.4177769318614389,"old_zone_acc":0.38484963837076513}}},"metrics":[{"label":"Which card (slot top-1)","old":0.5254877281309,"new":0.5473568281938326,"fmt":"pct","higher":true,"fair":true,"note":"Right card out of the 8-card deck, on 6,356 identical actions."},{"label":"Card in top-3","old":0.9282567652611705,"new":0.9354940213971051,"fmt":"pct","higher":true,"fair":true,"note":"Human's card sits inside the model's three best guesses."},{"label":"Where (zone accuracy)","old":0.41032095657646317,"new":0.44398993077407173,"fmt":"pct","higher":true,"fair":true,"note":"12 arena zones. v4 sees which card it is placing."},{"label":"Within one tile","old":0.028477029578351163,"new":0.04657016991818754,"fmt":"pct","higher":true,"fair":true,"note":"Pixel-tight placement, the hardest target of all."},{"label":"Placement error","old":5646.048696328173,"new":5235.607340509912,"fmt":"int","higher":false,"fair":true,"note":"Mean distance to the human tile in API units (lower is better)."},{"label":"Real defense windows","old":0.6068806377176421,"new":0.615151913718269,"fmt":"pct","higher":true,"fair":false,"note":"Top-1 answer to a real push \u00b7 4,767 vs 7,603 windows."},{"label":"Rollout realism P(real)","old":0.7923311583177195,"new":0.8864095585451075,"fmt":"float","higher":true,"fair":false,"note":"Realism scorer on 40-action self-continuations."},{"label":"Timing error","old":1.5715970863937434,"new":1.5447046188429725,"fmt":"sec","higher":false,"fair":false,"note":"Seconds until the next action (lower is better)."}],"cells":[{"threat":"balloon","answer":"executioner","label":"balloon \u2192 executioner","old":0.40625,"new":0.575,"human":0.47058823529411764,"support":"","n":204,"role":"failing"},{"threat":"graveyard","answer":"poison","label":"graveyard \u2192 poison","old":0.25806451612903225,"new":0.390625,"human":0.33211678832116787,"support":"","n":274,"role":"failing"},{"threat":"golem","answer":"inferno-dragon","label":"golem \u2192 inferno dragon","old":0.4444444444444444,"new":0.5277777777777778,"human":0.3597560975609756,"support":"","n":164,"role":"control"},{"threat":"hog-rider","answer":"tornado","label":"hog rider \u2192 tornado","old":0.22406639004149378,"new":0.2899022801302932,"human":0.28211920529801326,"support":"","n":1510,"role":"failing"},{"threat":"balloon","answer":"musketeer","label":"balloon \u2192 musketeer","old":0.6595744680851063,"new":0.7142857142857143,"human":0.48494983277591974,"support":"","n":299,"role":"control"},{"threat":"golem","answer":"pekka","label":"golem \u2192 pekka","old":0.7142857142857143,"new":0.7307692307692307,"human":0.53,"support":"","n":100,"role":"control"},{"threat":"hog-rider","answer":"tesla","label":"hog rider \u2192 tesla","old":0.5988372093023255,"new":0.5993265993265994,"human":0.5534161490683229,"support":"","n":1610,"role":"control"},{"threat":"golem","answer":"inferno-tower","label":"golem \u2192 inferno tower","old":0.0625,"new":0.05,"human":0.04597701149425287,"support":"","n":87,"role":"failing"},{"threat":"hog-rider","answer":"cannon","label":"hog rider \u2192 cannon","old":0.6796875,"new":0.6162790697674418,"human":0.5471512770137524,"support":"","n":2036,"role":"control"},{"threat":"graveyard","answer":"valkyrie","label":"graveyard \u2192 valkyrie","old":0.7777777777777778,"new":0.6195652173913043,"human":0.4915254237288136,"support":"","n":354,"role":"failing"}],"history":[{"epoch":1,"train_loss":3.961624327244789,"val_loss":3.952794614475444,"val_slot_top1":0.4384162634505669,"val_slot_top3":0.890896945186683,"val_type_acc":0.9980862280638405,"val_zone_acc":0.3493717050624684,"val_xy_mae":5895.784252681086,"val_tile_acc":0.022604174189355095,"val_timing_mae":1.729325036981213,"val_n":55388,"lr":0.0001992114701314478},{"epoch":2,"train_loss":3.5323983468989066,"val_loss":3.816044383334674,"val_slot_top1":0.470878168556366,"val_slot_top3":0.9092041597457933,"val_type_acc":0.9980862280638405,"val_zone_acc":0.37719361594569223,"val_xy_mae":5684.782736107099,"val_tile_acc":0.026215064634938976,"val_timing_mae":1.6780107125845456,"val_n":55388,"lr":0.0001968583161128631},{"epoch":3,"train_loss":3.3885241468578005,"val_loss":3.723328677190614,"val_slot_top1":0.4915685708095616,"val_slot_top3":0.9179064057196504,"val_type_acc":0.9980862280638405,"val_zone_acc":0.39338845959413593,"val_xy_mae":5575.315234121109,"val_tile_acc":0.028273272188921787,"val_timing_mae":1.6469615817268015,"val_n":55388,"lr":0.00019297764858882514},{"epoch":4,"train_loss":3.301343767627724,"val_loss":3.6793956789552893,"val_slot_top1":0.5027803856430996,"val_slot_top3":0.9231241424135191,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4009532750776341,"val_xy_mae":5505.266887683253,"val_tile_acc":0.030566187621867552,"val_timing_mae":1.629569291465849,"val_n":55388,"lr":0.00018763066800438636},{"epoch":5,"train_loss":3.23919426123979,"val_loss":3.6348617977810345,"val_slot_top1":0.5086480826171734,"val_slot_top3":0.9259586914133026,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4073084422618618,"val_xy_mae":5454.234166245396,"val_tile_acc":0.03134252906766809,"val_timing_mae":1.6101193884318337,"val_n":55388,"lr":0.00018090169943749476},{"epoch":6,"train_loss":3.192657351239658,"val_loss":3.6094595847591275,"val_slot_top1":0.5122228641583014,"val_slot_top3":0.9287029681519463,"val_type_acc":0.9980862280638405,"val_zone_acc":0.41290532245251677,"val_xy_mae":5410.72816314003,"val_tile_acc":0.033815989022893046,"val_timing_mae":1.6059914912145783,"val_n":55388,"lr":0.00017289686274214118},{"epoch":7,"train_loss":3.1556676485136883,"val_loss":3.577287477282335,"val_slot_top1":0.517242001877663,"val_slot_top3":0.9300389976168123,"val_type_acc":0.9980862280638405,"val_zone_acc":0.41837582147757635,"val_xy_mae":5384.992203861847,"val_tile_acc":0.034718711634289016,"val_timing_mae":1.6001630933084858,"val_n":55388,"lr":0.000163742398974869},{"epoch":8,"train_loss":3.124870367777119,"val_loss":3.564270546908752,"val_slot_top1":0.5222430851447967,"val_slot_top3":0.93101393803712,"val_type_acc":0.9980862280638405,"val_zone_acc":0.42028959341373584,"val_xy_mae":5360.355605004695,"val_tile_acc":0.03515201848775908,"val_timing_mae":1.5905567226215693,"val_n":55388,"lr":0.00015358267949789966},{"epoch":9,"train_loss":3.0986283008477837,"val_loss":3.56104007844002,"val_slot_top1":0.5226944464504947,"val_slot_top3":0.9321333140752509,"val_type_acc":0.9980862280638405,"val_zone_acc":0.42328663248357046,"val_xy_mae":5348.788792247418,"val_tile_acc":0.03775185960857948,"val_timing_mae":1.5816817509187053,"val_n":55388,"lr":0.00014257792915650726},{"epoch":10,"train_loss":3.0736635983117355,"val_loss":3.5492125535340904,"val_slot_top1":0.5243735105076912,"val_slot_top3":0.9314111359861342,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4227630533689608,"val_xy_mae":5327.639416480104,"val_tile_acc":0.03822127536650538,"val_timing_mae":1.5809933377352228,"val_n":55388,"lr":0.00013090169943749474},{"epoch":11,"train_loss":3.051930803861191,"val_loss":3.541103290522703,"val_slot_top1":0.5236152235141186,"val_slot_top3":0.9328374377121398,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4248754242796274,"val_xy_mae":5305.663244971835,"val_tile_acc":0.04083917093955369,"val_timing_mae":1.581824595036124,"val_n":55388,"lr":0.00011873813145857248},{"epoch":12,"train_loss":3.033709418163625,"val_loss":3.5399303820825394,"val_slot_top1":0.5268289160106883,"val_slot_top3":0.9326388387376326,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4248573698273994,"val_xy_mae":5303.420006364195,"val_tile_acc":0.039918393875929804,"val_timing_mae":1.5820566027088871,"val_n":55388,"lr":0.00010627905195293135},{"epoch":13,"train_loss":3.0174985846985125,"val_loss":3.535012792332381,"val_slot_top1":0.5271900050552466,"val_slot_top3":0.9332165812089261,"val_type_acc":0.9980862280638405,"val_zone_acc":0.42608507257889794,"val_xy_mae":5298.388344497003,"val_tile_acc":0.04150718567198671,"val_timing_mae":1.5746015847749448,"val_n":55388,"lr":9.372094804706867e-05},{"epoch":14,"train_loss":3.001337670314032,"val_loss":3.529967466257684,"val_slot_top1":0.5289412869213548,"val_slot_top3":0.9335235068968007,"val_type_acc":0.9980862280638405,"val_zone_acc":0.42722250306925685,"val_xy_mae":5289.264566557738,"val_tile_acc":0.04203076478659638,"val_timing_mae":1.5736712789573402,"val_n":55388,"lr":8.126186854142755e-05},{"epoch":15,"train_loss":2.9878087470780557,"val_loss":3.527320970588016,"val_slot_top1":0.5284177078067451,"val_slot_top3":0.934354011699285,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4270961219036614,"val_xy_mae":5289.558287670615,"val_tile_acc":0.04246407164006644,"val_timing_mae":1.5727278101338353,"val_n":55388,"lr":6.90983005625053e-05},{"epoch":16,"train_loss":2.9751764581655897,"val_loss":3.528748713330739,"val_slot_top1":0.5282552177366938,"val_slot_top3":0.9338665414891312,"val_type_acc":0.9980862280638405,"val_zone_acc":0.42731277533039647,"val_xy_mae":5283.101169251462,"val_tile_acc":0.04329457644255073,"val_timing_mae":1.571896284782061,"val_n":55388,"lr":5.742207084349274e-05},{"epoch":17,"train_loss":2.96464295059379,"val_loss":3.5289233192320792,"val_slot_top1":0.5300426085072579,"val_slot_top3":0.9343179027948292,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4266628150501914,"val_xy_mae":5282.361328266051,"val_tile_acc":0.04349317541705785,"val_timing_mae":1.5770416148192548,"val_n":55388,"lr":4.6417320502100316e-05},{"epoch":18,"train_loss":2.955793061490252,"val_loss":3.5244391612742905,"val_slot_top1":0.5301328807683975,"val_slot_top3":0.934354011699285,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4282696612984762,"val_xy_mae":5272.785834702463,"val_tile_acc":0.04439589802845382,"val_timing_mae":1.5713650633249334,"val_n":55388,"lr":3.6257601025131026e-05},{"epoch":19,"train_loss":2.9481418385688682,"val_loss":3.526158079024284,"val_slot_top1":0.5298620639849787,"val_slot_top3":0.9346248284827038,"val_type_acc":0.9980862280638405,"val_zone_acc":0.42801689896728534,"val_xy_mae":5269.727651973351,"val_tile_acc":0.044269516862858384,"val_timing_mae":1.5756553375239732,"val_n":55388,"lr":2.7103137257858868e-05},{"epoch":20,"train_loss":2.9423244270180335,"val_loss":3.5279643238964167,"val_slot_top1":0.5304398064562721,"val_slot_top3":0.933920704845815,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4281613345851087,"val_xy_mae":5271.582421959631,"val_tile_acc":0.04408897234057919,"val_timing_mae":1.5712422007058444,"val_n":55388,"lr":1.909830056250527e-05},{"epoch":21,"train_loss":2.9354251731179164,"val_loss":3.5245399562993907,"val_slot_top1":0.5298259550805229,"val_slot_top3":0.9344442839604247,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4289196215786813,"val_xy_mae":5267.764384884813,"val_tile_acc":0.04439589802845382,"val_timing_mae":1.5724338744447197,"val_n":55388,"lr":1.2369331995613644e-05},{"epoch":22,"train_loss":2.933533545623202,"val_loss":3.5254448712696127,"val_slot_top1":0.5303314797429046,"val_slot_top3":0.9344803928648805,"val_type_acc":0.9980862280638405,"val_zone_acc":0.42830577020293203,"val_xy_mae":5270.592186033075,"val_tile_acc":0.044684769264100525,"val_timing_mae":1.5707163101001242,"val_n":55388,"lr":7.0223514111748665e-06},{"epoch":23,"train_loss":2.928493592276502,"val_loss":3.5259005957484795,"val_slot_top1":0.5299162273416624,"val_slot_top3":0.9345345562215642,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4283599335596158,"val_xy_mae":5266.283562098289,"val_tile_acc":0.045009749404203075,"val_timing_mae":1.5707593693185335,"val_n":55388,"lr":3.141683887136904e-06},{"epoch":24,"train_loss":2.9269399960666322,"val_loss":3.5253372126460625,"val_slot_top1":0.5296273561060157,"val_slot_top3":0.9344442839604247,"val_type_acc":0.9980862280638405,"val_zone_acc":0.42810717122842495,"val_xy_mae":5268.081875812451,"val_tile_acc":0.04490142269083556,"val_timing_mae":1.570709880598273,"val_n":55388,"lr":7.885298685522236e-07},{"epoch":25,"train_loss":2.9255385933908573,"val_loss":3.5249893456560124,"val_slot_top1":0.5297356828193832,"val_slot_top3":0.9345526106737921,"val_type_acc":0.9980862280638405,"val_zone_acc":0.4280710623239691,"val_xy_mae":5268.317872327941,"val_tile_acc":0.04488336823860764,"val_timing_mae":1.5710574929926158,"val_n":55388,"lr":0.0}],"oldHistory":[{"epoch":1,"train_loss":3.4060035207802226,"val_loss":3.275841856962882,"val_slot_top1":0.41981627296587926,"val_slot_top3":0.8812860892388451,"val_type_acc":0.9976640419947507,"val_zone_acc":0.32818897637795275,"val_xy_mae":6137.50154199475,"val_tile_acc":0.021128608923884514,"val_timing_mae":1.6962859955234477,"val_n":38100,"lr":0.0001992114701314478},{"epoch":2,"train_loss":3.1861661758542437,"val_loss":3.169607925735064,"val_slot_top1":0.4542257217847769,"val_slot_top3":0.8996850393700787,"val_type_acc":0.9976640419947507,"val_zone_acc":0.341496062992126,"val_xy_mae":6041.816053149606,"val_tile_acc":0.022020997375328085,"val_timing_mae":1.6656325885442298,"val_n":38100,"lr":0.0001968583161128631},{"epoch":3,"train_loss":3.0946694519078846,"val_loss":3.107352716010689,"val_slot_top1":0.47199475065616797,"val_slot_top3":0.9096850393700787,"val_type_acc":0.9976640419947507,"val_zone_acc":0.35396325459317585,"val_xy_mae":5981.662240813648,"val_tile_acc":0.022230971128608924,"val_timing_mae":1.6419723662929584,"val_n":38100,"lr":0.00019297764858882514},{"epoch":4,"train_loss":3.0306555886627367,"val_loss":3.0545643736052033,"val_slot_top1":0.4857742782152231,"val_slot_top3":0.9149081364829397,"val_type_acc":0.9976640419947507,"val_zone_acc":0.36440944881889764,"val_xy_mae":5923.777293307086,"val_tile_acc":0.022650918635170603,"val_timing_mae":1.6166761271158854,"val_n":38100,"lr":0.00018763066800438636},{"epoch":5,"train_loss":2.9811747799099053,"val_loss":3.0191763727456933,"val_slot_top1":0.493254593175853,"val_slot_top3":0.918267716535433,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3698425196850394,"val_xy_mae":5900.271387795276,"val_tile_acc":0.022808398950131235,"val_timing_mae":1.6069384228964176,"val_n":38100,"lr":0.00018090169943749476},{"epoch":6,"train_loss":2.942550684964769,"val_loss":2.9926540355554363,"val_slot_top1":0.5004199475065617,"val_slot_top3":0.9198950131233595,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3756167979002625,"val_xy_mae":5861.178103674541,"val_tile_acc":0.023018372703412074,"val_timing_mae":1.5956850114957555,"val_n":38100,"lr":0.00017289686274214118},{"epoch":7,"train_loss":2.9084872397883186,"val_loss":2.974371887693469,"val_slot_top1":0.5011811023622047,"val_slot_top3":0.923490813648294,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3790813648293963,"val_xy_mae":5845.487358923884,"val_tile_acc":0.022388451443569553,"val_timing_mae":1.5846203380995223,"val_n":38100,"lr":0.000163742398974869},{"epoch":8,"train_loss":2.881845056263257,"val_loss":2.9577251936765325,"val_slot_top1":0.5075853018372704,"val_slot_top3":0.9251706036745407,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3816272965879265,"val_xy_mae":5818.142408136483,"val_tile_acc":0.024041994750656166,"val_timing_mae":1.577636811664411,"val_n":38100,"lr":0.00015358267949789966},{"epoch":9,"train_loss":2.855466011175915,"val_loss":2.9506582733768747,"val_slot_top1":0.5084251968503937,"val_slot_top3":0.9255643044619423,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3832808398950131,"val_xy_mae":5803.280534776903,"val_tile_acc":0.0231496062992126,"val_timing_mae":1.5772841998723548,"val_n":38100,"lr":0.00014257792915650726},{"epoch":10,"train_loss":2.8350121685330025,"val_loss":2.9384547592009476,"val_slot_top1":0.5111811023622047,"val_slot_top3":0.9254330708661417,"val_type_acc":0.9976640419947507,"val_zone_acc":0.38598425196850394,"val_xy_mae":5790.119530839895,"val_tile_acc":0.023832020997375327,"val_timing_mae":1.569972469299797,"val_n":38100,"lr":0.00013090169943749474},{"epoch":11,"train_loss":2.812084175576237,"val_loss":2.9325833528633884,"val_slot_top1":0.5123884514435696,"val_slot_top3":0.9274803149606299,"val_type_acc":0.9976640419947507,"val_zone_acc":0.38842519685039373,"val_xy_mae":5759.546807742782,"val_tile_acc":0.025065616797900262,"val_timing_mae":1.5688978861010294,"val_n":38100,"lr":0.00011873813145857248},{"epoch":12,"train_loss":2.793508394197984,"val_loss":2.9265638181827214,"val_slot_top1":0.5121784776902887,"val_slot_top3":0.9281627296587927,"val_type_acc":0.9976640419947507,"val_zone_acc":0.38931758530183724,"val_xy_mae":5761.168402230971,"val_tile_acc":0.02469816272965879,"val_timing_mae":1.5697302950961696,"val_n":38100,"lr":0.00010627905195293135},{"epoch":13,"train_loss":2.777250978827103,"val_loss":2.922664394314657,"val_slot_top1":0.5154068241469816,"val_slot_top3":0.9282939632545931,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3888451443569554,"val_xy_mae":5742.08595144357,"val_tile_acc":0.025590551181102362,"val_timing_mae":1.563274706742895,"val_n":38100,"lr":9.372094804706867e-05},{"epoch":14,"train_loss":2.7618326131826656,"val_loss":2.9197916888550624,"val_slot_top1":0.5166929133858268,"val_slot_top3":0.9286089238845144,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3899212598425197,"val_xy_mae":5730.434603018372,"val_tile_acc":0.02448818897637795,"val_timing_mae":1.5605896556784162,"val_n":38100,"lr":8.126186854142755e-05},{"epoch":15,"train_loss":2.748062003742565,"val_loss":2.9194882172066094,"val_slot_top1":0.5161154855643044,"val_slot_top3":0.9292125984251969,"val_type_acc":0.9976640419947507,"val_zone_acc":0.38979002624671916,"val_xy_mae":5731.064904855643,"val_tile_acc":0.023884514435695538,"val_timing_mae":1.5660133149555036,"val_n":38100,"lr":6.90983005625053e-05},{"epoch":16,"train_loss":2.7360224641602615,"val_loss":2.917887071635099,"val_slot_top1":0.5160629921259843,"val_slot_top3":0.928503937007874,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3920734908136483,"val_xy_mae":5725.176220472441,"val_tile_acc":0.024619422572178477,"val_timing_mae":1.5605080047367126,"val_n":38100,"lr":5.742207084349274e-05},{"epoch":17,"train_loss":2.724706210686495,"val_loss":2.917157401974569,"val_slot_top1":0.5150918635170604,"val_slot_top3":0.9287139107611548,"val_type_acc":0.9976640419947507,"val_zone_acc":0.39120734908136484,"val_xy_mae":5722.085882545932,"val_tile_acc":0.024829396325459316,"val_timing_mae":1.562800613363271,"val_n":38100,"lr":4.6417320502100316e-05},{"epoch":18,"train_loss":2.715906990172347,"val_loss":2.9181750732780305,"val_slot_top1":0.5156167979002625,"val_slot_top3":0.9286876640419948,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3917060367454068,"val_xy_mae":5721.729977034121,"val_tile_acc":0.024750656167979,"val_timing_mae":1.5604102707910412,"val_n":38100,"lr":3.6257601025131026e-05},{"epoch":19,"train_loss":2.7074855276409737,"val_loss":2.915813586855895,"val_slot_top1":0.5162729658792651,"val_slot_top3":0.9287139107611548,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3920472440944882,"val_xy_mae":5714.384858923884,"val_tile_acc":0.025065616797900262,"val_timing_mae":1.560500074972318,"val_n":38100,"lr":2.7103137257858868e-05},{"epoch":20,"train_loss":2.7031094551460124,"val_loss":2.915489246381209,"val_slot_top1":0.5152230971128609,"val_slot_top3":0.9285826771653544,"val_type_acc":0.9976640419947507,"val_zone_acc":0.39307086614173226,"val_xy_mae":5706.51622375328,"val_tile_acc":0.02530183727034121,"val_timing_mae":1.557489129814889,"val_n":38100,"lr":1.909830056250527e-05},{"epoch":21,"train_loss":2.695980377518645,"val_loss":2.9152948520327575,"val_slot_top1":0.5155905511811023,"val_slot_top3":0.9288451443569554,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3920472440944882,"val_xy_mae":5708.16310367454,"val_tile_acc":0.024881889763779527,"val_timing_mae":1.5563568243392183,"val_n":38100,"lr":1.2369331995613644e-05},{"epoch":22,"train_loss":2.6917078252122693,"val_loss":2.9153062577215616,"val_slot_top1":0.5167191601049869,"val_slot_top3":0.9292913385826772,"val_type_acc":0.9976640419947507,"val_zone_acc":0.39257217847769027,"val_xy_mae":5707.228612204724,"val_tile_acc":0.025118110236220473,"val_timing_mae":1.5566740621731976,"val_n":38100,"lr":7.0223514111748665e-06},{"epoch":23,"train_loss":2.6887901614078533,"val_loss":2.915035078189517,"val_slot_top1":0.516246719160105,"val_slot_top3":0.929002624671916,"val_type_acc":0.9976640419947507,"val_zone_acc":0.39307086614173226,"val_xy_mae":5705.252398293963,"val_tile_acc":0.02530183727034121,"val_timing_mae":1.5572788789203473,"val_n":38100,"lr":3.141683887136904e-06},{"epoch":24,"train_loss":2.6872086958451704,"val_loss":2.9152463410524714,"val_slot_top1":0.5165354330708661,"val_slot_top3":0.9289501312335958,"val_type_acc":0.9976640419947507,"val_zone_acc":0.392755905511811,"val_xy_mae":5704.5941633858265,"val_tile_acc":0.025406824146981626,"val_timing_mae":1.5568277882653585,"val_n":38100,"lr":7.885298685522236e-07},{"epoch":25,"train_loss":2.687604419116316,"val_loss":2.915205581076193,"val_slot_top1":0.5165616797900262,"val_slot_top3":0.9290551181102362,"val_type_acc":0.9976640419947507,"val_zone_acc":0.3928871391076115,"val_xy_mae":5704.659849081365,"val_tile_acc":0.025380577427821523,"val_timing_mae":1.5568961556502214,"val_n":38100,"lr":0.0}]};
+    
+const SVGNS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs = {}) => {
+  const node = document.createElementNS(SVGNS, tag);
+  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+  return node;
+};
+const pct = (v, d = 1) => (v === null || v === undefined ? "—" : (100 * v).toFixed(d) + "%");
+const titleCase = (s) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+/* zone geometry: x bins 0-.4-.6-1, y bins 0-.25-.45-.55-1 (own side at ny=0) */
+const XB = [0, 0.4, 0.6, 1];
+const YB = [0, 0.25, 0.45, 0.55, 1];
+const ZONE_NAMES = DATA.show.zone_names;
+
+/* ---------------- animated hero counters ---------------- */
+document.querySelectorAll("[data-count]").forEach((node) => {
+  const target = Number(node.dataset.count);
+  const start = performance.now();
+  const dur = 1200;
+  const step = (now) => {
+    const t = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - t, 3);
+    node.textContent = Math.round(target * eased).toLocaleString();
+    if (t < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+});
+
+/* ---------------- tale of the tape ---------------- */
+const raceHost = document.getElementById("race");
+const fmtMetric = (row, v) => {
+  if (row.fmt === "pct") return pct(v);
+  if (row.fmt === "int") return Math.round(v).toLocaleString();
+  if (row.fmt === "sec") return v.toFixed(2) + "s";
+  return v.toFixed(3);
+};
+DATA.metrics.forEach((row) => {
+  /* bars always encode "goodness", so lower-is-better metrics still grow right */
+  const span = Math.max(row.old, row.new) * 1.18;
+  const frac = (v) =>
+    row.higher
+      ? Math.max(2, Math.min(100, (v / span) * 100))
+      : Math.max(2, Math.min(100, (1 - v / span) * 100));
+  const better = row.higher ? row.new > row.old : row.new < row.old;
+  const delta = row.new - row.old;
+  const deltaTxt = row.fmt === "pct"
+    ? (delta * 100).toFixed(1) + "pp"
+    : (row.fmt === "int" ? Math.round(delta).toLocaleString() : delta.toFixed(2));
+  const wrap = document.createElement("div");
+  wrap.className = "race-row";
+  wrap.innerHTML =
+    `<div class="race-name">${row.label}
+       <span class="fair-tag ${row.fair ? "fair" : "unfair"}">${row.fair ? "same samples" : "archived run"}</span>
+       <small>${row.note}</small></div>
+     <div class="race-track">
+       <div class="race-fill${row.fair ? "" : " race-fill-soft"}" data-old="${frac(row.old)}" data-new="${frac(row.new)}"></div>
+       <div class="race-ghost" style="left:${frac(row.old)}%"></div>
+     </div>
+     <div class="race-val"><b>${fmtMetric(row, row.new)}</b>
+       <span class="race-delta ${better ? "up" : (delta === 0 ? "flat" : "down")}">
+         ${delta > 0 ? "+" : ""}${deltaTxt} vs v3</span></div>`;
+  raceHost.appendChild(wrap);
+});
+const fills = [...document.querySelectorAll(".race-fill")];
+const park = () => fills.forEach((f) => (f.style.width = f.dataset.old + "%"));
+const run = () => fills.forEach((f, i) => setTimeout(() => (f.style.width = f.dataset.new + "%"), i * 110));
+park();
+let raced = false;
+const raceBtn = document.getElementById("raceBtn");
+const raceHint = document.getElementById("raceHint");
+raceBtn.addEventListener("click", () => {
+  raced = !raced;
+  if (raced) { run(); raceBtn.textContent = "↺ Back to v3"; raceHint.textContent = "bars moved to v4"; }
+  else { park(); raceBtn.textContent = "▶ Run the diff"; raceHint.textContent = "bars are parked at v3"; }
+});
+const raceObs = new IntersectionObserver((entries) => {
+  entries.forEach((e) => { if (e.isIntersecting && !raced) raceBtn.click(); });
+}, { threshold: 0.4 });
+raceObs.observe(raceHost);
+
+/* ---------------- arena lab ---------------- */
+const arena = document.getElementById("arena");
+const tip = document.getElementById("arenaTip");
+const W = 300, H = 470, PAD = 6, TOP = 20;
+const AW = W - PAD * 2, AH = H - TOP - 22;
+const xPx = (nx) => PAD + nx * AW;
+const yPx = (ny) => TOP + (1 - ny) * AH;  /* own side (ny=0) at the bottom */
+
+let layer = "human";
+let cardIdx = -1;  /* -1 = all actions */
+let showScatter = false;
+
+const cards = DATA.show.cards;
+const cardRow = document.getElementById("cardRow");
+const mkChip = (label, n, idx) => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "chip" + (idx === cardIdx ? " active" : "");
+  b.innerHTML = label + (n ? `<span class="chip-n">${n}</span>` : "");
+  b.addEventListener("click", () => {
+    cardIdx = idx;
+    [...cardRow.children].forEach((c) => c.classList.remove("active"));
+    b.classList.add("active");
+    drawArena();
+  });
+  return b;
+};
+cardRow.appendChild(mkChip("All actions", DATA.show.overall.n, -1));
+cards.forEach((c, i) => cardRow.appendChild(mkChip(c.label + (c.is_wincon ? " ⚔" : ""), c.n, i)));
+
+document.querySelectorAll("#layerRow .chip").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    document.querySelectorAll("#layerRow .chip").forEach((c) => c.classList.remove("active"));
+    chip.classList.add("active");
+    layer = chip.dataset.layer;
+    drawArena();
+  });
+});
+document.getElementById("scatterToggle").addEventListener("change", (e) => {
+  showScatter = e.target.checked;
+  drawArena();
+});
+
+const currentSet = () => (cardIdx < 0 ? DATA.show.overall : cards[cardIdx]);
+
+function arenaBackdrop(g, w, h, ox, oy, scale) {
+  const rect = (x, y, ww, hh, attrs) => g.appendChild(el("rect", Object.assign({ x, y, width: ww, height: hh }, attrs)));
+  rect(ox, oy, w, h, { fill: "#0d1a2b", rx: 10 * scale });
+  /* enemy half tint */
+  rect(ox, oy, w, h * 0.5, { fill: "#991b1b", opacity: 0.28, rx: 10 * scale });
+  rect(ox, oy + h * 0.5, w, h * 0.5, { fill: "#1d4ed8", opacity: 0.22 });
+  /* river */
+  rect(ox, oy + h * 0.465, w, h * 0.07, { fill: "#1d4ed8", opacity: 0.45 });
+  /* bridges */
+  rect(ox + w * 0.16, oy + h * 0.455, w * 0.12, h * 0.09, { fill: "#7c5c33", opacity: 0.75 });
+  rect(ox + w * 0.72, oy + h * 0.455, w * 0.12, h * 0.09, { fill: "#7c5c33", opacity: 0.75 });
+  towerOverlay(g, w, h, ox, oy, scale, 0.85);
+}
+
+/* towers drawn on their own so they can also sit *above* the heatmap */
+function towerOverlay(g, w, h, ox, oy, scale, opacity) {
+  const tw = w * 0.11;
+  const tower = (cx, cy, king, friendly) => {
+    const size = king ? tw * 1.35 : tw;
+    g.appendChild(el("rect", {
+      x: cx - size / 2, y: cy - size / 2, width: size, height: size, rx: 3 * scale,
+      fill: friendly ? "#1e3a8a" : "#7f1d1d",
+      stroke: friendly ? "#93c5fd" : "#fca5a5", "stroke-width": 1.2 * scale, opacity,
+    }));
+  };
+  tower(ox + w * 0.22, oy + h * 0.19, false, false);
+  tower(ox + w * 0.78, oy + h * 0.19, false, false);
+  tower(ox + w * 0.5, oy + h * 0.075, true, false);
+  tower(ox + w * 0.22, oy + h * 0.81, false, true);
+  tower(ox + w * 0.78, oy + h * 0.81, false, true);
+  tower(ox + w * 0.5, oy + h * 0.925, true, true);
+}
+
+function drawArena() {
+  const set = currentSet();
+  arena.innerHTML = "";
+  const g = el("g");
+  arena.appendChild(g);
+  arenaBackdrop(g, AW, AH, PAD, TOP, 1);
+
+  const human = set.human_grid, nv = set.new_grid, ov = set.old_grid;
+  let values, diverging = false;
+  if (layer === "human") values = human;
+  else if (layer === "new") values = nv;
+  else if (layer === "old") values = ov;
+  else if (layer === "dnew") { values = nv.map((v, i) => v - human[i]); diverging = true; }
+  else { values = nv.map((v, i) => v - ov[i]); diverging = true; }
+  const peak = Math.max(...values.map((v) => Math.abs(v)), 1e-6);
+
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 3; col++) {
+      const z = row * 3 + col;
+      const x0 = xPx(XB[col]), x1 = xPx(XB[col + 1]);
+      const y0 = yPx(YB[row + 1]), y1 = yPx(YB[row]);
+      const v = values[z];
+      const mag = Math.abs(v) / peak;
+      const fill = diverging ? (v >= 0 ? "#34d399" : "#f87171") : "#22d3ee";
+      /* the cell tint stays neutral so the red/blue halves of the board survive */
+      const cell = el("rect", {
+        x: x0 + 1, y: y0 + 1, width: x1 - x0 - 2, height: y1 - y0 - 2, rx: 5,
+        fill: diverging ? fill : "#e2e8f0",
+        opacity: (diverging ? 0.04 + 0.16 * mag : 0.02 + 0.05 * mag).toFixed(3),
+        class: "zone-cell", stroke: "rgba(226,232,240,0.22)", "stroke-width": 1,
+      });
+      g.appendChild(cell);
+      /* magnitude as a bubble: area scales with the share of plays */
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      const rmax = Math.min(x1 - x0, y1 - y0) * 0.44;
+      const r = Math.max(9, Math.sqrt(mag) * rmax);
+      g.appendChild(el("circle", {
+        cx, cy, r, fill, opacity: 0.62, stroke: fill, "stroke-width": 1.5,
+        "pointer-events": "none",
+      }));
+      const label = el("text", {
+        x: cx, y: cy + 4, "text-anchor": "middle",
+        fill: "#04131f", "font-size": 11, "font-weight": 800,
+        "pointer-events": "none",
+      });
+      label.textContent = diverging
+        ? (v >= 0 ? "+" : "") + (v * 100).toFixed(1)
+        : (v * 100).toFixed(0) + "%";
+      g.appendChild(label);
+      cell.addEventListener("mousemove", (ev) => {
+        const box = arena.getBoundingClientRect();
+        tip.hidden = false;
+        tip.style.left = ev.clientX - box.left + "px";
+        tip.style.top = ev.clientY - box.top + "px";
+        tip.innerHTML =
+          `<b>${ZONE_NAMES[z]}</b><br>humans ${pct(human[z])} · v4 ${pct(nv[z])} · v3 ${pct(ov[z])}`;
+      });
+      cell.addEventListener("mouseleave", () => { tip.hidden = true; });
+    }
+  }
+
+  const sideLabel = (text, y, color) => {
+    const t = el("text", {
+      x: PAD, y, fill: color, "font-size": 11, "letter-spacing": "0.14em", "font-weight": 700,
+    });
+    t.textContent = text;
+    g.appendChild(t);
+  };
+  sideLabel("ENEMY SIDE ↑", 13, "#fca5a5");
+  sideLabel("YOUR SIDE ↓", H - 6, "#93c5fd");
+
+  if (showScatter && cardIdx >= 0) {
+    const pts = cards[cardIdx].scatter;
+    pts.forEach((p) => {
+      g.appendChild(el("line", {
+        x1: xPx(p.hx), y1: yPx(p.hy), x2: xPx(p.nx), y2: yPx(p.ny),
+        stroke: "#fbbf24", "stroke-width": 0.8, opacity: 0.4,
+      }));
+    });
+    pts.forEach((p) => {
+      g.appendChild(el("circle", { cx: xPx(p.hx), cy: yPx(p.hy), r: 2.6, fill: "#f8fafc", opacity: 0.85 }));
+      g.appendChild(el("circle", { cx: xPx(p.nx), cy: yPx(p.ny), r: 2.2, fill: "#fbbf24", opacity: 0.85 }));
+    });
+  } else if (showScatter) {
+    const note = el("text", { x: W / 2, y: 13, "text-anchor": "middle", fill: "#94a3b8", "font-size": 11 });
+    note.textContent = "pick a single card to see individual plays";
+    g.appendChild(note);
+  }
+
+  const readout = document.getElementById("labReadout");
+  const rows = [
+    { label: "v4 zone acc", value: set.new_zone_acc, color: "linear-gradient(90deg,#34d399,#22d3ee)" },
+    { label: "v3 zone acc", value: set.old_zone_acc, color: "rgba(248,113,113,0.7)" },
+  ];
+  const denom = Math.max(set.new_zone_acc, set.old_zone_acc, 0.05) * 1.25;
+  readout.innerHTML =
+    `<div style="font-size:.85rem;color:#cbd5f5">
+       ${cardIdx < 0 ? "All held-out card plays" : titleCase(cards[cardIdx].card)} ·
+       n = ${set.n.toLocaleString()}</div>` +
+    rows.map((r) =>
+      `<div class="readout-row"><span>${r.label}</span>
+        <span class="readout-track"><span class="readout-fill" style="width:${(r.value / denom) * 100}%;background:${r.color}"></span></span>
+        <span style="text-align:right">${pct(r.value)}</span></div>`).join("") +
+    `<div style="font-size:.78rem;color:#94a3b8">
+       ${cardIdx < 0
+        ? "Chance is 8.3% (1 of 12 zones); the plain most-common-zone rule gets " +
+          pct(Math.max(...set.human_grid)) + "."
+        : "Most common human zone for this card: " + ZONE_NAMES[set.human_grid.indexOf(Math.max(...set.human_grid))] +
+          " (" + pct(Math.max(...set.human_grid)) + ")."}
+     </div>`;
+}
+drawArena();
+
+/* ---------------- league table ---------------- */
+const league = document.getElementById("league");
+const leagueMax = Math.max(...cards.map((c) => Math.max(c.new_zone_acc, c.old_zone_acc))) * 1.1;
+cards.forEach((c) => {
+  const d = c.new_zone_acc - c.old_zone_acc;
+  const row = document.createElement("div");
+  row.className = "league-row";
+  row.innerHTML =
+    `<div>${c.label}<span class="league-tag">${c.n} plays · ${c.cost}⚡</span></div>
+     <div class="league-bar">
+       <div class="league-seg league-old" style="left:0;width:${(c.old_zone_acc / leagueMax) * 100}%"></div>
+       <div class="league-seg league-new" style="left:0;width:${(c.new_zone_acc / leagueMax) * 100}%;opacity:.85"></div>
+     </div>
+     <div style="text-align:right">${pct(c.new_zone_acc)}
+       <span class="race-delta ${d >= 0 ? "up" : "down"}">${d >= 0 ? "+" : ""}${(d * 100).toFixed(1)}pp</span></div>`;
+  league.appendChild(row);
+});
+
+/* ---------------- fix gallery ---------------- */
+const gallery = document.getElementById("gallery");
+DATA.show.fix_gallery.forEach((fx) => {
+  const card = document.createElement("div");
+  card.className = "fix-card";
+  const svg = document.createElementNS(SVGNS, "svg");
+  svg.setAttribute("viewBox", "0 0 120 170");
+  svg.setAttribute("class", "mini-arena");
+  const g = el("g");
+  svg.appendChild(g);
+  arenaBackdrop(g, 118, 168, 1, 1, 0.5);
+  const mx = (nx) => 1 + nx * 118;
+  const my = (ny) => 1 + (1 - ny) * 168;
+  const zoneCenter = (z) => {
+    const col = z % 3, row = Math.floor(z / 3);
+    return [(XB[col] + XB[col + 1]) / 2, (YB[row] + YB[row + 1]) / 2];
+  };
+  const [ox2, oy2] = zoneCenter(fx.old_zone);
+  g.appendChild(el("circle", { cx: mx(ox2), cy: my(oy2), r: 9, fill: "none", stroke: "#f87171", "stroke-width": 2, opacity: 0.9 }));
+  g.appendChild(el("circle", { cx: mx(fx.new_xy[0]), cy: my(fx.new_xy[1]), r: 5, fill: "#34d399" }));
+  const star = el("path", {
+    d: "M0,-7 L2,-2 L7,-2 L3,1 L5,6 L0,3 L-5,6 L-3,1 L-7,-2 L-2,-2 Z",
+    transform: `translate(${mx(fx.true_xy[0])},${my(fx.true_xy[1])})`,
+    fill: "#f8fafc",
+  });
+  g.appendChild(star);
+  card.innerHTML =
+    `<h4>${fx.label}</h4>
+     <p class="meta">${fx.seconds}s${fx.is_reaction ? " · under pressure" : ""}</p>`;
+  card.appendChild(svg);
+  const cap = document.createElement("p");
+  cap.className = "meta";
+  cap.style.marginTop = "8px";
+  cap.innerHTML = `v3 said <span class="down">${ZONE_NAMES[fx.old_zone]}</span><br>v4 said <span class="up">${ZONE_NAMES[fx.new_zone]}</span> ✓`;
+  card.appendChild(cap);
+  gallery.appendChild(card);
+});
+
+/* ---------------- defense quiz ---------------- */
+const quizHost = document.getElementById("quiz");
+const scoreHost = document.getElementById("quizScore");
+const scenarios = DATA.show.scenarios;
+let qi = 0;
+const tally = { you: 0, v4: 0, v3: 0, done: 0 };
+
+function renderScore() {
+  if (!tally.done) {
+    scoreHost.innerHTML = `<div class="score-pill">Answer a scenario to start the scoreboard.</div>`;
+    return;
+  }
+  scoreHost.innerHTML = [
+    ["You", tally.you, "#22d3ee"],
+    ["v4", tally.v4, "#34d399"],
+    ["v3", tally.v3, "#f87171"],
+  ].map(([name, val, color]) =>
+    `<div class="score-pill" style="border-left:3px solid ${color}">${name} matched the human
+      <b>${val}/${tally.done}</b></div>`).join("");
+}
+
+function renderQuiz() {
+  if (!scenarios.length) { quizHost.innerHTML = "<p class='caption'>No scenarios captured.</p>"; return; }
+  const s = scenarios[qi];
+  const wrap = document.createElement("div");
+  wrap.className = "quiz-card";
+  wrap.innerHTML =
+    `<p class="quiz-threat">Opponent dropped <b>${s.threat_label}</b> ${s.threat_delay}s ago.</p>
+     <p class="quiz-meta">Battle ${s.battle_id.slice(0, 10)} · ${s.seconds}s into the match · these
+     four cards were in hand. What do you answer with?</p>`;
+
+  const board = document.createElement("div");
+  board.className = "quiz-board";
+  const bsvg = document.createElementNS(SVGNS, "svg");
+  bsvg.setAttribute("viewBox", "0 0 130 184");
+  bsvg.setAttribute("class", "mini-arena");
+  const bg = el("g");
+  bsvg.appendChild(bg);
+  arenaBackdrop(bg, 128, 182, 1, 1, 0.55);
+  const bx = (nx) => 1 + nx * 128;
+  const by = (ny) => 1 + (1 - ny) * 182;
+  if (s.threat_xy) {
+    bg.appendChild(el("circle", {
+      cx: bx(s.threat_xy[0]), cy: by(s.threat_xy[1]), r: 7, fill: "#f8717155",
+      stroke: "#f87171", "stroke-width": 2,
+    }));
+    const ty = by(s.threat_xy[1]);
+    const lab = el("text", {
+      x: bx(s.threat_xy[0]), y: ty < 22 ? ty + 18 : ty - 11, "text-anchor": "middle",
+      fill: "#fca5a5", "font-size": 9,
+      style: "paint-order:stroke;stroke:#0b1220;stroke-width:3px",
+    });
+    lab.textContent = s.threat_label;
+    bg.appendChild(lab);
+  }
+  board.appendChild(bsvg);
+  const boardNote = document.createElement("p");
+  boardNote.className = "meta";
+  boardNote.textContent = "incoming threat, seen from your side of the board";
+  board.appendChild(boardNote);
+
+  const hand = document.createElement("div");
+  hand.className = "hand";
+  const verdict = document.createElement("div");
+  verdict.className = "quiz-verdict";
+  const stage = document.createElement("div");
+  stage.className = "quiz-stage";
+  const right = document.createElement("div");
+  right.appendChild(hand);
+  right.appendChild(verdict);
+  stage.appendChild(board);
+  stage.appendChild(right);
+  wrap.appendChild(stage);
+
+  s.hand.forEach((c) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "hand-card";
+    btn.innerHTML = `<span class="cost">${c.cost}</span><span class="name">${c.label}</span><span class="tags"></span>`;
+    btn.addEventListener("click", () => reveal(c.slot), { once: true });
+    hand.appendChild(btn);
+  });
+
+  const nav = document.createElement("div");
+  nav.className = "quiz-nav";
+  const next = document.createElement("button");
+  next.type = "button";
+  next.className = "play-btn";
+  next.textContent = "Next scenario →";
+  next.addEventListener("click", () => { qi = (qi + 1) % scenarios.length; renderQuiz(); });
+  const dots = document.createElement("div");
+  dots.className = "dots";
+  scenarios.forEach((_, i) => {
+    const d = document.createElement("span");
+    d.className = "dot" + (i === qi ? " current" : (i < qi ? " done" : ""));
+    dots.appendChild(d);
+  });
+  nav.appendChild(next);
+  nav.appendChild(dots);
+  wrap.appendChild(nav);
+
+  quizHost.innerHTML = "";
+  quizHost.appendChild(wrap);
+
+  function reveal(picked) {
+    tally.done += 1;
+    if (picked === s.human_slot) tally.you += 1;
+    if (s.new_slot === s.human_slot) tally.v4 += 1;
+    if (s.old_slot === s.human_slot) tally.v3 += 1;
+    [...hand.children].forEach((btn, i) => {
+      const slot = s.hand[i].slot;
+      btn.disabled = true;
+      const tags = btn.querySelector(".tags");
+      if (slot === picked) tags.innerHTML += `<span class="tag tag-you">you</span>`;
+      if (slot === s.human_slot) { tags.innerHTML += `<span class="tag tag-human">human</span>`; btn.classList.add("correct"); }
+      if (slot === s.new_slot) tags.innerHTML += `<span class="tag tag-v4">v4 ${(100 * s.new_slot_p).toFixed(0)}%</span>`;
+      if (slot === s.old_slot) tags.innerHTML += `<span class="tag tag-v3">v3</span>`;
+      if (slot === picked && slot !== s.human_slot) btn.classList.add("wrong");
+    });
+    if (s.human_xy) {
+      bg.appendChild(el("path", {
+        d: "M0,-7 L2,-2 L7,-2 L3,1 L5,6 L0,3 L-5,6 L-3,1 L-7,-2 L-2,-2 Z",
+        transform: `translate(${bx(s.human_xy[0])},${by(s.human_xy[1])})`, fill: "#f8fafc",
+      }));
+    }
+    if (s.new_xy) {
+      bg.appendChild(el("circle", {
+        cx: bx(s.new_xy[0]), cy: by(s.new_xy[1]), r: 4.5, fill: "#34d399",
+      }));
+    }
+    boardNote.textContent = "white star = human answer · green = where v4 would put it";
+    const you = picked === s.human_slot;
+    verdict.innerHTML =
+      `${you ? "<span class='up'>Match.</span>" : "<span class='down'>Different call.</span>"}
+       The human played <b>${titleCase(s.human_card)}</b> in the ${ZONE_NAMES[s.human_zone]};
+       v4 predicted ${ZONE_NAMES[s.new_zone]}.
+       ${s.new_slot === s.human_slot ? "v4 got the card right" : "v4 missed the card"},
+       ${s.old_slot === s.human_slot ? "v3 got it too" : "v3 missed it"}.`;
+    renderScore();
+    [...dots.children].forEach((d, i) => { if (i === qi) d.classList.add("done"); });
+  }
+}
+renderQuiz();
+renderScore();
+
+/* ---------------- defense cell dumbbells ---------------- */
+const dumb = document.getElementById("dumbbells");
+const dmax = Math.max(...DATA.cells.flatMap((c) => [c.new, c.old, c.human || 0])) * 1.12 || 1;
+DATA.cells.forEach((c) => {
+  const d = c.new - c.old;
+  const l = (v) => (v / dmax) * 100;
+  const lo = Math.min(l(c.old), l(c.new)), hi = Math.max(l(c.old), l(c.new));
+  const row = document.createElement("div");
+  row.className = "dumb-row";
+  row.innerHTML =
+    `<div>${c.label}<span class="league-tag">n=${c.n}</span></div>
+     <div class="dumb-track">
+       <div class="dumb-axis"></div>
+       <div class="dumb-line" style="left:${lo}%;width:${hi - lo}%;background:${d >= 0 ? "#34d399" : "#f87171"};opacity:.5"></div>
+       <div class="dumb-dot dumb-old" style="left:${l(c.old)}%"></div>
+       <div class="dumb-dot dumb-new" style="left:${l(c.new)}%"></div>
+       ${c.human ? `<div class="dumb-human" style="left:${l(c.human)}%" title="human rate"></div>` : ""}
+     </div>
+     <div style="text-align:right">${pct(c.new)}
+       <span class="race-delta ${d >= 0 ? "up" : "down"}">${d >= 0 ? "+" : ""}${(d * 100).toFixed(1)}pp</span></div>`;
+  dumb.appendChild(row);
+});
+
+/* ---------------- splits + entropy ---------------- */
+const splits = DATA.show.splits;
+const splitHost = document.getElementById("splitBars");
+const splitRows = [
+  ["Reaction · card", splits.reaction.old_slot_acc, splits.reaction.new_slot_acc, splits.reaction.n],
+  ["Reaction · zone", splits.reaction.old_zone_acc, splits.reaction.new_zone_acc, splits.reaction.n],
+  ["Free · card", splits.non_reaction.old_slot_acc, splits.non_reaction.new_slot_acc, splits.non_reaction.n],
+  ["Free · zone", splits.non_reaction.old_zone_acc, splits.non_reaction.new_zone_acc, splits.non_reaction.n],
+];
+const smax = Math.max(...splitRows.map((r) => Math.max(r[1], r[2]))) * 1.15;
+splitHost.innerHTML = splitRows.map(([label, o, n, count]) =>
+  `<div class="split-row"><span>${label}<br><small style="color:#94a3b8">n=${count.toLocaleString()}</small></span>
+    <span class="split-track">
+      <span class="split-old" style="width:${(o / smax) * 100}%"></span>
+      <span class="split-new" style="width:${(n / smax) * 100}%"></span>
+    </span>
+    <span style="text-align:right">${pct(n)} <span class="race-delta ${n >= o ? "up" : "down"}">${n >= o ? "+" : ""}${((n - o) * 100).toFixed(1)}pp</span></span>
+  </div>`).join("");
+
+const ent = DATA.show.overall;
+const entHost = document.getElementById("entropyBars");
+const entRows = [
+  ["Humans", ent.zone_entropy_human, "#f8fafc"],
+  ["v4", ent.zone_entropy_new, "#34d399"],
+  ["v3", ent.zone_entropy_old, "#f87171"],
+];
+const emax = Math.max(...entRows.map((r) => r[1])) * 1.15;
+entHost.innerHTML = entRows.map(([label, v, color]) =>
+  `<div class="split-row"><span>${label}</span>
+    <span class="split-track"><span class="split-new" style="top:5px;height:8px;width:${(v / emax) * 100}%;background:${color}"></span></span>
+    <span style="text-align:right">${v.toFixed(2)} bits</span></div>`).join("");
+
+/* ---------------- training chart ---------------- */
+const hist = DATA.history || [];
+const oldHist = DATA.oldHistory || [];
+const chart = document.getElementById("trainChart");
+const scrub = document.getElementById("trainScrub");
+const readout = document.getElementById("trainReadout");
+const playBtn = document.getElementById("trainPlay");
+const series = [
+  { key: "val_slot_top1", label: "v4 slot top-1", color: "#34d399", hist },
+  { key: "val_zone_acc", label: "v4 zone acc", color: "#22d3ee", hist },
+  { key: "val_slot_top1", label: "v3 slot top-1", color: "#f87171", hist: oldHist, dash: "4 3" },
+  { key: "val_zone_acc", label: "v3 zone acc", color: "#fbbf24", hist: oldHist, dash: "4 3" },
+];
+const CW = 720, CH = 260, ML = 46, MB = 30, MT = 12, MR = 12;
+const maxEpochs = Math.max(hist.length, oldHist.length, 1);
+scrub.max = maxEpochs;
+scrub.value = maxEpochs;
+
+function drawTrain(upto) {
+  chart.setAttribute("viewBox", `0 0 ${CW} ${CH}`);
+  chart.innerHTML = "";
+  const vals = series.flatMap((s) => s.hist.map((r) => r[s.key]).filter((v) => v != null));
+  if (!vals.length) return;
+  const lo = Math.min(...vals) * 0.95, hi = Math.max(...vals) * 1.05;
+  const px = (i) => ML + (i / Math.max(maxEpochs - 1, 1)) * (CW - ML - MR);
+  const py = (v) => CH - MB - ((v - lo) / (hi - lo)) * (CH - MB - MT);
+  for (let t = 0; t <= 4; t++) {
+    const v = lo + (t / 4) * (hi - lo);
+    chart.appendChild(el("line", { x1: ML, x2: CW - MR, y1: py(v), y2: py(v), stroke: "rgba(148,163,184,0.14)" }));
+    const lab = el("text", { x: ML - 8, y: py(v) + 4, "text-anchor": "end", fill: "#94a3b8", "font-size": 11 });
+    lab.textContent = (100 * v).toFixed(0) + "%";
+    chart.appendChild(lab);
+  }
+  series.forEach((s) => {
+    const pts = s.hist.slice(0, upto).map((r, i) => [px(i), py(r[s.key])]).filter((p) => !isNaN(p[1]));
+    if (pts.length < 2) return;
+    chart.appendChild(el("polyline", {
+      points: pts.map((p) => p.join(",")).join(" "), fill: "none",
+      stroke: s.color, "stroke-width": 2.2, "stroke-dasharray": s.dash || "none",
+      "stroke-linejoin": "round",
+    }));
+    const last = pts[pts.length - 1];
+    chart.appendChild(el("circle", { cx: last[0], cy: last[1], r: 3.4, fill: s.color }));
+  });
+  const axis = el("text", { x: CW / 2, y: CH - 6, "text-anchor": "middle", fill: "#94a3b8", "font-size": 11 });
+  axis.textContent = "epoch";
+  chart.appendChild(axis);
+  const row = hist[Math.min(upto, hist.length) - 1];
+  readout.textContent = row
+    ? `epoch ${row.epoch} · v4 slot ${pct(row.val_slot_top1)} · v4 zone ${pct(row.val_zone_acc ?? 0)}`
+    : `epoch ${upto}`;
+}
+document.getElementById("trainLegend").innerHTML = series.map((s) =>
+  `<span style="display:inline-flex;align-items:center;gap:6px;margin-right:14px;font-size:.8rem">
+    <span style="width:14px;height:3px;background:${s.color};display:inline-block"></span>${s.label}</span>`).join("");
+drawTrain(maxEpochs);
+scrub.addEventListener("input", () => drawTrain(Number(scrub.value)));
+let timer = null;
+playBtn.addEventListener("click", () => {
+  if (timer) { clearInterval(timer); timer = null; playBtn.textContent = "▶"; return; }
+  playBtn.textContent = "❚❚";
+  let i = 1;
+  drawTrain(i);
+  timer = setInterval(() => {
+    i += 1;
+    scrub.value = i;
+    drawTrain(i);
+    if (i >= maxEpochs) { clearInterval(timer); timer = null; playBtn.textContent = "▶"; }
+  }, 140);
+});
+
+  </script>
+</body>
+</html>

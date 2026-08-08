@@ -1,58 +1,10 @@
-"""Generate self-contained HTML training reports for winner prediction models."""
-
-from __future__ import annotations
-
-import html
-import json
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any
-
-
-def _fmt_pct(value: float | None, digits: int = 1) -> str:
-    if value is None:
-        return "—"
-    return f"{100 * value:.{digits}f}%"
-
-
-def _fmt_float(value: float | None, digits: int = 4) -> str:
-    if value is None:
-        return "—"
-    return f"{value:.{digits}f}"
-
-
-def _json_script(data: Any) -> str:
-    return json.dumps(data, separators=(",", ":"))
-
-
-def _asset_href(model_dir: Path, report_dir: Path, asset: str | None) -> str | None:
-    if not asset:
-        return None
-    asset_path = Path(asset)
-    if asset_path.is_absolute():
-        try:
-            asset_path = asset_path.relative_to(model_dir.parent.parent)
-        except ValueError:
-            asset_path = Path(*asset_path.parts[-2:])
-    href = Path("../") / asset_path
-    return href.as_posix()
-
-
-def _report_timestamp(model_dir: Path, *candidates: str) -> str:
-    times: list[float] = []
-    for name in candidates:
-        path = model_dir / name
-        if path.exists():
-            times.append(path.stat().st_mtime)
-    if not times:
-        return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    return datetime.fromtimestamp(max(times), tz=timezone.utc).strftime(
-        "%Y-%m-%d %H:%M UTC"
-    )
-
-
-def _base_styles() -> str:
-    return """
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Policy BC report — policy-bc-v2</title>
+  <style>
     :root {
       color-scheme: dark;
       --bg: #0a0f18;
@@ -379,11 +331,171 @@ def _base_styles() -> str:
     @media (max-width: 820px) {
       .kpi-row, .block-grid, .chart-grid { grid-template-columns: 1fr; }
     }
-    """
+    
+    .callout {
+      margin-top: 16px; padding: 12px 16px; border-radius: 12px;
+      background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.3);
+      font-size: 0.9rem;
+    }
+    .callout a { color: #67e8f9; font-weight: 700; }
+    .arch {
+      display: grid; grid-template-columns: 1fr 28px 1fr; gap: 12px; align-items: center;
+      max-width: 820px;
+    }
+    .arch-col {
+      padding: 14px; border-radius: 14px; background: rgba(148,163,184,0.06);
+      border: 1px solid rgba(148,163,184,0.16);
+    }
+    .arch-label {
+      font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: #94a3b8; margin-bottom: 10px;
+    }
+    .arch-box {
+      padding: 9px 12px; border-radius: 10px; text-align: center; font-size: 0.82rem;
+      margin-bottom: 8px; background: rgba(99,102,241,0.16);
+      border: 1px solid rgba(148,163,184,0.25);
+    }
+    .arch-box.trunk { background: rgba(34,211,238,0.12); }
+    .arch-box.live { border-color: #34d399; box-shadow: 0 0 0 1px #34d39955; }
+    .arch-box.mute { opacity: 0.55; }
+    .arch-heads { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .arch-arrow {
+      width: 100%; height: 2px; background: linear-gradient(90deg, #22d3ee, #6366f1);
+    }
+    .arch-note { font-size: 0.76rem; color: #94a3b8; margin: 8px 0 0; text-align: center; }
+    .arch-note.up { color: #6ee7b7; }
+    @media (max-width: 800px) {
+      .arch { grid-template-columns: 1fr; }
+      .arch-arrow { width: 2px; height: 24px; margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="report-header">
+      <div class="badge-row">
+        <span class="badge">policy-bc-v2</span>
+        <span class="badge">behavior cloning</span>
+        <span class="badge">v2</span>
+        <span class="badge">cuda</span>
+        <span class="badge">ready for live smoke test</span>
+      </div>
+      <h1>Next-action policy — cycle-aware</h1>
+      <p>Adds per-card cycle features and a card-conditioned slot head so the model knows which cards are likely in hand. Placement is still card-blind.</p>
+      <p class="meta">Created 2026-08-06 23:33 UTC · trained in 2977.6s ·
+      561,930 params · 248,618 train actions ·
+      14,170 battles</p>
+      
+    </header>
 
+    <section class="report-section kpi-row">
+      <div><span class="kpi-label">Test slot top-1</span><span class="kpi-value">51.5%</span></div>
+      <div><span class="kpi-label">Test slot top-3</span><span class="kpi-value">93.1%</span></div>
+      <div><span class="kpi-label">Zone accuracy</span><span class="kpi-value">39.5%</span></div>
+      <div><span class="kpi-label">Timing MAE</span><span class="kpi-value">1.63s</span></div>
+    </section>
 
-def _chart_script() -> str:
-    return r"""
+    <section class="report-section">
+      <h2>What this version is trying to do</h2>
+      <div class="arch"><div class="arch-col"><div class="arch-label">shared trunk</div><div class="arch-box trunk">card embed + continuous → causal GRU (2×160)</div><div class="arch-box trunk">deck matchup + global features</div></div><div class="arch-arrow"></div><div class="arch-col"><div class="arch-label">what changed in v2</div><div class="arch-heads"><div class="arch-box live">slot (card-conditioned)</div><div class="arch-box ">type</div><div class="arch-box mute">zone + xy</div><div class="arch-box ">timing</div></div><p class="arch-note up">+ per-card cycle features · slot head sees cycle state</p></div></div>
+    </section>
+
+    <section class="report-section block-grid">
+      <div class="block">
+        <h2>Test vs baselines</h2>
+        <table>
+          <thead><tr><th>Model</th><th>Slot top-1</th><th>Slot top-3</th><th>N</th></tr></thead>
+          <tbody>
+            <tr><td>Policy BC</td><td>51.5%</td><td>93.1%</td><td>34,858</td></tr>
+            <tr><td>Online frequency</td><td>11.8%</td><td>39.4%</td><td>134,581</td></tr>
+            <tr><td>Approx cycle</td><td>20.0%</td><td>62.4%</td><td>134,581</td></tr>
+            <tr><td>Chance (1/8)</td><td>12.5%</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="block">
+        <h2>Placement &amp; type</h2>
+        <table>
+          <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Type accuracy</td><td>99.8%</td></tr>
+            <tr><td>Zone accuracy</td><td>39.5%</td></tr>
+            <tr><td>XY MAE (API units)</td><td>5732.2</td></tr>
+            <tr><td>Within 1 tile</td><td>2.4%</td></tr>
+            <tr><td>Timing MAE</td><td>1.63 s</td></tr>
+            <tr><td>Test loss</td><td>2.9025</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="block">
+        <h2>Battle splits</h2>
+        <table>
+          <thead><tr><th>Split</th><th>Battles</th><th>Team win rate</th><th>Mean events</th></tr></thead>
+          <tbody><tr><td>train</td><td>9,920</td><td>51.6%</td><td>66.1</td></tr><tr><td>val</td><td>2,125</td><td>51.7%</td><td>65.3</td></tr><tr><td>test</td><td>2,125</td><td>48.8%</td><td>66.9</td></tr></tbody>
+        </table>
+      </div>
+      <div class="block">
+        <h2>Live-play readiness</h2>
+        <p class="caption">All offline gates passed; a short supervised live smoke test is justified.</p>
+        <table>
+          <thead><tr><th>Check</th><th>Status</th></tr></thead>
+          <tbody><tr><td>beats_baselines</td><td>pass</td></tr><tr><td>slot_floor</td><td>pass</td></tr><tr><td>zone_floor</td><td>pass</td></tr><tr><td>tile_or_zone</td><td>pass</td></tr><tr><td>rollout_beats_easy</td><td>pass</td></tr><tr><td>rollout_not_collapsed</td><td>pass</td></tr><tr><td>rollout_near_real</td><td>pass</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="report-section block-grid">
+      <div class="block block-wide">
+        <h2>Offline rollout realism</h2>
+        <p class="caption">Policy continues real prefixes for ~40 actions; realism scorer rates finished sequences vs real / easy / medium negatives.</p>
+        <table>
+          <thead><tr><th>Source</th><th>Mean P(real)</th><th>N</th></tr></thead>
+          <tbody>
+            <tr><td>Real test battles</td><td>0.8657</td><td>96</td></tr>
+            <tr><td>Policy rollouts</td><td>0.8524</td><td>96</td></tr>
+            <tr><td>Easy random</td><td>0.0001</td><td>96</td></tr>
+            <tr><td>Medium random</td><td>0.0000</td><td>96</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <div class="chart-grid">
+        <div class="chart-block">
+          <h2>Training loss</h2>
+          <svg class="chart" id="lossChart"></svg>
+          <div class="legend"></div>
+        </div>
+        <div class="chart-block">
+          <h2>Validation slot accuracy</h2>
+          <svg class="chart" id="slotChart"></svg>
+          <div class="legend"></div>
+        </div>
+        <div class="chart-block">
+          <h2>Validation tile &amp; type</h2>
+          <svg class="chart" id="auxChart"></svg>
+          <div class="legend"></div>
+        </div>
+        <div class="chart-block">
+          <h2>Rollout score comparison</h2>
+          <svg class="chart" id="rolloutChart"></svg>
+          <div class="legend"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class='report-section'><h2>Training animation</h2><p class='caption'>Validation metrics over epochs. Play or scrub.</p><div class='chart-animation' id='policyTrainingAnim'><svg class='chart' id='policyTrainingChart'></svg><div class='legend'></div><div class='anim-toolbar'><button type='button' class='anim-btn anim-btn-icon' id='policyAnimToggle' aria-label='Play'><svg class='anim-icon anim-icon-play' viewBox='0 0 16 16' aria-hidden='true'><path d='M4 2.5v11l9-5.5-9-5.5z'/></svg><svg class='anim-icon anim-icon-pause' viewBox='0 0 16 16' aria-hidden='true' hidden><path d='M3.5 2h3v12h-3V2zm6 0h3v12h-3V2z'/></svg></button><input type='range' class='anim-scrubber' id='policyAnimScrubber' min='0' max='0' value='0' step='1'><div class='anim-readout' id='policyAnimReadout'></div></div></div></section>
+
+    <section class="report-section">
+      <h2>Lessons learned</h2>
+      <ul class="lessons">
+        <li>v1&#x27;s flat 8-way head ignored per-card identity; v2 scores each deck card with embed + cycle features.</li><li>Soft hand masking from wait-time heuristics helps after the cycle is observable (≥4 plays).</li><li>Discrete placement zones are a better first target than raw XY on replay-only data.</li><li>Rollout realism can look strong even when exact card top-1 is modest — judge both.</li>
+      </ul>
+    </section>
+  </main>
+  <script>
+    
     const SVG_NS = "http://www.w3.org/2000/svg";
 
     function svgEl(tag, attrs) {
@@ -1079,369 +1191,106 @@ def _chart_script() -> str:
       setFrame(0);
       setAnimToggleState(toggleBtn, false);
     }
-    """
+    
+    const history = [{"epoch":1,"train_loss":3.5012768327944563,"val_loss":3.326665730618719,"val_slot_top1":0.39929783499122296,"val_slot_top3":0.8724985371562317,"val_type_acc":0.9979812755997659,"val_zone_acc":0.31322410766530134,"val_xy_mae":6177.6242557782325,"val_tile_acc":0.021269748390871854,"val_timing_mae":1.7627722198325615,"val_n":34180,"lr":0.0001992114701314478},{"epoch":2,"train_loss":3.3024128991880533,"val_loss":3.2056858237109966,"val_slot_top1":0.44177881802223523,"val_slot_top3":0.896459918080749,"val_type_acc":0.9979812755997659,"val_zone_acc":0.33645406670567585,"val_xy_mae":6054.086792349327,"val_tile_acc":0.021942656524283205,"val_timing_mae":1.7337476887711312,"val_n":34180,"lr":0.0001968583161128631},{"epoch":3,"train_loss":3.2107418302155324,"val_loss":3.125857577395083,"val_slot_top1":0.46135166764189584,"val_slot_top3":0.9077530719719134,"val_type_acc":0.9979812755997659,"val_zone_acc":0.35225277940315974,"val_xy_mae":5990.601278159743,"val_tile_acc":0.02088940901111761,"val_timing_mae":1.7062120539183643,"val_n":34180,"lr":0.00019297764858882514},{"epoch":4,"train_loss":3.1513759366278786,"val_loss":3.0815672536394487,"val_slot_top1":0.4778525453481568,"val_slot_top3":0.9131363370392042,"val_type_acc":0.9979812755997659,"val_zone_acc":0.36023990637799885,"val_xy_mae":5949.347582650673,"val_tile_acc":0.022264482153306026,"val_timing_mae":1.7041072463766045,"val_n":34180,"lr":0.00018763066800438636},{"epoch":5,"train_loss":3.105649056258025,"val_loss":3.0415539812685837,"val_slot_top1":0.4847279110590989,"val_slot_top3":0.9179344645991808,"val_type_acc":0.9979812755997659,"val_zone_acc":0.36696898771211234,"val_xy_mae":5908.608579578701,"val_tile_acc":0.02179637214745465,"val_timing_mae":1.6874399853701338,"val_n":34180,"lr":0.00018090169943749476},{"epoch":6,"train_loss":3.070254005277108,"val_loss":3.0158155124578903,"val_slot_top1":0.4934464599180807,"val_slot_top3":0.9205383265067291,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3738150965476887,"val_xy_mae":5890.199023551785,"val_tile_acc":0.021825629022820363,"val_timing_mae":1.6947638059094887,"val_n":34180,"lr":0.00017289686274214118},{"epoch":7,"train_loss":3.043744985704069,"val_loss":2.997057977007396,"val_slot_top1":0.49903452311293156,"val_slot_top3":0.9230836746635459,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3759801053247513,"val_xy_mae":5865.333978203628,"val_tile_acc":0.02235225277940316,"val_timing_mae":1.6770535932778614,"val_n":34180,"lr":0.000163742398974869},{"epoch":8,"train_loss":3.0194309027597246,"val_loss":2.9781665108097135,"val_slot_top1":0.501316559391457,"val_slot_top3":0.9232299590403745,"val_type_acc":0.9979812755997659,"val_zone_acc":0.37902282036278523,"val_xy_mae":5838.1502450263315,"val_tile_acc":0.022586307782328847,"val_timing_mae":1.6704936876291416,"val_n":34180,"lr":0.00015358267949789966},{"epoch":9,"train_loss":3.001026742497589,"val_loss":2.9630606565902484,"val_slot_top1":0.5049151550614395,"val_slot_top3":0.9255119953188999,"val_type_acc":0.9979812755997659,"val_zone_acc":0.38253364540667056,"val_xy_mae":5828.934055002926,"val_tile_acc":0.02173785839672323,"val_timing_mae":1.663988878798108,"val_n":34180,"lr":0.00014257792915650726},{"epoch":10,"train_loss":2.9847507336993275,"val_loss":2.9560192983541915,"val_slot_top1":0.5046811000585137,"val_slot_top3":0.925599765944997,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3855178466939731,"val_xy_mae":5806.712982738443,"val_tile_acc":0.023200702165008778,"val_timing_mae":1.659650808192611,"val_n":34180,"lr":0.00013090169943749474},{"epoch":11,"train_loss":2.9707555120864524,"val_loss":2.9457597714751516,"val_slot_top1":0.5090988882387361,"val_slot_top3":0.9267700409596256,"val_type_acc":0.9979812755997659,"val_zone_acc":0.38706846108835574,"val_xy_mae":5799.685740930368,"val_tile_acc":0.02363955529549444,"val_timing_mae":1.662047283603407,"val_n":34180,"lr":0.00011873813145857248},{"epoch":12,"train_loss":2.958237475819058,"val_loss":2.938817584692542,"val_slot_top1":0.5120245757753072,"val_slot_top3":0.927325921591574,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3887361029842013,"val_xy_mae":5791.72576067876,"val_tile_acc":0.023551784669397308,"val_timing_mae":1.6551596747008313,"val_n":34180,"lr":0.00010627905195293135},{"epoch":13,"train_loss":2.9471531785074085,"val_loss":2.9316637800700627,"val_slot_top1":0.5132826214160328,"val_slot_top3":0.9274429490930368,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3890579286132241,"val_xy_mae":5781.105774575775,"val_tile_acc":0.024019894675248683,"val_timing_mae":1.658123056535626,"val_n":34180,"lr":9.372094804706867e-05},{"epoch":14,"train_loss":2.935210016529256,"val_loss":2.9272776112627628,"val_slot_top1":0.5133703920421299,"val_slot_top3":0.9272966647162083,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3905500292568754,"val_xy_mae":5769.878360883557,"val_tile_acc":0.024429490930368638,"val_timing_mae":1.6512574643960398,"val_n":34180,"lr":8.126186854142755e-05},{"epoch":15,"train_loss":2.927647984567493,"val_loss":2.9216812226309705,"val_slot_top1":0.5145114101813927,"val_slot_top3":0.9289643066120539,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3911351667641896,"val_xy_mae":5755.265235517847,"val_tile_acc":0.024751316559391456,"val_timing_mae":1.6546782590130604,"val_n":34180,"lr":6.90983005625053e-05},{"epoch":16,"train_loss":2.9200497409443797,"val_loss":2.9194897235329473,"val_slot_top1":0.5146576945582212,"val_slot_top3":0.9287595084844938,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3920421299005266,"val_xy_mae":5754.447483908719,"val_tile_acc":0.024400234055002926,"val_timing_mae":1.6524875022571222,"val_n":34180,"lr":5.742207084349274e-05},{"epoch":17,"train_loss":2.9117507605886264,"val_loss":2.916374487663383,"val_slot_top1":0.5166471620830895,"val_slot_top3":0.9285254534815681,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3911644236395553,"val_xy_mae":5748.347271796372,"val_tile_acc":0.025365710942071386,"val_timing_mae":1.6492174571546774,"val_n":34180,"lr":4.6417320502100316e-05},{"epoch":18,"train_loss":2.9063531606776234,"val_loss":2.914709103641225,"val_slot_top1":0.5157694558221182,"val_slot_top3":0.9288765359859567,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3915740198946753,"val_xy_mae":5743.997805734348,"val_tile_acc":0.024926857811585722,"val_timing_mae":1.6472689303269228,"val_n":34180,"lr":3.6257601025131026e-05},{"epoch":19,"train_loss":2.9013842520890414,"val_loss":2.9124623305761994,"val_slot_top1":0.5167641895845524,"val_slot_top3":0.9289350497366882,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3932416617905208,"val_xy_mae":5740.007519016969,"val_tile_acc":0.024956114686951435,"val_timing_mae":1.646405951609871,"val_n":34180,"lr":2.7103137257858868e-05},{"epoch":20,"train_loss":2.8962446353072493,"val_loss":2.9121011157534014,"val_slot_top1":0.5166471620830895,"val_slot_top3":0.9288765359859567,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3920128730251609,"val_xy_mae":5736.873712697484,"val_tile_acc":0.02480983031012288,"val_timing_mae":1.6474919693591372,"val_n":34180,"lr":1.909830056250527e-05},{"epoch":21,"train_loss":2.8928774627147877,"val_loss":2.9109392699910632,"val_slot_top1":0.5177296664716209,"val_slot_top3":0.9292861322410767,"val_type_acc":0.9979812755997659,"val_zone_acc":0.392510239906378,"val_xy_mae":5733.7646119806905,"val_tile_acc":0.02510239906377999,"val_timing_mae":1.6455419818304517,"val_n":34180,"lr":1.2369331995613644e-05},{"epoch":22,"train_loss":2.890694717566172,"val_loss":2.9106113981844772,"val_slot_top1":0.5177589233469866,"val_slot_top3":0.9290813341135167,"val_type_acc":0.9979812755997659,"val_zone_acc":0.39133996489174955,"val_xy_mae":5733.580251609128,"val_tile_acc":0.025073142188414277,"val_timing_mae":1.6467286080348693,"val_n":34180,"lr":7.0223514111748665e-06},{"epoch":23,"train_loss":2.8894695252057456,"val_loss":2.9099991926506386,"val_slot_top1":0.5179344645991808,"val_slot_top3":0.929052077238151,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3924809830310123,"val_xy_mae":5733.6536278525455,"val_tile_acc":0.02542422469280281,"val_timing_mae":1.6459367889350727,"val_n":34180,"lr":3.141683887136904e-06},{"epoch":24,"train_loss":2.887638703049946,"val_loss":2.9096212351500097,"val_slot_top1":0.5168519602106495,"val_slot_top3":0.9291983616149795,"val_type_acc":0.9979812755997659,"val_zone_acc":0.3921591574019895,"val_xy_mae":5732.388717817437,"val_tile_acc":0.025365710942071386,"val_timing_mae":1.6460552713339478,"val_n":34180,"lr":7.885298685522236e-07},{"epoch":25,"train_loss":2.8867941699891424,"val_loss":2.909602764827102,"val_slot_top1":0.5171445289643066,"val_slot_top3":0.9291691047396138,"val_type_acc":0.9979812755997659,"val_zone_acc":0.392100643651258,"val_xy_mae":5732.569283937975,"val_tile_acc":0.025570509069631365,"val_timing_mae":1.646099658428123,"val_n":34180,"lr":0.0}];
+    const rollouts = {"available":true,"n":96,"mean_score_real":0.8656524952418271,"mean_score_policy":0.8523503167337981,"mean_score_easy":0.00012550499000328638,"mean_score_medium":4.765778678542757e-05,"policy_vs_easy_lift":0.8522248117437948,"policy_vs_medium_lift":0.8523026589470127,"policy_gap_to_real":0.01330217850802895};
+    const rolloutHist = {"real":[0.7175906696031347,0.8294996051903311,0.968778016944567,0.9845777644111611,0.9518317516671635,0.9584652630825187,0.9420213740436898,0.9914313209863892,0.847179528282908,0.9776264551433231,0.6921674396210729,0.9646692523089355,0.9787171861228248,0.9894005417217281,0.9930419683720393,0.927586975614402,0.305734236173404,0.9284359478957369,0.6928397167881216,0.6489833278205209,0.8838504034250865,0.9298782695609581,0.6013436927983079,0.6169253332670642,0.9194961778644785,0.637587266549444,0.975564004544565,0.2692401948026615,0.06596206650390568,0.9739583610731023,0.8119223575868036,0.891720731408245,0.7694616363565077,0.9945963486513478,0.9941769605638884,0.8750679161189848,0.9939416969198918,0.896564704156207,0.9210555401619002,0.9428129911788836,0.9780770794778376,0.9810166065370327,0.9232775181515529,0.9174806824114683,0.9983356126361445,0.9065560793897964,0.8860189134407196,0.9623151496828453,0.9522267650774611,0.9827462386750698,0.9637150778851388,0.5260618501076579,0.9412942940631593,0.9049237010889234,0.8806570856983742,0.722665746570592,0.9512183410743654,0.9237812908237347,0.8160255441282611,0.924008656690272,0.9881157755769937,0.9738942518038659,0.8036770158012022,0.9098152582057194,0.8333353489673473,0.9907724077250804,0.6233878371431713,0.9380739413953912,0.9617110525948084,0.8807580628125145,0.5785426559939335,0.9577270677154893,0.702204932882207,0.8490502543913967,0.8850028903324374,0.8448907359350387,0.9428720597437469,0.9843065815208243,0.9696466544346697,0.9817398488949397,0.5384609442601491,0.8825331405899894,0.8278049806096579,0.8570738320103511,0.989853206882902,0.9255712184489778,0.9780281937970633,0.8672656821296113,0.9101666517473593,0.7911035096862328,0.9604230122640912,0.9771726090993974,0.8814175318103682,0.8872923369208165,0.9424220094061143,0.9884188207849377],"policy":[0.8957018542978982,0.9882430544863152,0.9799092579994105,0.9539483656160064,0.998488591659163,0.9944295793624841,0.8253650782059619,0.9684819574439621,0.9820849831265442,0.9955322150422783,0.918043444647175,0.9823574420955923,0.998351847036227,0.8864695931989701,0.6492219820975059,0.9776853693295448,0.9951388469787791,0.35015292544124044,0.9792312930256977,0.9832273337229095,0.9592980350726893,0.9874281759211384,0.9848633499002604,0.7573784640509675,0.9691581312195989,0.996852819305372,0.9340049116977773,0.9946351317638499,0.9883639169984764,0.012952814165626617,0.9754207354090608,0.9919562647468664,0.8592886012306789,0.3970542015994695,0.912200934828005,0.8626625663447756,0.8682517357069293,0.9933261411475345,0.7812101905531172,0.9853550882113288,0.9545546627880126,0.7372825804625258,0.8756482845187699,0.0022883487951789183,0.8966558204153465,0.3791315813945618,0.9390685644277796,0.975244460348613,0.9212657170188914,0.9695090542127491,0.8315832169511582,0.9899143352171876,0.9865538041173217,0.993579526139122,0.9465474261756048,0.9286115554399796,0.9414603265315453,0.9961232200312102,0.9773464119914459,0.6073134933002059,0.8194144473979615,0.984434440324055,0.9803071403208442,0.981996589814542,0.9970305403151166,0.9428858165209368,0.9384314909059122,0.0003921173499955293,0.6793621369424913,0.9943301494672301,0.8705739005836456,0.8552025014303213,0.9876877134749402,0.010374830801629199,0.9854411269184241,0.9665816760768451,0.9931691213655168,0.9899557668678566,0.37680396655357473,0.8841694346970315,0.0011733063928793242,0.9439331915295027,0.9618338497656758,0.9845634149241126,0.32817350767188025,0.9294387077648539,0.9712350166192921,0.9645970331117869,0.9725546887154014,0.9944222249034645,0.6138506282055775,0.9890096801479061,0.9967011426575741,0.9766329807155287,0.9761092905269529,0.6194472196989733],"easy":[0.00039955251929292616,9.118646549732579e-05,6.595872465645261e-05,0.00033476117323499096,3.4520953190757446e-05,3.303087238751029e-05,0.00018475632180259724,2.524186780395391e-05,4.519403991973706e-05,0.00014631027726036002,0.00015480900352950097,2.465404317664593e-05,4.71832178870439e-05,4.729142068733521e-05,0.0001091125701312316,0.00011389972774456173,0.00011593991271240174,0.0004752418286443916,1.6453138243383842e-05,9.721348165869426e-05,3.034319264257701e-05,8.33155045830329e-05,5.513103338212142e-05,4.802662820543709e-05,0.00013084721865842369,0.0001420775660152286,4.075405051178535e-05,3.222540951661906e-05,2.6857925190614937e-05,3.5737502524907585e-05,0.00030478228869156693,0.00017370939111784834,0.00016256399467463325,3.009754147292341e-05,3.3452607215648454e-05,5.0676125065086584e-05,3.0961724041397215e-05,1.6929757637025413e-05,6.210360504198133e-05,3.2964122519868205e-05,9.110611866858828e-05,2.1638903015874822e-05,0.0001301667554309178,8.181911950797197e-05,4.994470244023032e-05,0.00011048216194453812,0.00010139194605365836,6.680659325811861e-05,0.00014158116494983444,9.6831664453873e-05,0.00010182396844929856,0.00048178201229056244,7.064675826507217e-05,2.615769389513953e-05,0.00033611632778971,5.378679316305345e-05,0.00010316882322793368,1.9819104991136334e-05,6.0947641137068624e-05,0.00011334989677930042,3.5668076794089064e-05,2.919504604187827e-05,0.0003403131459853807,1.8452969788784795e-05,0.0003949218861253574,6.637893452528696e-05,2.2683895722513745e-05,8.525660339898696e-05,3.0122219383733738e-05,4.624882363724539e-05,0.0012019728245698104,6.630534305650026e-05,0.0003181916279920514,0.0009110317436361797,0.00016050605816293894,0.00011087015203152718,4.380468172962432e-05,0.00010367624507234755,9.199429208860183e-05,0.00015555533085760266,2.992106278401443e-05,0.00021869138584161002,0.0002816788994924812,4.790069079586348e-05,5.2693028786474417e-05,2.069828480998235e-05,4.2048768593722996e-05,5.9062697024343515e-05,7.060983701061167e-05,4.2225836305973376e-05,4.803889871840024e-05,4.7761519732459976e-05,4.38774917754348e-05,7.565169736950154e-05,4.290701319865756e-05,0.00034632512959310966],"medium":[4.4790981155932755e-05,2.6179693413394583e-05,0.00011521691135797277,5.82031761878964e-05,1.9800648126732317e-05,4.053480871008803e-05,8.849147979006406e-05,1.883451683382942e-05,6.415728181991729e-05,8.272128447053626e-05,8.126493918325905e-05,2.217358170413888e-05,8.423846099836963e-05,4.2537607044367596e-05,4.756559889788636e-05,3.633134169786407e-05,4.648411517758485e-05,3.3489577670968546e-05,5.087265333525999e-05,5.69440955991699e-05,2.967449217460784e-05,4.984298458997719e-05,2.7372847784606065e-05,4.570387039258251e-05,9.945387367325058e-05,4.098469443293235e-05,2.1242398163375027e-05,3.4111018077065146e-05,2.8510602248988476e-05,1.2796131951789389e-05,1.3152005684464445e-05,4.752300870870748e-05,3.3411542962128914e-05,2.3903777625706203e-05,3.7382735089973086e-05,2.4238962300744895e-05,2.901686525150371e-05,4.5821898437574067e-05,2.4201678988339448e-05,1.7792467649954112e-05,2.7026556151186375e-05,5.298723899986035e-05,9.185506355612073e-05,7.422311561313321e-05,3.0748855644648976e-05,3.12058407010367e-05,4.589926528355982e-05,1.764633180609541e-05,2.4716829574082004e-05,6.150150826759023e-05,2.7922829826091686e-05,7.244199490996087e-05,8.650084268861587e-05,7.554290894235904e-05,2.445797423621091e-05,6.646749677541452e-05,7.189782500763161e-05,6.046690434914776e-05,4.784742763208955e-05,4.927638697418606e-05,1.843483514295572e-05,5.3518083300663715e-05,6.962590775359337e-05,3.298054577916495e-05,2.4993590315240482e-05,4.258512909662395e-05,3.4713788168282726e-05,3.7020686249889e-05,1.6790416858271965e-05,7.368768630965327e-05,3.930085909220563e-05,7.288472073649572e-05,3.0207633950583266e-05,2.2476351024882768e-05,6.223057149778172e-05,8.343800778613641e-05,3.0073338780552282e-05,5.100801626729758e-05,2.855302905978873e-05,4.9074573256493834e-05,3.0583383726967534e-05,2.3190631493887025e-05,4.988072436972965e-05,3.564384057743915e-05,1.541952676030668e-05,2.64189293460923e-05,2.2971368514597822e-05,7.408180936983622e-05,9.566662215748052e-05,1.7405114249060692e-05,4.407725431886825e-05,0.000109295628626564,1.725920464942825e-05,0.00016659701760920014,2.686727900438395e-05,0.0001585876198981217]};
 
+    if (history.length) {
+      const labels = history.map((row) => String(row.epoch));
+      renderLineChart("lossChart", [
+        { color: "#60a5fa", label: "Train loss", values: history.map((r) => r.train_loss) },
+        { color: "#34d399", label: "Val loss", values: history.map((r) => r.val_loss) },
+      ], labels, { yFormat: "float" });
+      renderLineChart("slotChart", [
+        { color: "#fbbf24", label: "Slot top-1", values: history.map((r) => r.val_slot_top1) },
+        { color: "#a78bfa", label: "Slot top-3", values: history.map((r) => r.val_slot_top3) },
+      ], labels, { yFormat: "percent" });
+      renderLineChart("auxChart", [
+        { color: "#34d399", label: "Zone acc", values: history.map((r) => r.val_zone_acc ?? r.val_tile_acc) },
+        { color: "#60a5fa", label: "Tile acc", values: history.map((r) => r.val_tile_acc) },
+        { color: "#a78bfa", label: "Type acc", values: history.map((r) => r.val_type_acc) },
+      ], labels, { yFormat: "percent" });
+      mountPolicyTrainingAnimation({
+        svgId: "policyTrainingChart",
+        stages: history,
+        scrubberId: "policyAnimScrubber",
+        toggleId: "policyAnimToggle",
+        readoutId: "policyAnimReadout",
+      });
+    }
 
-def render_hgb_report(
-    model_dir: str | Path = "models/winner_predictor",
-    output_path: str | Path | None = None,
-) -> Path:
-    model_dir = Path(model_dir)
-    report_path = model_dir / "hgb_report.json"
-    with report_path.open(encoding="utf-8") as handle:
-        report = json.load(handle)
+    const scoreBars = [
+      { label: "real", value: rollouts.mean_score_real || 0 },
+      { label: "policy", value: rollouts.mean_score_policy || 0 },
+      { label: "easy", value: rollouts.mean_score_easy || 0 },
+      { label: "medium", value: rollouts.mean_score_medium || 0 },
+    ];
+    renderLineChart("rolloutChart", [
+      {
+        color: "#60a5fa",
+        label: "Mean P(real)",
+        values: scoreBars.map((row) => row.value),
+      },
+    ], scoreBars.map((row) => row.label), { yFormat: "float" });
+    void rolloutHist;
 
-    confidence_path = model_dir / "accuracy_vs_confidence.json"
-    confidence_data: dict[str, Any] = {}
-    if confidence_path.exists():
-        with confidence_path.open(encoding="utf-8") as handle:
-            confidence_data = json.load(handle)
+    function mountPolicyTrainingAnimation(config) {
+      const svg = document.getElementById(config.svgId);
+      const scrubber = document.getElementById(config.scrubberId);
+      const toggle = document.getElementById(config.toggleId);
+      const readout = document.getElementById(config.readoutId);
+      const stages = config.stages || [];
+      if (!svg || !scrubber || !toggle || !stages.length) return;
 
-    report_dir = Path(output_path).parent if output_path else Path("reports")
-    report_dir.mkdir(parents=True, exist_ok=True)
-    out = Path(output_path) if output_path else report_dir / "winner_hgb_v1.html"
+      let frame = stages.length - 1;
+      let playing = false;
+      let timer = null;
+      const playIcon = toggle.querySelector(".anim-icon-play");
+      const pauseIcon = toggle.querySelector(".anim-icon-pause");
+      scrubber.max = String(stages.length - 1);
+      scrubber.value = String(frame);
 
-    created = _report_timestamp(model_dir, "hgb_report.json", "hgb_ensemble.pkl")
+      function setPlaying(next) {
+        playing = next;
+        if (playIcon) playIcon.hidden = playing;
+        if (pauseIcon) pauseIcon.hidden = !playing;
+        toggle.setAttribute("aria-label", playing ? "Pause" : "Play");
+        if (playing) {
+          timer = window.setInterval(() => {
+            frame = (frame + 1) % stages.length;
+            scrubber.value = String(frame);
+            draw();
+          }, 220);
+        } else if (timer) {
+          window.clearInterval(timer);
+          timer = null;
+        }
+      }
 
-    animation_stages: list[Any] = []
-    animation_path = model_dir / "confidence_training_stages.json"
-    if animation_path.exists():
-        with animation_path.open(encoding="utf-8") as handle:
-            animation_stages = json.load(handle)
+      function draw() {
+        const prefix = stages.slice(0, frame + 1);
+        const labels = prefix.map((row) => String(row.epoch));
+        renderLineChart(config.svgId, [
+          { color: "#fbbf24", label: "Slot top-1", values: prefix.map((r) => r.val_slot_top1) },
+          { color: "#34d399", label: "Zone acc", values: prefix.map((r) => r.val_zone_acc ?? r.val_tile_acc) },
+          { color: "#60a5fa", label: "Tile acc", values: prefix.map((r) => r.val_tile_acc) },
+        ], labels, { yFormat: "percent" });
+        const current = stages[frame];
+        readout.innerHTML = "Epoch <strong>" + current.epoch + "</strong> · "
+          + "slot@1 <strong>" + (100 * current.val_slot_top1).toFixed(1) + "%</strong> · "
+          + "zone <strong>" + (100 * (current.val_zone_acc ?? 0)).toFixed(1) + "%</strong> · "
+          + "loss <strong>" + Number(current.val_loss).toFixed(3) + "</strong>";
+      }
 
-    training_stages = report.get("training_stages", [])
-    duration_rows = report.get("test_by_duration", [])
-    split_rows = report.get("splits", [])
-
-    lessons = [
-        "Replay action sequences carry enough signal for ~79% full-game winner accuracy without live arena state.",
-        "Perspective symmetry (train on both sides, average at inference) removes arbitrary team/opponent orientation.",
-        "Blending HistGradientBoosting with Extra Trees beats a single HGB copy; trees add diversity the booster lacks.",
-        "Winner probability and confidence should use separate blend weights — accuracy and selective prediction optimize differently.",
-        "Short games (&lt;2 min) are nearly solved; mid-length games (~2–3 min) remain the hardest bucket.",
-    ]
-
-    body = f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Winner predictor report — HGB ensemble v1</title>
-  <style>{_base_styles()}</style>
-</head>
-<body>
-  <main>
-    <header class="report-header">
-      <div class="badge-row">
-        <span class="badge">winner-hgb-v1</span>
-        <span class="badge">tabular ensemble</span>
-        <span class="badge">scikit-learn · CPU</span>
-      </div>
-      <h1>Full-game winner predictor</h1>
-      <p>Perspective-symmetric blend of HistGradientBoosting and Extra Trees over {report["battles_total"]:,} RoyaleAPI replays. Predicts which player wins from deck metadata, elixir/leak tables, and the ordered card-play sequence.</p>
-      <p class="meta">Created {html.escape(created)} · trained in {report["seconds"]}s · {report["feature_dim"]} features</p>
-    </header>
-
-    <section class="report-section kpi-row">
-      <div><span class="kpi-label">Test accuracy</span><span class="kpi-value">{_fmt_pct(report["test"]["acc"])}</span></div>
-      <div><span class="kpi-label">Test AUC</span><span class="kpi-value">{_fmt_float(report["test"]["auc"])}</span></div>
-      <div><span class="kpi-label">Battles</span><span class="kpi-value">{report["battles_total"]:,}</span></div>
-      <div><span class="kpi-label">Baseline test acc</span><span class="kpi-value">{_fmt_pct(report["baseline"]["test"]["acc"])}</span></div>
-    </section>
-
-    <section class="report-section">
-      <h2>Architecture</h2>
-      <pre class="diagram">Replay JSON → feature extractor ({report["feature_dim"]} dims)
-  ├─ deck composition &amp; card costs
-  ├─ official elixir / leak tables
-  └─ prefix action statistics
-        ↓ symmetric inference (team view + swapped view, averaged)
-HistGradientBoosting ({_fmt_pct(report["blend"]["hgb_weight"], 0)} blend) + Extra Trees ({_fmt_pct(report["blend"]["extra_trees_weight"], 0)} blend)
-        ↓ separate confidence head (AURC-optimal blend + isotonic calibration)
-Winner probability + P(prediction is correct)</pre>
-    </section>
-
-    <section class="report-section block-grid">
-      <div class="block">
-        <h2>Validation vs test</h2>
-        <table>
-          <thead><tr><th>Split</th><th>Accuracy</th><th>AUC</th><th>Log loss</th><th>N</th></tr></thead>
-          <tbody>
-            <tr><td>Validation</td><td>{_fmt_pct(report["val"]["acc"])}</td><td>{_fmt_float(report["val"]["auc"])}</td><td>{_fmt_float(report["val"]["log_loss"])}</td><td>{report["val"]["n"]:,}</td></tr>
-            <tr><td>Test</td><td>{_fmt_pct(report["test"]["acc"])}</td><td>{_fmt_float(report["test"]["auc"])}</td><td>{_fmt_float(report["test"]["log_loss"])}</td><td>{report["test"]["n"]:,}</td></tr>
-            <tr><td>Baseline test</td><td>{_fmt_pct(report["baseline"]["test"]["acc"])}</td><td>{_fmt_float(report["baseline"]["test"]["auc"])}</td><td>—</td><td>{report["test"]["n"]:,}</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="block">
-        <h2>Data splits</h2>
-        <table>
-          <thead><tr><th>Split</th><th>Battles</th><th>Team win rate</th><th>Mean events</th></tr></thead>
-          <tbody>
-            {"".join(
-                f'<tr><td>{html.escape(row["split"])}</td><td>{row["battles"]:,}</td>'
-                f'<td>{_fmt_pct(row["team_win_rate"])}</td><td>{row["mean_events"]:.1f}</td></tr>'
-                for row in split_rows
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <div class="block">
-        <h2>Accuracy by game duration (test)</h2>
-        <table>
-          <thead><tr><th>Duration (s)</th><th>N</th><th>Accuracy</th></tr></thead>
-          <tbody>
-            {"".join(
-                f'<tr><td>{html.escape(row["duration"])}</td><td>{row["n"]}</td>'
-                f'<td>{_fmt_pct(row["accuracy"])}</td></tr>'
-                for row in duration_rows
-            )}
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="report-section">
-      <div class="chart-grid">
-        <div class="chart-block">
-          <h2>Ensemble training curve</h2>
-          <svg class="chart" id="stageAcc"></svg>
-          <div class="legend"></div>
-        </div>
-        <div class="chart-block">
-          <h2>Confidence calibration</h2>
-          <svg class="chart" id="confidenceChart"></svg>
-          <div class="legend"></div>
-        </div>
-      </div>
-    </section>
-
-    {(
-        "<section class='report-section'>"
-        "<h2>Training animation</h2>"
-        "<p class='caption'>Confidence curves while Extra Trees are added. Hover the chart, toggle series in the legend, then play or scrub below.</p>"
-        "<div class='chart-animation' id='confidenceTrainingAnim'>"
-        "<svg class='chart' id='confidenceTrainingChart'></svg>"
-        "<div class='legend'></div>"
-        "<div class='anim-toolbar'>"
-        "<button type='button' class='anim-btn anim-btn-icon' id='confidenceAnimToggle' aria-label='Play'>"
-        "<svg class='anim-icon anim-icon-play' viewBox='0 0 16 16' aria-hidden='true'><path d='M4 2.5v11l9-5.5-9-5.5z'/></svg>"
-        "<svg class='anim-icon anim-icon-pause' viewBox='0 0 16 16' aria-hidden='true' hidden><path d='M3.5 2h3v12h-3V2zm6 0h3v12h-3V2z'/></svg>"
-        "</button>"
-        "<input type='range' class='anim-scrubber' id='confidenceAnimScrubber' min='0' max='0' value='0' step='1'>"
-        "<div class='anim-readout' id='confidenceAnimReadout'></div>"
-        "</div>"
-        "</div></section>"
-    ) if animation_stages and confidence_data.get("baseline") else ""}
-
-    <section class="report-section">
-      <h2>Lessons learned</h2>
-      <ul class="lessons">
-        {"".join(f"<li>{lesson}</li>" for lesson in lessons)}
-      </ul>
-      <p>{html.escape(report.get("notes", ""))}</p>
-    </section>
-  </main>
-  <script>
-    {_chart_script()}
-    const trainingStages = {_json_script(training_stages)};
-    const confidenceData = {_json_script(confidence_data)};
-    const trainingAnimationStages = {_json_script(animation_stages)};
-    renderLineChart("stageAcc", [
-      {{ color: "#34d399", label: "Test accuracy", values: trainingStages.map((row) => row.accuracy) }}
-    ], trainingStages.map((row) => String(row.trees)), {{ area: true, yFormat: "percent" }});
-    if (confidenceData.baseline && confidenceData.improved) {{
-      renderConfidenceChart("confidenceChart", confidenceData.baseline, confidenceData.improved);
-    }}
-    if (trainingAnimationStages.length && confidenceData.baseline) {{
-      mountTrainingAnimation({{
-        containerId: "confidenceTrainingAnim",
-        svgId: "confidenceTrainingChart",
-        baseline: confidenceData.baseline,
-        stages: trainingAnimationStages,
-        scrubberId: "confidenceAnimScrubber",
-        toggleId: "confidenceAnimToggle",
-        readoutId: "confidenceAnimReadout",
-      }});
-    }}
+      scrubber.addEventListener("input", () => {
+        frame = Number(scrubber.value);
+        if (playing) setPlaying(false);
+        draw();
+      });
+      toggle.addEventListener("click", () => setPlaying(!playing));
+      draw();
+    }
   </script>
 </body>
 </html>
-"""
-
-    out.write_text(body, encoding="utf-8")
-    return out
-
-
-def render_transformer_report(
-    model_dir: str | Path = "models/winner_predictor",
-    output_path: str | Path | None = None,
-) -> Path:
-    model_dir = Path(model_dir)
-    report_path = model_dir / "report.json"
-    with report_path.open(encoding="utf-8") as handle:
-        report = json.load(handle)
-
-    report_dir = Path(output_path).parent if output_path else Path("reports")
-    report_dir.mkdir(parents=True, exist_ok=True)
-    out = Path(output_path) if output_path else report_dir / "winner_transformer_v1.html"
-
-    curves_href = _asset_href(model_dir, report_dir, str(model_dir / "training_curves.png"))
-    created = _report_timestamp(model_dir, "report.json", "best_model.pt")
-    history = report.get("history", {})
-    epochs = list(range(1, len(history.get("train_loss", [])) + 1))
-    prefix_rows = report.get("test_by_prefix_ratio", {})
-    split_rows = report.get("splits", [])
-
-    gpu = report.get("gpu_name") or report.get("device") or "CPU"
-    lessons = [
-        "Sequence transformers can learn winner signal from replay prefixes, but underperform tabular features on full games.",
-        "Mixed-prefix training helps generalization; full-game AUC peaks around epoch 13 then overfits.",
-        "Early-game prefixes (50% of actions) are barely above chance — most signal arrives in the final quarter of the battle.",
-        "This model remains useful as a prefix prior and for ablations, but production winner prediction should use the HGB ensemble.",
-    ]
-
-    prefix_table = "".join(
-        f'<tr><td>{html.escape(ratio)}</td><td>{row["n"]:,}</td>'
-        f'<td>{_fmt_pct(row["acc"])}</td><td>{_fmt_float(row["auc"])}</td></tr>'
-        for ratio, row in sorted(prefix_rows.items(), key=lambda item: float(item[0]))
-    )
-
-    body = f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Winner predictor report — Transformer v1</title>
-  <style>{_base_styles()}</style>
-</head>
-<body>
-  <main>
-    <header class="report-header">
-      <div class="badge-row">
-        <span class="badge">winner-transformer-v1</span>
-        <span class="badge">sequence model</span>
-        <span class="badge">PyTorch · {html.escape(str(gpu))}</span>
-      </div>
-      <h1>Prefix sequence winner model</h1>
-      <p>GPU transformer trained on random action-prefix samples from {report["battles_total"]:,} battles. Evaluated on held-out prefixes and full-game sequences.</p>
-      <p class="meta">Created {html.escape(created)} · trained in {report["seconds"]}s · majority baseline {_fmt_pct(report.get("majority_baseline"))}</p>
-    </header>
-
-    <section class="report-section kpi-row">
-      <div><span class="kpi-label">Test accuracy</span><span class="kpi-value">{_fmt_pct(report["test"]["acc"])}</span></div>
-      <div><span class="kpi-label">Test AUC</span><span class="kpi-value">{_fmt_float(report["test"]["auc"])}</span></div>
-      <div><span class="kpi-label">Best val full AUC</span><span class="kpi-value">{_fmt_float(report.get("best_val_auc"))}</span></div>
-      <div><span class="kpi-label">Prefix samples (train)</span><span class="kpi-value">{report["sequences"]["train"]:,}</span></div>
-    </section>
-
-    <section class="report-section">
-      <div class="chart-grid">
-        <div class="chart-block">
-          <h2>Training loss</h2>
-          <svg class="chart" id="lossChart"></svg>
-          <div class="legend"></div>
-        </div>
-        <div class="chart-block">
-          <h2>Training accuracy</h2>
-          <svg class="chart" id="accChart"></svg>
-          <div class="legend"></div>
-        </div>
-        <div class="chart-block">
-          <h2>Validation AUC</h2>
-          <svg class="chart" id="aucChart"></svg>
-          <div class="legend"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="report-section block-grid">
-      <div class="block">
-        <h2>Test accuracy by prefix length</h2>
-        <table>
-          <thead><tr><th>Prefix ratio</th><th>N</th><th>Accuracy</th><th>AUC</th></tr></thead>
-          <tbody>{prefix_table}</tbody>
-        </table>
-      </div>
-
-      <div class="block">
-        <h2>Data splits</h2>
-        <table>
-          <thead><tr><th>Split</th><th>Battles</th><th>Team win rate</th><th>Mean events</th></tr></thead>
-          <tbody>
-            {"".join(
-                f'<tr><td>{html.escape(row["split"])}</td><td>{row["battles"]:,}</td>'
-                f'<td>{_fmt_pct(row["team_win_rate"])}</td><td>{row["mean_events"]:.1f}</td></tr>'
-                for row in split_rows
-            )}
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    {"<section class='report-section'><h2>Static training curves</h2><img class='media' src='" + html.escape(curves_href) + "' alt='Training curves'></section>" if curves_href else ""}
-
-    <section class="report-section">
-      <h2>Lessons learned</h2>
-      <ul class="lessons">
-        {"".join(f"<li>{lesson}</li>" for lesson in lessons)}
-      </ul>
-    </section>
-  </main>
-  <script>
-    {_chart_script()}
-    const epochs = {_json_script(epochs)};
-    const history = {_json_script(history)};
-    renderLineChart("lossChart", [
-      {{ color: "#a78bfa", label: "Train", values: history.train_loss }},
-      {{ color: "#60a5fa", label: "Val", values: history.val_loss }}
-    ], epochs, {{ yFormat: "float" }});
-    renderLineChart("accChart", [
-      {{ color: "#22c55e", label: "Train", values: history.train_acc }},
-      {{ color: "#34d399", label: "Val", values: history.val_acc }}
-    ], epochs, {{ yFormat: "percent" }});
-    renderLineChart("aucChart", [
-      {{ color: "#f472b6", label: "Mixed prefix", values: history.val_auc }},
-      {{ color: "#34d399", label: "Full game", values: history.val_full_auc }}
-    ], epochs, {{ yFormat: "float" }});
-  </script>
-</body>
-</html>
-"""
-
-    out.write_text(body, encoding="utf-8")
-    return out
-
-
-def render_winner_reports(
-    model_dir: str | Path = "models/winner_predictor",
-    output_dir: str | Path = "reports",
-) -> list[Path]:
-    model_dir = Path(model_dir)
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    written: list[Path] = []
-
-    # Interactive kit-based reports are the default surface.
-    from .winner_interactive import (
-        render_hgb_interactive,
-        render_transformer_interactive,
-    )
-
-    hgb_report = model_dir / "hgb_report.json"
-    if hgb_report.exists():
-        written.append(
-            render_hgb_interactive(model_dir, output_dir / "winner_hgb_v1.html")
-        )
-
-    transformer_report = model_dir / "report.json"
-    if transformer_report.exists():
-        written.append(
-            render_transformer_interactive(
-                model_dir, output_dir / "winner_transformer_v1.html"
-            )
-        )
-
-    return written

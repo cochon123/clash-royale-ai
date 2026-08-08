@@ -1,0 +1,71 @@
+{
+  "device_serial": "4B090DLAQ002ZT",
+  "screen_width": 1080,
+  "screen_height": 2424,
+  "calibrated_at": "2026-01-11T00:22:56",
+  "zones": {
+    "card_slot_0": {
+      "x_min": 250,
+      "x_max": 428,
+      "y_min": 2106,
+      "y_max": 2338
+    },
+    "card_slot_1": {
+      "x_min": 448,
+      "x_max": 630,
+      "y_min": 2103,
+      "y_max": 2328
+    },
+    "card_slot_2": {
+      "x_min": 650,
+      "x_max": 828,
+      "y_min": 2086,
+      "y_max": 2335
+    },
+    "card_slot_3": {
+      "x_min": 845,
+      "x_max": 1043,
+      "y_min": 2083,
+      "y_max": 2338
+    },
+    "blue_arena": {
+      "x_min": 46,
+      "y_min": 1146,
+      "x_max": 1036,
+      "y_max": 1771
+    },
+    "red_arena": {
+      "x_min": 49,
+      "y_min": 412,
+      "x_max": 1036,
+      "y_max": 1160
+    }
+  },
+  "placement_points": {
+    "bridge_left": {
+      "x": 49,
+      "y": 1160
+    },
+    "bridge_right": {
+      "x": 1036,
+      "y": 1146
+    },
+    "bottom_left": {
+      "x": 46,
+      "y": 1771
+    },
+    "bottom_right": {
+      "x": 1036,
+      "y": 1768
+    },
+    "enemy_left": {
+      "x": 49,
+      "y": 412
+    },
+    "enemy_right": {
+      "x": 1030,
+      "y": 418
+    }
+  },
+  "placement_calibrated_at": "2026-08-08T14:47:15Z"
+}

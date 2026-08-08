@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/
+*.egg-info/
+src/*.egg-info/
+-
 data/raw/
 data/metadata/
 data/cleaned/
@@ -21,3 +24,6 @@ models/winner_predictor/training_curves.png
 models/winner_predictor/*.png
 models/winner_predictor/*.mp4
 models/winner_predictor/loop_experiments/
+# Large binary artifacts live on Hugging Face
+models/realism_scorer/*.pkl
+models/action_clock_v1/*.pkl
