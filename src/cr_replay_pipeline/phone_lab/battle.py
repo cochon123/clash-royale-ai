@@ -18,6 +18,8 @@ PHONE_KEYS = ("pixel8", "pixel9")
 CONTROLLER_MANUAL = "manual"
 CONTROLLER_V3 = "policy_bc_v3"
 CONTROLLER_V4 = "policy_bc_v4"
+CONTROLLER_V41 = "policy_bc_v4.1"
+CONTROLLER_V42 = "policy_bc_v4.2"
 DEFAULT_CONTROLLERS = {
     "pixel8": CONTROLLER_V4,
     "pixel9": CONTROLLER_V4,
@@ -25,6 +27,8 @@ DEFAULT_CONTROLLERS = {
 DEFAULT_POLICY_DIRS = {
     CONTROLLER_V3: Path("models/policy_bc_v3"),
     CONTROLLER_V4: Path("models/policy_bc_v4"),
+    CONTROLLER_V41: Path("models/policy_bc_v4.1"),
+    CONTROLLER_V42: Path("models/policy_bc_v4.2_full"),
 }
 # Lab default decks (Pixel 8 noob beatdown / Pixel 9 mortar bait-ish).
 DEFAULT_DECKS = {
@@ -57,11 +61,9 @@ ARENA_Y_MAX = 32000
 MAX_EMPTY_HAND_STREAK = 6
 # Latency budget — keep wall-clock waits tiny; model delay is only a soft hint.
 MAX_PLAN_DELAY_S = 1.0
-REACT_DELAY_CAP_S = 0.12  # answering the other phone's last play
 MIN_DELAY_S = 0.05
 POST_PLAY_SLEEP_S = 0.28  # just enough for CR to accept the next tap
 HAND_MAX_AGE_S = 0.55  # reuse YOLO result unless older than this
-SAME_TICK_ANSWER = True  # let the other AI fire immediately after a play
 
 PRESET_DECKS: dict[str, list[str]] = {
     "hog_cycle_2.6": [
@@ -207,8 +209,9 @@ def resolve_playable_card(
     pred: dict[str, Any],
     hand_slots: list[dict[str, Any]],
     costs: dict[str, int],
+    available_elixir: float | None = None,
 ) -> tuple[str, int, int] | None:
-    """Pick a card that YOLO currently sees, preferring model ranking."""
+    """Pick a detected card in model order, optionally requiring affordability."""
     ranked = list(pred.get("ranked_slots") or pred.get("top3") or [])
     if pred.get("card"):
         ranked = [
@@ -221,14 +224,44 @@ def resolve_playable_card(
             continue
         seen.add(card)
         slot = find_hand_slot(card, hand_slots)
-        if slot is not None:
-            return card, slot, int(costs.get(card, 4))
+        cost = int(costs.get(card, 4))
+        if slot is not None and (
+            available_elixir is None or cost <= available_elixir + 1e-6
+        ):
+            return card, slot, cost
     # Last resort: any detected card (keeps the match moving if ranking missed).
     for slot in hand_slots:
         card = base_card(slot.get("card_name"))
-        if card:
-            return card, int(slot["slot"]), int(costs.get(card, 4))
+        cost = int(costs.get(card, 4)) if card else 0
+        if card and (
+            available_elixir is None or cost <= available_elixir + 1e-6
+        ):
+            return card, int(slot["slot"]), cost
     return None
+
+
+def hand_confirms_play(
+    before: list[dict[str, Any]],
+    after: list[dict[str, Any]],
+    slot: int,
+    card: str,
+) -> bool | None:
+    """Confirm a deployment from the selected slot changing to another card.
+
+    ``None`` means the slot could not be read, so callers may retry detection.
+    The same card cannot naturally cycle back into the hand after one play.
+    """
+    before_card = next(
+        (base_card(row.get("card_name")) for row in before if row.get("slot") == slot),
+        None,
+    )
+    after_card = next(
+        (base_card(row.get("card_name")) for row in after if row.get("slot") == slot),
+        None,
+    )
+    if before_card is None or after_card is None:
+        return None
+    return before_card == base_card(card) and after_card != base_card(card)
 
 
 def validate_deck(deck: list[str], known: set[str]) -> list[str]:
@@ -244,7 +277,13 @@ def validate_deck(deck: list[str], known: set[str]) -> list[str]:
 
 
 def list_controllers() -> list[str]:
-    return [CONTROLLER_V4, CONTROLLER_V3, CONTROLLER_MANUAL]
+    return [
+        CONTROLLER_V42,
+        CONTROLLER_V41,
+        CONTROLLER_V4,
+        CONTROLLER_V3,
+        CONTROLLER_MANUAL,
+    ]
 
 
 def cards_payload(card_costs_path: str | Path) -> dict[str, Any]:
@@ -266,7 +305,8 @@ class ElixirTracker:
     STARTING = 5.0
     NORMAL_RATE = 1.0 / 2.8
     DOUBLE_RATE = 2.0 / 2.8
-    OVERTIME_RATE = 0.9
+    # Triple elixir is one elixir every 0.9 seconds, not 0.9 elixir/second.
+    OVERTIME_RATE = 1.0 / 0.9
     DOUBLE_AT = 120.0
     OVERTIME_AT = 240.0
 
@@ -326,6 +366,8 @@ class BattleConfig:
     timeout_s: float = 300.0
     card_costs_path: Path = Path("data/card_costs.json")
     policy_dirs: dict[str, Path] = field(default_factory=lambda: dict(DEFAULT_POLICY_DIRS))
+    mirror_tta: bool = False
+    think_steps: int = 0
 
 
 class BattleRunner:
@@ -430,6 +472,7 @@ class BattleRunner:
             timeout_s=config.timeout_s,
             card_costs_path=config.card_costs_path,
             policy_dirs=config.policy_dirs,
+            mirror_tta=config.mirror_tta,
         )
 
         needed = {c for c in controllers.values() if c != CONTROLLER_MANUAL}
@@ -505,13 +548,13 @@ class BattleRunner:
         return slots
 
     def _plan_delay(self, phone: str, raw_delay: float) -> float:
-        """Shrink waits, especially when answering the other phone."""
+        """Bound a policy's delay without favoring either player.
+
+        Both phones receive independent predictions and the smallest ready time
+        wins. Giving the opponent a special reaction cap forced near-perfect
+        blue/red alternation, even when the policy preferred the same side.
+        """
         delay = float(raw_delay or MIN_DELAY_S)
-        answering = bool(
-            self._events and self._events[-1].get("side") not in (None, phone)
-        )
-        if answering:
-            return min(max(delay, 0.0), REACT_DELAY_CAP_S)
         return min(max(delay, MIN_DELAY_S), MAX_PLAN_DELAY_S)
 
     def _phone_battle_view(self, phone: str) -> BattleExample:
@@ -574,6 +617,8 @@ class BattleRunner:
                 threat_dim=int(bundle.cfg.get("threat_dim", 0)),
                 min_context=0,
                 prefer_cards=hand_cards,
+                mirror_tta=bool(self._config.mirror_tta),
+                think_steps=int(self._config.think_steps),
             )
         except Exception as exc:  # noqa: BLE001
             self._append_log(f"{phone} predict failed: {exc}", "err")
@@ -619,29 +664,6 @@ class BattleRunner:
             )
         candidates.sort(key=lambda c: c["ready_at"])
         return candidates
-
-    def _immediate_answer(self, phone: str, match_t: float) -> bool:
-        """Let the other AI answer in the same tick (almost no timing wait)."""
-        assert self._config is not None
-        if self._config.controllers.get(phone) == CONTROLLER_MANUAL:
-            return False
-        self._refresh_hand(phone, force=False)
-        if hand_is_empty(self._hands[phone]):
-            self._refresh_hand(phone, force=True)
-        if hand_is_empty(self._hands[phone]):
-            return False
-        pred = self._predict(phone)
-        with self._lock:
-            self._next[phone] = pred
-        if not pred:
-            return False
-        return self._try_execute(
-            phone,
-            pred,
-            match_t,
-            settle_sleep=POST_PLAY_SLEEP_S,
-            force_hand=True,
-        )
 
     def _run_loop(self) -> None:
         assert self._config is not None
@@ -722,7 +744,7 @@ class BattleRunner:
                         chosen["pred"],
                         match_t,
                         settle_sleep=POST_PLAY_SLEEP_S,
-                        force_hand=True,
+                        force_hand=False,
                     ):
                         played_phone = chosen["phone"]
                         break
@@ -731,17 +753,6 @@ class BattleRunner:
                     time.sleep(0.12)
                     continue
 
-                # Same-tick answer: other AI reacts without another full delay wait.
-                if SAME_TICK_ANSWER:
-                    other = "pixel9" if played_phone == "pixel8" else "pixel8"
-                    if (
-                        other in ai_phones
-                        and self._config.controllers.get(other) != CONTROLLER_MANUAL
-                    ):
-                        match_t = time.time() - self._started_at
-                        self._match_time = match_t
-                        self._elixir.update(match_t)
-                        self._immediate_answer(other, match_t)
         except Exception as exc:  # noqa: BLE001
             self._error = str(exc)
             self._append_log(f"battle crashed: {exc}", "err")
@@ -770,8 +781,23 @@ class BattleRunner:
             self._append_log(f"{phone}: skip — empty hand", "err")
             return False
 
-        resolved = resolve_playable_card(pred, hand, self._costs)
+        available = self._elixir.values[phone]
+        resolved = resolve_playable_card(
+            pred,
+            hand,
+            self._costs,
+            available_elixir=available,
+        )
         if resolved is None:
+            detected_choice = resolve_playable_card(pred, hand, self._costs)
+            if detected_choice is not None:
+                card, _slot, cost = detected_choice
+                self._append_log(
+                    f"{phone}: no affordable detected card "
+                    f"(elixir {available:.1f}; first {card} costs {cost})",
+                    "info",
+                )
+                return False
             self._append_log(
                 f"{phone}: no playable card in { [s.get('card_name') for s in hand] }",
                 "err",
@@ -792,6 +818,24 @@ class BattleRunner:
             self._execute_action(phone, slot, u, v)
         except Exception as exc:  # noqa: BLE001
             self._append_log(f"{phone}: tap failed: {exc}", "err")
+            return False
+
+        # Do not mutate policy history or estimated elixir merely because ADB/scrcpy
+        # accepted the input. Confirm that Clash Royale actually replaced the slot.
+        if settle_sleep > 0:
+            time.sleep(settle_sleep)
+        self._hand_at[phone] = 0.0
+        after_hand = self._refresh_hand(phone, force=True)
+        confirmed = hand_confirms_play(hand, after_hand, slot, card)
+        if confirmed is None:
+            self._hand_at[phone] = 0.0
+            after_hand = self._refresh_hand(phone, force=True)
+            confirmed = hand_confirms_play(hand, after_hand, slot, card)
+        if confirmed is not True:
+            self._append_log(
+                f"{phone}: tap not confirmed — slot {slot} still shows {card}",
+                "err",
+            )
             return False
 
         self._elixir.spend(phone, cost)
@@ -815,8 +859,4 @@ class BattleRunner:
             f"elixir→{self._elixir.values[phone]:.1f}{note}",
             "ok",
         )
-        if settle_sleep > 0:
-            time.sleep(settle_sleep)
-        # Refresh only the phone that played (other keeps cache).
-        self._refresh_hand(phone, force=True)
         return True

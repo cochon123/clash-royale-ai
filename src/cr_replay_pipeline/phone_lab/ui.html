@@ -415,7 +415,7 @@
     <div id="panelCalibrate">
       <div>
         <h2>calibration mode</h2>
-        <p class="caption">Click/drag to touch. Right-click = back. With auto on, hand redetects from a full-res screencap ~1500ms after each play.</p>
+        <p class="caption">Click/drag to touch. Right-click = back. Hand detection uses low-latency crops from the live scrcpy stream.</p>
       </div>
 
       <section class="block">
@@ -547,7 +547,7 @@
       players: { pixel9: null, pixel8: null },
       cards: [],
       presets: {},
-      controllers: ["policy_bc_v4", "policy_bc_v3", "manual"],
+      controllers: ["policy_bc_v4.2", "policy_bc_v4.1", "policy_bc_v4", "policy_bc_v3", "manual"],
       decks: {
         pixel8: DEFAULT_DECKS.pixel8.slice(),
         pixel9: DEFAULT_DECKS.pixel9.slice(),
@@ -1005,7 +1005,7 @@
       document.getElementById("statusLine").textContent =
         `${data.phones.pixel8.label} · ${data.phones.pixel9.label}`;
       document.getElementById("yoloLine").textContent = data.detector.ready
-        ? `yolo ready · ${data.detector.num_classes} classes · full-res`
+        ? `yolo ready · ${data.detector.num_classes} classes · stream crops`
         : `yolo: ${data.detector.error || "not ready"}`;
       for (const key of ["pixel9", "pixel8"]) {
         const p = data.phones[key];
@@ -1043,19 +1043,47 @@
       }, AFTER_PLAY_DETECT_MS);
     }
 
+    function streamCropDataUrls(phone) {
+      const player = state.players[phone];
+      const rects = state.streamSlots[phone];
+      if (!player || !player.frames || !Array.isArray(rects) || rects.length !== 4) return null;
+      if (performance.now() - player.lastDraw > 750) return null;
+      const source = player.canvas;
+      return rects.map((rect) => {
+        const width = Math.max(1, Number(rect.x_max) - Number(rect.x_min));
+        const height = Math.max(1, Number(rect.y_max) - Number(rect.y_min));
+        const crop = document.createElement("canvas");
+        crop.width = width;
+        crop.height = height;
+        crop.getContext("2d", { alpha: false }).drawImage(
+          source,
+          Number(rect.x_min), Number(rect.y_min), width, height,
+          0, 0, width, height,
+        );
+        return crop.toDataURL("image/jpeg", 0.78);
+      });
+    }
+
     async function detectPhone(phone, { reason = "manual" } = {}) {
       if (state.detectInFlight[phone]) return null;
       state.detectInFlight[phone] = true;
       try {
-        const data = await fetchJSON("/api/detect", {
+        const crops = streamCropDataUrls(phone);
+        const data = await fetchJSON(crops ? "/api/detect-crops" : "/api/detect", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone }),
+          body: JSON.stringify(crops ? { phone, crops } : { phone }),
         });
-        const payload = data[phone];
+        const payload = crops ? data : data[phone];
         applyHand(phone, payload.slots);
         const n = payload.slots.filter((s) => s.card_name).length;
-        log(`detect ${phone} · ${n}/4 · ${payload.ms || "?"}ms · ${reason}`, "ok");
+        if (reason !== "battle-feed") {
+          log(
+            `detect ${phone} · ${n}/4 · ${payload.ms || "?"}ms · ` +
+            `${payload.source || "capture"} · ${reason}`,
+            "ok",
+          );
+        }
         return payload;
       } catch (err) {
         log(`detect ${phone} failed: ${err.message}`, "err");
@@ -1234,8 +1262,15 @@
       refreshStatus().catch(() => {});
       refreshBattle().catch(() => {});
     }, 1000);
+    // Keep the server-side battle loop supplied from decoded scrcpy frames.
+    // Requests do not overlap per phone; YOLO receives only four small crops.
+    setInterval(() => {
+      if (!state.battleRunning) return;
+      detectPhone("pixel8", { reason: "battle-feed" }).catch(() => {});
+      detectPhone("pixel9", { reason: "battle-feed" }).catch(() => {});
+    }, 500);
     setTimeout(() => detectAll().catch(() => {}), 1200);
-    log("calibrate or battle · full-res hand detect", "ok");
+    log("calibrate or battle · low-latency stream hand detect", "ok");
   </script>
 </body>
 </html>

@@ -156,7 +156,11 @@ def test_logic_xy_to_uv_own_side_is_high_v():
 
 
 def test_find_hand_slot_normalizes_names():
-    from cr_replay_pipeline.phone_lab.battle import find_hand_slot, resolve_playable_card
+    from cr_replay_pipeline.phone_lab.battle import (
+        find_hand_slot,
+        hand_confirms_play,
+        resolve_playable_card,
+    )
 
     hand = [
         {"slot": 0, "card_name": "Hog Rider"},
@@ -183,6 +187,16 @@ def test_find_hand_slot_normalizes_names():
         {"knight": 3, "mortar": 4, "archers": 3},
     )
     assert got == ("knight", 0, 3)
+    assert hand_confirms_play(
+        evo_hand,
+        [
+            {"slot": 0, "card_name": "ice-spirit"},
+            *evo_hand[1:],
+        ],
+        0,
+        "knight",
+    ) is True
+    assert hand_confirms_play(evo_hand, evo_hand, 0, "knight") is False
 
 
 def test_validate_deck_and_elixir():
@@ -206,6 +220,30 @@ def test_validate_deck_and_elixir():
     assert elixir.values["pixel8"] > 5.0
     assert elixir.spend("pixel8", 4)
     assert elixir.values["pixel8"] < 6.0
+    elixir.values = {"pixel8": 0.0, "pixel9": 0.0}
+    elixir.last_t = 240.0
+    elixir.update(240.9)
+    assert abs(elixir.values["pixel8"] - 1.0) < 1e-6
+
+
+def test_pixel8_skin_fallback_never_invents_a_whole_hand():
+    from cr_replay_pipeline.phone_lab.server import LabState
+
+    blank = [
+        {"slot": i, "card_name": None, "confidence": 0.0} for i in range(4)
+    ]
+    assert all(
+        row["card_name"] is None
+        for row in LabState._assume_unknown_musketeer_pixel8("pixel8", blank)
+    )
+    one_missing = [
+        {"slot": 0, "card_name": "knight", "confidence": 0.9},
+        {"slot": 1, "card_name": "archers", "confidence": 0.9},
+        {"slot": 2, "card_name": None, "confidence": 0.0},
+        {"slot": 3, "card_name": "arrows", "confidence": 0.9},
+    ]
+    inferred = LabState._assume_unknown_musketeer_pixel8("pixel8", one_missing)
+    assert inferred[2]["card_name"] == "musketeer"
 
 
 def test_battle_start_validation_without_phones():
@@ -270,6 +308,8 @@ def test_flip_logic_y_and_resolve_playable():
     costs = {"hog-rider": 4, "cannon": 3, "ice-spirit": 1, "skeletons": 1}
     got = resolve_playable_card(pred, hand, costs)
     assert got == ("cannon", 0, 3)
+    affordable = resolve_playable_card(pred, hand, costs, available_elixir=1.5)
+    assert affordable == ("ice-spirit", 1, 1)
 
 
 def test_phone_battle_view_flips_opponent_y():
@@ -340,12 +380,11 @@ def test_phone_battle_view_flips_opponent_y():
     assert view9.events[1]["y"] == 26000
 
 
-def test_plan_delay_is_short_when_answering():
+def test_plan_delay_does_not_force_alternation():
     from cr_replay_pipeline.phone_lab.battle import (
         BattleConfig,
         BattleRunner,
         MAX_PLAN_DELAY_S,
-        REACT_DELAY_CAP_S,
     )
 
     runner = BattleRunner(
@@ -377,7 +416,7 @@ def test_plan_delay_is_short_when_answering():
         },
         controllers={"pixel8": "manual", "pixel9": "manual"},
     )
-    # No history → normal (capped) delay.
+    # No history → normal capped delay.
     assert runner._plan_delay("pixel8", 5.0) == MAX_PLAN_DELAY_S
     runner._events = [
         {
@@ -389,9 +428,8 @@ def test_plan_delay_is_short_when_answering():
             "y": 8000,
         }
     ]
-    # pixel8 answering pixel9 → react cap.
-    assert runner._plan_delay("pixel8", 2.5) == REACT_DELAY_CAP_S
-    # pixel9 just played → not answering itself.
+    # Neither the previous actor nor its opponent receives special priority.
+    assert runner._plan_delay("pixel8", 2.5) == MAX_PLAN_DELAY_S
     assert runner._plan_delay("pixel9", 2.5) == MAX_PLAN_DELAY_S
 
 

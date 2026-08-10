@@ -68,6 +68,8 @@ class LabState:
         *,
         card_costs_path: Path = Path("data/card_costs.json"),
         policy_dirs: dict[str, Path] | None = None,
+        mirror_tta: bool = False,
+        think_steps: int = 0,
     ):
         self.phones = phones
         self.calibrations = calibrations
@@ -75,9 +77,13 @@ class LabState:
         self.streams = streams
         self.lock = threading.Lock()
         self.card_costs_path = Path(card_costs_path)
+        self.mirror_tta = bool(mirror_tta)
+        self.think_steps = int(think_steps)
         self.policy_dirs = {
             k: Path(v) for k, v in (policy_dirs or DEFAULT_POLICY_DIRS).items()
         }
+        self._detected_hands: dict[str, list[dict[str, Any]]] = {}
+        self._detected_hands_at: dict[str, float] = {}
         self.battle = BattleRunner(
             detect_hand=self._battle_detect_hand,
             execute_action=self._battle_execute,
@@ -96,12 +102,32 @@ class LabState:
             stream.stop()
 
     def _battle_detect_hand(self, key: str) -> list[dict[str, Any]]:
+        # The browser decodes the already-running scrcpy stream and posts four
+        # tiny slot crops. Give that low-latency feed a moment to publish a frame;
+        # retain full ADB screencap as a headless fallback.
+        deadline = time.monotonic() + 0.45
+        while time.monotonic() < deadline:
+            with self.lock:
+                slots = self._detected_hands.get(key)
+                age = time.monotonic() - self._detected_hands_at.get(key, 0.0)
+                if slots and age <= 1.10:
+                    return [dict(row) for row in slots]
+            time.sleep(0.025)
         return self.detect_phone(key)["slots"]
 
     def _battle_execute(
         self, phone_key: str, slot: int, u: float, v: float
     ) -> dict[str, Any]:
-        return self.test_action(phone_key, slot, u=u, v=v)
+        result = self.test_action(phone_key, slot, u=u, v=v)
+        # Require a crop captured after the tap for deployment confirmation.
+        with self.lock:
+            self._detected_hands_at[phone_key] = 0.0
+        return result
+
+    def _cache_detected_hand(self, key: str, slots: list[dict[str, Any]]) -> None:
+        with self.lock:
+            self._detected_hands[key] = [dict(row) for row in slots]
+            self._detected_hands_at[key] = time.monotonic()
 
     def capture_png(self, key: str) -> bytes:
         return self.phones[key].screencap_png_fast()
@@ -145,6 +171,12 @@ class LabState:
         """Pixel 8 deck uses a musketeer skin YOLO doesn't know yet."""
         if key != "pixel8":
             return slots
+        # Only infer the known skin when exactly one card is missing from an
+        # otherwise readable hand. On overlays / result screens all four crops
+        # are blank; treating those as cards made the battle loop tap blindly.
+        missing = [row for row in slots if not row.get("card_name")]
+        if len(missing) != 1:
+            return slots
         out = []
         for slot in slots:
             if slot.get("card_name"):
@@ -162,10 +194,12 @@ class LabState:
         png = png or self.capture_png(key)
         slots = self.detector.detect(png, card_slot_rects(self.calibrations[key]))
         slots = self._assume_unknown_musketeer_pixel8(key, slots)
+        public_slots = self._public_slots(slots)
+        self._cache_detected_hand(key, public_slots)
         ms = int((time.perf_counter() - t0) * 1000)
         return {
             "phone": key,
-            "slots": self._public_slots(slots),
+            "slots": public_slots,
             "ms": ms,
             "source": "screencap",
         }
@@ -188,10 +222,12 @@ class LabState:
         t0 = time.perf_counter()
         slots = self.detector.detect_crop_images(images, rects=rects)
         slots = self._assume_unknown_musketeer_pixel8(key, slots)
+        public_slots = self._public_slots(slots)
+        self._cache_detected_hand(key, public_slots)
         ms = int((time.perf_counter() - t0) * 1000)
         return {
             "phone": key,
-            "slots": self._public_slots(slots),
+            "slots": public_slots,
             "ms": ms,
             "source": "stream-crops",
         }
@@ -220,10 +256,25 @@ class LabState:
             u=u,
             v=v,
         )
+        stream = self.streams[phone_key]
+        transport = "adb"
         with self.lock:
-            phone.tap(*card_xy)
-            time.sleep(0.12)
-            phone.tap(*place_xy)
+            if stream.control_ready and stream.width > 0 and stream.height > 0:
+                transport = "scrcpy"
+
+                def stream_tap(point: tuple[int, int]) -> None:
+                    x = round(point[0] * stream.width / max(phone.width, 1))
+                    y = round(point[1] * stream.height / max(phone.height, 1))
+                    stream.inject_touch(ACTION_DOWN, x, y, pressure=1.0)
+                    stream.inject_touch(ACTION_UP, x, y, pressure=0.0)
+
+                stream_tap(card_xy)
+                time.sleep(0.12)
+                stream_tap(place_xy)
+            else:
+                phone.tap(*card_xy)
+                time.sleep(0.12)
+                phone.tap(*place_xy)
         # Hand refresh is done client-side from the live frame (~1500ms later).
         return {
             "phone": phone_key,
@@ -233,6 +284,7 @@ class LabState:
             "v": v,
             "card_tap": list(card_xy),
             "place_tap": list(place_xy),
+            "transport": transport,
         }
 
 
@@ -295,6 +347,8 @@ def make_handler(state: LabState):
                         "transport": "scrcpy-h264-websocket",
                         "battle": state.battle.status(),
                         "default_controllers": dict(DEFAULT_CONTROLLERS),
+                        "mirror_tta": state.mirror_tta,
+                        "think_steps": state.think_steps,
                     },
                 )
                 return
@@ -390,6 +444,8 @@ def make_handler(state: LabState):
                         timeout_s=timeout,
                         card_costs_path=state.card_costs_path,
                         policy_dirs=state.policy_dirs,
+                        mirror_tta=state.mirror_tta,
+                        think_steps=state.think_steps,
                     )
                     out = state.battle.start(cfg)
                     _json_response(self, 200, out)
@@ -513,6 +569,10 @@ def build_lab_state(
     card_costs_path: Path = Path("data/card_costs.json"),
     policy_v3: Path = Path("models/policy_bc_v3"),
     policy_v4: Path = Path("models/policy_bc_v4"),
+    policy_v41: Path = Path("models/policy_bc_v4.1"),
+    policy_v42: Path = Path("models/policy_bc_v4.2_full"),
+    mirror_tta: bool = False,
+    think_steps: int = 0,
 ) -> LabState:
     phones = {"pixel9": pixel9, "pixel8": pixel8}
     calibrations = {
@@ -543,7 +603,11 @@ def build_lab_state(
         policy_dirs={
             "policy_bc_v3": Path(policy_v3),
             "policy_bc_v4": Path(policy_v4),
+            "policy_bc_v4.1": Path(policy_v41),
+            "policy_bc_v4.2": Path(policy_v42),
         },
+        mirror_tta=mirror_tta,
+        think_steps=think_steps,
     )
 
 

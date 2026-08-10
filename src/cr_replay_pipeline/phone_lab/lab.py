@@ -30,6 +30,10 @@ def run_phone_lab(
     card_costs: str | Path = "data/card_costs.json",
     policy_v3: str | Path = "models/policy_bc_v3",
     policy_v4: str | Path = "models/policy_bc_v4",
+    policy_v41: str | Path = "models/policy_bc_v4.1",
+    policy_v42: str | Path = "models/policy_bc_v4.2_full",
+    mirror_tta: bool = False,
+    think_steps: int = 0,
     open_browser: bool = True,
 ) -> dict[str, object]:
     if not adb_available():
@@ -47,6 +51,10 @@ def run_phone_lab(
         card_costs_path=Path(card_costs),
         policy_v3=Path(policy_v3),
         policy_v4=Path(policy_v4),
+        policy_v41=Path(policy_v41),
+        policy_v42=Path(policy_v42),
+        mirror_tta=mirror_tta,
+        think_steps=think_steps,
     )
     # Warm detector once so the first live detect is not a cold GPU start.
     state.detector.warm_up()
@@ -63,6 +71,8 @@ def run_phone_lab(
     _say(f"  yolo:   {state.detector.status}")
     _say("  stream: scrcpy-server h264 → websocket → WebCodecs (+ touch)")
     _say(f"  open:   {url}")
+    _say(f"  mirror: {'enabled' if mirror_tta else 'disabled'}")
+    _say(f"  think:  {think_steps} step(s)" if think_steps else "  think:  off")
 
     if open_browser:
         webbrowser.open(url)
