@@ -1,0 +1,762 @@
+Loading policies ...
+Policies (cuda): policy-bc-v2, policy-bc-v3, policy-bc-v4, policy-bc-v4.1
+Loading battles / decks ...
+Cached 30381 battles -> data/winner_battles_cache.pkl
+Battle royale: 6 pairs × 2 games = 12 (keep conf>=80%)
+Pair done policy-bc-v2 vs policy-bc-v3: 0-1 on 1 confident / 2 raw
+Pair done policy-bc-v2 vs policy-bc-v4: 1-1 on 2 confident / 2 raw
+Pair done policy-bc-v2 vs policy-bc-v4.1: 0-0 on 0 confident / 2 raw
+Pair done policy-bc-v3 vs policy-bc-v4: 0-0 on 0 confident / 2 raw
+Pair done policy-bc-v3 vs policy-bc-v4.1: 0-0 on 0 confident / 2 raw
+Pair done policy-bc-v4 vs policy-bc-v4.1: 0-0 on 0 confident / 2 raw
+policy-bc-v3 wins the battle royale under the winner-predictor judge at confidence ≥ 80%: 1-0 (100.0% WR, Elo 1512) across 1 confident games.
+Wrote reports/battle_royale_smoke.json
+Wrote reports/battle_royale_smoke.html
+{
+  "status": "complete",
+  "created_at": "2026-08-09T00:26:14Z",
+  "model_name": "policy-battle-royale-v1",
+  "judge": "winner-predictor-hgb-symmetric",
+  "seconds": 104.8,
+  "setup": {
+    "policies": [
+      {
+        "policy_id": "policy-bc-v2",
+        "model_dir": "models/policy_bc",
+        "threat_dim": 0,
+        "card_conditioned_placement": false,
+        "created_at": "2026-08-06T22:44:05Z",
+        "data": {
+          "battles_total": 14170,
+          "min_card_plays": 12,
+          "train_samples": 248618,
+          "val_samples": 34180,
+          "test_samples": 34858,
+          "vocab_size": 126,
+          "splits": [
+            {
+              "split": "train",
+              "battles": 9920,
+              "team_win_rate": 0.5158266129032258,
+              "mean_events": 66.11300403225806
+            },
+            {
+              "split": "val",
+              "battles": 2125,
+              "team_win_rate": 0.5171764705882353,
+              "mean_events": 65.31858823529411
+            },
+            {
+              "split": "test",
+              "battles": 2125,
+              "team_win_rate": 0.4875294117647059,
+              "mean_events": 66.89411764705882
+            }
+          ]
+        },
+        "compute": {
+          "device": "cuda",
+          "framework": "pytorch",
+          "parameters": 561930,
+          "d_model": 160,
+          "num_layers": 2,
+          "epochs_requested": 25,
+          "epochs_ran": 25,
+          "batch_size": 256,
+          "learning_rate": 0.0002,
+          "dropout": 0.2,
+          "max_context": 64,
+          "max_samples_per_battle": 40
+        },
+        "test": {
+          "loss": 2.9025164137791544,
+          "slot_top1": 0.5148316025015778,
+          "slot_top3": 0.9307476045671008,
+          "type_acc": 0.9980492282976648,
+          "zone_acc": 0.3953755235526995,
+          "xy_mae": 5732.209574380343,
+          "tile_acc": 0.023983016811062022,
+          "timing_mae": 1.630938455388074,
+          "n": 34858
+        }
+      },
+      {
+        "policy_id": "policy-bc-v3",
+        "model_dir": "models/policy_bc_v3",
+        "threat_dim": 14,
+        "card_conditioned_placement": false,
+        "created_at": "2026-08-07T02:45:15Z",
+        "data": {
+          "battles_total": 15233,
+          "min_card_plays": 12,
+          "train_samples": 326444,
+          "val_samples": 38100,
+          "test_samples": 37599,
+          "vocab_size": 126,
+          "splits": [
+            {
+              "split": "train",
+              "battles": 10665,
+              "team_win_rate": 0.5071729957805907,
+              "mean_events": 65.92358180965776
+            },
+            {
+              "split": "val",
+              "battles": 2284,
+              "team_win_rate": 0.5148861646234676,
+              "mean_events": 66.74956217162872
+            },
+            {
+              "split": "test",
+              "battles": 2284,
+              "team_win_rate": 0.5166374781085814,
+              "mean_events": 65.89929947460595
+            }
+          ]
+        },
+        "compute": {
+          "device": "cuda",
+          "framework": "pytorch",
+          "parameters": 564170,
+          "d_model": 160,
+          "num_layers": 2,
+          "epochs_requested": 25,
+          "epochs_ran": 25,
+          "batch_size": 256,
+          "learning_rate": 0.0002,
+          "dropout": 0.2,
+          "max_context": 64,
+          "max_samples_per_battle": 40,
+          "global_dim": 62,
+          "threat_dim": 14,
+          "reaction_weight": 3.0,
+          "reaction_repeats": 2,
+          "reaction_seconds": 5.0
+        },
+        "test": {
+          "loss": 2.910020344922332,
+          "slot_top1": 0.5149073113646639,
+          "slot_top3": 0.931540732466289,
+          "type_acc": 0.9984840022341019,
+          "zone_acc": 0.39514348785871967,
+          "xy_mae": 5718.915735790845,
+          "tile_acc": 0.026197505252799277,
+          "timing_mae": 1.5715970863937434,
+          "n": 37599
+        }
+      },
+      {
+        "policy_id": "policy-bc-v4",
+        "model_dir": "models/policy_bc_v4",
+        "threat_dim": 14,
+        "card_conditioned_placement": true,
+        "created_at": "2026-08-08T00:02:13Z",
+        "data": {
+          "battles_total": 22554,
+          "min_card_plays": 12,
+          "train_samples": 480032,
+          "val_samples": 55388,
+          "test_samples": 55775,
+          "vocab_size": 126,
+          "splits": [
+            {
+              "split": "train",
+              "battles": 15788,
+              "team_win_rate": 0.5027235875348366,
+              "mean_events": 65.31625285026603
+            },
+            {
+              "split": "val",
+              "battles": 3383,
+              "team_win_rate": 0.5072420928170263,
+              "mean_events": 64.92225835057641
+            },
+            {
+              "split": "test",
+              "battles": 3383,
+              "team_win_rate": 0.5137451965710907,
+              "mean_events": 65.95122672184452
+            }
+          ]
+        },
+        "compute": {
+          "device": "cuda",
+          "framework": "pytorch",
+          "parameters": 632946,
+          "d_model": 160,
+          "num_layers": 2,
+          "epochs_requested": 25,
+          "epochs_ran": 25,
+          "batch_size": 256,
+          "learning_rate": 0.0002,
+          "dropout": 0.2,
+          "max_context": 64,
+          "max_samples_per_battle": 40,
+          "global_dim": 62,
+          "threat_dim": 14,
+          "card_conditioned_placement": true,
+          "reaction_weight": 3.0,
+          "reaction_repeats": 2,
+          "reaction_seconds": 5.0,
+          "loss_kwargs": {
+            "zone_weight": 1.1,
+            "xy_weight": 0.55,
+            "slot_weight": 1.4
+          }
+        },
+        "test": {
+          "loss": 3.521323877737063,
+          "slot_top1": 0.5310802330793366,
+          "slot_top3": 0.9332496638278799,
+          "type_acc": 0.9983505154639175,
+          "zone_acc": 0.42902734199910353,
+          "xy_mae": 5286.6420416853425,
+          "tile_acc": 0.04505602868668759,
+          "timing_mae": 1.5447046188429725,
+          "n": 55775
+        }
+      },
+      {
+        "policy_id": "policy-bc-v4.1",
+        "model_dir": "models/policy_bc_v4.1",
+        "threat_dim": 14,
+        "card_conditioned_placement": true,
+        "created_at": "2026-08-08T21:31:27Z",
+        "data": {
+          "battles_total": 29450,
+          "min_card_plays": 12,
+          "train_samples": 623704,
+          "val_samples": 72395,
+          "test_samples": 72556,
+          "vocab_size": 126,
+          "splits": [
+            {
+              "split": "train",
+              "battles": 20616,
+              "team_win_rate": 0.5064512999611952,
+              "mean_events": 64.98311990686845
+            },
+            {
+              "split": "val",
+              "battles": 4417,
+              "team_win_rate": 0.5014715870500339,
+              "mean_events": 64.77360199230247
+            },
+            {
+              "split": "test",
+              "battles": 4417,
+              "team_win_rate": 0.5105275073579353,
+              "mean_events": 65.30971247453023
+            }
+          ],
+          "battles_trained": 28102,
+          "train_samples_trained": 598192,
+          "val_samples_trained": 68826,
+          "test_samples_trained": 68508
+        },
+        "compute": {
+          "device": "cuda",
+          "framework": "pytorch",
+          "parameters": 632946,
+          "d_model": 160,
+          "num_layers": 2,
+          "epochs_requested": 25,
+          "epochs_ran": 17,
+          "batch_size": 256,
+          "learning_rate": 0.0002,
+          "dropout": 0.2,
+          "max_context": 64,
+          "max_samples_per_battle": 40,
+          "global_dim": 62,
+          "threat_dim": 14,
+          "card_conditioned_placement": true,
+          "reaction_weight": 3.0,
+          "reaction_repeats": 2,
+          "reaction_seconds": 5.0,
+          "loss_kwargs": {
+            "zone_weight": 1.1,
+            "xy_weight": 0.55,
+            "slot_weight": 1.4
+          },
+          "min_context": 8
+        },
+        "test": {
+          "loss": 3.4270822867541244,
+          "slot_top1": 0.5449997243508462,
+          "slot_top3": 0.9386956282044214,
+          "type_acc": 0.997822371685319,
+          "zone_acc": 0.4431749269529743,
+          "xy_mae": 5155.729107516952,
+          "tile_acc": 0.04741165444622085,
+          "timing_mae": 1.5486047415520667,
+          "n": 72556
+        }
+      }
+    ],
+    "games_per_pair": 2,
+    "min_confidence": 0.8,
+    "warmup_events": 10,
+    "policy_events": 50,
+    "temperature": 0.85,
+    "seed": 42,
+    "device": "cuda",
+    "deck_pool": 21267,
+    "note": "Round-robin offline self-play. Each seat uses a different policy checkpoint. Winners come from the offline winner predictor; only games with calibrated confidence >= 80% count in the standings."
+  },
+  "progress": {
+    "games_done": 12,
+    "games_total": 12,
+    "confident_games": 3,
+    "coverage": 0.25,
+    "mean_confidence": 0.7070396861917162,
+    "mean_kept_confidence": 0.9241686981821834
+  },
+  "standings": [
+    {
+      "policy_id": "policy-bc-v3",
+      "wins": 1,
+      "losses": 0,
+      "games": 1,
+      "win_rate": 1.0,
+      "raw_games": 6,
+      "raw_wins": 2,
+      "raw_win_rate": 0.3333333333333333,
+      "elo": 1512.0,
+      "model_dir": "models/policy_bc_v3",
+      "created_at": "2026-08-07T02:45:15Z",
+      "data_battles": 15233,
+      "compute": {
+        "device": "cuda",
+        "framework": "pytorch",
+        "parameters": 564170,
+        "d_model": 160,
+        "num_layers": 2,
+        "epochs_requested": 25,
+        "epochs_ran": 25,
+        "batch_size": 256,
+        "learning_rate": 0.0002,
+        "dropout": 0.2,
+        "max_context": 64,
+        "max_samples_per_battle": 40,
+        "global_dim": 62,
+        "threat_dim": 14,
+        "reaction_weight": 3.0,
+        "reaction_repeats": 2,
+        "reaction_seconds": 5.0
+      },
+      "rank": 1
+    },
+    {
+      "policy_id": "policy-bc-v4",
+      "wins": 1,
+      "losses": 1,
+      "games": 2,
+      "win_rate": 0.5,
+      "raw_games": 6,
+      "raw_wins": 4,
+      "raw_win_rate": 0.6666666666666666,
+      "elo": 1498.375054992543,
+      "model_dir": "models/policy_bc_v4",
+      "created_at": "2026-08-08T00:02:13Z",
+      "data_battles": 22554,
+      "compute": {
+        "device": "cuda",
+        "framework": "pytorch",
+        "parameters": 632946,
+        "d_model": 160,
+        "num_layers": 2,
+        "epochs_requested": 25,
+        "epochs_ran": 25,
+        "batch_size": 256,
+        "learning_rate": 0.0002,
+        "dropout": 0.2,
+        "max_context": 64,
+        "max_samples_per_battle": 40,
+        "global_dim": 62,
+        "threat_dim": 14,
+        "card_conditioned_placement": true,
+        "reaction_weight": 3.0,
+        "reaction_repeats": 2,
+        "reaction_seconds": 5.0,
+        "loss_kwargs": {
+          "zone_weight": 1.1,
+          "xy_weight": 0.55,
+          "slot_weight": 1.4
+        }
+      },
+      "rank": 2
+    },
+    {
+      "policy_id": "policy-bc-v2",
+      "wins": 1,
+      "losses": 2,
+      "games": 3,
+      "win_rate": 0.3333333333333333,
+      "raw_games": 6,
+      "raw_wins": 4,
+      "raw_win_rate": 0.6666666666666666,
+      "elo": 1489.624945007457,
+      "model_dir": "models/policy_bc",
+      "created_at": "2026-08-06T22:44:05Z",
+      "data_battles": 14170,
+      "compute": {
+        "device": "cuda",
+        "framework": "pytorch",
+        "parameters": 561930,
+        "d_model": 160,
+        "num_layers": 2,
+        "epochs_requested": 25,
+        "epochs_ran": 25,
+        "batch_size": 256,
+        "learning_rate": 0.0002,
+        "dropout": 0.2,
+        "max_context": 64,
+        "max_samples_per_battle": 40
+      },
+      "rank": 3
+    },
+    {
+      "policy_id": "policy-bc-v4.1",
+      "wins": 0,
+      "losses": 0,
+      "games": 0,
+      "win_rate": null,
+      "raw_games": 6,
+      "raw_wins": 2,
+      "raw_win_rate": 0.3333333333333333,
+      "elo": 1500.0,
+      "model_dir": "models/policy_bc_v4.1",
+      "created_at": "2026-08-08T21:31:27Z",
+      "data_battles": 29450,
+      "compute": {
+        "device": "cuda",
+        "framework": "pytorch",
+        "parameters": 632946,
+        "d_model": 160,
+        "num_layers": 2,
+        "epochs_requested": 25,
+        "epochs_ran": 17,
+        "batch_size": 256,
+        "learning_rate": 0.0002,
+        "dropout": 0.2,
+        "max_context": 64,
+        "max_samples_per_battle": 40,
+        "global_dim": 62,
+        "threat_dim": 14,
+        "card_conditioned_placement": true,
+        "reaction_weight": 3.0,
+        "reaction_repeats": 2,
+        "reaction_seconds": 5.0,
+        "loss_kwargs": {
+          "zone_weight": 1.1,
+          "xy_weight": 0.55,
+          "slot_weight": 1.4
+        },
+        "min_context": 8
+      },
+      "rank": 4
+    }
+  ],
+  "head_to_head": {
+    "policy-bc-v2": {
+      "policy-bc-v3": {
+        "wins": 0,
+        "losses": 1,
+        "games": 1
+      },
+      "policy-bc-v4": {
+        "wins": 1,
+        "losses": 1,
+        "games": 2
+      },
+      "policy-bc-v4.1": {
+        "wins": 0,
+        "losses": 0,
+        "games": 0
+      }
+    },
+    "policy-bc-v3": {
+      "policy-bc-v2": {
+        "wins": 1,
+        "losses": 0,
+        "games": 1
+      },
+      "policy-bc-v4": {
+        "wins": 0,
+        "losses": 0,
+        "games": 0
+      },
+      "policy-bc-v4.1": {
+        "wins": 0,
+        "losses": 0,
+        "games": 0
+      }
+    },
+    "policy-bc-v4": {
+      "policy-bc-v2": {
+        "wins": 1,
+        "losses": 1,
+        "games": 2
+      },
+      "policy-bc-v3": {
+        "wins": 0,
+        "losses": 0,
+        "games": 0
+      },
+      "policy-bc-v4.1": {
+        "wins": 0,
+        "losses": 0,
+        "games": 0
+      }
+    },
+    "policy-bc-v4.1": {
+      "policy-bc-v2": {
+        "wins": 0,
+        "losses": 0,
+        "games": 0
+      },
+      "policy-bc-v3": {
+        "wins": 0,
+        "losses": 0,
+        "games": 0
+      },
+      "policy-bc-v4": {
+        "wins": 0,
+        "losses": 0,
+        "games": 0
+      }
+    }
+  },
+  "pairs": [
+    {
+      "a": "policy-bc-v2",
+      "b": "policy-bc-v3",
+      "games": 2,
+      "confident_games": 1,
+      "a_wins": 0,
+      "b_wins": 1,
+      "a_win_rate": 0.0,
+      "coverage": 0.5
+    },
+    {
+      "a": "policy-bc-v2",
+      "b": "policy-bc-v4",
+      "games": 2,
+      "confident_games": 2,
+      "a_wins": 1,
+      "b_wins": 1,
+      "a_win_rate": 0.5,
+      "coverage": 1.0
+    },
+    {
+      "a": "policy-bc-v2",
+      "b": "policy-bc-v4.1",
+      "games": 2,
+      "confident_games": 0,
+      "a_wins": 0,
+      "b_wins": 0,
+      "a_win_rate": null,
+      "coverage": 0.0
+    },
+    {
+      "a": "policy-bc-v3",
+      "b": "policy-bc-v4",
+      "games": 2,
+      "confident_games": 0,
+      "a_wins": 0,
+      "b_wins": 0,
+      "a_win_rate": null,
+      "coverage": 0.0
+    },
+    {
+      "a": "policy-bc-v3",
+      "b": "policy-bc-v4.1",
+      "games": 2,
+      "confident_games": 0,
+      "a_wins": 0,
+      "b_wins": 0,
+      "a_win_rate": null,
+      "coverage": 0.0
+    },
+    {
+      "a": "policy-bc-v4",
+      "b": "policy-bc-v4.1",
+      "games": 2,
+      "confident_games": 0,
+      "a_wins": 0,
+      "b_wins": 0,
+      "a_win_rate": null,
+      "coverage": 0.0
+    }
+  ],
+  "champion": "policy-bc-v3",
+  "verdict": "policy-bc-v3 wins the battle royale under the winner-predictor judge at confidence ≥ 80%: 1-0 (100.0% WR, Elo 1512) across 1 confident games.",
+  "lessons": [
+    "Filter by judge confidence, not raw win rate — the winner model is ~79% accurate overall but ~94% at conf≥80%.",
+    "Heterogeneous seats matter: older policies without threat features still compete on the same decks.",
+    "This is still sequence-level offline play judged by another model — not live Clash Royale."
+  ],
+  "games_sample": [
+    {
+      "pair": "policy-bc-v2 vs policy-bc-v3",
+      "team": "policy-bc-v2",
+      "opponent": "policy-bc-v3",
+      "p_team": 0.10935377032650044,
+      "confidence": 0.9759036144578314,
+      "kept": true,
+      "winner": "policy-bc-v3",
+      "raw_winner": "policy-bc-v3",
+      "events": 60
+    },
+    {
+      "pair": "policy-bc-v2 vs policy-bc-v3",
+      "team": "policy-bc-v3",
+      "opponent": "policy-bc-v2",
+      "p_team": 0.4114051745336354,
+      "confidence": 0.5643564356435643,
+      "kept": false,
+      "winner": null,
+      "raw_winner": "policy-bc-v2",
+      "events": 60
+    },
+    {
+      "pair": "policy-bc-v2 vs policy-bc-v4",
+      "team": "policy-bc-v2",
+      "opponent": "policy-bc-v4",
+      "p_team": 0.16640659112763256,
+      "confidence": 0.944954128440367,
+      "kept": true,
+      "winner": "policy-bc-v4",
+      "raw_winner": "policy-bc-v4",
+      "events": 60
+    },
+    {
+      "pair": "policy-bc-v2 vs policy-bc-v4",
+      "team": "policy-bc-v4",
+      "opponent": "policy-bc-v2",
+      "p_team": 0.2501647580079736,
+      "confidence": 0.8516483516483516,
+      "kept": true,
+      "winner": "policy-bc-v2",
+      "raw_winner": "policy-bc-v2",
+      "events": 60
+    },
+    {
+      "pair": "policy-bc-v2 vs policy-bc-v4.1",
+      "team": "policy-bc-v2",
+      "opponent": "policy-bc-v4.1",
+      "p_team": 0.6447868341008878,
+      "confidence": 0.726530612244898,
+      "kept": false,
+      "winner": null,
+      "raw_winner": "policy-bc-v2",
+      "events": 60
+    },
+    {
+      "pair": "policy-bc-v2 vs policy-bc-v4.1",
+      "team": "policy-bc-v4.1",
+      "opponent": "policy-bc-v2",
+      "p_team": 0.44141397431935225,
+      "confidence": 0.5643564356435643,
+      "kept": false,
+      "winner": null,
+      "raw_winner": "policy-bc-v2",
+      "events": 60
+    },
+    {
+      "pair": "policy-bc-v3 vs policy-bc-v4",
+      "team": "policy-bc-v3",
+      "opponent": "policy-bc-v4",
+      "p_team": 0.5465531819126541,
+      "confidence": 0.5254237288135594,
+      "kept": false,
+      "winner": null,
+      "raw_winner": "policy-bc-v3",
+      "events": 60
+    },
+    {
+      "pair": "policy-bc-v3 vs policy-bc-v4",
+      "team": "policy-bc-v4",
+      "opponent": "policy-bc-v3",
+      "p_team": 0.6820499054184185,
+      "confidence": 0.7884615384615384,
+      "kept": false,
+      "winner": null,
+      "raw_winner": "policy-bc-v4",
+      "events": 60
+    },
+    {
+      "pair": "policy-bc-v3 vs policy-bc-v4.1",
+      "team": "policy-bc-v3",
+      "opponent": "policy-bc-v4.1",
+      "p_team": 0.47570936030271127,
+      "confidence": 0.5254237288135594,
+      "kept": false,
+      "winner": null,
+      "raw_winner": "policy-bc-v4.1",
+      "events": 60
+    },
+    {
+      "pair": "policy-bc-v3 vs policy-bc-v4.1",
+      "team": "policy-bc-v4.1",
+      "opponent": "policy-bc-v3",
+      "p_team": 0.6247463867332002,
+      "confidence": 0.726530612244898,
+      "kept": false,
+      "winner": null,
+      "raw_winner": "policy-bc-v4.1",
+      "events": 60
+    },
+    {
+      "pair": "policy-bc-v4 vs policy-bc-v4.1",
+      "team": "policy-bc-v4",
+      "opponent": "policy-bc-v4.1",
+      "p_team": 0.5521620813976513,
+      "confidence": 0.5643564356435643,
+      "kept": false,
+      "winner": null,
+      "raw_winner": "policy-bc-v4",
+      "events": 60
+    },
+    {
+      "pair": "policy-bc-v4 vs policy-bc-v4.1",
+      "team": "policy-bc-v4.1",
+      "opponent": "policy-bc-v4",
+      "p_team": 0.34253147356287317,
+      "confidence": 0.726530612244898,
+      "kept": false,
+      "winner": null,
+      "raw_winner": "policy-bc-v4",
+      "events": 60
+    }
+  ],
+  "confidence_hist": {
+    "edges": [
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.8500000000000001,
+      0.9,
+      0.95,
+      1.0
+    ],
+    "counts": [
+      2,
+      3,
+      0,
+      0,
+      3,
+      1,
+      0,
+      1,
+      1,
+      1
+    ],
+    "kept_fraction": 0.25
+  },
+  "html_report": "reports/battle_royale_smoke.html"
+}

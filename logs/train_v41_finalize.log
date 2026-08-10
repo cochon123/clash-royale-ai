@@ -1,0 +1,29 @@
+Loading battles ...
+Cached 29450 battles -> /home/cochon/Documents/mini-project/clash-royale-ai/data/winner_battles_cache.pkl
+Evaluating val/test ...
+Rolling out policy continuations ...
+{
+  "test": {
+    "loss": 3.4270822867541244,
+    "slot_top1": 0.5449997243508462,
+    "slot_top3": 0.9386956282044214,
+    "type_acc": 0.997822371685319,
+    "zone_acc": 0.4431749269529743,
+    "xy_mae": 5155.729107516952,
+    "tile_acc": 0.04741165444622085,
+    "timing_mae": 1.5486047415520667,
+    "n": 72556
+  },
+  "rollouts": {
+    "available": true,
+    "n": 95,
+    "mean_score_real": 0.8715095308477782,
+    "mean_score_policy": 0.9245960680294989,
+    "mean_score_easy": 0.00087828935043625,
+    "mean_score_medium": 6.39636324498398e-05,
+    "policy_vs_easy_lift": 0.9237177786790627,
+    "policy_vs_medium_lift": 0.924532104397049,
+    "policy_gap_to_real": -0.05308653718172074
+  }
+}
+Wrote /home/cochon/Documents/mini-project/clash-royale-ai/models/policy_bc_v4.1/report.json

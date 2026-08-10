@@ -1,0 +1,1693 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Style discriminator — human vs AI</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0f18;
+      --line: #1e293b;
+      --line-soft: #141c28;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(1.75rem, 3vw, 2.25rem);
+      letter-spacing: -0.03em;
+      font-weight: 650;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    p, li { color: var(--muted); margin: 0 0 10px; }
+    a { color: var(--accent); }
+    .report-header { padding-bottom: 28px; }
+    .report-header p { max-width: 720px; }
+    .meta { font-size: 0.92rem; color: #64748b; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .badge {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+    .badge + .badge::before {
+      content: "·";
+      margin-right: 8px;
+      color: #334155;
+    }
+    .report-section {
+      padding: 28px 0;
+      border-top: 1px solid var(--line-soft);
+    }
+    .report-section:first-of-type { border-top: none; padding-top: 0; }
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px 20px;
+    }
+    .kpi-label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .kpi-value {
+      display: block;
+      font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .block-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 36px 40px;
+    }
+    .block-wide { grid-column: 1 / -1; }
+    .chart-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
+    }
+    .chart-block {
+      width: 100%;
+    }
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+    }
+    svg.chart {
+      width: 100%;
+      height: auto;
+      min-height: 480px;
+      aspect-ratio: 1000 / 540;
+      display: block;
+      overflow: visible;
+    }
+    svg.chart-interactive .chart-lines polyline {
+      transition: stroke-width 0.15s ease, opacity 0.15s ease;
+    }
+    svg.chart-interactive:hover .chart-lines polyline {
+      stroke-width: 4.5;
+    }
+    .chart-tooltip {
+      position: absolute;
+      top: 12px;
+      left: 0;
+      min-width: 180px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: rgba(10, 15, 24, 0.94);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.12s ease, transform 0.12s ease;
+      z-index: 2;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    .chart-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .chart-tooltip-title {
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+    .chart-tooltip-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .chart-tooltip-row:last-child { margin-bottom: 0; }
+    .chart-tooltip-row strong {
+      margin-left: auto;
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+    .chart-tooltip-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      font-size: 14px;
+      color: #64748b;
+    }
+    .legend-interactive {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 10px;
+      border: 1px solid #243044;
+      border-radius: 999px;
+      background: transparent;
+      color: #94a3b8;
+      font: inherit;
+      font-size: 13px;
+      line-height: 1.2;
+      cursor: pointer;
+      transition: opacity 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .legend-item:hover {
+      border-color: #475569;
+      color: #cbd5e1;
+    }
+    .legend-item.is-on {
+      color: #e2e8f0;
+      border-color: #334155;
+    }
+    .legend-item.is-off {
+      opacity: 0.4;
+    }
+    .legend-item.is-off .legend-label {
+      text-decoration: line-through;
+    }
+    .legend-item.is-off .legend-preview {
+      opacity: 0.35;
+      border-top-color: #475569;
+    }
+    .legend-preview {
+      width: 16px;
+      border-top: 2px solid var(--legend-color, #64748b);
+      flex-shrink: 0;
+    }
+    .legend-item.legend-dashed .legend-preview {
+      border-top-style: dashed;
+    }
+    .legend-label {
+      white-space: nowrap;
+    }
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      margin-right: 6px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line-soft);
+      text-align: left;
+    }
+    th {
+      color: #64748b;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .diagram {
+      margin: 0;
+      padding: 0 0 0 16px;
+      border-left: 2px solid #334155;
+      background: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      color: #94a3b8;
+      white-space: pre-wrap;
+    }
+    .media {
+      width: 100%;
+      display: block;
+      border-radius: 6px;
+    }
+    .caption { font-size: 13px; color: #64748b; margin-top: 10px; }
+    .chart-animation {
+      width: 100%;
+    }
+    .anim-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px 18px;
+      margin-top: 20px;
+    }
+    .anim-btn {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid #334155;
+      background: #111827;
+      color: #e2e8f0;
+      font: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .anim-btn-icon {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .anim-btn:hover {
+      border-color: #60a5fa;
+      background: #172033;
+    }
+    .anim-icon {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+      display: block;
+    }
+    .anim-icon[hidden] {
+      display: none;
+    }
+    .anim-scrubber {
+      flex: 1 1 220px;
+      min-width: 180px;
+      accent-color: #60a5fa;
+      cursor: pointer;
+    }
+    .anim-readout {
+      flex: 1 1 100%;
+      font-size: 14px;
+      color: #94a3b8;
+      font-variant-numeric: tabular-nums;
+    }
+    .anim-readout strong {
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+    svg.chart-dual .chart-refline {
+      stroke-dasharray: 6 5;
+      opacity: 0.75;
+    }
+    .lessons { margin: 0; padding-left: 18px; }
+    .lessons li { margin-bottom: 10px; }
+    @media (max-width: 820px) {
+      .kpi-row, .block-grid, .chart-grid { grid-template-columns: 1fr; }
+    }
+    
+    .hero h1 { font-size: 2.5rem; letter-spacing: -0.02em; }
+    .hero-sub { font-size: 1.05rem; max-width: 72ch; color: #cbd5f5; }
+    .hero-scores { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 18px; }
+    .hero-score {
+      display: flex; flex-direction: column; gap: 4px; padding: 12px 18px;
+      border-radius: 14px; background: rgba(148,163,184,0.08);
+      border: 1px solid rgba(148,163,184,0.18);
+    }
+    .hero-score-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; }
+    .hero-score-value { font-size: 1.85rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .hero-score-value.up { color: #34d399; }
+    .hero-score-value.down { color: #f87171; }
+    .hero-score-value.neutral { color: #e2e8f0; }
+
+    .verdict {
+      display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px;
+      margin: 18px 0 4px; font-size: 0.95rem; border: 1px solid;
+    }
+    .verdict-tag { font-weight: 800; letter-spacing: 0.08em; font-size: 0.78rem; padding: 4px 10px; border-radius: 999px; }
+    .verdict-pass { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.35); }
+    .verdict-pass .verdict-tag { background: #34d399; color: #052e21; }
+    .verdict-fail { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.35); }
+    .verdict-fail .verdict-tag { background: #f87171; color: #2a0b0b; }
+    .verdict-partial { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.35); }
+    .verdict-partial .verdict-tag { background: #fbbf24; color: #2a1e05; }
+
+    .play-btn {
+      background: linear-gradient(120deg, #6366f1, #22d3ee);
+      color: #06111f; border: 0; border-radius: 999px; padding: 9px 20px;
+      font-weight: 700; cursor: pointer; font-size: 0.9rem;
+    }
+    .play-btn:hover { filter: brightness(1.12); }
+    .play-btn.ghost { background: rgba(148,163,184,0.14); color: #e2e8f0; }
+    .toolbar { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+    .toolbar .hint { color: #94a3b8; font-size: 0.85rem; }
+
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      background: rgba(148,163,184,0.1); border: 1px solid rgba(148,163,184,0.2);
+      color: #e2e8f0; border-radius: 999px; padding: 6px 13px; font-size: 0.82rem; cursor: pointer;
+    }
+    .chip:hover { border-color: #22d3ee88; }
+    .chip.active { background: linear-gradient(120deg, #6366f1, #22d3ee); color: #06111f; font-weight: 700; border-color: transparent; }
+    .chip .chip-n { opacity: 0.65; font-size: 0.72rem; margin-left: 5px; }
+    .control-label {
+      display: block; font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #94a3b8; margin-bottom: 8px;
+    }
+    .control-group { margin-bottom: 16px; }
+
+    .race { display: grid; gap: 12px; }
+    .race-row { display: grid; grid-template-columns: 230px 1fr 132px; gap: 14px; align-items: center; }
+    .race-name { font-size: 0.9rem; }
+    .race-name small { display: block; color: #94a3b8; font-size: 0.74rem; line-height: 1.35; }
+    .race-track { position: relative; height: 26px; border-radius: 8px; background: rgba(148,163,184,0.1); overflow: hidden; }
+    .race-fill {
+      position: absolute; inset: 0 auto 0 0; width: 0%;
+      background: linear-gradient(90deg, #6366f1, #22d3ee);
+      transition: width 1.1s cubic-bezier(.22,1,.36,1);
+    }
+    .race-fill-soft { background: linear-gradient(90deg, #64748b, #94a3b8); }
+    .race-ghost { position: absolute; top: 0; bottom: 0; width: 2px; background: #f8fafc88; }
+    .race-ghost span { position: absolute; top: -1px; left: 4px; font-size: 0.62rem; color: #cbd5f5; }
+    .race-val { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.9rem; }
+    .race-val b { display: block; }
+    .race-delta { font-size: 0.76rem; }
+    .up { color: #34d399; } .down { color: #f87171; } .flat { color: #94a3b8; }
+
+    .tag-pill {
+      display: inline-block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; padding: 2px 7px; border-radius: 999px; margin-left: 6px; vertical-align: 2px;
+    }
+    .tag-pill.good { background: rgba(52,211,153,0.18); color: #6ee7b7; }
+    .tag-pill.mute { background: rgba(148,163,184,0.16); color: #cbd5f5; }
+    .tag-pill.warn { background: rgba(251,191,36,0.18); color: #fcd34d; }
+
+    .legend-row { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.78rem; color: #cbd5f5; margin-bottom: 12px; }
+    .legend-row .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: -2px; }
+    .legend-row .swatch.tick { width: 3px; height: 14px; border-radius: 1px; }
+    .legend-row .swatch.bar { width: 16px; height: 6px; border-radius: 2px; vertical-align: 0; }
+
+    .callout {
+      margin-top: 16px; padding: 12px 16px; border-radius: 12px;
+      background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.3); font-size: 0.9rem;
+    }
+    .callout a { color: #67e8f9; font-weight: 700; }
+
+    .tip {
+      position: absolute; pointer-events: none; padding: 7px 10px; border-radius: 9px;
+      background: #0b1220ee; border: 1px solid rgba(148,163,184,0.3); font-size: 0.78rem;
+      transform: translate(-50%, -125%); white-space: nowrap; z-index: 5;
+    }
+    .rel { position: relative; }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+    .stat {
+      padding: 12px 14px; border-radius: 12px; background: rgba(148,163,184,0.07);
+      border: 1px solid rgba(148,163,184,0.16);
+    }
+    .stat .k { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em; color: #94a3b8; }
+    .stat .v { font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .stat .s { font-size: 0.72rem; color: #94a3b8; }
+
+    .arena { width: 100%; height: auto; display: block; }
+    .zone-cell { cursor: crosshair; }
+    .mini-arena { width: 100%; height: auto; border-radius: 8px; }
+
+    @media (max-width: 900px) {
+      .race-row { grid-template-columns: 1fr; }
+    }
+    
+    .flow { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; margin: 16px 0 20px; }
+    .flow-step {
+      flex: 1 1 130px; padding: 12px 14px; border-radius: 12px; position: relative;
+      border: 1px solid rgba(148,163,184,0.2); background: rgba(148,163,184,0.06);
+    }
+    .flow-step.two { border-color: rgba(56,189,248,0.4); }
+    .flow-step b { display: block; font-size: 0.9rem; margin-bottom: 3px; }
+    .flow-step small { color: #94a3b8; font-size: 0.75rem; }
+    .flow-num {
+      position: absolute; top: -9px; left: 12px; width: 18px; height: 18px; border-radius: 50%;
+      background: #22d3ee; color: #04131f; font-size: 11px; font-weight: 800;
+      display: grid; place-items: center;
+    }
+    .flow-arrow { align-self: center; color: #64748b; }
+    .datagrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .datagrid > div {
+      padding: 10px 14px; border-radius: 10px; background: rgba(148,163,184,0.06);
+      border: 1px solid rgba(148,163,184,0.14);
+    }
+    .datagrid span { display: block; font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #94a3b8; margin-bottom: 4px; }
+    .datagrid b { font-size: 0.92rem; }
+    .rank-table { display: grid; gap: 10px; }
+    .rank-row {
+      display: grid; grid-template-columns: 34px 1.1fr 1.6fr 0.9fr 0.9fr;
+      gap: 12px; align-items: center; padding: 12px 14px;
+      border-radius: 12px; border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(148,163,184,0.06); font-size: 0.88rem;
+    }
+    .rank-row.best { border-color: rgba(52,211,153,0.45); background: rgba(52,211,153,0.08); }
+    .rank-row .metric { font-variant-numeric: tabular-nums; }
+    .rank-bar { position: relative; height: 12px; border-radius: 999px;
+      background: rgba(148,163,184,0.14); overflow: hidden; }
+    .rank-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px;
+      background: linear-gradient(90deg,#38bdf8,#34d399); width: 0; transition: width .9s ease; }
+    .rank-line { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #f87171; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .chip {
+      padding: 6px 13px; border-radius: 999px; cursor: pointer; font-size: 0.8rem;
+      border: 1px solid rgba(148,163,184,0.25); background: rgba(148,163,184,0.06); color: #cbd5f5;
+    }
+    .chip.active { border-color: #22d3ee; background: rgba(34,211,238,0.14); color: #e2e8f0; }
+    .tell-layout {
+      display: grid; grid-template-columns: 1.2fr 0.9fr; gap: 18px; align-items: stretch;
+    }
+    .tell-left { display: flex; flex-direction: column; gap: 12px; min-height: 560px; }
+    .tell-list {
+      flex: 1 1 auto; min-height: 260px; max-height: 360px; overflow-y: auto;
+      display: grid; gap: 5px; padding-right: 6px; align-content: start;
+    }
+    .tell-readout {
+      flex: 0 0 auto; font-size: 0.85rem; color: #cbd5f5; line-height: 1.6;
+      padding: 14px 16px; border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.22); background: rgba(15,23,42,0.72);
+    }
+    .tell-readout b { color: #e2e8f0; }
+    .tell-detail {
+      position: sticky; top: 12px; align-self: start; padding: 12px; border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.16); background: rgba(148,163,184,0.04);
+    }
+    .tell-row {
+      display: grid; grid-template-columns: 1.7fr 62px 1fr 50px; gap: 9px; align-items: center;
+      padding: 8px 10px; border-radius: 9px; cursor: pointer; font-size: 0.8rem;
+      border: 1px solid transparent; background: rgba(148,163,184,0.05);
+    }
+    .tell-name { min-width: 0; }
+    .tell-name code { display: block; font-size: 0.76rem; color: #e2e8f0; }
+    .tell-name small {
+      display: block; color: #94a3b8; font-size: 0.68rem; margin-top: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tell-title { font-size: 1.08rem; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+    .tell-code { font-size: 0.78rem; color: #94a3b8; }
+    .tell-blurb {
+      margin: 10px 0 12px; color: #cbd5f5; font-size: 0.9rem; line-height: 1.55;
+      padding: 12px 14px; border-radius: 10px; background: rgba(56,189,248,0.08);
+      border: 1px solid rgba(56,189,248,0.22);
+    }
+    .tell-stats { font-size: 0.84rem; color: #cbd5f5; line-height: 1.65; }
+    .tell-warn { margin: 10px 0 0; color: #fcd34d; font-size: 0.82rem; }
+    .callout {
+      padding: 14px 16px; border-radius: 12px; margin: 14px 0 18px; font-size: 0.86rem;
+      line-height: 1.65; color: #cbd5f5;
+      border: 1px solid rgba(251,191,36,0.35); background: rgba(251,191,36,0.07);
+    }
+    .callout b { color: #fcd34d; }
+    .callout code { font-size: 0.8rem; }
+    .kind-tag {
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 7px;
+      border-radius: 999px; font-weight: 700;
+    }
+    .kind-tag.harness { background: rgba(251,191,36,0.2); color: #fcd34d; }
+    .kind-tag.policy { background: rgba(56,189,248,0.18); color: #7dd3fc; }
+    .tell-row:hover { background: rgba(148,163,184,0.11); }
+    .tell-row.active { border-color: #22d3ee; background: rgba(34,211,238,0.12); }
+    .tell-row .sep { font-variant-numeric: tabular-nums; text-align: right; color: #94a3b8; }
+    .tell-bar { height: 7px; border-radius: 999px; background: rgba(148,163,184,0.16); overflow: hidden; }
+    .tell-bar i { display: block; height: 100%; border-radius: 999px; background: #f87171; }
+    .heatmap { display: grid; gap: 4px; font-size: 0.78rem; overflow-x: auto; }
+    .heat-row { display: grid; align-items: center; gap: 4px; }
+    .heat-label { color: #cbd5f5; padding-right: 8px; white-space: nowrap; }
+    .heat-cell {
+      padding: 7px 4px; border-radius: 6px; text-align: center; font-variant-numeric: tabular-nums;
+      color: #04131f; font-weight: 700;
+    }
+    .heat-head { color: #94a3b8; font-weight: 600; text-align: center; padding: 4px; }
+    .twin-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .replay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 12px 0; }
+    .replay-pane { text-align: center; }
+    .replay-pane h3 { margin: 0 0 8px; font-size: 0.95rem; }
+    .pane-score { font-size: 0.78rem; color: #94a3b8; font-weight: 400; }
+    .arena { width: 100%; max-width: 290px; }
+    .replay-log {
+      margin-top: 12px; font-size: 0.8rem; color: #94a3b8; min-height: 22px;
+      font-variant-numeric: tabular-nums;
+    }
+    .dual-bars { display: grid; gap: 12px; }
+    .dual-row {
+      display: grid; grid-template-columns: 140px 1fr 1fr; gap: 10px; align-items: center;
+      font-size: 0.85rem;
+    }
+    .bar-track { height: 10px; border-radius: 999px; background: rgba(148,163,184,0.15); overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; }
+    .bar-fill.transfer { background: #38bdf8; }
+    .bar-fill.matched { background: #34d399; }
+    .quiz-section { background: rgba(99,102,241,0.06); border-radius: 20px; }
+    .quiz-card {
+      border: 1px solid rgba(148,163,184,0.2); border-radius: 18px; padding: 20px;
+      background: rgba(11,18,32,0.6);
+    }
+    .quiz-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0; }
+    .battle-card {
+      padding: 16px; border-radius: 14px; border: 1px solid rgba(148,163,184,0.25);
+      background: rgba(148,163,184,0.06); cursor: pointer; text-align: left; color: #e2e8f0;
+    }
+    .battle-card:hover:not(:disabled) { border-color: #22d3ee; }
+    .battle-card.correct { border-color: #34d399; }
+    .battle-card.wrong { border-color: #f87171; }
+    .battle-card h4 { margin: 0 0 8px; }
+    .battle-card .fp { font-size: 0.8rem; color: #cbd5f5; line-height: 1.45; }
+    .quiz-score { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px; }
+    .score-pill { padding: 9px 16px; border-radius: 12px; background: rgba(148,163,184,0.1); }
+    .quiz-verdict { min-height: 22px; font-size: 0.88rem; margin-top: 10px; color: #cbd5f5; }
+    .sanity { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .sanity-card {
+      padding: 14px; border-radius: 12px; border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(148,163,184,0.06); font-size: 0.85rem;
+    }
+    .sanity-card h3 { margin: 0 0 8px; font-size: 0.9rem; }
+    .next-steps { color: #cbd5f5; line-height: 1.7; }
+    @media (max-width: 900px) {
+      .rank-row, .dual-row, .quiz-pair, .sanity, .tell-layout,
+      .twin-charts, .replay-grid, .datagrid { grid-template-columns: 1fr; }
+      .flow-arrow { display: none; }
+    }
+    </style>
+</head>
+<body>
+  <main>
+
+    <header class="report-header hero">
+      <div class="badge-row"><span class="badge">style-discriminator-v1</span><span class="badge">v1.0.0</span><span class="badge">human vs AI judge</span><span class="badge">scikit-learn + policy rollouts</span><span class="badge">30,306 battles</span><span class="badge">cuda</span></div>
+      <h1>Can you tell human from AI?</h1>
+      <p class="hero-sub">A binary judge scoring P(sequence is human) from action statistics
+      alone. Its negatives are real policy rollouts, not random noise. The question it answers:
+      <b>how far is each behaviour-cloning policy from passing as a person?</b></p>
+      <p class="meta">Created 2026-08-09 00:54 UTC · built in 172.5s ·
+      67 features · 4 policies judged ·
+      negatives from <b>policy_bc_v2</b></p>
+      <div class="hero-scores"><div class="hero-score"><span class="hero-score-label">Detection AUC</span><span class="hero-score-value down" data-count="1.0">0</span></div><div class="hero-score"><span class="hero-score-label">Best fool rate</span><span class="hero-score-value up">0.0%</span></div><div class="hero-score"><span class="hero-score-label">Most human-like</span><span class="hero-score-value up">policy_bc_v4</span></div><div class="hero-score"><span class="hero-score-label">AI actions to catch</span><span class="hero-score-value neutral" data-count="20">0</span></div></div>
+      <div class="verdict verdict-partial"><span class="verdict-tag">CAUGHT</span><span>Every policy is separated from humans perfectly (AUC 1.000, 0% fool rate). The ranking below is therefore a margin comparison, not a contest anyone is winning yet.</span></div>
+    </header>
+
+    <section class="report-section">
+      <h2>How the experiment works</h2>
+      <p class="caption">Each AI sequence shares its first 12
+      events with a real battle, then the policy generates the next
+      40 actions at temperature
+      0.8. Humans are truncated to the same length, so the only
+      difference between the two classes is the generated suffix.</p>
+      <div class="flow">
+        <div class="flow-step"><span class="flow-num">1</span><b>Real battle</b>
+          <small>held-out human replay</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><span class="flow-num">2</span><b>Split at event 12</b>
+          <small>shared prefix</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step two"><span class="flow-num">3</span><b>Two futures</b>
+          <small>human continuation vs policy rollout</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><span class="flow-num">4</span><b>67 features</b>
+          <small>timing, elixir, placement, tempo</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><span class="flow-num">5</span><b>P(human)</b>
+          <small>HGB + ExtraTrees blend</small></div>
+      </div>
+      <div class="datagrid">
+        <div><span>Human sequences</span><b>2,000 train / 512 test</b></div>
+        <div><span>AI sequences</span><b>2,000 × 4 policies</b></div>
+        <div><span>Compute</span><b>cuda rollouts + CPU trees</b></div>
+        <div><span>Wall clock</span><b>172.5s</b></div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Policy human-likeness ranking</h2>
+      <p class="caption">Matched panel: every policy faces a detector trained on its own rollouts,
+      which is the fair test. Since all of them are caught, the separator is mean P(human) —
+      how close the AI gets to the human side before being rejected.</p>
+      <div class="rank-table" id="rankTable"></div>
+      <p class="caption">Bar length is log-scaled human-likeness; all values sit far below the
+      0.5 decision line, drawn in red.</p>
+    </section>
+
+    <section class="report-section">
+      <h2>Where the scores land</h2>
+      <p class="caption">Score distribution for humans and AI on held-out battles. Pick a policy.
+      The two classes do not overlap at all — that is what AUC 1.0 looks like.</p>
+      <div class="chips" id="histChips"></div>
+      <div class="rel" id="scoreHost">
+        <svg class="chart" id="scoreHist"></svg>
+        <div class="legend-row">
+          <span><i class="swatch bar" style="background:#34d399"></i>human</span>
+          <span><i class="swatch bar" style="background:#f87171"></i>AI rollout</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>The tells</h2>
+      <p class="caption">Every feature ranked by how well it separates human from AI <em>on its
+      own</em>. A bar at 1.00 means that single number is enough to catch the policy. Click a row
+      — the left panel explains the term; the right shows the two distributions.</p>
+      <div class="callout">
+        <b>Read this before trusting the top of the list.</b> Some tells are produced by the
+        rollout harness rather than the policy: continuations always alternate sides and always
+        run exactly 40 events, so
+        <code>alt_rate</code>, <code>n_events</code> and their relatives are free giveaways.
+        They are tagged <span class="kind-tag harness">harness</span> below. Retraining the judge
+        without any of those 13 features still reaches
+        <b>AUC 1.000</b> with a
+        0.0% fool rate, so the style gap is
+        genuine — the harness just makes it trivial.
+      </div>
+      <div class="tell-layout">
+        <div class="tell-left">
+          <div class="tell-list" id="tellList"></div>
+          <div class="tell-readout" id="tellReadout"></div>
+        </div>
+        <div class="tell-detail">
+          <div class="rel" id="tellHost">
+            <svg class="chart" id="tellChart"></svg>
+          </div>
+          <div class="legend-row" style="margin-top:8px">
+            <span><i class="swatch bar" style="background:#34d399"></i>human</span>
+            <span><i class="swatch bar" style="background:#f87171"></i>AI</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Tell profile across policies</h2>
+      <p class="caption">For the top tells, how far each policy sits from the human mean, in human
+      standard deviations. Green is close to human, red is far. This shows whether newer policies
+      repaired any specific tell.</p>
+      <div class="heatmap" id="tellHeatmap"></div>
+    </section>
+
+    <section class="report-section">
+      <h2>How fast is the AI caught?</h2>
+      <p class="caption">Truncate both sequences after N generated actions and re-score. This is
+      how much evidence the judge needs. Press play to watch detection build up.</p>
+      <div class="chart-animation">
+        <svg class="chart" id="truncChart"></svg>
+        <div class="legend" id="truncLegend"></div>
+        <div class="anim-toolbar">
+          <button type="button" class="play-btn" id="truncPlay">▶</button>
+          <input type="range" class="anim-scrubber" id="truncScrub" min="1" max="1" value="1" step="1">
+          <div class="anim-readout" id="truncReadout"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Could the policy hide?</h2>
+      <p class="caption">Delete the strongest tells from the feature set and retrain the judge.
+      If accuracy survives, the AI signature is spread across many statistics rather than one
+      fixable bug.</p>
+      <div class="chart-animation">
+        <svg class="chart" id="ablChart"></svg>
+        <div class="legend" id="ablLegend"></div>
+        <div class="anim-toolbar">
+          <button type="button" class="play-btn" id="ablPlay">▶</button>
+          <input type="range" class="anim-scrubber" id="ablScrub" min="1" max="1" value="1" step="1">
+          <div class="anim-readout" id="ablReadout"></div>
+        </div>
+      </div>
+      <p class="caption">With the 60 strongest tells removed —
+      leaving only 7 features — the judge still reaches AUC
+      0.993. Removing the 13 harness artifacts
+      instead leaves AUC 1.000. Both say the same thing: the AI
+      signature is spread across the whole statistical profile.</p>
+    </section>
+
+    <section class="report-section">
+      <h2>Replay: same prefix, two futures</h2>
+      <p class="caption">The shared human warm-up is drawn in grey; then the human continuation
+      and the policy rollout diverge. Press play to watch both timelines advance together.</p>
+      <div class="chips" id="replayChips"></div>
+      <div class="replay-grid">
+        <div class="replay-pane">
+          <h3>Human <span class="pane-score" id="humanScore"></span></h3>
+          <svg class="arena" id="humanArena"></svg>
+        </div>
+        <div class="replay-pane">
+          <h3>AI rollout <span class="pane-score" id="aiScore"></span></h3>
+          <svg class="arena" id="aiArena"></svg>
+        </div>
+      </div>
+      <div class="anim-toolbar">
+        <button type="button" class="play-btn" id="replayPlay">▶</button>
+        <input type="range" class="anim-scrubber" id="replayScrub" min="1" max="1" value="1" step="1">
+        <div class="anim-readout" id="replayReadout"></div>
+      </div>
+      <div class="replay-log" id="replayLog"></div>
+    </section>
+
+    <section class="report-section">
+      <h2>ROC curves</h2>
+      <p class="caption">Matched detector per policy. All curves hug the top-left corner, so the
+      judge trades nothing to catch everything.</p>
+      <div class="rel" id="rocHost">
+        <svg class="chart" id="rocChart"></svg>
+        <div class="legend" id="rocLegend"></div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Transfer vs matched</h2>
+      <p class="caption">Transfer keeps one detector trained on policy_bc_v2
+      rollouts and points it at every policy. Where transfer beats matched, the newer policy has
+      drifted away from the style the old detector memorised — the closest thing to progress here.</p>
+      <div class="dual-bars" id="dualBars"></div>
+    </section>
+
+    <section class="report-section quiz-section">
+      <h2>Spot the human</h2>
+      <p class="caption">Two fingerprints from held-out battles. One is a truncated human game,
+      the other is the same prefix continued by policy_bc_v2.
+      Pick the human, then compare with what the judge said.</p>
+      <div id="quiz"></div>
+      <div class="quiz-score" id="quizScore"></div>
+    </section>
+
+    <section class="report-section">
+      <h2>Training curves</h2>
+      <p class="caption">Left: boosting log-loss per iteration. Right: ensemble accuracy and AUC
+      as ExtraTrees accumulate. Scrub or press play to replay the fit.</p>
+      <div class="twin-charts">
+        <div class="chart-animation">
+          <svg class="chart" id="lossChart"></svg>
+          <div class="legend" id="lossLegend"></div>
+        </div>
+        <div class="chart-animation">
+          <svg class="chart" id="trainChart"></svg>
+          <div class="legend" id="trainLegend"></div>
+          <div class="anim-toolbar">
+            <button type="button" class="play-btn" id="trainPlay">▶</button>
+            <input type="range" class="anim-scrubber" id="trainScrub" min="1" max="1" value="1" step="1">
+            <div class="anim-readout" id="trainReadout"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>Sanity controls</h2>
+      <p class="caption">Legal-but-random synthetics scored by the same judge. They should be
+      rejected outright; if they were not, the judge would be detecting chaos instead of style.</p>
+      <div class="sanity" id="sanityPanel"></div>
+    </section>
+
+    <section class="report-section">
+      <h2>Lessons learned</h2>
+      <ul class="lessons"><li>The realism scorer said policy rollouts look real (0.85 vs 0.87); against actual policy negatives the same feature set separates them perfectly. A discriminator is only as strong as its negatives.</li><li>Top tells: alt_rate, in_single, frac_triple, in_overtime, frac_gap_lt_1. These are what a policy must fix to become statistically human.</li><li>Several top tells come from the rollout harness (strict side alternation, fixed 40-event continuation), not the policy. Removing all 13 harness features still leaves AUC 1.000, so the style gap is real either way.</li><li>Detection is not a close call, so mean P(human) — not accuracy — is the ranking signal while every policy sits at AUC 1.0.</li><li>The judge needs roughly 8 generated actions before it is confident, so short bursts of policy play are much harder to spot than full continuations.</li><li>Dropping the 60 strongest tells still leaves near-perfect detection: the AI signature is distributed across the whole feature set, not one fixable bug.</li></ul>
+      <h3>What to fix next</h3>
+      <ol class="lessons next-steps">
+        <li>Fix the harness before blaming the policy: sample who acts next instead of forcing
+          strict alternation, and vary continuation length so <code>n_events</code> stops being a
+          constant.</li>
+        <li>Then attack the strongest genuine tell, <b>frac_gap_lt_1</b>:
+          human 0.172 vs AI 0.037
+          (2.9σ apart).</li>
+        <li>Placement and timing are regressed to the conditional mean, which halves their spread
+          versus humans. Sampling from the predicted distribution should close several tells at
+          once.</li>
+        <li>Re-run this judge after each policy change — it needs no live play and the rollout
+          cache makes repeat runs cheap.</li>
+      </ol>
+      <p class="caption">Binary style discriminator: P(sequence is human) from action-sequence statistics. Negatives are offline policy rollouts starting from real battle prefixes.</p>
+    </section>
+
+    <footer class="report-footer">
+      <p class="meta">Offline judge · checkpoint models/style_discriminator/style_ensemble.pkl ·
+      generated 2026-08-09 00:54 UTC</p>
+    </footer>
+    
+  </main>
+  <script>
+    
+const SVGNS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs = {}) => {
+  const node = document.createElementNS(SVGNS, tag);
+  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+  return node;
+};
+const svgText = (attrs, text) => { const t = el("text", attrs); t.textContent = text; return t; };
+const pct = (v, d = 1) => (v === null || v === undefined ? "—" : (100 * v).toFixed(d) + "%");
+const titleCase = (s) => String(s).replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+/* count-up for anything carrying data-count */
+function mountCounters(root = document) {
+  root.querySelectorAll("[data-count]").forEach((node) => {
+    const target = Number(node.dataset.count);
+    const dec = node.dataset.decimals ? Number(node.dataset.decimals) : 0;
+    const suffix = node.dataset.suffix || "";
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - start) / 1200);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = target * eased;
+      node.textContent = (dec ? v.toFixed(dec) : Math.round(v).toLocaleString()) + suffix;
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+/* comparison bars that travel from a baseline value to the new value */
+function mountRace(hostId, rows, opts = {}) {
+  const host = document.getElementById(hostId);
+  if (!host) return null;
+  const oldName = opts.oldName || "before";
+  const fmt = (row, v) => {
+    if (row.fmt === "pct") return pct(v);
+    if (row.fmt === "int") return Math.round(v).toLocaleString();
+    if (row.fmt === "sec") return v.toFixed(2) + "s";
+    if (row.fmt === "x") return v.toFixed(2) + "×";
+    return v.toFixed(3);
+  };
+  host.innerHTML = "";
+  rows.forEach((row) => {
+    const span = Math.max(Math.abs(row.old), Math.abs(row.new)) * 1.18 || 1;
+    const frac = (v) => row.higher === false
+      ? clamp((1 - v / span) * 100, 2, 100)
+      : clamp((v / span) * 100, 2, 100);
+    const better = row.higher === false ? row.new < row.old : row.new > row.old;
+    const delta = row.new - row.old;
+    const deltaTxt = row.fmt === "pct"
+      ? (delta * 100).toFixed(1) + "pp"
+      : (row.fmt === "int" ? Math.round(delta).toLocaleString() : delta.toFixed(2));
+    const wrap = document.createElement("div");
+    wrap.className = "race-row";
+    const tag = row.tag
+      ? `<span class="tag-pill ${row.tagTone || "mute"}">${row.tag}</span>` : "";
+    wrap.innerHTML =
+      `<div class="race-name">${row.label}${tag}<small>${row.note || ""}</small></div>
+       <div class="race-track">
+         <div class="race-fill${row.soft ? " race-fill-soft" : ""}" data-old="${frac(row.old)}" data-new="${frac(row.new)}"></div>
+         <div class="race-ghost" style="left:${frac(row.old)}%"><span>${oldName}</span></div>
+       </div>
+       <div class="race-val"><b>${fmt(row, row.new)}</b>
+         <span class="race-delta ${better ? "up" : (delta === 0 ? "flat" : "down")}">
+           ${delta > 0 ? "+" : ""}${deltaTxt}</span></div>`;
+    host.appendChild(wrap);
+  });
+  const fills = [...host.querySelectorAll(".race-fill")];
+  const park = () => fills.forEach((f) => (f.style.width = f.dataset.old + "%"));
+  const run = () => fills.forEach((f, i) => setTimeout(() => (f.style.width = f.dataset.new + "%"), i * 100));
+  park();
+  let on = false;
+  const api = {
+    toggle() { on = !on; on ? run() : park(); return on; },
+    play() { if (!on) { on = true; run(); } },
+  };
+  if (opts.buttonId) {
+    const btn = document.getElementById(opts.buttonId);
+    const hint = opts.hintId ? document.getElementById(opts.hintId) : null;
+    btn.addEventListener("click", () => {
+      const now = api.toggle();
+      btn.textContent = now ? (opts.backLabel || "↺ Reset") : (opts.playLabel || "▶ Run the diff");
+      if (hint) hint.textContent = now ? (opts.hintAfter || "") : (opts.hintBefore || "");
+    });
+    new IntersectionObserver((entries, obs) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting && !on) { btn.click(); obs.disconnect(); }
+      });
+    }, { threshold: 0.35 }).observe(host);
+  }
+  return api;
+}
+
+/* single tooltip element shared by every chart in a report */
+function makeTip(hostId) {
+  const host = document.getElementById(hostId);
+  const tip = document.createElement("div");
+  tip.className = "tip";
+  tip.hidden = true;
+  host.appendChild(tip);
+  return {
+    show(ev, html) {
+      const box = host.getBoundingClientRect();
+      tip.hidden = false;
+      tip.innerHTML = html;
+      tip.style.left = ev.clientX - box.left + "px";
+      tip.style.top = ev.clientY - box.top + "px";
+    },
+    hide() { tip.hidden = true; },
+  };
+}
+
+/* compact multi-series line chart with an optional epoch cursor */
+function lineChart(svg, series, opts = {}) {
+  const W = opts.width || 720, H = opts.height || 260;
+  const ML = opts.marginLeft || 48, MB = 30, MT = 12, MR = 14;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = "";
+  const all = series.flatMap((s) => s.values.filter((v) => v != null && !isNaN(v)));
+  if (!all.length) return;
+  let lo = opts.min != null ? opts.min : Math.min(...all);
+  let hi = opts.max != null ? opts.max : Math.max(...all);
+  if (hi === lo) { hi = lo + 1; }
+  const pad = (hi - lo) * 0.08;
+  lo -= pad; hi += pad;
+  const n = Math.max(...series.map((s) => s.values.length), 2);
+  const px = (i) => ML + (i / (n - 1)) * (W - ML - MR);
+  const py = (v) => H - MB - ((v - lo) / (hi - lo)) * (H - MB - MT);
+  for (let t = 0; t <= 4; t++) {
+    const v = lo + (t / 4) * (hi - lo);
+    svg.appendChild(el("line", { x1: ML, x2: W - MR, y1: py(v), y2: py(v), stroke: "rgba(148,163,184,0.14)" }));
+    svg.appendChild(svgText(
+      { x: ML - 8, y: py(v) + 4, "text-anchor": "end", fill: "#94a3b8", "font-size": 11 },
+      opts.yFormat === "percent" ? (100 * v).toFixed(0) + "%" : v.toFixed(opts.yDigits ?? 2)));
+  }
+  series.forEach((s) => {
+    const pts = s.values.map((v, i) => [px(i), py(v)]).filter((p) => !isNaN(p[1]));
+    if (pts.length < 2) return;
+    svg.appendChild(el("polyline", {
+      points: pts.map((p) => p.join(",")).join(" "), fill: "none", stroke: s.color,
+      "stroke-width": s.width || 2.2, "stroke-dasharray": s.dash || "none", "stroke-linejoin": "round",
+    }));
+    const last = pts[pts.length - 1];
+    svg.appendChild(el("circle", { cx: last[0], cy: last[1], r: 3.4, fill: s.color }));
+  });
+  if (opts.xLabel) {
+    svg.appendChild(svgText(
+      { x: (W + ML) / 2, y: H - 6, "text-anchor": "middle", fill: "#94a3b8", "font-size": 11 }, opts.xLabel));
+  }
+  return { px, py, W, H, ML, MR, MB, MT };
+}
+
+function legendHTML(series) {
+  return series.map((s) =>
+    `<span style="display:inline-flex;align-items:center;gap:6px;margin-right:14px;font-size:.8rem">
+      <span style="width:14px;height:3px;background:${s.color};display:inline-block"></span>${s.label}</span>`).join("");
+}
+
+/* histogram from {edges, counts} or {centers, counts} */
+function histChart(svg, groups, opts = {}) {
+  const W = opts.width || 720, H = opts.height || 240, ML = 44, MB = 32, MT = 12, MR = 12;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = "";
+  const nb = Math.max(...groups.map((g) => g.counts.length));
+  const peak = Math.max(...groups.flatMap((g) => g.counts), 1);
+  const bw = (W - ML - MR) / nb;
+  groups.forEach((g, gi) => {
+    g.counts.forEach((c, i) => {
+      const h = (c / peak) * (H - MB - MT);
+      const x = ML + i * bw + (gi * bw) / (groups.length * 1.6);
+      svg.appendChild(el("rect", {
+        x: x + 0.5, y: H - MB - h, width: Math.max(1, bw / groups.length - 1), height: h,
+        fill: g.color, opacity: g.opacity || 0.8, rx: 1.5,
+      }));
+    });
+  });
+  svg.appendChild(el("line", { x1: ML, x2: W - MR, y1: H - MB, y2: H - MB, stroke: "rgba(148,163,184,0.3)" }));
+  const ticks = opts.ticks || [];
+  ticks.forEach((t) => {
+    const x = ML + t.at * (W - ML - MR);
+    svg.appendChild(svgText({ x, y: H - MB + 16, "text-anchor": "middle", fill: "#94a3b8", "font-size": 11 }, t.label));
+  });
+  if (opts.yLabel) {
+    svg.appendChild(svgText({ x: 6, y: MT + 10, fill: "#94a3b8", "font-size": 11 }, opts.yLabel));
+  }
+}
+
+    
+const XB = [0, 0.4, 0.6, 1];
+const YB = [0, 0.25, 0.45, 0.55, 1];
+const ZONE_LABELS = [
+  "own back left", "own back center", "own back right",
+  "own front left", "own front center", "own front right",
+  "river left", "river center", "river right",
+  "enemy left", "enemy center", "enemy right",
+];
+
+function towerOverlay(g, w, h, ox, oy, scale, opacity) {
+  const tw = w * 0.11;
+  const tower = (cx, cy, king, friendly) => {
+    const size = king ? tw * 1.35 : tw;
+    g.appendChild(el("rect", {
+      x: cx - size / 2, y: cy - size / 2, width: size, height: size, rx: 3 * scale,
+      fill: friendly ? "#1e3a8a" : "#7f1d1d",
+      stroke: friendly ? "#93c5fd" : "#fca5a5", "stroke-width": 1.2 * scale, opacity,
+    }));
+  };
+  tower(ox + w * 0.22, oy + h * 0.19, false, false);
+  tower(ox + w * 0.78, oy + h * 0.19, false, false);
+  tower(ox + w * 0.5, oy + h * 0.075, true, false);
+  tower(ox + w * 0.22, oy + h * 0.81, false, true);
+  tower(ox + w * 0.78, oy + h * 0.81, false, true);
+  tower(ox + w * 0.5, oy + h * 0.925, true, true);
+}
+
+function arenaBackdrop(g, w, h, ox, oy, scale) {
+  const rect = (x, y, ww, hh, attrs) =>
+    g.appendChild(el("rect", Object.assign({ x, y, width: ww, height: hh }, attrs)));
+  rect(ox, oy, w, h, { fill: "#0d1a2b", rx: 10 * scale });
+  rect(ox, oy, w, h * 0.5, { fill: "#991b1b", opacity: 0.28, rx: 10 * scale });
+  rect(ox, oy + h * 0.5, w, h * 0.5, { fill: "#1d4ed8", opacity: 0.22 });
+  rect(ox, oy + h * 0.465, w, h * 0.07, { fill: "#1d4ed8", opacity: 0.45 });
+  rect(ox + w * 0.16, oy + h * 0.455, w * 0.12, h * 0.09, { fill: "#7c5c33", opacity: 0.75 });
+  rect(ox + w * 0.72, oy + h * 0.455, w * 0.12, h * 0.09, { fill: "#7c5c33", opacity: 0.75 });
+  towerOverlay(g, w, h, ox, oy, scale, 0.85);
+}
+
+function zoneCenter(z) {
+  const col = z % 3, row = Math.floor(z / 3);
+  return [(XB[col] + XB[col + 1]) / 2, (YB[row] + YB[row + 1]) / 2];
+}
+
+/* draws the 12-zone bubble map; values are shares (or deltas when diverging) */
+function drawZoneBubbles(g, values, geom, opts = {}) {
+  const { xPx, yPx } = geom;
+  const diverging = !!opts.diverging;
+  const peak = Math.max(...values.map((v) => Math.abs(v)), 1e-6);
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 3; col++) {
+      const z = row * 3 + col;
+      const x0 = xPx(XB[col]), x1 = xPx(XB[col + 1]);
+      const y0 = yPx(YB[row + 1]), y1 = yPx(YB[row]);
+      const v = values[z];
+      const mag = Math.abs(v) / peak;
+      const fill = diverging ? (v >= 0 ? "#34d399" : "#f87171") : (opts.color || "#22d3ee");
+      const cell = el("rect", {
+        x: x0 + 1, y: y0 + 1, width: x1 - x0 - 2, height: y1 - y0 - 2, rx: 5,
+        fill: diverging ? fill : "#e2e8f0",
+        opacity: (diverging ? 0.04 + 0.16 * mag : 0.02 + 0.05 * mag).toFixed(3),
+        class: "zone-cell", stroke: "rgba(226,232,240,0.22)", "stroke-width": 1,
+      });
+      g.appendChild(cell);
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      const rmax = Math.min(x1 - x0, y1 - y0) * 0.44;
+      g.appendChild(el("circle", {
+        cx, cy, r: Math.max(9, Math.sqrt(mag) * rmax), fill, opacity: 0.62,
+        stroke: fill, "stroke-width": 1.5, "pointer-events": "none",
+      }));
+      g.appendChild(svgText(
+        { x: cx, y: cy + 4, "text-anchor": "middle", fill: "#04131f", "font-size": 11,
+          "font-weight": 800, "pointer-events": "none" },
+        diverging ? (v >= 0 ? "+" : "") + (v * 100).toFixed(1) : (v * 100).toFixed(0) + "%"));
+      if (opts.onHover) {
+        cell.addEventListener("mousemove", (ev) => opts.onHover(ev, z));
+        cell.addEventListener("mouseleave", () => opts.onLeave && opts.onLeave());
+      }
+    }
+  }
+}
+
+/* full arena with side captions; returns pixel mappers */
+function mountArena(svg, opts = {}) {
+  const W = opts.W || 300, H = opts.H || 470, PAD = 6, TOP = 20;
+  const AW = W - PAD * 2, AH = H - TOP - 22;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = "";
+  const g = el("g");
+  svg.appendChild(g);
+  arenaBackdrop(g, AW, AH, PAD, TOP, 1);
+  const geom = {
+    xPx: (nx) => PAD + nx * AW,
+    yPx: (ny) => TOP + (1 - ny) * AH,
+    W, H, PAD, TOP, AW, AH,
+  };
+  geom.captions = () => {
+    g.appendChild(svgText(
+      { x: PAD, y: 13, fill: "#fca5a5", "font-size": 11, "letter-spacing": "0.14em", "font-weight": 700 },
+      "ENEMY SIDE ↑"));
+    g.appendChild(svgText(
+      { x: PAD, y: H - 6, fill: "#93c5fd", "font-size": 11, "letter-spacing": "0.14em", "font-weight": 700 },
+      "YOUR SIDE ↓"));
+  };
+  return { g, geom };
+}
+
+    
+const DATA = {"matched":[{"policy_id":"policy_bc_v4","policy_path":"models/policy_bc_v4","panel":"matched","trained_on":"policy_bc_v4","fit":{"acc":1.0,"auc":1.0,"n":3980,"mean_score_real":0.9997654010358369,"mean_score_fake":0.00012760162757330585,"log_loss":0.00022315587931933062,"fool_rate_at_0.5":0.0,"mean_P_human_ai":0.00012760162757330585,"mean_P_human_real":0.9997654010358369,"n_train_rows":3383,"n_val_rows":597,"hgb_iterations":400,"boost_curve":[{"iteration":0,"train_loss":0.6931335699121838,"val_loss":0.6931402502341754},{"iteration":5,"train_loss":0.49266093957347135,"val_loss":0.49306009764527764},{"iteration":10,"train_loss":0.36187453068036296,"val_loss":0.36253619869503784},{"iteration":15,"train_loss":0.2713016023148361,"val_loss":0.272374467481908},{"iteration":20,"train_loss":0.20627508401822808,"val_loss":0.20775354324462544},{"iteration":25,"train_loss":0.15734247125055978,"val_loss":0.1588512242101801},{"iteration":30,"train_loss":0.12068362109166106,"val_loss":0.12242983944221902},{"iteration":35,"train_loss":0.09301469797666094,"val_loss":0.09527074009232282},{"iteration":40,"train_loss":0.07199076734421468,"val_loss":0.07462042443006213},{"iteration":45,"train_loss":0.05591927511794955,"val_loss":0.058873927630763614},{"iteration":50,"train_loss":0.043564224804962616,"val_loss":0.04683624188642347},{"iteration":55,"train_loss":0.0340260923214224,"val_loss":0.03750947251952921},{"iteration":60,"train_loss":0.02657271777938182,"val_loss":0.029905063635195187},{"iteration":65,"train_loss":0.020781317785134028,"val_loss":0.023913479796756613},{"iteration":70,"train_loss":0.016282044234165016,"val_loss":0.019320795674972475},{"iteration":75,"train_loss":0.012762132767951885,"val_loss":0.015585574884408539},{"iteration":80,"train_loss":0.01002674220015342,"val_loss":0.01277744233307947},{"iteration":85,"train_loss":0.007883004650606564,"val_loss":0.010603018131503833},{"iteration":90,"train_loss":0.006214955718999371,"val_loss":0.00901805224566284},{"iteration":95,"train_loss":0.0049116770217952875,"val_loss":0.00769759096147975},{"iteration":100,"train_loss":0.003892670510272113,"val_loss":0.00671810567642976},{"iteration":105,"train_loss":0.0030955028502739003,"val_loss":0.00591952034583333},{"iteration":110,"train_loss":0.00246674230528853,"val_loss":0.005252969379880804},{"iteration":115,"train_loss":0.001974589315223308,"val_loss":0.00477955841047309},{"iteration":120,"train_loss":0.001583145997078499,"val_loss":0.004296349029302558},{"iteration":125,"train_loss":0.0012740137758884475,"val_loss":0.0038696509501574697},{"iteration":130,"train_loss":0.0010297097928378797,"val_loss":0.003550714951413097},{"iteration":135,"train_loss":0.0008376760275417359,"val_loss":0.0033251126933534236},{"iteration":140,"train_loss":0.0006832644193607217,"val_loss":0.003059248859053756},{"iteration":145,"train_loss":0.0005624784410662222,"val_loss":0.002886078260020514},{"iteration":150,"train_loss":0.0004655772160820993,"val_loss":0.002727308759868066},{"iteration":155,"train_loss":0.0003882644883189713,"val_loss":0.0025598506900262356},{"iteration":160,"train_loss":0.00032624380574135107,"val_loss":0.0024413882147767355},{"iteration":165,"train_loss":0.00027565262169576283,"val_loss":0.0023498271986852823},{"iteration":170,"train_loss":0.0002345930565856814,"val_loss":0.0022752590714479157},{"iteration":175,"train_loss":0.00020141240921311783,"val_loss":0.0021873670209085643},{"iteration":180,"train_loss":0.00017411815309640457,"val_loss":0.0021335743942560137},{"iteration":185,"train_loss":0.00015179124746386483,"val_loss":0.00208193110486513},{"iteration":190,"train_loss":0.00013338696278008798,"val_loss":0.002100683824613195},{"iteration":195,"train_loss":0.00011783634704329879,"val_loss":0.002073141942519769},{"iteration":200,"train_loss":0.0001050128557910438,"val_loss":0.002039571172419124},{"iteration":205,"train_loss":9.421610372508011e-05,"val_loss":0.0020110621724435318},{"iteration":210,"train_loss":8.503867035298148e-05,"val_loss":0.0020198794840617486},{"iteration":215,"train_loss":7.712958690768737e-05,"val_loss":0.001989825059053928},{"iteration":220,"train_loss":7.026257936374972e-05,"val_loss":0.001973075514168545},{"iteration":225,"train_loss":6.445001385822289e-05,"val_loss":0.001984582215293175},{"iteration":230,"train_loss":5.9377846430208764e-05,"val_loss":0.001940332789727096},{"iteration":235,"train_loss":5.4838755927336995e-05,"val_loss":0.0019364262577243805},{"iteration":240,"train_loss":5.08650770091377e-05,"val_loss":0.0019075257516137252},{"iteration":245,"train_loss":4.741635312625258e-05,"val_loss":0.0018825418916472178},{"iteration":250,"train_loss":4.430670109157755e-05,"val_loss":0.0018838489826268428},{"iteration":255,"train_loss":4.153428283997436e-05,"val_loss":0.0018680319680818788},{"iteration":260,"train_loss":3.907919343084054e-05,"val_loss":0.0018626947520155685},{"iteration":265,"train_loss":3.681755903927758e-05,"val_loss":0.0018692768045901046},{"iteration":270,"train_loss":3.4830737647289676e-05,"val_loss":0.001850984298818085},{"iteration":275,"train_loss":3.302747110520676e-05,"val_loss":0.001856333721856205},{"iteration":280,"train_loss":3.138421305075458e-05,"val_loss":0.001834304966410851},{"iteration":285,"train_loss":2.9866417451448106e-05,"val_loss":0.0018221101589393854},{"iteration":290,"train_loss":2.8476879549415884e-05,"val_loss":0.0018299589972761074},{"iteration":295,"train_loss":2.7205545723923927e-05,"val_loss":0.0018136838863866726},{"iteration":300,"train_loss":2.6041238601003078e-05,"val_loss":0.001814293939898166},{"iteration":305,"train_loss":2.4973153437542802e-05,"val_loss":0.0018004718928305728},{"iteration":310,"train_loss":2.3978860864618255e-05,"val_loss":0.001793415205943863},{"iteration":315,"train_loss":2.3045379326951252e-05,"val_loss":0.0017959483604818222},{"iteration":320,"train_loss":2.216640389717109e-05,"val_loss":0.0017808526948873036},{"iteration":325,"train_loss":2.1373424177045204e-05,"val_loss":0.001767160501265382},{"iteration":330,"train_loss":2.0612728348868758e-05,"val_loss":0.0017598606520785652},{"iteration":335,"train_loss":1.992285910087597e-05,"val_loss":0.0017482726234758863},{"iteration":340,"train_loss":1.9268519472305147e-05,"val_loss":0.0017348541346357555},{"iteration":345,"train_loss":1.8647036053919154e-05,"val_loss":0.0017215842954316106},{"iteration":350,"train_loss":1.8066027539869927e-05,"val_loss":0.0017220754142618464},{"iteration":355,"train_loss":1.7518559618838148e-05,"val_loss":0.0017006988694262877},{"iteration":360,"train_loss":1.6999230477491212e-05,"val_loss":0.0016887287996906323},{"iteration":365,"train_loss":1.6515108463599532e-05,"val_loss":0.001678710002772153},{"iteration":370,"train_loss":1.605627657748076e-05,"val_loss":0.0016544107588590587},{"iteration":375,"train_loss":1.5618021106481382e-05,"val_loss":0.001656145193467746},{"iteration":380,"train_loss":1.5195382478868213e-05,"val_loss":0.0016509957622958694},{"iteration":385,"train_loss":1.480135440432003e-05,"val_loss":0.0016433884811196389},{"iteration":390,"train_loss":1.4424124075164613e-05,"val_loss":0.0016335846902048592},{"iteration":395,"train_loss":1.4071553536055305e-05,"val_loss":0.0016226375763192145},{"iteration":400,"train_loss":1.3734657857157613e-05,"val_loss":0.0016211965225390603}]},"roc":[{"fpr":0.0,"tpr":0.001953125},{"fpr":0.0,"tpr":0.03515625},{"fpr":0.0,"tpr":0.068359375},{"fpr":0.0,"tpr":0.1015625},{"fpr":0.0,"tpr":0.13671875},{"fpr":0.0,"tpr":0.169921875},{"fpr":0.0,"tpr":0.203125},{"fpr":0.0,"tpr":0.236328125},{"fpr":0.0,"tpr":0.271484375},{"fpr":0.0,"tpr":0.3046875},{"fpr":0.0,"tpr":0.337890625},{"fpr":0.0,"tpr":0.37109375},{"fpr":0.0,"tpr":0.40625},{"fpr":0.0,"tpr":0.439453125},{"fpr":0.0,"tpr":0.47265625},{"fpr":0.0,"tpr":0.505859375},{"fpr":0.0,"tpr":0.541015625},{"fpr":0.0,"tpr":0.57421875},{"fpr":0.0,"tpr":0.607421875},{"fpr":0.0,"tpr":0.640625},{"fpr":0.0,"tpr":0.67578125},{"fpr":0.0,"tpr":0.708984375},{"fpr":0.0,"tpr":0.7421875},{"fpr":0.0,"tpr":0.775390625},{"fpr":0.0,"tpr":0.810546875},{"fpr":0.0,"tpr":0.84375},{"fpr":0.0,"tpr":0.876953125},{"fpr":0.0,"tpr":0.91015625},{"fpr":0.0,"tpr":0.9453125},{"fpr":0.0,"tpr":0.978515625},{"fpr":0.011834319526627219,"tpr":1.0},{"fpr":0.045364891518737675,"tpr":1.0},{"fpr":0.08086785009861933,"tpr":1.0},{"fpr":0.11439842209072978,"tpr":1.0},{"fpr":0.14792899408284024,"tpr":1.0},{"fpr":0.1814595660749507,"tpr":1.0},{"fpr":0.21696252465483234,"tpr":1.0},{"fpr":0.2504930966469428,"tpr":1.0},{"fpr":0.28402366863905326,"tpr":1.0},{"fpr":0.3175542406311637,"tpr":1.0},{"fpr":0.3530571992110454,"tpr":1.0},{"fpr":0.3865877712031558,"tpr":1.0},{"fpr":0.42011834319526625,"tpr":1.0},{"fpr":0.4536489151873767,"tpr":1.0},{"fpr":0.4891518737672584,"tpr":1.0},{"fpr":0.5226824457593688,"tpr":1.0},{"fpr":0.5562130177514792,"tpr":1.0},{"fpr":0.5897435897435898,"tpr":1.0},{"fpr":0.6252465483234714,"tpr":1.0},{"fpr":0.6587771203155819,"tpr":1.0},{"fpr":0.6923076923076923,"tpr":1.0},{"fpr":0.7258382642998028,"tpr":1.0},{"fpr":0.7613412228796844,"tpr":1.0},{"fpr":0.7948717948717948,"tpr":1.0},{"fpr":0.8284023668639053,"tpr":1.0},{"fpr":0.8619329388560157,"tpr":1.0},{"fpr":0.8974358974358975,"tpr":1.0},{"fpr":0.9309664694280079,"tpr":1.0},{"fpr":0.9644970414201184,"tpr":1.0},{"fpr":1.0,"tpr":1.0}],"acc":0.9980372914622179,"auc":1.0,"n":1019,"mean_score_real":0.996416894380842,"mean_score_fake":3.809274771888009e-05,"mean_P_human_ai":3.809274771888009e-05,"mean_P_human_real":0.996416894380842,"fool_rate_at_0.5":0.0,"detect_rate_at_0.5":1.0,"human_likeness":3.809274771888009e-05,"score_histogram":{"edges":[0.0,0.05,0.1,0.15000000000000002,0.2,0.25,0.30000000000000004,0.35000000000000003,0.4,0.45,0.5,0.55,0.6000000000000001,0.65,0.7000000000000001,0.75,0.8,0.8500000000000001,0.9,0.9500000000000001,1.0],"real":[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,1,508],"synthetic":[507,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}},{"policy_id":"policy_bc_v2","policy_path":"models/policy_bc","panel":"matched","trained_on":"policy_bc_v2","fit":{"acc":0.999748743718593,"auc":1.0,"n":3980,"mean_score_real":0.9996287891760162,"mean_score_fake":1.6402727077858644e-05,"log_loss":0.00028254212463065355,"fool_rate_at_0.5":0.0,"mean_P_human_ai":1.6402727077858644e-05,"mean_P_human_real":0.9996287891760162,"n_train_rows":3383,"n_val_rows":597,"hgb_iterations":400,"boost_curve":[{"iteration":0,"train_loss":0.6931456682718483,"val_loss":0.6931418458724481},{"iteration":5,"train_loss":0.49225768291842764,"val_loss":0.49250998590589323},{"iteration":10,"train_loss":0.3610654332165955,"val_loss":0.3614594652560808},{"iteration":15,"train_loss":0.2702148743674761,"val_loss":0.2705781061532713},{"iteration":20,"train_loss":0.20506715933277242,"val_loss":0.2055123607601608},{"iteration":25,"train_loss":0.15691899960800956,"val_loss":0.1573371630107471},{"iteration":30,"train_loss":0.12079147560539229,"val_loss":0.12113880768141375},{"iteration":35,"train_loss":0.09345604579891702,"val_loss":0.09399420159671808},{"iteration":40,"train_loss":0.07264523198727914,"val_loss":0.07341215359098115},{"iteration":45,"train_loss":0.05659274477524757,"val_loss":0.05753249857239633},{"iteration":50,"train_loss":0.04413629377929203,"val_loss":0.04512570954312746},{"iteration":55,"train_loss":0.034435758348892696,"val_loss":0.03535045437333108},{"iteration":60,"train_loss":0.026960889110540828,"val_loss":0.027937455892957923},{"iteration":65,"train_loss":0.02110607420609059,"val_loss":0.022081516469666742},{"iteration":70,"train_loss":0.016529426272109824,"val_loss":0.017436483672458595},{"iteration":75,"train_loss":0.012958239919593738,"val_loss":0.013820919021684648},{"iteration":80,"train_loss":0.010164641110950865,"val_loss":0.011024996527906172},{"iteration":85,"train_loss":0.007989418892544254,"val_loss":0.008736265135005186},{"iteration":90,"train_loss":0.006295179395070961,"val_loss":0.006975071836213071},{"iteration":95,"train_loss":0.00496834955377759,"val_loss":0.005608450266104452},{"iteration":100,"train_loss":0.003924507671474894,"val_loss":0.0044829084345222765},{"iteration":105,"train_loss":0.0031061842732323847,"val_loss":0.003599166903377382},{"iteration":110,"train_loss":0.0024686168879499504,"val_loss":0.00290033840536239},{"iteration":115,"train_loss":0.0019629301593147965,"val_loss":0.002315849794541317},{"iteration":120,"train_loss":0.0015678903778289523,"val_loss":0.0018740647456062666},{"iteration":125,"train_loss":0.001258937731616025,"val_loss":0.0015236119436888662},{"iteration":130,"train_loss":0.0010138391076924332,"val_loss":0.0012356013963713518},{"iteration":135,"train_loss":0.0008200290506670812,"val_loss":0.0010001200563699928},{"iteration":140,"train_loss":0.0006670666863562921,"val_loss":0.0008300390041107362},{"iteration":145,"train_loss":0.0005460216268814743,"val_loss":0.000690056876326923},{"iteration":150,"train_loss":0.0004499188787751408,"val_loss":0.000577836858473664},{"iteration":155,"train_loss":0.0003729338685614241,"val_loss":0.0004872076116262439},{"iteration":160,"train_loss":0.0003120880643355504,"val_loss":0.0004182607602835243},{"iteration":165,"train_loss":0.0002631319287292625,"val_loss":0.0003586822744842318},{"iteration":170,"train_loss":0.00022394931658380917,"val_loss":0.00031478840811702095},{"iteration":175,"train_loss":0.00019173468670117622,"val_loss":0.00027199410510005074},{"iteration":180,"train_loss":0.00016588327680491303,"val_loss":0.00023668079397758492},{"iteration":185,"train_loss":0.00014428653009031353,"val_loss":0.00020736985065747285},{"iteration":190,"train_loss":0.00012666142891594223,"val_loss":0.00018512531465870262},{"iteration":195,"train_loss":0.00011198666072313141,"val_loss":0.00016498027689748794},{"iteration":200,"train_loss":9.960549918336652e-05,"val_loss":0.00014670547935295342},{"iteration":205,"train_loss":8.923341254833493e-05,"val_loss":0.0001343132577300712},{"iteration":210,"train_loss":8.047400238936338e-05,"val_loss":0.0001230840708188669},{"iteration":215,"train_loss":7.292736111404898e-05,"val_loss":0.00011334895400649822},{"iteration":220,"train_loss":6.648675824765817e-05,"val_loss":0.00010304953125168924},{"iteration":225,"train_loss":6.0957885533430735e-05,"val_loss":9.647750434746176e-05},{"iteration":230,"train_loss":5.6128472548924546e-05,"val_loss":9.047018164519112e-05},{"iteration":235,"train_loss":5.184509660117741e-05,"val_loss":8.369655568674099e-05},{"iteration":240,"train_loss":4.8141383436476464e-05,"val_loss":7.914733958100864e-05},{"iteration":245,"train_loss":4.486177651354261e-05,"val_loss":7.437704089235741e-05},{"iteration":250,"train_loss":4.191751298256423e-05,"val_loss":6.971247912340203e-05},{"iteration":255,"train_loss":3.9311467225859324e-05,"val_loss":6.581870419875672e-05},{"iteration":260,"train_loss":3.6966845544879744e-05,"val_loss":6.263795316040517e-05},{"iteration":265,"train_loss":3.489510123280618e-05,"val_loss":5.946125517622561e-05},{"iteration":270,"train_loss":3.3030202315729064e-05,"val_loss":5.7205822823670166e-05},{"iteration":275,"train_loss":3.1314761669197005e-05,"val_loss":5.47481818116446e-05},{"iteration":280,"train_loss":2.9749299116786972e-05,"val_loss":5.1999951088174276e-05},{"iteration":285,"train_loss":2.8335336587594282e-05,"val_loss":5.00000079238e-05},{"iteration":290,"train_loss":2.7036563718264766e-05,"val_loss":4.7685513730161135e-05},{"iteration":295,"train_loss":2.58353637812959e-05,"val_loss":4.598018959546356e-05},{"iteration":300,"train_loss":2.4738885395449648e-05,"val_loss":4.424436898302314e-05},{"iteration":305,"train_loss":2.3719901540039953e-05,"val_loss":4.271213500535463e-05},{"iteration":310,"train_loss":2.2770130055446156e-05,"val_loss":4.0952961482449834e-05},{"iteration":315,"train_loss":2.190585578930181e-05,"val_loss":3.967690857992743e-05},{"iteration":320,"train_loss":2.108277416390668e-05,"val_loss":3.824900440805975e-05},{"iteration":325,"train_loss":2.032196126843546e-05,"val_loss":3.7130250362488606e-05},{"iteration":330,"train_loss":1.961061458072659e-05,"val_loss":3.586528978157098e-05},{"iteration":335,"train_loss":1.8946101858208755e-05,"val_loss":3.4941721327741003e-05},{"iteration":340,"train_loss":1.832294099956891e-05,"val_loss":3.3696439586748055e-05},{"iteration":345,"train_loss":1.773267115880283e-05,"val_loss":3.277597099428192e-05},{"iteration":350,"train_loss":1.718213760535843e-05,"val_loss":3.18263090733603e-05},{"iteration":355,"train_loss":1.6668886335649678e-05,"val_loss":3.099706443889629e-05},{"iteration":360,"train_loss":1.6179437717770587e-05,"val_loss":3.0065811180044405e-05},{"iteration":365,"train_loss":1.571347388502388e-05,"val_loss":2.931118859742753e-05},{"iteration":370,"train_loss":1.527486351326596e-05,"val_loss":2.848061597938145e-05},{"iteration":375,"train_loss":1.4867753245672765e-05,"val_loss":2.7941041616360957e-05},{"iteration":380,"train_loss":1.4472219453728708e-05,"val_loss":2.7208129959976263e-05},{"iteration":385,"train_loss":1.4102104496023488e-05,"val_loss":2.6642315270852753e-05},{"iteration":390,"train_loss":1.3738639242260308e-05,"val_loss":2.607187981839131e-05},{"iteration":395,"train_loss":1.3406070075494349e-05,"val_loss":2.546778309451884e-05},{"iteration":400,"train_loss":1.308109319107441e-05,"val_loss":2.4905908198173868e-05}]},"roc":[{"fpr":0.0,"tpr":0.001953125},{"fpr":0.0,"tpr":0.03515625},{"fpr":0.0,"tpr":0.068359375},{"fpr":0.0,"tpr":0.1015625},{"fpr":0.0,"tpr":0.13671875},{"fpr":0.0,"tpr":0.169921875},{"fpr":0.0,"tpr":0.203125},{"fpr":0.0,"tpr":0.236328125},{"fpr":0.0,"tpr":0.271484375},{"fpr":0.0,"tpr":0.3046875},{"fpr":0.0,"tpr":0.337890625},{"fpr":0.0,"tpr":0.37109375},{"fpr":0.0,"tpr":0.40625},{"fpr":0.0,"tpr":0.439453125},{"fpr":0.0,"tpr":0.47265625},{"fpr":0.0,"tpr":0.505859375},{"fpr":0.0,"tpr":0.541015625},{"fpr":0.0,"tpr":0.57421875},{"fpr":0.0,"tpr":0.607421875},{"fpr":0.0,"tpr":0.640625},{"fpr":0.0,"tpr":0.67578125},{"fpr":0.0,"tpr":0.708984375},{"fpr":0.0,"tpr":0.7421875},{"fpr":0.0,"tpr":0.775390625},{"fpr":0.0,"tpr":0.810546875},{"fpr":0.0,"tpr":0.84375},{"fpr":0.0,"tpr":0.876953125},{"fpr":0.0,"tpr":0.91015625},{"fpr":0.0,"tpr":0.9453125},{"fpr":0.0,"tpr":0.978515625},{"fpr":0.011834319526627219,"tpr":1.0},{"fpr":0.045364891518737675,"tpr":1.0},{"fpr":0.08086785009861933,"tpr":1.0},{"fpr":0.11439842209072978,"tpr":1.0},{"fpr":0.14792899408284024,"tpr":1.0},{"fpr":0.1814595660749507,"tpr":1.0},{"fpr":0.21696252465483234,"tpr":1.0},{"fpr":0.2504930966469428,"tpr":1.0},{"fpr":0.28402366863905326,"tpr":1.0},{"fpr":0.3175542406311637,"tpr":1.0},{"fpr":0.3530571992110454,"tpr":1.0},{"fpr":0.3865877712031558,"tpr":1.0},{"fpr":0.42011834319526625,"tpr":1.0},{"fpr":0.4536489151873767,"tpr":1.0},{"fpr":0.4891518737672584,"tpr":1.0},{"fpr":0.5226824457593688,"tpr":1.0},{"fpr":0.5562130177514792,"tpr":1.0},{"fpr":0.5897435897435898,"tpr":1.0},{"fpr":0.6252465483234714,"tpr":1.0},{"fpr":0.6587771203155819,"tpr":1.0},{"fpr":0.6923076923076923,"tpr":1.0},{"fpr":0.7258382642998028,"tpr":1.0},{"fpr":0.7613412228796844,"tpr":1.0},{"fpr":0.7948717948717948,"tpr":1.0},{"fpr":0.8284023668639053,"tpr":1.0},{"fpr":0.8619329388560157,"tpr":1.0},{"fpr":0.8974358974358975,"tpr":1.0},{"fpr":0.9309664694280079,"tpr":1.0},{"fpr":0.9644970414201184,"tpr":1.0},{"fpr":1.0,"tpr":1.0}],"acc":0.9990186457311089,"auc":1.0,"n":1019,"mean_score_real":0.9970176663735841,"mean_score_fake":2.2638500048010705e-05,"mean_P_human_ai":2.2638500048010705e-05,"mean_P_human_real":0.9970176663735841,"fool_rate_at_0.5":0.0,"detect_rate_at_0.5":1.0,"human_likeness":2.2638500048010705e-05,"score_histogram":{"edges":[0.0,0.05,0.1,0.15000000000000002,0.2,0.25,0.30000000000000004,0.35000000000000003,0.4,0.45,0.5,0.55,0.6000000000000001,0.65,0.7000000000000001,0.75,0.8,0.8500000000000001,0.9,0.9500000000000001,1.0],"real":[0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,1,0,508],"synthetic":[507,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}},{"policy_id":"policy_bc_v4_1","policy_path":"models/policy_bc_v4.1","panel":"matched","trained_on":"policy_bc_v4_1","fit":{"acc":1.0,"auc":1.0,"n":3980,"mean_score_real":0.9996991653739355,"mean_score_fake":1.723552286634327e-05,"log_loss":0.0001876709057286847,"fool_rate_at_0.5":0.0,"mean_P_human_ai":1.723552286634327e-05,"mean_P_human_real":0.9996991653739355,"n_train_rows":3383,"n_val_rows":597,"hgb_iterations":400,"boost_curve":[{"iteration":0,"train_loss":0.6931296984164822,"val_loss":0.6931181029670488},{"iteration":5,"train_loss":0.4928965835514818,"val_loss":0.4920582282956828},{"iteration":10,"train_loss":0.36214952721888005,"val_loss":0.3610291825240827},{"iteration":15,"train_loss":0.2715752755148066,"val_loss":0.27041188612052747},{"iteration":20,"train_loss":0.20645455633783105,"val_loss":0.20541737336823093},{"iteration":25,"train_loss":0.15788099674930828,"val_loss":0.15729890957046966},{"iteration":30,"train_loss":0.12140210465516398,"val_loss":0.12133537528217131},{"iteration":35,"train_loss":0.09377527912528973,"val_loss":0.0939855940434974},{"iteration":40,"train_loss":0.07265187390354055,"val_loss":0.07291123187580474},{"iteration":45,"train_loss":0.056459732075112935,"val_loss":0.056753164847608006},{"iteration":50,"train_loss":0.04393426019267701,"val_loss":0.04475797143844446},{"iteration":55,"train_loss":0.03423594853986967,"val_loss":0.035298333967362504},{"iteration":60,"train_loss":0.02674778033293212,"val_loss":0.028143586739625463},{"iteration":65,"train_loss":0.020941042852017953,"val_loss":0.0222143147128355},{"iteration":70,"train_loss":0.016397877607731984,"val_loss":0.01763612184769384},{"iteration":75,"train_loss":0.012872080195097568,"val_loss":0.014100543183672496},{"iteration":80,"train_loss":0.01012406549993674,"val_loss":0.011231180896244156},{"iteration":85,"train_loss":0.00796986986450925,"val_loss":0.009036060939332095},{"iteration":90,"train_loss":0.006287359106142194,"val_loss":0.0073192035310931155},{"iteration":95,"train_loss":0.0049650122521395995,"val_loss":0.005920179635545357},{"iteration":100,"train_loss":0.003931092860739315,"val_loss":0.0047837749766489555},{"iteration":105,"train_loss":0.0031194888906641884,"val_loss":0.003940073197051286},{"iteration":110,"train_loss":0.0024848990619709722,"val_loss":0.0032272569993968166},{"iteration":115,"train_loss":0.001980449093432995,"val_loss":0.0026848613232999534},{"iteration":120,"train_loss":0.0015872032973987234,"val_loss":0.0022755886118783677},{"iteration":125,"train_loss":0.0012752971673944103,"val_loss":0.0019337280934115873},{"iteration":130,"train_loss":0.0010290248734618243,"val_loss":0.0016620349805654298},{"iteration":135,"train_loss":0.0008348758313257234,"val_loss":0.001429571735180861},{"iteration":140,"train_loss":0.0006810377700359176,"val_loss":0.00125420092043825},{"iteration":145,"train_loss":0.0005589595383065894,"val_loss":0.0011379703271929425},{"iteration":150,"train_loss":0.00046093639031810944,"val_loss":0.0010612495038748227},{"iteration":155,"train_loss":0.00038409869395680194,"val_loss":0.0009741217669915835},{"iteration":160,"train_loss":0.00032138894417882695,"val_loss":0.0009466706114584767},{"iteration":165,"train_loss":0.000270987965448257,"val_loss":0.0008783301384173341},{"iteration":170,"train_loss":0.0002307728884560404,"val_loss":0.0008271199463456033},{"iteration":175,"train_loss":0.00019776563011439897,"val_loss":0.0007771467514131616},{"iteration":180,"train_loss":0.00017110484281350873,"val_loss":0.0007315850041957218},{"iteration":185,"train_loss":0.00014912332284185622,"val_loss":0.0007208725640546242},{"iteration":190,"train_loss":0.00013088323886957471,"val_loss":0.0006940375520414581},{"iteration":195,"train_loss":0.00011583709654680764,"val_loss":0.0006694522157477802},{"iteration":200,"train_loss":0.00010323868520583268,"val_loss":0.0006492299510922377},{"iteration":205,"train_loss":9.258637192846556e-05,"val_loss":0.0006419564065536406},{"iteration":210,"train_loss":8.342018136746836e-05,"val_loss":0.0006318686369024013},{"iteration":215,"train_loss":7.57087955709456e-05,"val_loss":0.0006285722243779149},{"iteration":220,"train_loss":6.90443759504983e-05,"val_loss":0.0006296423164459448},{"iteration":225,"train_loss":6.325095237329361e-05,"val_loss":0.0006282650999063903},{"iteration":230,"train_loss":5.821790009488809e-05,"val_loss":0.0006088535855811128},{"iteration":235,"train_loss":5.383236620931921e-05,"val_loss":0.0006033909527876401},{"iteration":240,"train_loss":5.001335527208851e-05,"val_loss":0.0005907803729321328},{"iteration":245,"train_loss":4.658872672760094e-05,"val_loss":0.0005950653351482324},{"iteration":250,"train_loss":4.3562664326421585e-05,"val_loss":0.0005867103854655816},{"iteration":255,"train_loss":4.0825999301176336e-05,"val_loss":0.0005760661477091585},{"iteration":260,"train_loss":3.842370854441594e-05,"val_loss":0.0005755243560016521},{"iteration":265,"train_loss":3.6251619212785826e-05,"val_loss":0.0005630662527019521},{"iteration":270,"train_loss":3.4265334594088e-05,"val_loss":0.0005567399653132885},{"iteration":275,"train_loss":3.248620256171694e-05,"val_loss":0.0005511457230292044},{"iteration":280,"train_loss":3.086541947264653e-05,"val_loss":0.0005483609567645481},{"iteration":285,"train_loss":2.9374125663474198e-05,"val_loss":0.0005399878428316008},{"iteration":290,"train_loss":2.8012908085156714e-05,"val_loss":0.0005417798625107377},{"iteration":295,"train_loss":2.6761121715826688e-05,"val_loss":0.0005438138431658095},{"iteration":300,"train_loss":2.562555573553377e-05,"val_loss":0.0005452007612668118},{"iteration":305,"train_loss":2.4556849808766078e-05,"val_loss":0.0005425730597596594},{"iteration":310,"train_loss":2.3576205424254307e-05,"val_loss":0.000544620404764405},{"iteration":315,"train_loss":2.2658251043531075e-05,"val_loss":0.0005468654742342579},{"iteration":320,"train_loss":2.1802460378110382e-05,"val_loss":0.0005422602526254558},{"iteration":325,"train_loss":2.0999742729936998e-05,"val_loss":0.0005416602949645223},{"iteration":330,"train_loss":2.0267764254246484e-05,"val_loss":0.0005381773697676101},{"iteration":335,"train_loss":1.958548381603846e-05,"val_loss":0.0005388143064483292},{"iteration":340,"train_loss":1.8928711776021443e-05,"val_loss":0.0005390408926581747},{"iteration":345,"train_loss":1.831726907141815e-05,"val_loss":0.0005331683464845101},{"iteration":350,"train_loss":1.774461705619665e-05,"val_loss":0.0005303032454458625},{"iteration":355,"train_loss":1.720485855192122e-05,"val_loss":0.0005302325318728199},{"iteration":360,"train_loss":1.6692088594635638e-05,"val_loss":0.0005305839862691366},{"iteration":365,"train_loss":1.621218038582278e-05,"val_loss":0.0005271422008515626},{"iteration":370,"train_loss":1.5753544493463314e-05,"val_loss":0.0005220634965411446},{"iteration":375,"train_loss":1.5325675627039903e-05,"val_loss":0.000520865381548412},{"iteration":380,"train_loss":1.491254024837025e-05,"val_loss":0.000518506396972481},{"iteration":385,"train_loss":1.4527504508506411e-05,"val_loss":0.0005162580389991544},{"iteration":390,"train_loss":1.4159762428958053e-05,"val_loss":0.0005150092210932917},{"iteration":395,"train_loss":1.3803923626239286e-05,"val_loss":0.0005139910320699274},{"iteration":400,"train_loss":1.3470069640667207e-05,"val_loss":0.0005095277531029822}]},"roc":[{"fpr":0.0,"tpr":0.001953125},{"fpr":0.0,"tpr":0.03515625},{"fpr":0.0,"tpr":0.068359375},{"fpr":0.0,"tpr":0.1015625},{"fpr":0.0,"tpr":0.13671875},{"fpr":0.0,"tpr":0.169921875},{"fpr":0.0,"tpr":0.203125},{"fpr":0.0,"tpr":0.236328125},{"fpr":0.0,"tpr":0.271484375},{"fpr":0.0,"tpr":0.3046875},{"fpr":0.0,"tpr":0.337890625},{"fpr":0.0,"tpr":0.37109375},{"fpr":0.0,"tpr":0.40625},{"fpr":0.0,"tpr":0.439453125},{"fpr":0.0,"tpr":0.47265625},{"fpr":0.0,"tpr":0.505859375},{"fpr":0.0,"tpr":0.541015625},{"fpr":0.0,"tpr":0.57421875},{"fpr":0.0,"tpr":0.607421875},{"fpr":0.0,"tpr":0.640625},{"fpr":0.0,"tpr":0.67578125},{"fpr":0.0,"tpr":0.708984375},{"fpr":0.0,"tpr":0.7421875},{"fpr":0.0,"tpr":0.775390625},{"fpr":0.0,"tpr":0.810546875},{"fpr":0.0,"tpr":0.84375},{"fpr":0.0,"tpr":0.876953125},{"fpr":0.0,"tpr":0.91015625},{"fpr":0.0,"tpr":0.9453125},{"fpr":0.0,"tpr":0.978515625},{"fpr":0.011834319526627219,"tpr":1.0},{"fpr":0.045364891518737675,"tpr":1.0},{"fpr":0.08086785009861933,"tpr":1.0},{"fpr":0.11439842209072978,"tpr":1.0},{"fpr":0.14792899408284024,"tpr":1.0},{"fpr":0.1814595660749507,"tpr":1.0},{"fpr":0.21696252465483234,"tpr":1.0},{"fpr":0.2504930966469428,"tpr":1.0},{"fpr":0.28402366863905326,"tpr":1.0},{"fpr":0.3175542406311637,"tpr":1.0},{"fpr":0.3530571992110454,"tpr":1.0},{"fpr":0.3865877712031558,"tpr":1.0},{"fpr":0.42011834319526625,"tpr":1.0},{"fpr":0.4536489151873767,"tpr":1.0},{"fpr":0.4891518737672584,"tpr":1.0},{"fpr":0.5226824457593688,"tpr":1.0},{"fpr":0.5562130177514792,"tpr":1.0},{"fpr":0.5897435897435898,"tpr":1.0},{"fpr":0.6252465483234714,"tpr":1.0},{"fpr":0.6587771203155819,"tpr":1.0},{"fpr":0.6923076923076923,"tpr":1.0},{"fpr":0.7258382642998028,"tpr":1.0},{"fpr":0.7613412228796844,"tpr":1.0},{"fpr":0.7948717948717948,"tpr":1.0},{"fpr":0.8284023668639053,"tpr":1.0},{"fpr":0.8619329388560157,"tpr":1.0},{"fpr":0.8974358974358975,"tpr":1.0},{"fpr":0.9309664694280079,"tpr":1.0},{"fpr":0.9644970414201184,"tpr":1.0},{"fpr":1.0,"tpr":1.0}],"acc":0.9980372914622179,"auc":1.0,"n":1019,"mean_score_real":0.9962705930461748,"mean_score_fake":1.838149538810249e-05,"mean_P_human_ai":1.838149538810249e-05,"mean_P_human_real":0.9962705930461748,"fool_rate_at_0.5":0.0,"detect_rate_at_0.5":1.0,"human_likeness":1.838149538810249e-05,"score_histogram":{"edges":[0.0,0.05,0.1,0.15000000000000002,0.2,0.25,0.30000000000000004,0.35000000000000003,0.4,0.45,0.5,0.55,0.6000000000000001,0.65,0.7000000000000001,0.75,0.8,0.8500000000000001,0.9,0.9500000000000001,1.0],"real":[0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,508],"synthetic":[507,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}},{"policy_id":"policy_bc_v3","policy_path":"models/policy_bc_v3","panel":"matched","trained_on":"policy_bc_v3","fit":{"acc":1.0,"auc":1.0,"n":3980,"mean_score_real":0.9999726000495934,"mean_score_fake":1.3589570843374862e-05,"log_loss":2.0616377087551865e-05,"fool_rate_at_0.5":0.0,"mean_P_human_ai":1.3589570843374862e-05,"mean_P_human_real":0.9999726000495934,"n_train_rows":3383,"n_val_rows":597,"hgb_iterations":400,"boost_curve":[{"iteration":0,"train_loss":0.6931471200684508,"val_loss":0.6931472410514425},{"iteration":5,"train_loss":0.49287698850730444,"val_loss":0.49317885113177595},{"iteration":10,"train_loss":0.3622520482746597,"val_loss":0.3625408830269045},{"iteration":15,"train_loss":0.2709559606104275,"val_loss":0.2713158045091668},{"iteration":20,"train_loss":0.20491175290524766,"val_loss":0.20582409785982464},{"iteration":25,"train_loss":0.1565142019441352,"val_loss":0.1573836999838214},{"iteration":30,"train_loss":0.12011159933733337,"val_loss":0.12090430235415507},{"iteration":35,"train_loss":0.09269462408490978,"val_loss":0.09323193512088764},{"iteration":40,"train_loss":0.07166208380746923,"val_loss":0.07243169947327498},{"iteration":45,"train_loss":0.05556356800393338,"val_loss":0.05655186594493267},{"iteration":50,"train_loss":0.043202999195442814,"val_loss":0.04429481366367792},{"iteration":55,"train_loss":0.033720578946880006,"val_loss":0.034694372600498485},{"iteration":60,"train_loss":0.026326495218930067,"val_loss":0.02737188176424467},{"iteration":65,"train_loss":0.02061833133437087,"val_loss":0.02159644886279903},{"iteration":70,"train_loss":0.01616578711524902,"val_loss":0.017140141213835555},{"iteration":75,"train_loss":0.012706109745704736,"val_loss":0.01365229243144846},{"iteration":80,"train_loss":0.009966027319185623,"val_loss":0.010823625116014934},{"iteration":85,"train_loss":0.00782479515871744,"val_loss":0.008662765388375349},{"iteration":90,"train_loss":0.006155183376097244,"val_loss":0.006906576577132339},{"iteration":95,"train_loss":0.004848086248507215,"val_loss":0.005579697400733989},{"iteration":100,"train_loss":0.0038269073011189788,"val_loss":0.004489893168504503},{"iteration":105,"train_loss":0.0030287460656082,"val_loss":0.0036606765442743212},{"iteration":110,"train_loss":0.002403287728742314,"val_loss":0.0029894444827951562},{"iteration":115,"train_loss":0.0019124170664594716,"val_loss":0.0024535036391572043},{"iteration":120,"train_loss":0.0015277203068478986,"val_loss":0.0020361457642476006},{"iteration":125,"train_loss":0.00122451846514575,"val_loss":0.0016926032644106824},{"iteration":130,"train_loss":0.0009857336065489646,"val_loss":0.001436456059506317},{"iteration":135,"train_loss":0.0007979451434891126,"val_loss":0.0012260440489920677},{"iteration":140,"train_loss":0.0006495545793720296,"val_loss":0.0010505571192247086},{"iteration":145,"train_loss":0.0005313755467924886,"val_loss":0.0008980511146452305},{"iteration":150,"train_loss":0.00043812150414167554,"val_loss":0.0007812729556491992},{"iteration":155,"train_loss":0.00036370417421149355,"val_loss":0.0006892494082906297},{"iteration":160,"train_loss":0.00030408198089667583,"val_loss":0.0006054595387289099},{"iteration":165,"train_loss":0.0002565575849702228,"val_loss":0.0005456864119285428},{"iteration":170,"train_loss":0.00021816695004540023,"val_loss":0.0004982597741421576},{"iteration":175,"train_loss":0.00018753882642373338,"val_loss":0.00045575063947152076},{"iteration":180,"train_loss":0.0001624340323821391,"val_loss":0.00039607113645625917},{"iteration":185,"train_loss":0.00014184648800755223,"val_loss":0.000358631259658874},{"iteration":190,"train_loss":0.00012453955697077764,"val_loss":0.00032328674129972256},{"iteration":195,"train_loss":0.00011032976914422335,"val_loss":0.00030183737401530945},{"iteration":200,"train_loss":9.815558369880135e-05,"val_loss":0.0002702396181790363},{"iteration":205,"train_loss":8.814747179430627e-05,"val_loss":0.0002485815708047944},{"iteration":210,"train_loss":7.967038968488252e-05,"val_loss":0.00023534207707273953},{"iteration":215,"train_loss":7.228514607274685e-05,"val_loss":0.00021314795688225237},{"iteration":220,"train_loss":6.602532621139983e-05,"val_loss":0.00019846695566226263},{"iteration":225,"train_loss":6.063070833459744e-05,"val_loss":0.00019003322051285243},{"iteration":230,"train_loss":5.585446080854874e-05,"val_loss":0.0001769355494208998},{"iteration":235,"train_loss":5.1676096117152436e-05,"val_loss":0.00016486397198462406},{"iteration":240,"train_loss":4.801830361530993e-05,"val_loss":0.0001557261789434473},{"iteration":245,"train_loss":4.473487953112752e-05,"val_loss":0.0001479110137350817},{"iteration":250,"train_loss":4.185543634491904e-05,"val_loss":0.00014093224450875778},{"iteration":255,"train_loss":3.930668287943217e-05,"val_loss":0.00013419427900284643},{"iteration":260,"train_loss":3.701314359545186e-05,"val_loss":0.0001295095422934449},{"iteration":265,"train_loss":3.4935069457691114e-05,"val_loss":0.00012372194747855634},{"iteration":270,"train_loss":3.305469739603207e-05,"val_loss":0.00011883823275150076},{"iteration":275,"train_loss":3.134739469038408e-05,"val_loss":0.00011605424102492591},{"iteration":280,"train_loss":2.981257089221413e-05,"val_loss":0.00011168022905133178},{"iteration":285,"train_loss":2.8377582580000293e-05,"val_loss":0.00010934807548996692},{"iteration":290,"train_loss":2.70847021320573e-05,"val_loss":0.00010652137433513295},{"iteration":295,"train_loss":2.5888825657797212e-05,"val_loss":0.00010367562915004898},{"iteration":300,"train_loss":2.479067093955282e-05,"val_loss":0.0001003683092765584},{"iteration":305,"train_loss":2.3772729655469856e-05,"val_loss":9.81279001821542e-05},{"iteration":310,"train_loss":2.283552321359614e-05,"val_loss":9.518419973724224e-05},{"iteration":315,"train_loss":2.1948621211519505e-05,"val_loss":9.387277221981976e-05},{"iteration":320,"train_loss":2.1141218133630485e-05,"val_loss":9.119636501344507e-05},{"iteration":325,"train_loss":2.0375342213279894e-05,"val_loss":8.95772385817223e-05},{"iteration":330,"train_loss":1.967589812922222e-05,"val_loss":8.830028836635498e-05},{"iteration":335,"train_loss":1.9009125550074294e-05,"val_loss":8.62044689603817e-05},{"iteration":340,"train_loss":1.8387398559676604e-05,"val_loss":8.506865920806795e-05},{"iteration":345,"train_loss":1.7802612635896403e-05,"val_loss":8.244370540435985e-05},{"iteration":350,"train_loss":1.7247096873315718e-05,"val_loss":8.119157581086679e-05},{"iteration":355,"train_loss":1.6737121475168502e-05,"val_loss":8.028555549346426e-05},{"iteration":360,"train_loss":1.6244634829223564e-05,"val_loss":7.814842168719041e-05},{"iteration":365,"train_loss":1.5785405488632846e-05,"val_loss":7.7284219813266e-05},{"iteration":370,"train_loss":1.5344756411298998e-05,"val_loss":7.573162598565929e-05},{"iteration":375,"train_loss":1.4931690416674135e-05,"val_loss":7.492721036710614e-05},{"iteration":380,"train_loss":1.4541975634347252e-05,"val_loss":7.348180224350029e-05},{"iteration":385,"train_loss":1.4164957434897613e-05,"val_loss":7.214985851947729e-05},{"iteration":390,"train_loss":1.380607746302985e-05,"val_loss":7.151637738805692e-05},{"iteration":395,"train_loss":1.3468688211451617e-05,"val_loss":7.054308957605589e-05},{"iteration":400,"train_loss":1.3147166148111345e-05,"val_loss":6.931697930920868e-05}]},"roc":[{"fpr":0.0,"tpr":0.001953125},{"fpr":0.0,"tpr":0.03515625},{"fpr":0.0,"tpr":0.068359375},{"fpr":0.0,"tpr":0.1015625},{"fpr":0.0,"tpr":0.13671875},{"fpr":0.0,"tpr":0.169921875},{"fpr":0.0,"tpr":0.203125},{"fpr":0.0,"tpr":0.236328125},{"fpr":0.0,"tpr":0.271484375},{"fpr":0.0,"tpr":0.3046875},{"fpr":0.0,"tpr":0.337890625},{"fpr":0.0,"tpr":0.37109375},{"fpr":0.0,"tpr":0.40625},{"fpr":0.0,"tpr":0.439453125},{"fpr":0.0,"tpr":0.47265625},{"fpr":0.0,"tpr":0.505859375},{"fpr":0.0,"tpr":0.541015625},{"fpr":0.0,"tpr":0.57421875},{"fpr":0.0,"tpr":0.607421875},{"fpr":0.0,"tpr":0.640625},{"fpr":0.0,"tpr":0.67578125},{"fpr":0.0,"tpr":0.708984375},{"fpr":0.0,"tpr":0.7421875},{"fpr":0.0,"tpr":0.775390625},{"fpr":0.0,"tpr":0.810546875},{"fpr":0.0,"tpr":0.84375},{"fpr":0.0,"tpr":0.876953125},{"fpr":0.0,"tpr":0.91015625},{"fpr":0.0,"tpr":0.9453125},{"fpr":0.0,"tpr":0.978515625},{"fpr":0.011834319526627219,"tpr":1.0},{"fpr":0.045364891518737675,"tpr":1.0},{"fpr":0.08086785009861933,"tpr":1.0},{"fpr":0.11439842209072978,"tpr":1.0},{"fpr":0.14792899408284024,"tpr":1.0},{"fpr":0.1814595660749507,"tpr":1.0},{"fpr":0.21696252465483234,"tpr":1.0},{"fpr":0.2504930966469428,"tpr":1.0},{"fpr":0.28402366863905326,"tpr":1.0},{"fpr":0.3175542406311637,"tpr":1.0},{"fpr":0.3530571992110454,"tpr":1.0},{"fpr":0.3865877712031558,"tpr":1.0},{"fpr":0.42011834319526625,"tpr":1.0},{"fpr":0.4536489151873767,"tpr":1.0},{"fpr":0.4891518737672584,"tpr":1.0},{"fpr":0.5226824457593688,"tpr":1.0},{"fpr":0.5562130177514792,"tpr":1.0},{"fpr":0.5897435897435898,"tpr":1.0},{"fpr":0.6252465483234714,"tpr":1.0},{"fpr":0.6587771203155819,"tpr":1.0},{"fpr":0.6923076923076923,"tpr":1.0},{"fpr":0.7258382642998028,"tpr":1.0},{"fpr":0.7613412228796844,"tpr":1.0},{"fpr":0.7948717948717948,"tpr":1.0},{"fpr":0.8284023668639053,"tpr":1.0},{"fpr":0.8619329388560157,"tpr":1.0},{"fpr":0.8974358974358975,"tpr":1.0},{"fpr":0.9309664694280079,"tpr":1.0},{"fpr":0.9644970414201184,"tpr":1.0},{"fpr":1.0,"tpr":1.0}],"acc":0.9990186457311089,"auc":1.0,"n":1019,"mean_score_real":0.9973188054317502,"mean_score_fake":1.3073038784412534e-05,"mean_P_human_ai":1.3073038784412534e-05,"mean_P_human_real":0.9973188054317502,"fool_rate_at_0.5":0.0,"detect_rate_at_0.5":1.0,"human_likeness":1.3073038784412534e-05,"score_histogram":{"edges":[0.0,0.05,0.1,0.15000000000000002,0.2,0.25,0.30000000000000004,0.35000000000000003,0.4,0.45,0.5,0.55,0.6000000000000001,0.65,0.7000000000000001,0.75,0.8,0.8500000000000001,0.9,0.9500000000000001,1.0],"real":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,509],"synthetic":[507,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}}],"transfer":[{"policy_id":"policy_bc_v4","policy_path":"models/policy_bc_v4","panel":"transfer","trained_on":"policy_bc_v2","acc":0.9980372914622179,"auc":1.0,"n":1019,"mean_score_real":0.9960417781296925,"mean_score_fake":7.310015739154003e-05,"mean_P_human_ai":7.310015739154003e-05,"mean_P_human_real":0.9960417781296925,"fool_rate_at_0.5":0.0,"detect_rate_at_0.5":1.0,"human_likeness":7.310015739154003e-05,"score_histogram":{"edges":[0.0,0.05,0.1,0.15000000000000002,0.2,0.25,0.30000000000000004,0.35000000000000003,0.4,0.45,0.5,0.55,0.6000000000000001,0.65,0.7000000000000001,0.75,0.8,0.8500000000000001,0.9,0.9500000000000001,1.0],"real":[1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,509],"synthetic":[507,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}},{"policy_id":"policy_bc_v4_1","policy_path":"models/policy_bc_v4.1","panel":"transfer","trained_on":"policy_bc_v2","acc":0.9980372914622179,"auc":1.0,"n":1019,"mean_score_real":0.9960417781296925,"mean_score_fake":7.074711287262004e-05,"mean_P_human_ai":7.074711287262004e-05,"mean_P_human_real":0.9960417781296925,"fool_rate_at_0.5":0.0,"detect_rate_at_0.5":1.0,"human_likeness":7.074711287262004e-05,"score_histogram":{"edges":[0.0,0.05,0.1,0.15000000000000002,0.2,0.25,0.30000000000000004,0.35000000000000003,0.4,0.45,0.5,0.55,0.6000000000000001,0.65,0.7000000000000001,0.75,0.8,0.8500000000000001,0.9,0.9500000000000001,1.0],"real":[1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,509],"synthetic":[507,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}},{"policy_id":"policy_bc_v2","policy_path":"models/policy_bc","panel":"transfer","trained_on":"policy_bc_v2","acc":0.9980372914622179,"auc":1.0,"n":1019,"mean_score_real":0.9960417781296925,"mean_score_fake":1.5289149273327188e-05,"mean_P_human_ai":1.5289149273327188e-05,"mean_P_human_real":0.9960417781296925,"fool_rate_at_0.5":0.0,"detect_rate_at_0.5":1.0,"human_likeness":1.5289149273327188e-05,"score_histogram":{"edges":[0.0,0.05,0.1,0.15000000000000002,0.2,0.25,0.30000000000000004,0.35000000000000003,0.4,0.45,0.5,0.55,0.6000000000000001,0.65,0.7000000000000001,0.75,0.8,0.8500000000000001,0.9,0.9500000000000001,1.0],"real":[1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,509],"synthetic":[507,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}},{"policy_id":"policy_bc_v3","policy_path":"models/policy_bc_v3","panel":"transfer","trained_on":"policy_bc_v2","acc":0.9980372914622179,"auc":1.0,"n":1019,"mean_score_real":0.9960417781296925,"mean_score_fake":1.3331757304089826e-05,"mean_P_human_ai":1.3331757304089826e-05,"mean_P_human_real":0.9960417781296925,"fool_rate_at_0.5":0.0,"detect_rate_at_0.5":1.0,"human_likeness":1.3331757304089826e-05,"score_histogram":{"edges":[0.0,0.05,0.1,0.15000000000000002,0.2,0.25,0.30000000000000004,0.35000000000000003,0.4,0.45,0.5,0.55,0.6000000000000001,0.65,0.7000000000000001,0.75,0.8,0.8500000000000001,0.9,0.9500000000000001,1.0],"real":[1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,509],"synthetic":[507,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}}],"ranking":[{"policy_id":"policy_bc_v4","human_likeness":3.809274771888009e-05,"fool_rate_at_0.5":0.0,"detection_auc":1.0,"transfer_human_likeness":7.310015739154003e-05},{"policy_id":"policy_bc_v2","human_likeness":2.2638500048010705e-05,"fool_rate_at_0.5":0.0,"detection_auc":1.0,"transfer_human_likeness":1.5289149273327188e-05},{"policy_id":"policy_bc_v4_1","human_likeness":1.838149538810249e-05,"fool_rate_at_0.5":0.0,"detection_auc":1.0,"transfer_human_likeness":7.074711287262004e-05},{"policy_id":"policy_bc_v3","human_likeness":1.3073038784412534e-05,"fool_rate_at_0.5":0.0,"detection_auc":1.0,"transfer_human_likeness":1.3331757304089826e-05}],"stages":[{"trees":1,"acc":0.999748743718593,"auc":1.0,"tree_acc":0.9846733668341708,"tree_auc":0.9969146464646464,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":2,"acc":0.999748743718593,"auc":1.0,"tree_acc":0.9962311557788944,"tree_auc":0.9999709595959596,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":3,"acc":0.999748743718593,"auc":1.0,"tree_acc":0.9992462311557789,"tree_auc":0.9999992424242424,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":5,"acc":0.999748743718593,"auc":1.0,"tree_acc":0.999748743718593,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":8,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":10,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":15,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":20,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":25,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":30,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":35,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":40,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":45,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":50,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":55,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":60,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":65,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":70,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":75,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":80,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":85,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":90,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":95,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":100,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":105,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":110,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":115,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0},{"trees":120,"acc":0.999748743718593,"auc":1.0,"tree_acc":1.0,"tree_auc":1.0,"fool_rate_at_0.5":0.0,"hgb_acc":0.999748743718593,"hgb_auc":1.0}],"boost":[{"iteration":0,"train_loss":0.693109372900105,"val_loss":0.6931165177447659},{"iteration":5,"train_loss":0.4918102958292081,"val_loss":0.4920230890776124},{"iteration":10,"train_loss":0.36040997518329,"val_loss":0.360900348698101},{"iteration":15,"train_loss":0.2691602556062363,"val_loss":0.27021266359246726},{"iteration":20,"train_loss":0.20354958079587715,"val_loss":0.20510106744017306},{"iteration":25,"train_loss":0.15547465066625638,"val_loss":0.15760619269826356},{"iteration":30,"train_loss":0.11940975024307342,"val_loss":0.12220674008656313},{"iteration":35,"train_loss":0.09217570925295884,"val_loss":0.09549091780736593},{"iteration":40,"train_loss":0.07150678319968151,"val_loss":0.07522928938354072},{"iteration":45,"train_loss":0.05553596413331744,"val_loss":0.05975811274431469},{"iteration":50,"train_loss":0.04322740852237203,"val_loss":0.04780994749597585},{"iteration":55,"train_loss":0.03370958231235492,"val_loss":0.038622116326156745},{"iteration":60,"train_loss":0.026372960422448494,"val_loss":0.0313471056227048},{"iteration":65,"train_loss":0.020637451048205364,"val_loss":0.025840688052363385},{"iteration":70,"train_loss":0.01609902766245408,"val_loss":0.021231909952337015},{"iteration":75,"train_loss":0.012604612310352013,"val_loss":0.017929053466669113},{"iteration":80,"train_loss":0.009877353709190883,"val_loss":0.01538110347625261},{"iteration":85,"train_loss":0.00775854943077564,"val_loss":0.013372742216746624},{"iteration":90,"train_loss":0.006102237940709022,"val_loss":0.011756151500677268},{"iteration":95,"train_loss":0.00480540181675105,"val_loss":0.010586658923556778},{"iteration":100,"train_loss":0.003792675277589494,"val_loss":0.009451968251049226},{"iteration":105,"train_loss":0.0029970837878097057,"val_loss":0.008557652930869571},{"iteration":110,"train_loss":0.0023774752838063096,"val_loss":0.007989106192608437},{"iteration":115,"train_loss":0.001889013816766433,"val_loss":0.007402354202028638},{"iteration":120,"train_loss":0.0015070937124677833,"val_loss":0.007010222563300616},{"iteration":125,"train_loss":0.001205775669100487,"val_loss":0.006665366949784567},{"iteration":130,"train_loss":0.0009706258246974283,"val_loss":0.006394451689316959},{"iteration":135,"train_loss":0.0007841243277665089,"val_loss":0.00619573761262395},{"iteration":140,"train_loss":0.0006371692318249895,"val_loss":0.00603355470778546},{"iteration":145,"train_loss":0.0005208946591135901,"val_loss":0.005657861010906525},{"iteration":150,"train_loss":0.0004288472747792278,"val_loss":0.005544871793012365},{"iteration":155,"train_loss":0.0003554803101273231,"val_loss":0.00530224963152945},{"iteration":160,"train_loss":0.0002972380877082798,"val_loss":0.005044170113845216},{"iteration":165,"train_loss":0.0002503533943022274,"val_loss":0.00495277820754729},{"iteration":170,"train_loss":0.00021253174175928975,"val_loss":0.004785648012540685},{"iteration":175,"train_loss":0.00018219448118021598,"val_loss":0.004685767608960454},{"iteration":180,"train_loss":0.0001573328544749512,"val_loss":0.004473479291487709},{"iteration":185,"train_loss":0.00013701418265431135,"val_loss":0.0044364390414202105},{"iteration":190,"train_loss":0.000120273730349729,"val_loss":0.004270866562471038},{"iteration":195,"train_loss":0.00010638595512791868,"val_loss":0.004134763794334566},{"iteration":200,"train_loss":9.479510594724199e-05,"val_loss":0.004109419968821381},{"iteration":205,"train_loss":8.505149009657734e-05,"val_loss":0.0039548251196041655},{"iteration":210,"train_loss":7.682320362410447e-05,"val_loss":0.0038466112108490056},{"iteration":215,"train_loss":6.983400512889947e-05,"val_loss":0.003749949508657339},{"iteration":220,"train_loss":6.373978701109458e-05,"val_loss":0.0035954612594839078},{"iteration":225,"train_loss":5.847677142402047e-05,"val_loss":0.0035032422924403143},{"iteration":230,"train_loss":5.387576936471329e-05,"val_loss":0.0033864642871212994},{"iteration":235,"train_loss":4.986426216117523e-05,"val_loss":0.0032606005656775597},{"iteration":240,"train_loss":4.633685746196849e-05,"val_loss":0.0031881440522057575},{"iteration":245,"train_loss":4.322943657751398e-05,"val_loss":0.0030784015643866795},{"iteration":250,"train_loss":4.046522107945488e-05,"val_loss":0.0030078099181556103},{"iteration":255,"train_loss":3.798801603906332e-05,"val_loss":0.0029086489023929943},{"iteration":260,"train_loss":3.578065188787323e-05,"val_loss":0.002814366629759113},{"iteration":265,"train_loss":3.381434109500507e-05,"val_loss":0.002758940103960996},{"iteration":270,"train_loss":3.20012759305877e-05,"val_loss":0.002682514571502908},{"iteration":275,"train_loss":3.0345956481586908e-05,"val_loss":0.0026324525631308657},{"iteration":280,"train_loss":2.8854276966399822e-05,"val_loss":0.002559395163349587},{"iteration":285,"train_loss":2.7489457280316457e-05,"val_loss":0.002485402786617479},{"iteration":290,"train_loss":2.6213760477508085e-05,"val_loss":0.0024305127595293675},{"iteration":295,"train_loss":2.5071386562567076e-05,"val_loss":0.0023811747381379807},{"iteration":300,"train_loss":2.4011844525449984e-05,"val_loss":0.002343137501996454},{"iteration":305,"train_loss":2.304562307180654e-05,"val_loss":0.0022968969203075586},{"iteration":310,"train_loss":2.212835416040209e-05,"val_loss":0.0022596057130301124},{"iteration":315,"train_loss":2.129887772194083e-05,"val_loss":0.0022075240835058513},{"iteration":320,"train_loss":2.0509104025879856e-05,"val_loss":0.002187824347401671},{"iteration":325,"train_loss":1.9778960317196043e-05,"val_loss":0.00213823417395602},{"iteration":330,"train_loss":1.9103513637160395e-05,"val_loss":0.0021092148689514727},{"iteration":335,"train_loss":1.8462622631635608e-05,"val_loss":0.0020649988877649793},{"iteration":340,"train_loss":1.785745400367523e-05,"val_loss":0.002041089879312135},{"iteration":345,"train_loss":1.7295000722892493e-05,"val_loss":0.002006405258815194},{"iteration":350,"train_loss":1.6768346653452823e-05,"val_loss":0.0019826789507435653},{"iteration":355,"train_loss":1.6270793279307614e-05,"val_loss":0.0019572009982950496},{"iteration":360,"train_loss":1.579568726506638e-05,"val_loss":0.0019207899263754512},{"iteration":365,"train_loss":1.53476864027097e-05,"val_loss":0.0018909332342581654},{"iteration":370,"train_loss":1.492574415847879e-05,"val_loss":0.001861275446023599},{"iteration":375,"train_loss":1.4529219094353577e-05,"val_loss":0.0018429117166414118},{"iteration":380,"train_loss":1.4137680356542614e-05,"val_loss":0.0018073603455124674},{"iteration":385,"train_loss":1.3779097241029502e-05,"val_loss":0.0017908012099039305},{"iteration":390,"train_loss":1.3436912107424757e-05,"val_loss":0.0017706693140136652},{"iteration":395,"train_loss":1.3109579074945578e-05,"val_loss":0.0017400793835980026},{"iteration":400,"train_loss":1.279147559282277e-05,"val_loss":0.0017159798393116881}],"quiz":[],"sanity":{"easy":{"acc":0.5,"auc":0.91326904296875,"n":256,"mean_score_real":0.9999924240152036,"mean_score_fake":0.9999828025742894,"mean_P_human_ai":0.9999828025742894,"mean_P_human_real":0.9999924240152036,"fool_rate_at_0.5":1.0,"detect_rate_at_0.5":0.0,"human_likeness":0.9999828025742894,"score_histogram":{"edges":[0.0,0.05,0.1,0.15000000000000002,0.2,0.25,0.30000000000000004,0.35000000000000003,0.4,0.45,0.5,0.55,0.6000000000000001,0.65,0.7000000000000001,0.75,0.8,0.8500000000000001,0.9,0.9500000000000001,1.0],"real":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,128],"synthetic":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,128]}},"medium":{"acc":0.5078125,"auc":0.94647216796875,"n":256,"mean_score_real":0.9999924240152036,"mean_score_fake":0.9834914992874211,"mean_P_human_ai":0.9834914992874211,"mean_P_human_real":0.9999924240152036,"fool_rate_at_0.5":0.984375,"detect_rate_at_0.5":0.015625,"human_likeness":0.9834914992874211,"score_histogram":{"edges":[0.0,0.05,0.1,0.15000000000000002,0.2,0.25,0.30000000000000004,0.35000000000000003,0.4,0.45,0.5,0.55,0.6000000000000001,0.65,0.7000000000000001,0.75,0.8,0.8500000000000001,0.9,0.9500000000000001,1.0],"real":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,128],"synthetic":[0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,125]}}},"tells":[{"feature":"alt_rate","index":13,"separation_auc":0.9993619893483343,"human_mean":0.6768886436293056,"ai_mean":0.9304250299725414,"human_std":0.08622937031786226,"ai_std":0.029499502695643318,"cohens_d":-3.934291376663296,"permutation_drop":0.26722401824814207,"histogram":{"edges":[0.26666666666666666,0.3074074074074074,0.34814814814814815,0.3888888888888889,0.42962962962962964,0.4703703703703704,0.5111111111111111,0.5518518518518518,0.5925925925925926,0.6333333333333333,0.674074074074074,0.7148148148148148,0.7555555555555555,0.7962962962962963,0.837037037037037,0.8777777777777778,0.9185185185185185,0.9592592592592593,1.0],"human":[2,1,2,2,3,9,18,42,65,90,106,80,57,24,3,3,0,0],"ai":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,120,247,128]},"kind":"harness","title":"Side alternation rate","blurb":"How often consecutive actions switch team \u2194 opponent. Our rollout loop forces strict flip-flops, so AI sequences sit near 1.0 while humans are messier."},{"feature":"in_single","index":66,"separation_auc":0.9951410042443269,"human_mean":0.03944773175542406,"ai_mean":0.0,"human_std":0.19465766929349632,"ai_std":0.0,"cohens_d":0.2865929580676452,"permutation_drop":0.0,"histogram":{"edges":[0.0,0.05555555555555555,0.1111111111111111,0.16666666666666666,0.2222222222222222,0.2777777777777778,0.3333333333333333,0.38888888888888884,0.4444444444444444,0.5,0.5555555555555556,0.611111111111111,0.6666666666666666,0.7222222222222222,0.7777777777777777,0.8333333333333333,0.8888888888888888,0.9444444444444444,1.0],"human":[487,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20],"ai":[507,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"kind":"harness","title":"Still in single elixir?","blurb":"1 if the sequence ends before 2\u00d7 elixir (<120s), else 0."},{"feature":"frac_triple","index":17,"separation_auc":0.98839909900447,"human_mean":0.0,"ai_mean":0.0008024906214951464,"human_std":0.0,"ai_std":0.01062110756601638,"cohens_d":-0.1068526152796803,"permutation_drop":0.0,"histogram":{"edges":[0.0,0.008714596949891067,0.017429193899782133,0.0261437908496732,0.03485838779956427,0.04357298474945533,0.0522875816993464,0.061002178649237467,0.06971677559912853,0.0784313725490196,0.08714596949891067,0.09586056644880173,0.1045751633986928,0.11328976034858387,0.12200435729847493,0.130718954248366,0.13943355119825707,0.14814814814814814,0.1568627450980392],"human":[507,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"ai":[504,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,2]},"kind":"harness","title":"Triple-elixir phase share","blurb":"Fraction of plays after overtime / 3\u00d7 elixir starts (~4 minutes)."},{"feature":"in_overtime","index":65,"separation_auc":0.98839909900447,"human_mean":0.0,"ai_mean":0.005917159763313609,"human_std":0.0,"ai_std":0.07669515619417586,"cohens_d":-0.1091089451179962,"permutation_drop":0.0,"histogram":{"edges":[0.0,0.05555555555555555,0.1111111111111111,0.16666666666666666,0.2222222222222222,0.2777777777777778,0.3333333333333333,0.38888888888888884,0.4444444444444444,0.5,0.5555555555555556,0.611111111111111,0.6666666666666666,0.7222222222222222,0.7777777777777777,0.8333333333333333,0.8888888888888888,0.9444444444444444,1.0],"human":[507,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"ai":[504,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3]},"kind":"harness","title":"Reached overtime?","blurb":"1 if the truncated sequence lasts into overtime (\u2265240s), else 0."},{"feature":"frac_gap_lt_1","index":10,"separation_auc":0.9775879307058187,"human_mean":0.1718022818895277,"ai_mean":0.037243299686738604,"human_std":0.05688012218233456,"ai_std":0.032394662801818117,"cohens_d":2.9071290790011397,"permutation_drop":0.0,"histogram":{"edges":[0.0,0.020697167755991286,0.04139433551198257,0.06209150326797386,0.08278867102396514,0.10348583877995643,0.12418300653594772,0.144880174291939,0.1655773420479303,0.18627450980392157,0.20697167755991286,0.22766884531590414,0.24836601307189543,0.2690631808278867,0.289760348583878,0.3104575163398693,0.3311546840958606,0.35185185185185186,0.37254901960784315],"human":[1,4,4,16,40,46,64,54,78,64,51,37,22,12,10,1,1,2],"ai":[244,120,76,35,12,7,8,3,0,2,0,0,0,0,0,0,0,0]},"kind":"policy","title":"Rapid-fire plays (<1s)","blurb":"Fraction of consecutive actions less than 1 second apart. Humans often chain defenses or cycle plays this quickly; a policy that always waits longer looks robotic."},{"feature":"gap_p10","index":7,"separation_auc":0.9769927134515209,"human_mean":0.6833333333333331,"ai_mean":1.55133872550219,"human_std":0.2695143805345539,"ai_std":0.32332191442946734,"cohens_d":-2.91632636849116,"permutation_drop":0.0,"histogram":{"edges":[0.19999999999998863,0.3238506420086793,0.44770128401736997,0.5715519260260606,0.6954025680347513,0.819253210043442,0.9431038520521327,1.0669544940608233,1.190805136069514,1.3146557780782047,1.4385064200868953,1.562357062095586,1.6862077041042767,1.8100583461129673,1.933908988121658,2.0577596301303487,2.1816102721390394,2.30546091414773,2.4293115561564207],"human":[32,45,112,92,103,45,42,16,9,2,5,1,0,0,2,1,0,0],"ai":[0,0,0,0,2,10,23,37,60,65,62,62,73,50,28,24,8,3]},"kind":"policy","title":"Shortest delays (10th percentile)","blurb":"The quick end of the delay distribution \u2014 how snappy the fastest plays feel."},{"feature":"team_x_std","index":32,"separation_auc":0.9642480616536147,"human_mean":0.22438892131512136,"ai_mean":0.11253006698686532,"human_std":0.046569604547822926,"ai_std":0.03647008409688,"cohens_d":2.67439843734021,"permutation_drop":5.187078468823121e-06,"histogram":{"edges":[0.04097885715007226,0.05967554406726931,0.07837223098446636,0.09706891790166342,0.11576560481886045,0.1344622917360575,0.15315897865325456,0.1718556655704516,0.19055235248764865,0.2092490394048457,0.22794572632204274,0.2466424132392398,0.26533910015643686,0.28403578707363386,0.3027324739908309,0.321429160908028,0.34012584782522504,0.3588225347424221,0.37751922165961915],"human":[0,0,0,4,9,21,41,55,62,62,81,72,56,27,11,5,0,1],"ai":[10,69,141,85,65,58,40,19,14,5,1,0,0,0,0,0,0,0]},"kind":"policy","title":"Team left\u2013right spread","blurb":"How widely the team spreads placements across the lane. Regression-to-the-mean policies often pile up near the center, so this std is low versus humans."},{"feature":"n_events","index":1,"separation_auc":0.9602371532275947,"human_mean":47.84220907297831,"ai_mean":52.0,"human_std":7.7423216051740775,"ai_std":0.0,"cohens_d":-0.759462680364035,"permutation_drop":0.0,"histogram":{"edges":[12.0,14.222222222222221,16.444444444444443,18.666666666666668,20.88888888888889,23.11111111111111,25.333333333333336,27.555555555555557,29.77777777777778,32.0,34.22222222222222,36.44444444444444,38.66666666666667,40.888888888888886,43.111111111111114,45.333333333333336,47.55555555555556,49.77777777777778,52.0],"human":[3,4,2,2,5,3,2,2,7,6,3,5,13,37,29,25,21,338],"ai":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,507]},"kind":"harness","title":"Total actions","blurb":"Count of every card play and ability in the truncated sequence."},{"feature":"opp_x_std","index":36,"separation_auc":0.9594629817661224,"human_mean":0.22185115081848295,"ai_mean":0.11211718531541556,"human_std":0.04852449056794523,"ai_std":0.0362945098377592,"cohens_d":2.5610001650866927,"permutation_drop":2.5935392344115607e-06,"histogram":{"edges":[0.03717820654597674,0.05463523560517283,0.07209226466436892,0.08954929372356502,0.1070063227827611,0.1244633518419572,0.14192038090115328,0.15937740996034938,0.1768344390195455,0.1942914680787416,0.21174849713793764,0.22920552619713375,0.24666255525632985,0.26411958431552596,0.281576613374722,0.2990336424339181,0.3164906714931142,0.3339477005523103,0.3514047296115064],"human":[0,0,0,3,6,15,35,52,52,48,58,60,73,51,32,14,6,2],"ai":[4,39,130,109,52,61,50,35,14,8,4,1,0,0,0,0,0,0]},"kind":"policy","title":"Opponent left\u2013right spread","blurb":"How widely the opponent spreads left/right. Same tell as team_x_std for the other side."},{"feature":"gap_std","index":6,"separation_auc":0.9567903395850597,"human_mean":3.2854997082974453,"ai_mean":2.0514412409424376,"human_std":0.6614128387175212,"ai_std":0.44468498872213913,"cohens_d":2.189734675494674,"permutation_drop":0.0,"histogram":{"edges":[0.8203780477431759,1.2216192238353494,1.622860399927523,2.0241015760196968,2.4253427521118702,2.8265839282040437,3.2278251042962176,3.629066280388391,4.030307456480564,4.4315486325727385,4.832789808664911,5.234030984757085,5.63527216084926,6.036513336941432,6.437754513033607,6.838995689125779,7.240236865217954,7.641478041310126,8.0427192174023],"human":[0,0,2,16,101,141,131,68,30,4,5,4,1,1,2,0,0,1],"ai":[8,57,205,150,54,22,10,1,0,0,0,0,0,0,0,0,0,0]},"kind":"policy","title":"Delay variability","blurb":"How uneven the waits between actions are. Humans usually mix short and long gaps."},{"feature":"frac_gap_gt_8","index":12,"separation_auc":0.910985843166089,"human_mean":0.09119874210778797,"ai_mean":0.03407201144757706,"human_std":0.04330488923357134,"ai_std":0.02330321547875564,"cohens_d":1.6428370766700275,"permutation_drop":0.0,"histogram":{"edges":[0.0,0.025925925925925925,0.05185185185185185,0.07777777777777778,0.1037037037037037,0.12962962962962962,0.15555555555555556,0.18148148148148147,0.2074074074074074,0.23333333333333334,0.25925925925925924,0.28518518518518515,0.3111111111111111,0.337037037037037,0.36296296296296293,0.3888888888888889,0.4148148148148148,0.4407407407407407,0.4666666666666667],"human":[10,47,116,195,72,29,23,4,6,1,2,1,0,0,0,0,0,1],"ai":[227,155,92,31,2,0,0,0,0,0,0,0,0,0,0,0,0,0]},"kind":"policy","title":"Long pauses (>8s)","blurb":"Fraction of gaps longer than 8 seconds \u2014 banked elixir, dead time, or stalls."},{"feature":"n_plays","index":2,"separation_auc":0.9083521040735424,"human_mean":45.19921104536489,"ai_mean":51.32741617357002,"human_std":7.577720859265211,"ai_std":1.4139687143018445,"cohens_d":-1.1242883887429072,"permutation_drop":8.299325550120695e-05,"histogram":{"edges":[12.0,14.222222222222221,16.444444444444443,18.666666666666668,20.88888888888889,23.11111111111111,25.333333333333336,27.555555555555557,29.77777777777778,32.0,34.22222222222222,36.44444444444444,38.66666666666667,40.888888888888886,43.111111111111114,45.333333333333336,47.55555555555556,49.77777777777778,52.0],"human":[5,2,2,2,8,2,2,6,3,8,9,17,27,42,32,59,128,153],"ai":[0,0,0,0,0,0,0,0,0,0,0,0,1,8,0,0,1,497]},"kind":"harness","title":"Card plays","blurb":"Number of normal card deployments (abilities excluded)."},{"feature":"opp_y_std","index":38,"separation_auc":0.9062746791467775,"human_mean":0.18274008900837094,"ai_mean":0.11556225137918996,"human_std":0.04019991904405759,"ai_std":0.03174514770591364,"cohens_d":1.8547127445289848,"permutation_drop":1.2967696172057803e-06,"histogram":{"edges":[0.047177173605198096,0.0626865233542638,0.07819587310332951,0.09370522285239521,0.10921457260146092,0.12472392235052662,0.14023327209959235,0.15574262184865806,0.17125197159772376,0.18676132134678947,0.20227067109585517,0.21778002084492087,0.2332893705939866,0.2487987203430523,0.264308070092118,0.2798174198411837,0.2953267695902494,0.3108361193393151,0.3263454690883808],"human":[0,1,7,6,17,35,67,67,77,74,64,40,25,10,11,4,1,1],"ai":[26,37,65,89,105,80,48,33,16,7,1,0,0,0,0,0,0,0]},"kind":"policy","title":"Opponent depth spread","blurb":"How much the opponent varies placement depth."},{"feature":"team_y_std","index":34,"separation_auc":0.896867912343561,"human_mean":0.18075031692848254,"ai_mean":0.11732451167209045,"human_std":0.038964129152156184,"ai_std":0.030194779089407583,"cohens_d":1.8196349963559866,"permutation_drop":0.0,"histogram":{"edges":[0.039674223372811825,0.053167478294694856,0.0666607332165779,0.08015398813846092,0.09364724306034397,0.107140497982227,0.12063375290411002,0.13412700782599307,0.1476202627478761,0.16111351766975915,0.17460677259164217,0.1881000275135252,0.20159328243540822,0.21508653735729127,0.2285797922791743,0.24207304720105735,0.2555663021229404,0.2690595570448234,0.28255281196670645],"human":[0,0,0,3,10,18,33,48,55,59,49,73,57,49,26,14,7,6],"ai":[9,23,25,45,88,84,80,70,47,23,12,1,0,0,0,0,0,0]},"kind":"policy","title":"Team depth spread","blurb":"How much the team varies backline vs bridge vs push depth."},{"feature":"gap_p90","index":9,"separation_auc":0.873020319083132,"human_mean":7.352169625246549,"ai_mean":5.768765572736348,"human_std":1.2639595384414093,"ai_std":0.7470650061477818,"cohens_d":1.525150162656681,"permutation_drop":0.0,"histogram":{"edges":[3.5381977833183953,4.144686795356263,4.751175807394131,5.3576648194319985,5.964153831469867,6.570642843507734,7.177131855545602,7.78362086758347,8.390109879621338,8.996598891659204,9.603087903697073,10.20957691573494,10.816065927772808,11.422554939810677,12.029043951848545,12.635532963886412,13.24202197592428,13.848510987962147,14.455000000000014],"human":[1,1,13,46,78,107,101,65,52,19,8,9,4,2,0,0,0,1],"ai":[7,30,116,168,119,45,18,3,1,0,0,0,0,0,0,0,0,0]},"kind":"policy","title":"Longest delays (90th percentile)","blurb":"The slow end \u2014 long pauses for thinking, cycling, or waiting for elixir."},{"feature":"pending_deep","index":57,"separation_auc":0.8475660282669841,"human_mean":0.9861932938856016,"ai_mean":0.9270216962524654,"human_std":0.11668796416370052,"ai_std":0.26010088606090354,"cohens_d":0.2935398260675941,"permutation_drop":0.0,"histogram":{"edges":[0.0,0.05555555555555555,0.1111111111111111,0.16666666666666666,0.2222222222222222,0.2777777777777778,0.3333333333333333,0.38888888888888884,0.4444444444444444,0.5,0.5555555555555556,0.611111111111111,0.6666666666666666,0.7222222222222222,0.7777777777777777,0.8333333333333333,0.8888888888888888,0.9444444444444444,1.0],"human":[7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,500],"ai":[37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,470]},"kind":"policy","title":"Unanswered deep pushes","blurb":"Count of deep plays still waiting for a response at sequence end."}],"ablation":[{"dropped":0,"features_left":67,"auc":1.0,"acc":0.9970414201183432,"fool_rate_at_0.5":0.0,"mean_P_human_ai":6.168240937609121e-05},{"dropped":1,"features_left":66,"auc":1.0,"acc":1.0,"fool_rate_at_0.5":0.0,"mean_P_human_ai":0.00044660318128924876},{"dropped":2,"features_left":65,"auc":1.0,"acc":1.0,"fool_rate_at_0.5":0.0,"mean_P_human_ai":0.00044660318128924876},{"dropped":3,"features_left":64,"auc":1.0,"acc":1.0,"fool_rate_at_0.5":0.0,"mean_P_human_ai":0.00044660318128924876},{"dropped":5,"features_left":62,"auc":1.0,"acc":0.9990138067061144,"fool_rate_at_0.5":0.0,"mean_P_human_ai":0.0005615655880557744},{"dropped":8,"features_left":59,"auc":0.9999649872203354,"acc":0.9980276134122288,"fool_rate_at_0.5":0.0039447731755424065,"mean_P_human_ai":0.004702882901289178},{"dropped":12,"features_left":55,"auc":0.9998132651751223,"acc":0.9930966469428008,"fool_rate_at_0.5":0.0039447731755424065,"mean_P_human_ai":0.007026868325757979},{"dropped":20,"features_left":47,"auc":0.9996732140564639,"acc":0.9930966469428008,"fool_rate_at_0.5":0.009861932938856016,"mean_P_human_ai":0.014526301659351483},{"dropped":30,"features_left":37,"auc":0.9997160074538317,"acc":0.9940828402366864,"fool_rate_at_0.5":0.009861932938856016,"mean_P_human_ai":0.0182798544120909},{"dropped":45,"features_left":22,"auc":0.9997121171449801,"acc":0.9901380670611439,"fool_rate_at_0.5":0.013806706114398421,"mean_P_human_ai":0.022582491973956034},{"dropped":60,"features_left":7,"auc":0.9926589871969935,"acc":0.9585798816568047,"fool_rate_at_0.5":0.023668639053254437,"mean_P_human_ai":0.0582093931185991}],"truncation":[{"ai_events":1,"total_events":13,"n_pairs":506,"auc":0.5650728803761971,"mean_P_human_ai":0.9769967778757899,"fool_rate_at_0.5":0.9802371541501976},{"ai_events":2,"total_events":14,"n_pairs":504,"auc":0.6285942617787856,"mean_P_human_ai":0.9500058558996968,"fool_rate_at_0.5":0.9503968253968254},{"ai_events":3,"total_events":15,"n_pairs":504,"auc":0.6812523620559335,"mean_P_human_ai":0.9493082456315957,"fool_rate_at_0.5":0.9523809523809523},{"ai_events":5,"total_events":17,"n_pairs":500,"auc":0.763324,"mean_P_human_ai":0.8950490176390088,"fool_rate_at_0.5":0.892},{"ai_events":8,"total_events":20,"n_pairs":497,"auc":0.8675635300738029,"mean_P_human_ai":0.868057016268647,"fool_rate_at_0.5":0.8672032193158954},{"ai_events":12,"total_events":24,"n_pairs":491,"auc":0.9413848457572351,"mean_P_human_ai":0.7250808272926187,"fool_rate_at_0.5":0.7107942973523421},{"ai_events":16,"total_events":28,"n_pairs":486,"auc":0.9777091906721537,"mean_P_human_ai":0.5358716525364661,"fool_rate_at_0.5":0.5},{"ai_events":20,"total_events":32,"n_pairs":477,"auc":0.9903968285361426,"mean_P_human_ai":0.4439977300883062,"fool_rate_at_0.5":0.40670859538784065},{"ai_events":28,"total_events":40,"n_pairs":456,"auc":0.9994036626654356,"mean_P_human_ai":0.12754656617990662,"fool_rate_at_0.5":0.08333333333333333},{"ai_events":40,"total_events":52,"n_pairs":314,"auc":1.0,"mean_P_human_ai":1.671288737418617e-05,"fool_rate_at_0.5":0.0}],"tellProfile":[{"feature":"alt_rate","human_mean":0.676888643629305,"separation_auc":0.9993619893483343,"policies":{"policy_bc_v2":{"mean":0.9304250299725383,"z_vs_human":2.940255569635226},"policy_bc_v3":{"mean":0.9304250299725383,"z_vs_human":2.940255569635226},"policy_bc_v4":{"mean":0.9304250299725383,"z_vs_human":2.940255569635226},"policy_bc_v4_1":{"mean":0.9304250299725383,"z_vs_human":2.940255569635226}},"title":"Side alternation rate","blurb":"How often consecutive actions switch team \u2194 opponent. Our rollout loop forces strict flip-flops, so AI sequences sit near 1.0 while humans are messier."},{"feature":"in_single","human_mean":0.03944773175542406,"separation_auc":0.9951410042443269,"policies":{"policy_bc_v2":{"mean":0.0,"z_vs_human":-0.20265182408994234},"policy_bc_v3":{"mean":0.0,"z_vs_human":-0.20265182408994234},"policy_bc_v4":{"mean":0.0,"z_vs_human":-0.20265182408994234},"policy_bc_v4_1":{"mean":0.0039447731755424065,"z_vs_human":-0.18238664168094812}},"title":"Still in single elixir?","blurb":"1 if the sequence ends before 2\u00d7 elixir (<120s), else 0."},{"feature":"frac_triple","human_mean":0.0,"separation_auc":0.98839909900447,"policies":{"policy_bc_v2":{"mean":0.0008024906214951464,"z_vs_human":802490.6214951463},"policy_bc_v3":{"mean":0.0008419086038299404,"z_vs_human":841908.6038299403},"policy_bc_v4":{"mean":0.0007258858633728109,"z_vs_human":725885.8633728108},"policy_bc_v4_1":{"mean":0.0003465807503398871,"z_vs_human":346580.7503398871}},"title":"Triple-elixir phase share","blurb":"Fraction of plays after overtime / 3\u00d7 elixir starts (~4 minutes)."},{"feature":"in_overtime","human_mean":0.0,"separation_auc":0.98839909900447,"policies":{"policy_bc_v2":{"mean":0.005917159763313609,"z_vs_human":5917159.763313609},"policy_bc_v3":{"mean":0.005917159763313609,"z_vs_human":5917159.763313609},"policy_bc_v4":{"mean":0.005917159763313609,"z_vs_human":5917159.763313609},"policy_bc_v4_1":{"mean":0.005917159763313609,"z_vs_human":5917159.763313609}},"title":"Reached overtime?","blurb":"1 if the truncated sequence lasts into overtime (\u2265240s), else 0."},{"feature":"frac_gap_lt_1","human_mean":0.1718022818895281,"separation_auc":0.9775879307058187,"policies":{"policy_bc_v2":{"mean":0.0372432996867385,"z_vs_human":-2.365659162465371},"policy_bc_v3":{"mean":0.05453068801485075,"z_vs_human":-2.061732453716471},"policy_bc_v4":{"mean":0.061685423676373724,"z_vs_human":-1.9359462319747562},"policy_bc_v4_1":{"mean":0.06543682561782094,"z_vs_human":-1.8699934562507212}},"title":"Rapid-fire plays (<1s)","blurb":"Fraction of consecutive actions less than 1 second apart. Humans often chain defenses or cycle plays this quickly; a policy that always waits longer looks robotic."},{"feature":"gap_p10","human_mean":0.6833333333333335,"separation_auc":0.9769927134515209,"policies":{"policy_bc_v2":{"mean":1.5513387255021913,"z_vs_human":3.220627375976226},"policy_bc_v3":{"mean":1.3855020838730423,"z_vs_human":2.605310889708483},"policy_bc_v4":{"mean":1.2922215910168768,"z_vs_human":2.2592050801737438},"policy_bc_v4_1":{"mean":1.2403412836959067,"z_vs_human":2.0667095731879166}},"title":"Shortest delays (10th percentile)","blurb":"The quick end of the delay distribution \u2014 how snappy the fastest plays feel."},{"feature":"team_x_std","human_mean":0.22438892131512148,"separation_auc":0.9642480616536147,"policies":{"policy_bc_v2":{"mean":0.11253006698686538,"z_vs_human":-2.4019713161486442},"policy_bc_v3":{"mean":0.11164787023357138,"z_vs_human":-2.42091493316794},"policy_bc_v4":{"mean":0.11224946555666138,"z_vs_human":-2.407996736225292},"policy_bc_v4_1":{"mean":0.11317504583474816,"z_vs_human":-2.388121534641042}},"title":"Team left\u2013right spread","blurb":"How widely the team spreads placements across the lane. Regression-to-the-mean policies often pile up near the center, so this std is low versus humans."},{"feature":"n_events","human_mean":47.84220907297831,"separation_auc":0.9602371532275947,"policies":{"policy_bc_v2":{"mean":52.0,"z_vs_human":0.5370212113435185},"policy_bc_v3":{"mean":52.0,"z_vs_human":0.5370212113435185},"policy_bc_v4":{"mean":52.0,"z_vs_human":0.5370212113435185},"policy_bc_v4_1":{"mean":52.0,"z_vs_human":0.5370212113435185}},"title":"Total actions","blurb":"Count of every card play and ability in the truncated sequence."},{"feature":"opp_x_std","human_mean":0.22185115081848322,"separation_auc":0.9594629817661224,"policies":{"policy_bc_v2":{"mean":0.11211718531541562,"z_vs_human":-2.261414065736875},"policy_bc_v3":{"mean":0.11118506276776051,"z_vs_human":-2.2806233873957993},"policy_bc_v4":{"mean":0.11221551335371585,"z_vs_human":-2.259387706734454},"policy_bc_v4_1":{"mean":0.11261661511150428,"z_vs_human":-2.2511217413818287}},"title":"Opponent left\u2013right spread","blurb":"How widely the opponent spreads left/right. Same tell as team_x_std for the other side."},{"feature":"gap_std","human_mean":3.2854997082974435,"separation_auc":0.9567903395850597,"policies":{"policy_bc_v2":{"mean":2.0514412409424385,"z_vs_human":-1.865791522504828},"policy_bc_v3":{"mean":2.0366321126108673,"z_vs_human":-1.888181665944266},"policy_bc_v4":{"mean":2.075464696965343,"z_vs_human":-1.8294700987031887},"policy_bc_v4_1":{"mean":2.1036740912787044,"z_vs_human":-1.7868198919608167}},"title":"Delay variability","blurb":"How uneven the waits between actions are. Humans usually mix short and long gaps."},{"feature":"frac_gap_gt_8","human_mean":0.0911987421077882,"separation_auc":0.910985843166089,"policies":{"policy_bc_v2":{"mean":0.03407201144757696,"z_vs_human":-1.3191750786404206},"policy_bc_v3":{"mean":0.02796148045016815,"z_vs_human":-1.4602799539918099},"policy_bc_v4":{"mean":0.02873496538654901,"z_vs_human":-1.4424185773650517},"policy_bc_v4_1":{"mean":0.030668677727501162,"z_vs_human":-1.3977651357981566}},"title":"Long pauses (>8s)","blurb":"Fraction of gaps longer than 8 seconds \u2014 banked elixir, dead time, or stalls."},{"feature":"n_plays","human_mean":45.19921104536489,"separation_auc":0.9083521040735424,"policies":{"policy_bc_v2":{"mean":51.32741617357002,"z_vs_human":0.8087134960523407},"policy_bc_v3":{"mean":51.32741617357002,"z_vs_human":0.8087134960523407},"policy_bc_v4":{"mean":51.32741617357002,"z_vs_human":0.8087134960523407},"policy_bc_v4_1":{"mean":51.32741617357002,"z_vs_human":0.8087134960523407}},"title":"Card plays","blurb":"Number of normal card deployments (abilities excluded)."}],"trajectories":[{"battle_id":"00JYP82V0LJ9","warmup_events":12,"human":{"score":0.99999,"events":[{"t":8.7,"side":"team","card":"barbarian-barrel","x":0.1389,"y":0.5469,"ability":false},{"t":12.75,"side":"opponent","card":"electro-spirit","x":0.1944,"y":0.4531,"ability":false},{"t":15.25,"side":"team","card":"skeletons","x":0.4722,"y":0.9843,"ability":false},{"t":17.7,"side":"opponent","card":"dark-prince","x":0.4722,"y":0.0156,"ability":false},{"t":19.15,"side":"team","card":"ice-golem","x":0.4722,"y":0.9843,"ability":false},{"t":28.65,"side":"team","card":"musketeer","x":0.4722,"y":0.8281,"ability":false},{"t":31.75,"side":"opponent","card":"lightning","x":0.3056,"y":0.7344,"ability":false},{"t":35.45,"side":"team","card":"balloon","x":0.0278,"y":0.5781,"ability":false},{"t":36.55,"side":"team","card":"miner","x":0.0278,"y":0.2344,"ability":false},{"t":37.55,"side":"opponent","card":"musketeer","x":0.4166,"y":0.2656,"ability":false},{"t":41.25,"side":"team","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":42.65,"side":"opponent","card":"berserker","x":0.2499,"y":0.3281,"ability":false},{"t":44.45,"side":"opponent","card":"giant-snowball","x":0.1944,"y":0.2344,"ability":false},{"t":55.15,"side":"team","card":"barbarian-barrel","x":0.1944,"y":0.6719,"ability":false},{"t":68.4,"side":"opponent","card":"dark-prince","x":0.0277,"y":0.0469,"ability":false},{"t":77.1,"side":"opponent","card":"ram-rider","x":0.0833,"y":0.4531,"ability":false},{"t":78.05,"side":"team","card":"ice-golem","x":0.5278,"y":0.6406,"ability":false},{"t":80.1,"side":"team","card":"bomb-tower","x":0.0833,"y":0.7031,"ability":false},{"t":85.8,"side":"team","card":"giant-snowball","x":0.1389,"y":0.7031,"ability":false},{"t":94.6,"side":"opponent","card":"mega-knight","x":0.0277,"y":0.0469,"ability":false},{"t":100.85,"side":"team","card":"musketeer","x":0.4722,"y":0.9843,"ability":false},{"t":110.15,"side":"team","card":"skeletons","x":0.4722,"y":0.6093,"ability":false},{"t":112.55,"side":"team","card":"ice-golem","x":0.5278,"y":0.7031,"ability":false},{"t":112.6,"side":"opponent","card":"lightning","x":0.3056,"y":0.7031,"ability":false},{"t":116.9,"side":"opponent","card":"giant-snowball","x":0.25,"y":0.7656,"ability":false},{"t":117.95,"side":"team","card":"balloon","x":0.0278,"y":0.5781,"ability":false},{"t":119.6,"side":"team","card":"miner","x":0.3611,"y":0.2656,"ability":false},{"t":121.55,"side":"opponent","card":"musketeer","x":0.4166,"y":0.2969,"ability":false},{"t":123.45,"side":"opponent","card":"electro-spirit","x":0.3055,"y":0.2969,"ability":false},{"t":123.6,"side":"team","card":"giant-snowball","x":0.4167,"y":0.2969,"ability":false},{"t":124.55,"side":"team","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":133.45,"side":"team","card":"skeletons","x":0.4722,"y":0.8281,"ability":false},{"t":135.1,"side":"opponent","card":"mega-knight","x":0.9722,"y":0.0469,"ability":false},{"t":135.35,"side":"team","card":"ice-golem","x":0.8611,"y":0.5468,"ability":false},{"t":137.05,"side":"team","card":"balloon","x":0.9722,"y":0.5781,"ability":false},{"t":139.55,"side":"opponent","card":"dark-prince","x":0.9722,"y":0.0469,"ability":false},{"t":139.55,"side":"team","card":"miner","x":0.6944,"y":0.1719,"ability":false},{"t":145.05,"side":"opponent","card":"giant-snowball","x":0.8056,"y":0.2656,"ability":false},{"t":146.05,"side":"team","card":"giant-snowball","x":0.8056,"y":0.2656,"ability":false},{"t":148.1,"side":"opponent","card":"musketeer","x":0.75,"y":0.1406,"ability":false},{"t":149.9,"side":"opponent","card":"electro-spirit","x":0.9722,"y":0.2969,"ability":false},{"t":150.3,"side":"team","card":"musketeer","x":0.6389,"y":0.9843,"ability":false},{"t":157.9,"side":"opponent","card":"mega-knight","x":0.4722,"y":0.6406,"ability":false},{"t":159.85,"side":"team","card":"ice-golem","x":0.4722,"y":0.5468,"ability":false},{"t":162.2,"side":"team","card":"barbarian-barrel","x":0.4167,"y":0.7656,"ability":false},{"t":163.55,"side":"opponent","card":"dark-prince","x":0.4722,"y":0.6406,"ability":false},{"t":165.05,"side":"team","card":"miner","x":0.8611,"y":0.5469,"ability":false},{"t":166.35,"side":"opponent","card":"berserker","x":0.9167,"y":0.4531,"ability":false},{"t":166.65,"side":"team","card":"skeletons","x":0.3055,"y":0.7031,"ability":false},{"t":169.1,"side":"team","card":"musketeer","x":0.5278,"y":0.8281,"ability":false},{"t":177.55,"side":"team","card":"ice-golem","x":0.75,"y":0.5468,"ability":false},{"t":177.95,"side":"team","card":"balloon","x":0.9722,"y":0.5781,"ability":false}]},"ai":{"score":1e-05,"events":[{"t":8.7,"side":"team","card":"barbarian-barrel","x":0.1389,"y":0.5469,"ability":false},{"t":12.75,"side":"opponent","card":"electro-spirit","x":0.1944,"y":0.4531,"ability":false},{"t":15.25,"side":"team","card":"skeletons","x":0.4722,"y":0.9843,"ability":false},{"t":17.7,"side":"opponent","card":"dark-prince","x":0.4722,"y":0.0156,"ability":false},{"t":19.15,"side":"team","card":"ice-golem","x":0.4722,"y":0.9843,"ability":false},{"t":28.65,"side":"team","card":"musketeer","x":0.4722,"y":0.8281,"ability":false},{"t":31.75,"side":"opponent","card":"lightning","x":0.3056,"y":0.7344,"ability":false},{"t":35.45,"side":"team","card":"balloon","x":0.0278,"y":0.5781,"ability":false},{"t":36.55,"side":"team","card":"miner","x":0.0278,"y":0.2344,"ability":false},{"t":37.55,"side":"opponent","card":"musketeer","x":0.4166,"y":0.2656,"ability":false},{"t":41.25,"side":"team","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":42.65,"side":"opponent","card":"berserker","x":0.2499,"y":0.3281,"ability":false},{"t":48.07,"side":"opponent","card":"giant-snowball","x":0.3002,"y":0.342,"ability":false},{"t":54.87,"side":"team","card":"giant-snowball","x":0.3188,"y":0.7048,"ability":false},{"t":61.41,"side":"opponent","card":"electro-spirit","x":0.3874,"y":0.3242,"ability":false},{"t":66.58,"side":"team","card":"skeletons","x":0.3733,"y":0.7596,"ability":false},{"t":71.96,"side":"opponent","card":"dark-prince","x":0.4534,"y":0.2542,"ability":false},{"t":75.03,"side":"team","card":"ice-golem","x":0.4052,"y":0.7615,"ability":false},{"t":79.52,"side":"opponent","card":"mega-knight","x":0.4139,"y":0.3043,"ability":false},{"t":82.08,"side":"team","card":"bomb-tower","x":0.394,"y":0.7185,"ability":false},{"t":86.7,"side":"opponent","card":"musketeer","x":0.3091,"y":0.4923,"ability":false},{"t":88.36,"side":"team","card":"musketeer","x":0.2971,"y":0.6245,"ability":false},{"t":91.64,"side":"opponent","card":"berserker","x":0.2524,"y":0.6171,"ability":false},{"t":93.33,"side":"team","card":"barbarian-barrel","x":0.2644,"y":0.6015,"ability":false},{"t":97.51,"side":"opponent","card":"giant-snowball","x":0.2516,"y":0.6246,"ability":false},{"t":99.24,"side":"team","card":"skeletons","x":0.2756,"y":0.6322,"ability":false},{"t":104.22,"side":"opponent","card":"dark-prince","x":0.2666,"y":0.5672,"ability":false},{"t":105.89,"side":"team","card":"ice-golem","x":0.2818,"y":0.647,"ability":false},{"t":109.92,"side":"opponent","card":"electro-spirit","x":0.2732,"y":0.5371,"ability":false},{"t":111.73,"side":"team","card":"balloon","x":0.2769,"y":0.6646,"ability":false},{"t":116.53,"side":"opponent","card":"musketeer","x":0.2525,"y":0.3537,"ability":false},{"t":120.94,"side":"team","card":"giant-snowball","x":0.2388,"y":0.4502,"ability":false},{"t":124.91,"side":"opponent","card":"berserker","x":0.2223,"y":0.3649,"ability":false},{"t":127.35,"side":"team","card":"musketeer","x":0.3154,"y":0.6313,"ability":false},{"t":130.55,"side":"opponent","card":"ram-rider","x":0.2521,"y":0.4214,"ability":false},{"t":131.96,"side":"team","card":"bomb-tower","x":0.2342,"y":0.6221,"ability":false},{"t":133.41,"side":"opponent","card":"giant-snowball","x":0.2108,"y":0.6063,"ability":false},{"t":134.82,"side":"team","card":"ice-golem","x":0.2092,"y":0.6083,"ability":false},{"t":136.87,"side":"opponent","card":"electro-spirit","x":0.2186,"y":0.5134,"ability":false},{"t":138.5,"side":"team","card":"skeletons","x":0.234,"y":0.5899,"ability":false},{"t":140.73,"side":"opponent","card":"lightning","x":0.2234,"y":0.3907,"ability":false},{"t":142.43,"side":"team","card":"balloon","x":0.2818,"y":0.5048,"ability":false},{"t":145.36,"side":"opponent","card":"berserker","x":0.2185,"y":0.3097,"ability":false},{"t":146.75,"side":"team","card":"miner","x":0.2439,"y":0.3925,"ability":false},{"t":148.84,"side":"opponent","card":"musketeer","x":0.2203,"y":0.3037,"ability":false},{"t":150.84,"side":"team","card":"giant-snowball","x":0.2046,"y":0.4889,"ability":false},{"t":153.09,"side":"opponent","card":"giant-snowball","x":0.1858,"y":0.3106,"ability":false},{"t":155.58,"side":"team","card":"barbarian-barrel","x":0.2497,"y":0.6667,"ability":false},{"t":157.72,"side":"opponent","card":"electro-spirit","x":0.2104,"y":0.3329,"ability":false},{"t":160.06,"side":"team","card":"musketeer","x":0.3007,"y":0.7339,"ability":false},{"t":161.93,"side":"opponent","card":"ram-rider","x":0.2301,"y":0.3273,"ability":false},{"t":163.61,"side":"team","card":"ice-golem","x":0.2047,"y":0.6729,"ability":false}]}},{"battle_id":"082Y82RUPLUY","warmup_events":12,"human":{"score":0.99999,"events":[{"t":6.8,"side":"team","card":"princess","x":0.1388,"y":0.4531,"ability":false},{"t":8.9,"side":"opponent","card":"golden-knight","x":0.1388,"y":0.5468,"ability":false},{"t":11.85,"side":"opponent","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":13.05,"side":"team","card":"goblins","x":0.4166,"y":0.4531,"ability":false},{"t":15.8,"side":"team","card":"skeleton-army","x":0.5278,"y":0.3281,"ability":false},{"t":21.2,"side":"opponent","card":"flying-machine","x":0.4722,"y":0.7031,"ability":false},{"t":27.6,"side":"team","card":"firecracker","x":0.3611,"y":0.1406,"ability":false},{"t":36.8,"side":"opponent","card":"berserker","x":0.8611,"y":0.5468,"ability":false},{"t":40.05,"side":"team","card":"elite-barbarians","x":0.5833,"y":0.2969,"ability":false},{"t":44.1,"side":"opponent","card":"hunter","x":0.4722,"y":0.8281,"ability":false},{"t":47.1,"side":"opponent","card":"ice-golem","x":0.4722,"y":0.5781,"ability":false},{"t":49.05,"side":"opponent","card":"archers","x":0.5278,"y":0.7656,"ability":false},{"t":53.05,"side":"team","card":"princess","x":0.4722,"y":0.1719,"ability":false},{"t":55.3,"side":"team","card":"arrows","x":0.4167,"y":0.7031,"ability":false},{"t":56.05,"side":"opponent","card":"arrows","x":0.3056,"y":0.2656,"ability":false},{"t":60.75,"side":"team","card":"barbarian-barrel","x":0.1944,"y":0.3906,"ability":false},{"t":67.55,"side":"opponent","card":"berserker","x":0.1388,"y":0.5468,"ability":false},{"t":71.4,"side":"team","card":"skeleton-army","x":0.4722,"y":0.3594,"ability":false},{"t":74.3,"side":"team","card":"firecracker","x":0.4722,"y":0.1719,"ability":false},{"t":75.15,"side":"opponent","card":"flying-machine","x":0.4722,"y":0.7031,"ability":false},{"t":80.35,"side":"team","card":"goblins","x":0.1944,"y":0.4531,"ability":false},{"t":81.55,"side":"opponent","card":"golden-knight","x":0.1388,"y":0.5468,"ability":false},{"t":83.05,"side":"opponent","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":87.2,"side":"team","card":"valkyrie","x":0.2499,"y":0.3281,"ability":false},{"t":104.6,"side":"team","card":"princess","x":0.1944,"y":0.4531,"ability":false},{"t":107.15,"side":"opponent","card":"hunter","x":0.1944,"y":0.5468,"ability":false},{"t":112.05,"side":"team","card":"skeleton-army","x":0.1944,"y":0.4531,"ability":false},{"t":115.55,"side":"opponent","card":"archers","x":0.5278,"y":0.6718,"ability":false},{"t":125.15,"side":"opponent","card":"ice-golem","x":0.4722,"y":0.9843,"ability":false},{"t":125.55,"side":"team","card":"barbarian-barrel","x":0.25,"y":0.3281,"ability":false},{"t":128.55,"side":"team","card":"firecracker","x":0.4722,"y":0.0156,"ability":false},{"t":129.7,"side":"opponent","card":"berserker","x":0.8611,"y":0.5468,"ability":false},{"t":132.3,"side":"opponent","card":"arrows","x":0.3056,"y":0.2656,"ability":false},{"t":132.8,"side":"team","card":"goblins","x":0.5278,"y":0.3594,"ability":false},{"t":139.25,"side":"opponent","card":"golden-knight","x":0.5278,"y":0.9843,"ability":false},{"t":139.6,"side":"team","card":"elite-barbarians","x":0.8056,"y":0.4531,"ability":false},{"t":140.3,"side":"team","card":"valkyrie","x":0.8056,"y":0.4531,"ability":false},{"t":142.55,"side":"opponent","card":"skeletons","x":0.5278,"y":0.6093,"ability":false},{"t":143.05,"side":"opponent","card":"archers","x":0.5278,"y":0.7656,"ability":false},{"t":144.7,"side":"opponent","card":"ice-golem","x":0.4722,"y":0.5781,"ability":false},{"t":145.05,"side":"team","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":147.4,"side":"opponent","card":"berserker","x":0.5833,"y":0.5468,"ability":false},{"t":151.75,"side":"team","card":"arrows","x":0.6389,"y":0.7656,"ability":false},{"t":153.7,"side":"opponent","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":154.65,"side":"opponent","card":"golden-knight","x":0.1388,"y":0.5468,"ability":false},{"t":156.05,"side":"opponent","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":156.55,"side":"team","card":"skeleton-army","x":0.4722,"y":0.4219,"ability":false},{"t":158.75,"side":"team","card":"goblins","x":0.5278,"y":0.2969,"ability":false},{"t":160.9,"side":"team","card":"barbarian-barrel","x":0.4722,"y":0.2656,"ability":false},{"t":161.2,"side":"opponent","card":"flying-machine","x":0.4167,"y":0.5469,"ability":false},{"t":165.65,"side":"team","card":"firecracker","x":0.4722,"y":0.2344,"ability":false},{"t":168.05,"side":"opponent","card":"arrows","x":0.3611,"y":0.2969,"ability":false}]},"ai":{"score":1e-05,"events":[{"t":6.8,"side":"team","card":"princess","x":0.1388,"y":0.4531,"ability":false},{"t":8.9,"side":"opponent","card":"golden-knight","x":0.1388,"y":0.5468,"ability":false},{"t":11.85,"side":"opponent","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":13.05,"side":"team","card":"goblins","x":0.4166,"y":0.4531,"ability":false},{"t":15.8,"side":"team","card":"skeleton-army","x":0.5278,"y":0.3281,"ability":false},{"t":21.2,"side":"opponent","card":"flying-machine","x":0.4722,"y":0.7031,"ability":false},{"t":27.6,"side":"team","card":"firecracker","x":0.3611,"y":0.1406,"ability":false},{"t":36.8,"side":"opponent","card":"berserker","x":0.8611,"y":0.5468,"ability":false},{"t":40.05,"side":"team","card":"elite-barbarians","x":0.5833,"y":0.2969,"ability":false},{"t":44.1,"side":"opponent","card":"hunter","x":0.4722,"y":0.8281,"ability":false},{"t":47.1,"side":"opponent","card":"ice-golem","x":0.4722,"y":0.5781,"ability":false},{"t":49.05,"side":"opponent","card":"archers","x":0.5278,"y":0.7656,"ability":false},{"t":51.53,"side":"team","card":"princess","x":0.431,"y":0.3803,"ability":false},{"t":56.14,"side":"opponent","card":"arrows","x":0.4152,"y":0.5041,"ability":false},{"t":60.37,"side":"team","card":"barbarian-barrel","x":0.4782,"y":0.357,"ability":false},{"t":67.29,"side":"opponent","card":"golden-knight","x":0.4571,"y":0.6493,"ability":false},{"t":70.96,"side":"team","card":"goblins","x":0.4398,"y":0.2822,"ability":false},{"t":76.17,"side":"opponent","card":"hunter","x":0.4056,"y":0.6448,"ability":false},{"t":78.27,"side":"team","card":"firecracker","x":0.4234,"y":0.2844,"ability":false},{"t":81.84,"side":"opponent","card":"berserker","x":0.3298,"y":0.5091,"ability":false},{"t":83.62,"side":"team","card":"valkyrie","x":0.3482,"y":0.3621,"ability":false},{"t":88.39,"side":"opponent","card":"archers","x":0.3074,"y":0.6202,"ability":false},{"t":91.22,"side":"team","card":"princess","x":0.2992,"y":0.4254,"ability":false},{"t":94.49,"side":"opponent","card":"ice-golem","x":0.2106,"y":0.576,"ability":false},{"t":97.8,"side":"team","card":"elite-barbarians","x":0.2755,"y":0.4125,"ability":false},{"t":101.71,"side":"opponent","card":"flying-machine","x":0.2594,"y":0.6531,"ability":false},{"t":105.98,"side":"team","card":"arrows","x":0.2638,"y":0.545,"ability":false},{"t":110.5,"side":"opponent","card":"golden-knight","x":0.2751,"y":0.6459,"ability":false},{"t":117.63,"side":"team","card":"firecracker","x":0.2968,"y":0.348,"ability":false},{"t":121.83,"side":"opponent","card":"arrows","x":0.2486,"y":0.5148,"ability":false},{"t":126.15,"side":"team","card":"skeleton-army","x":0.3097,"y":0.3394,"ability":false},{"t":129.59,"side":"opponent","card":"archers","x":0.3172,"y":0.7187,"ability":false},{"t":132.52,"side":"team","card":"princess","x":0.2924,"y":0.3358,"ability":false},{"t":134.59,"side":"opponent","card":"berserker","x":0.2727,"y":0.6683,"ability":false},{"t":136.63,"side":"team","card":"goblins","x":0.2703,"y":0.336,"ability":false},{"t":138.27,"side":"opponent","card":"flying-machine","x":0.2897,"y":0.6494,"ability":false},{"t":139.92,"side":"team","card":"valkyrie","x":0.2912,"y":0.3459,"ability":false},{"t":141.94,"side":"opponent","card":"golden-knight","x":0.3225,"y":0.6534,"ability":false},{"t":143.67,"side":"team","card":"firecracker","x":0.2949,"y":0.3589,"ability":false},{"t":145.65,"side":"opponent","card":"ice-golem","x":0.2913,"y":0.5806,"ability":false},{"t":147.28,"side":"team","card":"elite-barbarians","x":0.2746,"y":0.3941,"ability":false},{"t":148.98,"side":"opponent","card":"hunter","x":0.3014,"y":0.6058,"ability":false},{"t":151.1,"side":"team","card":"arrows","x":0.2242,"y":0.4926,"ability":false},{"t":153.15,"side":"opponent","card":"berserker","x":0.2627,"y":0.6492,"ability":false},{"t":155.28,"side":"team","card":"princess","x":0.2406,"y":0.4306,"ability":false},{"t":156.95,"side":"opponent","card":"flying-machine","x":0.2265,"y":0.6305,"ability":false},{"t":159.04,"side":"team","card":"goblins","x":0.2298,"y":0.4387,"ability":false},{"t":161.22,"side":"opponent","card":"archers","x":0.2139,"y":0.5999,"ability":false},{"t":163.2,"side":"team","card":"firecracker","x":0.2402,"y":0.451,"ability":false},{"t":165.55,"side":"opponent","card":"golden-knight","x":0.2113,"y":0.5736,"ability":false},{"t":167.58,"side":"team","card":"valkyrie","x":0.2211,"y":0.4391,"ability":false},{"t":169.96,"side":"opponent","card":"hunter","x":0.237,"y":0.5867,"ability":false}]}},{"battle_id":"00JYP2VURU9R","warmup_events":12,"human":{"score":0.99999,"events":[{"t":6.05,"side":"team","card":"baby-dragon","x":0.9167,"y":0.4531,"ability":false},{"t":8.65,"side":"opponent","card":"valkyrie","x":0.6944,"y":0.7031,"ability":false},{"t":18.55,"side":"team","card":"valkyrie","x":0.8056,"y":0.2656,"ability":false},{"t":21.05,"side":"opponent","card":"dark-prince","x":0.5833,"y":0.9843,"ability":false},{"t":27.25,"side":"team","card":"witch","x":0.5833,"y":0.0156,"ability":false},{"t":28.05,"side":"opponent","card":"giant","x":0.9167,"y":0.5468,"ability":false},{"t":32.7,"side":"opponent","card":"dart-goblin","x":0.5833,"y":0.5468,"ability":false},{"t":33.75,"side":"team","card":"wizard","x":0.9167,"y":0.2031,"ability":false},{"t":36.6,"side":"team","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":39.55,"side":"opponent","card":"fireball","x":0.8056,"y":0.2344,"ability":false},{"t":65.9,"side":"opponent","card":"baby-dragon","x":0.5278,"y":0.9844,"ability":false},{"t":69.4,"side":"team","card":"ram-rider","x":0.1944,"y":0.2656,"ability":false},{"t":72.2,"side":"team","card":"baby-dragon","x":0.1944,"y":0.4219,"ability":false},{"t":73.55,"side":"opponent","card":"valkyrie","x":0.1944,"y":0.6718,"ability":false},{"t":88.1,"side":"opponent","card":"giant","x":0.5278,"y":0.9843,"ability":false},{"t":94.4,"side":"team","card":"valkyrie","x":0.5833,"y":0.0156,"ability":false},{"t":96.85,"side":"team","card":"witch","x":0.5278,"y":0.0156,"ability":false},{"t":96.9,"side":"opponent","card":"dark-prince","x":0.5278,"y":0.9843,"ability":false},{"t":103.75,"side":"opponent","card":"dart-goblin","x":0.9722,"y":0.5781,"ability":false},{"t":107.05,"side":"team","card":"freeze","x":0.8056,"y":0.5469,"ability":false},{"t":109.6,"side":"opponent","card":"baby-dragon","x":0.5833,"y":0.5469,"ability":false},{"t":117.55,"side":"team","card":"fireball","x":0.9722,"y":0.5469,"ability":false},{"t":126.15,"side":"opponent","card":"valkyrie","x":0.6944,"y":0.5468,"ability":false},{"t":130.15,"side":"team","card":"baby-dragon","x":0.9167,"y":0.3594,"ability":false},{"t":130.2,"side":"opponent","card":"balloon","x":0.9167,"y":0.5469,"ability":false},{"t":132.55,"side":"team","card":"ram-rider","x":0.5278,"y":0.4531,"ability":false},{"t":135.55,"side":"opponent","card":"dark-prince","x":0.8056,"y":0.7031,"ability":false},{"t":137.4,"side":"team","card":"wizard","x":0.9722,"y":0.2344,"ability":false},{"t":144.55,"side":"opponent","card":"dart-goblin","x":0.5833,"y":0.6718,"ability":false},{"t":146.05,"side":"team","card":"witch","x":0.6944,"y":0.3594,"ability":false},{"t":147.05,"side":"team","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":151.2,"side":"opponent","card":"giant","x":0.9167,"y":0.6093,"ability":false},{"t":153.35,"side":"opponent","card":"baby-dragon","x":0.5833,"y":0.5469,"ability":false},{"t":155.9,"side":"team","card":"valkyrie","x":0.9167,"y":0.4531,"ability":false},{"t":157.55,"side":"team","card":"freeze","x":0.6944,"y":0.5781,"ability":false},{"t":163.1,"side":"opponent","card":"valkyrie","x":0.9167,"y":0.5468,"ability":false},{"t":164.55,"side":"team","card":"ram-rider","x":0.5833,"y":0.4531,"ability":false},{"t":168.2,"side":"opponent","card":"dark-prince","x":0.6389,"y":0.7343,"ability":false},{"t":168.75,"side":"opponent","card":"arrows","x":0.8056,"y":0.6094,"ability":false},{"t":174.75,"side":"team","card":"baby-dragon","x":0.9722,"y":0.2031,"ability":false},{"t":178.15,"side":"opponent","card":"giant","x":0.5278,"y":0.9843,"ability":false},{"t":179.85,"side":"team","card":"witch","x":0.5833,"y":0.2656,"ability":false},{"t":185.55,"side":"opponent","card":"baby-dragon","x":0.6389,"y":0.7344,"ability":false},{"t":186.75,"side":"team","card":"wizard","x":0.9722,"y":0.0781,"ability":false},{"t":189.3,"side":"opponent","card":"valkyrie","x":0.9167,"y":0.5468,"ability":false},{"t":190.05,"side":"team","card":"valkyrie","x":0.9167,"y":0.3906,"ability":false},{"t":193.05,"side":"opponent","card":"dart-goblin","x":0.5278,"y":0.6406,"ability":false},{"t":194.9,"side":"team","card":"freeze","x":0.6944,"y":0.5781,"ability":false},{"t":195.2,"side":"opponent","card":"fireball","x":0.8056,"y":0.3906,"ability":false},{"t":199.05,"side":"opponent","card":"arrows","x":0.8056,"y":0.4219,"ability":false},{"t":199.2,"side":"team","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":202.55,"side":"team","card":"fireball","x":0.75,"y":0.4531,"ability":false}]},"ai":{"score":4e-05,"events":[{"t":6.05,"side":"team","card":"baby-dragon","x":0.9167,"y":0.4531,"ability":false},{"t":8.65,"side":"opponent","card":"valkyrie","x":0.6944,"y":0.7031,"ability":false},{"t":18.55,"side":"team","card":"valkyrie","x":0.8056,"y":0.2656,"ability":false},{"t":21.05,"side":"opponent","card":"dark-prince","x":0.5833,"y":0.9843,"ability":false},{"t":27.25,"side":"team","card":"witch","x":0.5833,"y":0.0156,"ability":false},{"t":28.05,"side":"opponent","card":"giant","x":0.9167,"y":0.5468,"ability":false},{"t":32.7,"side":"opponent","card":"dart-goblin","x":0.5833,"y":0.5468,"ability":false},{"t":33.75,"side":"team","card":"wizard","x":0.9167,"y":0.2031,"ability":false},{"t":36.6,"side":"team","card":"_ability","x":0.5,"y":0.5,"ability":true},{"t":39.55,"side":"opponent","card":"fireball","x":0.8056,"y":0.2344,"ability":false},{"t":65.9,"side":"opponent","card":"baby-dragon","x":0.5278,"y":0.9844,"ability":false},{"t":69.4,"side":"team","card":"ram-rider","x":0.1944,"y":0.2656,"ability":false},{"t":72.24,"side":"team","card":"baby-dragon","x":0.2703,"y":0.4495,"ability":false},{"t":73.77,"side":"opponent","card":"valkyrie","x":0.2523,"y":0.7119,"ability":false},{"t":78.05,"side":"team","card":"freeze","x":0.2828,"y":0.5399,"ability":false},{"t":80.48,"side":"opponent","card":"giant","x":0.3022,"y":0.7121,"ability":false},{"t":87.33,"side":"team","card":"skeleton-army","x":0.3444,"y":0.2656,"ability":false},{"t":91.03,"side":"opponent","card":"dark-prince","x":0.3523,"y":0.6189,"ability":false},{"t":96.22,"side":"team","card":"valkyrie","x":0.2784,"y":0.2673,"ability":false},{"t":101.15,"side":"opponent","card":"balloon","x":0.3507,"y":0.6156,"ability":false},{"t":105.69,"side":"team","card":"wizard","x":0.2984,"y":0.2797,"ability":false},{"t":111.09,"side":"opponent","card":"dart-goblin","x":0.3032,"y":0.5037,"ability":false},{"t":115.27,"side":"team","card":"baby-dragon","x":0.2292,"y":0.4522,"ability":false},{"t":120.17,"side":"opponent","card":"valkyrie","x":0.2418,"y":0.6116,"ability":false},{"t":126.73,"side":"team","card":"witch","x":0.3139,"y":0.3688,"ability":false},{"t":129.89,"side":"opponent","card":"baby-dragon","x":0.3594,"y":0.6274,"ability":false},{"t":133.34,"side":"team","card":"skeleton-army","x":0.2627,"y":0.3789,"ability":false},{"t":135.48,"side":"opponent","card":"dark-prince","x":0.2537,"y":0.5476,"ability":false},{"t":137.47,"side":"team","card":"valkyrie","x":0.2067,"y":0.3904,"ability":false},{"t":139.26,"side":"opponent","card":"arrows","x":0.2498,"y":0.4972,"ability":false},{"t":141.65,"side":"team","card":"fireball","x":0.2101,"y":0.372,"ability":false},{"t":144.36,"side":"opponent","card":"dart-goblin","x":0.2961,"y":0.6899,"ability":false},{"t":147.55,"side":"team","card":"baby-dragon","x":0.2229,"y":0.408,"ability":false},{"t":150.14,"side":"opponent","card":"giant","x":0.2898,"y":0.6852,"ability":false},{"t":153.47,"side":"team","card":"witch","x":0.2466,"y":0.3258,"ability":false},{"t":155.66,"side":"opponent","card":"valkyrie","x":0.2458,"y":0.6397,"ability":false},{"t":158.42,"side":"team","card":"ram-rider","x":0.2058,"y":0.3611,"ability":false},{"t":160.33,"side":"opponent","card":"baby-dragon","x":0.2213,"y":0.6044,"ability":false},{"t":162.66,"side":"team","card":"skeleton-army","x":0.1889,"y":0.5235,"ability":false},{"t":164.35,"side":"opponent","card":"fireball","x":0.1938,"y":0.6205,"ability":false},{"t":166.64,"side":"team","card":"freeze","x":0.1996,"y":0.5694,"ability":false},{"t":168.68,"side":"opponent","card":"dark-prince","x":0.2152,"y":0.6754,"ability":false},{"t":171.83,"side":"team","card":"baby-dragon","x":0.2153,"y":0.493,"ability":false},{"t":174.29,"side":"opponent","card":"dart-goblin","x":0.2369,"y":0.6783,"ability":false},{"t":177.17,"side":"team","card":"fireball","x":0.1891,"y":0.5575,"ability":false},{"t":179.74,"side":"opponent","card":"giant","x":0.2295,"y":0.6375,"ability":false},{"t":183.78,"side":"team","card":"ram-rider","x":0.2494,"y":0.3587,"ability":false},{"t":185.81,"side":"opponent","card":"valkyrie","x":0.2065,"y":0.6812,"ability":false},{"t":188.81,"side":"team","card":"wizard","x":0.2188,"y":0.4098,"ability":false},{"t":190.81,"side":"opponent","card":"fireball","x":0.2619,"y":0.5523,"ability":false},{"t":193.67,"side":"team","card":"valkyrie","x":0.1893,"y":0.4427,"ability":false},{"t":195.58,"side":"opponent","card":"arrows","x":0.2203,"y":0.5793,"ability":false}]}}],"trainPolicy":"policy_bc_v2","glossary":{"duration_norm":{"title":"Battle length","blurb":"How long the sequence lasts, scaled toward a ~5 minute match (seconds / 300)."},"n_events":{"title":"Total actions","blurb":"Count of every card play and ability in the truncated sequence."},"n_plays":{"title":"Card plays","blurb":"Number of normal card deployments (abilities excluded)."},"n_abilities":{"title":"Ability activations","blurb":"How many champion/ability activations appear in the sequence."},"plays_per_min":{"title":"Play tempo","blurb":"Card plays per minute of battle time \u2014 overall activity rate."},"gap_mean":{"title":"Average delay between actions","blurb":"Mean seconds between consecutive actions. Low = frantic; high = patient."},"gap_std":{"title":"Delay variability","blurb":"How uneven the waits between actions are. Humans usually mix short and long gaps."},"gap_p10":{"title":"Shortest delays (10th percentile)","blurb":"The quick end of the delay distribution \u2014 how snappy the fastest plays feel."},"gap_p50":{"title":"Median delay","blurb":"Typical wait between one action and the next."},"gap_p90":{"title":"Longest delays (90th percentile)","blurb":"The slow end \u2014 long pauses for thinking, cycling, or waiting for elixir."},"frac_gap_lt_1":{"title":"Rapid-fire plays (<1s)","blurb":"Fraction of consecutive actions less than 1 second apart. Humans often chain defenses or cycle plays this quickly; a policy that always waits longer looks robotic."},"frac_gap_lt_2":{"title":"Fast plays (<2s)","blurb":"Fraction of gaps under 2 seconds \u2014 still brisk reactions / cycle tempo."},"frac_gap_gt_8":{"title":"Long pauses (>8s)","blurb":"Fraction of gaps longer than 8 seconds \u2014 banked elixir, dead time, or stalls."},"alt_rate":{"title":"Side alternation rate","blurb":"How often consecutive actions switch team \u2194 opponent. Our rollout loop forces strict flip-flops, so AI sequences sit near 1.0 while humans are messier."},"max_streak":{"title":"Longest same-side streak","blurb":"Max number of actions in a row from the same player before the other acts."},"frac_single":{"title":"Single-elixir phase share","blurb":"Fraction of plays that happen before 2\u00d7 elixir (first ~2 minutes)."},"frac_double":{"title":"Double-elixir phase share","blurb":"Fraction of plays during 2\u00d7 elixir (roughly minutes 2\u20134)."},"frac_triple":{"title":"Triple-elixir phase share","blurb":"Fraction of plays after overtime / 3\u00d7 elixir starts (~4 minutes)."},"leak_team":{"title":"Team elixir leak","blurb":"Estimated elixir the team wasted by sitting at 10 while more would have accrued."},"leak_opp":{"title":"Opponent elixir leak","blurb":"Same leak estimate for the opponent side."},"leak_diff":{"title":"Elixir leak difference","blurb":"Team leak minus opponent leak \u2014 who wasted more idle elixir."},"pre_elixir_mean":{"title":"Elixir before each play","blurb":"Average estimated elixir a player held right before spending."},"pre_elixir_std":{"title":"Elixir-before-play variability","blurb":"Spread of pre-play elixir \u2014 do they always dump, or play at mixed levels?"},"dump_rate":{"title":"Near-empty dump rate","blurb":"Fraction of plays that leave the side nearly empty (\u22641.5 elixir left)."},"spend_team":{"title":"Team total spend","blurb":"Sum of card costs spent by the team over the sequence."},"spend_opp":{"title":"Opponent total spend","blurb":"Sum of card costs spent by the opponent."},"spend_diff":{"title":"Spend difference","blurb":"Team spend minus opponent spend."},"cost_mean":{"title":"Average card cost","blurb":"Mean elixir cost of the cards that were actually played."},"cost_std":{"title":"Card-cost spread","blurb":"How mixed cheap and expensive plays are in the sequence."},"cost_delta_mean":{"title":"Cost swing between plays","blurb":"Average absolute cost change from one play to the next (cycle rhythm)."},"cost_delta_std":{"title":"Cost-swing variability","blurb":"Whether cost changes between plays are steady or erratic."},"team_x_mean":{"title":"Team left\u2013right center","blurb":"Average horizontal placement for the team (0 = left, 1 = right)."},"team_x_std":{"title":"Team left\u2013right spread","blurb":"How widely the team spreads placements across the lane. Regression-to-the-mean policies often pile up near the center, so this std is low versus humans."},"team_y_mean":{"title":"Team depth center","blurb":"Average vertical placement for the team (backline \u2192 bridge \u2192 enemy half)."},"team_y_std":{"title":"Team depth spread","blurb":"How much the team varies backline vs bridge vs push depth."},"opp_x_mean":{"title":"Opponent left\u2013right center","blurb":"Average horizontal placement for the opponent."},"opp_x_std":{"title":"Opponent left\u2013right spread","blurb":"How widely the opponent spreads left/right. Same tell as team_x_std for the other side."},"opp_y_mean":{"title":"Opponent depth center","blurb":"Average vertical placement for the opponent."},"opp_y_std":{"title":"Opponent depth spread","blurb":"How much the opponent varies placement depth."},"team_deep_rate":{"title":"Team deep-push rate","blurb":"Fraction of team plays placed deep into the opponent half."},"opp_deep_rate":{"title":"Opponent deep-push rate","blurb":"Fraction of opponent plays placed deep into the team half."},"team_bridge_rate":{"title":"Team bridge rate","blurb":"Fraction of team plays dropped near the river / bridge."},"opp_bridge_rate":{"title":"Opponent bridge rate","blurb":"Fraction of opponent plays near the river / bridge."},"team_back_rate":{"title":"Team backline rate","blurb":"Fraction of team plays kept safely in the back."},"opp_back_rate":{"title":"Opponent backline rate","blurb":"Fraction of opponent plays kept in their backline."},"team_left_rate":{"title":"Team left-lane bias","blurb":"Fraction of team placements on the left half of the arena."},"opp_left_rate":{"title":"Opponent left-lane bias","blurb":"Fraction of opponent placements on the left half."},"tile_diversity":{"title":"Placement diversity","blurb":"How many distinct coarse tiles get used, relative to event count."},"team_unique_frac":{"title":"Team card variety","blurb":"How many unique team cards appear / 8 \u2014 did they cycle the whole deck?"},"opp_unique_frac":{"title":"Opponent card variety","blurb":"How many unique opponent cards appear / 8."},"team_spell_rate":{"title":"Team spell rate","blurb":"Fraction of team plays that are spells (Fireball, Zap, \u2026)."},"opp_spell_rate":{"title":"Opponent spell rate","blurb":"Fraction of opponent plays that are spells."},"team_wincon_rate":{"title":"Team win-condition rate","blurb":"Fraction of team plays that look like win conditions (Hog, Balloon, \u2026)."},"opp_wincon_rate":{"title":"Opponent win-condition rate","blurb":"Fraction of opponent plays that look like win conditions."},"resp_latency_mean":{"title":"Mean answer latency","blurb":"Average seconds to respond after the other side places a deep / threatening play."},"resp_latency_std":{"title":"Answer-latency spread","blurb":"How consistent those reaction times are."},"resp_rate":{"title":"Threat answer rate","blurb":"How often a deep push is followed by a measured response from the other side."},"pending_deep":{"title":"Unanswered deep pushes","blurb":"Count of deep plays still waiting for a response at sequence end."},"team_deck_cost_mean":{"title":"Team deck average cost","blurb":"Mean elixir cost of the 8 cards in the team deck (composition, not plays)."},"opp_deck_cost_mean":{"title":"Opponent deck average cost","blurb":"Mean elixir cost of the opponent deck."},"team_deck_spells":{"title":"Team spell count in deck","blurb":"How many spells are in the team deck list."},"opp_deck_spells":{"title":"Opponent spell count in deck","blurb":"How many spells are in the opponent deck list."},"team_deck_wincons":{"title":"Team win-cons in deck","blurb":"How many win-condition-ish cards the team deck contains."},"opp_deck_wincons":{"title":"Opponent win-cons in deck","blurb":"How many win-condition-ish cards the opponent deck contains."},"side_count_imbalance":{"title":"Action-count imbalance","blurb":"How uneven the number of team vs opponent actions is in the sequence."},"in_overtime":{"title":"Reached overtime?","blurb":"1 if the truncated sequence lasts into overtime (\u2265240s), else 0."},"in_single":{"title":"Still in single elixir?","blurb":"1 if the sequence ends before 2\u00d7 elixir (<120s), else 0."}}};
+
+mountCounters();
+
+const div = (cls) => { const d = document.createElement("div"); if (cls) d.className = cls; return d; };
+const sci = (v) => {
+  if (v === null || v === undefined) return "—";
+  if (v === 0) return "0";
+  if (v >= 0.01) return v.toFixed(3);
+  const exp = Math.floor(Math.log10(Math.abs(v)));
+  return (v / Math.pow(10, exp)).toFixed(1) + "e" + exp;
+};
+const logFrac = (v) => {
+  const floor = -6, ceil = Math.log10(0.5);
+  const lv = Math.log10(Math.max(v, Math.pow(10, floor)));
+  return clamp(((lv - floor) / (ceil - floor)) * 100, 1.5, 100);
+};
+
+/* ---------- ranking ---------- */
+(function () {
+  const host = document.getElementById("rankTable");
+  if (!host || !DATA.ranking) return;
+  DATA.ranking.forEach((row, i) => {
+    const node = div("rank-row" + (i === 0 ? " best" : ""));
+    node.innerHTML = `
+      <div>#${i + 1}</div>
+      <div><b>${row.policy_id}</b><br><small style="color:#94a3b8">fool ${pct(row["fool_rate_at_0.5"] || 0)}</small></div>
+      <div class="rank-bar"><i data-w="${logFrac(row.human_likeness || 0)}"></i><span class="rank-line" style="left:100%"></span></div>
+      <div class="metric">P(human) ${sci(row.human_likeness || 0)}</div>
+      <div class="metric">AUC ${(row.detection_auc || 0).toFixed(3)}</div>`;
+    host.appendChild(node);
+  });
+  const fills = [...host.querySelectorAll(".rank-bar i")];
+  new IntersectionObserver((entries, obs) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      fills.forEach((f, i) => setTimeout(() => (f.style.width = f.dataset.w + "%"), i * 120));
+      obs.disconnect();
+    });
+  }, { threshold: 0.3 }).observe(host);
+})();
+
+/* ---------- score distributions ---------- */
+(function () {
+  const rows = DATA.matched || [];
+  const chips = document.getElementById("histChips");
+  const svg = document.getElementById("scoreHist");
+  if (!rows.length || !chips || !svg) return;
+  const tip = makeTip("scoreHost");
+  let active = 0;
+  function draw() {
+    const row = rows[active];
+    const hist = row.score_histogram || {};
+    const edges = hist.edges || [];
+    const human = hist.real || [];
+    const ai = hist.synthetic || [];
+    const W = 720, H = 250, ML = 46, MB = 34, MT = 14, MR = 12;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = "";
+    const peak = Math.max(...human, ...ai, 1);
+    const n = Math.max(human.length, ai.length, 1);
+    const bw = (W - ML - MR) / n;
+    const bars = (counts, color, offset, width, label) => counts.forEach((c, i) => {
+      const h = (c / peak) * (H - MB - MT);
+      const bar = el("rect", {
+        x: ML + i * bw + offset, y: H - MB - h, width, height: Math.max(h, c ? 1.5 : 0),
+        fill: color, opacity: 0.85, rx: 1.5,
+      });
+      bar.addEventListener("mousemove", (ev) => tip.show(ev,
+        `<b>${label}: ${c}</b><br>P(human) ${(edges[i] || 0).toFixed(2)}–${(edges[i + 1] || 0).toFixed(2)}`));
+      bar.addEventListener("mouseleave", tip.hide);
+      svg.appendChild(bar);
+    });
+    bars(ai, "#f87171", 1, Math.max(1, bw * 0.46), "AI");
+    bars(human, "#34d399", bw * 0.5, Math.max(1, bw * 0.46), "human");
+    svg.appendChild(el("line", { x1: ML, x2: W - MR, y1: H - MB, y2: H - MB, stroke: "rgba(148,163,184,0.3)" }));
+    const midX = ML + 0.5 * (W - ML - MR);
+    svg.appendChild(el("line", { x1: midX, x2: midX, y1: MT, y2: H - MB, stroke: "#f87171",
+      "stroke-dasharray": "4 4", opacity: 0.55 }));
+    svg.appendChild(svgText({ x: midX + 5, y: MT + 12, fill: "#f87171", "font-size": 10 }, "decision 0.5"));
+    [0, 0.25, 0.5, 0.75, 1].forEach((t) => {
+      svg.appendChild(svgText({ x: ML + t * (W - ML - MR), y: H - MB + 16, "text-anchor": "middle",
+        fill: "#94a3b8", "font-size": 11 }, t.toFixed(2)));
+    });
+    svg.appendChild(svgText({ x: 6, y: MT + 8, fill: "#94a3b8", "font-size": 11 }, "battles"));
+  }
+  rows.forEach((row, i) => {
+    const chip = div("chip" + (i === 0 ? " active" : ""));
+    chip.textContent = row.policy_id;
+    chip.addEventListener("click", () => {
+      active = i;
+      [...chips.children].forEach((c, j) => c.classList.toggle("active", i === j));
+      draw();
+    });
+    chips.appendChild(chip);
+  });
+  draw();
+})();
+
+/* ---------- the tells ---------- */
+(function () {
+  const tells = DATA.tells || [];
+  const list = document.getElementById("tellList");
+  const svg = document.getElementById("tellChart");
+  const readout = document.getElementById("tellReadout");
+  if (!tells.length || !list) return;
+  const tip = makeTip("tellHost");
+  let active = 0;
+  function drawDetail() {
+    const t = tells[active];
+    const hist = t.histogram || {};
+    const edges = hist.edges || [];
+    const W = 460, H = 230, ML = 44, MB = 34, MT = 14, MR = 12;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = "";
+    const peak = Math.max(...(hist.human || [0]), ...(hist.ai || [0]), 1);
+    const n = Math.max((hist.human || []).length, 1);
+    const bw = (W - ML - MR) / n;
+    const bars = (counts, color, offset, label) => (counts || []).forEach((c, i) => {
+      const h = (c / peak) * (H - MB - MT);
+      const bar = el("rect", { x: ML + i * bw + offset, y: H - MB - h,
+        width: Math.max(1, bw * 0.46), height: Math.max(h, c ? 1.5 : 0), fill: color, opacity: 0.85, rx: 1.5 });
+      bar.addEventListener("mousemove", (ev) => tip.show(ev,
+        `<b>${label}: ${c}</b><br>${(edges[i] || 0).toFixed(3)} – ${(edges[i + 1] || 0).toFixed(3)}`));
+      bar.addEventListener("mouseleave", tip.hide);
+      svg.appendChild(bar);
+    });
+    bars(hist.ai, "#f87171", 1, "AI");
+    bars(hist.human, "#34d399", bw * 0.5, "human");
+    svg.appendChild(el("line", { x1: ML, x2: W - MR, y1: H - MB, y2: H - MB, stroke: "rgba(148,163,184,0.3)" }));
+    [0, 0.5, 1].forEach((f) => {
+      const v = (edges[0] || 0) + f * ((edges[edges.length - 1] || 1) - (edges[0] || 0));
+      svg.appendChild(svgText({ x: ML + f * (W - ML - MR), y: H - MB + 16, "text-anchor": "middle",
+        fill: "#94a3b8", "font-size": 11 }, v.toFixed(2)));
+    });
+    const higher = (t.human_mean || 0) >= (t.ai_mean || 0) ? "humans" : "AI";
+    const lower = higher === "humans" ? "AI" : "humans";
+    const glossary = (DATA.glossary && DATA.glossary[t.feature]) || {};
+    const title = t.title || glossary.title || titleCase(t.feature);
+    const blurb = t.blurb || glossary.blurb || "";
+    readout.innerHTML = `
+      <div class="tell-title">${title} <span class="kind-tag ${t.kind}">${t.kind}</span></div>
+      <code class="tell-code">${t.feature}</code>
+      <p class="tell-blurb">${blurb}</p>
+      <div class="tell-stats">
+        separation AUC <b>${(t.separation_auc || 0).toFixed(3)}</b> ·
+        effect size ${Math.abs(t.cohens_d || 0).toFixed(2)}σ<br>
+        human ${t.human_mean.toFixed(3)} ± ${t.human_std.toFixed(3)} ·
+        AI ${t.ai_mean.toFixed(3)} ± ${t.ai_std.toFixed(3)}<br>
+        <span style="color:#94a3b8">${higher} score higher on this metric; ${lower} sit lower.</span><br>
+        AUC lost if this feature is scrambled: ${(t.permutation_drop || 0).toFixed(4)}
+      </div>
+      ${t.kind === "harness"
+        ? "<p class='tell-warn'>Harness artifact — produced by the rollout loop (forced side flips or fixed length), not by the policy’s play style.</p>"
+        : ""}`;
+  }
+  tells.forEach((t, i) => {
+    const row = div("tell-row" + (i === 0 ? " active" : ""));
+    const glossary = (DATA.glossary && DATA.glossary[t.feature]) || {};
+    const title = t.title || glossary.title || "";
+    row.title = title + (t.blurb || glossary.blurb ? " — " + (t.blurb || glossary.blurb) : "");
+    row.innerHTML = `<div class="tell-name"><code>${t.feature}</code><small>${title}</small></div>
+      <span class="kind-tag ${t.kind}">${t.kind}</span>
+      <div class="tell-bar"><i style="width:${clamp((t.separation_auc - 0.5) * 200, 2, 100)}%;
+        background:${t.kind === "harness" ? "#fbbf24" : "#f87171"}"></i></div>
+      <div class="sep">${(t.separation_auc || 0).toFixed(3)}</div>`;
+    row.addEventListener("click", () => {
+      active = i;
+      [...list.children].forEach((c, j) => c.classList.toggle("active", i === j));
+      drawDetail();
+    });
+    list.appendChild(row);
+  });
+  drawDetail();
+})();
+
+/* ---------- tell profile heatmap ---------- */
+(function () {
+  const profile = DATA.tellProfile || [];
+  const host = document.getElementById("tellHeatmap");
+  if (!profile.length || !host) return;
+  const policies = Object.keys(profile[0].policies || {});
+  const cols = `220px repeat(${policies.length}, minmax(72px, 1fr))`;
+  const head = div("heat-row");
+  head.style.gridTemplateColumns = cols;
+  head.innerHTML = `<div class="heat-label"></div>` +
+    policies.map((p) => `<div class="heat-head">${p.replace("policy_bc_", "")}</div>`).join("");
+  host.appendChild(head);
+  profile.forEach((row) => {
+    const line = div("heat-row");
+    line.style.gridTemplateColumns = cols;
+    let html = `<div class="heat-label"><code>${row.feature}</code></div>`;
+    policies.forEach((p) => {
+      const z = (row.policies[p] || {}).z_vs_human || 0;
+      const mag = clamp(Math.abs(z) / 4, 0, 1);
+      const color = Math.abs(z) < 1 ? "52,211,153" : (Math.abs(z) < 2.5 ? "251,191,36" : "248,113,113");
+      html += `<div class="heat-cell" style="background:rgba(${color},${(0.18 + 0.75 * mag).toFixed(2)})"
+        title="${row.feature} — ${p}: ${z.toFixed(2)}σ from human">${z >= 0 ? "+" : ""}${z.toFixed(1)}σ</div>`;
+    });
+    line.innerHTML = html;
+    host.appendChild(line);
+  });
+})();
+
+/* ---------- detection vs sequence length ---------- */
+(function () {
+  const rows = DATA.truncation || [];
+  const svg = document.getElementById("truncChart");
+  const scrub = document.getElementById("truncScrub");
+  if (!rows.length || !svg || !scrub) return;
+  scrub.max = rows.length; scrub.value = rows.length;
+  document.getElementById("truncLegend").innerHTML = legendHTML([
+    { label: "Detection AUC", color: "#38bdf8" },
+    { label: "Mean P(human) on AI", color: "#f87171" },
+  ]);
+  function draw(upto) {
+    const slice = rows.slice(0, upto);
+    lineChart(svg, [
+      { label: "AUC", color: "#38bdf8", values: slice.map((r) => r.auc) },
+      { label: "P(human)", color: "#f87171", values: slice.map((r) => r.mean_P_human_ai) },
+    ], { yFormat: "percent", min: 0, max: 1, xLabel: "generated AI actions" });
+    const last = slice[slice.length - 1];
+    document.getElementById("truncReadout").textContent = last
+      ? `${last.ai_events} AI actions · AUC ${last.auc.toFixed(3)} · mean P(human) ${sci(last.mean_P_human_ai)}`
+      : "";
+  }
+  draw(rows.length);
+  scrub.addEventListener("input", () => draw(Number(scrub.value)));
+  let timer = null;
+  document.getElementById("truncPlay").addEventListener("click", (ev) => {
+    const btn = ev.currentTarget;
+    if (timer) { clearInterval(timer); timer = null; btn.textContent = "▶"; return; }
+    btn.textContent = "❚❚";
+    let i = 1;
+    timer = setInterval(() => {
+      scrub.value = i; draw(i); i += 1;
+      if (i > rows.length) { clearInterval(timer); timer = null; btn.textContent = "▶"; }
+    }, 260);
+  });
+})();
+
+/* ---------- ablation ---------- */
+(function () {
+  const rows = DATA.ablation || [];
+  const svg = document.getElementById("ablChart");
+  const scrub = document.getElementById("ablScrub");
+  if (!rows.length || !svg || !scrub) return;
+  scrub.max = rows.length; scrub.value = rows.length;
+  document.getElementById("ablLegend").innerHTML = legendHTML([
+    { label: "AUC after removing tells", color: "#a78bfa" },
+    { label: "Accuracy", color: "#34d399" },
+  ]);
+  function draw(upto) {
+    const slice = rows.slice(0, upto);
+    lineChart(svg, [
+      { label: "AUC", color: "#a78bfa", values: slice.map((r) => r.auc) },
+      { label: "acc", color: "#34d399", values: slice.map((r) => r.acc) },
+    ], { yFormat: "percent", min: 0.5, max: 1.01, xLabel: "strongest tells removed" });
+    const last = slice[slice.length - 1];
+    document.getElementById("ablReadout").textContent = last
+      ? `${last.dropped} tells removed · ${last.features_left} features left · AUC ${last.auc.toFixed(4)}`
+      : "";
+  }
+  draw(rows.length);
+  scrub.addEventListener("input", () => draw(Number(scrub.value)));
+  let timer = null;
+  document.getElementById("ablPlay").addEventListener("click", (ev) => {
+    const btn = ev.currentTarget;
+    if (timer) { clearInterval(timer); timer = null; btn.textContent = "▶"; return; }
+    btn.textContent = "❚❚";
+    let i = 1;
+    timer = setInterval(() => {
+      scrub.value = i; draw(i); i += 1;
+      if (i > rows.length) { clearInterval(timer); timer = null; btn.textContent = "▶"; }
+    }, 300);
+  });
+})();
+
+/* ---------- replay viewer ---------- */
+(function () {
+  const pairs = DATA.trajectories || [];
+  const chips = document.getElementById("replayChips");
+  const scrub = document.getElementById("replayScrub");
+  if (!pairs.length || !chips || !scrub) return;
+  let active = 0;
+  const panes = {
+    human: { svg: document.getElementById("humanArena"), score: document.getElementById("humanScore") },
+    ai: { svg: document.getElementById("aiArena"), score: document.getElementById("aiScore") },
+  };
+  function drawPane(kind, upto) {
+    const pair = pairs[active];
+    const track = pair[kind];
+    const { g, geom } = mountArena(panes[kind].svg, { W: 290, H: 430 });
+    geom.captions();
+    const warm = pair.warmup_events || 12;
+    track.events.slice(0, upto).forEach((e, i) => {
+      const isWarm = i < warm;
+      const color = isWarm ? "#94a3b8" : (e.side === "team" ? "#60a5fa" : "#fca5a5");
+      const latest = i === upto - 1;
+      g.appendChild(el("circle", {
+        cx: geom.xPx(e.x), cy: geom.yPx(e.y), r: latest ? 8 : 5,
+        fill: color, opacity: isWarm ? 0.45 : 0.85,
+        stroke: latest ? "#e2e8f0" : "none", "stroke-width": latest ? 2 : 0,
+      }));
+    });
+    panes[kind].score.textContent = `P(human) = ${sci(track.score)}`;
+  }
+  function draw(upto) {
+    drawPane("human", upto);
+    drawPane("ai", upto);
+    const pair = pairs[active];
+    const h = pair.human.events[upto - 1], a = pair.ai.events[upto - 1];
+    const warm = pair.warmup_events || 12;
+    document.getElementById("replayReadout").textContent =
+      `event ${upto}/${pair.human.events.length} ${upto <= warm ? "(shared warm-up)" : "(diverged)"}`;
+    document.getElementById("replayLog").innerHTML = (h && a)
+      ? `human: <b>${titleCase(h.card)}</b> @ ${h.t}s (${h.side}) &nbsp;·&nbsp;
+         AI: <b>${titleCase(a.card)}</b> @ ${a.t}s (${a.side})`
+      : "";
+  }
+  function setPair(i) {
+    active = i;
+    [...chips.children].forEach((c, j) => c.classList.toggle("active", i === j));
+    const n = Math.min(pairs[i].human.events.length, pairs[i].ai.events.length);
+    scrub.max = n; scrub.value = n;
+    draw(n);
+  }
+  pairs.forEach((pair, i) => {
+    const chip = div("chip" + (i === 0 ? " active" : ""));
+    chip.textContent = "battle " + pair.battle_id;
+    chip.addEventListener("click", () => setPair(i));
+    chips.appendChild(chip);
+  });
+  setPair(0);
+  scrub.addEventListener("input", () => draw(Number(scrub.value)));
+  let timer = null;
+  document.getElementById("replayPlay").addEventListener("click", (ev) => {
+    const btn = ev.currentTarget;
+    if (timer) { clearInterval(timer); timer = null; btn.textContent = "▶"; return; }
+    btn.textContent = "❚❚";
+    let i = 1;
+    const max = Number(scrub.max);
+    timer = setInterval(() => {
+      scrub.value = i; draw(i); i += 1;
+      if (i > max) { clearInterval(timer); timer = null; btn.textContent = "▶"; }
+    }, 130);
+  });
+})();
+
+/* ---------- ROC ---------- */
+(function () {
+  const rows = (DATA.matched || []).filter((r) => (r.roc || []).length);
+  const svg = document.getElementById("rocChart");
+  if (!rows.length || !svg) return;
+  const palette = ["#38bdf8", "#34d399", "#fbbf24", "#f472b6", "#a78bfa"];
+  const W = 460, H = 340, ML = 48, MB = 40, MT = 14, MR = 14;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = "";
+  const px = (v) => ML + v * (W - ML - MR);
+  const py = (v) => H - MB - v * (H - MB - MT);
+  for (let t = 0; t <= 4; t++) {
+    svg.appendChild(el("line", { x1: ML, x2: W - MR, y1: py(t / 4), y2: py(t / 4), stroke: "rgba(148,163,184,0.14)" }));
+    svg.appendChild(svgText({ x: ML - 8, y: py(t / 4) + 4, "text-anchor": "end", fill: "#94a3b8", "font-size": 11 },
+      (t / 4).toFixed(2)));
+  }
+  svg.appendChild(el("line", { x1: px(0), y1: py(0), x2: px(1), y2: py(1),
+    stroke: "#64748b", "stroke-dasharray": "5 4" }));
+  rows.forEach((row, i) => {
+    const pts = [[0, 0], ...row.roc.map((p) => [p.fpr, p.tpr]), [1, 1]];
+    svg.appendChild(el("polyline", {
+      points: pts.map(([x, y]) => `${px(x)},${py(y)}`).join(" "),
+      fill: "none", stroke: palette[i % palette.length], "stroke-width": 2.4, opacity: 0.9,
+    }));
+  });
+  svg.appendChild(svgText({ x: (W + ML) / 2, y: H - 8, "text-anchor": "middle", fill: "#94a3b8", "font-size": 11 },
+    "false positive rate"));
+  document.getElementById("rocLegend").innerHTML = legendHTML(
+    rows.map((r, i) => ({ label: `${r.policy_id} (AUC ${(r.auc || 0).toFixed(3)})`, color: palette[i % palette.length] })));
+})();
+
+/* ---------- transfer vs matched ---------- */
+(function () {
+  const host = document.getElementById("dualBars");
+  if (!host) return;
+  const byId = (rows) => Object.fromEntries((rows || []).map((r) => [r.policy_id, r]));
+  const transfer = byId(DATA.transfer);
+  const matched = byId(DATA.matched);
+  const ids = [...new Set((DATA.ranking || []).map((r) => r.policy_id))];
+  ids.forEach((id) => {
+    const t = transfer[id] || {};
+    const m = matched[id] || {};
+    const row = div("dual-row");
+    row.innerHTML = `<div><b>${id}</b></div>`;
+    [["transfer", t.human_likeness || 0], ["matched", m.human_likeness || 0]].forEach(([kind, val]) => {
+      const cell = div();
+      cell.innerHTML = `<div style="font-size:11px;color:#94a3b8;margin-bottom:4px">${kind} P(human) ${sci(val)}</div>
+        <div class="bar-track"><div class="bar-fill ${kind}" style="width:${logFrac(val)}%"></div></div>`;
+      row.appendChild(cell);
+    });
+    host.appendChild(row);
+  });
+})();
+
+/* ---------- boosting loss ---------- */
+(function () {
+  const curve = DATA.boost || [];
+  const svg = document.getElementById("lossChart");
+  if (!curve.length || !svg) return;
+  lineChart(svg, [
+    { label: "train", color: "#22d3ee", values: curve.map((r) => r.train_loss) },
+    { label: "val", color: "#fbbf24", values: curve.map((r) => r.val_loss), dash: "4 3" },
+  ], { xLabel: "boosting iteration", yDigits: 3, width: 460, height: 260 });
+  document.getElementById("lossLegend").innerHTML = legendHTML([
+    { label: "train log-loss", color: "#22d3ee" },
+    { label: "val log-loss", color: "#fbbf24" },
+  ]);
+})();
+
+/* ---------- sanity controls ---------- */
+(function () {
+  const host = document.getElementById("sanityPanel");
+  const sanity = DATA.sanity || {};
+  if (!host) return;
+  ["easy", "medium"].forEach((tier) => {
+    const row = sanity[tier];
+    if (!row) return;
+    const card = div("sanity-card");
+    card.innerHTML = `<h3>${titleCase(tier)} synthetic negatives</h3>
+      <p>mean P(human): <b>${sci(row.mean_P_human_ai || 0)}</b></p>
+      <p>fooled the judge: <b>${pct(row["fool_rate_at_0.5"] || 0)}</b> — expected 0%</p>
+      <p style="color:#94a3b8">Random-but-legal sequences stay rejected, so the judge is reading
+      style rather than raw chaos.</p>`;
+    host.appendChild(card);
+  });
+})();
+
+(function () {
+  const stages = DATA.stages || [];
+  const scrub = document.getElementById("trainScrub");
+  const chart = document.getElementById("trainChart");
+  if (!scrub || !chart || !stages.length) return;
+  scrub.max = Math.max(stages.length, 1);
+  scrub.value = stages.length;
+  function drawTrain(upto) {
+    const slice = stages.slice(0, upto);
+    lineChart(chart, [
+      { label: "AUC", color: "#38bdf8", values: slice.map((s) => s.auc) },
+      { label: "Accuracy", color: "#34d399", values: slice.map((s) => s.acc) },
+      { label: "Fool@0.5", color: "#fbbf24", values: slice.map((s) => s["fool_rate_at_0.5"]) },
+    ], { yFormat: "percent", xLabel: "ExtraTrees stage", width: 460, height: 260 });
+    const last = slice[slice.length - 1];
+    document.getElementById("trainReadout").textContent = last
+      ? `trees ${last.trees} · AUC ${(last.auc || 0).toFixed(3)} · fool ${pct(last["fool_rate_at_0.5"] || 0)}`
+      : "";
+  }
+  document.getElementById("trainLegend").innerHTML = legendHTML([
+    { label: "AUC", color: "#38bdf8" },
+    { label: "Accuracy", color: "#34d399" },
+    { label: "Fool@0.5", color: "#fbbf24" },
+  ]);
+  drawTrain(stages.length);
+  scrub.addEventListener("input", () => drawTrain(Number(scrub.value)));
+  let timer = null;
+  document.getElementById("trainPlay").addEventListener("click", () => {
+    const btn = document.getElementById("trainPlay");
+    if (timer) { clearInterval(timer); timer = null; btn.textContent = "▶"; return; }
+    btn.textContent = "❚❚";
+    let i = 1;
+    timer = setInterval(() => {
+      scrub.value = i; drawTrain(i); i += 1;
+      if (i > stages.length) { clearInterval(timer); timer = null; btn.textContent = "▶"; }
+    }, 80);
+  });
+})();
+
+(function () {
+  const host = document.getElementById("quiz");
+  const scoreHost = document.getElementById("quizScore");
+  const rounds = DATA.quiz || [];
+  if (!host || !rounds.length) {
+    if (host) host.innerHTML = "<p class='caption'>Quiz cache empty — rerun report-style after training.</p>";
+    return;
+  }
+  let idx = 0, correct = 0, answered = 0, judge = 0;
+  function renderRound() {
+    const round = rounds[idx];
+    host.innerHTML = "";
+    const card = div("quiz-card");
+    card.innerHTML = `<div class="caption">Round ${idx + 1}/${rounds.length} ·
+      AI continuation from ${round.policy_id}</div>`;
+    const pair = div("quiz-pair");
+    ["left", "right"].forEach((side) => {
+      const b = round[side];
+      const btn = document.createElement("button");
+      btn.className = "battle-card";
+      btn.type = "button";
+      btn.innerHTML = `<h4>Battle ${b.battle_id}</h4>
+        <div class="fp">${b.n_plays} plays · ${b.duration}s long<br>
+        alternation ${pct(b.alt_rate)} · mean Δt ${b.mean_delay}s<br>
+        team: ${(b.team_cards || []).map(titleCase).join(", ")}…</div>`;
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+        [...pair.querySelectorAll("button")].forEach((x) => {
+          x.disabled = true;
+          if (x.dataset.side === round.human_side) x.classList.add("correct");
+        });
+        if (side === round.human_side) correct += 1;
+        else btn.classList.add("wrong");
+        const judgePick = round.left.score >= round.right.score ? "left" : "right";
+        if (judgePick === round.human_side) judge += 1;
+        answered += 1;
+        verdict.innerHTML =
+          `${side === round.human_side ? "<span class='up'>Correct.</span>" : "<span class='down'>That one was the AI.</span>"}
+           Judge: left ${sci(round.left.score)}, right ${sci(round.right.score)} →
+           picked <b>${judgePick}</b> ${judgePick === round.human_side ? "(correct)" : "(wrong)"}.`;
+        scoreHost.innerHTML = [["You", correct], ["Judge", judge]]
+          .map(([n, v]) => `<span class="score-pill">${n}: <b>${v}/${answered}</b></span>`).join("");
+      });
+      btn.dataset.side = side;
+      pair.appendChild(btn);
+    });
+    card.appendChild(pair);
+    const verdict = div("quiz-verdict");
+    card.appendChild(verdict);
+    const next = document.createElement("button");
+    next.className = "play-btn";
+    next.type = "button";
+    next.textContent = "Next round →";
+    next.style.marginTop = "12px";
+    next.addEventListener("click", () => { idx = (idx + 1) % rounds.length; renderRound(); });
+    card.appendChild(next);
+    host.appendChild(card);
+  }
+  renderRound();
+  scoreHost.innerHTML = `<span class="score-pill">Pick a side to start scoring.</span>`;
+})();
+
+
+  </script>
+</body>
+</html>

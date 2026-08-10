@@ -1,0 +1,1579 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PolicyBC v5 — hide from the style judge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@450;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+  
+    :root {
+      color-scheme: dark;
+      --bg: #0a0f18;
+      --line: #1e293b;
+      --line-soft: #141c28;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(1.75rem, 3vw, 2.25rem);
+      letter-spacing: -0.03em;
+      font-weight: 650;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    p, li { color: var(--muted); margin: 0 0 10px; }
+    a { color: var(--accent); }
+    .report-header { padding-bottom: 28px; }
+    .report-header p { max-width: 720px; }
+    .meta { font-size: 0.92rem; color: #64748b; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .badge {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+    .badge + .badge::before {
+      content: "·";
+      margin-right: 8px;
+      color: #334155;
+    }
+    .report-section {
+      padding: 28px 0;
+      border-top: 1px solid var(--line-soft);
+    }
+    .report-section:first-of-type { border-top: none; padding-top: 0; }
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px 20px;
+    }
+    .kpi-label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .kpi-value {
+      display: block;
+      font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .block-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 36px 40px;
+    }
+    .block-wide { grid-column: 1 / -1; }
+    .chart-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
+    }
+    .chart-block {
+      width: 100%;
+    }
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+    }
+    svg.chart {
+      width: 100%;
+      height: auto;
+      min-height: 480px;
+      aspect-ratio: 1000 / 540;
+      display: block;
+      overflow: visible;
+    }
+    svg.chart-interactive .chart-lines polyline {
+      transition: stroke-width 0.15s ease, opacity 0.15s ease;
+    }
+    svg.chart-interactive:hover .chart-lines polyline {
+      stroke-width: 4.5;
+    }
+    .chart-tooltip {
+      position: absolute;
+      top: 12px;
+      left: 0;
+      min-width: 180px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: rgba(10, 15, 24, 0.94);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.12s ease, transform 0.12s ease;
+      z-index: 2;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    .chart-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .chart-tooltip-title {
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+    .chart-tooltip-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .chart-tooltip-row:last-child { margin-bottom: 0; }
+    .chart-tooltip-row strong {
+      margin-left: auto;
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+    .chart-tooltip-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      font-size: 14px;
+      color: #64748b;
+    }
+    .legend-interactive {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 10px;
+      border: 1px solid #243044;
+      border-radius: 999px;
+      background: transparent;
+      color: #94a3b8;
+      font: inherit;
+      font-size: 13px;
+      line-height: 1.2;
+      cursor: pointer;
+      transition: opacity 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .legend-item:hover {
+      border-color: #475569;
+      color: #cbd5e1;
+    }
+    .legend-item.is-on {
+      color: #e2e8f0;
+      border-color: #334155;
+    }
+    .legend-item.is-off {
+      opacity: 0.4;
+    }
+    .legend-item.is-off .legend-label {
+      text-decoration: line-through;
+    }
+    .legend-item.is-off .legend-preview {
+      opacity: 0.35;
+      border-top-color: #475569;
+    }
+    .legend-preview {
+      width: 16px;
+      border-top: 2px solid var(--legend-color, #64748b);
+      flex-shrink: 0;
+    }
+    .legend-item.legend-dashed .legend-preview {
+      border-top-style: dashed;
+    }
+    .legend-label {
+      white-space: nowrap;
+    }
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      margin-right: 6px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line-soft);
+      text-align: left;
+    }
+    th {
+      color: #64748b;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .diagram {
+      margin: 0;
+      padding: 0 0 0 16px;
+      border-left: 2px solid #334155;
+      background: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      color: #94a3b8;
+      white-space: pre-wrap;
+    }
+    .media {
+      width: 100%;
+      display: block;
+      border-radius: 6px;
+    }
+    .caption { font-size: 13px; color: #64748b; margin-top: 10px; }
+    .chart-animation {
+      width: 100%;
+    }
+    .anim-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px 18px;
+      margin-top: 20px;
+    }
+    .anim-btn {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid #334155;
+      background: #111827;
+      color: #e2e8f0;
+      font: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .anim-btn-icon {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .anim-btn:hover {
+      border-color: #60a5fa;
+      background: #172033;
+    }
+    .anim-icon {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+      display: block;
+    }
+    .anim-icon[hidden] {
+      display: none;
+    }
+    .anim-scrubber {
+      flex: 1 1 220px;
+      min-width: 180px;
+      accent-color: #60a5fa;
+      cursor: pointer;
+    }
+    .anim-readout {
+      flex: 1 1 100%;
+      font-size: 14px;
+      color: #94a3b8;
+      font-variant-numeric: tabular-nums;
+    }
+    .anim-readout strong {
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+    svg.chart-dual .chart-refline {
+      stroke-dasharray: 6 5;
+      opacity: 0.75;
+    }
+    .lessons { margin: 0; padding-left: 18px; }
+    .lessons li { margin-bottom: 10px; }
+    @media (max-width: 820px) {
+      .kpi-row, .block-grid, .chart-grid { grid-template-columns: 1fr; }
+    }
+    
+  body {
+    font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(34,211,238,0.10), transparent 55%),
+      radial-gradient(900px 500px at 90% 0%, rgba(251,191,36,0.08), transparent 50%),
+      var(--bg);
+  }
+  .hero {
+    padding: 8px 0 36px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .hero h1 {
+    font-size: clamp(2.1rem, 4.5vw, 3rem);
+    letter-spacing: -0.035em;
+    max-width: 18ch;
+    line-height: 1.05;
+  }
+  .hero-sub { max-width: 62ch; font-size: 1.05rem; color: #cbd5e1; }
+  .hero-scores {
+    display: flex; flex-wrap: wrap; gap: 14px; margin-top: 22px;
+  }
+  .hero-score {
+    min-width: 140px; padding: 14px 16px; border-radius: 14px;
+    background: rgba(15,23,42,0.65); border: 1px solid rgba(148,163,184,0.18);
+  }
+  .hero-score-label {
+    font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: #94a3b8;
+  }
+  .hero-score-value {
+    display: block; margin-top: 6px; font-size: 1.7rem; font-weight: 700;
+    font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+  }
+  .hero-score-value.up { color: #34d399; }
+  .hero-score-value.warn { color: #fbbf24; }
+  .hero-score-value.flat { color: #e2e8f0; }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+  .run-row {
+    display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px;
+  }
+  .run-card {
+    padding: 16px; border-radius: 14px;
+    border: 1px solid rgba(148,163,184,0.16);
+    background: rgba(15,23,42,0.55);
+  }
+  .run-card.crash { border-color: rgba(248,113,113,0.45); }
+  .run-card.ok { border-color: rgba(52,211,153,0.35); }
+  .run-label { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: #94a3b8; }
+  .run-epochs { font-size: 1.6rem; font-weight: 700; margin: 6px 0; }
+  .run-meta, .run-warm { font-size: 0.85rem; color: #94a3b8; }
+
+  .protocol-toggle {
+    display: inline-flex; gap: 6px; padding: 4px; border-radius: 999px;
+    background: rgba(148,163,184,0.1); border: 1px solid rgba(148,163,184,0.18);
+    margin-bottom: 16px;
+  }
+  .protocol-toggle button {
+    border: 0; background: transparent; color: #94a3b8; cursor: pointer;
+    padding: 8px 14px; border-radius: 999px; font: inherit; font-size: 0.88rem;
+  }
+  .protocol-toggle button.active {
+    background: #0f172a; color: #e2e8f0; box-shadow: 0 0 0 1px #334155;
+  }
+  .protocol-panel { display: none; }
+  .protocol-panel.active { display: block; }
+
+  .race { display: grid; gap: 12px; }
+  .race-row {
+    display: grid; grid-template-columns: 160px 1fr 90px; gap: 12px; align-items: center;
+  }
+  .race-name { font-size: 0.88rem; }
+  .race-name small { display: block; color: #64748b; font-size: 0.72rem; }
+  .race-track {
+    position: relative; height: 22px; border-radius: 8px;
+    background: rgba(148,163,184,0.1); overflow: hidden;
+  }
+  .race-fill {
+    position: absolute; inset: 0 auto 0 0; width: 0%;
+    background: linear-gradient(90deg, #22d3ee, #34d399);
+    transition: width 1s cubic-bezier(.22,1,.36,1);
+  }
+  .race-fill.old { background: linear-gradient(90deg, #64748b, #94a3b8); opacity: 0.55; }
+  .race-val { font-variant-numeric: tabular-nums; font-size: 0.9rem; text-align: right; }
+
+  .radar-wrap { width: 100%; max-width: 520px; margin: 0 auto; }
+  svg.radar { width: 100%; height: auto; aspect-ratio: 1; display: block; }
+
+  .wire {
+    display: grid; grid-template-columns: 1.1fr 28px 1fr; gap: 10px; align-items: stretch;
+    max-width: 900px;
+  }
+  .wire-col {
+    padding: 16px; border-radius: 16px;
+    background: rgba(148,163,184,0.06); border: 1px solid rgba(148,163,184,0.16);
+  }
+  .wire-title {
+    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #94a3b8; margin-bottom: 12px;
+  }
+  .wire-box {
+    padding: 10px 12px; border-radius: 10px; text-align: center; font-size: 0.84rem;
+    margin-bottom: 8px; background: rgba(34,211,238,0.12);
+    border: 1px solid rgba(148,163,184,0.22);
+  }
+  .wire-box.live { border-color: #34d399; box-shadow: 0 0 0 1px #34d39944; }
+  .wire-box.warn { border-color: #fbbf24; }
+  .wire-arrow {
+    align-self: center; height: 2px;
+    background: linear-gradient(90deg, #22d3ee, #fbbf24);
+  }
+  .wire-note { font-size: 0.78rem; color: #94a3b8; margin-top: 8px; text-align: center; }
+
+  .br-table td.good { color: #34d399; font-weight: 600; }
+  .tell-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+    border-radius: 999px; font-size: 0.78rem; margin: 2px 4px 2px 0;
+    background: rgba(148,163,184,0.1); border: 1px solid rgba(148,163,184,0.16);
+  }
+  .tell-chip.up { border-color: rgba(52,211,153,0.45); color: #6ee7b7; }
+  .tell-chip.down { border-color: rgba(248,113,113,0.4); color: #fca5a5; }
+
+  .scrub-bar {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 14px;
+  }
+  .scrub-bar input[type=range] { flex: 1; min-width: 180px; accent-color: #22d3ee; }
+  .play-btn {
+    border: 0; border-radius: 999px; padding: 9px 18px; cursor: pointer;
+    font: inherit; font-weight: 700; font-size: 0.88rem;
+    background: linear-gradient(120deg, #22d3ee, #34d399); color: #041016;
+  }
+  .play-btn:hover { filter: brightness(1.08); }
+
+  @media (max-width: 820px) {
+    .run-row, .wire { grid-template-columns: 1fr; }
+    .wire-arrow { width: 2px; height: 24px; margin: 0 auto; }
+    .race-row { grid-template-columns: 1fr; }
+  }
+  </style>
+</head>
+<body>
+<main>
+  <header class="hero report-header">
+    <div class="badge-row">
+      <span class="badge">policy-bc-v5</span>
+      <span class="badge">anti-detector</span>
+      <span class="badge">21 logged epochs · 3 runs</span>
+      <span class="badge">cuda</span>
+      <span class="badge">offline gates passed</span>
+    </div>
+    <h1>Mimic humans. Confuse the judge.</h1>
+    <p class="hero-sub">
+      v5 keeps the v4.1 trunk, then trains against the frozen human-vs-AI style discriminator:
+      differentiable moment matching on timing/placement tells, plus REINFORCE polish on
+      clock-aware rollouts. This page is the full multi-run story — not the truncated stages file.
+    </p>
+    <p class="meta">Snapshot eval 2026-08-09 13:53 UTC ·
+      709,176 train actions ·
+      33,558 battles ·
+      632,946 params ·
+      style_match=0.4</p>
+    <div class="hero-scores">
+      <div class="hero-score">
+        <span class="hero-score-label">Tell distance vs v4.1</span>
+        <span class="hero-score-value up mono" id="heroL2">
+          −0.41
+        </span>
+      </div>
+      <div class="hero-score">
+        <span class="hero-score-label">Test slot top-1</span>
+        <span class="hero-score-value flat mono">55.1%</span>
+      </div>
+      <div class="hero-score">
+        <span class="hero-score-label">Tells improved</span>
+        <span class="hero-score-value up mono">10/11</span>
+      </div>
+      <div class="hero-score">
+        <span class="hero-score-label">Clock fool @0.5</span>
+        <span class="hero-score-value warn mono">95.8%</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="report-section">
+    <h2>What v5 actually changes</h2>
+    <div class="wire">
+      <div class="wire-col">
+        <div class="wire-title">kept from v4.1</div>
+        <div class="wire-box">causal GRU trunk</div>
+        <div class="wire-box">threat + reaction upweight</div>
+        <div class="wire-box live">card-conditioned zone / XY</div>
+      </div>
+      <div class="wire-arrow"></div>
+      <div class="wire-col">
+        <div class="wire-title">new anti-detector stack</div>
+        <div class="wire-box live">BC loss (still primary)</div>
+        <div class="wire-box live">style moment match</div>
+        <div class="wire-box warn">REINFORCE vs tell distance</div>
+        <div class="wire-box">clock-aware who-acts-next</div>
+        <p class="wire-note">Judge is non-differentiable → match features + black-box polish</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="report-section">
+    <h2>Training timeline — 21 epochs across 3 runs</h2>
+    <p class="caption">Parsed from <span class="mono">logs/policy_bc_v5.log</span>. Run 1 died on the first polish; run 2 is where REINFORCE actually landed; run 3 resumed and stalled again.</p>
+    <div class="run-row">
+        <div class="run-card crash">
+          <div class="run-label">Run 1</div>
+          <div class="run-epochs">5 epochs</div>
+          <div class="run-meta">crashed on first polish</div>
+          <div class="run-warm">warm ← policy_bc_v4.1</div>
+        </div>
+        
+        <div class="run-card ok">
+          <div class="run-label">Run 2</div>
+          <div class="run-epochs">11 epochs</div>
+          <div class="run-meta">3 REINFORCE polishes</div>
+          <div class="run-warm">warm ← policy_bc_v5</div>
+        </div>
+        
+        <div class="run-card ok">
+          <div class="run-label">Run 3</div>
+          <div class="run-epochs">5 epochs</div>
+          <div class="run-meta">stalled before polish</div>
+          <div class="run-warm">warm ← policy_bc_v5</div>
+        </div>
+        </div>
+    <div class="chart-grid" style="margin-top:36px">
+      <div class="chart-block">
+        <h2>BC losses</h2>
+        <svg class="chart" id="lossChart"></svg>
+        <div class="legend"></div>
+      </div>
+      <div class="chart-block">
+        <h2>Style match loss (↓ means batch moments closer to humans)</h2>
+        <svg class="chart" id="styleMatchChart"></svg>
+        <div class="legend"></div>
+      </div>
+      <div class="chart-block">
+        <h2>Slot@1 stays healthy while tell distance falls</h2>
+        <p class="caption">Feature L2 is probed sparsely; the line carries the last measured value forward.</p>
+        <svg class="chart" id="slotStyleChart"></svg>
+        <div class="legend"></div>
+      </div>
+    </div>
+    <div class="scrub-bar">
+      <button type="button" class="play-btn" id="animPlay">Play epoch film</button>
+      <input type="range" id="animScrub" min="0" max="0" value="0" step="1">
+      <div class="caption" id="animReadout">—</div>
+    </div>
+  </section>
+
+  <section class="report-section">
+    <h2>Style judge — two protocols</h2>
+    <p class="caption">The frozen discriminator was trained on forced side-alternation rollouts. Under that harness it still sees v5 as AI. With the action-clock deciding who acts next (deploy-shaped), fool rate jumps. v5 optimizes the residual: <span class="mono">feature_l2</span> on controllable tells.</p>
+    <div class="protocol-toggle" id="protoToggle">
+      <button type="button" class="active" data-panel="clock">Clock (deploy)</button>
+      <button type="button" data-panel="alt">Alternation (legacy harness)</button>
+    </div>
+    <div class="protocol-panel active" id="panel-clock">
+      <div class="kpi-row">
+        <div><span class="kpi-label">P(human)</span><span class="kpi-value mono">0.9574</span></div>
+        <div><span class="kpi-label">Fool @0.5</span><span class="kpi-value mono">95.8%</span></div>
+        <div><span class="kpi-label">Detection AUC</span><span class="kpi-value mono">0.941</span></div>
+        <div><span class="kpi-label">Feature L2</span><span class="kpi-value mono">1.433</span></div>
+      </div>
+    </div>
+    <div class="protocol-panel" id="panel-alt">
+      <div class="kpi-row">
+        <div><span class="kpi-label">P(human)</span><span class="kpi-value mono">0.0232</span></div>
+        <div><span class="kpi-label">Fool @0.5</span><span class="kpi-value mono">1.1%</span></div>
+        <div><span class="kpi-label">Detection AUC</span><span class="kpi-value mono">1.000</span></div>
+        <div><span class="kpi-label">v4.1 clock P</span><span class="kpi-value mono">0.9788</span></div>
+      </div>
+      <p class="caption" style="margin-top:14px">Near-zero fool rate here is expected: harness features (<span class="mono">alt_rate</span>, <span class="mono">n_events</span>) dominate the frozen judge.</p>
+    </div>
+  </section>
+
+  <section class="report-section">
+    <h2>Tell map — human · v5 · v4.1</h2>
+    <p class="caption">Closer to the human ring is better. Green chips = v5 closer than v4.1.</p>
+    <div id="tellChips" style="margin-bottom:18px"></div>
+    <div class="block-grid">
+      <div class="block">
+        <div class="radar-wrap"><svg class="radar" id="tellRadar" viewBox="0 0 400 400"></svg></div>
+      </div>
+      <div class="block">
+        <h2>Error race (abs distance to human)</h2>
+        <div class="race" id="tellRace"></div>
+        <button type="button" class="play-btn" id="racePlay" style="margin-top:16px">Animate race</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="report-section">
+    <h2>Where the gap closed — and where it didn't</h2>
+    <div class="block-grid">
+      <div class="block">
+        <h2>Timing (mostly fixed)</h2>
+        <table>
+          <thead><tr><th>Tell</th><th>Human</th><th>v5</th><th>v4.1</th></tr></thead>
+          <tbody>
+            <tr><td class='mono'>gap_p90</td><td>7.450</td><td>8.007</td><td>5.567</td></tr><tr><td class='mono'>gap_std</td><td>3.349</td><td>3.035</td><td>2.059</td></tr><tr><td class='mono'>gap_p10</td><td>0.682</td><td>0.792</td><td>1.199</td></tr><tr><td class='mono'>frac_gap_lt_1</td><td>0.175</td><td>0.175</td><td>0.068</td></tr><tr><td class='mono'>frac_gap_gt_8</td><td>0.094</td><td>0.090</td><td>0.030</td></tr><tr><td class='mono'>frac_gap_lt_2</td><td>0.362</td><td>0.357</td><td>0.332</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="block">
+        <h2>Placement spread (still short)</h2>
+        <table>
+          <thead><tr><th>Tell</th><th>Human</th><th>v5</th><th>v4.1</th></tr></thead>
+          <tbody>
+            <tr><td class='mono'>team_y_std</td><td>0.183</td><td>0.154</td><td>0.130</td></tr><tr><td class='mono'>opp_y_std</td><td>0.185</td><td>0.163</td><td>0.145</td></tr><tr><td class='mono'>team_x_std</td><td>0.221</td><td>0.136</td><td>0.119</td></tr><tr><td class='mono'>opp_x_std</td><td>0.223</td><td>0.131</td><td>0.114</td></tr><tr><td class='mono'>tile_diversity</td><td>0.755</td><td>0.788</td><td>0.746</td></tr>
+          </tbody>
+        </table>
+        <p class="caption">Humans spray X across lanes (~0.22 std). Policies still cluster (~0.13–0.14). Next lever after v5.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="report-section">
+    <h2>Cloning quality (still required)</h2>
+    <div class="kpi-row">
+      <div><span class="kpi-label">Slot top-1</span><span class="kpi-value mono">55.1%</span></div>
+      <div><span class="kpi-label">Zone acc</span><span class="kpi-value mono">44.6%</span></div>
+      <div><span class="kpi-label">Timing MAE</span><span class="kpi-value mono">2.76s</span></div>
+      <div><span class="kpi-label">Rollout P(real)</span><span class="kpi-value mono">0.606</span></div>
+    </div>
+    <p class="caption">Style gains that destroy slot@1 are rejected at checkpoint time. Offline readiness: All offline gates passed; a short supervised live smoke test is justified.</p>
+  </section>
+
+  <section class="report-section" id="brSection">
+    <h2>Battle royale</h2>
+    <p class="caption" id="brCaption">Loading standings when <span class="mono">reports/battle_royale_v5.json</span> is ready — 5 policies, 100 games/pair (400 games each).</p>
+    <div id="brBody"></div>
+  </section>
+
+  <section class="report-section">
+    <h2>Lessons</h2>
+    <ul class="lessons"><li>Training spanned 3 runs and 21 logged epochs before the process died; the HTML stitches the full log, not only the last truncated stages file.</li><li>Run 1 crashed at the first REINFORCE polish (cuDNN GRU backward under eval). Run 2 reached global epoch 11 with working polish. Run 3 resumed and died again before polish.</li><li>Best saved weights come from the resume cut (slot@1 ≈ 55%). Controllable style metric feature_l2 improved vs v4.1 (≈1.43 vs ≈1.84).</li><li>Clock-aware rollouts saturate P(human); the residual AI signature is placement spread (team/opp x_std) more than timing.</li><li>Alternation-harness P(human) stays near zero — the frozen judge still keys off harness artifacts when turn-taking is forced.</li></ul>
+  </section>
+</main>
+<script>
+
+    const SVG_NS = "http://www.w3.org/2000/svg";
+
+    function svgEl(tag, attrs) {
+      const el = document.createElementNS(SVG_NS, tag);
+      Object.entries(attrs || {}).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) el.setAttribute(key, String(value));
+      });
+      return el;
+    }
+
+    function formatAxisValue(value, kind) {
+      if (kind === "percent") return (value * 100).toFixed(1) + "%";
+      if (kind === "float") return Number(value).toFixed(3);
+      if (Math.abs(value) >= 1000) return Math.round(value).toLocaleString();
+      if (Number.isInteger(value)) return String(value);
+      return Number(value).toFixed(2);
+    }
+
+    function inferYFormat(values) {
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      if (min >= 0 && max <= 1.05) return "percent";
+      return "float";
+    }
+
+    function niceTicks(min, max, targetCount) {
+      const span = Math.max(max - min, 1e-9);
+      const rawStep = span / Math.max(1, targetCount - 1);
+      const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+      const residual = rawStep / magnitude;
+      let step = magnitude;
+      if (residual > 5) step = 10 * magnitude;
+      else if (residual > 2) step = 5 * magnitude;
+      else if (residual > 1) step = 2 * magnitude;
+      const tickMin = Math.floor(min / step) * step;
+      const tickMax = Math.ceil(max / step) * step;
+      const ticks = [];
+      for (let value = tickMin; value <= tickMax + step * 0.001; value += step) {
+        ticks.push(Number(value.toFixed(10)));
+      }
+      return { min: tickMin, max: tickMax, ticks, step };
+    }
+
+    function sampleTickIndexes(length, maxTicks) {
+      if (length <= 1) return [0];
+      const count = Math.min(maxTicks, length);
+      const indexes = [];
+      for (let i = 0; i < count; i += 1) {
+        indexes.push(Math.round((i / (count - 1)) * (length - 1)));
+      }
+      return [...new Set(indexes)];
+    }
+
+    function ensureChartWrap(svg) {
+      let wrap = svg.parentElement;
+      if (!wrap || !wrap.classList.contains("chart-wrap")) {
+        wrap = document.createElement("div");
+        wrap.className = "chart-wrap";
+        svg.parentNode.insertBefore(wrap, svg);
+        wrap.appendChild(svg);
+      }
+      let tooltip = wrap.querySelector(".chart-tooltip");
+      if (!tooltip) {
+        tooltip = document.createElement("div");
+        tooltip.className = "chart-tooltip";
+        wrap.appendChild(tooltip);
+      }
+      return { wrap, tooltip };
+    }
+
+    function createLegendButton(meta) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "legend-item is-on";
+      button.setAttribute("aria-pressed", "true");
+      button.style.setProperty("--legend-color", meta.color);
+      if (meta.dashed) button.classList.add("legend-dashed");
+
+      const preview = document.createElement("span");
+      preview.className = "legend-preview";
+      preview.setAttribute("aria-hidden", "true");
+
+      const label = document.createElement("span");
+      label.className = "legend-label";
+      label.textContent = meta.label;
+
+      button.appendChild(preview);
+      button.appendChild(label);
+      button.addEventListener("click", () => {
+        meta.onToggle();
+        const visible = meta.getVisible();
+        button.classList.toggle("is-on", visible);
+        button.classList.toggle("is-off", !visible);
+        button.setAttribute("aria-pressed", visible ? "true" : "false");
+      });
+      return button;
+    }
+
+    function bindInteractiveLegend(chartBlock, series, seriesLayers) {
+      const legend = chartBlock && chartBlock.querySelector(".legend");
+      if (!legend) return;
+      legend.innerHTML = "";
+      legend.classList.add("legend-interactive");
+      series.forEach((entry, index) => {
+        legend.appendChild(createLegendButton({
+          color: entry.color,
+          label: entry.label || ("Series " + (index + 1)),
+          dashed: !!entry.dashed,
+          onToggle: () => {
+            const layer = seriesLayers[index];
+            layer.visible = !layer.visible;
+            layer.line.style.display = layer.visible ? "" : "none";
+            if (layer.area) layer.area.style.display = layer.visible ? "" : "none";
+          },
+          getVisible: () => seriesLayers[index].visible,
+        }));
+      });
+    }
+
+    function mountInteractiveLineChart(svgId, config) {
+      const svg = document.getElementById(svgId);
+      if (!svg) return;
+
+      const width = 1000;
+      const height = 540;
+      const pad = { top: 40, right: 32, bottom: 64, left: 88 };
+      const series = config.series || [];
+      const xLabels = config.xLabels || series[0].values.map((_, index) => String(index));
+      const allY = series.flatMap((entry) => entry.values);
+      const yFormat = config.yFormat || inferYFormat(allY);
+      const rawMin = Math.min(...allY);
+      const rawMax = Math.max(...allY);
+      const yTicks = niceTicks(rawMin, rawMax, 6);
+      const yPad = Math.max((yTicks.max - yTicks.min) * 0.08, yFormat === "percent" ? 0.005 : 0.01);
+      const yMin = yTicks.min - yPad;
+      const yMax = yTicks.max + yPad;
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+      const xMax = Math.max(1, xLabels.length - 1);
+
+      svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+      svg.innerHTML = "";
+      svg.classList.add("chart-interactive");
+      const { wrap, tooltip } = ensureChartWrap(svg);
+
+      function px(index) {
+        return pad.left + (plotW * index / xMax);
+      }
+      function py(value) {
+        return pad.top + plotH - ((value - yMin) / (yMax - yMin)) * plotH;
+      }
+
+      const gridGroup = svgEl("g", { class: "chart-grid" });
+      yTicks.ticks.forEach((tick) => {
+        if (tick < yMin - 1e-9 || tick > yMax + 1e-9) return;
+        const y = py(tick);
+        gridGroup.appendChild(svgEl("line", {
+          x1: pad.left,
+          y1: y,
+          x2: width - pad.right,
+          y2: y,
+          stroke: "#1e293b",
+          "stroke-width": 1,
+        }));
+        const yLabel = svgEl("text", {
+          x: pad.left - 14,
+          y: y + 5,
+          fill: "#94a3b8",
+          "font-size": 16,
+          "text-anchor": "end",
+        });
+        yLabel.textContent = formatAxisValue(tick, yFormat);
+        gridGroup.appendChild(yLabel);
+      });
+
+      sampleTickIndexes(xLabels.length, 7).forEach((index) => {
+        const x = px(index);
+        gridGroup.appendChild(svgEl("line", {
+          x1: x,
+          y1: pad.top,
+          x2: x,
+          y2: height - pad.bottom,
+          stroke: "#141c28",
+          "stroke-width": 1,
+          "stroke-dasharray": "4 7",
+        }));
+        const xLabel = svgEl("text", {
+          x: x,
+          y: height - pad.bottom + 30,
+          fill: "#94a3b8",
+          "font-size": 16,
+          "text-anchor": "middle",
+        });
+        xLabel.textContent = xLabels[index];
+        gridGroup.appendChild(xLabel);
+      });
+      svg.appendChild(gridGroup);
+
+      const axesGroup = svgEl("g", { class: "chart-axes" });
+      axesGroup.appendChild(svgEl("line", {
+        x1: pad.left,
+        y1: height - pad.bottom,
+        x2: width - pad.right,
+        y2: height - pad.bottom,
+        stroke: "#334155",
+        "stroke-width": 1.5,
+      }));
+      axesGroup.appendChild(svgEl("line", {
+        x1: pad.left,
+        y1: pad.top,
+        x2: pad.left,
+        y2: height - pad.bottom,
+        stroke: "#334155",
+        "stroke-width": 1.5,
+      }));
+      svg.appendChild(axesGroup);
+
+      const linesGroup = svgEl("g", { class: "chart-lines" });
+      const seriesLayers = series.map((entry) => {
+        let area = null;
+        if (config.area && series.length === 1) {
+          const areaPoints = [
+            pad.left + "," + (height - pad.bottom),
+            ...entry.values.map((value, index) => px(index) + "," + py(value)),
+            (pad.left + plotW) + "," + (height - pad.bottom),
+          ].join(" ");
+          area = svgEl("polygon", {
+            points: areaPoints,
+            fill: entry.color,
+            opacity: 0.1,
+          });
+          linesGroup.appendChild(area);
+        }
+        const line = svgEl("polyline", {
+          points: entry.values.map((value, index) => px(index) + "," + py(value)).join(" "),
+          fill: "none",
+          stroke: entry.color,
+          "stroke-width": 4,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          "stroke-dasharray": entry.dashed ? "8 6" : "none",
+          opacity: entry.dashed ? 0.85 : 1,
+        });
+        linesGroup.appendChild(line);
+        return { area: area, line: line, visible: true };
+      });
+      svg.appendChild(linesGroup);
+
+      const hoverGroup = svgEl("g", { class: "chart-hover", opacity: 0 });
+      const crosshair = svgEl("line", {
+        class: "chart-crosshair",
+        x1: 0,
+        y1: pad.top,
+        x2: 0,
+        y2: height - pad.bottom,
+        stroke: "#94a3b8",
+        "stroke-width": 1.2,
+        "stroke-dasharray": "4 4",
+        opacity: 0.75,
+      });
+      hoverGroup.appendChild(crosshair);
+      const dots = series.map((entry) => svgEl("circle", {
+        class: "chart-dot",
+        r: 8,
+        fill: entry.color,
+        stroke: "#0a0f18",
+        "stroke-width": 2.5,
+        opacity: 0,
+      }));
+      dots.forEach((dot) => hoverGroup.appendChild(dot));
+      svg.appendChild(hoverGroup);
+
+      const overlay = svgEl("rect", {
+        x: pad.left,
+        y: pad.top,
+        width: plotW,
+        height: plotH,
+        fill: "transparent",
+        class: "chart-overlay",
+      });
+      svg.appendChild(overlay);
+
+      function showHover(clientX, index) {
+        const x = px(index);
+        crosshair.setAttribute("x1", x);
+        crosshair.setAttribute("x2", x);
+        hoverGroup.setAttribute("opacity", 1);
+        let tooltipHtml = '<div class="chart-tooltip-title">' + xLabels[index] + "</div>";
+        let visibleCount = 0;
+        series.forEach((entry, seriesIndex) => {
+          const dot = dots[seriesIndex];
+          const layer = seriesLayers[seriesIndex];
+          if (!layer.visible) {
+            dot.setAttribute("opacity", 0);
+            return;
+          }
+          visibleCount += 1;
+          dot.setAttribute("cx", x);
+          dot.setAttribute("cy", py(entry.values[index]));
+          dot.setAttribute("opacity", 1);
+          tooltipHtml += '<div class="chart-tooltip-row"><span class="chart-tooltip-swatch" style="background:'
+            + entry.color + '"></span><span>' + (entry.label || "Value")
+            + '</span><strong>' + formatAxisValue(entry.values[index], yFormat) + "</strong></div>";
+        });
+        if (!visibleCount) {
+          hideHover();
+          return;
+        }
+        tooltip.innerHTML = tooltipHtml;
+        tooltip.classList.add("visible");
+        const wrapRect = wrap.getBoundingClientRect();
+        const relX = clientX - wrapRect.left;
+        tooltip.style.left = Math.min(wrapRect.width - tooltip.offsetWidth - 8, Math.max(8, relX + 14)) + "px";
+      }
+
+      function hideHover() {
+        hoverGroup.setAttribute("opacity", 0);
+        dots.forEach((dot) => dot.setAttribute("opacity", 0));
+        tooltip.classList.remove("visible");
+      }
+
+      overlay.addEventListener("mousemove", (event) => {
+        const rect = svg.getBoundingClientRect();
+        const relX = ((event.clientX - rect.left) / rect.width) * width;
+        const index = Math.round(((relX - pad.left) / plotW) * xMax);
+        showHover(event.clientX, Math.max(0, Math.min(xMax, index)));
+      });
+      overlay.addEventListener("mouseleave", hideHover);
+      bindInteractiveLegend(wrap.parentElement, series, seriesLayers);
+    }
+
+    function renderLineChart(svgId, series, xLabels, options) {
+      mountInteractiveLineChart(svgId, Object.assign({
+        series: series.map((entry, index) => Object.assign({}, entry, {
+          label: entry.label || ("Series " + (index + 1)),
+        })),
+        xLabels: xLabels,
+      }, options || {}));
+    }
+
+    function renderConfidenceChart(svgId, baseline, improved) {
+      renderLineChart(svgId, [
+        {
+          label: "Baseline",
+          values: baseline.map((row) => row.accuracy),
+          color: "#7a8699",
+          dashed: true,
+        },
+        {
+          label: "Improved",
+          values: improved.map((row) => row.accuracy),
+          color: "#60a5fa",
+        },
+      ], improved.map((row) => formatAxisValue(row.min_confidence, "percent")), {
+        yFormat: "percent",
+      });
+    }
+
+    function nearestConfidenceIndex(curve, confidence) {
+      let bestIndex = 0;
+      let bestDistance = Infinity;
+      curve.forEach((row, index) => {
+        const distance = Math.abs(row.min_confidence - confidence);
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          bestIndex = index;
+        }
+      });
+      return bestIndex;
+    }
+
+    function curvePoints(curve, field, px, py) {
+      return curve.map((row) => px(row.min_confidence) + "," + py(row[field])).join(" ");
+    }
+
+    function setAnimToggleState(toggleBtn, playing) {
+      if (!toggleBtn) return;
+      toggleBtn.setAttribute("aria-label", playing ? "Pause" : "Play");
+      const playIcon = toggleBtn.querySelector(".anim-icon-play");
+      const pauseIcon = toggleBtn.querySelector(".anim-icon-pause");
+      if (playIcon) playIcon.hidden = playing;
+      if (pauseIcon) pauseIcon.hidden = !playing;
+    }
+
+    function mountTrainingAnimation(config) {
+      const svg = document.getElementById(config.svgId);
+      const container = document.getElementById(config.containerId);
+      const baseline = config.baseline || [];
+      const stages = config.stages || [];
+      const scrubber = document.getElementById(config.scrubberId);
+      const toggleBtn = document.getElementById(config.toggleId);
+      const readout = document.getElementById(config.readoutId);
+      if (!svg || !container || !stages.length || !baseline.length) return;
+
+      const width = 1000;
+      const height = 540;
+      const pad = { top: 40, right: 72, bottom: 64, left: 88 };
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+      const allX = baseline.map((row) => row.min_confidence).concat(
+        stages[stages.length - 1].confidence_curve.map((row) => row.min_confidence)
+      );
+      const xMin = Math.min(...allX);
+      const xMax = Math.max(...allX);
+      const xSpan = Math.max(xMax - xMin, 1e-9);
+      const leftMin = 0.70;
+      const leftMax = 1.005;
+      const rightMin = 0.0;
+      const rightMax = 1.05;
+
+      svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+      svg.innerHTML = "";
+      svg.classList.add("chart-interactive", "chart-dual");
+
+      function px(value) {
+        return pad.left + ((value - xMin) / xSpan) * plotW;
+      }
+      function pyLeft(value) {
+        return pad.top + plotH - ((value - leftMin) / (leftMax - leftMin)) * plotH;
+      }
+      function pyRight(value) {
+        return pad.top + plotH - ((value - rightMin) / (rightMax - rightMin)) * plotH;
+      }
+
+      const gridGroup = svgEl("g", { class: "chart-grid" });
+      for (let i = 0; i <= 5; i += 1) {
+        const value = leftMin + ((leftMax - leftMin) * i / 5);
+        const y = pyLeft(value);
+        gridGroup.appendChild(svgEl("line", {
+          x1: pad.left, y1: y, x2: width - pad.right, y2: y,
+          stroke: "#1e293b", "stroke-width": 1,
+        }));
+        const leftLabel = svgEl("text", {
+          x: pad.left - 14, y: y + 5, fill: "#60a5fa", "font-size": 16, "text-anchor": "end",
+        });
+        leftLabel.textContent = formatAxisValue(value, "percent");
+        gridGroup.appendChild(leftLabel);
+        const rightValue = rightMin + ((rightMax - rightMin) * i / 5);
+        const rightLabel = svgEl("text", {
+          x: width - pad.right + 14, y: y + 5, fill: "#bd7c00", "font-size": 16, "text-anchor": "start",
+        });
+        rightLabel.textContent = formatAxisValue(rightValue, "percent");
+        gridGroup.appendChild(rightLabel);
+      }
+      sampleTickIndexes(baseline.length, 7).forEach((index) => {
+        const x = px(baseline[index].min_confidence);
+        gridGroup.appendChild(svgEl("line", {
+          x1: x, y1: pad.top, x2: x, y2: height - pad.bottom,
+          stroke: "#141c28", "stroke-width": 1, "stroke-dasharray": "4 7",
+        }));
+        const xLabel = svgEl("text", {
+          x: x, y: height - pad.bottom + 30, fill: "#94a3b8", "font-size": 16, "text-anchor": "middle",
+        });
+        xLabel.textContent = formatAxisValue(baseline[index].min_confidence, "percent");
+        gridGroup.appendChild(xLabel);
+      });
+      svg.appendChild(gridGroup);
+
+      const axesGroup = svgEl("g", { class: "chart-axes" });
+      axesGroup.appendChild(svgEl("line", {
+        x1: pad.left, y1: height - pad.bottom, x2: width - pad.right, y2: height - pad.bottom,
+        stroke: "#334155", "stroke-width": 1.5,
+      }));
+      axesGroup.appendChild(svgEl("line", {
+        x1: pad.left, y1: pad.top, x2: pad.left, y2: height - pad.bottom,
+        stroke: "#334155", "stroke-width": 1.5,
+      }));
+      axesGroup.appendChild(svgEl("line", {
+        x1: width - pad.right, y1: pad.top, x2: width - pad.right, y2: height - pad.bottom,
+        stroke: "#334155", "stroke-width": 1.5,
+      }));
+      [0.90, 0.95].forEach((refValue, index) => {
+        axesGroup.appendChild(svgEl("line", {
+          class: "chart-refline",
+          x1: pad.left, y1: pyLeft(refValue), x2: width - pad.right, y2: pyLeft(refValue),
+          stroke: index === 0 ? "#e63946" : "#7c4dff",
+          "stroke-width": 1.4,
+        }));
+      });
+      svg.appendChild(axesGroup);
+
+      const seriesDefs = [
+        { label: "Previous accuracy", color: "#7a8699", dashed: true, field: "accuracy", axis: "left", staticCurve: baseline },
+        { label: "Training accuracy", color: "#60a5fa", dashed: false, field: "accuracy", axis: "left", animated: true },
+        { label: "Previous coverage", color: "#9a6a12", dashed: true, field: "coverage", axis: "right", staticCurve: baseline },
+        { label: "Training coverage", color: "#bd7c00", dashed: false, field: "coverage", axis: "right", animated: true },
+      ];
+
+      const { wrap, tooltip } = ensureChartWrap(svg);
+
+      const linesGroup = svgEl("g", { class: "chart-lines" });
+      const seriesLayers = seriesDefs.map((def) => {
+        const py = def.axis === "left" ? pyLeft : pyRight;
+        const source = def.staticCurve || stages[0].confidence_curve;
+        const line = svgEl("polyline", {
+          points: curvePoints(source, def.field, px, py),
+          fill: "none",
+          stroke: def.color,
+          "stroke-width": def.animated ? 4 : 3.2,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          "stroke-dasharray": def.dashed ? "8 6" : "none",
+          opacity: def.dashed ? 0.85 : 1,
+        });
+        linesGroup.appendChild(line);
+        return { def: def, line: line, visible: true, py: py };
+      });
+      svg.appendChild(linesGroup);
+
+      const hoverGroup = svgEl("g", { class: "chart-hover", opacity: 0 });
+      const crosshair = svgEl("line", {
+        class: "chart-crosshair",
+        x1: 0,
+        y1: pad.top,
+        x2: 0,
+        y2: height - pad.bottom,
+        stroke: "#94a3b8",
+        "stroke-width": 1.2,
+        "stroke-dasharray": "4 4",
+        opacity: 0.75,
+      });
+      hoverGroup.appendChild(crosshair);
+      const hoverDots = seriesLayers.map((layer) => svgEl("circle", {
+        class: "chart-dot",
+        r: 8,
+        fill: layer.def.color,
+        stroke: "#0a0f18",
+        "stroke-width": 2.5,
+        opacity: 0,
+      }));
+      hoverDots.forEach((dot) => hoverGroup.appendChild(dot));
+      svg.appendChild(hoverGroup);
+
+      const overlay = svgEl("rect", {
+        x: pad.left,
+        y: pad.top,
+        width: plotW,
+        height: plotH,
+        fill: "transparent",
+        class: "chart-overlay",
+      });
+      svg.appendChild(overlay);
+
+      let hoverState = null;
+
+      function getLayerCurve(layer) {
+        if (layer.def.staticCurve) return layer.def.staticCurve;
+        return stages[frame].confidence_curve;
+      }
+
+      function showAnimHover(clientX, confidence) {
+        hoverState = { clientX: clientX, confidence: confidence };
+        const pointIndex = nearestConfidenceIndex(baseline, confidence);
+        const row = baseline[pointIndex];
+        const x = px(row.min_confidence);
+        crosshair.setAttribute("x1", x);
+        crosshair.setAttribute("x2", x);
+        hoverGroup.setAttribute("opacity", 1);
+        let tooltipHtml = '<div class="chart-tooltip-title">Min confidence '
+          + formatAxisValue(row.min_confidence, "percent") + "</div>";
+        let visibleCount = 0;
+        seriesLayers.forEach((layer, index) => {
+          const dot = hoverDots[index];
+          if (!layer.visible) {
+            dot.setAttribute("opacity", 0);
+            return;
+          }
+          const curve = getLayerCurve(layer);
+          const curveRow = curve[pointIndex];
+          const value = curveRow[layer.def.field];
+          visibleCount += 1;
+          dot.setAttribute("cx", x);
+          dot.setAttribute("cy", layer.py(value));
+          dot.setAttribute("opacity", 1);
+          tooltipHtml += '<div class="chart-tooltip-row"><span class="chart-tooltip-swatch" style="background:'
+            + layer.def.color + '"></span><span>' + layer.def.label
+            + '</span><strong>' + formatAxisValue(value, "percent") + "</strong></div>";
+        });
+        if (!visibleCount) {
+          hideAnimHover();
+          return;
+        }
+        tooltip.innerHTML = tooltipHtml;
+        tooltip.classList.add("visible");
+        const wrapRect = wrap.getBoundingClientRect();
+        const relX = clientX - wrapRect.left;
+        tooltip.style.left = Math.min(wrapRect.width - tooltip.offsetWidth - 8, Math.max(8, relX + 14)) + "px";
+      }
+
+      function hideAnimHover() {
+        hoverState = null;
+        hoverGroup.setAttribute("opacity", 0);
+        hoverDots.forEach((dot) => dot.setAttribute("opacity", 0));
+        tooltip.classList.remove("visible");
+      }
+
+      overlay.addEventListener("mousemove", (event) => {
+        const rect = svg.getBoundingClientRect();
+        const relX = ((event.clientX - rect.left) / rect.width) * width;
+        const confidence = xMin + ((relX - pad.left) / plotW) * xSpan;
+        showAnimHover(
+          event.clientX,
+          Math.max(xMin, Math.min(xMax, confidence))
+        );
+      });
+      overlay.addEventListener("mouseleave", hideAnimHover);
+
+      const legend = container.querySelector(".legend");
+      if (legend) {
+        legend.innerHTML = "";
+        legend.classList.add("legend-interactive");
+        seriesLayers.forEach((layer) => {
+          legend.appendChild(createLegendButton({
+            color: layer.def.color,
+            label: layer.def.label,
+            dashed: layer.def.dashed,
+            onToggle: () => {
+              layer.visible = !layer.visible;
+              layer.line.style.display = layer.visible ? "" : "none";
+              if (hoverState) showAnimHover(hoverState.clientX, hoverState.confidence);
+            },
+            getVisible: () => layer.visible,
+          }));
+        });
+      }
+
+      let frame = 0;
+      let playing = false;
+      let timer = null;
+      const fps = 8;
+
+      function updateReadout(stage) {
+        if (!readout || !stage) return;
+        readout.innerHTML = "<strong>" + stage.trees.toLocaleString() + " trees</strong>"
+          + " · accuracy " + formatAxisValue(stage.accuracy, "percent")
+          + " · AUC " + Number(stage.auc).toFixed(4)
+          + " · AURC " + Number(stage.aurc).toFixed(4);
+      }
+
+      function setFrame(index) {
+        frame = Math.max(0, Math.min(stages.length - 1, index));
+        if (scrubber) {
+          scrubber.max = String(stages.length - 1);
+          scrubber.value = String(frame);
+        }
+        const stage = stages[frame];
+        seriesLayers.forEach((layer) => {
+          if (!layer.def.animated) return;
+          layer.line.setAttribute(
+            "points",
+            curvePoints(stage.confidence_curve, layer.def.field, px, layer.py)
+          );
+        });
+        updateReadout(stage);
+        if (hoverState) showAnimHover(hoverState.clientX, hoverState.confidence);
+      }
+
+      function pause() {
+        playing = false;
+        setAnimToggleState(toggleBtn, false);
+        if (timer) clearInterval(timer);
+        timer = null;
+      }
+
+      function play() {
+        if (playing) return;
+        playing = true;
+        setAnimToggleState(toggleBtn, true);
+        timer = setInterval(() => {
+          if (frame >= stages.length - 1) {
+            pause();
+            return;
+          }
+          setFrame(frame + 1);
+        }, 1000 / fps);
+      }
+
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+          if (playing) pause();
+          else play();
+        });
+      }
+      if (scrubber) {
+        scrubber.addEventListener("input", () => {
+          pause();
+          setFrame(Number(scrubber.value));
+        });
+      }
+
+      setFrame(0);
+      setAnimToggleState(toggleBtn, false);
+    }
+    
+const DATA = {"history":[{"epoch":1,"run":1,"run_epoch":1,"train_loss":3.097,"train_style_match":0.7241,"val_slot_top1":0.535,"val_zone_acc":0.427,"val_loss":3.5499,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null},{"epoch":2,"run":1,"run_epoch":2,"train_loss":3.1104,"train_style_match":0.6436,"val_slot_top1":0.537,"val_zone_acc":0.428,"val_loss":3.5405,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null},{"epoch":3,"run":1,"run_epoch":3,"train_loss":3.1061,"train_style_match":0.6051,"val_slot_top1":0.535,"val_zone_acc":0.426,"val_loss":3.5512,"style_feature_l2":1.444,"style_P_human":0.9488,"style_alt_P_human":0.0,"polish":null},{"epoch":4,"run":1,"run_epoch":4,"train_loss":3.1018,"train_style_match":0.5445,"val_slot_top1":0.535,"val_zone_acc":0.427,"val_loss":3.5389,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null},{"epoch":5,"run":1,"run_epoch":5,"train_loss":3.0978,"train_style_match":0.513,"val_slot_top1":0.536,"val_zone_acc":0.426,"val_loss":3.5537,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null},{"epoch":6,"run":2,"run_epoch":1,"train_loss":3.1267,"train_style_match":0.6535,"val_slot_top1":0.532,"val_zone_acc":0.428,"val_loss":3.5403,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null},{"epoch":7,"run":2,"run_epoch":2,"train_loss":3.1158,"train_style_match":0.5208,"val_slot_top1":0.534,"val_zone_acc":0.429,"val_loss":3.5331,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null},{"epoch":8,"run":2,"run_epoch":3,"train_loss":3.1,"train_style_match":0.3874,"val_slot_top1":0.536,"val_zone_acc":0.43,"val_loss":3.5325,"style_feature_l2":1.528,"style_P_human":0.9714,"style_alt_P_human":0.0,"polish":null},{"epoch":9,"run":2,"run_epoch":4,"train_loss":3.081,"train_style_match":0.302,"val_slot_top1":0.539,"val_zone_acc":0.432,"val_loss":3.5095,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null},{"epoch":10,"run":2,"run_epoch":5,"train_loss":3.0626,"train_style_match":0.2925,"val_slot_top1":0.538,"val_zone_acc":0.432,"val_loss":3.5075,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null},{"epoch":11,"run":2,"run_epoch":6,"train_loss":3.0483,"train_style_match":0.2939,"val_slot_top1":0.541,"val_zone_acc":0.434,"val_loss":3.4949,"style_feature_l2":1.483,"style_P_human":0.9635,"style_alt_P_human":0.0056,"polish":{"epoch":6,"n":24,"reward":0.4566,"feat_l2":1.341,"full_P":0.9769,"fool":0.958}},{"epoch":12,"run":2,"run_epoch":7,"train_loss":3.0325,"train_style_match":0.2754,"val_slot_top1":0.542,"val_zone_acc":0.437,"val_loss":3.4891,"style_feature_l2":1.487,"style_P_human":0.9843,"style_alt_P_human":0.0,"polish":null},{"epoch":13,"run":2,"run_epoch":8,"train_loss":3.0211,"train_style_match":0.2504,"val_slot_top1":0.542,"val_zone_acc":0.437,"val_loss":3.4853,"style_feature_l2":1.458,"style_P_human":0.9755,"style_alt_P_human":0.0,"polish":{"epoch":8,"n":23,"reward":0.3658,"feat_l2":1.529,"full_P":0.9851,"fool":1.0}},{"epoch":14,"run":2,"run_epoch":9,"train_loss":3.0062,"train_style_match":0.2608,"val_slot_top1":0.543,"val_zone_acc":0.437,"val_loss":3.4835,"style_feature_l2":1.444,"style_P_human":0.9918,"style_alt_P_human":0.0,"polish":null},{"epoch":15,"run":2,"run_epoch":10,"train_loss":2.996,"train_style_match":0.2303,"val_slot_top1":0.544,"val_zone_acc":0.438,"val_loss":3.4798,"style_feature_l2":1.413,"style_P_human":0.9729,"style_alt_P_human":0.0,"polish":{"epoch":10,"n":24,"reward":0.3852,"feat_l2":1.494,"full_P":0.9999,"fool":1.0}},{"epoch":16,"run":2,"run_epoch":11,"train_loss":2.9833,"train_style_match":0.2249,"val_slot_top1":0.543,"val_zone_acc":0.438,"val_loss":3.4743,"style_feature_l2":1.341,"style_P_human":0.9999,"style_alt_P_human":0.0,"polish":null},{"epoch":17,"run":3,"run_epoch":1,"train_loss":3.0263,"train_style_match":0.212,"val_slot_top1":0.545,"val_zone_acc":0.438,"val_loss":3.4684,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null},{"epoch":18,"run":3,"run_epoch":2,"train_loss":3.0164,"train_style_match":0.2113,"val_slot_top1":0.545,"val_zone_acc":0.437,"val_loss":3.4718,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null},{"epoch":19,"run":3,"run_epoch":3,"train_loss":3.0008,"train_style_match":0.194,"val_slot_top1":0.547,"val_zone_acc":0.44,"val_loss":3.4669,"style_feature_l2":1.349,"style_P_human":0.9658,"style_alt_P_human":0.0,"polish":null},{"epoch":20,"run":3,"run_epoch":4,"train_loss":2.9846,"train_style_match":0.1933,"val_slot_top1":0.548,"val_zone_acc":0.44,"val_loss":3.4623,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null},{"epoch":21,"run":3,"run_epoch":5,"train_loss":2.9674,"train_style_match":0.1787,"val_slot_top1":0.547,"val_zone_acc":0.441,"val_loss":3.4586,"style_feature_l2":null,"style_P_human":null,"style_alt_P_human":null,"polish":null}],"styleHistory":[{"epoch":0,"run":1,"phase":"start","clock_P":0.9841,"clock_fool":0.984,"feat_l2":1.547,"alt_P":0.0001,"alt_fool":0.0,"mean_P_human_ai":0.9841,"fool_rate_at_0.5":0.984,"feature_l2":1.547},{"epoch":3,"run":1,"mean_P_human_ai":0.9488,"feature_l2":1.444,"alt_P":0.0,"fool_rate_at_0.5":null},{"epoch":5,"run":2,"phase":"start","clock_P":0.9999,"clock_fool":1.0,"feat_l2":1.395,"alt_P":0.0087,"alt_fool":0.0,"mean_P_human_ai":0.9999,"fool_rate_at_0.5":1.0,"feature_l2":1.395},{"epoch":8,"run":2,"mean_P_human_ai":0.9714,"feature_l2":1.528,"alt_P":0.0,"fool_rate_at_0.5":null},{"epoch":11,"run":2,"mean_P_human_ai":0.9635,"feature_l2":1.483,"alt_P":0.0056,"fool_rate_at_0.5":null},{"epoch":12,"run":2,"mean_P_human_ai":0.9843,"feature_l2":1.487,"alt_P":0.0,"fool_rate_at_0.5":null},{"epoch":13,"run":2,"mean_P_human_ai":0.9755,"feature_l2":1.458,"alt_P":0.0,"fool_rate_at_0.5":null},{"epoch":14,"run":2,"mean_P_human_ai":0.9918,"feature_l2":1.444,"alt_P":0.0,"fool_rate_at_0.5":null},{"epoch":15,"run":2,"mean_P_human_ai":0.9729,"feature_l2":1.413,"alt_P":0.0,"fool_rate_at_0.5":null},{"epoch":16,"run":2,"mean_P_human_ai":0.9999,"feature_l2":1.341,"alt_P":0.0,"fool_rate_at_0.5":null},{"epoch":16,"run":3,"phase":"start","clock_P":0.9999,"clock_fool":1.0,"feat_l2":1.356,"alt_P":0.0276,"alt_fool":0.016,"mean_P_human_ai":0.9999,"fool_rate_at_0.5":1.0,"feature_l2":1.356},{"epoch":19,"run":3,"mean_P_human_ai":0.9658,"feature_l2":1.349,"alt_P":0.0,"fool_rate_at_0.5":null}],"timeline":[{"run":1,"warmstart":"models/policy_bc_v4.1","n_epochs":5,"crashed":true,"style0":{"clock_P":0.9841,"clock_fool":0.984,"feat_l2":1.547,"alt_P":0.0001,"alt_fool":0.0},"polishes":[]},{"run":2,"warmstart":"models/policy_bc_v5","n_epochs":11,"crashed":false,"style0":{"clock_P":0.9999,"clock_fool":1.0,"feat_l2":1.395,"alt_P":0.0087,"alt_fool":0.0},"polishes":[{"epoch":6,"n":24,"reward":0.4566,"feat_l2":1.341,"full_P":0.9769,"fool":0.958},{"epoch":8,"n":23,"reward":0.3658,"feat_l2":1.529,"full_P":0.9851,"fool":1.0},{"epoch":10,"n":24,"reward":0.3852,"feat_l2":1.494,"full_P":0.9999,"fool":1.0}]},{"run":3,"warmstart":"models/policy_bc_v5","n_epochs":5,"crashed":false,"style0":{"clock_P":0.9999,"clock_fool":1.0,"feat_l2":1.356,"alt_P":0.0276,"alt_fool":0.016},"polishes":[]}],"tells":[{"feature":"gap_p90","human":7.449582499999987,"v5":8.007120297071374,"v41":5.56687278173251,"v5_err":0.5575377970713875,"v41_err":1.8827097182674768,"improved":true},{"feature":"gap_std","human":3.348806014634409,"v5":3.0350122186017345,"v41":2.0586097371290233,"v5_err":0.31379379603267443,"v41_err":1.2901962775053857,"improved":true},{"feature":"gap_p10","human":0.6819649999999985,"v5":0.791854366327201,"v41":1.1989217260560785,"v5_err":0.10988936632720248,"v41_err":0.51695672605608,"improved":true},{"feature":"frac_gap_lt_1","human":0.17512864968392242,"v5":0.17544934640522877,"v41":0.06842320261437908,"v5_err":0.0003206967213063572,"v41_err":0.10670544706954334,"improved":true},{"feature":"frac_gap_gt_8","human":0.09412133737319216,"v5":0.0900735294117647,"v41":0.02961601307189542,"v5_err":0.004047807961427452,"v41_err":0.06450532430129674,"improved":true},{"feature":"frac_gap_lt_2","human":0.3624139526312128,"v5":0.3572303921568627,"v41":0.3321078431372549,"v5_err":0.005183560474350091,"v41_err":0.0303061094939579,"improved":true},{"feature":"team_y_std","human":0.18346937030146995,"v5":0.15434489396542964,"v41":0.13027889752126623,"v5_err":0.029124476336040317,"v41_err":0.053190472780203724,"improved":true},{"feature":"opp_y_std","human":0.18492170410682165,"v5":0.16281401596355366,"v41":0.14461590918832945,"v5_err":0.022107688143267995,"v41_err":0.040305794918492205,"improved":true},{"feature":"team_x_std","human":0.2205041804201597,"v5":0.1360113039627422,"v41":0.11903237044180896,"v5_err":0.08449287645741752,"v41_err":0.10147180997835074,"improved":true},{"feature":"opp_x_std","human":0.22284070440215845,"v5":0.13120379220543008,"v41":0.11437346970271077,"v5_err":0.09163691219672837,"v41_err":0.10846723469944768,"improved":true},{"feature":"tile_diversity","human":0.7552013779831266,"v5":0.788261217948718,"v41":0.7459935897435898,"v5_err":0.033059839965591364,"v41_err":0.00920778823953683,"improved":false}],"timingTells":[{"feature":"gap_p90","human":7.449582499999987,"v5":8.007120297071374,"v41":5.56687278173251,"v5_err":0.5575377970713875,"v41_err":1.8827097182674768,"improved":true},{"feature":"gap_std","human":3.348806014634409,"v5":3.0350122186017345,"v41":2.0586097371290233,"v5_err":0.31379379603267443,"v41_err":1.2901962775053857,"improved":true},{"feature":"gap_p10","human":0.6819649999999985,"v5":0.791854366327201,"v41":1.1989217260560785,"v5_err":0.10988936632720248,"v41_err":0.51695672605608,"improved":true},{"feature":"frac_gap_lt_1","human":0.17512864968392242,"v5":0.17544934640522877,"v41":0.06842320261437908,"v5_err":0.0003206967213063572,"v41_err":0.10670544706954334,"improved":true},{"feature":"frac_gap_gt_8","human":0.09412133737319216,"v5":0.0900735294117647,"v41":0.02961601307189542,"v5_err":0.004047807961427452,"v41_err":0.06450532430129674,"improved":true},{"feature":"frac_gap_lt_2","human":0.3624139526312128,"v5":0.3572303921568627,"v41":0.3321078431372549,"v5_err":0.005183560474350091,"v41_err":0.0303061094939579,"improved":true}],"placeTells":[{"feature":"team_y_std","human":0.18346937030146995,"v5":0.15434489396542964,"v41":0.13027889752126623,"v5_err":0.029124476336040317,"v41_err":0.053190472780203724,"improved":true},{"feature":"opp_y_std","human":0.18492170410682165,"v5":0.16281401596355366,"v41":0.14461590918832945,"v5_err":0.022107688143267995,"v41_err":0.040305794918492205,"improved":true},{"feature":"team_x_std","human":0.2205041804201597,"v5":0.1360113039627422,"v41":0.11903237044180896,"v5_err":0.08449287645741752,"v41_err":0.10147180997835074,"improved":true},{"feature":"opp_x_std","human":0.22284070440215845,"v5":0.13120379220543008,"v41":0.11437346970271077,"v5_err":0.09163691219672837,"v41_err":0.10846723469944768,"improved":true},{"feature":"tile_diversity","human":0.7552013779831266,"v5":0.788261217948718,"v41":0.7459935897435898,"v5_err":0.033059839965591364,"v41_err":0.00920778823953683,"improved":false}],"style":{"feat_l2":1.4326213602260212,"v41_l2":1.8384676870567205,"clock_P":0.9573913456597788,"clock_fool":0.9583333333333334,"clock_auc":0.9406467013888888,"alt_P":0.02315575279201308,"alt_fool":0.010638297872340425,"alt_auc":1.0,"v41_clock_P":0.978834163421472},"test":{"loss":3.435051889717579,"slot_top1":0.5507441003039885,"slot_top3":0.9413387701285542,"type_acc":0.9983640780847505,"zone_acc":0.4460695144730256,"xy_mae":5331.897835760765,"tile_acc":0.04596452246950959,"timing_mae":2.7601212936978663,"n":81911},"oldTest":{"loss":3.4270822867541244,"slot_top1":0.5449997243508462,"slot_top3":0.9386956282044214,"type_acc":0.997822371685319,"zone_acc":0.4431749269529743,"xy_mae":5155.729107516952,"tile_acc":0.04741165444622085,"timing_mae":1.5486047415520667,"n":72556},"rollouts":{"available":true,"n":93,"mean_score_real":0.9047824842479303,"mean_score_policy":0.6062087874609557,"mean_score_easy":0.00014425163216315225,"mean_score_medium":5.643357457816254e-05,"policy_vs_easy_lift":0.6060645358287926,"policy_vs_medium_lift":0.6061523538863776,"policy_gap_to_real":0.29857369678697454},"battleRoyale":{"ready":true,"standings":[{"policy_id":"policy-bc-v4.1","wins":123,"losses":81,"games":204,"win_rate":0.6029411764705882,"raw_games":400,"raw_wins":216,"raw_win_rate":0.54,"elo":1578.5347571142115,"model_dir":"models/policy_bc_v4.1","created_at":"2026-08-08T21:31:27Z","data_battles":29450,"compute":{"device":"cuda","framework":"pytorch","parameters":632946,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":17,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0,"loss_kwargs":{"zone_weight":1.1,"xy_weight":0.55,"slot_weight":1.4},"min_context":8},"rank":1},{"policy_id":"policy-bc-v5","wins":134,"losses":95,"games":229,"win_rate":0.5851528384279476,"raw_games":400,"raw_wins":223,"raw_win_rate":0.5575,"elo":1559.924197105701,"model_dir":"models/policy_bc_v5","created_at":"2026-08-09T13:20:01Z","data_battles":33558,"compute":{"device":"cuda","framework":"pytorch + frozen sklearn style judge","parameters":632946,"d_model":160,"num_layers":2,"epochs_requested":18,"epochs_ran":5,"best_checkpoint_epoch":5,"batch_size":256,"learning_rate":0.00015,"dropout":0.2,"max_context":64,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"style_match_weight":0.4,"style_model_dir":"models/style_discriminator","action_clock_dir":"models/action_clock_v1","warmstart_dir":"models/policy_bc_v4.1 / resumed policy_bc_v5","eval_only":true},"rank":2},{"policy_id":"policy-bc-v4","wins":104,"losses":112,"games":216,"win_rate":0.48148148148148145,"raw_games":400,"raw_wins":222,"raw_win_rate":0.555,"elo":1477.0704618891934,"model_dir":"models/policy_bc_v4","created_at":"2026-08-08T00:02:13Z","data_battles":22554,"compute":{"device":"cuda","framework":"pytorch","parameters":632946,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0,"loss_kwargs":{"zone_weight":1.1,"xy_weight":0.55,"slot_weight":1.4}},"rank":3},{"policy_id":"policy-bc-v2","wins":94,"losses":106,"games":200,"win_rate":0.47,"raw_games":400,"raw_wins":174,"raw_win_rate":0.435,"elo":1439.5586863150338,"model_dir":"models/policy_bc","created_at":"2026-08-06T22:44:05Z","data_battles":14170,"compute":{"device":"cuda","framework":"pytorch","parameters":561930,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40},"rank":4},{"policy_id":"policy-bc-v3","wins":65,"losses":126,"games":191,"win_rate":0.3403141361256545,"raw_games":400,"raw_wins":165,"raw_win_rate":0.4125,"elo":1444.91189757586,"model_dir":"models/policy_bc_v3","created_at":"2026-08-07T02:45:15Z","data_battles":15233,"compute":{"device":"cuda","framework":"pytorch","parameters":564170,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0},"rank":5}],"pairs":[{"a":"policy-bc-v2","b":"policy-bc-v3","games":100,"confident_games":42,"a_wins":27,"b_wins":15,"a_win_rate":0.6428571428571429,"coverage":0.42},{"a":"policy-bc-v2","b":"policy-bc-v4","games":100,"confident_games":52,"a_wins":26,"b_wins":26,"a_win_rate":0.5,"coverage":0.52},{"a":"policy-bc-v2","b":"policy-bc-v4.1","games":100,"confident_games":49,"a_wins":19,"b_wins":30,"a_win_rate":0.3877551020408163,"coverage":0.49},{"a":"policy-bc-v2","b":"policy-bc-v5","games":100,"confident_games":57,"a_wins":22,"b_wins":35,"a_win_rate":0.38596491228070173,"coverage":0.57},{"a":"policy-bc-v3","b":"policy-bc-v4","games":100,"confident_games":53,"a_wins":21,"b_wins":32,"a_win_rate":0.39622641509433965,"coverage":0.53},{"a":"policy-bc-v3","b":"policy-bc-v4.1","games":100,"confident_games":47,"a_wins":15,"b_wins":32,"a_win_rate":0.3191489361702128,"coverage":0.47},{"a":"policy-bc-v3","b":"policy-bc-v5","games":100,"confident_games":49,"a_wins":14,"b_wins":35,"a_win_rate":0.2857142857142857,"coverage":0.49},{"a":"policy-bc-v4","b":"policy-bc-v4.1","games":100,"confident_games":48,"a_wins":15,"b_wins":33,"a_win_rate":0.3125,"coverage":0.48},{"a":"policy-bc-v4","b":"policy-bc-v5","games":100,"confident_games":63,"a_wins":31,"b_wins":32,"a_win_rate":0.49206349206349204,"coverage":0.63},{"a":"policy-bc-v4.1","b":"policy-bc-v5","games":100,"confident_games":60,"a_wins":28,"b_wins":32,"a_win_rate":0.4666666666666667,"coverage":0.6}],"setup":{"policies":[{"policy_id":"policy-bc-v2","model_dir":"models/policy_bc","threat_dim":0,"card_conditioned_placement":false,"created_at":"2026-08-06T22:44:05Z","data":{"battles_total":14170,"min_card_plays":12,"train_samples":248618,"val_samples":34180,"test_samples":34858,"vocab_size":126,"splits":[{"split":"train","battles":9920,"team_win_rate":0.5158266129032258,"mean_events":66.11300403225806},{"split":"val","battles":2125,"team_win_rate":0.5171764705882353,"mean_events":65.31858823529411},{"split":"test","battles":2125,"team_win_rate":0.4875294117647059,"mean_events":66.89411764705882}]},"compute":{"device":"cuda","framework":"pytorch","parameters":561930,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40},"test":{"loss":2.9025164137791544,"slot_top1":0.5148316025015778,"slot_top3":0.9307476045671008,"type_acc":0.9980492282976648,"zone_acc":0.3953755235526995,"xy_mae":5732.209574380343,"tile_acc":0.023983016811062022,"timing_mae":1.630938455388074,"n":34858}},{"policy_id":"policy-bc-v3","model_dir":"models/policy_bc_v3","threat_dim":14,"card_conditioned_placement":false,"created_at":"2026-08-07T02:45:15Z","data":{"battles_total":15233,"min_card_plays":12,"train_samples":326444,"val_samples":38100,"test_samples":37599,"vocab_size":126,"splits":[{"split":"train","battles":10665,"team_win_rate":0.5071729957805907,"mean_events":65.92358180965776},{"split":"val","battles":2284,"team_win_rate":0.5148861646234676,"mean_events":66.74956217162872},{"split":"test","battles":2284,"team_win_rate":0.5166374781085814,"mean_events":65.89929947460595}]},"compute":{"device":"cuda","framework":"pytorch","parameters":564170,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0},"test":{"loss":2.910020344922332,"slot_top1":0.5149073113646639,"slot_top3":0.931540732466289,"type_acc":0.9984840022341019,"zone_acc":0.39514348785871967,"xy_mae":5718.915735790845,"tile_acc":0.026197505252799277,"timing_mae":1.5715970863937434,"n":37599}},{"policy_id":"policy-bc-v4","model_dir":"models/policy_bc_v4","threat_dim":14,"card_conditioned_placement":true,"created_at":"2026-08-08T00:02:13Z","data":{"battles_total":22554,"min_card_plays":12,"train_samples":480032,"val_samples":55388,"test_samples":55775,"vocab_size":126,"splits":[{"split":"train","battles":15788,"team_win_rate":0.5027235875348366,"mean_events":65.31625285026603},{"split":"val","battles":3383,"team_win_rate":0.5072420928170263,"mean_events":64.92225835057641},{"split":"test","battles":3383,"team_win_rate":0.5137451965710907,"mean_events":65.95122672184452}]},"compute":{"device":"cuda","framework":"pytorch","parameters":632946,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0,"loss_kwargs":{"zone_weight":1.1,"xy_weight":0.55,"slot_weight":1.4}},"test":{"loss":3.521323877737063,"slot_top1":0.5310802330793366,"slot_top3":0.9332496638278799,"type_acc":0.9983505154639175,"zone_acc":0.42902734199910353,"xy_mae":5286.6420416853425,"tile_acc":0.04505602868668759,"timing_mae":1.5447046188429725,"n":55775}},{"policy_id":"policy-bc-v4.1","model_dir":"models/policy_bc_v4.1","threat_dim":14,"card_conditioned_placement":true,"created_at":"2026-08-08T21:31:27Z","data":{"battles_total":29450,"min_card_plays":12,"train_samples":623704,"val_samples":72395,"test_samples":72556,"vocab_size":126,"splits":[{"split":"train","battles":20616,"team_win_rate":0.5064512999611952,"mean_events":64.98311990686845},{"split":"val","battles":4417,"team_win_rate":0.5014715870500339,"mean_events":64.77360199230247},{"split":"test","battles":4417,"team_win_rate":0.5105275073579353,"mean_events":65.30971247453023}],"battles_trained":28102,"train_samples_trained":598192,"val_samples_trained":68826,"test_samples_trained":68508},"compute":{"device":"cuda","framework":"pytorch","parameters":632946,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":17,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0,"loss_kwargs":{"zone_weight":1.1,"xy_weight":0.55,"slot_weight":1.4},"min_context":8},"test":{"loss":3.4270822867541244,"slot_top1":0.5449997243508462,"slot_top3":0.9386956282044214,"type_acc":0.997822371685319,"zone_acc":0.4431749269529743,"xy_mae":5155.729107516952,"tile_acc":0.04741165444622085,"timing_mae":1.5486047415520667,"n":72556}},{"policy_id":"policy-bc-v5","model_dir":"models/policy_bc_v5","threat_dim":14,"card_conditioned_placement":true,"created_at":"2026-08-09T13:20:01Z","data":{"battles_total":33558,"min_card_plays":12,"train_samples":709176,"val_samples":82847,"test_samples":81911,"vocab_size":126,"splits":[{"split":"train","battles":23492,"team_win_rate":0.5050229865486123,"mean_events":64.79882513195982},{"split":"val","battles":5033,"team_win_rate":0.5197695211603417,"mean_events":65.35148023047884},{"split":"test","battles":5033,"team_win_rate":0.49970196701768327,"mean_events":64.73792966421617}]},"compute":{"device":"cuda","framework":"pytorch + frozen sklearn style judge","parameters":632946,"d_model":160,"num_layers":2,"epochs_requested":18,"epochs_ran":5,"best_checkpoint_epoch":5,"batch_size":256,"learning_rate":0.00015,"dropout":0.2,"max_context":64,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"style_match_weight":0.4,"style_model_dir":"models/style_discriminator","action_clock_dir":"models/action_clock_v1","warmstart_dir":"models/policy_bc_v4.1 / resumed policy_bc_v5","eval_only":true},"test":{"loss":3.435051889717579,"slot_top1":0.5507441003039885,"slot_top3":0.9413387701285542,"type_acc":0.9983640780847505,"zone_acc":0.4460695144730256,"xy_mae":5331.897835760765,"tile_acc":0.04596452246950959,"timing_mae":2.7601212936978663,"n":81911}}],"games_per_pair":100,"min_confidence":0.8,"warmup_events":10,"policy_events":50,"temperature":0.85,"seed":42,"device":"cuda","deck_pool":23697,"note":"Round-robin offline self-play. Each seat uses a different policy checkpoint. Winners come from the offline winner predictor; only games with calibrated confidence >= 80% count in the standings."},"champion":"policy-bc-v4.1","v5":{"policy_id":"policy-bc-v5","wins":134,"losses":95,"games":229,"win_rate":0.5851528384279476,"raw_games":400,"raw_wins":223,"raw_win_rate":0.5575,"elo":1559.924197105701,"model_dir":"models/policy_bc_v5","created_at":"2026-08-09T13:20:01Z","data_battles":33558,"compute":{"device":"cuda","framework":"pytorch + frozen sklearn style judge","parameters":632946,"d_model":160,"num_layers":2,"epochs_requested":18,"epochs_ran":5,"best_checkpoint_epoch":5,"batch_size":256,"learning_rate":0.00015,"dropout":0.2,"max_context":64,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"style_match_weight":0.4,"style_model_dir":"models/style_discriminator","action_clock_dir":"models/action_clock_v1","warmstart_dir":"models/policy_bc_v4.1 / resumed policy_bc_v5","eval_only":true},"rank":2}},"meta":{"global_epochs":21,"runs":3,"polishes":3,"n_improved_tells":10,"n_tells":11}};
+
+function fill(v) { return v == null || Number.isNaN(v) ? null : Number(v); }
+
+(function charts() {
+  const hist = DATA.history || [];
+  if (!hist.length) return;
+  const labels = hist.map((r) => String(r.epoch));
+  renderLineChart("lossChart", [
+    { color: "#60a5fa", label: "Train loss", values: hist.map((r) => r.train_loss) },
+    { color: "#34d399", label: "Val loss", values: hist.map((r) => r.val_loss) },
+  ], labels, { yFormat: "float" });
+  renderLineChart("styleMatchChart", [
+    { color: "#fbbf24", label: "Style match", values: hist.map((r) => r.train_style_match) },
+  ], labels, { yFormat: "float" });
+
+  const startL2 = (DATA.styleHistory || []).find((s) => s.feature_l2 != null);
+  let last = startL2 ? fill(startL2.feature_l2) : null;
+  const l2filled = hist.map((r) => {
+    const v = fill(r.style_feature_l2);
+    if (v != null) last = v;
+    return last;
+  });
+  renderLineChart("slotStyleChart", [
+    { color: "#a78bfa", label: "Val slot@1", values: hist.map((r) => r.val_slot_top1) },
+    { color: "#f87171", label: "Feature L2", values: l2filled },
+  ], labels, { yFormat: "float" });
+})();
+
+(function protocol() {
+  const root = document.getElementById("protoToggle");
+  if (!root) return;
+  root.addEventListener("click", (ev) => {
+    const btn = ev.target.closest("button");
+    if (!btn) return;
+    root.querySelectorAll("button").forEach((b) => b.classList.toggle("active", b === btn));
+    document.querySelectorAll(".protocol-panel").forEach((p) => {
+      p.classList.toggle("active", p.id === "panel-" + btn.dataset.panel);
+    });
+  });
+})();
+
+(function tells() {
+  const tells = DATA.tells || [];
+  const chips = document.getElementById("tellChips");
+  chips.innerHTML = tells.map((t) =>
+    `<span class="tell-chip ${t.improved ? "up" : "down"}"><b>${t.feature}</b> ${t.improved ? "closer" : "still off"}</span>`
+  ).join("");
+
+  // Radar: normalize each axis by human magnitude (or 1)
+  const svg = document.getElementById("tellRadar");
+  const names = tells.map((t) => t.feature);
+  const n = Math.max(names.length, 1);
+  const cx = 200, cy = 200, R = 150;
+  function pt(i, radius) {
+    const a = (-Math.PI / 2) + (i / n) * Math.PI * 2;
+    return [cx + Math.cos(a) * radius, cy + Math.sin(a) * radius];
+  }
+  function ring(vals, color, fill) {
+    const pts = vals.map((v, i) => pt(i, Math.max(8, Math.min(1, v) * R)));
+    const d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ") + " Z";
+    return `<path d="${d}" fill="${fill}" stroke="${color}" stroke-width="2" />`;
+  }
+  // Similarity to human: 1 - clipped relative error
+  function sim(val, human) {
+    const denom = Math.max(Math.abs(human), 0.05);
+    return Math.max(0, 1 - Math.abs(val - human) / denom);
+  }
+  const hum = tells.map(() => 1);
+  const v5 = tells.map((t) => sim(t.v5, t.human));
+  const v41 = tells.map((t) => sim(t.v41, t.human));
+  let grid = "";
+  for (const g of [0.25, 0.5, 0.75, 1]) {
+    const pts = Array.from({length: n}, (_, i) => pt(i, R * g));
+    grid += `<polygon points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke="#1e293b" />`;
+  }
+  const spokes = names.map((_, i) => {
+    const [x, y] = pt(i, R);
+    return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#1e293b" />`;
+  }).join("");
+  const labels = names.map((name, i) => {
+    const [x, y] = pt(i, R + 22);
+    return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" fill="#94a3b8" font-size="9">${name.replace("frac_","").replace("gap_","g.")}</text>`;
+  }).join("");
+  svg.innerHTML = grid + spokes
+    + ring(hum, "#94a3b8", "rgba(148,163,184,0.08)")
+    + ring(v41, "#64748b", "rgba(100,116,139,0.12)")
+    + ring(v5, "#34d399", "rgba(52,211,153,0.18)")
+    + labels
+    + `<text x="20" y="24" fill="#94a3b8" font-size="11">human</text>`
+    + `<text x="20" y="40" fill="#64748b" font-size="11">v4.1</text>`
+    + `<text x="20" y="56" fill="#34d399" font-size="11">v5</text>`;
+
+  const race = document.getElementById("tellRace");
+  const maxErr = Math.max(...tells.map((t) => Math.max(t.v5_err, t.v41_err)), 1e-6);
+  race.innerHTML = tells.slice(0, 8).map((t) => `
+    <div class="race-row" data-v5="${(100 * t.v5_err / maxErr).toFixed(2)}" data-v41="${(100 * t.v41_err / maxErr).toFixed(2)}">
+      <div class="race-name">${t.feature}<small>abs err to human</small></div>
+      <div class="race-track">
+        <div class="race-fill old" style="width:0%"></div>
+        <div class="race-fill" style="width:0%"></div>
+      </div>
+      <div class="race-val mono">${t.v5_err.toFixed(3)}</div>
+    </div>`).join("");
+
+  function runRace() {
+    race.querySelectorAll(".race-row").forEach((row) => {
+      const fills = row.querySelectorAll(".race-fill");
+      fills[0].style.width = row.dataset.v41 + "%";
+      fills[1].style.width = row.dataset.v5 + "%";
+    });
+  }
+  document.getElementById("racePlay").addEventListener("click", runRace);
+  setTimeout(runRace, 350);
+})();
+
+(function anim() {
+  const hist = DATA.history || [];
+  const scrub = document.getElementById("animScrub");
+  const readout = document.getElementById("animReadout");
+  const btn = document.getElementById("animPlay");
+  if (!hist.length || !scrub) return;
+  scrub.max = String(hist.length - 1);
+  scrub.value = String(hist.length - 1);
+  let timer = null;
+  function draw() {
+    const i = Number(scrub.value);
+    const r = hist[i];
+    const polish = r.polish ? ` · polish reward ${Number(r.polish.reward).toFixed(3)}` : "";
+    readout.innerHTML = `Global epoch <strong>${r.epoch}</strong> (run ${r.run} #${r.run_epoch}) · `
+      + `slot <strong>${(100 * r.val_slot_top1).toFixed(1)}%</strong> · `
+      + `style_match <strong>${Number(r.train_style_match).toFixed(3)}</strong>`
+      + (r.style_feature_l2 != null ? ` · L2 <strong>${Number(r.style_feature_l2).toFixed(3)}</strong>` : "")
+      + polish;
+  }
+  scrub.addEventListener("input", () => { if (timer) { clearInterval(timer); timer = null; btn.textContent = "Play epoch film"; } draw(); });
+  btn.addEventListener("click", () => {
+    if (timer) { clearInterval(timer); timer = null; btn.textContent = "Play epoch film"; return; }
+    btn.textContent = "Pause";
+    timer = setInterval(() => {
+      let i = Number(scrub.value);
+      i = (i + 1) % hist.length;
+      scrub.value = String(i);
+      draw();
+    }, 220);
+  });
+  draw();
+})();
+
+(function battleRoyale() {
+  const body = document.getElementById("brBody");
+  const caption = document.getElementById("brCaption");
+  const br = DATA.battleRoyale || {};
+  if (!br.ready) {
+    body.innerHTML = `<p class="caption">Tournament still running or JSON missing. Re-open this page after <span class="mono">logs/battle_royale_v5.log</span> finishes — or regenerate with the report command.</p>`;
+    return;
+  }
+  const setup = br.setup || {};
+  caption.innerHTML = `${(setup.policies || []).length} policies · ${setup.games_per_pair || "?"} games/pair`
+    + ` (= <b>400 raw games each</b>) · min confidence ${setup.min_confidence ?? 0.8}`
+    + ` · champion <b>${br.champion || "—"}</b>`
+    + ` · full table in <a href="battle_royale_v5.html">battle_royale_v5.html</a>`;
+  const standings = br.standings || [];
+  const rows = standings.map((s) => {
+    const pid = String(s.policy_id || "");
+    const isV5 = /v5/i.test(pid);
+    return `<tr class="${isV5 ? "champ" : ""}">
+      <td>${s.rank ?? ""}</td>
+      <td>${pid}${isV5 ? " ←" : ""}</td>
+      <td>${s.wins ?? 0}-${s.losses ?? 0}</td>
+      <td class="${(s.win_rate || 0) >= 0.5 ? "good" : ""}">${((s.win_rate || 0) * 100).toFixed(1)}%</td>
+      <td>${((s.raw_win_rate || 0) * 100).toFixed(1)}%</td>
+      <td>${s.raw_games ?? s.games ?? 0}</td>
+      <td>${(s.elo || 0).toFixed(0)}</td>
+    </tr>`;
+  }).join("");
+  const pairs = (br.pairs || []).map((p) =>
+    `<tr><td>${p.a}</td><td>${p.b}</td><td>${p.a_wins}-${p.b_wins}</td><td>${p.confident_games}/${p.games}</td></tr>`
+  ).join("");
+  body.innerHTML = `
+    <div class="block-grid">
+      <div class="block block-wide">
+        <h2>Standings</h2>
+        <table class="br-table">
+          <thead><tr><th>#</th><th>Policy</th><th>Conf W-L</th><th>Conf WR</th><th>Raw WR</th><th>Raw games</th><th>Elo</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <p class="caption">Confidence gate keeps only winner-model decisions ≥ threshold. Raw WR counts every offline game.</p>
+      </div>
+      <div class="block block-wide">
+        <h2>Pair results</h2>
+        <table>
+          <thead><tr><th>A</th><th>B</th><th>Conf score</th><th>Kept/raw</th></tr></thead>
+          <tbody>${pairs}</tbody>
+        </table>
+      </div>
+    </div>`;
+})();
+</script>
+</body>
+</html>

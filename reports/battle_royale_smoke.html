@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Battle Royale — policy-battle-royale-v1</title>
+  <style>
+    
+    :root {
+      color-scheme: dark;
+      --bg: #0a0f18;
+      --line: #1e293b;
+      --line-soft: #141c28;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(1.75rem, 3vw, 2.25rem);
+      letter-spacing: -0.03em;
+      font-weight: 650;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    p, li { color: var(--muted); margin: 0 0 10px; }
+    a { color: var(--accent); }
+    .report-header { padding-bottom: 28px; }
+    .report-header p { max-width: 720px; }
+    .meta { font-size: 0.92rem; color: #64748b; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .badge {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+    .badge + .badge::before {
+      content: "·";
+      margin-right: 8px;
+      color: #334155;
+    }
+    .report-section {
+      padding: 28px 0;
+      border-top: 1px solid var(--line-soft);
+    }
+    .report-section:first-of-type { border-top: none; padding-top: 0; }
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px 20px;
+    }
+    .kpi-label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .kpi-value {
+      display: block;
+      font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .block-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 36px 40px;
+    }
+    .block-wide { grid-column: 1 / -1; }
+    .chart-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
+    }
+    .chart-block {
+      width: 100%;
+    }
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+    }
+    svg.chart {
+      width: 100%;
+      height: auto;
+      min-height: 480px;
+      aspect-ratio: 1000 / 540;
+      display: block;
+      overflow: visible;
+    }
+    svg.chart-interactive .chart-lines polyline {
+      transition: stroke-width 0.15s ease, opacity 0.15s ease;
+    }
+    svg.chart-interactive:hover .chart-lines polyline {
+      stroke-width: 4.5;
+    }
+    .chart-tooltip {
+      position: absolute;
+      top: 12px;
+      left: 0;
+      min-width: 180px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: rgba(10, 15, 24, 0.94);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.12s ease, transform 0.12s ease;
+      z-index: 2;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    .chart-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .chart-tooltip-title {
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+    .chart-tooltip-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .chart-tooltip-row:last-child { margin-bottom: 0; }
+    .chart-tooltip-row strong {
+      margin-left: auto;
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+    .chart-tooltip-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      font-size: 14px;
+      color: #64748b;
+    }
+    .legend-interactive {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 10px;
+      border: 1px solid #243044;
+      border-radius: 999px;
+      background: transparent;
+      color: #94a3b8;
+      font: inherit;
+      font-size: 13px;
+      line-height: 1.2;
+      cursor: pointer;
+      transition: opacity 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .legend-item:hover {
+      border-color: #475569;
+      color: #cbd5e1;
+    }
+    .legend-item.is-on {
+      color: #e2e8f0;
+      border-color: #334155;
+    }
+    .legend-item.is-off {
+      opacity: 0.4;
+    }
+    .legend-item.is-off .legend-label {
+      text-decoration: line-through;
+    }
+    .legend-item.is-off .legend-preview {
+      opacity: 0.35;
+      border-top-color: #475569;
+    }
+    .legend-preview {
+      width: 16px;
+      border-top: 2px solid var(--legend-color, #64748b);
+      flex-shrink: 0;
+    }
+    .legend-item.legend-dashed .legend-preview {
+      border-top-style: dashed;
+    }
+    .legend-label {
+      white-space: nowrap;
+    }
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      margin-right: 6px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line-soft);
+      text-align: left;
+    }
+    th {
+      color: #64748b;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .diagram {
+      margin: 0;
+      padding: 0 0 0 16px;
+      border-left: 2px solid #334155;
+      background: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      color: #94a3b8;
+      white-space: pre-wrap;
+    }
+    .media {
+      width: 100%;
+      display: block;
+      border-radius: 6px;
+    }
+    .caption { font-size: 13px; color: #64748b; margin-top: 10px; }
+    .chart-animation {
+      width: 100%;
+    }
+    .anim-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px 18px;
+      margin-top: 20px;
+    }
+    .anim-btn {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid #334155;
+      background: #111827;
+      color: #e2e8f0;
+      font: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .anim-btn-icon {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .anim-btn:hover {
+      border-color: #60a5fa;
+      background: #172033;
+    }
+    .anim-icon {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+      display: block;
+    }
+    .anim-icon[hidden] {
+      display: none;
+    }
+    .anim-scrubber {
+      flex: 1 1 220px;
+      min-width: 180px;
+      accent-color: #60a5fa;
+      cursor: pointer;
+    }
+    .anim-readout {
+      flex: 1 1 100%;
+      font-size: 14px;
+      color: #94a3b8;
+      font-variant-numeric: tabular-nums;
+    }
+    .anim-readout strong {
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+    svg.chart-dual .chart-refline {
+      stroke-dasharray: 6 5;
+      opacity: 0.75;
+    }
+    .lessons { margin: 0; padding-left: 18px; }
+    .lessons li { margin-bottom: 10px; }
+    @media (max-width: 820px) {
+      .kpi-row, .block-grid, .chart-grid { grid-template-columns: 1fr; }
+    }
+    
+    .podium {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 18px 0 8px;
+    }
+    .podium-card {
+      padding: 18px 16px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #101826, #0b1220);
+    }
+    .podium-card.rank-1 { border-color: #fbbf24; box-shadow: inset 0 0 0 1px rgba(251,191,36,0.25); }
+    .podium-card.rank-2 { border-color: #94a3b8; }
+    .podium-card.rank-3 { border-color: #b45309; }
+    .podium-rank { color: var(--muted); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .podium-name { font-size: 1.2rem; font-weight: 650; margin: 8px 0 4px; color: var(--text); }
+    .podium-wr { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.03em; }
+    .podium-meta { color: #64748b; font-size: 0.88rem; margin-top: 6px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    th {
+      color: #64748b;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    tr.champ td { color: #fde68a; }
+    .policy-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .policy-card {
+      border: 1px solid var(--line-soft);
+      padding: 14px 16px;
+    }
+    .policy-card h3 { margin: 0 0 4px; color: var(--text); font-size: 1.05rem; }
+    .policy-card dl {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 14px;
+      margin: 12px 0 0;
+    }
+    .policy-card dt { color: #64748b; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .policy-card dd { margin: 2px 0 0; color: var(--text); }
+    .matrix-wrap { overflow-x: auto; }
+    .verdict {
+      font-size: 1.15rem;
+      color: var(--text);
+      max-width: 820px;
+      line-height: 1.45;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .flow-step {
+      border: 1px solid var(--line-soft);
+      padding: 12px;
+      min-height: 110px;
+    }
+    .flow-num {
+      display: inline-block;
+      width: 22px; height: 22px;
+      border-radius: 999px;
+      background: #1e293b;
+      color: #93c5fd;
+      text-align: center;
+      line-height: 22px;
+      font-size: 0.75rem;
+      margin-bottom: 8px;
+    }
+    @media (max-width: 800px) {
+      .podium, .policy-grid, .flow, .kpi-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header class="report-header">
+    <div class="badge-row">
+      <span class="badge">policy-battle-royale-v1</span>
+      <span class="badge">judge: winner-predictor-hgb-symmetric</span>
+      <span class="badge">conf ≥ 80.0%</span>
+      <span class="badge">2026-08-09T00:26:14Z</span>
+    </div>
+    <h1>Policy battle royale</h1>
+    <p class="verdict">policy-bc-v3 wins the battle royale under the winner-predictor judge at confidence ≥ 80%: 1-0 (100.0% WR, Elo 1512) across 1 confident games.</p>
+    <p class="meta">
+      Offline round-robin · 4 policies ·
+      3 confident / 12 raw games ·
+      cuda · 104.8s
+    </p>
+  </header>
+
+  <section class="report-section">
+    <h2>Podium</h2>
+    <div class="podium">
+        <div class="podium-card rank-1">
+          <div class="podium-rank">#1</div>
+          <div class="podium-name">policy-bc-v3</div>
+          <div class="podium-wr">100.0%</div>
+          <div class="podium-meta">1-0
+            · Elo 1512</div>
+        </div>
+        
+        <div class="podium-card rank-2">
+          <div class="podium-rank">#2</div>
+          <div class="podium-name">policy-bc-v4</div>
+          <div class="podium-wr">50.0%</div>
+          <div class="podium-meta">1-1
+            · Elo 1498</div>
+        </div>
+        
+        <div class="podium-card rank-3">
+          <div class="podium-rank">#3</div>
+          <div class="podium-name">policy-bc-v2</div>
+          <div class="podium-wr">33.3%</div>
+          <div class="podium-meta">1-2
+            · Elo 1490</div>
+        </div>
+        </div>
+  </section>
+
+  <section class="report-section kpi-row">
+    <div>
+      <span class="kpi-label">Champion</span>
+      <span class="kpi-value">policy-bc-v3</span>
+    </div>
+    <div>
+      <span class="kpi-label">Confident coverage</span>
+      <span class="kpi-value">25.0%</span>
+    </div>
+    <div>
+      <span class="kpi-label">Mean kept confidence</span>
+      <span class="kpi-value">92.4%</span>
+    </div>
+    <div>
+      <span class="kpi-label">Games / pair</span>
+      <span class="kpi-value">2</span>
+    </div>
+  </section>
+
+  <section class="report-section">
+    <h2>How the tournament works</h2>
+    <div class="flow">
+      <div class="flow-step"><span class="flow-num">1</span><b>Sample real decks</b><br>
+        <small>Train-split decks from the replay corpus</small></div>
+      <div class="flow-step"><span class="flow-num">2</span><b>Cross-play</b><br>
+        <small>Each policy sits one seat; seats alternate</small></div>
+      <div class="flow-step"><span class="flow-num">3</span><b>Winner judge</b><br>
+        <small>Symmetric HGB+trees ensemble scores P(team wins)</small></div>
+      <div class="flow-step"><span class="flow-num">4</span><b>Confidence gate</b><br>
+        <small>Keep only games with calibrated conf ≥ 80.0%</small></div>
+    </div>
+  </section>
+
+  <section class="report-section">
+    <h2>Standings (confident games only)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Policy</th><th>W</th><th>L</th><th>WR</th>
+          <th>Elo</th><th>Games</th><th>Raw WR</th><th>Trained</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="champ">
+          <td>1</td>
+          <td>policy-bc-v3</td>
+          <td>1</td>
+          <td>0</td>
+          <td>100.0%</td>
+          <td>1512.0</td>
+          <td>1</td>
+          <td>33.3%</td>
+          <td>2026-08-07T02:45:15Z</td>
+        </tr>
+        
+        <tr class="">
+          <td>2</td>
+          <td>policy-bc-v4</td>
+          <td>1</td>
+          <td>1</td>
+          <td>50.0%</td>
+          <td>1498.4</td>
+          <td>2</td>
+          <td>66.7%</td>
+          <td>2026-08-08T00:02:13Z</td>
+        </tr>
+        
+        <tr class="">
+          <td>3</td>
+          <td>policy-bc-v2</td>
+          <td>1</td>
+          <td>2</td>
+          <td>33.3%</td>
+          <td>1489.6</td>
+          <td>3</td>
+          <td>66.7%</td>
+          <td>2026-08-06T22:44:05Z</td>
+        </tr>
+        
+        <tr class="">
+          <td>4</td>
+          <td>policy-bc-v4.1</td>
+          <td>0</td>
+          <td>0</td>
+          <td>—</td>
+          <td>1500.0</td>
+          <td>0</td>
+          <td>33.3%</td>
+          <td>2026-08-08T21:31:27Z</td>
+        </tr>
+        </tbody>
+    </table>
+  </section>
+
+  <section class="report-section chart-grid">
+    <div class="chart-block">
+      <h2>Win rate by policy</h2>
+      <div class="chart-wrap"><svg class="chart" id="wrChart"></svg></div>
+      <p class="caption">Bars use confident decisions only. Hover for W-L and Elo.</p>
+    </div>
+    <div class="chart-block">
+      <h2>Head-to-head matrix</h2>
+      <div class="matrix-wrap"><svg class="chart" id="h2hChart"></svg></div>
+      <p class="caption">Cell = row's win rate vs column on confident games. Diagonal is empty.</p>
+    </div>
+    <div class="chart-block">
+      <h2>Judge confidence distribution</h2>
+      <div class="chart-wrap"><svg class="chart" id="confChart"></svg></div>
+      <p class="caption">Dashed line marks the 80.0% gate. Coverage on held-out real games
+        at this threshold is ~48% with ~94% accuracy.</p>
+    </div>
+  </section>
+
+  <section class="report-section">
+    <h2>Pair results</h2>
+    <table>
+      <thead>
+        <tr><th>A</th><th>B</th><th>Score (A-B)</th><th>A WR</th><th>Kept/Raw</th><th>Coverage</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>policy-bc-v2</td>
+          <td>policy-bc-v3</td>
+          <td>0-1</td>
+          <td>0.0%</td>
+          <td>1/2</td>
+          <td>50.0%</td>
+        </tr>
+        
+        <tr>
+          <td>policy-bc-v2</td>
+          <td>policy-bc-v4</td>
+          <td>1-1</td>
+          <td>50.0%</td>
+          <td>2/2</td>
+          <td>100.0%</td>
+        </tr>
+        
+        <tr>
+          <td>policy-bc-v2</td>
+          <td>policy-bc-v4.1</td>
+          <td>0-0</td>
+          <td>—</td>
+          <td>0/2</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>policy-bc-v3</td>
+          <td>policy-bc-v4</td>
+          <td>0-0</td>
+          <td>—</td>
+          <td>0/2</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>policy-bc-v3</td>
+          <td>policy-bc-v4.1</td>
+          <td>0-0</td>
+          <td>—</td>
+          <td>0/2</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>policy-bc-v4</td>
+          <td>policy-bc-v4.1</td>
+          <td>0-0</td>
+          <td>—</td>
+          <td>0/2</td>
+          <td>0.0%</td>
+        </tr>
+        </tbody>
+    </table>
+  </section>
+
+  <section class="report-section">
+    <h2>Contenders</h2>
+    <div class="policy-grid">
+        <div class="policy-card">
+          <h3>policy-bc-v2</h3>
+          <p class="meta">models/policy_bc</p>
+          <dl>
+            <div><dt>Created</dt><dd>2026-08-06T22:44:05Z</dd></div>
+            <div><dt>Threat dim</dt><dd>0</dd></div>
+            <div><dt>Card-conditioned XY</dt>
+              <dd>no</dd></div>
+            <div><dt>Test slot@1</dt>
+              <dd>51.5%</dd></div>
+          </dl>
+        </div>
+        
+        <div class="policy-card">
+          <h3>policy-bc-v3</h3>
+          <p class="meta">models/policy_bc_v3</p>
+          <dl>
+            <div><dt>Created</dt><dd>2026-08-07T02:45:15Z</dd></div>
+            <div><dt>Threat dim</dt><dd>14</dd></div>
+            <div><dt>Card-conditioned XY</dt>
+              <dd>no</dd></div>
+            <div><dt>Test slot@1</dt>
+              <dd>51.5%</dd></div>
+          </dl>
+        </div>
+        
+        <div class="policy-card">
+          <h3>policy-bc-v4</h3>
+          <p class="meta">models/policy_bc_v4</p>
+          <dl>
+            <div><dt>Created</dt><dd>2026-08-08T00:02:13Z</dd></div>
+            <div><dt>Threat dim</dt><dd>14</dd></div>
+            <div><dt>Card-conditioned XY</dt>
+              <dd>yes</dd></div>
+            <div><dt>Test slot@1</dt>
+              <dd>53.1%</dd></div>
+          </dl>
+        </div>
+        
+        <div class="policy-card">
+          <h3>policy-bc-v4.1</h3>
+          <p class="meta">models/policy_bc_v4.1</p>
+          <dl>
+            <div><dt>Created</dt><dd>2026-08-08T21:31:27Z</dd></div>
+            <div><dt>Threat dim</dt><dd>14</dd></div>
+            <div><dt>Card-conditioned XY</dt>
+              <dd>yes</dd></div>
+            <div><dt>Test slot@1</dt>
+              <dd>54.5%</dd></div>
+          </dl>
+        </div>
+        </div>
+  </section>
+
+  <section class="report-section">
+    <h2>Lessons</h2>
+    <ul><li>Filter by judge confidence, not raw win rate — the winner model is ~79% accurate overall but ~94% at conf≥80%.</li><li>Heterogeneous seats matter: older policies without threat features still compete on the same decks.</li><li>This is still sequence-level offline play judged by another model — not live Clash Royale.</li></ul>
+    <p class="meta">JSON source: reports/battle_royale.json · stream:
+      <code>tail -f reports/battle_royale_progress.jsonl</code></p>
+  </section>
+</main>
+<script>
+const DATA = {"status":"complete","created_at":"2026-08-09T00:26:14Z","model_name":"policy-battle-royale-v1","judge":"winner-predictor-hgb-symmetric","seconds":104.8,"setup":{"policies":[{"policy_id":"policy-bc-v2","model_dir":"models/policy_bc","threat_dim":0,"card_conditioned_placement":false,"created_at":"2026-08-06T22:44:05Z","data":{"battles_total":14170,"min_card_plays":12,"train_samples":248618,"val_samples":34180,"test_samples":34858,"vocab_size":126,"splits":[{"split":"train","battles":9920,"team_win_rate":0.5158266129032258,"mean_events":66.11300403225806},{"split":"val","battles":2125,"team_win_rate":0.5171764705882353,"mean_events":65.31858823529411},{"split":"test","battles":2125,"team_win_rate":0.4875294117647059,"mean_events":66.89411764705882}]},"compute":{"device":"cuda","framework":"pytorch","parameters":561930,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40},"test":{"loss":2.9025164137791544,"slot_top1":0.5148316025015778,"slot_top3":0.9307476045671008,"type_acc":0.9980492282976648,"zone_acc":0.3953755235526995,"xy_mae":5732.209574380343,"tile_acc":0.023983016811062022,"timing_mae":1.630938455388074,"n":34858}},{"policy_id":"policy-bc-v3","model_dir":"models/policy_bc_v3","threat_dim":14,"card_conditioned_placement":false,"created_at":"2026-08-07T02:45:15Z","data":{"battles_total":15233,"min_card_plays":12,"train_samples":326444,"val_samples":38100,"test_samples":37599,"vocab_size":126,"splits":[{"split":"train","battles":10665,"team_win_rate":0.5071729957805907,"mean_events":65.92358180965776},{"split":"val","battles":2284,"team_win_rate":0.5148861646234676,"mean_events":66.74956217162872},{"split":"test","battles":2284,"team_win_rate":0.5166374781085814,"mean_events":65.89929947460595}]},"compute":{"device":"cuda","framework":"pytorch","parameters":564170,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0},"test":{"loss":2.910020344922332,"slot_top1":0.5149073113646639,"slot_top3":0.931540732466289,"type_acc":0.9984840022341019,"zone_acc":0.39514348785871967,"xy_mae":5718.915735790845,"tile_acc":0.026197505252799277,"timing_mae":1.5715970863937434,"n":37599}},{"policy_id":"policy-bc-v4","model_dir":"models/policy_bc_v4","threat_dim":14,"card_conditioned_placement":true,"created_at":"2026-08-08T00:02:13Z","data":{"battles_total":22554,"min_card_plays":12,"train_samples":480032,"val_samples":55388,"test_samples":55775,"vocab_size":126,"splits":[{"split":"train","battles":15788,"team_win_rate":0.5027235875348366,"mean_events":65.31625285026603},{"split":"val","battles":3383,"team_win_rate":0.5072420928170263,"mean_events":64.92225835057641},{"split":"test","battles":3383,"team_win_rate":0.5137451965710907,"mean_events":65.95122672184452}]},"compute":{"device":"cuda","framework":"pytorch","parameters":632946,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0,"loss_kwargs":{"zone_weight":1.1,"xy_weight":0.55,"slot_weight":1.4}},"test":{"loss":3.521323877737063,"slot_top1":0.5310802330793366,"slot_top3":0.9332496638278799,"type_acc":0.9983505154639175,"zone_acc":0.42902734199910353,"xy_mae":5286.6420416853425,"tile_acc":0.04505602868668759,"timing_mae":1.5447046188429725,"n":55775}},{"policy_id":"policy-bc-v4.1","model_dir":"models/policy_bc_v4.1","threat_dim":14,"card_conditioned_placement":true,"created_at":"2026-08-08T21:31:27Z","data":{"battles_total":29450,"min_card_plays":12,"train_samples":623704,"val_samples":72395,"test_samples":72556,"vocab_size":126,"splits":[{"split":"train","battles":20616,"team_win_rate":0.5064512999611952,"mean_events":64.98311990686845},{"split":"val","battles":4417,"team_win_rate":0.5014715870500339,"mean_events":64.77360199230247},{"split":"test","battles":4417,"team_win_rate":0.5105275073579353,"mean_events":65.30971247453023}],"battles_trained":28102,"train_samples_trained":598192,"val_samples_trained":68826,"test_samples_trained":68508},"compute":{"device":"cuda","framework":"pytorch","parameters":632946,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":17,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0,"loss_kwargs":{"zone_weight":1.1,"xy_weight":0.55,"slot_weight":1.4},"min_context":8},"test":{"loss":3.4270822867541244,"slot_top1":0.5449997243508462,"slot_top3":0.9386956282044214,"type_acc":0.997822371685319,"zone_acc":0.4431749269529743,"xy_mae":5155.729107516952,"tile_acc":0.04741165444622085,"timing_mae":1.5486047415520667,"n":72556}}],"games_per_pair":2,"min_confidence":0.8,"warmup_events":10,"policy_events":50,"temperature":0.85,"seed":42,"device":"cuda","deck_pool":21267,"note":"Round-robin offline self-play. Each seat uses a different policy checkpoint. Winners come from the offline winner predictor; only games with calibrated confidence >= 80% count in the standings."},"progress":{"games_done":12,"games_total":12,"confident_games":3,"coverage":0.25,"mean_confidence":0.7070396861917162,"mean_kept_confidence":0.9241686981821834},"standings":[{"policy_id":"policy-bc-v3","wins":1,"losses":0,"games":1,"win_rate":1.0,"raw_games":6,"raw_wins":2,"raw_win_rate":0.3333333333333333,"elo":1512.0,"model_dir":"models/policy_bc_v3","created_at":"2026-08-07T02:45:15Z","data_battles":15233,"compute":{"device":"cuda","framework":"pytorch","parameters":564170,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0},"rank":1},{"policy_id":"policy-bc-v4","wins":1,"losses":1,"games":2,"win_rate":0.5,"raw_games":6,"raw_wins":4,"raw_win_rate":0.6666666666666666,"elo":1498.375054992543,"model_dir":"models/policy_bc_v4","created_at":"2026-08-08T00:02:13Z","data_battles":22554,"compute":{"device":"cuda","framework":"pytorch","parameters":632946,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0,"loss_kwargs":{"zone_weight":1.1,"xy_weight":0.55,"slot_weight":1.4}},"rank":2},{"policy_id":"policy-bc-v2","wins":1,"losses":2,"games":3,"win_rate":0.3333333333333333,"raw_games":6,"raw_wins":4,"raw_win_rate":0.6666666666666666,"elo":1489.624945007457,"model_dir":"models/policy_bc","created_at":"2026-08-06T22:44:05Z","data_battles":14170,"compute":{"device":"cuda","framework":"pytorch","parameters":561930,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":25,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40},"rank":3},{"policy_id":"policy-bc-v4.1","wins":0,"losses":0,"games":0,"win_rate":null,"raw_games":6,"raw_wins":2,"raw_win_rate":0.3333333333333333,"elo":1500.0,"model_dir":"models/policy_bc_v4.1","created_at":"2026-08-08T21:31:27Z","data_battles":29450,"compute":{"device":"cuda","framework":"pytorch","parameters":632946,"d_model":160,"num_layers":2,"epochs_requested":25,"epochs_ran":17,"batch_size":256,"learning_rate":0.0002,"dropout":0.2,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0,"loss_kwargs":{"zone_weight":1.1,"xy_weight":0.55,"slot_weight":1.4},"min_context":8},"rank":4}],"head_to_head":{"policy-bc-v2":{"policy-bc-v3":{"wins":0,"losses":1,"games":1},"policy-bc-v4":{"wins":1,"losses":1,"games":2},"policy-bc-v4.1":{"wins":0,"losses":0,"games":0}},"policy-bc-v3":{"policy-bc-v2":{"wins":1,"losses":0,"games":1},"policy-bc-v4":{"wins":0,"losses":0,"games":0},"policy-bc-v4.1":{"wins":0,"losses":0,"games":0}},"policy-bc-v4":{"policy-bc-v2":{"wins":1,"losses":1,"games":2},"policy-bc-v3":{"wins":0,"losses":0,"games":0},"policy-bc-v4.1":{"wins":0,"losses":0,"games":0}},"policy-bc-v4.1":{"policy-bc-v2":{"wins":0,"losses":0,"games":0},"policy-bc-v3":{"wins":0,"losses":0,"games":0},"policy-bc-v4":{"wins":0,"losses":0,"games":0}}},"pairs":[{"a":"policy-bc-v2","b":"policy-bc-v3","games":2,"confident_games":1,"a_wins":0,"b_wins":1,"a_win_rate":0.0,"coverage":0.5},{"a":"policy-bc-v2","b":"policy-bc-v4","games":2,"confident_games":2,"a_wins":1,"b_wins":1,"a_win_rate":0.5,"coverage":1.0},{"a":"policy-bc-v2","b":"policy-bc-v4.1","games":2,"confident_games":0,"a_wins":0,"b_wins":0,"a_win_rate":null,"coverage":0.0},{"a":"policy-bc-v3","b":"policy-bc-v4","games":2,"confident_games":0,"a_wins":0,"b_wins":0,"a_win_rate":null,"coverage":0.0},{"a":"policy-bc-v3","b":"policy-bc-v4.1","games":2,"confident_games":0,"a_wins":0,"b_wins":0,"a_win_rate":null,"coverage":0.0},{"a":"policy-bc-v4","b":"policy-bc-v4.1","games":2,"confident_games":0,"a_wins":0,"b_wins":0,"a_win_rate":null,"coverage":0.0}],"champion":"policy-bc-v3","verdict":"policy-bc-v3 wins the battle royale under the winner-predictor judge at confidence \u2265 80%: 1-0 (100.0% WR, Elo 1512) across 1 confident games.","lessons":["Filter by judge confidence, not raw win rate \u2014 the winner model is ~79% accurate overall but ~94% at conf\u226580%.","Heterogeneous seats matter: older policies without threat features still compete on the same decks.","This is still sequence-level offline play judged by another model \u2014 not live Clash Royale."],"games_sample":[{"pair":"policy-bc-v2 vs policy-bc-v3","team":"policy-bc-v2","opponent":"policy-bc-v3","p_team":0.10935377032650044,"confidence":0.9759036144578314,"kept":true,"winner":"policy-bc-v3","raw_winner":"policy-bc-v3","events":60},{"pair":"policy-bc-v2 vs policy-bc-v3","team":"policy-bc-v3","opponent":"policy-bc-v2","p_team":0.4114051745336354,"confidence":0.5643564356435643,"kept":false,"winner":null,"raw_winner":"policy-bc-v2","events":60},{"pair":"policy-bc-v2 vs policy-bc-v4","team":"policy-bc-v2","opponent":"policy-bc-v4","p_team":0.16640659112763256,"confidence":0.944954128440367,"kept":true,"winner":"policy-bc-v4","raw_winner":"policy-bc-v4","events":60},{"pair":"policy-bc-v2 vs policy-bc-v4","team":"policy-bc-v4","opponent":"policy-bc-v2","p_team":0.2501647580079736,"confidence":0.8516483516483516,"kept":true,"winner":"policy-bc-v2","raw_winner":"policy-bc-v2","events":60},{"pair":"policy-bc-v2 vs policy-bc-v4.1","team":"policy-bc-v2","opponent":"policy-bc-v4.1","p_team":0.6447868341008878,"confidence":0.726530612244898,"kept":false,"winner":null,"raw_winner":"policy-bc-v2","events":60},{"pair":"policy-bc-v2 vs policy-bc-v4.1","team":"policy-bc-v4.1","opponent":"policy-bc-v2","p_team":0.44141397431935225,"confidence":0.5643564356435643,"kept":false,"winner":null,"raw_winner":"policy-bc-v2","events":60},{"pair":"policy-bc-v3 vs policy-bc-v4","team":"policy-bc-v3","opponent":"policy-bc-v4","p_team":0.5465531819126541,"confidence":0.5254237288135594,"kept":false,"winner":null,"raw_winner":"policy-bc-v3","events":60},{"pair":"policy-bc-v3 vs policy-bc-v4","team":"policy-bc-v4","opponent":"policy-bc-v3","p_team":0.6820499054184185,"confidence":0.7884615384615384,"kept":false,"winner":null,"raw_winner":"policy-bc-v4","events":60},{"pair":"policy-bc-v3 vs policy-bc-v4.1","team":"policy-bc-v3","opponent":"policy-bc-v4.1","p_team":0.47570936030271127,"confidence":0.5254237288135594,"kept":false,"winner":null,"raw_winner":"policy-bc-v4.1","events":60},{"pair":"policy-bc-v3 vs policy-bc-v4.1","team":"policy-bc-v4.1","opponent":"policy-bc-v3","p_team":0.6247463867332002,"confidence":0.726530612244898,"kept":false,"winner":null,"raw_winner":"policy-bc-v4.1","events":60},{"pair":"policy-bc-v4 vs policy-bc-v4.1","team":"policy-bc-v4","opponent":"policy-bc-v4.1","p_team":0.5521620813976513,"confidence":0.5643564356435643,"kept":false,"winner":null,"raw_winner":"policy-bc-v4","events":60},{"pair":"policy-bc-v4 vs policy-bc-v4.1","team":"policy-bc-v4.1","opponent":"policy-bc-v4","p_team":0.34253147356287317,"confidence":0.726530612244898,"kept":false,"winner":null,"raw_winner":"policy-bc-v4","events":60}],"confidence_hist":{"edges":[0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.8500000000000001,0.9,0.95,1.0],"counts":[2,3,0,0,3,1,0,1,1,1],"kept_fraction":0.25}};
+
+function renderWinRates(svgId, standings) {
+  const svg = document.getElementById(svgId);
+  if (!svg || !standings.length) return;
+  const W = 1000, H = 540, ML = 70, MR = 24, MT = 28, MB = 90;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = "";
+  const plotW = W - ML - MR, plotH = H - MT - MB;
+  const n = standings.length;
+  const gap = 18;
+  const barW = (plotW - gap * (n + 1)) / n;
+  const maxY = Math.max(0.6, ...standings.map(s => s.win_rate || 0));
+  const colors = ["#fbbf24", "#93c5fd", "#fca5a5", "#86efac", "#c4b5fd", "#fdba74"];
+
+  // axes
+  svg.appendChild(svgEl("line", {x1: ML, y1: MT, x2: ML, y2: MT+plotH, stroke: "#334155"}));
+  svg.appendChild(svgEl("line", {x1: ML, y1: MT+plotH, x2: ML+plotW, y2: MT+plotH, stroke: "#334155"}));
+  for (let t = 0; t <= 4; t++) {
+    const yv = t / 4 * maxY;
+    const y = MT + plotH - (yv / maxY) * plotH;
+    svg.appendChild(svgEl("line", {x1: ML, y1: y, x2: ML+plotW, y2: y, stroke: "#1e293b"}));
+    svg.appendChild(svgText({x: ML-10, y: y+4, fill: "#64748b", "font-size": 12, "text-anchor": "end"},
+      (100*yv).toFixed(0) + "%"));
+  }
+  standings.forEach((s, i) => {
+    const h = ((s.win_rate || 0) / maxY) * plotH;
+    const x = ML + gap + i * (barW + gap);
+    const y = MT + plotH - h;
+    const rect = svgEl("rect", {
+      x, y, width: barW, height: Math.max(h, 1),
+      fill: colors[i % colors.length], opacity: 0.9, rx: 4
+    });
+    rect.appendChild(document.createElementNS("http://www.w3.org/2000/svg", "title")).textContent =
+      `${s.policy_id}: ${((s.win_rate||0)*100).toFixed(1)}% (${s.wins}-${s.losses}) Elo ${s.elo.toFixed(0)}`;
+    svg.appendChild(rect);
+    svg.appendChild(svgText({
+      x: x + barW/2, y: MT + plotH + 22, fill: "#94a3b8", "font-size": 12,
+      "text-anchor": "middle"
+    }, s.policy_id.replace("policy-bc-", "")));
+    svg.appendChild(svgText({
+      x: x + barW/2, y: y - 8, fill: "#e2e8f0", "font-size": 13,
+      "text-anchor": "middle", "font-weight": 600
+    }, ((s.win_rate||0)*100).toFixed(1) + "%"));
+  });
+}
+
+function renderH2H(svgId, standings, h2h) {
+  const svg = document.getElementById(svgId);
+  if (!svg || !standings.length) return;
+  const ids = standings.map(s => s.policy_id);
+  const W = 1000, H = 540, ML = 140, MR = 40, MT = 40, MB = 40;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = "";
+  const n = ids.length;
+  const size = Math.min((W - ML - MR) / n, (H - MT - MB) / n);
+  const ox = ML, oy = MT;
+  function color(wr) {
+    if (wr == null) return "#0f172a";
+    const t = Math.max(0, Math.min(1, wr));
+    const r = Math.round(248 * (1-t) + 52 * t);
+    const g = Math.round(113 * (1-t) + 211 * t);
+    const b = Math.round(113 * (1-t) + 153 * t);
+    return `rgb(${r},${g},${b})`;
+  }
+  ids.forEach((rowId, i) => {
+    svg.appendChild(svgText({
+      x: ox - 10, y: oy + i*size + size/2 + 4, fill: "#94a3b8", "font-size": 12,
+      "text-anchor": "end"
+    }, rowId.replace("policy-bc-", "")));
+    ids.forEach((colId, j) => {
+      const x = ox + j*size, y = oy + i*size;
+      let wr = null, label = "—";
+      if (i === j) {
+        label = "·";
+      } else {
+        const cell = (h2h[rowId] || {})[colId] || {};
+        const g = cell.games || 0;
+        if (g > 0) {
+          wr = (cell.wins || 0) / g;
+          label = (100*wr).toFixed(0) + "%";
+        }
+      }
+      const rect = svgEl("rect", {
+        x: x+2, y: y+2, width: size-4, height: size-4,
+        fill: i===j ? "#111827" : color(wr),
+        stroke: "#1e293b"
+      });
+      rect.appendChild(document.createElementNS("http://www.w3.org/2000/svg", "title")).textContent =
+        `${rowId} vs ${colId}: ${label}`;
+      svg.appendChild(rect);
+      svg.appendChild(svgText({
+        x: x + size/2, y: y + size/2 + 4, fill: "#0b1220", "font-size": 13,
+        "text-anchor": "middle", "font-weight": 650
+      }, label));
+    });
+    svg.appendChild(svgText({
+      x: ox + i*size + size/2, y: oy - 12, fill: "#94a3b8", "font-size": 12,
+      "text-anchor": "middle"
+    }, ids[i].replace("policy-bc-", "")));
+  });
+}
+
+function renderConf(svgId, hist, minConf) {
+  const svg = document.getElementById(svgId);
+  if (!svg || !hist) return;
+  const edges = hist.edges || [];
+  const counts = hist.counts || [];
+  const W = 1000, H = 540, ML = 60, MR = 24, MT = 28, MB = 60;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = "";
+  const plotW = W - ML - MR, plotH = H - MT - MB;
+  const maxC = Math.max(1, ...counts);
+  const n = counts.length;
+  const barW = plotW / n;
+  counts.forEach((c, i) => {
+    const h = (c / maxC) * plotH;
+    const x = ML + i * barW;
+    const mid = (edges[i] + edges[i+1]) / 2;
+    const kept = mid >= minConf;
+    const rect = svgEl("rect", {
+      x: x+3, y: MT + plotH - h, width: barW-6, height: Math.max(h,1),
+      fill: kept ? "#34d399" : "#64748b", opacity: 0.85, rx: 3
+    });
+    svg.appendChild(rect);
+    svg.appendChild(svgText({
+      x: x + barW/2, y: MT + plotH + 22, fill: "#64748b", "font-size": 11,
+      "text-anchor": "middle"
+    }, (100*edges[i]).toFixed(0)));
+  });
+  const gx = ML + ((minConf - edges[0]) / (edges[edges.length-1] - edges[0])) * plotW;
+  svg.appendChild(svgEl("line", {
+    x1: gx, y1: MT, x2: gx, y2: MT+plotH, stroke: "#fbbf24",
+    "stroke-dasharray": "6 4", "stroke-width": 2
+  }));
+  svg.appendChild(svgText({
+    x: gx + 6, y: MT + 14, fill: "#fbbf24", "font-size": 12
+  }, "gate " + (100*minConf).toFixed(0) + "%"));
+}
+
+function svgEl(name, attrs) {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", name);
+  Object.entries(attrs || {}).forEach(([k,v]) => el.setAttribute(k, v));
+  return el;
+}
+function svgText(attrs, text) {
+  const el = svgEl("text", attrs);
+  el.textContent = text;
+  return el;
+}
+
+renderWinRates("wrChart", DATA.standings || []);
+renderH2H("h2hChart", DATA.standings || [], DATA.head_to_head || {});
+renderConf("confChart", DATA.confidence_hist, (DATA.setup || {}).min_confidence || 0.8);
+</script>
+</body>
+</html>

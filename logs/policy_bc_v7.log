@@ -1,0 +1,14 @@
+run model=policy-bc-v7 stage=arena-adapter control=aligned batch=512 accumulation=1
+progress phase=arena-adapter epoch=1/1 batch=1/119 work=0.8% elapsed=1s ETA=92s tile_loss=4.0516 lr=3.000e-04 vram_mb=477
+progress phase=arena-adapter epoch=1/1 batch=25/119 work=21.0% elapsed=6s ETA=21s tile_loss=4.0674 lr=3.000e-04 vram_mb=478
+progress phase=arena-adapter epoch=1/1 batch=50/119 work=42.0% elapsed=11s ETA=15s tile_loss=4.1330 lr=3.000e-04 vram_mb=478
+progress phase=arena-adapter epoch=1/1 batch=75/119 work=63.0% elapsed=16s ETA=9s tile_loss=4.0902 lr=3.000e-04 vram_mb=478
+progress phase=arena-adapter epoch=1/1 batch=100/119 work=84.0% elapsed=21s ETA=4s tile_loss=4.0602 lr=3.000e-04 vram_mb=478
+progress phase=arena-adapter epoch=1/1 batch=119/119 work=100.0% elapsed=25s ETA=0s tile_loss=4.0536 lr=3.000e-04 vram_mb=478
+run model=policy-bc-v7 stage=arena-adapter control=shuffled batch=512 accumulation=1
+progress phase=arena-adapter epoch=1/1 batch=1/119 work=0.8% elapsed=1s ETA=89s tile_loss=4.0516 lr=3.000e-04 vram_mb=477
+progress phase=arena-adapter epoch=1/1 batch=25/119 work=21.0% elapsed=6s ETA=23s tile_loss=4.0676 lr=3.000e-04 vram_mb=478
+progress phase=arena-adapter epoch=1/1 batch=50/119 work=42.0% elapsed=11s ETA=15s tile_loss=4.1355 lr=3.000e-04 vram_mb=478
+progress phase=arena-adapter epoch=1/1 batch=75/119 work=63.0% elapsed=16s ETA=9s tile_loss=4.0988 lr=3.000e-04 vram_mb=478
+progress phase=arena-adapter epoch=1/1 batch=100/119 work=84.0% elapsed=21s ETA=4s tile_loss=4.0731 lr=3.000e-04 vram_mb=478
+progress phase=arena-adapter epoch=1/1 batch=119/119 work=100.0% elapsed=26s ETA=0s tile_loss=4.0787 lr=3.000e-04 vram_mb=478

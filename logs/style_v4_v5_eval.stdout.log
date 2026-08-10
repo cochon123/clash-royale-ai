@@ -1,0 +1,15 @@
+Loading battles (min_card_plays=12) ...
+Cached 46137 battles -> data/winner_battles_cache.pkl
+Test pool: 512 human seed battles
+Transfer judge trained on: policy_bc_v2
+
+=== policy_bc_v4 ===
+Loaded cached rollouts: models/style_discriminator/rollouts/policy_bc_v4/test.pkl (507 battles)
+P(human|AI)=0.000073  fool@0.5=0.00%  AUC=1.0000  detect@0.5=100.0%
+
+=== policy_bc_v4_1 ===
+Loaded cached rollouts: models/style_discriminator/rollouts/policy_bc_v4_1/test.pkl (507 battles)
+P(human|AI)=0.000071  fool@0.5=0.00%  AUC=1.0000  detect@0.5=100.0%
+
+=== policy_bc_v4_2 ===
+Generating rollouts for policy_bc_v4_2 on test (512 seed battles) ...

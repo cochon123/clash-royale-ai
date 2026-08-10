@@ -1,0 +1,101 @@
+Loading battles from data/raw ...
+Cached 30968 battles -> data/winner_battles_cache.pkl
+Warm-started from models/policy_bc_v4.1
+Training policy-bc-v5 (style_match=0.4, polish_start=6, clock=yes, warmstart=True)
+Samples train/val/test: 656458/76062/75619 on cuda
+Scoring initial style detectability ...
+style@0  clock_P=0.9841  clock_fool=0.984  feat_l2=1.547  alt_P=0.0001  alt_fool=0.000
+epoch 01  train_loss=3.0970  style_match=0.7241  val_slot@1=0.535  val_zone=0.427  val_loss=3.5499
+epoch 02  train_loss=3.1104  style_match=0.6436  val_slot@1=0.537  val_zone=0.428  val_loss=3.5405
+epoch 03  train_loss=3.1061  style_match=0.6051  val_slot@1=0.535  val_zone=0.426  val_loss=3.5512  feat_l2=1.444  clock_P=0.9488  alt_P=0.0000
+epoch 04  train_loss=3.1018  style_match=0.5445  val_slot@1=0.535  val_zone=0.427  val_loss=3.5389
+epoch 05  train_loss=3.0978  style_match=0.5130  val_slot@1=0.536  val_zone=0.426  val_loss=3.5537
+epoch 06  REINFORCE style polish ...
+Traceback (most recent call last):
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/cr-replays", line 8, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/src/cr_replay_pipeline/cli.py", line 939, in main
+    train_policy_v5(
+    ~~~~~~~~~~~~~~~^
+        input_dir=args.input,
+        ^^^^^^^^^^^^^^^^^^^^^
+    ...<16 lines>...
+        style_match_weight=args.style_match_weight,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ),
+    ^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/src/cr_replay_pipeline/policy_train_v5.py", line 293, in train_policy_v5
+    polish_metrics, baseline_ema = reinforce_style_step(
+                                   ~~~~~~~~~~~~~~~~~~~~^
+        model,
+        ^^^^^^
+    ...<14 lines>...
+        baseline_ema=baseline_ema,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/src/cr_replay_pipeline/style_adversary.py", line 572, in reinforce_style_step
+    policy_loss.backward()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/.venv/lib/python3.14/site-packages/torch/_tensor.py", line 623, in backward
+    torch.autograd.backward(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        self, gradient, retain_graph, create_graph, inputs=inputs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/.venv/lib/python3.14/site-packages/torch/autograd/__init__.py", line 395, in backward
+    _engine_run_backward(
+    ~~~~~~~~~~~~~~~~~~~~^
+        tensors,
+        ^^^^^^^^
+    ...<5 lines>...
+        accumulate_grad=True,
+        ^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/.venv/lib/python3.14/site-packages/torch/autograd/graph.py", line 979, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        t_outputs, *args, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )  # Calls into the C++ engine to run the backward pass
+    ^
+RuntimeError: cudnn RNN backward can only be called in training mode
+Loading battles from data/raw ...
+Cached 31468 battles -> data/winner_battles_cache.pkl
+Warm-started from models/policy_bc_v5
+Training policy-bc-v5 (style_match=0.4, polish_start=6, clock=yes, warmstart=True)
+Samples train/val/test: 665332/77373/77171 on cuda
+Scoring initial style detectability ...
+style@0  clock_P=0.9999  clock_fool=1.000  feat_l2=1.395  alt_P=0.0087  alt_fool=0.000
+epoch 01  train_loss=3.1267  style_match=0.6535  val_slot@1=0.532  val_zone=0.428  val_loss=3.5403
+epoch 02  train_loss=3.1158  style_match=0.5208  val_slot@1=0.534  val_zone=0.429  val_loss=3.5331
+epoch 03  train_loss=3.1000  style_match=0.3874  val_slot@1=0.536  val_zone=0.430  val_loss=3.5325  feat_l2=1.528  clock_P=0.9714  alt_P=0.0000
+epoch 04  train_loss=3.0810  style_match=0.3020  val_slot@1=0.539  val_zone=0.432  val_loss=3.5095
+epoch 05  train_loss=3.0626  style_match=0.2925  val_slot@1=0.538  val_zone=0.432  val_loss=3.5075
+epoch 06  REINFORCE style polish ...
+  polish  n=24  reward=0.4566  feat_l2=1.341  full_P=0.9769  fool=0.958
+epoch 06  train_loss=3.0483  style_match=0.2939  val_slot@1=0.541  val_zone=0.434  val_loss=3.4949  feat_l2=1.483  clock_P=0.9635  alt_P=0.0056
+epoch 07  train_loss=3.0325  style_match=0.2754  val_slot@1=0.542  val_zone=0.437  val_loss=3.4891  feat_l2=1.487  clock_P=0.9843  alt_P=0.0000
+epoch 08  REINFORCE style polish ...
+  polish  n=23  reward=0.3658  feat_l2=1.529  full_P=0.9851  fool=1.000
+epoch 08  train_loss=3.0211  style_match=0.2504  val_slot@1=0.542  val_zone=0.437  val_loss=3.4853  feat_l2=1.458  clock_P=0.9755  alt_P=0.0000
+epoch 09  train_loss=3.0062  style_match=0.2608  val_slot@1=0.543  val_zone=0.437  val_loss=3.4835  feat_l2=1.444  clock_P=0.9918  alt_P=0.0000
+epoch 10  REINFORCE style polish ...
+  polish  n=24  reward=0.3852  feat_l2=1.494  full_P=0.9999  fool=1.000
+epoch 10  train_loss=2.9960  style_match=0.2303  val_slot@1=0.544  val_zone=0.438  val_loss=3.4798  feat_l2=1.413  clock_P=0.9729  alt_P=0.0000
+epoch 11  train_loss=2.9833  style_match=0.2249  val_slot@1=0.543  val_zone=0.438  val_loss=3.4743  feat_l2=1.341  clock_P=0.9999  alt_P=0.0000
+Loading battles from data/raw ...
+Cached 32834 battles -> data/winner_battles_cache.pkl
+Warm-started from models/policy_bc_v5
+Training policy-bc-v5 (style_match=0.4, polish_start=6, clock=yes, warmstart=True)
+Samples train/val/test: 696372/79929/80388 on cuda
+Scoring initial style detectability ...
+style@0  clock_P=0.9999  clock_fool=1.000  feat_l2=1.356  alt_P=0.0276  alt_fool=0.016
+epoch 01  train_loss=3.0263  style_match=0.2120  val_slot@1=0.545  val_zone=0.438  val_loss=3.4684
+epoch 02  train_loss=3.0164  style_match=0.2113  val_slot@1=0.545  val_zone=0.437  val_loss=3.4718
+epoch 03  train_loss=3.0008  style_match=0.1940  val_slot@1=0.547  val_zone=0.440  val_loss=3.4669  feat_l2=1.349  clock_P=0.9658  alt_P=0.0000
+epoch 04  train_loss=2.9846  style_match=0.1933  val_slot@1=0.548  val_zone=0.440  val_loss=3.4623
+epoch 05  train_loss=2.9674  style_match=0.1787  val_slot@1=0.547  val_zone=0.441  val_loss=3.4586

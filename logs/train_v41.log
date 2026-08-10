@@ -1,0 +1,44 @@
+Loading battles from data/raw ...
+Cached 26904 battles -> data/winner_battles_cache.pkl
+Training policy-bc-v4.1 (threat_dim=14, card_conditioned_placement=True, reaction_weight=3.0, reaction_repeats=2)
+Samples train/val/test: 568048/66675/66274 on cuda
+epoch 01  train_loss=3.9125  val_slot@1=0.443  val_zone=0.355  val_tile=0.023  val_loss=3.9346
+epoch 02  train_loss=3.4897  val_slot@1=0.476  val_zone=0.383  val_tile=0.029  val_loss=3.7868
+epoch 03  train_loss=3.3506  val_slot@1=0.492  val_zone=0.399  val_tile=0.031  val_loss=3.6998
+epoch 04  train_loss=3.2656  val_slot@1=0.506  val_zone=0.408  val_tile=0.033  val_loss=3.6380
+epoch 05  train_loss=3.2090  val_slot@1=0.514  val_zone=0.414  val_tile=0.033  val_loss=3.6006
+epoch 06  train_loss=3.1651  val_slot@1=0.518  val_zone=0.420  val_tile=0.037  val_loss=3.5848
+epoch 07  train_loss=3.1306  val_slot@1=0.521  val_zone=0.422  val_tile=0.037  val_loss=3.5621
+epoch 08  train_loss=3.0988  val_slot@1=0.524  val_zone=0.424  val_tile=0.038  val_loss=3.5484
+epoch 09  train_loss=3.0750  val_slot@1=0.525  val_zone=0.426  val_tile=0.040  val_loss=3.5373
+epoch 10  train_loss=3.0545  val_slot@1=0.527  val_zone=0.428  val_tile=0.040  val_loss=3.5262
+epoch 11  train_loss=3.0338  val_slot@1=0.529  val_zone=0.429  val_tile=0.042  val_loss=3.5239
+epoch 12  train_loss=3.0163  val_slot@1=0.529  val_zone=0.430  val_tile=0.043  val_loss=3.5107
+epoch 13  train_loss=3.0006  val_slot@1=0.531  val_zone=0.432  val_tile=0.044  val_loss=3.5113
+epoch 14  train_loss=2.9861  val_slot@1=0.533  val_zone=0.431  val_tile=0.044  val_loss=3.5058
+epoch 15  train_loss=2.9736  val_slot@1=0.532  val_zone=0.432  val_tile=0.045  val_loss=3.5040
+epoch 16  train_loss=2.9614  val_slot@1=0.532  val_zone=0.432  val_tile=0.045  val_loss=3.5064
+epoch 17  train_loss=2.9515  val_slot@1=0.535  val_zone=0.434  val_tile=0.047  val_loss=3.5025
+
+===== RESTART 2026-08-08T15:31:26-06:00 after crash at epoch 17 =====
+Loading battles from data/raw ...
+Cached 28102 battles -> data/winner_battles_cache.pkl
+Training policy-bc-v4.1 (threat_dim=14, card_conditioned_placement=True, reaction_weight=3.0, reaction_repeats=2)
+Samples train/val/test: 598192/68826/68508 on cuda
+epoch 01  train_loss=3.8937  val_slot@1=0.448  val_zone=0.357  val_tile=0.024  val_loss=3.9144
+epoch 02  train_loss=3.4724  val_slot@1=0.481  val_zone=0.384  val_tile=0.027  val_loss=3.7594
+epoch 03  train_loss=3.3369  val_slot@1=0.499  val_zone=0.400  val_tile=0.031  val_loss=3.6817
+epoch 04  train_loss=3.2542  val_slot@1=0.508  val_zone=0.409  val_tile=0.033  val_loss=3.6260
+epoch 05  train_loss=3.1973  val_slot@1=0.516  val_zone=0.414  val_tile=0.035  val_loss=3.5942
+epoch 06  train_loss=3.1544  val_slot@1=0.521  val_zone=0.419  val_tile=0.036  val_loss=3.5671
+epoch 07  train_loss=3.1193  val_slot@1=0.526  val_zone=0.420  val_tile=0.038  val_loss=3.5550
+epoch 08  train_loss=3.0887  val_slot@1=0.528  val_zone=0.426  val_tile=0.038  val_loss=3.5333
+epoch 09  train_loss=3.0655  val_slot@1=0.530  val_zone=0.426  val_tile=0.040  val_loss=3.5210
+epoch 10  train_loss=3.0427  val_slot@1=0.532  val_zone=0.427  val_tile=0.043  val_loss=3.5177
+epoch 11  train_loss=3.0234  val_slot@1=0.532  val_zone=0.429  val_tile=0.044  val_loss=3.5149
+epoch 12  train_loss=3.0056  val_slot@1=0.533  val_zone=0.430  val_tile=0.042  val_loss=3.5038
+epoch 13  train_loss=2.9903  val_slot@1=0.535  val_zone=0.431  val_tile=0.043  val_loss=3.5062
+epoch 14  train_loss=2.9765  val_slot@1=0.536  val_zone=0.431  val_tile=0.044  val_loss=3.4989
+epoch 15  train_loss=2.9630  val_slot@1=0.537  val_zone=0.432  val_tile=0.045  val_loss=3.4933
+epoch 16  train_loss=2.9507  val_slot@1=0.536  val_zone=0.433  val_tile=0.046  val_loss=3.4928
+epoch 17  train_loss=2.9419  val_slot@1=0.537  val_zone=0.433  val_tile=0.046  val_loss=3.4921
