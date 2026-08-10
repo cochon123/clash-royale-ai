@@ -13,3 +13,51 @@ P(human|AI)=0.000071  fool@0.5=0.00%  AUC=1.0000  detect@0.5=100.0%
 
 === policy_bc_v4_2 ===
 Generating rollouts for policy_bc_v4_2 on test (512 seed battles) ...
+Wrote 507 rollouts -> models/style_discriminator/rollouts/policy_bc_v4_2/test.pkl
+P(human|AI)=0.004052  fool@0.5=0.39%  AUC=0.9998  detect@0.5=99.6%
+
+=== policy_bc_v4_3 ===
+Generating rollouts for policy_bc_v4_3 on test (512 seed battles) ...
+Wrote 507 rollouts -> models/style_discriminator/rollouts/policy_bc_v4_3/test.pkl
+P(human|AI)=0.005710  fool@0.5=0.59%  AUC=0.9998  detect@0.5=99.4%
+
+=== policy_bc_v5 ===
+Generating rollouts for policy_bc_v5 on test (512 seed battles) ...
+Wrote 507 rollouts -> models/style_discriminator/rollouts/policy_bc_v5/test.pkl
+P(human|AI)=0.018873  fool@0.5=0.59%  AUC=0.9982  detect@0.5=99.4%
+
+Wrote reports/style_policy_v4_v5_eval.json
+{
+  "ranking": [
+    {
+      "policy_id": "policy_bc_v5",
+      "mean_P_human_ai": 0.018872573252610096,
+      "fool_rate_at_0.5": 0.005917159763313609,
+      "auc": 0.9981855584319527
+    },
+    {
+      "policy_id": "policy_bc_v4_3",
+      "mean_P_human_ai": 0.005709878861683047,
+      "fool_rate_at_0.5": 0.005917159763313609,
+      "auc": 0.9998266457100592
+    },
+    {
+      "policy_id": "policy_bc_v4_2",
+      "mean_P_human_ai": 0.004052142807633208,
+      "fool_rate_at_0.5": 0.0039447731755424065,
+      "auc": 0.9997958271696252
+    },
+    {
+      "policy_id": "policy_bc_v4",
+      "mean_P_human_ai": 7.310015739154003e-05,
+      "fool_rate_at_0.5": 0.0,
+      "auc": 0.9999653291420119
+    },
+    {
+      "policy_id": "policy_bc_v4_1",
+      "mean_P_human_ai": 7.074711287262004e-05,
+      "fool_rate_at_0.5": 0.0,
+      "auc": 0.9999576245069034
+    }
+  ]
+}
