@@ -38,6 +38,13 @@ def build_parser() -> argparse.ArgumentParser:
     watch.add_argument("--json", action="store_true", help="Emit one JSON object per line")
     watch.add_argument("--no-color", action="store_true")
 
+    policy_training_watch = commands.add_parser(
+        "watch-policy-training",
+        help="Stream policy training progress with completed work and ETA",
+    )
+    policy_training_watch.add_argument("--progress", required=True)
+    policy_training_watch.add_argument("--interval", type=float, default=2.0)
+
     pause = commands.add_parser("pause", help="Pause new player claims")
     pause.add_argument("--db", default="data/collector.sqlite3")
     pause.add_argument("--reason", default="paused by operator")
@@ -143,6 +150,48 @@ def build_parser() -> argparse.ArgumentParser:
     report_realism.add_argument("--model-dir", default="models/realism_scorer")
     report_realism.add_argument("--output-dir", default="reports")
 
+    train_style = commands.add_parser(
+        "train-style",
+        help=(
+            "Train a human-vs-AI style discriminator on policy rollouts "
+            "and rank policies by detectability"
+        ),
+    )
+    train_style.add_argument("--input", default="data/raw")
+    train_style.add_argument("--output", default="models/style_discriminator")
+    train_style.add_argument("--card-costs", default="data/card_costs.json")
+    train_style.add_argument(
+        "--train-policy",
+        default="models/policy_bc",
+        help="Policy used to generate training negatives (default: v2)",
+    )
+    train_style.add_argument(
+        "--eval-policies",
+        default=(
+            "models/policy_bc,models/policy_bc_v3,"
+            "models/policy_bc_v4,models/policy_bc_v4.1,models/policy_bc_v5"
+        ),
+        help="Comma-separated policy dirs to evaluate",
+    )
+    train_style.add_argument("--min-card-plays", type=int, default=12)
+    train_style.add_argument("--seed", type=int, default=42)
+    train_style.add_argument("--trees", type=int, default=120)
+    train_style.add_argument("--train-battles", type=int, default=2000)
+    train_style.add_argument("--eval-battles", type=int, default=512)
+    train_style.add_argument("--device", default=None, help="cuda, cpu, or omit for auto")
+    train_style.add_argument(
+        "--force-rollouts",
+        action="store_true",
+        help="Regenerate cached policy rollouts",
+    )
+
+    report_style = commands.add_parser(
+        "report-style",
+        help="Generate an HTML training report for the style discriminator",
+    )
+    report_style.add_argument("--model-dir", default="models/style_discriminator")
+    report_style.add_argument("--output-dir", default="reports")
+
     train_policy = commands.add_parser(
         "train-policy",
         help=(
@@ -159,21 +208,66 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional realism scorer for offline rollout scoring",
     )
     train_policy.add_argument("--epochs", type=int, default=25)
-    train_policy.add_argument("--batch-size", type=int, default=256)
+    train_policy.add_argument(
+        "--batch-size",
+        type=int,
+        default=None,
+        help="Batch size (v7 defaults to 512; earlier policies default to 256)",
+    )
+    train_policy.add_argument(
+        "--max-samples-per-battle",
+        type=int,
+        default=40,
+        help="Causal action windows retained per battle",
+    )
     train_policy.add_argument("--lr", type=float, default=2e-4)
     train_policy.add_argument("--d-model", type=int, default=160)
     train_policy.add_argument("--num-layers", type=int, default=2)
     train_policy.add_argument("--min-card-plays", type=int, default=12)
+    train_policy.add_argument(
+        "--max-battles",
+        type=int,
+        default=None,
+        help="Optional fixed battle count for reproducible same-data comparisons",
+    )
     train_policy.add_argument("--seed", type=int, default=42)
     train_policy.add_argument("--device", default=None, help="cuda, cpu, or omit for auto")
     train_policy.add_argument(
         "--version",
         default="2",
-        choices=["2", "3", "4"],
+        choices=["2", "3", "4", "4.1", "4.2", "4.3", "5", "6", "6.1", "7"],
         help=(
             "2=cycle features; 3=threat+reaction; "
-            "4=v3 + jointly trained card-conditioned placement"
+            "4=v3 + jointly trained card-conditioned placement; "
+            "4.1=same architecture as 4, new data cut; "
+            "4.2=v4.1 plus mirrored training augmentation; "
+            "4.3=v4.2 recipe + larger trunk + toggled latent think loop for inference compute; "
+            "5=v4.1 + style feature matching + REINFORCE vs style judge; "
+            "6=v4 trunk + card-conditioned placement heatmap + hidden opponent deck augmentation; "
+            "6.1=v4.1 warm-start + frozen incumbent heads + tile-head-only isolation; "
+            "7=v6.1 + causal decaying arena-memory placement adapter"
         ),
+    )
+    train_policy.add_argument(
+        "--style-model-dir",
+        default="models/style_discriminator",
+        help="Frozen style discriminator for v5 anti-detector training",
+    )
+    train_policy.add_argument(
+        "--action-clock-dir",
+        default="models/action_clock_v1",
+        help="Action clock for v5 clock-aware REINFORCE rollouts",
+    )
+    train_policy.add_argument(
+        "--warmstart-dir",
+        default="models/policy_bc_v4.1",
+        help="Optional v4.1 checkpoint to warm-start v5 from",
+    )
+    train_policy.add_argument(
+        "--style-match-weight",
+        type=float,
+        default=0.4,
+        help="Weight of differentiable style moment-matching loss (v5)",
     )
     train_policy.add_argument(
         "--reaction-weight",
@@ -187,6 +281,60 @@ def build_parser() -> argparse.ArgumentParser:
         default=2,
         help="Extra index repeats for reaction samples (v3)",
     )
+    train_policy.add_argument(
+        "--hide-opponent-prob",
+        type=float,
+        default=0.0,
+        help="For v6 training, probability of replacing unrevealed opponent cards with UNK",
+    )
+    train_policy.add_argument(
+        "--freeze-backbone",
+        action="store_true",
+        help="Train only the v6.1 heatmap head after warm-starting",
+    )
+    train_policy.add_argument("--split-manifest", default=None)
+    train_policy.add_argument("--write-split-manifest", default=None)
+    train_policy.add_argument(
+        "--training-stage",
+        choices=["arena-adapter", "placement-calibration"],
+        default=None,
+        help="v7 adapter stage; defaults to arena-adapter",
+    )
+    train_policy.add_argument(
+        "--arena-control",
+        choices=["aligned", "shuffled"],
+        default="aligned",
+        help="v7 aligned memory or deterministic shuffled-memory control",
+    )
+    train_policy.add_argument("--arena-gate-bias", type=float, default=-2.2)
+    train_policy.add_argument("--progress-path", default=None)
+    train_policy.add_argument("--mirror-training", action="store_true")
+    train_policy.add_argument("--training-log-path", default=None)
+    train_policy.add_argument(
+        "--max-think-steps",
+        type=int,
+        default=None,
+        help="Max latent refine steps (v4.3 defaults to 8; 0 disables think loop)",
+    )
+    train_policy.add_argument(
+        "--eval-think-steps",
+        type=int,
+        default=None,
+        help="Fixed think depth used for val/test checkpoint selection (default=max)",
+    )
+
+    manifest_policy = commands.add_parser(
+        "make-policy-manifest",
+        help="Freeze battle IDs and splits for a reproducible policy experiment",
+    )
+    manifest_policy.add_argument("--input", default="data/raw")
+    manifest_policy.add_argument("--output", default="data/splits/policy_v7_33558_seed42.json")
+    manifest_policy.add_argument("--pilot-output", default=None)
+    manifest_policy.add_argument("--card-costs", default="data/card_costs.json")
+    manifest_policy.add_argument("--min-card-plays", type=int, default=12)
+    manifest_policy.add_argument("--max-battles", type=int, default=33558)
+    manifest_policy.add_argument("--pilot-train-battles", type=int, default=5000)
+    manifest_policy.add_argument("--seed", type=int, default=42)
 
     showcase = commands.add_parser(
         "showcase-policy",
@@ -235,6 +383,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional HTML filename (default derived from model_name)",
     )
 
+    compare_policy = commands.add_parser(
+        "compare-policy",
+        help="Render an HTML comparison report between two policy checkpoints",
+    )
+    compare_policy.add_argument("--old-model-dir", default="models/policy_bc_v4")
+    compare_policy.add_argument("--new-model-dir", default="models/policy_bc_v4.1")
+    compare_policy.add_argument(
+        "--output", default="reports/policy_bc_v4_1_compare.html"
+    )
+
     predict_policy = commands.add_parser(
         "predict-policy",
         help="Offline next-action prediction from a raw replay prefix (no live play)",
@@ -245,6 +403,12 @@ def build_parser() -> argparse.ArgumentParser:
     predict_policy.add_argument("--prefix-events", type=int, default=20)
     predict_policy.add_argument("--side", choices=["team", "opponent"], default="team")
     predict_policy.add_argument("--device", default=None)
+    predict_policy.add_argument(
+        "--think-steps",
+        type=int,
+        default=0,
+        help="v4.3 latent think depth (0=off/fast; higher spends more compute)",
+    )
 
     matchup = commands.add_parser(
         "eval-matchups",
@@ -263,6 +427,35 @@ def build_parser() -> argparse.ArgumentParser:
     matchup.add_argument("--min-n", type=int, default=60)
     matchup.add_argument("--seed", type=int, default=42)
     matchup.add_argument("--device", default=None)
+
+    royale = commands.add_parser(
+        "battle-royale",
+        help=(
+            "Round-robin every policy AI offline; winner predictor judges "
+            "games (optional confidence gate)"
+        ),
+    )
+    royale.add_argument("--input", default="data/raw")
+    royale.add_argument(
+        "--policy-dir",
+        action="append",
+        dest="policy_dirs",
+        default=None,
+        help="Policy checkpoint dir (repeatable). Defaults to all policy_bc*",
+    )
+    royale.add_argument("--winner-dir", default="models/winner_predictor")
+    royale.add_argument("--card-costs", default="data/card_costs.json")
+    royale.add_argument("--output", default="reports/battle_royale.json")
+    royale.add_argument("--html", default="reports/battle_royale.html")
+    royale.add_argument("--games", type=int, default=48, help="Games per pair")
+    royale.add_argument(
+        "--min-confidence",
+        type=float,
+        default=0.80,
+        help="Keep only judge decisions with calibrated confidence >= this",
+    )
+    royale.add_argument("--seed", type=int, default=42)
+    royale.add_argument("--device", default=None)
 
     defense = commands.add_parser(
         "eval-defense",
@@ -399,6 +592,25 @@ def build_parser() -> argparse.ArgumentParser:
     )
     phone_lab.add_argument(
         "--policy-v4", default="models/policy_bc_v4"
+    )
+    phone_lab.add_argument(
+        "--policy-v41", default="models/policy_bc_v4.1",
+        help="v4.1 checkpoint exposed as policy_bc_v4.1",
+    )
+    phone_lab.add_argument(
+        "--policy-v42", default="models/policy_bc_v4.2_full",
+        help="full-data v4.2 checkpoint exposed as policy_bc_v4.2",
+    )
+    phone_lab.add_argument(
+        "--mirror-tta",
+        action="store_true",
+        help="Use two-pass horizontal-mirror inference for live policy battles",
+    )
+    phone_lab.add_argument(
+        "--think-steps",
+        type=int,
+        default=0,
+        help="v4.3 latent think depth for live policy battles (0=off)",
     )
     phone_lab.add_argument(
         "--no-open",
@@ -645,6 +857,34 @@ def _print_json(status: dict, *, compact: bool = False) -> None:
     )
 
 
+def _watch_policy_training(progress_path: str, interval: float = 2.0) -> None:
+    """Tail JSONL policy progress with completed work and ETA columns."""
+    target = Path(progress_path)
+    last_line = ""
+    print("PHASE EPOCH BATCH WORK% ELAPSED ETA TILE_LOSS LR VRAM_MB", flush=True)
+    while True:
+        if target.exists():
+            lines = target.read_text(encoding="utf-8").splitlines()
+            if lines:
+                line = lines[-1]
+                if line != last_line:
+                    last_line = line
+                    row = json.loads(line)
+                    print(
+                        f"{str(row.get('phase', '—'))[:14]:<14} "
+                        f"{row.get('epoch', '—')}/{row.get('epochs_total', '—'):<5} "
+                        f"{row.get('batch', '—')}/{row.get('batches_total', '—'):<6} "
+                        f"{row.get('progress_percent', 0):6.1f}% "
+                        f"{row.get('elapsed_seconds', 0):7.0f}s "
+                        f"{row.get('eta_seconds', 0):7.0f}s "
+                        f"{row.get('tile_loss', 0):9.4f} "
+                        f"{row.get('learning_rate', 0):.2e} "
+                        f"{row.get('gpu_memory_mb', 0):7.0f}",
+                        flush=True,
+                    )
+        time.sleep(max(float(interval), 0.25))
+
+
 def main() -> None:
     args = build_parser().parse_args()
     if args.command == "serve":
@@ -668,6 +908,11 @@ def main() -> None:
                 else:
                     _print_watch_row(status, colors)
                 time.sleep(max(0.2, args.interval))
+        except KeyboardInterrupt:
+            print()
+    elif args.command == "watch-policy-training":
+        try:
+            _watch_policy_training(args.progress, args.interval)
         except KeyboardInterrupt:
             print()
     elif args.command == "pause":
@@ -786,38 +1031,167 @@ def main() -> None:
             Path(args.output_dir) / "realism_scorer_v1.html",
         )
         print(json.dumps({"report": str(path)}, indent=2))
-    elif args.command == "train-policy":
-        from .policy_train import train_policy_model
+    elif args.command == "train-style":
+        from .style_train import train_style_discriminator
 
-        output = args.output
-        if args.version == "3" and output == "models/policy_bc":
-            output = "models/policy_bc_v3"
-        elif args.version == "4" and output == "models/policy_bc":
-            output = "models/policy_bc_v4"
         print(
             json.dumps(
-                train_policy_model(
+                train_style_discriminator(
                     input_dir=args.input,
-                    output_dir=output,
+                    output_dir=args.output,
                     card_costs_path=args.card_costs,
-                    realism_model_dir=args.realism_model_dir,
-                    epochs=args.epochs,
-                    batch_size=args.batch_size,
-                    learning_rate=args.lr,
-                    d_model=args.d_model,
-                    num_layers=args.num_layers,
+                    train_policy=args.train_policy,
+                    eval_policies=args.eval_policies,
                     min_card_plays=args.min_card_plays,
                     seed=args.seed,
+                    trees=args.trees,
+                    train_battles=args.train_battles,
+                    eval_battles=args.eval_battles,
                     device_name=args.device,
-                    version=args.version,
-                    reaction_weight=args.reaction_weight,
-                    reaction_repeats=args.reaction_repeats,
+                    force_rollouts=args.force_rollouts,
                 ),
                 indent=2,
                 ensure_ascii=False,
-                default=str,
             )
         )
+    elif args.command == "report-style":
+        from .style_report import render_style_report
+
+        path = render_style_report(
+            args.model_dir,
+            Path(args.output_dir) / "style_discriminator_v1.html",
+        )
+        print(json.dumps({"report": str(path)}, indent=2))
+    elif args.command == "make-policy-manifest":
+        from .policy_manifest import build_manifest
+        from .policy_dataset import collect_battles
+
+        battles = collect_battles(args.input, min_card_plays=args.min_card_plays)
+        selected = battles[: args.max_battles]
+        full = build_manifest(
+            selected,
+            args.output,
+            seed=args.seed,
+            min_card_plays=args.min_card_plays,
+        )
+        result = {"output": args.output, "manifest": full}
+        if args.pilot_output:
+            pilot = build_manifest(
+                selected,
+                args.pilot_output,
+                seed=args.seed,
+                pilot_train_battles=args.pilot_train_battles,
+                min_card_plays=args.min_card_plays,
+            )
+            result["pilot_output"] = args.pilot_output
+            result["pilot_manifest"] = pilot
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+    elif args.command == "train-policy":
+        output = args.output
+        if args.version == "5" and output == "models/policy_bc":
+            output = "models/policy_bc_v5"
+        elif args.version == "3" and output == "models/policy_bc":
+            output = "models/policy_bc_v3"
+        elif args.version == "4.3" and output == "models/policy_bc":
+            output = "models/policy_bc_v4.3"
+        elif args.version == "4.2" and output == "models/policy_bc":
+            output = "models/policy_bc_v4.2"
+        elif args.version == "4.1" and output == "models/policy_bc":
+            output = "models/policy_bc_v4.1"
+        elif args.version == "4" and output == "models/policy_bc":
+            output = "models/policy_bc_v4"
+        elif args.version == "6" and output == "models/policy_bc":
+            output = "models/policy_bc_v6"
+        elif args.version == "6.1" and output == "models/policy_bc":
+            output = "models/policy_bc_v6_1"
+        elif args.version == "7" and output == "models/policy_bc":
+            output = "models/policy_bc_v7"
+        if args.version == "5":
+            from .policy_train_v5 import train_policy_v5
+
+            print(
+                json.dumps(
+                    train_policy_v5(
+                        input_dir=args.input,
+                        output_dir=output,
+                        card_costs_path=args.card_costs,
+                        realism_model_dir=args.realism_model_dir,
+                        style_model_dir=args.style_model_dir,
+                        action_clock_dir=args.action_clock_dir,
+                        warmstart_dir=args.warmstart_dir,
+                        epochs=args.epochs,
+                        batch_size=args.batch_size or 256,
+                        max_samples_per_battle=args.max_samples_per_battle,
+                        learning_rate=args.lr,
+                        d_model=args.d_model,
+                        num_layers=args.num_layers,
+                        min_card_plays=args.min_card_plays,
+                        seed=args.seed,
+                        device_name=args.device,
+                        reaction_weight=args.reaction_weight,
+                        reaction_repeats=args.reaction_repeats,
+                        style_match_weight=args.style_match_weight,
+                    ),
+                    indent=2,
+                    ensure_ascii=False,
+                    default=str,
+                )
+            )
+        else:
+            from .policy_train import train_policy_model
+
+            warmstart_dir = args.warmstart_dir
+            if args.version == "7" and warmstart_dir == "models/policy_bc_v4.1":
+                warmstart_dir = "models/policy_bc_v6_1"
+
+            print(
+                json.dumps(
+                    train_policy_model(
+                        input_dir=args.input,
+                        output_dir=output,
+                        card_costs_path=args.card_costs,
+                        realism_model_dir=args.realism_model_dir,
+                        epochs=args.epochs,
+                        batch_size=args.batch_size
+                        or (512 if args.version in {"4.2", "4.3", "7"} else 256),
+                        learning_rate=args.lr,
+                        d_model=args.d_model,
+                        num_layers=args.num_layers,
+                        min_card_plays=args.min_card_plays,
+                        max_samples_per_battle=args.max_samples_per_battle,
+                        max_battles=args.max_battles,
+                        seed=args.seed,
+                        device_name=args.device,
+                        version=args.version,
+                        reaction_weight=args.reaction_weight,
+                        mirror_training=args.mirror_training
+                        or args.version in {"4.2", "4.3"},
+                        training_log_path=args.training_log_path,
+                        reaction_repeats=args.reaction_repeats,
+                        hide_opponent_deck=args.version == "6",
+                        hide_opponent_prob=args.hide_opponent_prob,
+                        warmstart_dir=(
+                            warmstart_dir
+                            if args.version in {"6.1", "7"}
+                            else None
+                        ),
+                        freeze_backbone=(
+                            args.freeze_backbone or args.version in {"6.1", "7"}
+                        ),
+                        split_manifest=args.split_manifest,
+                        write_split_manifest=args.write_split_manifest,
+                        training_stage=args.training_stage,
+                        arena_control=args.arena_control,
+                        arena_gate_bias=args.arena_gate_bias,
+                        progress_path=args.progress_path,
+                        max_think_steps=args.max_think_steps,
+                        eval_think_steps=args.eval_think_steps,
+                    ),
+                    indent=2,
+                    ensure_ascii=False,
+                    default=str,
+                )
+            )
     elif args.command == "showcase-policy":
         from .policy_showcase import build_policy_showcase
 
@@ -846,20 +1220,82 @@ def main() -> None:
         )
         print(json.dumps({"report": str(path)}, indent=2))
     elif args.command == "report-policy":
-        from .policy_report import render_policy_report
-
         name = args.output_name
         if name is None:
             md = str(args.model_dir)
-            if "v4" in md:
+            if "v7" in md:
+                name = "policy_bc_v7.html"
+            elif "v6_1" in md or "v6.1" in md:
+                name = "policy_bc_v6_1.html"
+            elif "v6" in md:
+                name = "policy_bc_v6.html"
+            elif "v5" in md:
+                name = "policy_bc_v5.html"
+            elif "v4.3" in md or "v4_3" in md:
+                name = "policy_bc_v4_3.html"
+            elif "v4.2" in md or "v4_2" in md:
+                name = "policy_bc_v4_2_full_showcase.html"
+            elif "v4.1" in md or "v4_1" in md:
+                name = "policy_bc_v4_1.html"
+            elif "v4" in md:
                 name = "policy_bc_v4.html"
             elif "v3" in md:
                 name = "policy_bc_v3.html"
             else:
                 name = "policy_bc_v2.html"
-        path = render_policy_report(
-            args.model_dir,
-            Path(args.output_dir) / name,
+        model_dir_s = str(args.model_dir)
+        if "v7" in model_dir_s or (name and "v7" in name):
+            from .policy_v7_report import render_policy_v7_report
+
+            path = render_policy_v7_report(
+                model_dir=args.model_dir,
+                output_path=Path(args.output_dir) / name,
+            )
+        elif "v6" in model_dir_s or (name and "v6" in name):
+            from .policy_v6_report import render_policy_v6_report
+
+            path = render_policy_v6_report(
+                model_dir=args.model_dir,
+                output_path=Path(args.output_dir) / name,
+            )
+        elif "v5" in model_dir_s or (name and "v5" in name):
+            from .policy_v5_report import render_policy_v5_report
+
+            path = render_policy_v5_report(
+                model_dir=args.model_dir,
+                battle_royale_path=Path(args.output_dir) / "battle_royale_v5.json",
+                output_path=Path(args.output_dir) / name,
+            )
+        elif "v4.3" in model_dir_s or "v4_3" in model_dir_s or (name and "v4_3" in name):
+            from .policy_v43_report import render_policy_v43_report
+
+            path = render_policy_v43_report(
+                model_dir=args.model_dir,
+                output_path=Path(args.output_dir) / name,
+            )
+        elif "v4.2" in model_dir_s or "v4_2" in model_dir_s or (
+            name and "v4_2" in name
+        ):
+            from .policy_v42_report import render_policy_v42_report
+
+            path = render_policy_v42_report(
+                output_path=Path(args.output_dir) / name,
+            )
+        else:
+            from .policy_report import render_policy_report
+
+            path = render_policy_report(
+                args.model_dir,
+                Path(args.output_dir) / name,
+            )
+        print(json.dumps({"report": str(path)}, indent=2))
+    elif args.command == "compare-policy":
+        from .policy_compare_report import render_policy_compare_report
+
+        path = render_policy_compare_report(
+            old_dir=args.old_model_dir,
+            new_dir=args.new_model_dir,
+            output_path=args.output,
         )
         print(json.dumps({"report": str(path)}, indent=2))
     elif args.command == "predict-policy":
@@ -873,6 +1309,7 @@ def main() -> None:
                     card_costs_path=args.card_costs,
                     prefix_events=args.prefix_events,
                     acting_side=args.side,
+                    think_steps=args.think_steps,
                     device_name=args.device,
                 ),
                 indent=2,
@@ -893,6 +1330,28 @@ def main() -> None:
                     games_per_matchup=args.games,
                     top_k=args.top_k,
                     min_n=args.min_n,
+                    seed=args.seed,
+                    device_name=args.device,
+                ),
+                indent=2,
+                ensure_ascii=False,
+                default=str,
+            )
+        )
+    elif args.command == "battle-royale":
+        from .battle_royale import DEFAULT_POLICIES, run_battle_royale
+
+        print(
+            json.dumps(
+                run_battle_royale(
+                    policy_dirs=args.policy_dirs or list(DEFAULT_POLICIES),
+                    input_dir=args.input,
+                    winner_dir=args.winner_dir,
+                    card_costs_path=args.card_costs,
+                    output_path=args.output,
+                    html_output=args.html,
+                    games_per_pair=args.games,
+                    min_confidence=args.min_confidence,
                     seed=args.seed,
                     device_name=args.device,
                 ),
@@ -1037,6 +1496,10 @@ def main() -> None:
                 card_costs=args.card_costs,
                 policy_v3=args.policy_v3,
                 policy_v4=args.policy_v4,
+                policy_v41=args.policy_v41,
+                policy_v42=args.policy_v42,
+                mirror_tta=args.mirror_tta,
+                think_steps=args.think_steps,
                 open_browser=not args.no_open,
             )
         except RuntimeError as exc:

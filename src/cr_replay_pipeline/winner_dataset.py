@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import pickle
 import random
 from dataclasses import dataclass
@@ -169,7 +170,7 @@ def collect_battles(
                 cached = pickle.load(handle)
             if (
                 isinstance(cached, dict)
-                and cached.get("file_count") == file_count
+                and (os.environ.get("CR_REPLAY_TRUST_CACHE") == "1" or cached.get("file_count") == file_count)
                 and cached.get("min_card_plays") == min_card_plays
                 and isinstance(cached.get("battles"), list)
             ):
