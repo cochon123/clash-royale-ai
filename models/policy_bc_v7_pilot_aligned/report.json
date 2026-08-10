@@ -1,0 +1,205 @@
+{
+  "model_name": "policy-bc-v7",
+  "model_version": "7.0.0",
+  "created_at": "2026-08-09T19:04:08Z",
+  "seconds": 221.5,
+  "compute": {
+    "device": "cuda",
+    "framework": "pytorch",
+    "parameters": 792816,
+    "d_model": 160,
+    "num_layers": 2,
+    "epochs_requested": 1,
+    "epochs_ran": 1,
+    "batch_size": 512,
+    "gradient_accumulation_steps": 1,
+    "learning_rate": 0.0003,
+    "dropout": 0.2,
+    "max_context": 64,
+    "max_samples_per_battle": 8,
+    "global_dim": 62,
+    "threat_dim": 14,
+    "card_conditioned_placement": true,
+    "placement_mode": "heatmap",
+    "reaction_weight": 3.0,
+    "reaction_repeats": 2,
+    "reaction_seconds": 5.0,
+    "max_battles": null,
+    "hide_opponent_deck": false,
+    "hide_opponent_prob": 0.0,
+    "loss_kwargs": {
+      "slot_weight": 0.0,
+      "type_weight": 0.0,
+      "zone_weight": 0.0,
+      "xy_weight": 0.0,
+      "timing_weight": 0.0,
+      "tile_weight": 1.0
+    },
+    "warmstart": {
+      "dir": "models/policy_bc_v6_1",
+      "missing_keys": [
+        "arena_adapter.stem.0.weight",
+        "arena_adapter.stem.0.bias",
+        "arena_adapter.stem.1.weight",
+        "arena_adapter.stem.1.bias",
+        "arena_adapter.block.0.weight",
+        "arena_adapter.block.0.bias",
+        "arena_adapter.block.1.weight",
+        "arena_adapter.block.1.bias",
+        "arena_adapter.block.3.weight",
+        "arena_adapter.block.3.bias",
+        "arena_adapter.block.4.weight",
+        "arena_adapter.block.4.bias",
+        "arena_adapter.query.0.weight",
+        "arena_adapter.query.0.bias",
+        "arena_adapter.query.1.weight",
+        "arena_adapter.query.1.bias",
+        "arena_adapter.query_proj.weight",
+        "arena_adapter.query_proj.bias",
+        "arena_adapter.spatial_residual.weight",
+        "arena_adapter.spatial_residual.bias",
+        "arena_adapter.gate.weight",
+        "arena_adapter.gate.bias"
+      ],
+      "unexpected_keys": []
+    },
+    "freeze_backbone": true,
+    "training_stage": "arena-adapter",
+    "arena_control": "aligned",
+    "arena_memory_channels": 16,
+    "arena_hidden_channels": 32,
+    "arena_memory_version": "decay-v1",
+    "arena_gate_bias": -2.2,
+    "split_manifest": "data/splits/policy_v7_pilot_5000_seed42.json",
+    "manifest_hash": "4121f7971db3753b01d705cf6f6a8612e2baed7bc1fd79ff1f206c674cb00249",
+    "progress_path": "models/policy_bc_v7_pilot_aligned/progress.jsonl",
+    "trainable_parameters": 31774
+  },
+  "data": {
+    "battles_total": 15066,
+    "min_card_plays": 12,
+    "train_samples": 60589,
+    "val_samples": 39014,
+    "test_samples": 39098,
+    "vocab_size": 126,
+    "splits": [
+      {
+        "split": "train",
+        "battles": 5000,
+        "team_win_rate": 0.4974,
+        "mean_events": 64.5618
+      },
+      {
+        "split": "val",
+        "battles": 5033,
+        "team_win_rate": 0.5032783628054838,
+        "mean_events": 64.3437313729386
+      },
+      {
+        "split": "test",
+        "battles": 5033,
+        "team_win_rate": 0.5142062388237632,
+        "mean_events": 64.5916948142261
+      }
+    ]
+  },
+  "baselines": {
+    "frequency": {
+      "name": "online_frequency",
+      "slot_top1": 0.12104404143393134,
+      "slot_top3": 0.3979660179338956,
+      "n": 307574
+    },
+    "cycle": {
+      "name": "approx_cycle",
+      "slot_top1": 0.20112233153647577,
+      "slot_top3": 0.620065415152126,
+      "n": 307574
+    },
+    "chance_slot_top1": 0.125
+  },
+  "val": {
+    "loss": 4.19357257075124,
+    "slot_top1": 0.5501871123186548,
+    "slot_top3": 0.9399190034346645,
+    "type_acc": 0.9981288768134515,
+    "zone_acc": 0.4417388629722664,
+    "xy_mae": 5452.823161236992,
+    "tile_acc": 0.03460296303890911,
+    "tile_class_acc": 0.12895370892500127,
+    "tile_top5_acc": 0.33967293791972114,
+    "tile_nll": 4.145365181503104,
+    "timing_mae": 1.6641431493529866,
+    "model_x_std": 0.17073297500610352,
+    "model_y_std": 0.14744769036769867
+  },
+  "test": {
+    "loss": 4.195024713293298,
+    "slot_top1": 0.5542227223898921,
+    "slot_top3": 0.9382577113918871,
+    "type_acc": 0.9982863573584326,
+    "zone_acc": 0.4413269220932017,
+    "xy_mae": 5453.146976827459,
+    "tile_acc": 0.034835541459921224,
+    "tile_class_acc": 0.1284720446058622,
+    "tile_top5_acc": 0.33827817279656247,
+    "tile_nll": 4.144647152480326,
+    "timing_mae": 1.6513795746800308,
+    "n": 39098,
+    "model_x_std": 0.17043203115463257,
+    "model_y_std": 0.14741633832454681
+  },
+  "rollouts": {
+    "available": false
+  },
+  "rollout_hist": null,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 4.076309017774437,
+      "val_loss": 4.19357257075124,
+      "val_slot_top1": 0.5501871123186548,
+      "val_slot_top3": 0.9399190034346645,
+      "val_type_acc": 0.9981288768134515,
+      "val_zone_acc": 0.4417388629722664,
+      "val_xy_mae": 5452.823161236992,
+      "val_tile_acc": 0.03460296303890911,
+      "val_tile_class_acc": 0.12895370892500127,
+      "val_tile_top5_acc": 0.33967293791972114,
+      "val_tile_nll": 4.145365181503104,
+      "val_timing_mae": 1.6641431493529866,
+      "val_model_x_std": 0.17073297500610352,
+      "val_model_y_std": 0.14744769036769867,
+      "val_n": 39014,
+      "lr": 0.0
+    }
+  ],
+  "checkpoint": "models/policy_bc_v7_pilot_aligned/best_model.pt",
+  "lessons": [
+    "v7 adds a causal 16-channel arena-memory proxy over the frozen v6.1 heatmap prior.",
+    "The proxy remembers decayed action locations; it does not observe troop movement, death, health, or targeting.",
+    "Aligned-versus-shuffled memory and adapter-off probes are required before calling the state hypothesis supported.",
+    "This is an offline placement experiment and is not a live-play readiness signal."
+  ],
+  "live_play_readiness": {
+    "ready_for_live_smoke_test": false,
+    "checks": {
+      "beats_baselines": true,
+      "slot_floor": true,
+      "zone_floor": true,
+      "tile_or_zone": true,
+      "rollout_beats_easy": true,
+      "rollout_not_collapsed": true,
+      "rollout_near_real": true
+    },
+    "rationale": "Offline-only experiment; do not run live yet."
+  },
+  "promotion_gates": {
+    "aligned_nll_beats_baseline_0_02": true,
+    "aligned_nll_beats_shuffled_0_01": false,
+    "aligned_top1_beats_shuffled_0_5pp": false,
+    "adapter_off_removes_half_gain": true
+  },
+  "verdict": "rejected",
+  "verdict_reason": "The aligned arena-memory adapter did not clear the predeclared shuffled-control thresholds; stop before full training."
+}

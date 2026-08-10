@@ -225,6 +225,13 @@ cr-replays phone-lab
 # or without auto-opening a tab:
 cr-replays phone-lab --no-open --port 8766
 
+# expose v4.1 and full-data v4.2 in the controller dropdown,
+# with mirrored two-pass inference enabled:
+cr-replays phone-lab \
+  --policy-v41 models/policy_bc_v4.1 \
+  --policy-v42 models/policy_bc_v4.2_full \
+  --mirror-tta
+
 # Click 6 placement landmarks on a live screenshot (matplotlib):
 # bridge left/right → my corner left/right → enemy corner left/right
 cr-replays phone-lab-calibrate --phone pixel9
@@ -361,6 +368,20 @@ hf download Cochon123/clash-royale-policy-bc-v4 --local-dir models/policy_bc_v4
 # Realism scorer (real vs synthetic sequences)
 hf download Cochon123/clash-royale-realism-scorer --local-dir models/realism_scorer
 
+# Style discriminator (distinguishes policies by play style)
+hf download Cochon123/clash-royale-style-discriminator --local-dir models/style_discriminator
+
 # Replay corpus
 hf download Cochon123/clash-royale-replays --repo-type dataset --local-dir data
+```
+
+Each policy BC version also has its own model repo, e.g.:
+
+```bash
+# Latest policy checkpoints (one repo per version)
+hf download Cochon123/clash-royale-policy-bc-v7-pilot-aligned --local-dir models/policy_bc_v7_pilot_aligned
+hf download Cochon123/clash-royale-policy-bc-v7-pilot-shuffled --local-dir models/policy_bc_v7_pilot_shuffled
+hf download Cochon123/clash-royale-policy-bc-v6 --local-dir models/policy_bc_v6
+hf download Cochon123/clash-royale-policy-bc-v5 --local-dir models/policy_bc_v5
+hf download Cochon123/clash-royale-policy-bc-v4-3 --local-dir models/policy_bc_v4.3
 ```
