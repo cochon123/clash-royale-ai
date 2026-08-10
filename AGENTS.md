@@ -1,29 +1,54 @@
-Our goal is to create an AI model that can play clash royale.
+# Clash Royale AI
 
-for that we are collecting data, rigth now the script that collect data is probable still collecting
+Our goal is to create an AI model that can play Clash Royale.
 
-to achieve our goal, i want to use a data based approach. 
-from what i know so far, every attemps of doing that was just RL, get a model to play the game with vision recognition but it was always very bad.
+## Approach: Data-Driven
 
-also consider the process of getting the AI to actually play the game as something very expensive that we can only do at the end when we have our final models or when we are 95% sure that it is unavoidable to continue. if we can test something without actually playing the game we should go for that. 
+We are collecting data to build a **data-based approach**. Right now, the data collection script should still be running.
 
-thats why i wanna use the data approach
+From what we know so far, every previous attempt at this used **Reinforcement Learning (RL)** — training a model to play the game via vision recognition — and it always performed very badly.
 
-this is not our first time trying to do something like this and i think you can find usefull lesson here /home/cochon/Documents/ClashRoyaleAI
+### Why Data-Based
 
-for every AI we train, we create html report. 
-they should include the name/version of the model
-the compute allocated for it
-the quantity of data
-a time stamp of when the model was created
-some curve like the loss, the accuracy and other one (depending on what the model is and where we could plot something)
-videos of the curves evolving if possible
-lesson learned if there are some
-do not use matplot lib inside the report, use native html graph and animation
+- **Playing the game is expensive.** Getting the AI to actually play the game is a costly process that we should only do at the very end, once we have our final models — or when we are 95% sure it is unavoidable to continue.
+- **Test without playing.** If we can test something without actually running the game, we should do that.
 
+## Training Reports
 
+For every AI we train, we create an **HTML report**.
 
-these are just minimum, the actual report should include more model specific stuff.
-diagram ,graphics, images. possibly interactive suff.
+### Required Content
 
-since we are compute limited the script we are writing should aim for efficiency.
+The report must include:
+
+- **Name/version** of the model
+- **Compute** allocated for it
+- **Quantity of data**
+- **Timestamp** of when the model was created
+- **Curves** such as loss, accuracy, and others (depending on the model and what we can plot)
+- **Videos of the curves evolving**, if possible
+- **Lessons learned**, if there are any
+
+### Report Styling Requirements
+
+- **No matplotlib** inside the report — use native HTML graphs and animations.
+- Include niceties like:
+  - Hover effects on graphs
+  - Explanations of expressions
+  - Ability to add/remove curves in a graph for better visibility
+- Be creative. Use these as references:
+  - `reports/style_discriminator_v1.html`
+  - `reports/policy_bc_v4_showcase.html`
+
+> These are just the minimum — the actual report should include more model-specific content: diagrams, graphics, images, possibly interactive stuff.
+
+## Hardware / Compute
+
+Since we are compute-limited (3060 8GB vram, 13th gen core i5, 32GB ram), the scripts we write should aim to **maximize the available hardware**.
+
+## Run Monitoring
+
+When you launch a run, provide a command that lets me **stream the evolution of the run in real time**. Make sure there is:
+
+- A column for an **estimation of the amount of time left**
+- A column for the **amount of work done so far**
