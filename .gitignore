@@ -27,3 +27,6 @@ models/winner_predictor/loop_experiments/
 # Large binary artifacts live on Hugging Face
 models/realism_scorer/*.pkl
 models/action_clock_v1/*.pkl
+models/policy_bc*/*.pt
+models/style_discriminator/*.pkl
+models/style_discriminator/rollouts/
