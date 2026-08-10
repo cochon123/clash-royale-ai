@@ -36,6 +36,12 @@ def load_policy(
         num_layers=int(cfg.get("num_layers", 2)),
         dropout=float(cfg.get("dropout", 0.2)),
         card_conditioned_placement=bool(cfg.get("card_conditioned_placement", False)),
+        placement_mode=str(cfg.get("placement_mode", "xy")),
+        arena_memory_channels=int(cfg.get("arena_memory_channels", 0)),
+        arena_hidden_channels=int(cfg.get("arena_hidden_channels", 32)),
+        arena_memory_version=str(cfg.get("arena_memory_version", "none")),
+        arena_gate_bias=float(cfg.get("arena_gate_bias", -2.2)),
+        max_think_steps=int(cfg.get("max_think_steps", 0)),
     )
     model.load_state_dict(ckpt["model_state"])
     model.to(device)
@@ -56,12 +62,19 @@ def predict_next_action(
     threat_dim: int = 0,
     min_context: int | None = None,
     prefer_cards: set[str] | None = None,
+    placement_decode: str = "expected",
+    placement_temperature: float = 1.0,
+    mirror_tta: bool = False,
+    think_steps: int | None = None,
 ) -> dict[str, Any]:
     """Predict the next action as if ``acting_side`` is about to play.
 
     ``min_context=0`` allows live kickoff with an empty event history.
     ``prefer_cards`` (normalized names) biases argmax toward cards currently
     observed in hand (e.g. YOLO detections).
+    ``think_steps`` toggles v4.3 latent refine compute: ``0`` is off/fast,
+    higher values spend more shared-weight refine steps (capped by the
+    checkpoint's ``max_think_steps``). ``None`` defaults to off.
     """
     acting_deck = battle.team_deck if acting_side == "team" else battle.opponent_deck
     if not acting_deck:
@@ -123,6 +136,7 @@ def predict_next_action(
         if preferred.any():
             hand_mask = preferred
 
+    resolved_think = 0 if think_steps is None else int(think_steps)
     out = model(
         continuous.unsqueeze(0).to(device),
         card_ids.unsqueeze(0).to(device),
@@ -132,7 +146,59 @@ def predict_next_action(
         length.unsqueeze(0).to(device),
         slot_feats.unsqueeze(0).to(device),
         hand_mask.unsqueeze(0).to(device),
+        think_steps=resolved_think,
     )
+
+    if mirror_tta:
+        # Evaluate the exact horizontal reflection used during v4.2 training,
+        # map its spatial outputs back, then average both probability views.
+        # Imports stay local to keep the ordinary one-pass inference path lean.
+        from .policy_train import _MirroredBattle
+        from .policy_tta import mirror_ensemble_outputs
+
+        mirrored_sample = encode_policy_sample(
+            _MirroredBattle(probe),
+            len(battle.events),
+            vocab,
+            costs,
+            max_context=max_context,
+            threat_dim=threat_dim,
+            min_context=min_context,
+        )
+        if mirrored_sample is None:
+            raise RuntimeError("Could not encode mirrored policy prefix")
+        (
+            mirror_continuous,
+            mirror_card_ids,
+            mirror_team_deck,
+            mirror_opp_deck,
+            mirror_global_feat,
+            mirror_slot_feats,
+            mirror_hand_mask,
+            _mirror_slot,
+            _mirror_type,
+            _mirror_zone,
+            _mirror_xy,
+            _mirror_timing,
+            mirror_length,
+        ) = mirrored_sample
+        if prefer_cards:
+            mirror_hand_mask = hand_mask
+        mirrored_out = model(
+            mirror_continuous.unsqueeze(0).to(device),
+            mirror_card_ids.unsqueeze(0).to(device),
+            mirror_team_deck.unsqueeze(0).to(device),
+            mirror_opp_deck.unsqueeze(0).to(device),
+            mirror_global_feat.unsqueeze(0).to(device),
+            mirror_length.unsqueeze(0).to(device),
+            mirror_slot_feats.unsqueeze(0).to(device),
+            mirror_hand_mask.unsqueeze(0).to(device),
+            think_steps=resolved_think,
+        )
+        out = mirror_ensemble_outputs(out, mirrored_out)
+
+    if placement_decode not in {"expected", "argmax", "sample"}:
+        raise ValueError("placement_decode must be expected, argmax, or sample")
 
     logits = out["slot_logits"][0] / max(temperature, 1e-3)
     probs = torch.softmax(logits, dim=-1).cpu().numpy()
@@ -145,6 +211,16 @@ def predict_next_action(
     )
     zone = int(out["zone_logits"][0].argmax().item())
     xy = out["xy"][0].cpu().numpy()
+    selected_tile = None
+    tile_logits = out.get("tile_logits")
+    if tile_logits is not None and placement_decode != "expected":
+        tile_probs = torch.softmax(tile_logits[0] / max(placement_temperature, 1e-3), dim=-1)
+        if placement_decode == "argmax":
+            selected_tile = int(tile_probs.argmax().item())
+        else:
+            selected_tile = int(torch.multinomial(tile_probs, 1).item())
+        rows, cols = divmod(selected_tile, 32)
+        xy = np.asarray([(cols + 0.5) / 32.0, (rows + 0.5) / 18.0], dtype=np.float32)
     x_norm, y_norm = float(xy[0]), float(xy[1])
     if acting_side == "opponent":
         y_norm = 1.0 - y_norm
@@ -171,6 +247,11 @@ def predict_next_action(
         "zone": zone,
         "zone_from_xy": xy_to_zone(float(xy[0]), float(xy[1])),
         "delay_seconds": dt,
+        "placement_decode": placement_decode,
+        "placement_temperature": float(placement_temperature),
+        "mirror_tta": bool(mirror_tta),
+        "think_steps": resolved_think,
+        "tile": selected_tile,
         "top3": ranked[:3],
         "ranked_slots": ranked,
         "hand_mask": [bool(v) for v in hand_mask.tolist()],
@@ -184,6 +265,7 @@ def demo_predict_from_raw(
     prefix_events: int = 20,
     acting_side: str = "team",
     device_name: str | None = None,
+    think_steps: int = 0,
 ) -> dict[str, Any]:
     from .parser import parse_replay
 
@@ -231,6 +313,7 @@ def demo_predict_from_raw(
         acting_side=acting_side,
         max_context=int(cfg.get("max_context", 64)),
         threat_dim=int(cfg.get("threat_dim", 0)),
+        think_steps=think_steps,
     )
     return {
         "battle_id": replay.battle_id,

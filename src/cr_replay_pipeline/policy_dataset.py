@@ -10,6 +10,14 @@ import torch
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, Dataset
 
+# Large mirrored datasets contain tens of thousands of cached tensor streams.
+# Python 3.14's forkserver can exhaust file-descriptor sharing while spawning
+# workers; filesystem sharing keeps the same tensors out of the FD table.
+try:
+    torch.multiprocessing.set_sharing_strategy("file_system")
+except RuntimeError:
+    pass
+
 from .winner_dataset import (
     CONTINUOUS_DIM,
     DEFAULT_ELIXIR_COST,
@@ -667,12 +675,17 @@ class PolicyActionDataset(Dataset):
         reaction_weight: float = 1.0,
         prefer_reactions: bool = False,
         reaction_repeats: int = 1,
+        hide_opponent_deck: bool = False,
+        hide_opponent_prob: float = 0.0,
     ):
         self.max_context = max_context
         self.battles = battles
+        self.vocab = vocab
         self.costs = costs
         self.threat_dim = threat_dim
         self.reaction_seconds = reaction_seconds
+        self.hide_opponent_deck = bool(hide_opponent_deck)
+        self.hide_opponent_prob = float(hide_opponent_prob)
         self.reaction_weight = reaction_weight
         self.index: list[tuple[int, int]] = []
         self._streams: dict[
@@ -712,7 +725,10 @@ class PolicyActionDataset(Dataset):
                 other.append(event_index)
 
             if prefer_reactions and max_samples_per_battle is not None:
-                kept = list(reaction)
+                if len(reaction) > max_samples_per_battle:
+                    kept = sorted(rng.sample(reaction, max_samples_per_battle))
+                else:
+                    kept = list(reaction)
                 remaining = max(0, max_samples_per_battle - len(kept))
                 if remaining and len(other) > remaining:
                     kept.extend(sorted(rng.sample(other, remaining)))
@@ -784,6 +800,26 @@ class PolicyActionDataset(Dataset):
         if continuous.size(0) > self.max_context:
             continuous = continuous[-self.max_context :]
             card_ids = card_ids[-self.max_context :]
+
+        if self.hide_opponent_deck and self.hide_opponent_prob > 0:
+            # At deployment the acting deck is known, while unrevealed
+            # opponent cards are not. Train v6 with this mismatch injected;
+            # validation/test remain oracle-deck metrics for comparison.
+            rng = random.Random((battle_i + 1) * 1000003 + event_index)
+            if rng.random() < self.hide_opponent_prob:
+                seen = {
+                    int(card)
+                    for card, side in zip(
+                        card_ids.tolist(), continuous[:, 1].tolist()
+                    )
+                    if side < 0.5
+                }
+                opponent_deck = opponent_deck.clone()
+                unknown = torch.tensor(
+                    [int(card) not in seen for card in opponent_deck.tolist()],
+                    dtype=torch.bool,
+                )
+                opponent_deck[unknown] = int(self.vocab.unk_id)
 
         weight = 1.0
         if self.threat_dim > 0 or self.reaction_weight != 1.0:
@@ -883,6 +919,9 @@ def create_policy_dataloaders(
     reaction_seconds: float = DEFAULT_REACTION_SECONDS,
     reaction_weight: float = 1.0,
     reaction_repeats: int = 1,
+    hide_opponent_deck: bool = False,
+    hide_opponent_prob: float = 0.0,
+    num_workers: int = 0,
 ) -> tuple[DataLoader, DataLoader, DataLoader]:
     train_ds = PolicyActionDataset(
         train_battles,
@@ -897,6 +936,8 @@ def create_policy_dataloaders(
         reaction_weight=reaction_weight,
         prefer_reactions=threat_dim > 0 or reaction_weight > 1.0 or reaction_repeats > 1,
         reaction_repeats=reaction_repeats,
+        hide_opponent_deck=hide_opponent_deck,
+        hide_opponent_prob=hide_opponent_prob,
     )
     val_ds = PolicyActionDataset(
         val_battles,
@@ -932,21 +973,27 @@ def create_policy_dataloaders(
             batch_size=batch_size,
             shuffle=True,
             collate_fn=collate_policy_batch,
-            num_workers=0,
+            num_workers=num_workers,
+            persistent_workers=num_workers > 0,
+            prefetch_factor=2 if num_workers > 0 else None,
         ),
         DataLoader(
             val_ds,
             batch_size=batch_size,
             shuffle=False,
             collate_fn=collate_policy_batch,
-            num_workers=0,
+            num_workers=num_workers,
+            persistent_workers=num_workers > 0,
+            prefetch_factor=2 if num_workers > 0 else None,
         ),
         DataLoader(
             test_ds,
             batch_size=batch_size,
             shuffle=False,
             collate_fn=collate_policy_batch,
-            num_workers=0,
+            num_workers=num_workers,
+            persistent_workers=num_workers > 0,
+            prefetch_factor=2 if num_workers > 0 else None,
         ),
     )
 

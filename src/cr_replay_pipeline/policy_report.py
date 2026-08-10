@@ -19,6 +19,12 @@ from .winner_report import (
 def _version_key(report: dict[str, Any], model_dir: Path) -> str:
     ver = str(report.get("model_version") or report.get("version") or "")
     name = str(report.get("model_name") or model_dir.name)
+    if ver.startswith("6") or "v6" in name:
+        return "6"
+    if ver.startswith("5") or "v5" in name:
+        return "5"
+    if ver.startswith("4.1") or "v4.1" in name or "v4_1" in name:
+        return "4.1"
     if ver.startswith("4") or "v4" in name:
         return "4"
     if ver.startswith("3") or "v3" in name:
@@ -53,6 +59,22 @@ def _version_story(version: str) -> tuple[str, str]:
             "Keeps v3 threat/reaction and jointly trains zone/XY heads that see which "
             "card is being played. The offline probe that justified this is in the "
             "placement-probe report; the interactive comparison is in the showcase.",
+        ),
+        "4.1": (
+            "Next-action policy — v4 architecture, larger replay cut",
+            "Same card-conditioned placement stack as v4.0; retrained on the expanded "
+            "RoyaleAPI dump (~28k raw replays). Compare against v4.0 in the v4.1 compare report.",
+        ),
+        "5": (
+            "Next-action policy — human mimic that hides from the style judge",
+            "Keeps the v4.1 trunk, then trains against the frozen human-vs-AI style "
+            "discriminator: differentiable moment matching on timing/placement tells, "
+            "plus REINFORCE polish with clock-aware rollouts maximizing P(human).",
+        ),
+        "6": (
+            "Next-action policy — multimodal card-conditioned placement",
+            "Keeps the threat-conditioned trunk, replaces point-XY regression with an "
+            "18×32 placement heatmap, and trains with hidden unrevealed opponent cards.",
         ),
     }
     return stories.get(version, stories["1"])
@@ -113,6 +135,35 @@ def _version_diagram_html(version: str, compute: dict[str, Any]) -> str:
             f'{box("timing")}'
             f"</div>"
             f'<p class="arch-note up">+ reaction-window upweighting · placement still card-blind</p>'
+            f"</div>"
+        )
+    elif version == "6":
+        heads = (
+            f'<div class="arch-col">'
+            f'<div class="arch-label">what changed in v6</div>'
+            f'{box("v4 threat-conditioned trunk", "trunk")}'
+            f'<div class="arch-heads">'
+            f'{box("slot", "live")}'
+            f'{box("type")}'
+            f'{box("zone", "live")}'
+            f'{box("18×32 tile heatmap ← card embed", "live")}'
+            f'{box("timing")}'
+            f"</div>"
+            f'<p class="arch-note up">multimodal placement likelihood · hidden opponent-card augmentation</p>'
+            f"</div>"
+        )
+    elif version == "5":
+        heads = (
+            f'<div class="arch-col">'
+            f'<div class="arch-label">what changed in v5</div>'
+            f'{box("v4.1 trunk kept", "trunk")}'
+            f'<div class="arch-heads">'
+            f'{box("BC loss", "live")}'
+            f'{box("style moment match", "live")}'
+            f'{box("REINFORCE vs judge", "live")}'
+            f'{box("clock-aware rollout", "live")}'
+            f"</div>"
+            f'<p class="arch-note up">hide from style discriminator without live play</p>'
             f"</div>"
         )
     else:
@@ -194,6 +245,49 @@ def render_policy_report(
     version = _version_key(report, model_dir)
     headline, subcopy = _version_story(version)
     arch_html = _version_diagram_html(version, compute)
+    style = report.get("style") or {}
+    style_full = style.get("full") or {}
+    style_free = style.get("harness_free") or {}
+    style_hist = report.get("style_history") or []
+    tell_gaps = style.get("tell_gaps") or {}
+    tell_rows = "".join(
+        f"<tr><td>{html.escape(name)}</td>"
+        f"<td>{_fmt_float(vals.get('human'), 3)}</td>"
+        f"<td>{_fmt_float(vals.get('ai'), 3)}</td></tr>"
+        for name, vals in list(tell_gaps.items())[:10]
+    )
+    alt_full = ((style.get("alternation") or {}).get("full")) or {}
+    style_section = ""
+    if style_full:
+        style_section = f"""
+    <section class="report-section">
+      <h2>Style judge (anti-detector)</h2>
+      <p class="caption">{html.escape(str(style.get("note") or (
+          "Clock protocol = deploy-style rollouts with action-clock initiative. "
+          "Alternation = legacy discriminator harness. v5 optimizes tell distance (feature_l2)."
+      )))}</p>
+      <div class="kpi-row">
+        <div><span class="kpi-label">Clock P(human)</span><span class="kpi-value">{_fmt_float(style_full.get("mean_P_human_ai"), 4)}</span></div>
+        <div><span class="kpi-label">Clock fool @0.5</span><span class="kpi-value">{_fmt_pct(style_full.get("fool_rate_at_0.5"))}</span></div>
+        <div><span class="kpi-label">Feature L2 (tells)</span><span class="kpi-value">{_fmt_float(style.get("feature_l2") or style_full.get("feature_l2"), 3)}</span></div>
+        <div><span class="kpi-label">Alt-harness P(human)</span><span class="kpi-value">{_fmt_float(alt_full.get("mean_P_human_ai"), 4)}</span></div>
+      </div>
+      <div class="block-grid" style="margin-top:24px">
+        <div class="block">
+          <h2>Top tell gaps (human vs v5, clock)</h2>
+          <table>
+            <thead><tr><th>Feature</th><th>Human</th><th>Policy</th></tr></thead>
+            <tbody>{tell_rows or "<tr><td colspan='3'>No tell gaps recorded</td></tr>"}</tbody>
+          </table>
+        </div>
+        <div class="block">
+          <h2>Style over training</h2>
+          <svg class="chart" id="styleChart"></svg>
+          <div class="legend"></div>
+        </div>
+      </div>
+    </section>
+"""
 
     body = f"""<!doctype html>
 <html lang="en">
@@ -314,6 +408,8 @@ def render_policy_report(
       </div>
     </section>
 
+    {style_section}
+
     <section class="report-section block-grid">
       <div class="block block-wide">
         <h2>Offline rollout realism</h2>
@@ -383,6 +479,7 @@ def render_policy_report(
   <script>
     {_chart_script()}
     const history = {_json_script(history)};
+    const styleHistory = {_json_script(style_hist)};
     const rollouts = {_json_script({k: v for k, v in rollouts.items() if k != "hist"})};
     const rolloutHist = {_json_script(report.get("rollout_hist") or {})};
 
@@ -424,6 +521,15 @@ def render_policy_report(
       }},
     ], scoreBars.map((row) => row.label), {{ yFormat: "float" }});
     void rolloutHist;
+
+    if (styleHistory.length && document.getElementById("styleChart")) {{
+      const labels = styleHistory.map((row) => String(row.epoch));
+      renderLineChart("styleChart", [
+        {{ color: "#f87171", label: "Clock P(human)", values: styleHistory.map((r) => r.mean_P_human_ai || 0) }},
+        {{ color: "#60a5fa", label: "Feature L2", values: styleHistory.map((r) => r.feature_l2 || 0) }},
+        {{ color: "#fbbf24", label: "Alt P(human)", values: styleHistory.map((r) => (r.alternation && r.alternation.full && r.alternation.full.mean_P_human_ai) || 0) }},
+      ], labels, {{ yFormat: "float" }});
+    }}
 
     function mountPolicyTrainingAnimation(config) {{
       const svg = document.getElementById(config.svgId);

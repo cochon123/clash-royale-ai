@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 import json
 import pickle
 import random
@@ -33,10 +34,48 @@ from .policy_dataset import (
     split_battles,
     summarize_split,
 )
-from .policy_model import PolicyBC
+from .policy_model import NUM_TILES, TILE_COLS, TILE_ROWS, PolicyBC
+from .policy_manifest import (
+    battles_from_manifest,
+    build_manifest,
+    load_manifest,
+)
 from .realism_generate import TimingPrior, generate_easy_negative, generate_medium_negative
 from .realism_train import extract_realism_features
-from .winner_dataset import BattleExample
+from .winner_dataset import BattleExample, CardVocab
+
+
+class _MirroredEvent:
+    """Small lazy view of an event reflected across the arena's x-axis."""
+
+    __slots__ = ("_event",)
+
+    def __init__(self, event: dict[str, Any]):
+        self._event = event
+
+    def __getitem__(self, key: str):
+        if key == "x":
+            return 18000 - int(self._event["x"])
+        return self._event[key]
+
+    def get(self, key: str, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
+
+class _MirroredBattle:
+    """Memory-light mirrored battle view; raw event dictionaries are shared."""
+
+    __slots__ = ("battle_id", "team_deck", "opponent_deck", "team_wins", "events")
+
+    def __init__(self, battle: BattleExample):
+        self.battle_id = battle.battle_id + "-mirror"
+        self.team_deck = battle.team_deck
+        self.opponent_deck = battle.opponent_deck
+        self.team_wins = battle.team_wins
+        self.events = tuple(_MirroredEvent(event) for event in battle.events)
 
 
 def _move_batch(batch, device: torch.device):
@@ -80,6 +119,8 @@ def evaluate_policy(
     loader,
     device: torch.device,
     loss_kwargs: dict[str, float] | None = None,
+    arena_control: str = "aligned",
+    think_steps: int | None = None,
 ) -> dict[str, Any]:
     model.eval()
     total_loss = 0.0
@@ -91,10 +132,14 @@ def evaluate_policy(
     total = 0
     xy_err = 0.0
     tile_hits = 0
+    tile_class_correct = 0
+    tile_top5_correct = 0
+    tile_nll = 0.0
+    model_xy_rows: list[np.ndarray] = []
     timing_err = 0.0
     loss_kwargs = loss_kwargs or {}
 
-    for batch in loader:
+    for batch_index, batch in enumerate(loader):
         (
             continuous,
             card_ids,
@@ -111,6 +156,13 @@ def evaluate_policy(
             lengths,
             _weights,
         ) = _move_batch(batch, device)
+        permutation = None
+        if arena_control == "shuffled" and continuous.size(0) > 1:
+            # A deterministic derangement keeps the control reproducible and
+            # avoids accidentally leaving a row in its original position.
+            permutation = torch.roll(
+                torch.arange(continuous.size(0), device=device), shifts=1
+            )
         out = model(
             continuous,
             card_ids,
@@ -121,6 +173,8 @@ def evaluate_policy(
             slot_feats,
             hand_mask,
             target_slots=None,
+            arena_permutation=permutation,
+            think_steps=think_steps,
         )
         losses = model.loss(out, slots, types, zones, xy, timing, **loss_kwargs)
         total_loss += float(losses["loss"].item())
@@ -141,6 +195,25 @@ def evaluate_policy(
         dist = np.sqrt(dx * dx + dy * dy)
         xy_err += float(dist.sum())
         tile_hits += int((dist <= TILE_UNITS).sum())
+        if out.get("tile_logits") is not None:
+            true_tile_x = (xy[:, 0] * TILE_COLS).floor().long().clamp(0, TILE_COLS - 1)
+            true_tile_y = (xy[:, 1] * TILE_ROWS).floor().long().clamp(0, TILE_ROWS - 1)
+            true_tiles = true_tile_y * TILE_COLS + true_tile_x
+            tile_class_correct += int(
+                (out["tile_logits"].argmax(dim=-1) == true_tiles).sum().item()
+            )
+            tile_top5_correct += int(
+                (out["tile_logits"].topk(5, dim=-1).indices == true_tiles.unsqueeze(-1))
+                .any(dim=-1)
+                .sum()
+                .item()
+            )
+            tile_nll += float(
+                torch.nn.functional.cross_entropy(
+                    out["tile_logits"], true_tiles, reduction="sum"
+                ).item()
+            )
+        model_xy_rows.append(pred_xy)
 
         pred_dt = np.expm1(out["timing"].cpu().numpy())
         true_dt = np.expm1(timing.cpu().numpy())
@@ -154,8 +227,19 @@ def evaluate_policy(
         "zone_acc": zone_correct / max(total, 1),
         "xy_mae": xy_err / max(total, 1),
         "tile_acc": tile_hits / max(total, 1),
+        "tile_class_acc": tile_class_correct / max(total, 1)
+        if tile_class_correct
+        else None,
+        "tile_top5_acc": tile_top5_correct / max(total, 1) if tile_class_correct else None,
+        "tile_nll": tile_nll / max(total, 1) if tile_class_correct else None,
         "timing_mae": timing_err / max(total, 1),
         "n": total,
+        "model_x_std": float(np.concatenate(model_xy_rows)[:, 0].std())
+        if model_xy_rows
+        else None,
+        "model_y_std": float(np.concatenate(model_xy_rows)[:, 1].std())
+        if model_xy_rows
+        else None,
     }
 
 
@@ -301,13 +385,46 @@ def rollout_policy_battles(
     return out_battles
 
 
-def train_policy_model(
+def train_policy_model(*args: Any, **kwargs: Any) -> dict[str, Any]:
+    """Train a policy, retrying v7 CUDA OOMs with deterministic accumulation."""
+    version = str(kwargs.get("version", args[16] if len(args) > 16 else "2"))
+    requested_batch = int(kwargs.get("batch_size", args[5] if len(args) > 5 else 256))
+    if not version.startswith("7") or requested_batch < 512:
+        return _train_policy_model_impl(*args, **kwargs)
+    attempts = [(requested_batch, 1)]
+    if requested_batch >= 512:
+        attempts.extend([(384, 2), (256, 2)])
+    last_error: RuntimeError | None = None
+    normalized = dict(inspect.signature(_train_policy_model_impl).bind_partial(*args, **kwargs).arguments)
+    for batch_size, accumulation in attempts:
+        try:
+            call_kwargs = dict(normalized)
+            call_kwargs["batch_size"] = batch_size
+            call_kwargs["gradient_accumulation_steps"] = accumulation
+            if batch_size != requested_batch:
+                print(
+                    f"CUDA OOM fallback: batch_size={batch_size}, "
+                    f"gradient_accumulation_steps={accumulation}",
+                    flush=True,
+                )
+            return _train_policy_model_impl(**call_kwargs)
+        except RuntimeError as exc:
+            if "out of memory" not in str(exc).lower() or batch_size == attempts[-1][0]:
+                raise
+            last_error = exc
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+    raise last_error or RuntimeError("v7 training failed after CUDA OOM fallbacks")
+
+
+def _train_policy_model_impl(
     input_dir: str | Path = "data/raw",
     output_dir: str | Path = "models/policy_bc",
     card_costs_path: str | Path = "data/card_costs.json",
     realism_model_dir: str | Path = "models/realism_scorer",
     epochs: int = 25,
     batch_size: int = 256,
+    gradient_accumulation_steps: int = 1,
     learning_rate: float = 2e-4,
     d_model: int = 160,
     num_layers: int = 2,
@@ -322,6 +439,22 @@ def train_policy_model(
     reaction_weight: float = 3.0,
     reaction_repeats: int = 2,
     reaction_seconds: float = DEFAULT_REACTION_SECONDS,
+    max_battles: int | None = None,
+    hide_opponent_deck: bool = False,
+    hide_opponent_prob: float = 0.0,
+    warmstart_dir: str | Path | None = None,
+    freeze_backbone: bool = False,
+    split_manifest: str | Path | None = None,
+    write_split_manifest: str | Path | None = None,
+    training_stage: str | None = None,
+    arena_control: str = "aligned",
+    arena_gate_bias: float = -2.2,
+    progress_path: str | Path | None = None,
+    mirror_training: bool = False,
+    train_fraction: float = 0.9,
+    training_log_path: str | Path | None = None,
+    max_think_steps: int | None = None,
+    eval_think_steps: int | None = None,
 ) -> dict[str, Any]:
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -333,13 +466,33 @@ def train_policy_model(
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     version = str(version)
-    use_v4 = version.startswith("4")
+    gradient_accumulation_steps = max(int(gradient_accumulation_steps), 1)
+    use_v7 = version.startswith("7")
+    use_v6 = version.startswith("6") or use_v7
+    use_v61 = version.startswith("6.1")
+    use_v4 = version.startswith("4") or use_v6
     use_v3 = version.startswith("3") or use_v4
+    use_v43 = version.startswith("4.3")
     card_conditioned_placement = use_v4
+    placement_mode = "heatmap" if use_v6 else "xy"
     threat_dim = THREAT_DIM if use_v3 else 0
     global_dim = GLOBAL_DIM + threat_dim
-    if use_v4:
-        model_name, model_version = "policy-bc-v4", "4.0.0"
+    if max_think_steps is None:
+        max_think_steps = 8 if use_v43 else 0
+    max_think_steps = max(int(max_think_steps), 0)
+    if eval_think_steps is None:
+        eval_think_steps = max_think_steps
+    eval_think_steps = max(0, min(int(eval_think_steps), max_think_steps))
+    if use_v7:
+        model_name, model_version = "policy-bc-v7", "7.0.0"
+    elif use_v6:
+        model_name = "policy-bc-v6.1" if use_v61 else "policy-bc-v6"
+        model_version = "6.1.0" if use_v61 else "6.0.0"
+    elif use_v4:
+        # "4" / "4.0" → 4.0.0; "4.1"/"4.2"/"4.3" keep their minor versions.
+        parts = version.split(".")
+        minor = parts[1] if len(parts) > 1 else "0"
+        model_name, model_version = f"policy-bc-v4.{minor}", f"4.{minor}.0"
     elif use_v3:
         model_name, model_version = "policy-bc-v3", "3.0.0"
     else:
@@ -353,7 +506,18 @@ def train_policy_model(
         rr = 1
     # v4: upweight placement — experiments showed XY/zone are the main offline gap.
     loss_kwargs = (
-        {"zone_weight": 1.1, "xy_weight": 0.55, "slot_weight": 1.4}
+        {
+            "slot_weight": 0.0,
+            "type_weight": 0.0,
+            "zone_weight": 0.0,
+            "xy_weight": 0.0,
+            "timing_weight": 0.0,
+            "tile_weight": 1.0,
+        }
+        if (use_v61 and freeze_backbone) or use_v7
+        else {"zone_weight": 0.9, "xy_weight": 0.0, "tile_weight": 0.35, "slot_weight": 2.2}
+        if use_v6
+        else {"zone_weight": 1.1, "xy_weight": 0.55, "slot_weight": 1.4}
         if use_v4
         else {}
     )
@@ -363,13 +527,71 @@ def train_policy_model(
     started = time.time()
     created_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
+    if use_v7:
+        training_stage = training_stage or "arena-adapter"
+        if training_stage not in {"arena-adapter", "placement-calibration"}:
+            raise ValueError("v7 training_stage must be arena-adapter or placement-calibration")
+        if arena_control not in {"aligned", "shuffled"}:
+            raise ValueError("arena_control must be aligned or shuffled")
+        freeze_backbone = True
+        if warmstart_dir is None:
+            warmstart_dir = "models/policy_bc_v6_1"
     print(f"Loading battles from {input_dir} ...", flush=True)
     battles = collect_battles(input_dir, min_card_plays=min_card_plays)
+    manifest: dict[str, Any] | None = None
+    if write_split_manifest:
+        if split_manifest:
+            raise ValueError("Use either split_manifest or write_split_manifest, not both")
+        selected = battles[: int(max_battles)] if max_battles is not None else battles
+        manifest = build_manifest(
+            selected,
+            write_split_manifest,
+            seed=seed,
+        )
+        split_manifest = write_split_manifest
+    if split_manifest:
+        manifest = load_manifest(split_manifest)
+        train_battles, val_battles, test_battles = battles_from_manifest(battles, manifest)
+    else:
+        if max_battles is not None:
+            battles = battles[: int(max_battles)]
+        if train_fraction == 0.9:
+            rng = random.Random(seed)
+            ordered = list(battles)
+            rng.shuffle(ordered)
+            n_train = int(len(ordered) * 0.9)
+            n_val = int((len(ordered) - n_train) / 2)
+            train_battles, val_battles, test_battles = (
+                ordered[:n_train], ordered[n_train:n_train + n_val], ordered[n_train + n_val:]
+            )
+        else:
+            train_battles, val_battles, test_battles = split_battles(battles, seed=seed)
+    if mirror_training:
+        mirrored = [_MirroredBattle(battle) for battle in train_battles]
+        train_battles = train_battles + mirrored
+        print(f"Mirroring enabled: {len(mirrored):,} augmented training battles", flush=True)
+    manifest_hash = (manifest or {}).get("ordered_id_sha256")
     if len(battles) < 50:
-        raise RuntimeError(f"Need at least 50 usable battles; found {len(battles)}")
-
-    train_battles, val_battles, test_battles = split_battles(battles, seed=seed)
-    vocab = build_vocab(train_battles)
+        # A manifest may resolve to fewer battles than the current collector
+        # cache, so validate the resolved partitions as well.
+        resolved_count = len(train_battles) + len(val_battles) + len(test_battles)
+        if resolved_count < 50:
+            raise RuntimeError(f"Need at least 50 usable battles; found {resolved_count}")
+    battles = train_battles + val_battles + test_battles
+    warmstart_artifact = None
+    if warmstart_dir:
+        warmstart_path = Path(warmstart_dir) / "best_model.pt"
+        if not warmstart_path.exists():
+            raise FileNotFoundError(f"Warm-start checkpoint not found: {warmstart_path}")
+        warmstart_artifact = torch.load(
+            warmstart_path, map_location="cpu", weights_only=False
+        )
+        # Preserve the checkpoint's card-id mapping. A small smoke subset may
+        # omit cards present in v4.1, which would otherwise change embedding
+        # dimensions or silently remap card identities.
+        vocab = CardVocab.from_dict(warmstart_artifact["vocab"])
+    else:
+        vocab = build_vocab(train_battles)
     costs = load_card_costs(card_costs_path)
 
     train_loader, val_loader, test_loader = create_policy_dataloaders(
@@ -385,11 +607,14 @@ def train_policy_model(
         reaction_seconds=reaction_seconds,
         reaction_weight=rw,
         reaction_repeats=rr,
+        hide_opponent_deck=hide_opponent_deck,
+        hide_opponent_prob=hide_opponent_prob,
     )
     print(
         f"Training {model_name} (threat_dim={threat_dim}, "
         f"card_conditioned_placement={card_conditioned_placement}, "
-        f"reaction_weight={rw}, reaction_repeats={rr})",
+        f"reaction_weight={rw}, reaction_repeats={rr}, "
+        f"max_think_steps={max_think_steps}, eval_think_steps={eval_think_steps})",
         flush=True,
     )
     print(
@@ -405,20 +630,135 @@ def train_policy_model(
         num_layers=num_layers,
         dropout=dropout,
         card_conditioned_placement=card_conditioned_placement,
+        placement_mode=placement_mode,
+        arena_memory_channels=16 if use_v7 else 0,
+        arena_hidden_channels=32,
+        arena_memory_version="decay-v1" if use_v7 else "none",
+        arena_gate_bias=arena_gate_bias,
+        max_think_steps=max_think_steps,
     ).to(device)
-    optimizer = AdamW(model.parameters(), lr=learning_rate, weight_decay=1e-4)
+    warmstart_info: dict[str, Any] = {}
+    if warmstart_artifact is not None:
+        loaded = model.load_state_dict(warmstart_artifact["model_state"], strict=False)
+        warmstart_info = {
+            "dir": str(warmstart_dir),
+            "missing_keys": list(loaded.missing_keys),
+            "unexpected_keys": list(loaded.unexpected_keys),
+        }
+        print(
+            f"Warm-started from {warmstart_dir} (missing={len(loaded.missing_keys)}, "
+            f"unexpected={len(loaded.unexpected_keys)})",
+            flush=True,
+        )
+    if freeze_backbone:
+        for parameter in model.parameters():
+            parameter.requires_grad = False
+        if use_v7:
+            if not hasattr(model, "arena_adapter"):
+                raise RuntimeError("v7 requires a heatmap arena adapter")
+            for parameter in model.arena_rasterizer.parameters():
+                parameter.requires_grad = True
+            for parameter in model.arena_adapter.parameters():
+                parameter.requires_grad = True
+            if training_stage == "placement-calibration":
+                for parameter in model.tile_head[3].parameters():
+                    parameter.requires_grad = True
+            print(
+                "Frozen-trunk v7 mode: training arena adapter"
+                + (" + final tile projection" if training_stage == "placement-calibration" else ""),
+                flush=True,
+            )
+        else:
+            if not hasattr(model, "tile_head"):
+                raise RuntimeError("freeze_backbone requires a heatmap placement head")
+            for parameter in model.tile_head.parameters():
+                parameter.requires_grad = True
+            print("Frozen-trunk mode: training tile_head only", flush=True)
+    trainable_parameters = [p for p in model.parameters() if p.requires_grad]
+    optimizer = AdamW(trainable_parameters, lr=learning_rate, weight_decay=1e-4)
     scheduler = CosineAnnealingLR(optimizer, T_max=max(epochs, 1))
 
     history: list[dict[str, Any]] = []
     best_val = float("inf")
     best_state = None
     bad_epochs = 0
+    progress_target = Path(progress_path) if progress_path else output / "progress.jsonl"
+    progress_target.parent.mkdir(parents=True, exist_ok=True)
+    table_log_target = Path(training_log_path) if training_log_path else output / "training.log"
+    table_log_target.parent.mkdir(parents=True, exist_ok=True)
+    table_columns = (
+        "time", "phase", "epoch", "batch", "work", "done", "ETA", "loss",
+        "card@1", "zone", "tile", "timing",
+    )
+    with table_log_target.open("w", encoding="utf-8") as table_handle:
+        table_handle.write(" | ".join(table_columns) + "\n")
+        table_handle.write("-+-".join("-" * len(column) for column in table_columns) + "\n")
+
+    def append_table_row(
+        phase: str,
+        epoch_value: str,
+        batch_value: str,
+        work_value: float,
+        done_value: str,
+        eta_value: float,
+        loss_value: float | None = None,
+        card_value: float | None = None,
+        zone_value: float | None = None,
+        tile_value: float | None = None,
+        timing_value: float | None = None,
+    ) -> None:
+        def pct_value(value: float | None) -> str:
+            return "—" if value is None else f"{100.0 * value:6.2f}%"
+
+        def num_value(value: float | None, digits: int = 3) -> str:
+            return "—" if value is None else f"{value:.{digits}f}"
+
+        def seconds_value(value: float) -> str:
+            if value <= 0:
+                return "done"
+            minutes, seconds = divmod(int(value), 60)
+            hours, minutes = divmod(minutes, 60)
+            return f"{hours:d}h{minutes:02d}m" if hours else f"{minutes:02d}m{seconds:02d}s"
+
+        row_values = (
+            datetime.now(timezone.utc).strftime("%H:%M:%S"), phase, epoch_value,
+            batch_value, f"{work_value:6.2f}%", done_value, seconds_value(eta_value),
+            num_value(loss_value), pct_value(card_value), pct_value(zone_value),
+            pct_value(tile_value), num_value(timing_value),
+        )
+        with table_log_target.open("a", encoding="utf-8") as table_handle:
+            table_handle.write(" | ".join(row_values) + "\n")
+
+    progress_target.write_text("", encoding="utf-8")
+    log_target = Path("logs/policy_bc_v7.log") if use_v7 else None
+    if log_target is not None:
+        log_target.parent.mkdir(parents=True, exist_ok=True)
+        with log_target.open("a", encoding="utf-8") as log_handle:
+            log_handle.write(
+                f"run model={model_name} stage={training_stage} control={arena_control} "
+                f"batch={batch_size} accumulation={gradient_accumulation_steps}\n"
+            )
+    control_generator = torch.Generator(device=device)
+    control_generator.manual_seed(seed + 43)
+    run_started = time.time()
 
     for epoch in range(1, epochs + 1):
-        model.train()
+        # Frozen-trunk mode keeps dropout and batch-independent feature
+        # extraction deterministic; only the new tile head is in train mode.
+        if freeze_backbone:
+            model.eval()
+            if use_v7:
+                model.arena_adapter.train()
+                if training_stage == "placement-calibration":
+                    model.tile_head[3].train()
+            else:
+                model.tile_head.train()
+        else:
+            model.train()
         running = 0.0
         n_batches = 0
-        for batch in train_loader:
+        optimizer.zero_grad(set_to_none=True)
+        for batch_index, batch in enumerate(train_loader, start=1):
             (
                 continuous,
                 card_ids,
@@ -435,7 +775,11 @@ def train_policy_model(
                 lengths,
                 weights,
             ) = _move_batch(batch, device)
-            optimizer.zero_grad(set_to_none=True)
+            permutation = None
+            if use_v7 and arena_control == "shuffled" and continuous.size(0) > 1:
+                permutation = torch.randperm(
+                    continuous.size(0), device=device, generator=control_generator
+                )
             out = model(
                 continuous,
                 card_ids,
@@ -446,6 +790,7 @@ def train_policy_model(
                 slot_feats,
                 hand_mask,
                 target_slots=slots,
+                arena_permutation=permutation,
             )
             losses = model.loss(
                 out,
@@ -457,16 +802,81 @@ def train_policy_model(
                 sample_weights=weights,
                 **loss_kwargs,
             )
-            losses["loss"].backward()
-            nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            optimizer.step()
+            (losses["loss"] / gradient_accumulation_steps).backward()
+            should_step = (
+                batch_index % gradient_accumulation_steps == 0
+                or batch_index == len(train_loader)
+            )
+            if should_step:
+                nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
             running += float(losses["loss"].item())
             n_batches += 1
+            if batch_index == 1 or batch_index % 25 == 0 or batch_index == len(train_loader):
+                elapsed = time.time() - run_started
+                work = (epoch - 1) * len(train_loader) + batch_index
+                total_work = max(epochs * len(train_loader), 1)
+                rate = work / max(elapsed, 1e-6)
+                eta = max(total_work - work, 0) / max(rate, 1e-6)
+                progress_row = {
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "phase": training_stage or ("v6.1" if use_v61 else version),
+                    "epoch": epoch,
+                    "epochs_total": epochs,
+                    "batch": batch_index,
+                    "batches_total": len(train_loader),
+                    "samples_done": min(work * batch_size, epochs * len(train_loader.dataset)),
+                    "samples_total": epochs * len(train_loader.dataset),
+                    "progress_percent": 100.0 * work / total_work,
+                    "elapsed_seconds": elapsed,
+                    "eta_seconds": eta,
+                    "loss": float(losses["loss"].item()),
+                    "tile_loss": float(losses["tile_loss"].item()),
+                    "learning_rate": float(optimizer.param_groups[0]["lr"]),
+                    "gpu_memory_mb": (
+                        torch.cuda.max_memory_allocated(device) / (1024.0 * 1024.0)
+                        if device.type == "cuda"
+                        else 0.0
+                    ),
+                }
+                with progress_target.open("a", encoding="utf-8") as progress_handle:
+                    progress_handle.write(json.dumps(progress_row) + "\n")
+                print(
+                    f"progress phase={progress_row['phase']} epoch={epoch}/{epochs} "
+                    f"batch={batch_index}/{len(train_loader)} "
+                    f"work={progress_row['progress_percent']:.1f}% "
+                    f"elapsed={elapsed:.0f}s ETA={eta:.0f}s "
+                    f"tile_loss={progress_row['tile_loss']:.4f}",
+                    flush=True,
+                )
+                if log_target is not None:
+                    with log_target.open("a", encoding="utf-8") as log_handle:
+                        log_handle.write(
+                            f"progress phase={progress_row['phase']} epoch={epoch}/{epochs} "
+                            f"batch={batch_index}/{len(train_loader)} "
+                            f"work={progress_row['progress_percent']:.1f}% "
+                            f"elapsed={elapsed:.0f}s ETA={eta:.0f}s "
+                            f"tile_loss={progress_row['tile_loss']:.4f} "
+                            f"lr={progress_row['learning_rate']:.3e} "
+                            f"vram_mb={progress_row['gpu_memory_mb']:.0f}\n"
+                        )
+                append_table_row(
+                    str(progress_row["phase"]), f"{epoch}/{epochs}",
+                    f"{batch_index}/{len(train_loader)}", progress_row["progress_percent"],
+                    f"{progress_row['samples_done']:,}/{progress_row['samples_total']:,}",
+                    progress_row["eta_seconds"], loss_value=progress_row["loss"],
+                )
         scheduler.step()
 
         train_loss = running / max(n_batches, 1)
         val_metrics = evaluate_policy(
-            model, val_loader, device, loss_kwargs=loss_kwargs
+            model,
+            val_loader,
+            device,
+            loss_kwargs=loss_kwargs,
+            arena_control=arena_control if use_v7 else "aligned",
+            think_steps=eval_think_steps if max_think_steps else None,
         )
         row = {
             "epoch": epoch,
@@ -484,10 +894,65 @@ def train_policy_model(
             f"val_loss={val_metrics['loss']:.4f}",
             flush=True,
         )
+        epoch_work = 100.0 * epoch / max(epochs, 1)
+        elapsed = time.time() - run_started
+        total_estimate = elapsed * epochs / max(epoch, 1)
+        append_table_row(
+            "validation", f"{epoch}/{epochs}", "epoch-end", epoch_work,
+            f"{min(epoch * len(train_loader.dataset), epochs * len(train_loader.dataset)):,}/"
+            f"{epochs * len(train_loader.dataset):,}",
+            max(total_estimate - elapsed, 0.0), loss_value=train_loss,
+            card_value=val_metrics["slot_top1"], zone_value=val_metrics["zone_acc"],
+            tile_value=val_metrics["tile_acc"], timing_value=val_metrics["timing_mae"],
+        )
         if val_metrics["loss"] < best_val - 1e-4:
             best_val = val_metrics["loss"]
             best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
             bad_epochs = 0
+            # Persist best weights each improvement so a crash does not wipe the run.
+            torch.save(
+                {
+                    "model_state": best_state,
+                    "vocab": vocab.to_dict(),
+                    "config": {
+                        "batch_size": batch_size,
+                        "gradient_accumulation_steps": gradient_accumulation_steps,
+                        "d_model": d_model,
+                        "num_layers": num_layers,
+                        "dropout": dropout,
+                        "max_context": max_context,
+                        "max_samples_per_battle": max_samples_per_battle,
+                        "min_context": DEFAULT_MIN_CONTEXT,
+                        "global_dim": global_dim,
+                        "threat_dim": threat_dim,
+                        "reaction_seconds": reaction_seconds,
+                        "card_conditioned_placement": card_conditioned_placement,
+                        "placement_mode": placement_mode,
+                        "version": model_version,
+                        "warmstart": warmstart_info,
+                        "freeze_backbone": freeze_backbone,
+                        "training_stage": training_stage,
+                        "arena_control": arena_control,
+                        "arena_memory_channels": 16 if use_v7 else 0,
+                        "arena_hidden_channels": 32,
+                        "arena_memory_version": "decay-v1" if use_v7 else "none",
+                        "arena_gate_bias": arena_gate_bias,
+                        "split_manifest": str(split_manifest) if split_manifest else None,
+                        "manifest_hash": manifest_hash,
+                        "progress_path": str(progress_target),
+                        "log_path": str(log_target) if log_target else None,
+                        "trainable_parameters": sum(p.numel() for p in trainable_parameters),
+                        "max_think_steps": max_think_steps,
+                        "eval_think_steps": eval_think_steps,
+                    },
+                    "created_at": created_at,
+                    "epoch": epoch,
+                    "best_val_loss": best_val,
+                },
+                output / "best_model.pt",
+            )
+            with (output / "training_stages.json").open("w", encoding="utf-8") as handle:
+                json.dump(history, handle, indent=2)
         else:
             bad_epochs += 1
             if bad_epochs >= patience:
@@ -498,13 +963,30 @@ def train_policy_model(
         model.load_state_dict(best_state)
 
     test_metrics = evaluate_policy(
-        model, test_loader, device, loss_kwargs=loss_kwargs
+        model,
+        test_loader,
+        device,
+        loss_kwargs=loss_kwargs,
+        arena_control=arena_control if use_v7 else "aligned",
+        think_steps=eval_think_steps if max_think_steps else None,
     )
+    test_metrics_think_off: dict[str, Any] | None = None
+    if max_think_steps > 0 and eval_think_steps != 0:
+        test_metrics_think_off = evaluate_policy(
+            model,
+            test_loader,
+            device,
+            loss_kwargs=loss_kwargs,
+            arena_control=arena_control if use_v7 else "aligned",
+            think_steps=0,
+        )
     freq_base = baseline_frequency_slot(test_battles)
     cycle_base = baseline_cycle_slot(test_battles)
 
     realism_path = Path(realism_model_dir) / "realism_ensemble.pkl"
-    realism_artifact = _load_realism_scorer(realism_path)
+    # v7 is an offline placement isolation experiment; avoid loading the
+    # optional sklearn realism artifact and keep its environment-independent.
+    realism_artifact = None if use_v7 else _load_realism_scorer(realism_path)
     rollout_stats: dict[str, Any] = {"available": False}
     if realism_artifact is not None:
         print("Rolling out policy continuations for realism scoring ...", flush=True)
@@ -564,16 +1046,35 @@ def train_policy_model(
             "model_state": model.state_dict(),
             "vocab": vocab.to_dict(),
             "config": {
+                "batch_size": batch_size,
+                "gradient_accumulation_steps": gradient_accumulation_steps,
                 "d_model": d_model,
                 "num_layers": num_layers,
                 "dropout": dropout,
                 "max_context": max_context,
+                "max_samples_per_battle": max_samples_per_battle,
                 "min_context": DEFAULT_MIN_CONTEXT,
                 "global_dim": global_dim,
                 "threat_dim": threat_dim,
                 "reaction_seconds": reaction_seconds,
                 "card_conditioned_placement": card_conditioned_placement,
+                "placement_mode": placement_mode,
                 "version": model_version,
+                "warmstart": warmstart_info,
+                "freeze_backbone": freeze_backbone,
+                "training_stage": training_stage,
+                "arena_control": arena_control,
+                "arena_memory_channels": 16 if use_v7 else 0,
+                "arena_hidden_channels": 32,
+                "arena_memory_version": "decay-v1" if use_v7 else "none",
+                "arena_gate_bias": arena_gate_bias,
+                "split_manifest": str(split_manifest) if split_manifest else None,
+                "manifest_hash": manifest_hash,
+                "progress_path": str(progress_target),
+                "log_path": str(log_target) if log_target else None,
+                "trainable_parameters": sum(p.numel() for p in trainable_parameters),
+                "max_think_steps": max_think_steps,
+                "eval_think_steps": eval_think_steps,
             },
             "created_at": created_at,
         },
@@ -583,6 +1084,18 @@ def train_policy_model(
         json.dump(vocab.to_dict(), handle, indent=2)
 
     n_params = sum(p.numel() for p in model.parameters())
+    v6_lessons = [
+        "v6 keeps the v4 threat-conditioned trunk but predicts a card-conditioned 18×32 placement heatmap instead of a single XY point.",
+        "Tile cross-entropy models multimodal legal placements; expected XY is retained for compatibility while rollouts can sample tiles.",
+        "Training can hide unrevealed opponent cards so the deck encoder is less dependent on an offline oracle deck.",
+        "This is an offline action-prior experiment; it does not restore missing arena state or establish live-play readiness.",
+    ]
+    v7_lessons = [
+        "v7 adds a causal 16-channel arena-memory proxy over the frozen v6.1 heatmap prior.",
+        "The proxy remembers decayed action locations; it does not observe troop movement, death, health, or targeting.",
+        "Aligned-versus-shuffled memory and adapter-off probes are required before calling the state hypothesis supported.",
+        "This is an offline placement experiment and is not a live-play readiness signal.",
+    ]
     v4_lessons = [
         "v4 keeps v3 threat conditioning + reaction upweight; adds jointly trained card-conditioned zone/XY heads.",
         "Offline probe: oracle card conditioning lifted zone to ~52%; e2e on frozen argmax did not — so v4 trains placement with the trunk (70% teacher / 30% soft slot mix).",
@@ -602,8 +1115,31 @@ def train_policy_model(
         "Discrete placement zones are a better first target than raw XY on replay-only data.",
         "Rollout realism can look strong even when exact card top-1 is modest — judge both.",
     ]
-    if use_v4:
-        lessons = v4_lessons
+    if use_v7:
+        lessons = v7_lessons
+    elif use_v6:
+        lessons = v6_lessons
+    elif use_v4:
+        lessons = list(v4_lessons)
+        if model_version.startswith("4.3"):
+            lessons.insert(
+                0,
+                "v4.3 keeps the v4.2 recipe (90/5/5 + mirror + 40 windows), scales the trunk, and adds a toggled latent think loop so inference can spend more compute.",
+            )
+            lessons.insert(
+                1,
+                "Train samples K~Uniform(0..max_think_steps); inference think_steps=0 is the fast off path and higher K scales shared-weight refine steps.",
+            )
+        elif model_version.startswith("4.2"):
+            lessons.insert(
+                0,
+                "v4.2 is v4.1 with the current data cut and horizontal arena mirroring applied to training battles only.",
+            )
+        elif model_version.startswith("4.1"):
+            lessons.insert(
+                0,
+                "v4.1 keeps the v4 architecture and retrains on a newer data cut.",
+            )
     elif use_v3:
         lessons = v3_lessons
     else:
@@ -622,6 +1158,7 @@ def train_policy_model(
             "epochs_requested": epochs,
             "epochs_ran": len(history),
             "batch_size": batch_size,
+            "gradient_accumulation_steps": gradient_accumulation_steps,
             "learning_rate": learning_rate,
             "dropout": dropout,
             "max_context": max_context,
@@ -629,10 +1166,31 @@ def train_policy_model(
             "global_dim": global_dim,
             "threat_dim": threat_dim,
             "card_conditioned_placement": card_conditioned_placement,
+            "placement_mode": placement_mode,
             "reaction_weight": rw,
             "reaction_repeats": rr,
             "reaction_seconds": reaction_seconds,
+            "max_battles": max_battles,
+            "hide_opponent_deck": hide_opponent_deck,
+            "hide_opponent_prob": hide_opponent_prob,
             "loss_kwargs": loss_kwargs,
+            "warmstart": warmstart_info,
+            "training_log_path": str(table_log_target),
+            "freeze_backbone": freeze_backbone,
+            "training_stage": training_stage,
+            "arena_control": arena_control,
+            "arena_memory_channels": 16 if use_v7 else 0,
+            "arena_hidden_channels": 32,
+            "arena_memory_version": "decay-v1" if use_v7 else "none",
+            "arena_gate_bias": arena_gate_bias,
+            "split_manifest": str(split_manifest) if split_manifest else None,
+            "manifest_hash": manifest_hash,
+            "progress_path": str(progress_target),
+            "log_path": str(log_target) if log_target else None,
+            "trainable_parameters": sum(p.numel() for p in trainable_parameters),
+            "mirror_training": mirror_training,
+            "max_think_steps": max_think_steps,
+            "eval_think_steps": eval_think_steps,
         },
         "data": {
             "battles_total": len(battles),
@@ -662,18 +1220,30 @@ def train_policy_model(
                 "zone_acc",
                 "xy_mae",
                 "tile_acc",
+                "tile_class_acc",
+                "tile_top5_acc",
+                "tile_nll",
                 "timing_mae",
+                "model_x_std",
+                "model_y_std",
             )
         }
         if history
         else {},
         "test": test_metrics,
+        "test_think_off": test_metrics_think_off,
         "rollouts": {k: v for k, v in rollout_stats.items() if k != "hist"},
         "rollout_hist": rollout_stats.get("hist"),
         "history": history,
         "checkpoint": str(ckpt_path),
         "lessons": lessons,
-        "live_play_readiness": _readiness(test_metrics, freq_base, cycle_base, rollout_stats),
+        "live_play_readiness": _readiness(
+            test_metrics,
+            freq_base,
+            cycle_base,
+            rollout_stats,
+            offline_only=use_v6,
+        ),
     }
 
     report_path = output / "report.json"
@@ -702,6 +1272,8 @@ def _readiness(
     freq: dict[str, Any],
     cycle: dict[str, Any],
     rollouts: dict[str, Any],
+    *,
+    offline_only: bool = False,
 ) -> dict[str, Any]:
     slot = float(test.get("slot_top1", 0.0))
     tile = float(test.get("tile_acc", 0.0))
@@ -720,13 +1292,21 @@ def _readiness(
         "rollout_not_collapsed": (not rollouts.get("available")) or (policy_score >= 0.20),
         "rollout_near_real": (not rollouts.get("available")) or (policy_score >= 0.45 * real_score),
     }
-    ready = all(checks.values())
+    # The heatmap/action-prior v6 experiment is intentionally offline-only.
+    # Passing generic metric gates must not be mistaken for authorization to
+    # spend an expensive live-game run before the missing-state problem is
+    # solved and the policy is independently validated.
+    ready = all(checks.values()) and not offline_only
     return {
         "ready_for_live_smoke_test": ready,
         "checks": checks,
         "rationale": (
             "All offline gates passed; a short supervised live smoke test is justified."
             if ready
-            else "Keep iterating offline — one or more readiness checks failed."
+            else (
+                "Offline-only experiment; do not run live yet."
+                if offline_only
+                else "Keep iterating offline — one or more readiness checks failed."
+            )
         ),
     }
