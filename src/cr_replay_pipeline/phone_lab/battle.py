@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import random
 import threading
 import time
 from dataclasses import dataclass, field
@@ -11,7 +12,7 @@ from typing import Any, Callable
 import numpy as np
 import torch
 
-from ..policy_infer import load_policy, predict_next_action
+from ..policy_infer import load_policy, predict_next_action, rollout_decode_settings
 from ..winner_dataset import BattleExample, CardVocab, load_card_costs
 
 PHONE_KEYS = ("pixel8", "pixel9")
@@ -20,15 +21,21 @@ CONTROLLER_V3 = "policy_bc_v3"
 CONTROLLER_V4 = "policy_bc_v4"
 CONTROLLER_V41 = "policy_bc_v4.1"
 CONTROLLER_V42 = "policy_bc_v4.2"
+CONTROLLER_V43 = "policy_bc_v4.3"
+CONTROLLER_V44 = "policy_bc_v4.4"
+CONTROLLER_V441 = "policy_bc_v4.4.1"
 DEFAULT_CONTROLLERS = {
-    "pixel8": CONTROLLER_V4,
-    "pixel9": CONTROLLER_V4,
+    "pixel8": CONTROLLER_V441,
+    "pixel9": CONTROLLER_V441,
 }
 DEFAULT_POLICY_DIRS = {
     CONTROLLER_V3: Path("models/policy_bc_v3"),
     CONTROLLER_V4: Path("models/policy_bc_v4"),
     CONTROLLER_V41: Path("models/policy_bc_v4.1"),
     CONTROLLER_V42: Path("models/policy_bc_v4.2_full"),
+    CONTROLLER_V43: Path("models/policy_bc_v4.3"),
+    CONTROLLER_V44: Path("models/policy_bc_v4.4"),
+    CONTROLLER_V441: Path("models/policy_bc_v4.4.1"),
 }
 # Lab default decks (Pixel 8 noob beatdown / Pixel 9 mortar bait-ish).
 DEFAULT_DECKS = {
@@ -59,8 +66,8 @@ ARENA_Y_MAX = 32000
 # Consecutive loop iterations where every AI phone has an empty YOLO hand
 # before we assume the match UI is gone and stop.
 MAX_EMPTY_HAND_STREAK = 6
-# Latency budget — keep wall-clock waits tiny; model delay is only a soft hint.
-MAX_PLAN_DELAY_S = 1.0
+# The model was trained and evaluated with delays clipped to this range.
+MAX_PLAN_DELAY_S = 12.0
 MIN_DELAY_S = 0.05
 POST_PLAY_SLEEP_S = 0.28  # just enough for CR to accept the next tap
 HAND_MAX_AGE_S = 0.55  # reuse YOLO result unless older than this
@@ -211,33 +218,15 @@ def resolve_playable_card(
     costs: dict[str, int],
     available_elixir: float | None = None,
 ) -> tuple[str, int, int] | None:
-    """Pick a detected card in model order, optionally requiring affordability."""
-    ranked = list(pred.get("ranked_slots") or pred.get("top3") or [])
-    if pred.get("card"):
-        ranked = [
-            {"card": pred["card"], "prob": 1.0, "slot": pred.get("slot")}
-        ] + ranked
-    seen: set[str] = set()
-    for row in ranked:
-        card = base_card(row.get("card"))
-        if not card or card in seen:
-            continue
-        seen.add(card)
-        slot = find_hand_slot(card, hand_slots)
-        cost = int(costs.get(card, 4))
-        if slot is not None and (
-            available_elixir is None or cost <= available_elixir + 1e-6
-        ):
-            return card, slot, cost
-    # Last resort: any detected card (keeps the match moving if ranking missed).
-    for slot in hand_slots:
-        card = base_card(slot.get("card_name"))
-        cost = int(costs.get(card, 4)) if card else 0
-        if card and (
-            available_elixir is None or cost <= available_elixir + 1e-6
-        ):
-            return card, int(slot["slot"]), cost
-    return None
+    """Resolve only the model-selected card; never silently substitute one."""
+    card = base_card(pred.get("card"))
+    slot = find_hand_slot(card, hand_slots)
+    cost = int(costs.get(card, 4)) if card else 0
+    if slot is None or not card:
+        return None
+    if available_elixir is not None and cost > available_elixir + 1e-6:
+        return None
+    return card, slot, cost
 
 
 def hand_confirms_play(
@@ -278,6 +267,9 @@ def validate_deck(deck: list[str], known: set[str]) -> list[str]:
 
 def list_controllers() -> list[str]:
     return [
+        CONTROLLER_V441,
+        CONTROLLER_V44,
+        CONTROLLER_V43,
         CONTROLLER_V42,
         CONTROLLER_V41,
         CONTROLLER_V4,
@@ -367,7 +359,7 @@ class BattleConfig:
     card_costs_path: Path = Path("data/card_costs.json")
     policy_dirs: dict[str, Path] = field(default_factory=lambda: dict(DEFAULT_POLICY_DIRS))
     mirror_tta: bool = False
-    think_steps: int = 0
+    think_steps: int | None = None
 
 
 class BattleRunner:
@@ -400,6 +392,7 @@ class BattleRunner:
         self._match_time = 0.0
         self._error: str | None = None
         self._last_play_phone: str | None = None
+        self._rng = random.Random(441)
 
     @property
     def running(self) -> bool:
@@ -441,6 +434,15 @@ class BattleRunner:
                     for k in PHONE_KEYS
                 },
                 "next": dict(self._next),
+                "protocol": {
+                    "scheduler": "two-sided predicted-delay race",
+                    "slot": "checkpoint rollout decoder + detected-hand hard mask",
+                    "placement": "checkpoint rollout decoder conditioned on selected card",
+                    "think_steps": (
+                        self._config.think_steps if self._config else None
+                    ),
+                    "history": "confirmed deployments only",
+                },
                 "log": list(self._log_lines[-80:]),
                 "events": len(self._events),
             }
@@ -466,6 +468,12 @@ class BattleRunner:
             if ctrl not in list_controllers():
                 raise ValueError(f"unknown controller for {k}: {ctrl}")
             controllers[k] = ctrl
+        ai_count = sum(ctrl != CONTROLLER_MANUAL for ctrl in controllers.values())
+        if ai_count == 1:
+            raise ValueError(
+                "mixed manual/AI battles are not model-faithful: manual deployments "
+                "cannot be reconstructed from hand crops with placement coordinates"
+            )
         config = BattleConfig(
             decks=decks,
             controllers=controllers,
@@ -473,6 +481,7 @@ class BattleRunner:
             card_costs_path=config.card_costs_path,
             policy_dirs=config.policy_dirs,
             mirror_tta=config.mirror_tta,
+            think_steps=config.think_steps,
         )
 
         needed = {c for c in controllers.values() if c != CONTROLLER_MANUAL}
@@ -499,6 +508,7 @@ class BattleRunner:
         self._next = {k: None for k in PHONE_KEYS}
         self._hand_at = {k: 0.0 for k in PHONE_KEYS}
         self._last_play_phone = None
+        self._rng = random.Random(441)
         self._elixir.reset()
         self._match_time = 0.0
         self._started_at = time.time()
@@ -605,6 +615,12 @@ class BattleRunner:
             return None
         bundle = self._policies[ctrl]
         battle = self._phone_battle_view(phone)
+        decode = rollout_decode_settings(bundle.cfg)
+        think_steps = (
+            decode["think_steps"]
+            if self._config.think_steps is None
+            else int(self._config.think_steps)
+        )
         try:
             pred = predict_next_action(
                 bundle.model,
@@ -613,21 +629,23 @@ class BattleRunner:
                 battle,
                 bundle.device,
                 acting_side="team",
+                temperature=float(decode["temperature"]),
+                slot_decode=str(decode["slot_decode"]),
                 max_context=int(bundle.cfg.get("max_context", 64)),
                 threat_dim=int(bundle.cfg.get("threat_dim", 0)),
                 min_context=0,
                 prefer_cards=hand_cards,
+                placement_decode=str(decode["placement_decode"]),
+                placement_temperature=float(decode["placement_temperature"]),
+                placement_top_k=decode["placement_top_k"],
                 mirror_tta=bool(self._config.mirror_tta),
-                think_steps=int(self._config.think_steps),
+                think_steps=think_steps,
+                now_seconds=self._match_time,
+                rng=self._rng,
             )
         except Exception as exc:  # noqa: BLE001
             self._append_log(f"{phone} predict failed: {exc}", "err")
             return None
-        # Live taps are card plays only — ability activations have no place target.
-        if pred.get("event_type") == "ability_activation":
-            pred = dict(pred)
-            pred["event_type"] = "card_play"
-            pred["ability_suppressed"] = True
         pred["phone"] = phone
         pred["controller"] = ctrl
         return pred
@@ -654,12 +672,20 @@ class BattleRunner:
                 self._next[phone] = pred
             if not pred:
                 continue
+            if pred.get("event_type") == "ability_activation":
+                pred["skip"] = "ability_not_calibrated"
+                self._append_log(
+                    f"{phone}: model proposed an ability; ability control is not calibrated",
+                    "err",
+                )
+                continue
             delay = self._plan_delay(phone, float(pred.get("delay_seconds") or MIN_DELAY_S))
+            last_event_t = float(self._events[-1]["seconds"]) if self._events else 0.0
             candidates.append(
                 {
                     "phone": phone,
                     "pred": pred,
-                    "ready_at": match_t + delay,
+                    "ready_at": max(match_t, last_event_t + delay),
                 }
             )
         candidates.sort(key=lambda c: c["ready_at"])
@@ -724,16 +750,17 @@ class BattleRunner:
                     time.sleep(0.15)
                     continue
 
-                wait = candidates[0]["ready_at"] - (time.time() - self._started_at)
-                if wait > 0:
-                    deadline = time.time() + wait
-                    while time.time() < deadline and not self._stop.is_set():
-                        time.sleep(min(0.05, max(0.0, deadline - time.time())))
-                    if self._stop.is_set():
-                        break
-
                 played_phone: str | None = None
                 for chosen in candidates:
+                    if self._stop.is_set():
+                        break
+                    # A failed earlier candidate must not let the other phone
+                    # act before its own model-predicted ready time.
+                    wait = chosen["ready_at"] - (time.time() - self._started_at)
+                    if wait > 0:
+                        deadline = time.time() + wait
+                        while time.time() < deadline and not self._stop.is_set():
+                            time.sleep(min(0.05, max(0.0, deadline - time.time())))
                     if self._stop.is_set():
                         break
                     match_t = time.time() - self._started_at
@@ -781,29 +808,15 @@ class BattleRunner:
             self._append_log(f"{phone}: skip — empty hand", "err")
             return False
 
-        available = self._elixir.values[phone]
-        resolved = resolve_playable_card(
-            pred,
-            hand,
-            self._costs,
-            available_elixir=available,
-        )
-        if resolved is None:
-            detected_choice = resolve_playable_card(pred, hand, self._costs)
-            if detected_choice is not None:
-                card, _slot, cost = detected_choice
-                self._append_log(
-                    f"{phone}: no affordable detected card "
-                    f"(elixir {available:.1f}; first {card} costs {cost})",
-                    "info",
-                )
-                return False
+        card = base_card(pred.get("card"))
+        slot = find_hand_slot(card, hand)
+        if slot is None:
             self._append_log(
-                f"{phone}: no playable card in { [s.get('card_name') for s in hand] }",
+                f"{phone}: model-selected {card or '?'} is not in the refreshed hand; replan",
                 "err",
             )
             return False
-        card, slot, cost = resolved
+        cost = int(self._costs.get(card, 4))
 
         if not self._elixir.can_afford(phone, cost):
             self._append_log(
@@ -839,7 +852,6 @@ class BattleRunner:
             return False
 
         self._elixir.spend(phone, cost)
-        fallback = card != base_card(pred.get("card"))
         event = {
             "seconds": match_t,
             "side": phone,
@@ -847,16 +859,21 @@ class BattleRunner:
             "card": card,
             "x": int(pred.get("x") or 9000),
             "y": int(pred.get("y") or 8000),
+            "model_slot": int(pred.get("slot", -1)),
+            "tile": pred.get("tile"),
+            "slot_decode": pred.get("slot_decode"),
+            "placement_decode": pred.get("placement_decode"),
+            "think_steps": pred.get("think_steps"),
         }
         with self._lock:
             self._events.append(event)
         self._last_play_phone = phone
         # Hand is stale after a play until we redetect.
         self._hand_at[phone] = 0.0
-        note = " [fallback]" if fallback else ""
         self._append_log(
             f"{match_t:5.1f}s  {phone}  {card}  uv=({u:.2f},{v:.2f})  "
-            f"elixir→{self._elixir.values[phone]:.1f}{note}",
+            f"elixir→{self._elixir.values[phone]:.1f} "
+            f"[{pred.get('slot_decode')} / {pred.get('placement_decode')} / K={pred.get('think_steps')} ]",
             "ok",
         )
         return True

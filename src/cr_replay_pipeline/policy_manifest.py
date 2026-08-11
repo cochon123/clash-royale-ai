@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import random
 from typing import Any
 
 from .policy_dataset import collect_battles, split_battles
@@ -24,12 +25,24 @@ def build_manifest(
     max_battles: int | None = None,
     pilot_train_battles: int | None = None,
     min_card_plays: int = 12,
+    train_fraction: float | None = None,
 ) -> dict[str, Any]:
     """Write a deterministic manifest using the same split as training."""
     selected = list(battles[:max_battles] if max_battles is not None else battles)
     if len(selected) < 50:
         raise ValueError(f"Need at least 50 battles for a manifest; got {len(selected)}")
-    train, val, test = split_battles(selected, seed=seed)
+    if train_fraction is None:
+        train, val, test = split_battles(selected, seed=seed)
+    else:
+        if not 0.5 <= train_fraction < 1.0:
+            raise ValueError("train_fraction must be in [0.5, 1.0)")
+        ordered_battles = list(selected)
+        random.Random(seed).shuffle(ordered_battles)
+        n_train = int(len(ordered_battles) * train_fraction)
+        n_val = int((len(ordered_battles) - n_train) / 2)
+        train = ordered_battles[:n_train]
+        val = ordered_battles[n_train : n_train + n_val]
+        test = ordered_battles[n_train + n_val :]
     if pilot_train_battles is not None:
         if pilot_train_battles < 1 or pilot_train_battles > len(train):
             raise ValueError("pilot_train_battles must fit inside the training split")

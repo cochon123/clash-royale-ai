@@ -32,8 +32,11 @@ def run_phone_lab(
     policy_v4: str | Path = "models/policy_bc_v4",
     policy_v41: str | Path = "models/policy_bc_v4.1",
     policy_v42: str | Path = "models/policy_bc_v4.2_full",
+    policy_v43: str | Path = "models/policy_bc_v4.3",
+    policy_v44: str | Path = "models/policy_bc_v4.4",
+    policy_v441: str | Path = "models/policy_bc_v4.4.1",
     mirror_tta: bool = False,
-    think_steps: int = 0,
+    think_steps: int | None = None,
     open_browser: bool = True,
 ) -> dict[str, object]:
     if not adb_available():
@@ -53,6 +56,9 @@ def run_phone_lab(
         policy_v4=Path(policy_v4),
         policy_v41=Path(policy_v41),
         policy_v42=Path(policy_v42),
+        policy_v43=Path(policy_v43),
+        policy_v44=Path(policy_v44),
+        policy_v441=Path(policy_v441),
         mirror_tta=mirror_tta,
         think_steps=think_steps,
     )
@@ -72,7 +78,11 @@ def run_phone_lab(
     _say("  stream: scrcpy-server h264 → websocket → WebCodecs (+ touch)")
     _say(f"  open:   {url}")
     _say(f"  mirror: {'enabled' if mirror_tta else 'disabled'}")
-    _say(f"  think:  {think_steps} step(s)" if think_steps else "  think:  off")
+    _say(
+        f"  think:  {think_steps} forced step(s)"
+        if think_steps is not None
+        else "  think:  checkpoint evaluation default"
+    )
 
     if open_browser:
         webbrowser.open(url)

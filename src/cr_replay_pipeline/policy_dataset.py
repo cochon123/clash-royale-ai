@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import random
+from collections import OrderedDict
 from typing import Any
 
 import numpy as np
 import torch
 from torch.nn.utils.rnn import pad_sequence
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset, Sampler
 
 # Large mirrored datasets contain tens of thousands of cached tensor streams.
 # Python 3.14's forkserver can exhaust file-descriptor sharing while spawning
@@ -677,6 +678,8 @@ class PolicyActionDataset(Dataset):
         reaction_repeats: int = 1,
         hide_opponent_deck: bool = False,
         hide_opponent_prob: float = 0.0,
+        mirror_augmentation: bool = False,
+        stream_cache_size: int | None = None,
     ):
         self.max_context = max_context
         self.battles = battles
@@ -687,11 +690,16 @@ class PolicyActionDataset(Dataset):
         self.hide_opponent_deck = bool(hide_opponent_deck)
         self.hide_opponent_prob = float(hide_opponent_prob)
         self.reaction_weight = reaction_weight
+        self.mirror_augmentation = bool(mirror_augmentation)
+        self.stream_cache_size = (
+            max(1, int(stream_cache_size)) if stream_cache_size is not None else None
+        )
         self.index: list[tuple[int, int]] = []
-        self._streams: dict[
+        self._mirror_flags: list[bool] = []
+        self._streams: OrderedDict[
             tuple[int, bool],
             tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor],
-        ] = {}
+        ] = OrderedDict()
         rng = random.Random(seed)
 
         for battle_i, battle in enumerate(battles):
@@ -758,13 +766,14 @@ class PolicyActionDataset(Dataset):
                 continue
 
             for swap in {battle.events[i]["side"] == "opponent" for i in kept}:
-                stream = _encode_causal_stream(battle, vocab, costs, swap_sides=swap)
-                if stream is not None:
-                    self._streams[(battle_i, swap)] = stream
+                if self.stream_cache_size is None:
+                    stream = _encode_causal_stream(battle, vocab, costs, swap_sides=swap)
+                    if stream is not None:
+                        self._streams[(battle_i, swap)] = stream
 
             for event_index in kept:
                 swap = battle.events[event_index]["side"] == "opponent"
-                if (battle_i, swap) not in self._streams:
+                if self.stream_cache_size is None and (battle_i, swap) not in self._streams:
                     continue
                 repeats = 1
                 if prefer_reactions and reaction_repeats > 1:
@@ -780,26 +789,53 @@ class PolicyActionDataset(Dataset):
                         repeats = reaction_repeats
                 for _ in range(repeats):
                     self.index.append((battle_i, event_index))
+                    self._mirror_flags.append(False)
+                    if self.mirror_augmentation:
+                        # Duplicate only the compact sample reference. The
+                        # encoded battle streams remain shared in RAM.
+                        self.index.append((battle_i, event_index))
+                        self._mirror_flags.append(True)
 
     def __len__(self) -> int:
         return len(self.index)
+
+    def _stream(self, battle_i: int, swap: bool):
+        key = (battle_i, swap)
+        cached = self._streams.get(key)
+        if cached is not None:
+            self._streams.move_to_end(key)
+            return cached
+        stream = _encode_causal_stream(
+            self.battles[battle_i], self.vocab, self.costs, swap_sides=swap
+        )
+        if stream is None:
+            raise RuntimeError(f"Could not encode battle stream {battle_i}, swap={swap}")
+        self._streams[key] = stream
+        if self.stream_cache_size is not None:
+            while len(self._streams) > self.stream_cache_size:
+                self._streams.popitem(last=False)
+        return stream
 
     def __getitem__(self, index: int):
         from .policy_model import xy_to_zone
 
         battle_i, event_index = self.index[index]
+        mirror = self._mirror_flags[index]
         battle = self.battles[battle_i]
         target = battle.events[event_index]
         swap = target["side"] == "opponent"
-        continuous, card_ids, team_deck, opponent_deck, globals_all = self._streams[
-            (battle_i, swap)
-        ]
+        continuous, card_ids, team_deck, opponent_deck, globals_all = self._stream(
+            battle_i, swap
+        )
         continuous = continuous[:event_index]
         card_ids = card_ids[:event_index]
         global_feat = globals_all[event_index - 1]
         if continuous.size(0) > self.max_context:
             continuous = continuous[-self.max_context :]
             card_ids = card_ids[-self.max_context :]
+        if mirror:
+            continuous = continuous.clone()
+            continuous[:, 4] = 1.0 - continuous[:, 4]
 
         if self.hide_opponent_deck and self.hide_opponent_prob > 0:
             # At deployment the acting deck is known, while unrevealed
@@ -831,6 +867,9 @@ class PolicyActionDataset(Dataset):
                 max_age=self.reaction_seconds,
             )
             if self.threat_dim > 0:
+                if mirror and is_react:
+                    threat_feat = threat_feat.clone()
+                    threat_feat[12] = 1.0 - threat_feat[12]
                 if threat_feat.numel() >= self.threat_dim:
                     threat_feat = threat_feat[: self.threat_dim]
                 else:
@@ -845,6 +884,8 @@ class PolicyActionDataset(Dataset):
         slot = deck_slot_for_card(acting_deck, target["card"])
         assert slot is not None
         nx, ny = _normalize_xy(int(target["x"]), int(target["y"]), swap_sides=swap)
+        if mirror:
+            nx = 1.0 - nx
         prev_seconds = float(battle.events[event_index - 1]["seconds"])
         delta = max(0.0, float(target["seconds"]) - prev_seconds)
         event_type = 1 if target["event_type"] == "ability_activation" else 0
@@ -906,6 +947,43 @@ def collate_policy_batch(batch):
     )
 
 
+class GroupedBattleSampler(Sampler[int]):
+    """Shuffle battle groups while keeping each battle's samples adjacent.
+
+    Adjacent access lets the bounded stream LRU encode each perspective once
+    per epoch instead of once per randomly interleaved sample.
+    """
+
+    def __init__(self, dataset: PolicyActionDataset, seed: int = 42):
+        self.dataset = dataset
+        self.seed = int(seed)
+        self.epoch = 0
+        groups: list[tuple[int, int]] = []
+        current_battle = None
+        start = 0
+        for sample_i, (battle_i, _event_i) in enumerate(dataset.index):
+            if current_battle is not None and battle_i != current_battle:
+                groups.append((start, sample_i))
+                start = sample_i
+            current_battle = battle_i
+        if dataset.index:
+            groups.append((start, len(dataset.index)))
+        self.groups = groups
+
+    def __iter__(self):
+        rng = random.Random(self.seed + self.epoch)
+        self.epoch += 1
+        groups = list(self.groups)
+        rng.shuffle(groups)
+        for start, end in groups:
+            group = list(range(start, end))
+            rng.shuffle(group)
+            yield from group
+
+    def __len__(self) -> int:
+        return len(self.dataset)
+
+
 def create_policy_dataloaders(
     train_battles: list[BattleExample],
     val_battles: list[BattleExample],
@@ -922,6 +1000,8 @@ def create_policy_dataloaders(
     hide_opponent_deck: bool = False,
     hide_opponent_prob: float = 0.0,
     num_workers: int = 0,
+    mirror_augmentation: bool = False,
+    stream_cache_size: int | None = None,
 ) -> tuple[DataLoader, DataLoader, DataLoader]:
     train_ds = PolicyActionDataset(
         train_battles,
@@ -938,6 +1018,8 @@ def create_policy_dataloaders(
         reaction_repeats=reaction_repeats,
         hide_opponent_deck=hide_opponent_deck,
         hide_opponent_prob=hide_opponent_prob,
+        mirror_augmentation=mirror_augmentation,
+        stream_cache_size=stream_cache_size,
     )
     val_ds = PolicyActionDataset(
         val_battles,
@@ -952,6 +1034,7 @@ def create_policy_dataloaders(
         reaction_weight=1.0,
         prefer_reactions=False,
         reaction_repeats=1,
+        stream_cache_size=stream_cache_size,
     )
     test_ds = PolicyActionDataset(
         test_battles,
@@ -966,12 +1049,18 @@ def create_policy_dataloaders(
         reaction_weight=1.0,
         prefer_reactions=False,
         reaction_repeats=1,
+        stream_cache_size=stream_cache_size,
     )
     return (
         DataLoader(
             train_ds,
             batch_size=batch_size,
-            shuffle=True,
+            shuffle=False,
+            sampler=(
+                GroupedBattleSampler(train_ds, seed=44)
+                if stream_cache_size is not None
+                else None
+            ),
             collate_fn=collate_policy_batch,
             num_workers=num_workers,
             persistent_workers=num_workers > 0,

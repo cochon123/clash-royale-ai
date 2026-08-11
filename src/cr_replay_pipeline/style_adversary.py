@@ -297,23 +297,28 @@ def batch_style_match_loss(
     }
 
 
-def _sample_action(
+def _sample_slot(
     out: dict[str, torch.Tensor],
     temperature: float,
-    rng: random.Random,
-) -> tuple[int, int, torch.Tensor, torch.Tensor, float]:
-    """Sample slot/type; return log_probs and predicted xy/timing values."""
+) -> tuple[int, torch.Tensor]:
     logits = out["slot_logits"][0] / max(temperature, 1e-3)
     dist = Categorical(logits=logits)
-    # Use torch sampling for a proper log_prob path; seed via generator when available.
     slot_t = dist.sample()
-    slot = int(slot_t.item())
-    # Re-draw with python rng only for reproducibility across devices — keep torch sample.
+    return int(slot_t.item()), dist.log_prob(slot_t)
+
+
+def _sample_conditioned_action(
+    out: dict[str, torch.Tensor],
+    slot_log_prob: torch.Tensor,
+    placement_temperature: float = 0.6,
+    placement_top_k: int = 5,
+) -> tuple[int, torch.Tensor, torch.Tensor, float]:
+    """Sample type/timing after placement has been conditioned on the slot."""
     type_logits = out["type_logits"][0]
     type_dist = Categorical(logits=type_logits)
     type_t = type_dist.sample()
     event_type = int(type_t.item())
-    log_prob = dist.log_prob(slot_t) + type_dist.log_prob(type_t)
+    log_prob = slot_log_prob + type_dist.log_prob(type_t)
 
     # Light Gaussian exploration on timing so REINFORCE can nudge delays.
     timing_mean = out["timing"][0]
@@ -324,8 +329,20 @@ def _sample_action(
     log_prob = log_prob + 0.35 * timing_log_prob
 
     xy = out["xy"][0]
+    tile_logits = out.get("tile_logits")
+    if tile_logits is not None:
+        logits = tile_logits[0] / max(placement_temperature, 1e-3)
+        k = max(1, min(int(placement_top_k), int(logits.numel())))
+        values, indices = torch.topk(logits, k)
+        tile_dist = Categorical(logits=values)
+        local_tile = tile_dist.sample()
+        tile = indices[local_tile]
+        log_prob = log_prob + tile_dist.log_prob(local_tile)
+        row = torch.div(tile, 32, rounding_mode="floor")
+        col = tile.remainder(32)
+        xy = torch.stack(((col.float() + 0.5) / 32.0, (row.float() + 0.5) / 18.0))
     dt = float(np.clip(np.expm1(timing_sample.detach().item()), 0.2, 12.0))
-    return slot, event_type, log_prob, xy, dt
+    return event_type, log_prob, xy, dt
 
 
 def rollout_trajectories_for_reinforce(
@@ -419,7 +436,18 @@ def rollout_trajectories_for_reinforce(
                 slot_feats.unsqueeze(0).to(device),
                 hand_mask.unsqueeze(0).to(device),
             )
-            slot, event_type_i, log_prob, xy_t, dt = _sample_action(out, temperature, rng)
+            slot, slot_log_prob = _sample_slot(out, temperature)
+            if getattr(model, "placement_card_mode", "soft") == "selected":
+                out = model(
+                    continuous.unsqueeze(0).to(device), card_ids.unsqueeze(0).to(device),
+                    team_deck.unsqueeze(0).to(device), opp_deck.unsqueeze(0).to(device),
+                    global_feat.unsqueeze(0).to(device), length.unsqueeze(0).to(device),
+                    slot_feats.unsqueeze(0).to(device), hand_mask.unsqueeze(0).to(device),
+                    placement_slots=torch.tensor([slot], device=device),
+                )
+            event_type_i, log_prob, xy_t, dt = _sample_conditioned_action(
+                out, slot_log_prob
+            )
             log_probs.append(log_prob)
 
             acting_deck = battle.team_deck if next_side == "team" else battle.opponent_deck

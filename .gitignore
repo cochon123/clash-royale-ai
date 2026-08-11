@@ -15,6 +15,7 @@ data/*.sqlite3
 data/*.sqlite3-shm
 data/*.sqlite3-wal
 data/winner_battles_cache.pkl
+data/policy_battles_cache.pkl
 reports/*.json
 models/winner_predictor/*.pt
 models/winner_predictor/*.pkl
@@ -28,5 +29,8 @@ models/winner_predictor/loop_experiments/
 models/realism_scorer/*.pkl
 models/action_clock_v1/*.pkl
 models/policy_bc*/*.pt
+models/card_detector*.pt
+models/card_detector_runs/
+data/card_detector/
 models/style_discriminator/*.pkl
 models/style_discriminator/rollouts/

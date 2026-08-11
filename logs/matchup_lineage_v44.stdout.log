@@ -1,0 +1,321 @@
+Loading battles ...
+Cached 48001 battles -> data/winner_battles_cache.pkl
+Lineage matchups: 8 · policies: 1 · games/policy: 640 · total: 640
+  [1/8] golem > x-bow human=74.5% n=102
+  [2/8] graveyard > hog-rider human=57.1% n=483
+  [3/8] royal-hogs > goblin-barrel human=59.0% n=293
+  [4/8] mortar > sparky human=64.0% n=114
+  [5/8] battle-ram > hog-rider human=55.5% n=696
+  [6/8] mega-knight > royal-giant human=62.1% n=132
+  [7/8] golem > goblin-drill human=60.8% n=153
+  [8/8] battle-ram > wall-breakers human=61.2% n=129
+
+== v4.4 (models/policy_bc_v4.4) think=3 on cuda ==
+v4.4	16/640	policy 16/640	ETA 2.5m	4.18 games/s
+v4.4	32/640	policy 32/640	ETA 2.2m	4.51 games/s
+v4.4	48/640	policy 48/640	ETA 2.1m	4.60 games/s
+v4.4	64/640	policy 64/640	ETA 2.0m	4.74 games/s
+v4.4	80/640	policy 80/640	ETA 2.0m	4.78 games/s
+v4.4	96/640	policy 96/640	ETA 1.9m	4.83 games/s
+v4.4	112/640	policy 112/640	ETA 1.8m	4.86 games/s
+v4.4	128/640	policy 128/640	ETA 1.7m	4.89 games/s
+v4.4	144/640	policy 144/640	ETA 1.7m	4.91 games/s
+v4.4	160/640	policy 160/640	ETA 1.6m	4.94 games/s
+v4.4	176/640	policy 176/640	ETA 1.6m	4.96 games/s
+v4.4	192/640	policy 192/640	ETA 1.5m	4.97 games/s
+v4.4	208/640	policy 208/640	ETA 1.4m	4.98 games/s
+v4.4	224/640	policy 224/640	ETA 1.4m	5.00 games/s
+v4.4	240/640	policy 240/640	ETA 1.3m	5.01 games/s
+v4.4	256/640	policy 256/640	ETA 1.3m	5.02 games/s
+v4.4	272/640	policy 272/640	ETA 1.2m	5.03 games/s
+v4.4	288/640	policy 288/640	ETA 1.2m	5.03 games/s
+v4.4	304/640	policy 304/640	ETA 1.1m	5.04 games/s
+v4.4	320/640	policy 320/640	ETA 1.1m	5.04 games/s
+v4.4	336/640	policy 336/640	ETA 1.0m	5.05 games/s
+v4.4	352/640	policy 352/640	ETA 57s	5.05 games/s
+v4.4	368/640	policy 368/640	ETA 54s	5.06 games/s
+v4.4	384/640	policy 384/640	ETA 51s	5.06 games/s
+v4.4	400/640	policy 400/640	ETA 47s	5.06 games/s
+v4.4	416/640	policy 416/640	ETA 44s	5.06 games/s
+v4.4	432/640	policy 432/640	ETA 41s	5.06 games/s
+v4.4	448/640	policy 448/640	ETA 38s	5.06 games/s
+v4.4	464/640	policy 464/640	ETA 35s	5.06 games/s
+v4.4	480/640	policy 480/640	ETA 32s	5.06 games/s
+v4.4	496/640	policy 496/640	ETA 28s	5.07 games/s
+v4.4	512/640	policy 512/640	ETA 25s	5.07 games/s
+v4.4	528/640	policy 528/640	ETA 22s	5.06 games/s
+v4.4	544/640	policy 544/640	ETA 19s	5.04 games/s
+v4.4	560/640	policy 560/640	ETA 16s	5.02 games/s
+v4.4	576/640	policy 576/640	ETA 13s	5.01 games/s
+v4.4	592/640	policy 592/640	ETA 10s	5.00 games/s
+v4.4	608/640	policy 608/640	ETA 6s	5.00 games/s
+v4.4	624/640	policy 624/640	ETA 3s	5.00 games/s
+v4.4	640/640	policy 640/640	ETA 0s	5.00 games/s
+  golem > x-bow: human=74.5% AI=100.0% Δ=+25.5% OK
+  graveyard > hog-rider: human=57.1% AI=60.0% Δ=+2.9% OK
+  royal-hogs > goblin-barrel: human=59.0% AI=66.2% Δ=+7.2% OK
+  mortar > sparky: human=64.0% AI=35.0% Δ=-29.0% FLIP
+  battle-ram > hog-rider: human=55.5% AI=61.3% Δ=+5.8% OK
+  mega-knight > royal-giant: human=62.1% AI=86.2% Δ=+24.1% OK
+  golem > goblin-drill: human=60.8% AI=82.5% Δ=+21.7% OK
+  battle-ram > wall-breakers: human=61.2% AI=88.8% Δ=+27.5% OK
+{
+  "matchups": 8,
+  "policies": 1,
+  "games_per_policy": 640,
+  "best_mean_abs_delta": "v4.4",
+  "best_mean_abs_delta_wr": 0.17966556501878206
+}
+v4.4 is closest to human matchup edges (mean |Δ| = 18.0 pp) under shared-schedule self-play judged by the winner model.
+Wrote reports/matchup_lineage_v44_only.json
+Wrote reports/matchup_lineage_v44_only.html
+{
+  "created_at": "2026-08-10T19:03:10Z",
+  "model_name": "matchup-lineage",
+  "judge": "winner-predictor-hgb-symmetric",
+  "seconds": 128.996999502182,
+  "setup": {
+    "games_per_matchup": 80,
+    "top_k": 8,
+    "min_empirical_n": 80,
+    "warmup_events": 10,
+    "policy_events": 50,
+    "temperature": 0.85,
+    "archetype": "primary win-condition by corpus frequency",
+    "seat_balanced": true,
+    "shared_schedule": true,
+    "policies": [
+      {
+        "id": "v4.4",
+        "path": "models/policy_bc_v4.4",
+        "color": "#38bdf8"
+      }
+    ],
+    "note": "Same wincon matchups and identical deck/seed/seat schedule for every policy. Each seat uses that policy's weights (self-play). Winners are judged by the offline winner model — no live Clash Royale."
+  },
+  "matchups": [
+    {
+      "id": "golem>x-bow",
+      "favorite": "golem",
+      "underdog": "x-bow",
+      "label": "golem > x-bow",
+      "empirical_n": 102,
+      "empirical_fav_wr": 0.7450980392156863
+    },
+    {
+      "id": "graveyard>hog-rider",
+      "favorite": "graveyard",
+      "underdog": "hog-rider",
+      "label": "graveyard > hog-rider",
+      "empirical_n": 483,
+      "empirical_fav_wr": 0.5714285714285714
+    },
+    {
+      "id": "royal-hogs>goblin-barrel",
+      "favorite": "royal-hogs",
+      "underdog": "goblin-barrel",
+      "label": "royal-hogs > goblin-barrel",
+      "empirical_n": 293,
+      "empirical_fav_wr": 0.590443686006826
+    },
+    {
+      "id": "mortar>sparky",
+      "favorite": "mortar",
+      "underdog": "sparky",
+      "label": "mortar > sparky",
+      "empirical_n": 114,
+      "empirical_fav_wr": 0.6403508771929824
+    },
+    {
+      "id": "battle-ram>hog-rider",
+      "favorite": "battle-ram",
+      "underdog": "hog-rider",
+      "label": "battle-ram > hog-rider",
+      "empirical_n": 696,
+      "empirical_fav_wr": 0.5545977011494253
+    },
+    {
+      "id": "mega-knight>royal-giant",
+      "favorite": "mega-knight",
+      "underdog": "royal-giant",
+      "label": "mega-knight > royal-giant",
+      "empirical_n": 132,
+      "empirical_fav_wr": 0.6212121212121212
+    },
+    {
+      "id": "golem>goblin-drill",
+      "favorite": "golem",
+      "underdog": "goblin-drill",
+      "label": "golem > goblin-drill",
+      "empirical_n": 153,
+      "empirical_fav_wr": 0.607843137254902
+    },
+    {
+      "id": "battle-ram>wall-breakers",
+      "favorite": "battle-ram",
+      "underdog": "wall-breakers",
+      "label": "battle-ram > wall-breakers",
+      "empirical_n": 129,
+      "empirical_fav_wr": 0.6124031007751938
+    }
+  ],
+  "models": [
+    {
+      "id": "v4.4",
+      "policyId": "policy-bc-v4.4",
+      "modelDir": "models/policy_bc_v4.4",
+      "color": "#38bdf8",
+      "thinkSteps": 3,
+      "seconds": 128.84855818748474,
+      "matchups": [
+        {
+          "id": "golem>x-bow",
+          "favorite": "golem",
+          "underdog": "x-bow",
+          "label": "golem > x-bow",
+          "empirical_n": 102,
+          "empirical_fav_wr": 0.7450980392156863,
+          "games": 80,
+          "policy_fav_wr": 1.0,
+          "policy_mean_P_fav": 0.7838813207839838,
+          "policy_fav_wr_ci95": 6.929646455628166e-06,
+          "delta_wr": 0.2549019607843137,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "graveyard>hog-rider",
+          "favorite": "graveyard",
+          "underdog": "hog-rider",
+          "label": "graveyard > hog-rider",
+          "empirical_n": 483,
+          "empirical_fav_wr": 0.5714285714285714,
+          "games": 80,
+          "policy_fav_wr": 0.6,
+          "policy_mean_P_fav": 0.5375132655902454,
+          "policy_fav_wr_ci95": 0.10735362127101256,
+          "delta_wr": 0.02857142857142858,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "royal-hogs>goblin-barrel",
+          "favorite": "royal-hogs",
+          "underdog": "goblin-barrel",
+          "label": "royal-hogs > goblin-barrel",
+          "empirical_n": 293,
+          "empirical_fav_wr": 0.590443686006826,
+          "games": 80,
+          "policy_fav_wr": 0.6625,
+          "policy_mean_P_fav": 0.5824926862326196,
+          "policy_fav_wr_ci95": 0.10361936052205688,
+          "delta_wr": 0.07205631399317403,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>sparky",
+          "favorite": "mortar",
+          "underdog": "sparky",
+          "label": "mortar > sparky",
+          "empirical_n": 114,
+          "empirical_fav_wr": 0.6403508771929824,
+          "games": 80,
+          "policy_fav_wr": 0.35,
+          "policy_mean_P_fav": 0.4084211758033575,
+          "policy_fav_wr_ci95": 0.10452057213773755,
+          "delta_wr": -0.29035087719298247,
+          "preserves_favorite": false,
+          "agrees_strongly": false,
+          "mean_events": 60.0
+        },
+        {
+          "id": "battle-ram>hog-rider",
+          "favorite": "battle-ram",
+          "underdog": "hog-rider",
+          "label": "battle-ram > hog-rider",
+          "empirical_n": 696,
+          "empirical_fav_wr": 0.5545977011494253,
+          "games": 80,
+          "policy_fav_wr": 0.6125,
+          "policy_mean_P_fav": 0.5509634209286565,
+          "policy_fav_wr_ci95": 0.10675788905275338,
+          "delta_wr": 0.05790229885057474,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mega-knight>royal-giant",
+          "favorite": "mega-knight",
+          "underdog": "royal-giant",
+          "label": "mega-knight > royal-giant",
+          "empirical_n": 132,
+          "empirical_fav_wr": 0.6212121212121212,
+          "games": 80,
+          "policy_fav_wr": 0.8625,
+          "policy_mean_P_fav": 0.6801733246260837,
+          "policy_fav_wr_ci95": 0.07546437487318104,
+          "delta_wr": 0.24128787878787883,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>goblin-drill",
+          "favorite": "golem",
+          "underdog": "goblin-drill",
+          "label": "golem > goblin-drill",
+          "empirical_n": 153,
+          "empirical_fav_wr": 0.607843137254902,
+          "games": 80,
+          "policy_fav_wr": 0.825,
+          "policy_mean_P_fav": 0.685183161452463,
+          "policy_fav_wr_ci95": 0.08326396279303551,
+          "delta_wr": 0.21715686274509793,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "battle-ram>wall-breakers",
+          "favorite": "battle-ram",
+          "underdog": "wall-breakers",
+          "label": "battle-ram > wall-breakers",
+          "empirical_n": 129,
+          "empirical_fav_wr": 0.6124031007751938,
+          "games": 80,
+          "policy_fav_wr": 0.8875,
+          "policy_mean_P_fav": 0.6929397025701779,
+          "policy_fav_wr_ci95": 0.06924230552920665,
+          "delta_wr": 0.2750968992248062,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        }
+      ],
+      "meanAbsDelta": 0.17966556501878206,
+      "meanAbsDeltaCI": [
+        0.10783917514115392,
+        0.2526442172837617
+      ],
+      "preserveFavoriteRate": 0.875,
+      "strongAgreementRate": 0.875,
+      "meanPolicyFavWr": 0.725
+    }
+  ],
+  "summary": {
+    "matchups": 8,
+    "policies": 1,
+    "games_per_policy": 640,
+    "best_mean_abs_delta": "v4.4",
+    "best_mean_abs_delta_wr": 0.17966556501878206
+  },
+  "verdict": "v4.4 is closest to human matchup edges (mean |Δ| = 18.0 pp) under shared-schedule self-play judged by the winner model.",
+  "protocol": "shared 8 matchups × 80 games · wincon archetypes · seat-balanced self-play",
+  "note": "Δ = AI favorite WR − human favorite WR. Positive means the policy overstates the empirical edge; negative means it washes or flips it.",
+  "html_report": "reports/matchup_lineage_v44_only.html"
+}

@@ -1,0 +1,1326 @@
+Loading battles ...
+Cached 48034 battles -> data/winner_battles_cache.pkl
+Lineage matchups: 8 · policies: 6 · games/policy: 640 · total: 3840
+  [1/8] graveyard > hog-rider human=58.7% n=504
+  [2/8] golem > x-bow human=68.0% n=97
+  [3/8] royal-hogs > goblin-barrel human=59.4% n=281
+  [4/8] graveyard > goblin-drill human=65.7% n=99
+  [5/8] balloon > hog-rider human=55.1% n=801
+  [6/8] mortar > sparky human=64.1% n=103
+  [7/8] mortar > royal-giant human=65.5% n=84
+  [8/8] golem > royal-hogs human=57.7% n=324
+
+== v4 (models/policy_bc_v4) think=0 on cuda ==
+v4	16/3840	policy 16/640	ETA 13.1m	4.87 games/s
+v4	32/3840	policy 32/640	ETA 12.2m	5.21 games/s
+v4	48/3840	policy 48/640	ETA 11.9m	5.33 games/s
+v4	64/3840	policy 64/640	ETA 11.7m	5.39 games/s
+v4	80/3840	policy 80/640	ETA 11.5m	5.43 games/s
+v4	96/3840	policy 96/640	ETA 11.4m	5.46 games/s
+v4	112/3840	policy 112/640	ETA 11.4m	5.47 games/s
+v4	128/3840	policy 128/640	ETA 11.3m	5.49 games/s
+v4	144/3840	policy 144/640	ETA 11.2m	5.50 games/s
+v4	160/3840	policy 160/640	ETA 11.1m	5.52 games/s
+v4	176/3840	policy 176/640	ETA 11.1m	5.52 games/s
+v4	192/3840	policy 192/640	ETA 11.0m	5.53 games/s
+v4	208/3840	policy 208/640	ETA 10.9m	5.54 games/s
+v4	224/3840	policy 224/640	ETA 10.9m	5.54 games/s
+v4	240/3840	policy 240/640	ETA 10.8m	5.54 games/s
+v4	256/3840	policy 256/640	ETA 10.8m	5.54 games/s
+v4	272/3840	policy 272/640	ETA 10.7m	5.55 games/s
+v4	288/3840	policy 288/640	ETA 10.7m	5.55 games/s
+v4	304/3840	policy 304/640	ETA 10.6m	5.55 games/s
+v4	320/3840	policy 320/640	ETA 10.6m	5.56 games/s
+v4	336/3840	policy 336/640	ETA 10.5m	5.56 games/s
+v4	352/3840	policy 352/640	ETA 10.5m	5.56 games/s
+v4	368/3840	policy 368/640	ETA 10.4m	5.56 games/s
+v4	384/3840	policy 384/640	ETA 10.4m	5.56 games/s
+v4	400/3840	policy 400/640	ETA 10.3m	5.56 games/s
+v4	416/3840	policy 416/640	ETA 10.3m	5.57 games/s
+v4	432/3840	policy 432/640	ETA 10.2m	5.57 games/s
+v4	448/3840	policy 448/640	ETA 10.2m	5.57 games/s
+v4	464/3840	policy 464/640	ETA 10.1m	5.57 games/s
+v4	480/3840	policy 480/640	ETA 10.1m	5.57 games/s
+v4	496/3840	policy 496/640	ETA 10.0m	5.57 games/s
+v4	512/3840	policy 512/640	ETA 10.0m	5.57 games/s
+v4	528/3840	policy 528/640	ETA 9.9m	5.58 games/s
+v4	544/3840	policy 544/640	ETA 9.8m	5.58 games/s
+v4	560/3840	policy 560/640	ETA 9.8m	5.58 games/s
+v4	576/3840	policy 576/640	ETA 9.7m	5.58 games/s
+v4	592/3840	policy 592/640	ETA 9.7m	5.58 games/s
+v4	608/3840	policy 608/640	ETA 9.6m	5.58 games/s
+v4	624/3840	policy 624/640	ETA 9.6m	5.58 games/s
+v4	640/3840	policy 640/640	ETA 9.6m	5.58 games/s
+  graveyard > hog-rider: human=58.7% AI=77.5% Δ=+18.8% OK
+  golem > x-bow: human=68.0% AI=96.2% Δ=+28.2% OK
+  royal-hogs > goblin-barrel: human=59.4% AI=56.2% Δ=-3.2% OK
+  graveyard > goblin-drill: human=65.7% AI=70.0% Δ=+4.3% OK
+  balloon > hog-rider: human=55.1% AI=70.0% Δ=+14.9% OK
+  mortar > sparky: human=64.1% AI=30.0% Δ=-34.1% FLIP
+  mortar > royal-giant: human=65.5% AI=50.0% Δ=-15.5% OK
+  golem > royal-hogs: human=57.7% AI=65.0% Δ=+7.3% OK
+
+== v4.1 (models/policy_bc_v4.1) think=0 on cuda ==
+v4.1	656/3840	policy 16/640	ETA 9.6m	5.54 games/s
+v4.1	672/3840	policy 32/640	ETA 9.5m	5.54 games/s
+v4.1	688/3840	policy 48/640	ETA 9.5m	5.54 games/s
+v4.1	704/3840	policy 64/640	ETA 9.4m	5.54 games/s
+v4.1	720/3840	policy 80/640	ETA 9.4m	5.55 games/s
+v4.1	736/3840	policy 96/640	ETA 9.3m	5.55 games/s
+v4.1	752/3840	policy 112/640	ETA 9.3m	5.55 games/s
+v4.1	768/3840	policy 128/640	ETA 9.2m	5.55 games/s
+v4.1	784/3840	policy 144/640	ETA 9.2m	5.55 games/s
+v4.1	800/3840	policy 160/640	ETA 9.1m	5.55 games/s
+v4.1	816/3840	policy 176/640	ETA 9.1m	5.55 games/s
+v4.1	832/3840	policy 192/640	ETA 9.0m	5.55 games/s
+v4.1	848/3840	policy 208/640	ETA 9.0m	5.55 games/s
+v4.1	864/3840	policy 224/640	ETA 8.9m	5.56 games/s
+v4.1	880/3840	policy 240/640	ETA 8.9m	5.56 games/s
+v4.1	896/3840	policy 256/640	ETA 8.8m	5.56 games/s
+v4.1	912/3840	policy 272/640	ETA 8.8m	5.56 games/s
+v4.1	928/3840	policy 288/640	ETA 8.7m	5.56 games/s
+v4.1	944/3840	policy 304/640	ETA 8.7m	5.56 games/s
+v4.1	960/3840	policy 320/640	ETA 8.6m	5.56 games/s
+v4.1	976/3840	policy 336/640	ETA 8.6m	5.56 games/s
+v4.1	992/3840	policy 352/640	ETA 8.5m	5.56 games/s
+v4.1	1008/3840	policy 368/640	ETA 8.5m	5.56 games/s
+v4.1	1024/3840	policy 384/640	ETA 8.4m	5.56 games/s
+v4.1	1040/3840	policy 400/640	ETA 8.4m	5.56 games/s
+v4.1	1056/3840	policy 416/640	ETA 8.3m	5.56 games/s
+v4.1	1072/3840	policy 432/640	ETA 8.3m	5.57 games/s
+v4.1	1088/3840	policy 448/640	ETA 8.2m	5.57 games/s
+v4.1	1104/3840	policy 464/640	ETA 8.2m	5.57 games/s
+v4.1	1120/3840	policy 480/640	ETA 8.1m	5.57 games/s
+v4.1	1136/3840	policy 496/640	ETA 8.1m	5.57 games/s
+v4.1	1152/3840	policy 512/640	ETA 8.0m	5.57 games/s
+v4.1	1168/3840	policy 528/640	ETA 8.0m	5.57 games/s
+v4.1	1184/3840	policy 544/640	ETA 7.9m	5.57 games/s
+v4.1	1200/3840	policy 560/640	ETA 7.9m	5.57 games/s
+v4.1	1216/3840	policy 576/640	ETA 7.9m	5.57 games/s
+v4.1	1232/3840	policy 592/640	ETA 7.8m	5.57 games/s
+v4.1	1248/3840	policy 608/640	ETA 7.8m	5.57 games/s
+v4.1	1264/3840	policy 624/640	ETA 7.7m	5.57 games/s
+v4.1	1280/3840	policy 640/640	ETA 7.7m	5.57 games/s
+  graveyard > hog-rider: human=58.7% AI=70.0% Δ=+11.3% OK
+  golem > x-bow: human=68.0% AI=96.2% Δ=+28.2% OK
+  royal-hogs > goblin-barrel: human=59.4% AI=62.5% Δ=+3.1% OK
+  graveyard > goblin-drill: human=65.7% AI=71.2% Δ=+5.6% OK
+  balloon > hog-rider: human=55.1% AI=76.2% Δ=+21.2% OK
+  mortar > sparky: human=64.1% AI=21.2% Δ=-42.8% FLIP
+  mortar > royal-giant: human=65.5% AI=55.0% Δ=-10.5% OK
+  golem > royal-hogs: human=57.7% AI=76.2% Δ=+18.5% OK
+
+== v4.2 (models/policy_bc_v4.2_full) think=0 on cuda ==
+v4.2	1296/3840	policy 16/640	ETA 7.6m	5.54 games/s
+v4.2	1312/3840	policy 32/640	ETA 7.6m	5.55 games/s
+v4.2	1328/3840	policy 48/640	ETA 7.5m	5.55 games/s
+v4.2	1344/3840	policy 64/640	ETA 7.5m	5.55 games/s
+v4.2	1360/3840	policy 80/640	ETA 7.5m	5.55 games/s
+v4.2	1376/3840	policy 96/640	ETA 7.4m	5.55 games/s
+v4.2	1392/3840	policy 112/640	ETA 7.4m	5.55 games/s
+v4.2	1408/3840	policy 128/640	ETA 7.3m	5.55 games/s
+v4.2	1424/3840	policy 144/640	ETA 7.3m	5.55 games/s
+v4.2	1440/3840	policy 160/640	ETA 7.2m	5.55 games/s
+v4.2	1456/3840	policy 176/640	ETA 7.2m	5.55 games/s
+v4.2	1472/3840	policy 192/640	ETA 7.1m	5.55 games/s
+v4.2	1488/3840	policy 208/640	ETA 7.1m	5.55 games/s
+v4.2	1504/3840	policy 224/640	ETA 7.0m	5.55 games/s
+v4.2	1520/3840	policy 240/640	ETA 7.0m	5.55 games/s
+v4.2	1536/3840	policy 256/640	ETA 6.9m	5.55 games/s
+v4.2	1552/3840	policy 272/640	ETA 6.9m	5.55 games/s
+v4.2	1568/3840	policy 288/640	ETA 6.8m	5.55 games/s
+v4.2	1584/3840	policy 304/640	ETA 6.8m	5.55 games/s
+v4.2	1600/3840	policy 320/640	ETA 6.7m	5.55 games/s
+v4.2	1616/3840	policy 336/640	ETA 6.7m	5.55 games/s
+v4.2	1632/3840	policy 352/640	ETA 6.6m	5.55 games/s
+v4.2	1648/3840	policy 368/640	ETA 6.6m	5.55 games/s
+v4.2	1664/3840	policy 384/640	ETA 6.5m	5.55 games/s
+v4.2	1680/3840	policy 400/640	ETA 6.5m	5.55 games/s
+v4.2	1696/3840	policy 416/640	ETA 6.4m	5.55 games/s
+v4.2	1712/3840	policy 432/640	ETA 6.4m	5.55 games/s
+v4.2	1728/3840	policy 448/640	ETA 6.3m	5.55 games/s
+v4.2	1744/3840	policy 464/640	ETA 6.3m	5.55 games/s
+v4.2	1760/3840	policy 480/640	ETA 6.2m	5.55 games/s
+v4.2	1776/3840	policy 496/640	ETA 6.2m	5.56 games/s
+v4.2	1792/3840	policy 512/640	ETA 6.1m	5.56 games/s
+v4.2	1808/3840	policy 528/640	ETA 6.1m	5.56 games/s
+v4.2	1824/3840	policy 544/640	ETA 6.0m	5.56 games/s
+v4.2	1840/3840	policy 560/640	ETA 6.0m	5.56 games/s
+v4.2	1856/3840	policy 576/640	ETA 5.9m	5.56 games/s
+v4.2	1872/3840	policy 592/640	ETA 5.9m	5.56 games/s
+v4.2	1888/3840	policy 608/640	ETA 5.9m	5.56 games/s
+v4.2	1904/3840	policy 624/640	ETA 5.8m	5.56 games/s
+v4.2	1920/3840	policy 640/640	ETA 5.8m	5.56 games/s
+  graveyard > hog-rider: human=58.7% AI=65.0% Δ=+6.3% OK
+  golem > x-bow: human=68.0% AI=98.8% Δ=+30.7% OK
+  royal-hogs > goblin-barrel: human=59.4% AI=61.3% Δ=+1.8% OK
+  graveyard > goblin-drill: human=65.7% AI=75.0% Δ=+9.3% OK
+  balloon > hog-rider: human=55.1% AI=70.0% Δ=+14.9% OK
+  mortar > sparky: human=64.1% AI=28.7% Δ=-35.3% FLIP
+  mortar > royal-giant: human=65.5% AI=56.2% Δ=-9.2% OK
+  golem > royal-hogs: human=57.7% AI=68.8% Δ=+11.0% OK
+
+== v4.3 (models/policy_bc_v4.3) think=8 on cuda ==
+v4.3	1936/3840	policy 16/640	ETA 5.7m	5.53 games/s
+v4.3	1952/3840	policy 32/640	ETA 5.7m	5.51 games/s
+v4.3	1968/3840	policy 48/640	ETA 5.7m	5.49 games/s
+v4.3	1984/3840	policy 64/640	ETA 5.6m	5.48 games/s
+v4.3	2000/3840	policy 80/640	ETA 5.6m	5.46 games/s
+v4.3	2016/3840	policy 96/640	ETA 5.6m	5.44 games/s
+v4.3	2032/3840	policy 112/640	ETA 5.6m	5.43 games/s
+v4.3	2048/3840	policy 128/640	ETA 5.5m	5.41 games/s
+v4.3	2064/3840	policy 144/640	ETA 5.5m	5.40 games/s
+v4.3	2080/3840	policy 160/640	ETA 5.4m	5.38 games/s
+v4.3	2096/3840	policy 176/640	ETA 5.4m	5.37 games/s
+v4.3	2112/3840	policy 192/640	ETA 5.4m	5.36 games/s
+v4.3	2128/3840	policy 208/640	ETA 5.3m	5.34 games/s
+v4.3	2144/3840	policy 224/640	ETA 5.3m	5.33 games/s
+v4.3	2160/3840	policy 240/640	ETA 5.3m	5.32 games/s
+v4.3	2176/3840	policy 256/640	ETA 5.2m	5.30 games/s
+v4.3	2192/3840	policy 272/640	ETA 5.2m	5.29 games/s
+v4.3	2208/3840	policy 288/640	ETA 5.2m	5.28 games/s
+v4.3	2224/3840	policy 304/640	ETA 5.1m	5.27 games/s
+v4.3	2240/3840	policy 320/640	ETA 5.1m	5.26 games/s
+v4.3	2256/3840	policy 336/640	ETA 5.0m	5.24 games/s
+v4.3	2272/3840	policy 352/640	ETA 5.0m	5.23 games/s
+v4.3	2288/3840	policy 368/640	ETA 5.0m	5.22 games/s
+v4.3	2304/3840	policy 384/640	ETA 4.9m	5.21 games/s
+v4.3	2320/3840	policy 400/640	ETA 4.9m	5.20 games/s
+v4.3	2336/3840	policy 416/640	ETA 4.8m	5.19 games/s
+v4.3	2352/3840	policy 432/640	ETA 4.8m	5.18 games/s
+v4.3	2368/3840	policy 448/640	ETA 4.7m	5.17 games/s
+v4.3	2384/3840	policy 464/640	ETA 4.7m	5.16 games/s
+v4.3	2400/3840	policy 480/640	ETA 4.7m	5.15 games/s
+v4.3	2416/3840	policy 496/640	ETA 4.6m	5.14 games/s
+v4.3	2432/3840	policy 512/640	ETA 4.6m	5.13 games/s
+v4.3	2448/3840	policy 528/640	ETA 4.5m	5.12 games/s
+v4.3	2464/3840	policy 544/640	ETA 4.5m	5.11 games/s
+v4.3	2480/3840	policy 560/640	ETA 4.4m	5.10 games/s
+v4.3	2496/3840	policy 576/640	ETA 4.4m	5.09 games/s
+v4.3	2512/3840	policy 592/640	ETA 4.4m	5.08 games/s
+v4.3	2528/3840	policy 608/640	ETA 4.3m	5.08 games/s
+v4.3	2544/3840	policy 624/640	ETA 4.3m	5.07 games/s
+v4.3	2560/3840	policy 640/640	ETA 4.2m	5.06 games/s
+  graveyard > hog-rider: human=58.7% AI=66.2% Δ=+7.5% OK
+  golem > x-bow: human=68.0% AI=100.0% Δ=+32.0% OK
+  royal-hogs > goblin-barrel: human=59.4% AI=61.3% Δ=+1.8% OK
+  graveyard > goblin-drill: human=65.7% AI=57.5% Δ=-8.2% OK
+  balloon > hog-rider: human=55.1% AI=70.0% Δ=+14.9% OK
+  mortar > sparky: human=64.1% AI=23.8% Δ=-40.3% FLIP
+  mortar > royal-giant: human=65.5% AI=58.8% Δ=-6.7% OK
+  golem > royal-hogs: human=57.7% AI=86.2% Δ=+28.5% OK
+
+== v4.4 (models/policy_bc_v4.4) think=3 on cuda ==
+v4.4	2576/3840	policy 16/640	ETA 4.2m	5.05 games/s
+v4.4	2592/3840	policy 32/640	ETA 4.1m	5.05 games/s
+v4.4	2608/3840	policy 48/640	ETA 4.1m	5.05 games/s
+v4.4	2624/3840	policy 64/640	ETA 4.0m	5.05 games/s
+v4.4	2640/3840	policy 80/640	ETA 4.0m	5.05 games/s
+v4.4	2656/3840	policy 96/640	ETA 3.9m	5.05 games/s
+v4.4	2672/3840	policy 112/640	ETA 3.9m	5.05 games/s
+v4.4	2688/3840	policy 128/640	ETA 3.8m	5.05 games/s
+v4.4	2704/3840	policy 144/640	ETA 3.7m	5.05 games/s
+v4.4	2720/3840	policy 160/640	ETA 3.7m	5.05 games/s
+v4.4	2736/3840	policy 176/640	ETA 3.6m	5.05 games/s
+v4.4	2752/3840	policy 192/640	ETA 3.6m	5.05 games/s
+v4.4	2768/3840	policy 208/640	ETA 3.5m	5.05 games/s
+v4.4	2784/3840	policy 224/640	ETA 3.5m	5.05 games/s
+v4.4	2800/3840	policy 240/640	ETA 3.4m	5.06 games/s
+v4.4	2816/3840	policy 256/640	ETA 3.4m	5.06 games/s
+v4.4	2832/3840	policy 272/640	ETA 3.3m	5.06 games/s
+v4.4	2848/3840	policy 288/640	ETA 3.3m	5.06 games/s
+v4.4	2864/3840	policy 304/640	ETA 3.2m	5.06 games/s
+v4.4	2880/3840	policy 320/640	ETA 3.2m	5.06 games/s
+v4.4	2896/3840	policy 336/640	ETA 3.1m	5.06 games/s
+v4.4	2912/3840	policy 352/640	ETA 3.1m	5.06 games/s
+v4.4	2928/3840	policy 368/640	ETA 3.0m	5.06 games/s
+v4.4	2944/3840	policy 384/640	ETA 3.0m	5.06 games/s
+v4.4	2960/3840	policy 400/640	ETA 2.9m	5.06 games/s
+v4.4	2976/3840	policy 416/640	ETA 2.8m	5.06 games/s
+v4.4	2992/3840	policy 432/640	ETA 2.8m	5.06 games/s
+v4.4	3008/3840	policy 448/640	ETA 2.7m	5.06 games/s
+v4.4	3024/3840	policy 464/640	ETA 2.7m	5.06 games/s
+v4.4	3040/3840	policy 480/640	ETA 2.6m	5.06 games/s
+v4.4	3056/3840	policy 496/640	ETA 2.6m	5.06 games/s
+v4.4	3072/3840	policy 512/640	ETA 2.5m	5.06 games/s
+v4.4	3088/3840	policy 528/640	ETA 2.5m	5.06 games/s
+v4.4	3104/3840	policy 544/640	ETA 2.4m	5.06 games/s
+v4.4	3120/3840	policy 560/640	ETA 2.4m	5.06 games/s
+v4.4	3136/3840	policy 576/640	ETA 2.3m	5.06 games/s
+v4.4	3152/3840	policy 592/640	ETA 2.3m	5.07 games/s
+v4.4	3168/3840	policy 608/640	ETA 2.2m	5.07 games/s
+v4.4	3184/3840	policy 624/640	ETA 2.2m	5.07 games/s
+v4.4	3200/3840	policy 640/640	ETA 2.1m	5.07 games/s
+  graveyard > hog-rider: human=58.7% AI=71.2% Δ=+12.5% OK
+  golem > x-bow: human=68.0% AI=100.0% Δ=+32.0% OK
+  royal-hogs > goblin-barrel: human=59.4% AI=60.0% Δ=+0.6% OK
+  graveyard > goblin-drill: human=65.7% AI=73.8% Δ=+8.1% OK
+  balloon > hog-rider: human=55.1% AI=68.8% Δ=+13.7% OK
+  mortar > sparky: human=64.1% AI=23.8% Δ=-40.3% FLIP
+  mortar > royal-giant: human=65.5% AI=58.8% Δ=-6.7% OK
+  golem > royal-hogs: human=57.7% AI=75.0% Δ=+17.3% OK
+
+== v5 (models/policy_bc_v5) think=0 on cuda ==
+v5	3216/3840	policy 16/640	ETA 2.1m	5.06 games/s
+v5	3232/3840	policy 32/640	ETA 2.0m	5.06 games/s
+v5	3248/3840	policy 48/640	ETA 1.9m	5.06 games/s
+v5	3264/3840	policy 64/640	ETA 1.9m	5.07 games/s
+v5	3280/3840	policy 80/640	ETA 1.8m	5.07 games/s
+v5	3296/3840	policy 96/640	ETA 1.8m	5.07 games/s
+v5	3312/3840	policy 112/640	ETA 1.7m	5.07 games/s
+v5	3328/3840	policy 128/640	ETA 1.7m	5.08 games/s
+v5	3344/3840	policy 144/640	ETA 1.6m	5.08 games/s
+v5	3360/3840	policy 160/640	ETA 1.6m	5.08 games/s
+v5	3376/3840	policy 176/640	ETA 1.5m	5.08 games/s
+v5	3392/3840	policy 192/640	ETA 1.5m	5.08 games/s
+v5	3408/3840	policy 208/640	ETA 1.4m	5.09 games/s
+v5	3424/3840	policy 224/640	ETA 1.4m	5.09 games/s
+v5	3440/3840	policy 240/640	ETA 1.3m	5.09 games/s
+v5	3456/3840	policy 256/640	ETA 1.3m	5.09 games/s
+v5	3472/3840	policy 272/640	ETA 1.2m	5.10 games/s
+v5	3488/3840	policy 288/640	ETA 1.2m	5.10 games/s
+v5	3504/3840	policy 304/640	ETA 1.1m	5.10 games/s
+v5	3520/3840	policy 320/640	ETA 1.0m	5.10 games/s
+v5	3536/3840	policy 336/640	ETA 60s	5.10 games/s
+v5	3552/3840	policy 352/640	ETA 56s	5.11 games/s
+v5	3568/3840	policy 368/640	ETA 53s	5.11 games/s
+v5	3584/3840	policy 384/640	ETA 50s	5.11 games/s
+v5	3600/3840	policy 400/640	ETA 47s	5.11 games/s
+v5	3616/3840	policy 416/640	ETA 44s	5.11 games/s
+v5	3632/3840	policy 432/640	ETA 41s	5.12 games/s
+v5	3648/3840	policy 448/640	ETA 38s	5.12 games/s
+v5	3664/3840	policy 464/640	ETA 34s	5.12 games/s
+v5	3680/3840	policy 480/640	ETA 31s	5.12 games/s
+v5	3696/3840	policy 496/640	ETA 28s	5.12 games/s
+v5	3712/3840	policy 512/640	ETA 25s	5.13 games/s
+v5	3728/3840	policy 528/640	ETA 22s	5.13 games/s
+v5	3744/3840	policy 544/640	ETA 19s	5.13 games/s
+v5	3760/3840	policy 560/640	ETA 16s	5.13 games/s
+v5	3776/3840	policy 576/640	ETA 12s	5.13 games/s
+v5	3792/3840	policy 592/640	ETA 9s	5.14 games/s
+v5	3808/3840	policy 608/640	ETA 6s	5.14 games/s
+v5	3824/3840	policy 624/640	ETA 3s	5.14 games/s
+v5	3840/3840	policy 640/640	ETA 0s	5.14 games/s
+  graveyard > hog-rider: human=58.7% AI=72.5% Δ=+13.8% OK
+  golem > x-bow: human=68.0% AI=95.0% Δ=+27.0% OK
+  royal-hogs > goblin-barrel: human=59.4% AI=62.5% Δ=+3.1% OK
+  graveyard > goblin-drill: human=65.7% AI=65.0% Δ=-0.7% OK
+  balloon > hog-rider: human=55.1% AI=68.8% Δ=+13.7% OK
+  mortar > sparky: human=64.1% AI=41.2% Δ=-22.8% FLIP
+  mortar > royal-giant: human=65.5% AI=65.0% Δ=-0.5% OK
+  golem > royal-hogs: human=57.7% AI=77.5% Δ=+19.8% OK
+{
+  "matchups": 8,
+  "policies": 6,
+  "games_per_policy": 640,
+  "best_mean_abs_delta": "v5",
+  "best_mean_abs_delta_wr": 0.12654524506488074
+}
+v5 is closest to human matchup edges (mean |Δ| = 12.7 pp) under shared-schedule self-play judged by the winner model.
+Wrote reports/matchup_lineage.json
+Wrote reports/matchup_lineage.html
+{
+  "created_at": "2026-08-10T19:18:34Z",
+  "model_name": "matchup-lineage",
+  "judge": "winner-predictor-hgb-symmetric",
+  "seconds": 747.7845010757446,
+  "setup": {
+    "games_per_matchup": 80,
+    "top_k": 8,
+    "min_empirical_n": 80,
+    "warmup_events": 10,
+    "policy_events": 50,
+    "temperature": 0.85,
+    "archetype": "primary win-condition by corpus frequency",
+    "seat_balanced": true,
+    "shared_schedule": true,
+    "policies": [
+      {
+        "id": "v4",
+        "path": "models/policy_bc_v4",
+        "color": "#70a1ff"
+      },
+      {
+        "id": "v4.1",
+        "path": "models/policy_bc_v4.1",
+        "color": "#ffca63"
+      },
+      {
+        "id": "v4.2",
+        "path": "models/policy_bc_v4.2_full",
+        "color": "#70e1b1"
+      },
+      {
+        "id": "v4.3",
+        "path": "models/policy_bc_v4.3",
+        "color": "#e8f58b"
+      },
+      {
+        "id": "v4.4",
+        "path": "models/policy_bc_v4.4",
+        "color": "#38bdf8"
+      },
+      {
+        "id": "v5",
+        "path": "models/policy_bc_v5",
+        "color": "#f472b6"
+      }
+    ],
+    "note": "Same wincon matchups and identical deck/seed/seat schedule for every policy. Each seat uses that policy's weights (self-play). Winners are judged by the offline winner model — no live Clash Royale."
+  },
+  "matchups": [
+    {
+      "id": "graveyard>hog-rider",
+      "favorite": "graveyard",
+      "underdog": "hog-rider",
+      "label": "graveyard > hog-rider",
+      "empirical_n": 504,
+      "empirical_fav_wr": 0.5873015873015873
+    },
+    {
+      "id": "golem>x-bow",
+      "favorite": "golem",
+      "underdog": "x-bow",
+      "label": "golem > x-bow",
+      "empirical_n": 97,
+      "empirical_fav_wr": 0.6804123711340206
+    },
+    {
+      "id": "royal-hogs>goblin-barrel",
+      "favorite": "royal-hogs",
+      "underdog": "goblin-barrel",
+      "label": "royal-hogs > goblin-barrel",
+      "empirical_n": 281,
+      "empirical_fav_wr": 0.594306049822064
+    },
+    {
+      "id": "graveyard>goblin-drill",
+      "favorite": "graveyard",
+      "underdog": "goblin-drill",
+      "label": "graveyard > goblin-drill",
+      "empirical_n": 99,
+      "empirical_fav_wr": 0.6565656565656566
+    },
+    {
+      "id": "balloon>hog-rider",
+      "favorite": "balloon",
+      "underdog": "hog-rider",
+      "label": "balloon > hog-rider",
+      "empirical_n": 801,
+      "empirical_fav_wr": 0.550561797752809
+    },
+    {
+      "id": "mortar>sparky",
+      "favorite": "mortar",
+      "underdog": "sparky",
+      "label": "mortar > sparky",
+      "empirical_n": 103,
+      "empirical_fav_wr": 0.6407766990291263
+    },
+    {
+      "id": "mortar>royal-giant",
+      "favorite": "mortar",
+      "underdog": "royal-giant",
+      "label": "mortar > royal-giant",
+      "empirical_n": 84,
+      "empirical_fav_wr": 0.6547619047619048
+    },
+    {
+      "id": "golem>royal-hogs",
+      "favorite": "golem",
+      "underdog": "royal-hogs",
+      "label": "golem > royal-hogs",
+      "empirical_n": 324,
+      "empirical_fav_wr": 0.5771604938271605
+    }
+  ],
+  "models": [
+    {
+      "id": "v4",
+      "policyId": "policy-bc-v4",
+      "modelDir": "models/policy_bc_v4",
+      "color": "#70a1ff",
+      "thinkSteps": 0,
+      "seconds": 115.3315122127533,
+      "matchups": [
+        {
+          "id": "graveyard>hog-rider",
+          "favorite": "graveyard",
+          "underdog": "hog-rider",
+          "label": "graveyard > hog-rider",
+          "empirical_n": 504,
+          "empirical_fav_wr": 0.5873015873015873,
+          "games": 80,
+          "policy_fav_wr": 0.775,
+          "policy_mean_P_fav": 0.6492505597131436,
+          "policy_fav_wr_ci95": 0.09150676204521718,
+          "delta_wr": 0.1876984126984127,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>x-bow",
+          "favorite": "golem",
+          "underdog": "x-bow",
+          "label": "golem > x-bow",
+          "empirical_n": 97,
+          "empirical_fav_wr": 0.6804123711340206,
+          "games": 80,
+          "policy_fav_wr": 0.9625,
+          "policy_mean_P_fav": 0.7428447419069523,
+          "policy_fav_wr_ci95": 0.04163198139651774,
+          "delta_wr": 0.2820876288659794,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "royal-hogs>goblin-barrel",
+          "favorite": "royal-hogs",
+          "underdog": "goblin-barrel",
+          "label": "royal-hogs > goblin-barrel",
+          "empirical_n": 281,
+          "empirical_fav_wr": 0.594306049822064,
+          "games": 80,
+          "policy_fav_wr": 0.5625,
+          "policy_mean_P_fav": 0.5244262957567086,
+          "policy_fav_wr_ci95": 0.10870796601445545,
+          "delta_wr": -0.03180604982206403,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "graveyard>goblin-drill",
+          "favorite": "graveyard",
+          "underdog": "goblin-drill",
+          "label": "graveyard > goblin-drill",
+          "empirical_n": 99,
+          "empirical_fav_wr": 0.6565656565656566,
+          "games": 80,
+          "policy_fav_wr": 0.7,
+          "policy_mean_P_fav": 0.5943716853215015,
+          "policy_fav_wr_ci95": 0.10042011750640407,
+          "delta_wr": 0.04343434343434338,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "balloon>hog-rider",
+          "favorite": "balloon",
+          "underdog": "hog-rider",
+          "label": "balloon > hog-rider",
+          "empirical_n": 801,
+          "empirical_fav_wr": 0.550561797752809,
+          "games": 80,
+          "policy_fav_wr": 0.7,
+          "policy_mean_P_fav": 0.6265923670063661,
+          "policy_fav_wr_ci95": 0.10042011750640407,
+          "delta_wr": 0.14943820224719095,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>sparky",
+          "favorite": "mortar",
+          "underdog": "sparky",
+          "label": "mortar > sparky",
+          "empirical_n": 103,
+          "empirical_fav_wr": 0.6407766990291263,
+          "games": 80,
+          "policy_fav_wr": 0.3,
+          "policy_mean_P_fav": 0.36534674150882296,
+          "policy_fav_wr_ci95": 0.10042011750640406,
+          "delta_wr": -0.3407766990291263,
+          "preserves_favorite": false,
+          "agrees_strongly": false,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>royal-giant",
+          "favorite": "mortar",
+          "underdog": "royal-giant",
+          "label": "mortar > royal-giant",
+          "empirical_n": 84,
+          "empirical_fav_wr": 0.6547619047619048,
+          "games": 80,
+          "policy_fav_wr": 0.5,
+          "policy_mean_P_fav": 0.48994721849498707,
+          "policy_fav_wr_ci95": 0.10956733089748968,
+          "delta_wr": -0.15476190476190477,
+          "preserves_favorite": true,
+          "agrees_strongly": false,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>royal-hogs",
+          "favorite": "golem",
+          "underdog": "royal-hogs",
+          "label": "golem > royal-hogs",
+          "empirical_n": 324,
+          "empirical_fav_wr": 0.5771604938271605,
+          "games": 80,
+          "policy_fav_wr": 0.65,
+          "policy_mean_P_fav": 0.5789975086576427,
+          "policy_fav_wr_ci95": 0.10452057213773755,
+          "delta_wr": 0.07283950617283952,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        }
+      ],
+      "meanAbsDelta": 0.1578553433789826,
+      "meanAbsDeltaCI": [
+        0.0865827379223558,
+        0.23330647963520515
+      ],
+      "preserveFavoriteRate": 0.875,
+      "strongAgreementRate": 0.75,
+      "meanPolicyFavWr": 0.64375
+    },
+    {
+      "id": "v4.1",
+      "policyId": "policy-bc-v4.1",
+      "modelDir": "models/policy_bc_v4.1",
+      "color": "#ffca63",
+      "thinkSteps": 0,
+      "seconds": 115.26159930229187,
+      "matchups": [
+        {
+          "id": "graveyard>hog-rider",
+          "favorite": "graveyard",
+          "underdog": "hog-rider",
+          "label": "graveyard > hog-rider",
+          "empirical_n": 504,
+          "empirical_fav_wr": 0.5873015873015873,
+          "games": 80,
+          "policy_fav_wr": 0.7,
+          "policy_mean_P_fav": 0.6186032307471517,
+          "policy_fav_wr_ci95": 0.10042011750640407,
+          "delta_wr": 0.11269841269841263,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>x-bow",
+          "favorite": "golem",
+          "underdog": "x-bow",
+          "label": "golem > x-bow",
+          "empirical_n": 97,
+          "empirical_fav_wr": 0.6804123711340206,
+          "games": 80,
+          "policy_fav_wr": 0.9625,
+          "policy_mean_P_fav": 0.7376691397505308,
+          "policy_fav_wr_ci95": 0.04163198139651774,
+          "delta_wr": 0.2820876288659794,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "royal-hogs>goblin-barrel",
+          "favorite": "royal-hogs",
+          "underdog": "goblin-barrel",
+          "label": "royal-hogs > goblin-barrel",
+          "empirical_n": 281,
+          "empirical_fav_wr": 0.594306049822064,
+          "games": 80,
+          "policy_fav_wr": 0.625,
+          "policy_mean_P_fav": 0.5680104983978236,
+          "policy_fav_wr_ci95": 0.10608811196359373,
+          "delta_wr": 0.03069395017793597,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "graveyard>goblin-drill",
+          "favorite": "graveyard",
+          "underdog": "goblin-drill",
+          "label": "graveyard > goblin-drill",
+          "empirical_n": 99,
+          "empirical_fav_wr": 0.6565656565656566,
+          "games": 80,
+          "policy_fav_wr": 0.7125,
+          "policy_mean_P_fav": 0.5959017352339846,
+          "policy_fav_wr_ci95": 0.09917961925214272,
+          "delta_wr": 0.05593434343434345,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "balloon>hog-rider",
+          "favorite": "balloon",
+          "underdog": "hog-rider",
+          "label": "balloon > hog-rider",
+          "empirical_n": 801,
+          "empirical_fav_wr": 0.550561797752809,
+          "games": 80,
+          "policy_fav_wr": 0.7625,
+          "policy_mean_P_fav": 0.643745965814403,
+          "policy_fav_wr_ci95": 0.09325299928152446,
+          "delta_wr": 0.21193820224719095,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>sparky",
+          "favorite": "mortar",
+          "underdog": "sparky",
+          "label": "mortar > sparky",
+          "empirical_n": 103,
+          "empirical_fav_wr": 0.6407766990291263,
+          "games": 80,
+          "policy_fav_wr": 0.2125,
+          "policy_mean_P_fav": 0.3294033280529536,
+          "policy_fav_wr_ci95": 0.08964288524473094,
+          "delta_wr": -0.42827669902912624,
+          "preserves_favorite": false,
+          "agrees_strongly": false,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>royal-giant",
+          "favorite": "mortar",
+          "underdog": "royal-giant",
+          "label": "mortar > royal-giant",
+          "empirical_n": 84,
+          "empirical_fav_wr": 0.6547619047619048,
+          "games": 80,
+          "policy_fav_wr": 0.55,
+          "policy_mean_P_fav": 0.5050417081329235,
+          "policy_fav_wr_ci95": 0.10901811776030625,
+          "delta_wr": -0.10476190476190472,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>royal-hogs",
+          "favorite": "golem",
+          "underdog": "royal-hogs",
+          "label": "golem > royal-hogs",
+          "empirical_n": 324,
+          "empirical_fav_wr": 0.5771604938271605,
+          "games": 80,
+          "policy_fav_wr": 0.7625,
+          "policy_mean_P_fav": 0.6443389856671355,
+          "policy_fav_wr_ci95": 0.09325299928152446,
+          "delta_wr": 0.18533950617283945,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        }
+      ],
+      "meanAbsDelta": 0.17646633092346659,
+      "meanAbsDeltaCI": [
+        0.09451797138959707,
+        0.26738654810134893
+      ],
+      "preserveFavoriteRate": 0.875,
+      "strongAgreementRate": 0.875,
+      "meanPolicyFavWr": 0.6609375
+    },
+    {
+      "id": "v4.2",
+      "policyId": "policy-bc-v4.2",
+      "modelDir": "models/policy_bc_v4.2_full",
+      "color": "#70e1b1",
+      "thinkSteps": 0,
+      "seconds": 115.34818577766418,
+      "matchups": [
+        {
+          "id": "graveyard>hog-rider",
+          "favorite": "graveyard",
+          "underdog": "hog-rider",
+          "label": "graveyard > hog-rider",
+          "empirical_n": 504,
+          "empirical_fav_wr": 0.5873015873015873,
+          "games": 80,
+          "policy_fav_wr": 0.65,
+          "policy_mean_P_fav": 0.5976772504855095,
+          "policy_fav_wr_ci95": 0.10452057213773755,
+          "delta_wr": 0.0626984126984127,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>x-bow",
+          "favorite": "golem",
+          "underdog": "x-bow",
+          "label": "golem > x-bow",
+          "empirical_n": 97,
+          "empirical_fav_wr": 0.6804123711340206,
+          "games": 80,
+          "policy_fav_wr": 0.9875,
+          "policy_mean_P_fav": 0.76208637791341,
+          "policy_fav_wr_ci95": 0.0243463934700809,
+          "delta_wr": 0.3070876288659794,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "royal-hogs>goblin-barrel",
+          "favorite": "royal-hogs",
+          "underdog": "goblin-barrel",
+          "label": "royal-hogs > goblin-barrel",
+          "empirical_n": 281,
+          "empirical_fav_wr": 0.594306049822064,
+          "games": 80,
+          "policy_fav_wr": 0.6125,
+          "policy_mean_P_fav": 0.5516513429942824,
+          "policy_fav_wr_ci95": 0.10675788905275338,
+          "delta_wr": 0.018193950177936014,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "graveyard>goblin-drill",
+          "favorite": "graveyard",
+          "underdog": "goblin-drill",
+          "label": "graveyard > goblin-drill",
+          "empirical_n": 99,
+          "empirical_fav_wr": 0.6565656565656566,
+          "games": 80,
+          "policy_fav_wr": 0.75,
+          "policy_mean_P_fav": 0.6190355147636862,
+          "policy_fav_wr_ci95": 0.09488809198208172,
+          "delta_wr": 0.09343434343434343,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "balloon>hog-rider",
+          "favorite": "balloon",
+          "underdog": "hog-rider",
+          "label": "balloon > hog-rider",
+          "empirical_n": 801,
+          "empirical_fav_wr": 0.550561797752809,
+          "games": 80,
+          "policy_fav_wr": 0.7,
+          "policy_mean_P_fav": 0.6240566781631547,
+          "policy_fav_wr_ci95": 0.10042011750640407,
+          "delta_wr": 0.14943820224719095,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>sparky",
+          "favorite": "mortar",
+          "underdog": "sparky",
+          "label": "mortar > sparky",
+          "empirical_n": 103,
+          "empirical_fav_wr": 0.6407766990291263,
+          "games": 80,
+          "policy_fav_wr": 0.2875,
+          "policy_mean_P_fav": 0.3633531477116915,
+          "policy_fav_wr_ci95": 0.09917961925214272,
+          "delta_wr": -0.3532766990291263,
+          "preserves_favorite": false,
+          "agrees_strongly": false,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>royal-giant",
+          "favorite": "mortar",
+          "underdog": "royal-giant",
+          "label": "mortar > royal-giant",
+          "empirical_n": 84,
+          "empirical_fav_wr": 0.6547619047619048,
+          "games": 80,
+          "policy_fav_wr": 0.5625,
+          "policy_mean_P_fav": 0.5064776246616975,
+          "policy_fav_wr_ci95": 0.10870796601445545,
+          "delta_wr": -0.09226190476190477,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>royal-hogs",
+          "favorite": "golem",
+          "underdog": "royal-hogs",
+          "label": "golem > royal-hogs",
+          "empirical_n": 324,
+          "empirical_fav_wr": 0.5771604938271605,
+          "games": 80,
+          "policy_fav_wr": 0.6875,
+          "policy_mean_P_fav": 0.6211406236126201,
+          "policy_fav_wr_ci95": 0.10157163420463412,
+          "delta_wr": 0.1103395061728395,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        }
+      ],
+      "meanAbsDelta": 0.14834133092346663,
+      "meanAbsDeltaCI": [
+        0.0760465623884741,
+        0.232487880391289
+      ],
+      "preserveFavoriteRate": 0.875,
+      "strongAgreementRate": 0.875,
+      "meanPolicyFavWr": 0.6546875
+    },
+    {
+      "id": "v4.3",
+      "policyId": "policy-bc-v4.3",
+      "modelDir": "models/policy_bc_v4.3",
+      "color": "#e8f58b",
+      "thinkSteps": 8,
+      "seconds": 160.854065656662,
+      "matchups": [
+        {
+          "id": "graveyard>hog-rider",
+          "favorite": "graveyard",
+          "underdog": "hog-rider",
+          "label": "graveyard > hog-rider",
+          "empirical_n": 504,
+          "empirical_fav_wr": 0.5873015873015873,
+          "games": 80,
+          "policy_fav_wr": 0.6625,
+          "policy_mean_P_fav": 0.5980828377549277,
+          "policy_fav_wr_ci95": 0.10361936052205688,
+          "delta_wr": 0.07519841269841265,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>x-bow",
+          "favorite": "golem",
+          "underdog": "x-bow",
+          "label": "golem > x-bow",
+          "empirical_n": 97,
+          "empirical_fav_wr": 0.6804123711340206,
+          "games": 80,
+          "policy_fav_wr": 1.0,
+          "policy_mean_P_fav": 0.7656633681418767,
+          "policy_fav_wr_ci95": 6.929646455628166e-06,
+          "delta_wr": 0.31958762886597936,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "royal-hogs>goblin-barrel",
+          "favorite": "royal-hogs",
+          "underdog": "goblin-barrel",
+          "label": "royal-hogs > goblin-barrel",
+          "empirical_n": 281,
+          "empirical_fav_wr": 0.594306049822064,
+          "games": 80,
+          "policy_fav_wr": 0.6125,
+          "policy_mean_P_fav": 0.5662166662708593,
+          "policy_fav_wr_ci95": 0.10675788905275338,
+          "delta_wr": 0.018193950177936014,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "graveyard>goblin-drill",
+          "favorite": "graveyard",
+          "underdog": "goblin-drill",
+          "label": "graveyard > goblin-drill",
+          "empirical_n": 99,
+          "empirical_fav_wr": 0.6565656565656566,
+          "games": 80,
+          "policy_fav_wr": 0.575,
+          "policy_mean_P_fav": 0.5496668879494626,
+          "policy_fav_wr_ci95": 0.1083276857502273,
+          "delta_wr": -0.08156565656565662,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "balloon>hog-rider",
+          "favorite": "balloon",
+          "underdog": "hog-rider",
+          "label": "balloon > hog-rider",
+          "empirical_n": 801,
+          "empirical_fav_wr": 0.550561797752809,
+          "games": 80,
+          "policy_fav_wr": 0.7,
+          "policy_mean_P_fav": 0.6234423206211411,
+          "policy_fav_wr_ci95": 0.10042011750640407,
+          "delta_wr": 0.14943820224719095,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>sparky",
+          "favorite": "mortar",
+          "underdog": "sparky",
+          "label": "mortar > sparky",
+          "empirical_n": 103,
+          "empirical_fav_wr": 0.6407766990291263,
+          "games": 80,
+          "policy_fav_wr": 0.2375,
+          "policy_mean_P_fav": 0.3388081633419887,
+          "policy_fav_wr_ci95": 0.09325299928152445,
+          "delta_wr": -0.4032766990291263,
+          "preserves_favorite": false,
+          "agrees_strongly": false,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>royal-giant",
+          "favorite": "mortar",
+          "underdog": "royal-giant",
+          "label": "mortar > royal-giant",
+          "empirical_n": 84,
+          "empirical_fav_wr": 0.6547619047619048,
+          "games": 80,
+          "policy_fav_wr": 0.5875,
+          "policy_mean_P_fav": 0.535799346464033,
+          "policy_fav_wr_ci95": 0.10787653533090502,
+          "delta_wr": -0.06726190476190474,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>royal-hogs",
+          "favorite": "golem",
+          "underdog": "royal-hogs",
+          "label": "golem > royal-hogs",
+          "empirical_n": 324,
+          "empirical_fav_wr": 0.5771604938271605,
+          "games": 80,
+          "policy_fav_wr": 0.8625,
+          "policy_mean_P_fav": 0.7249748225971396,
+          "policy_fav_wr_ci95": 0.07546437487318104,
+          "delta_wr": 0.28533950617283954,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        }
+      ],
+      "meanAbsDelta": 0.17498274506488076,
+      "meanAbsDeltaCI": [
+        0.08500372910485268,
+        0.2730085393819766
+      ],
+      "preserveFavoriteRate": 0.875,
+      "strongAgreementRate": 0.875,
+      "meanPolicyFavWr": 0.6546875000000001
+    },
+    {
+      "id": "v4.4",
+      "policyId": "policy-bc-v4.4",
+      "modelDir": "models/policy_bc_v4.4",
+      "color": "#38bdf8",
+      "thinkSteps": 3,
+      "seconds": 125.58847284317017,
+      "matchups": [
+        {
+          "id": "graveyard>hog-rider",
+          "favorite": "graveyard",
+          "underdog": "hog-rider",
+          "label": "graveyard > hog-rider",
+          "empirical_n": 504,
+          "empirical_fav_wr": 0.5873015873015873,
+          "games": 80,
+          "policy_fav_wr": 0.7125,
+          "policy_mean_P_fav": 0.6000664761111829,
+          "policy_fav_wr_ci95": 0.09917961925214272,
+          "delta_wr": 0.1251984126984127,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>x-bow",
+          "favorite": "golem",
+          "underdog": "x-bow",
+          "label": "golem > x-bow",
+          "empirical_n": 97,
+          "empirical_fav_wr": 0.6804123711340206,
+          "games": 80,
+          "policy_fav_wr": 1.0,
+          "policy_mean_P_fav": 0.7550046171642627,
+          "policy_fav_wr_ci95": 6.929646455628166e-06,
+          "delta_wr": 0.31958762886597936,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "royal-hogs>goblin-barrel",
+          "favorite": "royal-hogs",
+          "underdog": "goblin-barrel",
+          "label": "royal-hogs > goblin-barrel",
+          "empirical_n": 281,
+          "empirical_fav_wr": 0.594306049822064,
+          "games": 80,
+          "policy_fav_wr": 0.6,
+          "policy_mean_P_fav": 0.5572174772484948,
+          "policy_fav_wr_ci95": 0.10735362127101256,
+          "delta_wr": 0.005693950177935947,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "graveyard>goblin-drill",
+          "favorite": "graveyard",
+          "underdog": "goblin-drill",
+          "label": "graveyard > goblin-drill",
+          "empirical_n": 99,
+          "empirical_fav_wr": 0.6565656565656566,
+          "games": 80,
+          "policy_fav_wr": 0.7375,
+          "policy_mean_P_fav": 0.6378968632195132,
+          "policy_fav_wr_ci95": 0.09641769482309769,
+          "delta_wr": 0.08093434343434347,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "balloon>hog-rider",
+          "favorite": "balloon",
+          "underdog": "hog-rider",
+          "label": "balloon > hog-rider",
+          "empirical_n": 801,
+          "empirical_fav_wr": 0.550561797752809,
+          "games": 80,
+          "policy_fav_wr": 0.6875,
+          "policy_mean_P_fav": 0.6355212193273664,
+          "policy_fav_wr_ci95": 0.10157163420463412,
+          "delta_wr": 0.136938202247191,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>sparky",
+          "favorite": "mortar",
+          "underdog": "sparky",
+          "label": "mortar > sparky",
+          "empirical_n": 103,
+          "empirical_fav_wr": 0.6407766990291263,
+          "games": 80,
+          "policy_fav_wr": 0.2375,
+          "policy_mean_P_fav": 0.3590969676230132,
+          "policy_fav_wr_ci95": 0.09325299928152445,
+          "delta_wr": -0.4032766990291263,
+          "preserves_favorite": false,
+          "agrees_strongly": false,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>royal-giant",
+          "favorite": "mortar",
+          "underdog": "royal-giant",
+          "label": "mortar > royal-giant",
+          "empirical_n": 84,
+          "empirical_fav_wr": 0.6547619047619048,
+          "games": 80,
+          "policy_fav_wr": 0.5875,
+          "policy_mean_P_fav": 0.5270206451824897,
+          "policy_fav_wr_ci95": 0.10787653533090502,
+          "delta_wr": -0.06726190476190474,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>royal-hogs",
+          "favorite": "golem",
+          "underdog": "royal-hogs",
+          "label": "golem > royal-hogs",
+          "empirical_n": 324,
+          "empirical_fav_wr": 0.5771604938271605,
+          "games": 80,
+          "policy_fav_wr": 0.75,
+          "policy_mean_P_fav": 0.6387973182094979,
+          "policy_fav_wr_ci95": 0.09488809198208172,
+          "delta_wr": 0.1728395061728395,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        }
+      ],
+      "meanAbsDelta": 0.16396633092346663,
+      "meanAbsDeltaCI": [
+        0.08297693335124183,
+        0.2580261276027188
+      ],
+      "preserveFavoriteRate": 0.875,
+      "strongAgreementRate": 0.875,
+      "meanPolicyFavWr": 0.6640625
+    },
+    {
+      "id": "v5",
+      "policyId": "policy-bc-v5",
+      "modelDir": "models/policy_bc_v5",
+      "color": "#f472b6",
+      "thinkSteps": 0,
+      "seconds": 114.99203729629517,
+      "matchups": [
+        {
+          "id": "graveyard>hog-rider",
+          "favorite": "graveyard",
+          "underdog": "hog-rider",
+          "label": "graveyard > hog-rider",
+          "empirical_n": 504,
+          "empirical_fav_wr": 0.5873015873015873,
+          "games": 80,
+          "policy_fav_wr": 0.725,
+          "policy_mean_P_fav": 0.6352419231552735,
+          "policy_fav_wr_ci95": 0.0978467551838077,
+          "delta_wr": 0.13769841269841265,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>x-bow",
+          "favorite": "golem",
+          "underdog": "x-bow",
+          "label": "golem > x-bow",
+          "empirical_n": 97,
+          "empirical_fav_wr": 0.6804123711340206,
+          "games": 80,
+          "policy_fav_wr": 0.95,
+          "policy_mean_P_fav": 0.7531328639986198,
+          "policy_fav_wr_ci95": 0.047759292289563944,
+          "delta_wr": 0.2695876288659793,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "royal-hogs>goblin-barrel",
+          "favorite": "royal-hogs",
+          "underdog": "goblin-barrel",
+          "label": "royal-hogs > goblin-barrel",
+          "empirical_n": 281,
+          "empirical_fav_wr": 0.594306049822064,
+          "games": 80,
+          "policy_fav_wr": 0.625,
+          "policy_mean_P_fav": 0.568273322383867,
+          "policy_fav_wr_ci95": 0.10608811196359373,
+          "delta_wr": 0.03069395017793597,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "graveyard>goblin-drill",
+          "favorite": "graveyard",
+          "underdog": "goblin-drill",
+          "label": "graveyard > goblin-drill",
+          "empirical_n": 99,
+          "empirical_fav_wr": 0.6565656565656566,
+          "games": 80,
+          "policy_fav_wr": 0.65,
+          "policy_mean_P_fav": 0.5776459791343243,
+          "policy_fav_wr_ci95": 0.10452057213773755,
+          "delta_wr": -0.006565656565656552,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "balloon>hog-rider",
+          "favorite": "balloon",
+          "underdog": "hog-rider",
+          "label": "balloon > hog-rider",
+          "empirical_n": 801,
+          "empirical_fav_wr": 0.550561797752809,
+          "games": 80,
+          "policy_fav_wr": 0.6875,
+          "policy_mean_P_fav": 0.6150354057087629,
+          "policy_fav_wr_ci95": 0.10157163420463412,
+          "delta_wr": 0.136938202247191,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>sparky",
+          "favorite": "mortar",
+          "underdog": "sparky",
+          "label": "mortar > sparky",
+          "empirical_n": 103,
+          "empirical_fav_wr": 0.6407766990291263,
+          "games": 80,
+          "policy_fav_wr": 0.4125,
+          "policy_mean_P_fav": 0.45154387250039774,
+          "policy_fav_wr_ci95": 0.10787653533090502,
+          "delta_wr": -0.22827669902912628,
+          "preserves_favorite": false,
+          "agrees_strongly": false,
+          "mean_events": 60.0
+        },
+        {
+          "id": "mortar>royal-giant",
+          "favorite": "mortar",
+          "underdog": "royal-giant",
+          "label": "mortar > royal-giant",
+          "empirical_n": 84,
+          "empirical_fav_wr": 0.6547619047619048,
+          "games": 80,
+          "policy_fav_wr": 0.65,
+          "policy_mean_P_fav": 0.5411507360699792,
+          "policy_fav_wr_ci95": 0.10452057213773755,
+          "delta_wr": -0.004761904761904745,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>royal-hogs",
+          "favorite": "golem",
+          "underdog": "royal-hogs",
+          "label": "golem > royal-hogs",
+          "empirical_n": 324,
+          "empirical_fav_wr": 0.5771604938271605,
+          "games": 80,
+          "policy_fav_wr": 0.775,
+          "policy_mean_P_fav": 0.6415416021758606,
+          "policy_fav_wr_ci95": 0.09150676204521718,
+          "delta_wr": 0.19783950617283952,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        }
+      ],
+      "meanAbsDelta": 0.12654524506488074,
+      "meanAbsDeltaCI": [
+        0.05647209909339893,
+        0.18892522040489937
+      ],
+      "preserveFavoriteRate": 0.875,
+      "strongAgreementRate": 0.875,
+      "meanPolicyFavWr": 0.684375
+    }
+  ],
+  "summary": {
+    "matchups": 8,
+    "policies": 6,
+    "games_per_policy": 640,
+    "best_mean_abs_delta": "v5",
+    "best_mean_abs_delta_wr": 0.12654524506488074
+  },
+  "verdict": "v5 is closest to human matchup edges (mean |Δ| = 12.7 pp) under shared-schedule self-play judged by the winner model.",
+  "protocol": "shared 8 matchups × 80 games · wincon archetypes · seat-balanced self-play",
+  "note": "Δ = AI favorite WR − human favorite WR. Positive means the policy overstates the empirical edge; negative means it washes or flips it.",
+  "html_report": "reports/matchup_lineage.html"
+}

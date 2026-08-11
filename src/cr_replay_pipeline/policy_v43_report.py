@@ -128,6 +128,9 @@ def render_policy_v43_report(
             row = json.loads(line)
             peak_vram = max(peak_vram, float(row.get("gpu_memory_mb") or 0.0))
 
+    matchup_path = ROOT / "reports" / "policy_bc_v4_3_matchup.json"
+    matchup = _load(matchup_path) if matchup_path.exists() else None
+
     card_delta = (think_on["slot_top1"] - v42["test"]["slot_top1"]) * 100.0
     zone_delta = (think_on["zone_acc"] - v42["test"]["zone_acc"]) * 100.0
     xy_delta = think_on["xy_mae"] - v42["test"]["xy_mae"]
@@ -176,6 +179,7 @@ def render_policy_v43_report(
             "dModel": v43["dModel"],
             "numLayers": v43["numLayers"],
         },
+        "matchup": matchup,
     }
 
     html = f"""<!doctype html>
@@ -256,8 +260,24 @@ button:hover,.toggle:hover{{border-color:#416459;color:var(--text)}}button.activ
 .expr b{{color:var(--star)}}
 .foot{{padding-top:26px;color:#557067;font:11px "IBM Plex Mono",ui-monospace,monospace}}
 .pill{{display:inline-block;padding:4px 8px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font:11px "IBM Plex Mono",ui-monospace,monospace;margin-right:6px}}
-@media(max-width:980px){{.model-grid,.kpis{{grid-template-columns:1fr 1fr}}.arch,.compare-grid,.lessons{{grid-template-columns:1fr}}.flow{{grid-template-columns:1fr 1fr}}}}
-@media(max-width:560px){{main{{width:min(100% - 22px,1220px)}}.kpis,.model-grid,.star-stats,.flow{{grid-template-columns:1fr}}.verdict,.star-point{{grid-template-columns:1fr}}}}
+.match-chips,.replay-chips{{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}}
+.match-chip,.replay-chip{{border:1px solid var(--line);background:#0a1512;color:var(--muted);border-radius:999px;padding:8px 14px;font:700 12px "IBM Plex Mono",ui-monospace,monospace;cursor:pointer;transition:border-color .25s,background .25s,color .25s,transform .25s}}
+.match-chip:hover,.replay-chip:hover{{color:var(--text);border-color:#416459}}
+.match-chip.active{{color:var(--ink);border-color:transparent;background:var(--tone,var(--star));transform:translateY(-1px)}}
+.replay-chip.active{{border-color:var(--star);background:rgba(232,245,139,.14);color:var(--text)}}
+.match-kpis{{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}}
+.delta-chart{{width:100%;height:auto;display:block}}
+.delta-bar{{transition:none}}
+.replay-grid{{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}}
+.replay-pane h3{{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}}
+.pane-score{{font:700 12px "IBM Plex Mono",ui-monospace,monospace;color:var(--muted)}}
+.arena{{width:100%;max-width:320px;height:auto;display:block;margin:0 auto;border-radius:12px}}
+.anim-toolbar{{display:flex;align-items:center;gap:12px;margin-top:14px}}
+.anim-scrubber{{flex:1;accent-color:var(--star)}}
+.anim-readout,.replay-log{{font:12px "IBM Plex Mono",ui-monospace,monospace;color:var(--muted);margin-top:8px}}
+.mean-ring{{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--tone,var(--star));background:rgba(232,245,139,.08);font:800 15px "IBM Plex Mono",ui-monospace,monospace;color:var(--tone,var(--star));transition:border-color .35s,color .35s}}
+@media(max-width:980px){{.model-grid,.kpis,.match-kpis{{grid-template-columns:1fr 1fr}}.arch,.compare-grid,.lessons,.replay-grid{{grid-template-columns:1fr}}.flow{{grid-template-columns:1fr 1fr}}}}
+@media(max-width:560px){{main{{width:min(100% - 22px,1220px)}}.kpis,.model-grid,.star-stats,.flow,.match-kpis{{grid-template-columns:1fr}}.verdict,.star-point{{grid-template-columns:1fr}}}}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -383,12 +403,58 @@ button:hover,.toggle:hover{{border-color:#416459;color:var(--text)}}button.activ
   </div>
 </section>
 
+<section class="section" id="matchupSection">
+  <div class="section-head"><div><div class="eyebrow">08 · human vs AI style</div><h2>Same prefix, two futures — toggle the policy</h2></div><p>Shared 512-battle test pool. Each policy continues the same warm-up; the style judge scores how far the continuation drifts from human statistics.</p></div>
+  <div class="match-chips" id="matchChips"></div>
+  <div class="match-kpis">
+    <div class="kpi" style="--tone:var(--star)"><span>Overall mean |Δ|</span><b id="meanAbsZ">—</b><small id="meanAbsZCI">95% bootstrap CI</small></div>
+    <div class="kpi" style="--tone:var(--green)"><span>Mean P(human|AI)</span><b id="meanPHuman">—</b><small id="meanPNote">transfer judge · lower = more detected</small></div>
+    <div class="kpi" style="--tone:var(--blue)"><span>Paired games</span><b id="matchN">—</b><small id="matchProtocol">shared seed battles</small></div>
+    <div class="kpi" style="--tone:var(--gold)"><span>Human baseline</span><b id="humanP">—</b><small>mean P(human|human)</small></div>
+  </div>
+  <div class="compare-grid">
+    <div class="card chart-card">
+      <h3>Feature distance vs human</h3>
+      <p style="margin-bottom:12px">Bars are (AI − human) / human σ on the strongest non-harness tells. Switching models morphs the profile.</p>
+      <svg class="delta-chart" id="deltaChart" viewBox="0 0 640 420" role="img" aria-label="Feature deltas vs human"></svg>
+      <div class="expr" id="deltaExpr"><b>Δ</b> = (μ<sub>AI</sub> − μ<sub>human</sub>) / σ<sub>human</sub> &nbsp;·&nbsp; <b>mean |Δ|</b> averages absolute z over these features</div>
+    </div>
+    <div class="card">
+      <h3>Lineage distance</h3>
+      <p>Lower mean |Δ| means closer to the human feature cloud on this shared pool.</p>
+      <div class="bars" id="lineageBars" style="margin-top:16px"></div>
+      <div class="callout" style="margin-top:16px"><b>Read:</b> this is not live win-rate. It is how statistically human the offline continuation looks under the alternation-trained style judge.</div>
+    </div>
+  </div>
+  <div class="card chart-card" style="margin-top:14px">
+    <h3>Replay · same warm-up, diverging futures</h3>
+    <p style="margin-bottom:12px">Grey dots are the shared human prefix. After the cut, left stays human; right is the selected policy. Change model to morph the AI arena.</p>
+    <div class="replay-chips" id="replayChips"></div>
+    <div class="replay-grid">
+      <div class="replay-pane">
+        <h3>Human <span class="pane-score" id="humanScore"></span></h3>
+        <svg class="arena" id="humanArena"></svg>
+      </div>
+      <div class="replay-pane">
+        <h3>AI · <span id="aiModelLabel">v4.3</span> <span class="pane-score" id="aiScore"></span></h3>
+        <svg class="arena" id="aiArena"></svg>
+      </div>
+    </div>
+    <div class="anim-toolbar">
+      <button type="button" id="replayPlay">▶ play</button>
+      <input type="range" class="anim-scrubber" id="replayScrub" min="1" max="1" value="1" step="1">
+      <div class="anim-readout" id="replayReadout"></div>
+    </div>
+    <div class="replay-log" id="replayLog"></div>
+  </div>
+</section>
+
 <section class="section">
-  <div class="section-head"><div><div class="eyebrow">08 · lessons</div><h2>What v4.3 taught us</h2></div><p>Capacity finally moved the needle after v4.2 proved the data recipe.</p></div>
+  <div class="section-head"><div><div class="eyebrow">09 · lessons</div><h2>What v4.3 taught us</h2></div><p>Capacity finally moved the needle after v4.2 proved the data recipe.</p></div>
   <div class="lessons">
     <div class="card lesson"><div class="n">01 / CAPACITY</div><h3>A 3.9× larger trunk helped.</h3><p>Moving from 633k to 2.47M parameters on more data improved every primary offline action metric versus full-data v4.2, without blowing the 6GB laptop budget (peak ~{peak_vram:.0f} MB).</p></div>
     <div class="card lesson"><div class="n">02 / THINKING</div><h3>Train random depth; toggle at serve time.</h3><p>Sampling K during training keeps both the fast path and the deep path competent. At inference, <code>--think-steps</code> is just a compute dial.</p></div>
-    <div class="card lesson"><div class="n">03 / NEXT</div><h3>Pair think with mirror TTA carefully.</h3><p>Mirror TTA and think steps multiply latency. The next clean experiment is a frozen-manifest bake-off of v4.2★ / v4.3 off / v4.3★ before spending live phone time.</p></div>
+    <div class="card lesson"><div class="n">03 / STYLE</div><h3>Closer action metrics ≠ human style.</h3><p>Use the matchup toggle above: mean |Δ| ranks how far each lineage step still sits from human continuations on the same prefixes.</p></div>
   </div>
   <div class="callout"><b>How to use it:</b> default live to <code>--think-steps 0</code> when latency matters; flip to <code>8</code> for offline eval or slower lab runs. Phone-lab accepts the same flag.</div>
 </section>
@@ -512,6 +578,243 @@ $('#budgetBars').innerHTML=budget.map(([key,label])=>{{
   </div>`;
 }}).join('');
 requestAnimationFrame(()=>document.querySelectorAll('.bar-fill').forEach(b=>b.style.width=b.dataset.width+'%'));
+
+/* ---------- human vs AI matchup ---------- */
+(function(){{
+  const M=D.matchup;
+  const section=$('#matchupSection');
+  if(!M||!M.models||!M.models.length){{
+    if(section) section.innerHTML='<div class="section-head"><div><div class="eyebrow">08 · human vs AI style</div><h2>Matchup payload pending</h2></div><p>Generate <code>reports/policy_bc_v4_3_matchup.json</code> then re-run the report.</p></div>';
+    return;
+  }}
+  const byId=Object.fromEntries(M.models.map(m=>[m.id,m]));
+  let activeId=byId['v4.3']?'v4.3':M.models[0].id;
+  let display={{...byId[activeId], featureDelta:byId[activeId].featureDelta.map(r=>({{...r}}))}};
+  let animToken=0;
+  let replayIdx=0, scrubN=1, playTimer=null, morphT=1;
+  let aiFrom=null, aiTo=null;
+
+  const SVGNS='http://www.w3.org/2000/svg';
+  const el=(tag,attrs={{}})=>{{const n=document.createElementNS(SVGNS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);return n;}};
+  const svgText=(attrs,text)=>{{const t=el('text',attrs);t.textContent=text;return t;}};
+  const ease=t=>1-Math.pow(1-t,3);
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const titleCase=s=>String(s).replace(/[-_]/g,' ').replace(/\\b\\w/g,c=>c.toUpperCase());
+  const sci=v=>{{
+    const n=Number(v);
+    if(!Number.isFinite(n))return '—';
+    if(Math.abs(n)>=0.01)return n.toFixed(3);
+    return n.toExponential(2);
+  }};
+
+  function towerOverlay(g,w,h,ox,oy,scale,opacity){{
+    const tw=w*0.11;
+    const tower=(cx,cy,king,friendly)=>{{
+      const size=king?tw*1.35:tw;
+      g.appendChild(el('rect',{{x:cx-size/2,y:cy-size/2,width:size,height:size,rx:3*scale,fill:friendly?'#1e3a8a':'#7f1d1d',stroke:friendly?'#93c5fd':'#fca5a5','stroke-width':1.2*scale,opacity}}));
+    }};
+    tower(ox+w*0.22,oy+h*0.19,false,false);tower(ox+w*0.78,oy+h*0.19,false,false);tower(ox+w*0.5,oy+h*0.075,true,false);
+    tower(ox+w*0.22,oy+h*0.81,false,true);tower(ox+w*0.78,oy+h*0.81,false,true);tower(ox+w*0.5,oy+h*0.925,true,true);
+  }}
+  function arenaBackdrop(g,w,h,ox,oy,scale){{
+    const rect=(x,y,ww,hh,attrs)=>g.appendChild(el('rect',Object.assign({{x,y,width:ww,height:hh}},attrs)));
+    rect(ox,oy,w,h,{{fill:'#0d1a2b',rx:10*scale}});
+    rect(ox,oy,w,h*0.5,{{fill:'#991b1b',opacity:0.28,rx:10*scale}});
+    rect(ox,oy+h*0.5,w,h*0.5,{{fill:'#1d4ed8',opacity:0.22}});
+    rect(ox,oy+h*0.465,w,h*0.07,{{fill:'#1d4ed8',opacity:0.45}});
+    rect(ox+w*0.16,oy+h*0.455,w*0.12,h*0.09,{{fill:'#7c5c33',opacity:0.75}});
+    rect(ox+w*0.72,oy+h*0.455,w*0.12,h*0.09,{{fill:'#7c5c33',opacity:0.75}});
+    towerOverlay(g,w,h,ox,oy,scale,0.85);
+  }}
+  function mountArena(svg,opts={{}}){{
+    const W=opts.W||300,H=opts.H||450,PAD=6,TOP=20;
+    const AW=W-PAD*2,AH=H-TOP-22;
+    svg.setAttribute('viewBox',`0 0 ${{W}} ${{H}}`);
+    svg.innerHTML='';
+    const g=el('g');svg.appendChild(g);
+    arenaBackdrop(g,AW,AH,PAD,TOP,1);
+    const geom={{xPx:nx=>PAD+nx*AW,yPx:ny=>TOP+(1-ny)*AH,W,H,PAD,TOP,AW,AH}};
+    geom.captions=()=>{{
+      g.appendChild(svgText({{x:PAD,y:13,fill:'#fca5a5','font-size':11,'letter-spacing':'0.14em','font-weight':700}},'ENEMY SIDE ↑'));
+      g.appendChild(svgText({{x:PAD,y:H-6,fill:'#93c5fd','font-size':11,'letter-spacing':'0.14em','font-weight':700}},'YOUR SIDE ↓'));
+    }};
+    return {{g,geom}};
+  }}
+
+  function paintKpis(model,t=1){{
+    const from=display, to=model;
+    const mean=lerp(from.meanAbsZ,to.meanAbsZ,t);
+    const p=lerp(from.meanPHuman,to.meanPHuman,t);
+    $('#meanAbsZ').textContent=mean.toFixed(2)+'σ';
+    const ci=to.meanAbsZCI||[mean,mean];
+    $('#meanAbsZCI').textContent=`95% CI ${{ci[0].toFixed(2)}}–${{ci[1].toFixed(2)}} · n=${{to.n}}`;
+    $('#meanPHuman').textContent=sci(p);
+    $('#meanPNote').textContent=`fool@0.5 ${{(100*(to.foolRate||0)).toFixed(1)}}% · ${{to.policyId}}`;
+    $('#matchN').textContent=fmt(to.n);
+    $('#matchProtocol').textContent=M.protocol||'shared test pool';
+    $('#humanP').textContent=sci(M.humanMeanP||to.humanMeanP);
+  }}
+
+  function drawDelta(model,t=1){{
+    const svg=$('#deltaChart'); if(!svg)return;
+    const W=640,H=420,L=168,R=24,T=18,B=28;
+    const rows=model.featureDelta;
+    const fromRows=display.featureDelta;
+    const zs=rows.map((r,i)=>lerp((fromRows[i]&&fromRows[i].z)||0,r.z,t));
+    const maxAbs=Math.max(1.5,...M.models.flatMap(m=>m.featureDelta.map(r=>Math.abs(r.z))));
+    const rowH=(H-T-B)/rows.length;
+    const x0=L+(W-L-R)/2;
+    const xScale=v=>x0+(v/maxAbs)*((W-L-R)/2);
+    let out=`<line x1="${{x0}}" y1="${{T}}" x2="${{x0}}" y2="${{H-B}}" stroke="#355247" stroke-dasharray="4 4"/>`;
+    out+=`<text x="${{x0}}" y="${{H-8}}" text-anchor="middle" fill="#668078" font-size="11" font-family="IBM Plex Mono,monospace">human μ</text>`;
+    rows.forEach((r,i)=>{{
+      const z=zs[i], y=T+i*rowH+rowH*0.18, h=rowH*0.64;
+      const x1=xScale(0), x2=xScale(z);
+      const fill=z>=0?'#ff7e78':'#70e1b1';
+      const left=Math.min(x1,x2), width=Math.max(2,Math.abs(x2-x1));
+      out+=`<text x="${{L-8}}" y="${{y+h*0.72}}" text-anchor="end" fill="#9bb6ad" font-size="11" font-family="IBM Plex Mono,monospace">${{r.feature}}</text>`;
+      out+=`<rect class="delta-bar" x="${{left}}" y="${{y}}" width="${{width}}" height="${{h}}" rx="5" fill="${{fill}}" opacity="0.85"/>`;
+      out+=`<text x="${{z>=0?x2+6:x2-6}}" y="${{y+h*0.72}}" text-anchor="${{z>=0?'start':'end'}}" fill="${{fill}}" font-size="11" font-family="IBM Plex Mono,monospace" font-weight="700">${{z>=0?'+':''}}${{z.toFixed(2)}}σ</text>`;
+    }});
+    svg.innerHTML=out;
+  }}
+
+  function drawLineage(){{
+    const host=$('#lineageBars');
+    const max=Math.max(...M.models.map(m=>m.meanAbsZ),0.01);
+    host.innerHTML=M.models.map(m=>`
+      <div class="bar-row" data-lineage="${{m.id}}" style="cursor:pointer">
+        <b style="color:${{m.color}}">${{m.id}}</b>
+        <div class="bar-track"><div class="bar-fill" style="--tone:${{m.color}}" data-width="${{100*m.meanAbsZ/max}}"></div></div>
+        <div class="bar-value">${{m.meanAbsZ.toFixed(2)}}σ</div>
+      </div>`).join('');
+    requestAnimationFrame(()=>host.querySelectorAll('.bar-fill').forEach(b=>b.style.width=b.dataset.width+'%'));
+    host.onclick=e=>{{
+      const row=e.target.closest('[data-lineage]');
+      if(row) selectModel(row.dataset.lineage);
+    }};
+  }}
+
+  function eventAt(track,i){{return track&&track.events?track.events[i]:null;}}
+  function blendedAI(upto){{
+    const pair=M.trajectories[replayIdx];
+    const warm=pair.warmupEvents||12;
+    const to=aiTo||pair.aiByModel[activeId];
+    const from=aiFrom||to;
+    const n=Math.min(upto, Math.max(from.events.length,to.events.length));
+    const out=[];
+    for(let i=0;i<n;i++){{
+      const a=eventAt(from,Math.min(i,from.events.length-1));
+      const b=eventAt(to,Math.min(i,to.events.length-1));
+      if(!a||!b)continue;
+      out.push({{
+        t:lerp(a.t,b.t,morphT),
+        side:morphT<0.5?a.side:b.side,
+        card:morphT<0.5?a.card:b.card,
+        x:lerp(a.x,b.x,morphT),
+        y:lerp(a.y,b.y,morphT),
+        warm:i<warm,
+      }});
+    }}
+    return {{events:out, score:lerp(from.score,to.score,morphT)}};
+  }}
+
+  function drawArenas(upto){{
+    const pair=M.trajectories[replayIdx];
+    if(!pair)return;
+    const warm=pair.warmupEvents||12;
+    const human=pair.human;
+    const ai=blendedAI(upto);
+    function paint(svg, track, uptoN, accent){{
+      const {{g,geom}}=mountArena(svg,{{W:300,H:450}});
+      geom.captions();
+      track.events.slice(0,uptoN).forEach((e,i)=>{{
+        const isWarm=e.warm!=null?e.warm:i<warm;
+        const color=isWarm?'#94a3b8':(e.side==='team'?'#60a5fa':accent||'#fca5a5');
+        const latest=i===uptoN-1;
+        g.appendChild(el('circle',{{
+          cx:geom.xPx(e.x), cy:geom.yPx(e.y), r:latest?8:5,
+          fill:color, opacity:isWarm?0.42:0.88,
+          stroke:latest?'#e2e8f0':'none','stroke-width':latest?2:0
+        }}));
+      }});
+    }}
+    paint($('#humanArena'), human, upto, '#70a1ff');
+    paint($('#aiArena'), ai, upto, byId[activeId].color);
+    $('#humanScore').textContent=`P(human)=${{sci(human.score)}}`;
+    $('#aiScore').textContent=`P(human)=${{sci(ai.score)}}`;
+    $('#aiModelLabel').textContent=activeId;
+    const h=human.events[Math.min(upto,human.events.length)-1];
+    const a=ai.events[Math.min(upto,ai.events.length)-1];
+    $('#replayReadout').textContent=`event ${{upto}}/${{scrubN}} ${{upto<=warm?'(shared warm-up)':'(diverged)'}}`;
+    $('#replayLog').innerHTML=(h&&a)
+      ?`human: <b>${{titleCase(h.card)}}</b> @ ${{h.t}}s (${{h.side}}) &nbsp;·&nbsp; AI: <b>${{titleCase(a.card)}}</b> @ ${{a.t}}s (${{a.side}})`
+      :'';
+  }}
+
+  function setReplay(i){{
+    replayIdx=i;
+    [...$('#replayChips').children].forEach((c,j)=>c.classList.toggle('active',j===i));
+    const pair=M.trajectories[i];
+    const ai=pair.aiByModel[activeId];
+    aiFrom=ai; aiTo=ai; morphT=1;
+    scrubN=Math.min(pair.human.events.length, ai.events.length);
+    const scrub=$('#replayScrub');
+    scrub.max=scrubN; scrub.value=scrubN;
+    drawArenas(scrubN);
+  }}
+
+  function selectModel(id){{
+    if(!byId[id]||(id===activeId&&morphT===1&&aiFrom===aiTo))return;
+    const target=byId[id];
+    const pair=M.trajectories[replayIdx];
+    aiFrom=pair?pair.aiByModel[activeId]:null;
+    aiTo=pair?pair.aiByModel[id]:null;
+    activeId=id;
+    [...$('#matchChips').children].forEach(c=>{{
+      const on=c.dataset.model===id;
+      c.classList.toggle('active',on);
+      if(on)c.style.setProperty('--tone',target.color);
+    }});
+    const token=++animToken;
+    const start=performance.now();
+    const dur=520;
+    (function tick(now){{
+      if(token!==animToken)return;
+      const t=ease(Math.min(1,(now-start)/dur));
+      morphT=t;
+      paintKpis(target,t);
+      drawDelta(target,t);
+      drawArenas(Number($('#replayScrub').value));
+      if(t<1)requestAnimationFrame(tick);
+      else{{
+        display={{...target, featureDelta:target.featureDelta.map(r=>({{...r}}))}};
+        morphT=1; aiFrom=aiTo;
+        paintKpis(target,1); drawDelta(target,1); drawArenas(Number($('#replayScrub').value));
+      }}
+    }})(start);
+  }}
+
+  $('#matchChips').innerHTML=M.models.map(m=>`<button type="button" class="match-chip${{m.id===activeId?' active':''}}" data-model="${{m.id}}" style="--tone:${{m.color}}">${{m.id}}</button>`).join('');
+  $('#matchChips').onclick=e=>{{const b=e.target.closest('[data-model]');if(b)selectModel(b.dataset.model);}};
+  $('#replayChips').innerHTML=(M.trajectories||[]).map((p,i)=>`<button type="button" class="replay-chip${{i===0?' active':''}}" data-replay="${{i}}">battle ${{p.battleId}}</button>`).join('');
+  $('#replayChips').onclick=e=>{{const b=e.target.closest('[data-replay]');if(b)setReplay(Number(b.dataset.replay));}};
+  $('#replayScrub').oninput=()=>drawArenas(Number($('#replayScrub').value));
+  $('#replayPlay').onclick=()=>{{
+    if(playTimer){{clearInterval(playTimer);playTimer=null;$('#replayPlay').textContent='▶ play';return;}}
+    $('#replayPlay').textContent='❚❚';
+    let i=1; const max=Number($('#replayScrub').max);
+    playTimer=setInterval(()=>{{
+      $('#replayScrub').value=i; drawArenas(i); i+=1;
+      if(i>max){{clearInterval(playTimer);playTimer=null;$('#replayPlay').textContent='▶ play';}}
+    }},130);
+  }};
+
+  drawLineage();
+  paintKpis(byId[activeId],1);
+  drawDelta(byId[activeId],1);
+  if(M.trajectories&&M.trajectories.length)setReplay(0);
+}})();
 </script></body></html>"""
 
     output = Path(output_path)

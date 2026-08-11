@@ -174,6 +174,14 @@ def heterogeneous_policy_game(
         logits = out["slot_logits"][0] / max(temperature, 1e-3)
         probs = torch.softmax(logits, dim=-1).cpu().numpy()
         slot = int(rng.choices(range(8), weights=probs.tolist(), k=1)[0])
+        if getattr(acting.model, "placement_card_mode", "soft") == "selected":
+            out = acting.model(
+                continuous.unsqueeze(0).to(device), card_ids.unsqueeze(0).to(device),
+                team_deck_t.unsqueeze(0).to(device), opp_deck_t.unsqueeze(0).to(device),
+                global_feat.unsqueeze(0).to(device), length.unsqueeze(0).to(device),
+                slot_feats.unsqueeze(0).to(device), hand_mask.unsqueeze(0).to(device),
+                placement_slots=torch.tensor([slot], device=device),
+            )
         card = acting_deck[slot]
         event_type = (
             "ability_activation"
@@ -181,6 +189,12 @@ def heterogeneous_policy_game(
             else "card_play"
         )
         xy = out["xy"][0].cpu().numpy()
+        if getattr(acting.model, "placement_card_mode", "soft") == "selected" and out.get("tile_logits") is not None:
+            tile_probs = torch.softmax(out["tile_logits"][0] / 0.6, dim=-1).cpu().numpy()
+            candidates = np.argsort(tile_probs)[-5:]
+            tile = int(rng.choices(candidates.tolist(), weights=tile_probs[candidates].tolist(), k=1)[0])
+            row, col = divmod(tile, 32)
+            xy = np.asarray([(col + 0.5) / 32.0, (row + 0.5) / 18.0])
         x = int(np.clip(xy[0] * 18000.0, 3000, 15000))
         y_norm = float(xy[1])
         if next_side == "opponent":

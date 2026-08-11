@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from cr_replay_pipeline.policy_dataset import (
+    GroupedBattleSampler,
     PolicyActionDataset,
     deck_slot_for_card,
     encode_policy_sample,
@@ -90,6 +91,58 @@ def test_deck_slot_zone_and_encode():
     assert 0 <= int(zone.item()) < 12
     assert xy.shape == (2,)
     assert int(length.item()) == continuous.shape[0]
+
+
+def test_live_inference_hard_masks_hand_and_reconditions_selected_card():
+    from cr_replay_pipeline.policy_infer import predict_next_action
+
+    battle = _sample_battle()
+    vocab = CardVocab(list(battle.team_deck) + list(battle.opponent_deck))
+
+    class SelectedCardSpy:
+        placement_card_mode = "selected"
+
+        def __init__(self):
+            self.placement_slots = []
+
+        def __call__(self, *_args, placement_slots=None, **_kwargs):
+            selected = None if placement_slots is None else int(placement_slots[0])
+            self.placement_slots.append(selected)
+            tile_logits = torch.full((1, 576), -20.0)
+            tile_logits[0, 7 if selected is None else 32 + selected] = 20.0
+            return {
+                "slot_logits": torch.tensor([[20.0, 10.0, 9.0, 1.0, 0.0, 0.0, 0.0, 0.0]]),
+                "type_logits": torch.tensor([[20.0, -20.0]]),
+                "zone_logits": torch.zeros(1, 12),
+                "xy": torch.tensor([[0.5, 0.5]]),
+                "tile_logits": tile_logits,
+                "timing": torch.tensor([0.0]),
+            }
+
+    model = SelectedCardSpy()
+    pred = predict_next_action(
+        model,
+        vocab,
+        {"fireball": 4},
+        BattleExample(
+            battle_id=battle.battle_id,
+            team_deck=battle.team_deck,
+            opponent_deck=battle.opponent_deck,
+            team_wins=1,
+            events=tuple(),
+        ),
+        torch.device("cpu"),
+        min_context=0,
+        prefer_cards={"fireball"},
+        placement_decode="argmax",
+        now_seconds=9.5,
+    )
+    assert pred["card"] == "fireball"
+    assert pred["slot"] == 3
+    assert pred["tile"] == 35
+    assert pred["observed_now_seconds"] == 9.5
+    assert model.placement_slots == [None, 3]
+    assert [row["card"] for row in pred["ranked_slots"] if row["legal"]] == ["fireball"]
 
 
 def test_arena_memory_is_causal_decayed_and_perspective_normalized():
@@ -271,6 +324,47 @@ def test_dataset_and_model_forward():
         sample_weights=weights,
     )
     assert torch.isfinite(losses["loss"])
+
+
+def test_lazy_mirror_augmentation_shares_streams_and_reflects_x():
+    battle = _sample_battle()
+    vocab = CardVocab(list(battle.team_deck) + list(battle.opponent_deck))
+    base = PolicyActionDataset([battle], vocab, {}, max_samples_per_battle=12)
+    mirrored = PolicyActionDataset(
+        [battle], vocab, {}, max_samples_per_battle=12, mirror_augmentation=True
+    )
+    assert len(mirrored) == 2 * len(base)
+    assert len(mirrored._streams) == len(base._streams)
+    original = mirrored[0]
+    reflected = mirrored[1]
+    assert torch.equal(original[1], reflected[1])
+    assert torch.allclose(reflected[0][:, 4], 1.0 - original[0][:, 4])
+    assert torch.allclose(reflected[0][:, 5], original[0][:, 5])
+    assert torch.allclose(reflected[10][0], 1.0 - original[10][0])
+    assert torch.allclose(reflected[10][1], original[10][1])
+    assert reflected[9].item() == xy_to_zone(*reflected[10].tolist())
+
+
+def test_bounded_stream_cache_and_grouped_sampler():
+    battles = [_sample_battle(), _sample_battle()]
+    vocab = CardVocab(
+        [c for battle in battles for c in battle.team_deck + battle.opponent_deck]
+    )
+    dataset = PolicyActionDataset(
+        battles,
+        vocab,
+        {},
+        max_samples_per_battle=8,
+        mirror_augmentation=True,
+        stream_cache_size=1,
+    )
+    assert not dataset._streams
+    sampler = GroupedBattleSampler(dataset, seed=7)
+    sampled = list(sampler)
+    assert sorted(sampled) == list(range(len(dataset)))
+    for sample_i in sampled:
+        dataset[sample_i]
+        assert len(dataset._streams) <= 1
 
 
 def test_v4_card_conditioned_placement_forward():

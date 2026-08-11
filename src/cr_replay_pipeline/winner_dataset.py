@@ -155,12 +155,14 @@ def collect_battles(
     input_dir: str | Path,
     min_card_plays: int = 12,
     cache_path: str | Path | None = None,
+    require_decisive_result: bool = True,
 ) -> list[BattleExample]:
     source = Path(input_dir)
     cache_file = (
         Path(cache_path)
         if cache_path is not None
-        else source.parent / "winner_battles_cache.pkl"
+        else source.parent
+        / ("winner_battles_cache.pkl" if require_decisive_result else "policy_battles_cache.pkl")
     )
 
     file_count = sum(1 for _ in source.rglob("*.json"))
@@ -172,6 +174,7 @@ def collect_battles(
                 isinstance(cached, dict)
                 and (os.environ.get("CR_REPLAY_TRUST_CACHE") == "1" or cached.get("file_count") == file_count)
                 and cached.get("min_card_plays") == min_card_plays
+                and cached.get("require_decisive_result", True) == require_decisive_result
                 and isinstance(cached.get("battles"), list)
             ):
                 print(
@@ -199,10 +202,11 @@ def collect_battles(
 
         team_crowns = replay.crowns.get("team")
         opponent_crowns = replay.crowns.get("opponent")
-        if team_crowns is None or opponent_crowns is None:
-            continue
-        if team_crowns == opponent_crowns:
-            continue
+        if require_decisive_result:
+            if team_crowns is None or opponent_crowns is None:
+                continue
+            if team_crowns == opponent_crowns:
+                continue
         team_deck = tuple(replay.decks.get("team") or [])
         opponent_deck = tuple(replay.decks.get("opponent") or [])
         if len(team_deck) != 8 or len(opponent_deck) != 8:
@@ -243,7 +247,13 @@ def collect_battles(
                 battle_id=replay.battle_id,
                 team_deck=team_deck,
                 opponent_deck=opponent_deck,
-                team_wins=1 if team_crowns > opponent_crowns else 0,
+                team_wins=(
+                    1
+                    if team_crowns is not None
+                    and opponent_crowns is not None
+                    and team_crowns > opponent_crowns
+                    else 0
+                ),
                 events=tuple(events),
             )
         )
@@ -254,6 +264,7 @@ def collect_battles(
                 {
                     "file_count": file_count,
                     "min_card_plays": min_card_plays,
+                    "require_decisive_result": require_decisive_result,
                     "battles": battles,
                 },
                 handle,

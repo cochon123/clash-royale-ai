@@ -1,0 +1,229 @@
+Loading battles ...
+Cached 47832 battles -> data/winner_battles_cache.pkl
+Lineage matchups: 3 · policies: 2 · games/policy: 12 · total: 24
+  [1/3] royal-hogs > goblin-barrel human=63.0% n=276
+  [2/3] golem > x-bow human=71.7% n=99
+  [3/3] royal-hogs > wall-breakers human=64.9% n=114
+
+== v4 (models/policy_bc_v4) think=0 on cuda ==
+v4	12/24	policy 12/12	ETA 3s	3.44 games/s
+  royal-hogs > goblin-barrel: human=63.0% AI=100.0% Δ=+37.0% OK
+  golem > x-bow: human=71.7% AI=100.0% Δ=+28.3% OK
+  royal-hogs > wall-breakers: human=64.9% AI=75.0% Δ=+10.1% OK
+
+== v4.1 (models/policy_bc_v4.1) think=0 on cuda ==
+v4.1	24/24	policy 12/12	ETA 0s	3.55 games/s
+  royal-hogs > goblin-barrel: human=63.0% AI=50.0% Δ=-13.0% OK
+  golem > x-bow: human=71.7% AI=100.0% Δ=+28.3% OK
+  royal-hogs > wall-breakers: human=64.9% AI=50.0% Δ=-14.9% OK
+{
+  "matchups": 3,
+  "policies": 2,
+  "games_per_policy": 12,
+  "best_mean_abs_delta": "v4.1",
+  "best_mean_abs_delta_wr": 0.18746195748484082
+}
+v4.1 is closest to human matchup edges (mean |Δ| = 18.7 pp) under shared-schedule self-play judged by the winner model.
+Wrote reports/matchup_lineage_smoke.json
+Wrote reports/matchup_lineage_smoke.html
+{
+  "created_at": "2026-08-10T18:12:12Z",
+  "model_name": "matchup-lineage",
+  "judge": "winner-predictor-hgb-symmetric",
+  "seconds": 6.9215826988220215,
+  "setup": {
+    "games_per_matchup": 4,
+    "top_k": 3,
+    "min_empirical_n": 60,
+    "warmup_events": 10,
+    "policy_events": 50,
+    "temperature": 0.85,
+    "archetype": "primary win-condition by corpus frequency",
+    "seat_balanced": true,
+    "shared_schedule": true,
+    "policies": [
+      {
+        "id": "v4",
+        "path": "models/policy_bc_v4",
+        "color": "#70a1ff"
+      },
+      {
+        "id": "v4.1",
+        "path": "models/policy_bc_v4.1",
+        "color": "#ffca63"
+      }
+    ],
+    "note": "Same wincon matchups and identical deck/seed/seat schedule for every policy. Each seat uses that policy's weights (self-play). Winners are judged by the offline winner model — no live Clash Royale."
+  },
+  "matchups": [
+    {
+      "id": "royal-hogs>goblin-barrel",
+      "favorite": "royal-hogs",
+      "underdog": "goblin-barrel",
+      "label": "royal-hogs > goblin-barrel",
+      "empirical_n": 276,
+      "empirical_fav_wr": 0.6304347826086957
+    },
+    {
+      "id": "golem>x-bow",
+      "favorite": "golem",
+      "underdog": "x-bow",
+      "label": "golem > x-bow",
+      "empirical_n": 99,
+      "empirical_fav_wr": 0.7171717171717171
+    },
+    {
+      "id": "royal-hogs>wall-breakers",
+      "favorite": "royal-hogs",
+      "underdog": "wall-breakers",
+      "label": "royal-hogs > wall-breakers",
+      "empirical_n": 114,
+      "empirical_fav_wr": 0.6491228070175439
+    }
+  ],
+  "models": [
+    {
+      "id": "v4",
+      "policyId": "policy-bc-v4",
+      "modelDir": "models/policy_bc_v4",
+      "color": "#70a1ff",
+      "thinkSteps": 0,
+      "seconds": 3.6557772159576416,
+      "matchups": [
+        {
+          "id": "royal-hogs>goblin-barrel",
+          "favorite": "royal-hogs",
+          "underdog": "goblin-barrel",
+          "label": "royal-hogs > goblin-barrel",
+          "empirical_n": 276,
+          "empirical_fav_wr": 0.6304347826086957,
+          "games": 4,
+          "policy_fav_wr": 1.0,
+          "policy_mean_P_fav": 0.7355524060944982,
+          "policy_fav_wr_ci95": 3.099032106965012e-05,
+          "delta_wr": 0.3695652173913043,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>x-bow",
+          "favorite": "golem",
+          "underdog": "x-bow",
+          "label": "golem > x-bow",
+          "empirical_n": 99,
+          "empirical_fav_wr": 0.7171717171717171,
+          "games": 4,
+          "policy_fav_wr": 1.0,
+          "policy_mean_P_fav": 0.7415077446013916,
+          "policy_fav_wr_ci95": 3.099032106965012e-05,
+          "delta_wr": 0.2828282828282829,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "royal-hogs>wall-breakers",
+          "favorite": "royal-hogs",
+          "underdog": "wall-breakers",
+          "label": "royal-hogs > wall-breakers",
+          "empirical_n": 114,
+          "empirical_fav_wr": 0.6491228070175439,
+          "games": 4,
+          "policy_fav_wr": 0.75,
+          "policy_mean_P_fav": 0.7201568371433738,
+          "policy_fav_wr_ci95": 0.4243524478543749,
+          "delta_wr": 0.10087719298245612,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        }
+      ],
+      "meanAbsDelta": 0.2510902310673478,
+      "meanAbsDeltaCI": [
+        0.10087719298245612,
+        0.3695652173913044
+      ],
+      "preserveFavoriteRate": 1.0,
+      "strongAgreementRate": 1.0,
+      "meanPolicyFavWr": 0.9166666666666666
+    },
+    {
+      "id": "v4.1",
+      "policyId": "policy-bc-v4.1",
+      "modelDir": "models/policy_bc_v4.1",
+      "color": "#ffca63",
+      "thinkSteps": 0,
+      "seconds": 2.9743456840515137,
+      "matchups": [
+        {
+          "id": "royal-hogs>goblin-barrel",
+          "favorite": "royal-hogs",
+          "underdog": "goblin-barrel",
+          "label": "royal-hogs > goblin-barrel",
+          "empirical_n": 276,
+          "empirical_fav_wr": 0.6304347826086957,
+          "games": 4,
+          "policy_fav_wr": 0.5,
+          "policy_mean_P_fav": 0.4652794680104947,
+          "policy_fav_wr_ci95": 0.49,
+          "delta_wr": -0.13043478260869568,
+          "preserves_favorite": true,
+          "agrees_strongly": false,
+          "mean_events": 60.0
+        },
+        {
+          "id": "golem>x-bow",
+          "favorite": "golem",
+          "underdog": "x-bow",
+          "label": "golem > x-bow",
+          "empirical_n": 99,
+          "empirical_fav_wr": 0.7171717171717171,
+          "games": 4,
+          "policy_fav_wr": 1.0,
+          "policy_mean_P_fav": 0.7946994982332272,
+          "policy_fav_wr_ci95": 3.099032106965012e-05,
+          "delta_wr": 0.2828282828282829,
+          "preserves_favorite": true,
+          "agrees_strongly": true,
+          "mean_events": 60.0
+        },
+        {
+          "id": "royal-hogs>wall-breakers",
+          "favorite": "royal-hogs",
+          "underdog": "wall-breakers",
+          "label": "royal-hogs > wall-breakers",
+          "empirical_n": 114,
+          "empirical_fav_wr": 0.6491228070175439,
+          "games": 4,
+          "policy_fav_wr": 0.5,
+          "policy_mean_P_fav": 0.6420751623790881,
+          "policy_fav_wr_ci95": 0.49,
+          "delta_wr": -0.14912280701754388,
+          "preserves_favorite": true,
+          "agrees_strongly": false,
+          "mean_events": 60.0
+        }
+      ],
+      "meanAbsDelta": 0.18746195748484082,
+      "meanAbsDeltaCI": [
+        0.13043478260869568,
+        0.2828282828282829
+      ],
+      "preserveFavoriteRate": 1.0,
+      "strongAgreementRate": 0.3333333333333333,
+      "meanPolicyFavWr": 0.6666666666666666
+    }
+  ],
+  "summary": {
+    "matchups": 3,
+    "policies": 2,
+    "games_per_policy": 12,
+    "best_mean_abs_delta": "v4.1",
+    "best_mean_abs_delta_wr": 0.18746195748484082
+  },
+  "verdict": "v4.1 is closest to human matchup edges (mean |Δ| = 18.7 pp) under shared-schedule self-play judged by the winner model.",
+  "protocol": "shared 3 matchups × 4 games · wincon archetypes · seat-balanced self-play",
+  "note": "Δ = AI favorite WR − human favorite WR. Positive means the policy overstates the empirical edge; negative means it washes or flips it.",
+  "html_report": "reports/matchup_lineage_smoke.html"
+}

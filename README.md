@@ -239,7 +239,17 @@ cr-replays phone-lab-calibrate --phone pixel8
 # then restart phone-lab so TEST uses the new points
 ```
 
-Requires `adb` and the phones unlocked. Calibration JSON lives in `data/phone_lab/calibrations/` (seeded from the old dual-phone unified zones; scaled per device resolution). Hand detection uses the existing YOLO weights at `ClashRoyaleAI/models/yolo/card_detector.pt` — point at another checkpoint with `--yolo-model`.
+Requires `adb` and the phones unlocked. Calibration JSON lives in `data/phone_lab/calibrations/` (seeded from the old dual-phone unified zones; scaled per device resolution). Hand detection defaults to `models/card_detector_clash_cards_v3.pt`, trained from [Roboflow clash-cards v3](https://universe.roboflow.com/new-workspace-v9zo5/clash-cards-1nnw7/dataset/3). Set `CR_CARD_DETECTOR_MODEL` or use `--yolo-model` to override it.
+
+Train the detector locally with:
+
+```bash
+pip install -e '.[detector-training]'
+export ROBOFLOW_API_KEY=...  # required by Roboflow dataset exports
+python scripts/train_card_detector.py
+```
+
+The v3 dataset’s filename-style labels are normalized by the phone harness (`archers.png` → `archers`, `archers evoluted.png` → `archers-evo`, `giant_hero.png` → `giant`).
 
 ## Next-action policy (behavior cloning)
 

@@ -135,7 +135,12 @@ def evaluate_policy(
     tile_class_correct = 0
     tile_top5_correct = 0
     tile_nll = 0.0
+    has_tile_logits = False
     model_xy_rows: list[np.ndarray] = []
+    argmax_xy_rows: list[np.ndarray] = []
+    tile_entropy_sum = 0.0
+    tile_top1_mass_sum = 0.0
+    tile_top5_mass_sum = 0.0
     timing_err = 0.0
     loss_kwargs = loss_kwargs or {}
 
@@ -196,6 +201,19 @@ def evaluate_policy(
         xy_err += float(dist.sum())
         tile_hits += int((dist <= TILE_UNITS).sum())
         if out.get("tile_logits") is not None:
+            has_tile_logits = True
+            tile_probs = torch.softmax(out["tile_logits"], dim=-1)
+            tile_entropy_sum += float((-(tile_probs * tile_probs.clamp_min(1e-12).log2()).sum(dim=-1)).sum().item())
+            top5_mass = tile_probs.topk(5, dim=-1).values
+            tile_top1_mass_sum += float(top5_mass[:, 0].sum().item())
+            tile_top5_mass_sum += float(top5_mass.sum().item())
+            argmax_tiles = tile_probs.argmax(dim=-1)
+            argmax_rows = torch.div(argmax_tiles, TILE_COLS, rounding_mode="floor")
+            argmax_cols = argmax_tiles % TILE_COLS
+            argmax_xy_rows.append(torch.stack([
+                (argmax_cols.float() + 0.5) / TILE_COLS,
+                (argmax_rows.float() + 0.5) / TILE_ROWS,
+            ], dim=-1).cpu().numpy())
             true_tile_x = (xy[:, 0] * TILE_COLS).floor().long().clamp(0, TILE_COLS - 1)
             true_tile_y = (xy[:, 1] * TILE_ROWS).floor().long().clamp(0, TILE_ROWS - 1)
             true_tiles = true_tile_y * TILE_COLS + true_tile_x
@@ -227,11 +245,13 @@ def evaluate_policy(
         "zone_acc": zone_correct / max(total, 1),
         "xy_mae": xy_err / max(total, 1),
         "tile_acc": tile_hits / max(total, 1),
-        "tile_class_acc": tile_class_correct / max(total, 1)
-        if tile_class_correct
-        else None,
-        "tile_top5_acc": tile_top5_correct / max(total, 1) if tile_class_correct else None,
-        "tile_nll": tile_nll / max(total, 1) if tile_class_correct else None,
+        "tile_class_acc": (tile_class_correct / max(total, 1)) if has_tile_logits else None,
+        "tile_top5_acc": (tile_top5_correct / max(total, 1)) if has_tile_logits else None,
+        "tile_nll": (tile_nll / max(total, 1)) if has_tile_logits else None,
+        "tile_entropy_bits": (tile_entropy_sum / max(total, 1)) if has_tile_logits else None,
+        "tile_effective_count": (2.0 ** (tile_entropy_sum / max(total, 1))) if has_tile_logits else None,
+        "tile_top1_mass": (tile_top1_mass_sum / max(total, 1)) if has_tile_logits else None,
+        "tile_top5_mass": (tile_top5_mass_sum / max(total, 1)) if has_tile_logits else None,
         "timing_mae": timing_err / max(total, 1),
         "n": total,
         "model_x_std": float(np.concatenate(model_xy_rows)[:, 0].std())
@@ -240,6 +260,10 @@ def evaluate_policy(
         "model_y_std": float(np.concatenate(model_xy_rows)[:, 1].std())
         if model_xy_rows
         else None,
+        "argmax_x_std": float(np.concatenate(argmax_xy_rows)[:, 0].std())
+        if argmax_xy_rows else None,
+        "argmax_y_std": float(np.concatenate(argmax_xy_rows)[:, 1].std())
+        if argmax_xy_rows else None,
     }
 
 
@@ -261,6 +285,35 @@ def _score_realism(artifact: dict[str, Any], battles: list[BattleExample], costs
     return [float(p) for p in probs]
 
 
+def placement_diversity_stats(
+    battles: list[BattleExample], start_event: int = 12, max_events: int = 40
+) -> dict[str, float]:
+    """Measure realized placement diversity on the model's own 18×32 grid."""
+    unique_counts: list[float] = []
+    max_shares: list[float] = []
+    for battle in battles:
+        tiles: list[int] = []
+        for event in battle.events[start_event : start_event + max_events]:
+            if event.get("event_type") == "ability_activation":
+                continue
+            x_norm = float(event.get("x", 9000)) / 18000.0
+            y_norm = float(event.get("y", 16000)) / 32000.0
+            if event.get("side") == "opponent":
+                y_norm = 1.0 - y_norm
+            col = min(TILE_COLS - 1, max(0, int(x_norm * TILE_COLS)))
+            row = min(TILE_ROWS - 1, max(0, int(y_norm * TILE_ROWS)))
+            tiles.append(row * TILE_COLS + col)
+        if tiles:
+            counts = np.unique(tiles, return_counts=True)[1]
+            unique_counts.append(float(len(counts)))
+            max_shares.append(float(counts.max() / len(tiles)))
+    return {
+        "battles": float(len(unique_counts)),
+        "mean_unique_tiles": float(np.mean(unique_counts)) if unique_counts else 0.0,
+        "mean_max_tile_share": float(np.mean(max_shares)) if max_shares else 0.0,
+    }
+
+
 @torch.no_grad()
 def rollout_policy_battles(
     model: nn.Module,
@@ -275,7 +328,23 @@ def rollout_policy_battles(
     seed: int = 0,
     max_context: int = DEFAULT_MAX_CONTEXT,
     threat_dim: int = 0,
+    placement_decode: str = "expected",
+    placement_temperature: float = 1.0,
+    placement_top_k: int | None = None,
+    think_steps: int = 0,
+    scheduling: str = "race",
 ) -> list[BattleExample]:
+    """Generate model-faithful continuations.
+
+    The deployment protocol is a two-sided timing race: both sides propose an
+    action from the same history and the shorter predicted delay acts. This
+    permits same-side double plays. ``alternate`` remains available solely to
+    reproduce older reports that hard-flipped the actor after every action.
+    """
+    if scheduling not in {"race", "alternate"}:
+        raise ValueError("scheduling must be race or alternate")
+    from .policy_infer import predict_next_action
+
     model.eval()
     rng = random.Random(seed)
     chosen = list(seed_battles)
@@ -291,87 +360,43 @@ def rollout_policy_battles(
         next_side = battle.events[warmup_events]["side"]
 
         for _ in range(max_new_events):
-            dummy = {
-                "seconds": seconds + 1.0,
-                "side": next_side,
-                "event_type": "card_play",
-                "card": battle.team_deck[0] if next_side == "team" else battle.opponent_deck[0],
-                "x": 9000,
-                "y": 8000 if next_side == "team" else 24000,
-            }
-            probe = BattleExample(
+            current = BattleExample(
                 battle_id=battle.battle_id + "-rollout",
                 team_deck=battle.team_deck,
                 opponent_deck=battle.opponent_deck,
                 team_wins=battle.team_wins,
-                events=tuple(events) + (dummy,),
+                events=tuple(events),
             )
-            sample = encode_policy_sample(
-                probe,
-                len(events),
-                vocab,
-                costs,
-                max_context=max_context,
-                threat_dim=threat_dim,
+            sides = [next_side] if scheduling == "alternate" else ["team", "opponent"]
+            predictions = []
+            for side in sides:
+                pred = predict_next_action(
+                    model, vocab, costs, current, device,
+                    acting_side=side, temperature=temperature, slot_decode="sample",
+                    max_context=max_context, threat_dim=threat_dim,
+                    placement_decode=placement_decode,
+                    placement_temperature=placement_temperature,
+                    placement_top_k=placement_top_k, think_steps=think_steps,
+                    now_seconds=seconds, rng=rng,
+                )
+                predictions.append((side, pred))
+            next_side, pred = min(
+                predictions, key=lambda row: float(row[1]["delay_seconds"])
             )
-            if sample is None:
-                break
-            (
-                continuous,
-                card_ids,
-                team_deck,
-                opp_deck,
-                global_feat,
-                slot_feats,
-                hand_mask,
-                _slot,
-                _type,
-                _zone,
-                _xy,
-                _timing,
-                length,
-            ) = sample
-            out = model(
-                continuous.unsqueeze(0).to(device),
-                card_ids.unsqueeze(0).to(device),
-                team_deck.unsqueeze(0).to(device),
-                opp_deck.unsqueeze(0).to(device),
-                global_feat.unsqueeze(0).to(device),
-                length.unsqueeze(0).to(device),
-                slot_feats.unsqueeze(0).to(device),
-                hand_mask.unsqueeze(0).to(device),
-            )
-            logits = out["slot_logits"][0] / max(temperature, 1e-3)
-            probs = torch.softmax(logits, dim=-1).cpu().numpy()
-            slot = int(rng.choices(range(8), weights=probs.tolist(), k=1)[0])
-            acting_deck = battle.team_deck if next_side == "team" else battle.opponent_deck
-            card = acting_deck[slot]
-            event_type = (
-                "ability_activation"
-                if int(out["type_logits"][0].argmax().item()) == 1
-                else "card_play"
-            )
-            xy = out["xy"][0].cpu().numpy()
-            x = int(np.clip(xy[0] * 18000.0, 3000, 15000))
-            y_norm = float(xy[1])
-            if next_side == "opponent":
-                y_norm = 1.0 - y_norm
-            y = int(np.clip(y_norm * 32000.0, 500, 31500))
-            if event_type == "ability_activation":
-                x, y = 9000, 16000
-            dt = float(np.clip(np.expm1(out["timing"][0].item()), 0.2, 12.0))
+            dt = float(pred["delay_seconds"])
             seconds = min(330.0, seconds + dt)
             events.append(
                 {
                     "seconds": seconds,
                     "side": next_side,
-                    "event_type": event_type,
-                    "card": card,
-                    "x": x,
-                    "y": y,
+                    "event_type": pred["event_type"],
+                    "card": pred["card"],
+                    "x": pred["x"],
+                    "y": pred["y"],
                 }
             )
-            next_side = "opponent" if next_side == "team" else "team"
+            if scheduling == "alternate":
+                next_side = "opponent" if next_side == "team" else "team"
 
         out_battles.append(
             BattleExample(
@@ -473,12 +498,29 @@ def _train_policy_model_impl(
     use_v4 = version.startswith("4") or use_v6
     use_v3 = version.startswith("3") or use_v4
     use_v43 = version.startswith("4.3")
+    use_v44 = version.startswith("4.4")
+    use_v441 = version.startswith("4.4.1")
     card_conditioned_placement = use_v4
-    placement_mode = "heatmap" if use_v6 else "xy"
+    # v4.4 / v6+: classify an 18×32 tile heatmap instead of regressing one XY mean.
+    placement_mode = "heatmap" if (use_v6 or use_v44) else "xy"
+    placement_card_mode = "selected" if use_v441 else "soft"
+    rollout_placement_decode = (
+        "sample" if use_v441 else ("argmax" if placement_mode == "heatmap" else "expected")
+    )
+    rollout_placement_temperature = 0.6 if use_v441 else 1.0
+    rollout_placement_top_k = 5 if use_v441 else None
+    rollout_slot_decode = "sample"
+    rollout_slot_temperature = 0.8
+    rollout_scheduling = "race"
     threat_dim = THREAT_DIM if use_v3 else 0
     global_dim = GLOBAL_DIM + threat_dim
     if max_think_steps is None:
-        max_think_steps = 8 if use_v43 else 0
+        if use_v43:
+            max_think_steps = 8
+        elif use_v44:
+            max_think_steps = 3
+        else:
+            max_think_steps = 0
     max_think_steps = max(int(max_think_steps), 0)
     if eval_think_steps is None:
         eval_think_steps = max_think_steps
@@ -489,10 +531,13 @@ def _train_policy_model_impl(
         model_name = "policy-bc-v6.1" if use_v61 else "policy-bc-v6"
         model_version = "6.1.0" if use_v61 else "6.0.0"
     elif use_v4:
-        # "4" / "4.0" → 4.0.0; "4.1"/"4.2"/"4.3" keep their minor versions.
-        parts = version.split(".")
-        minor = parts[1] if len(parts) > 1 else "0"
-        model_name, model_version = f"policy-bc-v4.{minor}", f"4.{minor}.0"
+        # "4" / "4.0" → 4.0.0; "4.1"/"4.2"/"4.3"/"4.4" keep their minor versions.
+        if use_v441:
+            model_name, model_version = "policy-bc-v4.4.1", "4.4.1"
+        else:
+            parts = version.split(".")
+            minor = parts[1] if len(parts) > 1 else "0"
+            model_name, model_version = f"policy-bc-v4.{minor}", f"4.{minor}.0"
     elif use_v3:
         model_name, model_version = "policy-bc-v3", "3.0.0"
     else:
@@ -517,6 +562,13 @@ def _train_policy_model_impl(
         if (use_v61 and freeze_backbone) or use_v7
         else {"zone_weight": 0.9, "xy_weight": 0.0, "tile_weight": 0.35, "slot_weight": 2.2}
         if use_v6
+        else {
+            "zone_weight": 1.1,
+            "xy_weight": 0.0,
+            "tile_weight": 0.55,
+            "slot_weight": 1.4,
+        }
+        if use_v44
         else {"zone_weight": 1.1, "xy_weight": 0.55, "slot_weight": 1.4}
         if use_v4
         else {}
@@ -537,7 +589,11 @@ def _train_policy_model_impl(
         if warmstart_dir is None:
             warmstart_dir = "models/policy_bc_v6_1"
     print(f"Loading battles from {input_dir} ...", flush=True)
-    battles = collect_battles(input_dir, min_card_plays=min_card_plays)
+    battles = collect_battles(
+        input_dir,
+        min_card_plays=min_card_plays,
+        require_decisive_result=False,
+    )
     manifest: dict[str, Any] | None = None
     if write_split_manifest:
         if split_manifest:
@@ -547,6 +603,7 @@ def _train_policy_model_impl(
             selected,
             write_split_manifest,
             seed=seed,
+            train_fraction=train_fraction,
         )
         split_manifest = write_split_manifest
     if split_manifest:
@@ -566,10 +623,17 @@ def _train_policy_model_impl(
             )
         else:
             train_battles, val_battles, test_battles = split_battles(battles, seed=seed)
-    if mirror_training:
+    lazy_mirror_training = bool(mirror_training and use_v441)
+    if mirror_training and not lazy_mirror_training:
         mirrored = [_MirroredBattle(battle) for battle in train_battles]
         train_battles = train_battles + mirrored
         print(f"Mirroring enabled: {len(mirrored):,} augmented training battles", flush=True)
+    elif lazy_mirror_training:
+        print(
+            f"Memory-safe lazy mirroring enabled: {len(train_battles):,} source battles; "
+            "encoded streams are shared",
+            flush=True,
+        )
     manifest_hash = (manifest or {}).get("ordered_id_sha256")
     if len(battles) < 50:
         # A manifest may resolve to fewer battles than the current collector
@@ -609,10 +673,14 @@ def _train_policy_model_impl(
         reaction_repeats=rr,
         hide_opponent_deck=hide_opponent_deck,
         hide_opponent_prob=hide_opponent_prob,
+        mirror_augmentation=lazy_mirror_training,
+        stream_cache_size=256 if use_v441 else None,
     )
     print(
         f"Training {model_name} (threat_dim={threat_dim}, "
         f"card_conditioned_placement={card_conditioned_placement}, "
+        f"placement_mode={placement_mode}, "
+        f"placement_card_mode={placement_card_mode}, "
         f"reaction_weight={rw}, reaction_repeats={rr}, "
         f"max_think_steps={max_think_steps}, eval_think_steps={eval_think_steps})",
         flush=True,
@@ -631,6 +699,7 @@ def _train_policy_model_impl(
         dropout=dropout,
         card_conditioned_placement=card_conditioned_placement,
         placement_mode=placement_mode,
+        placement_card_mode=placement_card_mode,
         arena_memory_channels=16 if use_v7 else 0,
         arena_hidden_channels=32,
         arena_memory_version="decay-v1" if use_v7 else "none",
@@ -886,11 +955,19 @@ def _train_policy_model_impl(
             "lr": float(scheduler.get_last_lr()[0]),
         }
         history.append(row)
+        tile_class = val_metrics.get("tile_class_acc")
+        tile_top5 = val_metrics.get("tile_top5_acc")
+        tile_extra = (
+            f"  val_tile_cls={tile_class:.3f}  val_tile@5={tile_top5:.3f}"
+            if tile_class is not None and tile_top5 is not None
+            else ""
+        )
         print(
             f"epoch {epoch:02d}  train_loss={train_loss:.4f}  "
             f"val_slot@1={val_metrics['slot_top1']:.3f}  "
             f"val_zone={val_metrics['zone_acc']:.3f}  "
-            f"val_tile={val_metrics['tile_acc']:.3f}  "
+            f"val_tile={val_metrics['tile_acc']:.3f}"
+            f"{tile_extra}  "
             f"val_loss={val_metrics['loss']:.4f}",
             flush=True,
         )
@@ -928,6 +1005,13 @@ def _train_policy_model_impl(
                         "reaction_seconds": reaction_seconds,
                         "card_conditioned_placement": card_conditioned_placement,
                         "placement_mode": placement_mode,
+                        "placement_card_mode": placement_card_mode,
+                        "rollout_placement_decode": rollout_placement_decode,
+                        "rollout_placement_temperature": rollout_placement_temperature,
+                        "rollout_placement_top_k": rollout_placement_top_k,
+                        "rollout_slot_decode": rollout_slot_decode,
+                        "rollout_slot_temperature": rollout_slot_temperature,
+                        "rollout_scheduling": rollout_scheduling,
                         "version": model_version,
                         "warmstart": warmstart_info,
                         "freeze_backbone": freeze_backbone,
@@ -1000,6 +1084,11 @@ def _train_policy_model_impl(
             seed=seed + 7,
             max_context=max_context,
             threat_dim=threat_dim,
+            placement_decode=rollout_placement_decode,
+            placement_temperature=rollout_placement_temperature,
+            placement_top_k=rollout_placement_top_k,
+            think_steps=eval_think_steps,
+            scheduling="race",
         )
         timing_prior = TimingPrior.from_battles(train_battles)
         rng = random.Random(seed + 9)
@@ -1038,6 +1127,14 @@ def _train_policy_model_impl(
                 "easy": scores_easy,
                 "medium": scores_medium,
             },
+            "placement_diversity": {
+                "human": placement_diversity_stats(real_slice),
+                "policy": placement_diversity_stats(rollouts),
+                "grid": f"{TILE_ROWS}x{TILE_COLS}",
+                "decode": rollout_placement_decode,
+                "temperature": rollout_placement_temperature,
+                "top_k": rollout_placement_top_k,
+            },
         }
 
     ckpt_path = output / "best_model.pt"
@@ -1059,6 +1156,13 @@ def _train_policy_model_impl(
                 "reaction_seconds": reaction_seconds,
                 "card_conditioned_placement": card_conditioned_placement,
                 "placement_mode": placement_mode,
+                "placement_card_mode": placement_card_mode,
+                "rollout_placement_decode": rollout_placement_decode,
+                "rollout_placement_temperature": rollout_placement_temperature,
+                "rollout_placement_top_k": rollout_placement_top_k,
+                "rollout_slot_decode": rollout_slot_decode,
+                "rollout_slot_temperature": rollout_slot_temperature,
+                "rollout_scheduling": rollout_scheduling,
                 "version": model_version,
                 "warmstart": warmstart_info,
                 "freeze_backbone": freeze_backbone,
@@ -1121,7 +1225,29 @@ def _train_policy_model_impl(
         lessons = v6_lessons
     elif use_v4:
         lessons = list(v4_lessons)
-        if model_version.startswith("4.3"):
+        if model_version.startswith("4.4"):
+            if model_version == "4.4.1":
+                lessons.insert(
+                    0,
+                    "v4.4.1 warm-starts from v4.4 on a fresh expanded-data split and conditions placement on the card actually selected, removing the train/eval soft-card mismatch.",
+                )
+                lessons.insert(
+                    1,
+                    "The shared rollout and phone harness decodes placement with temperature-0.6 sampling over the top five tiles; diversity is measured on the same 18×32 grid as the head.",
+                )
+            lessons.insert(
+                2 if model_version == "4.4.1" else 0,
+                "v4.4 keeps the v4.2 trunk size and v4.3 data recipe, but replaces XY regression with a card-conditioned 18×32 tile heatmap so placement can be multimodal.",
+            )
+            lessons.insert(
+                3 if model_version == "4.4.1" else 1,
+                "Primary placement signal is tile cross-entropy; expected XY is kept for compatibility. Think loop defaults to max K=3 for a cheap compute dial.",
+            )
+            lessons.insert(
+                4 if model_version == "4.4.1" else 2,
+                "Judge v4.4 on tile_class_acc / tile_top5_acc and placement spread, not only soft within-tile MAE from the XY mean.",
+            )
+        elif model_version.startswith("4.3"):
             lessons.insert(
                 0,
                 "v4.3 keeps the v4.2 recipe (90/5/5 + mirror + 40 windows), scales the trunk, and adds a toggled latent think loop so inference can spend more compute.",
@@ -1167,6 +1293,13 @@ def _train_policy_model_impl(
             "threat_dim": threat_dim,
             "card_conditioned_placement": card_conditioned_placement,
             "placement_mode": placement_mode,
+            "placement_card_mode": placement_card_mode,
+            "rollout_placement_decode": rollout_placement_decode,
+            "rollout_placement_temperature": rollout_placement_temperature,
+            "rollout_placement_top_k": rollout_placement_top_k,
+            "rollout_slot_decode": rollout_slot_decode,
+            "rollout_slot_temperature": rollout_slot_temperature,
+            "rollout_scheduling": rollout_scheduling,
             "reaction_weight": rw,
             "reaction_repeats": rr,
             "reaction_seconds": reaction_seconds,
@@ -1189,6 +1322,7 @@ def _train_policy_model_impl(
             "log_path": str(log_target) if log_target else None,
             "trainable_parameters": sum(p.numel() for p in trainable_parameters),
             "mirror_training": mirror_training,
+            "lazy_mirror_training": lazy_mirror_training,
             "max_think_steps": max_think_steps,
             "eval_think_steps": eval_think_steps,
         },

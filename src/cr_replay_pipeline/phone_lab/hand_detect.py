@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import io
+import os
+import re
 import threading
 from pathlib import Path
 from typing import Any
@@ -10,10 +12,31 @@ from typing import Any
 from PIL import Image
 
 DEFAULT_YOLO = Path(
-    "/home/cochon/Documents/ClashRoyaleAI/models/yolo/card_detector.pt"
+    os.environ.get(
+        "CR_CARD_DETECTOR_MODEL",
+        "models/card_detector_clash_cards_v3.pt",
+    )
 )
 # Match the dual-phone v8 detector; do not force a tiny imgsz (hurts accuracy).
 DEFAULT_CONF = 0.45
+
+
+def normalize_detector_label(label: str | None) -> str | None:
+    """Map Roboflow clash-cards v3 labels onto policy card ids."""
+    if not label:
+        return None
+    raw = str(label).strip().lower()
+    raw = re.sub(r"\.(png|jpe?g|webp)$", "", raw)
+    raw = raw.replace("evoluted", "evo").replace("evolved", "evo")
+    value = re.sub(r"[\s_]+", "-", raw)
+    value = re.sub(r"-+", "-", value).strip("-")
+    if value.endswith("-hero"):
+        value = value[: -len("-hero")]
+    if value.endswith("-evo"):
+        value = value[: -len("-evo")] + "-evo"
+    if not value or value.isdigit() or value in {"unknown", "none", "null"}:
+        return None
+    return value
 
 
 class HandDetector:
@@ -186,7 +209,8 @@ class HandDetector:
         for box in result.boxes:
             score = float(box.conf[0])
             cls = int(box.cls[0])
-            if score > best_conf:
+            candidate = normalize_detector_label(names.get(cls, str(cls)))
+            if candidate and score > best_conf:
                 best_conf = score
-                best_name = names.get(cls, str(cls))
+                best_name = candidate
         return best_name, best_conf, None

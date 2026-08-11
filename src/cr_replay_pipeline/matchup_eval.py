@@ -83,7 +83,7 @@ def discover_matchups(
             decks = (battle.opponent_deck, battle.team_deck)
         stats[pair]["n"] += 1
         stats[pair]["a_wins"] += int(a_won)
-        if len(examples[pair]) < 40:
+        if len(examples[pair]) < 120:
             examples[pair].append(decks)
 
     ranked: list[tuple[float, MatchupSpec]] = []
@@ -183,96 +183,54 @@ def policy_vs_policy_game(
     temperature: float = 0.85,
     max_context: int = 64,
     threat_dim: int = 0,
+    think_steps: int | None = None,
 ) -> BattleExample:
     events = _bootstrap_opening(
         team_deck, opponent_deck, costs, rng, n_events=warmup_events
     )
     seconds = float(events[-1]["seconds"])
-    next_side = "team" if events[-1]["side"] == "opponent" else "opponent"
+    from .policy_infer import predict_next_action
+
+    placement_decode = (
+        "sample"
+        if getattr(model, "placement_card_mode", "soft") == "selected"
+        else ("argmax" if getattr(model, "placement_mode", "xy") == "heatmap" else "expected")
+    )
 
     for _ in range(max_new_events):
-        dummy_card = team_deck[0] if next_side == "team" else opponent_deck[0]
-        dummy = {
-            "seconds": seconds + 1.0,
-            "side": next_side,
-            "event_type": "card_play",
-            "card": dummy_card,
-            "x": 9000,
-            "y": 8000 if next_side == "team" else 24000,
-        }
-        probe = BattleExample(
+        current = BattleExample(
             battle_id="matchup-probe",
             team_deck=team_deck,
             opponent_deck=opponent_deck,
             team_wins=0,
-            events=tuple(events) + (dummy,),
+            events=tuple(events),
         )
-        sample = encode_policy_sample(
-            probe,
-            len(events),
-            vocab,
-            costs,
-            max_context=max_context,
-            threat_dim=threat_dim,
+        predictions = []
+        for side in ("team", "opponent"):
+            pred = predict_next_action(
+                model, vocab, costs, current, device,
+                acting_side=side, temperature=temperature, slot_decode="sample",
+                max_context=max_context, threat_dim=threat_dim,
+                placement_decode=placement_decode, placement_temperature=0.6,
+                placement_top_k=5, think_steps=think_steps,
+                now_seconds=seconds, rng=rng,
+            )
+            predictions.append((side, pred))
+        next_side, pred = min(
+            predictions, key=lambda row: float(row[1]["delay_seconds"])
         )
-        if sample is None:
-            break
-        (
-            continuous,
-            card_ids,
-            team_deck_t,
-            opp_deck_t,
-            global_feat,
-            slot_feats,
-            hand_mask,
-            _slot,
-            _type,
-            _zone,
-            _xy,
-            _timing,
-            length,
-        ) = sample
-        out = model(
-            continuous.unsqueeze(0).to(device),
-            card_ids.unsqueeze(0).to(device),
-            team_deck_t.unsqueeze(0).to(device),
-            opp_deck_t.unsqueeze(0).to(device),
-            global_feat.unsqueeze(0).to(device),
-            length.unsqueeze(0).to(device),
-            slot_feats.unsqueeze(0).to(device),
-            hand_mask.unsqueeze(0).to(device),
-        )
-        logits = out["slot_logits"][0] / max(temperature, 1e-3)
-        probs = torch.softmax(logits, dim=-1).cpu().numpy()
-        slot = int(rng.choices(range(8), weights=probs.tolist(), k=1)[0])
-        acting = team_deck if next_side == "team" else opponent_deck
-        card = acting[slot]
-        event_type = (
-            "ability_activation"
-            if int(out["type_logits"][0].argmax().item()) == 1
-            else "card_play"
-        )
-        xy = out["xy"][0].cpu().numpy()
-        x = int(np.clip(xy[0] * 18000.0, 3000, 15000))
-        y_norm = float(xy[1])
-        if next_side == "opponent":
-            y_norm = 1.0 - y_norm
-        y = int(np.clip(y_norm * 32000.0, 500, 31500))
-        if event_type == "ability_activation":
-            x, y = 9000, 16000
-        dt = float(np.clip(np.expm1(out["timing"][0].item()), 0.25, 10.0))
+        dt = float(pred["delay_seconds"])
         seconds = min(330.0, seconds + dt)
         events.append(
             {
                 "seconds": seconds,
                 "side": next_side,
-                "event_type": event_type,
-                "card": card,
-                "x": x,
-                "y": y,
+                "event_type": pred["event_type"],
+                "card": pred["card"],
+                "x": pred["x"],
+                "y": pred["y"],
             }
         )
-        next_side = "opponent" if next_side == "team" else "team"
 
     return BattleExample(
         battle_id="matchup-game",
@@ -467,4 +425,348 @@ def evaluate_matchups(
     print(json.dumps(report["summary"], indent=2))
     print(report["verdict"])
     print(f"Wrote {out}")
+    return report
+
+
+DEFAULT_LINEAGE_POLICIES: tuple[tuple[str, str, str], ...] = (
+    ("v4", "models/policy_bc_v4", "#70a1ff"),
+    ("v4.1", "models/policy_bc_v4.1", "#ffca63"),
+    ("v4.2", "models/policy_bc_v4.2_full", "#70e1b1"),
+    ("v4.3", "models/policy_bc_v4.3", "#e8f58b"),
+    ("v4.4", "models/policy_bc_v4.4", "#38bdf8"),
+    ("v5", "models/policy_bc_v5", "#f472b6"),
+)
+
+
+def _policy_think_steps(cfg: dict[str, Any], report: dict[str, Any]) -> int | None:
+    """Use the checkpoint's eval think depth when the model supports thinking."""
+    max_think = int(cfg.get("max_think_steps", 0) or 0)
+    if max_think <= 0:
+        return None
+    compute = report.get("compute") or {}
+    eval_think = compute.get("eval_think_steps")
+    if eval_think is None:
+        eval_think = cfg.get("eval_think_steps", max_think)
+    return max(0, min(int(eval_think), max_think))
+
+
+def _fmt_eta(seconds: float) -> str:
+    seconds = max(0.0, float(seconds))
+    if seconds < 60:
+        return f"{seconds:.0f}s"
+    if seconds < 3600:
+        return f"{seconds / 60:.1f}m"
+    return f"{seconds / 3600:.2f}h"
+
+
+def _score_matchup_games(
+    winner: dict[str, Any],
+    games: list[BattleExample],
+    fav_is_team: list[bool],
+    costs: dict[str, int],
+    empirical_fav_wr: float,
+) -> dict[str, Any]:
+    probs_team = _score_team_win_prob(winner, games, costs)
+    fav_probs = [
+        float(p if fav else 1.0 - p) for p, fav in zip(probs_team, fav_is_team)
+    ]
+    fav_probs_arr = np.asarray(fav_probs, dtype=np.float64)
+    n = len(fav_probs_arr)
+    policy_fav_wr = float((fav_probs_arr >= 0.5).mean()) if n else 0.0
+    mean_p = float(fav_probs_arr.mean()) if n else 0.0
+    delta = policy_fav_wr - empirical_fav_wr
+    preserves = policy_fav_wr >= 0.5
+    agrees_strongly = abs(delta) <= 0.12 or (
+        policy_fav_wr >= 0.55 and empirical_fav_wr >= 0.55
+    )
+    return {
+        "games": n,
+        "policy_fav_wr": policy_fav_wr,
+        "policy_mean_P_fav": mean_p,
+        "policy_fav_wr_ci95": float(
+            1.96 * np.sqrt(max(policy_fav_wr * (1 - policy_fav_wr), 1e-9) / max(n, 1))
+        ),
+        "delta_wr": delta,
+        "preserves_favorite": preserves,
+        "agrees_strongly": agrees_strongly,
+        "mean_events": float(np.mean([len(g.events) for g in games])) if games else 0.0,
+    }
+
+
+def evaluate_matchup_lineage(
+    input_dir: str | Path = "data/raw",
+    policy_specs: list[tuple[str, str, str]] | None = None,
+    winner_dir: str | Path = "models/winner_predictor",
+    card_costs_path: str | Path = "data/card_costs.json",
+    output_path: str | Path = "reports/matchup_lineage.json",
+    html_output: str | Path | None = "reports/matchup_lineage.html",
+    games_per_matchup: int = 80,
+    top_k: int = 8,
+    min_n: int = 80,
+    seed: int = 42,
+    device_name: str | None = None,
+    warmup_events: int = 10,
+    max_new_events: int = 50,
+    temperature: float = 0.85,
+) -> dict[str, Any]:
+    """Mine shared wincon matchups, run each policy on the same schedule, report.
+
+    Progress lines include done/total and ETA so long lineage runs are monitorable.
+    """
+    import time
+
+    from .matchup_lineage_report import write_matchup_lineage_report
+
+    specs = list(policy_specs or DEFAULT_LINEAGE_POLICIES)
+    specs = [(label, path, color) for label, path, color in specs if Path(path).exists()]
+    if not specs:
+        raise RuntimeError("No policy checkpoints found for lineage matchup eval")
+
+    rng = random.Random(seed)
+    print("Loading battles ...", flush=True)
+    battles = collect_battles(input_dir)
+    train, _val, _test = split_battles(battles, seed=42)
+    matchups = discover_matchups(train, min_n=min_n, top_k=top_k)
+    if not matchups:
+        raise RuntimeError("No matchups found with the current thresholds")
+
+    costs = load_card_costs(card_costs_path)
+    with Path(winner_dir, "hgb_ensemble.pkl").open("rb") as handle:
+        winner = pickle.load(handle)
+
+    # Shared schedule: identical decks/seeds/seats for every policy.
+    schedule: list[dict[str, Any]] = []
+    matchup_meta: list[dict[str, Any]] = []
+    for mi, spec in enumerate(matchups):
+        matchup_meta.append(
+            {
+                "id": f"{spec.favorite}>{spec.underdog}",
+                "favorite": spec.favorite,
+                "underdog": spec.underdog,
+                "label": f"{spec.favorite} > {spec.underdog}",
+                "empirical_n": spec.empirical_n,
+                "empirical_fav_wr": spec.empirical_fav_wr,
+            }
+        )
+        for i in range(games_per_matchup):
+            team_deck, opp_deck = rng.choice(spec.deck_pairs)
+            fav_is_team = i % 2 == 0
+            schedule.append(
+                {
+                    "matchup_index": mi,
+                    "game_index": i,
+                    "team_deck": team_deck if fav_is_team else opp_deck,
+                    "opp_deck": opp_deck if fav_is_team else team_deck,
+                    "fav_is_team": fav_is_team,
+                    "seed": rng.randint(0, 10**9),
+                }
+            )
+
+    total_games = len(specs) * len(schedule)
+    print(
+        f"Lineage matchups: {len(matchups)} · policies: {len(specs)} · "
+        f"games/policy: {len(schedule)} · total: {total_games}",
+        flush=True,
+    )
+    for mi, meta in enumerate(matchup_meta):
+        print(
+            f"  [{mi+1}/{len(matchup_meta)}] {meta['label']} "
+            f"human={meta['empirical_fav_wr']:.1%} n={meta['empirical_n']}",
+            flush=True,
+        )
+
+    models_out: list[dict[str, Any]] = []
+    done = 0
+    t0 = time.time()
+    progress_path = Path(output_path).with_name(
+        Path(output_path).stem + "_progress.jsonl"
+    )
+    if progress_path.exists():
+        progress_path.unlink()
+
+    for label, path, color in specs:
+        model, vocab, cfg, device = load_policy(path, device_name=device_name)
+        report_json: dict[str, Any] = {}
+        report_path = Path(path) / "report.json"
+        if report_path.exists():
+            with report_path.open(encoding="utf-8") as handle:
+                report_json = json.load(handle)
+        think_steps = _policy_think_steps(cfg, report_json)
+        print(
+            f"\n== {label} ({path}) think={think_steps if think_steps is not None else 0} "
+            f"on {device} ==",
+            flush=True,
+        )
+
+        by_matchup: dict[int, list[BattleExample]] = defaultdict(list)
+        fav_flags: dict[int, list[bool]] = defaultdict(list)
+        policy_t0 = time.time()
+
+        for step_i, job in enumerate(schedule):
+            battle = policy_vs_policy_game(
+                model,
+                vocab,
+                costs,
+                job["team_deck"],
+                job["opp_deck"],
+                device,
+                random.Random(job["seed"]),
+                warmup_events=warmup_events,
+                max_new_events=max_new_events,
+                temperature=temperature,
+                max_context=int(cfg.get("max_context", 64)),
+                threat_dim=int(cfg.get("threat_dim", 0) or 0),
+                think_steps=think_steps,
+            )
+            mi = int(job["matchup_index"])
+            by_matchup[mi].append(battle)
+            fav_flags[mi].append(bool(job["fav_is_team"]))
+            done += 1
+            if (step_i + 1) % 16 == 0 or (step_i + 1) == len(schedule):
+                elapsed = time.time() - t0
+                rate = done / max(elapsed, 1e-6)
+                remaining = (total_games - done) / max(rate, 1e-6)
+                print(
+                    f"{label}\t{done}/{total_games}\t"
+                    f"policy {step_i+1}/{len(schedule)}\t"
+                    f"ETA {_fmt_eta(remaining)}\t"
+                    f"{rate:.2f} games/s",
+                    flush=True,
+                )
+                with progress_path.open("a", encoding="utf-8") as handle:
+                    handle.write(
+                        json.dumps(
+                            {
+                                "ts": datetime.now(timezone.utc).strftime(
+                                    "%Y-%m-%dT%H:%M:%SZ"
+                                ),
+                                "policy": label,
+                                "done": done,
+                                "total": total_games,
+                                "eta_seconds": remaining,
+                                "games_per_sec": rate,
+                            }
+                        )
+                        + "\n"
+                    )
+
+        rows = []
+        for mi, meta in enumerate(matchup_meta):
+            scored = _score_matchup_games(
+                winner,
+                by_matchup[mi],
+                fav_flags[mi],
+                costs,
+                meta["empirical_fav_wr"],
+            )
+            row = {**meta, **scored}
+            rows.append(row)
+            print(
+                f"  {meta['label']}: human={meta['empirical_fav_wr']:.1%} "
+                f"AI={scored['policy_fav_wr']:.1%} "
+                f"Δ={scored['delta_wr']:+.1%} "
+                f"{'OK' if scored['preserves_favorite'] else 'FLIP'}",
+                flush=True,
+            )
+
+        deltas = [abs(r["delta_wr"]) for r in rows]
+        mean_abs = float(np.mean(deltas)) if deltas else 0.0
+        # Bootstrap mean |Δ| over matchups (lightweight uncertainty).
+        rs = np.random.default_rng(seed + 17)
+        boot = []
+        arr = np.asarray(deltas, dtype=np.float64)
+        for _ in range(800):
+            sample = arr[rs.integers(0, len(arr), size=len(arr))]
+            boot.append(float(sample.mean()))
+        boot_arr = np.asarray(boot)
+        models_out.append(
+            {
+                "id": label,
+                "policyId": report_json.get("model_name") or Path(path).name,
+                "modelDir": path,
+                "color": color,
+                "thinkSteps": think_steps if think_steps is not None else 0,
+                "seconds": time.time() - policy_t0,
+                "matchups": rows,
+                "meanAbsDelta": mean_abs,
+                "meanAbsDeltaCI": [
+                    float(np.percentile(boot_arr, 2.5)),
+                    float(np.percentile(boot_arr, 97.5)),
+                ],
+                "preserveFavoriteRate": float(
+                    np.mean([r["preserves_favorite"] for r in rows])
+                ),
+                "strongAgreementRate": float(
+                    np.mean([r["agrees_strongly"] for r in rows])
+                ),
+                "meanPolicyFavWr": float(np.mean([r["policy_fav_wr"] for r in rows])),
+            }
+        )
+        # Free GPU memory between policies.
+        del model
+        if device.type == "cuda":
+            torch.cuda.empty_cache()
+
+    best = min(models_out, key=lambda m: m["meanAbsDelta"])
+    report = {
+        "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "model_name": "matchup-lineage",
+        "judge": "winner-predictor-hgb-symmetric",
+        "seconds": time.time() - t0,
+        "setup": {
+            "games_per_matchup": games_per_matchup,
+            "top_k": top_k,
+            "min_empirical_n": min_n,
+            "warmup_events": warmup_events,
+            "policy_events": max_new_events,
+            "temperature": temperature,
+            "archetype": "primary win-condition by corpus frequency",
+            "seat_balanced": True,
+            "shared_schedule": True,
+            "policies": [
+                {"id": label, "path": path, "color": color}
+                for label, path, color in specs
+            ],
+            "note": (
+                "Same wincon matchups and identical deck/seed/seat schedule for every "
+                "policy. Each seat uses that policy's weights (self-play). Winners are "
+                "judged by the offline winner model — no live Clash Royale."
+            ),
+        },
+        "matchups": matchup_meta,
+        "models": models_out,
+        "summary": {
+            "matchups": len(matchup_meta),
+            "policies": len(models_out),
+            "games_per_policy": len(schedule),
+            "best_mean_abs_delta": best["id"],
+            "best_mean_abs_delta_wr": best["meanAbsDelta"],
+        },
+        "verdict": (
+            f"{best['id']} is closest to human matchup edges "
+            f"(mean |Δ| = {100*best['meanAbsDelta']:.1f} pp) under shared-schedule "
+            f"self-play judged by the winner model."
+        ),
+        "protocol": (
+            f"shared {len(matchup_meta)} matchups × {games_per_matchup} games · "
+            "wincon archetypes · seat-balanced self-play"
+        ),
+        "note": (
+            "Δ = AI favorite WR − human favorite WR. Positive means the policy "
+            "overstates the empirical edge; negative means it washes or flips it."
+        ),
+    }
+
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", encoding="utf-8") as handle:
+        json.dump(report, handle, indent=2)
+    print(json.dumps(report["summary"], indent=2))
+    print(report["verdict"])
+    print(f"Wrote {out}")
+
+    if html_output:
+        html_path = write_matchup_lineage_report(report, html_output)
+        report["html_report"] = str(html_path)
+        print(f"Wrote {html_path}")
     return report

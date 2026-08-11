@@ -69,7 +69,7 @@ class LabState:
         card_costs_path: Path = Path("data/card_costs.json"),
         policy_dirs: dict[str, Path] | None = None,
         mirror_tta: bool = False,
-        think_steps: int = 0,
+        think_steps: int | None = None,
     ):
         self.phones = phones
         self.calibrations = calibrations
@@ -78,7 +78,7 @@ class LabState:
         self.lock = threading.Lock()
         self.card_costs_path = Path(card_costs_path)
         self.mirror_tta = bool(mirror_tta)
-        self.think_steps = int(think_steps)
+        self.think_steps = None if think_steps is None else int(think_steps)
         self.policy_dirs = {
             k: Path(v) for k, v in (policy_dirs or DEFAULT_POLICY_DIRS).items()
         }
@@ -168,26 +168,14 @@ class LabState:
     def _assume_unknown_musketeer_pixel8(
         key: str, slots: list[dict[str, Any]]
     ) -> list[dict[str, Any]]:
-        """Pixel 8 deck uses a musketeer skin YOLO doesn't know yet."""
-        if key != "pixel8":
-            return slots
-        # Only infer the known skin when exactly one card is missing from an
-        # otherwise readable hand. On overlays / result screens all four crops
-        # are blank; treating those as cards made the battle loop tap blindly.
-        missing = [row for row in slots if not row.get("card_name")]
-        if len(missing) != 1:
-            return slots
-        out = []
-        for slot in slots:
-            if slot.get("card_name"):
-                out.append(slot)
-                continue
-            assumed = dict(slot)
-            assumed["card_name"] = "musketeer"
-            assumed["confidence"] = float(slot.get("confidence") or 0.0) or 0.5
-            assumed["error"] = "assumed_musketeer_new_skin"
-            out.append(assumed)
-        return out
+        """Compatibility hook that deliberately does not invent card labels.
+
+        The previous Pixel 8 special case turned any single unreadable crop
+        into Musketeer. That could make the policy tap a different real card.
+        Unknown visual state must remain unknown until the detector reads it.
+        """
+        del key
+        return slots
 
     def detect_phone(self, key: str, *, png: bytes | None = None) -> dict[str, Any]:
         t0 = time.perf_counter()
@@ -571,8 +559,11 @@ def build_lab_state(
     policy_v4: Path = Path("models/policy_bc_v4"),
     policy_v41: Path = Path("models/policy_bc_v4.1"),
     policy_v42: Path = Path("models/policy_bc_v4.2_full"),
+    policy_v43: Path = Path("models/policy_bc_v4.3"),
+    policy_v44: Path = Path("models/policy_bc_v4.4"),
+    policy_v441: Path = Path("models/policy_bc_v4.4.1"),
     mirror_tta: bool = False,
-    think_steps: int = 0,
+    think_steps: int | None = None,
 ) -> LabState:
     phones = {"pixel9": pixel9, "pixel8": pixel8}
     calibrations = {
@@ -605,6 +596,9 @@ def build_lab_state(
             "policy_bc_v4": Path(policy_v4),
             "policy_bc_v4.1": Path(policy_v41),
             "policy_bc_v4.2": Path(policy_v42),
+            "policy_bc_v4.3": Path(policy_v43),
+            "policy_bc_v4.4": Path(policy_v44),
+            "policy_bc_v4.4.1": Path(policy_v441),
         },
         mirror_tta=mirror_tta,
         think_steps=think_steps,

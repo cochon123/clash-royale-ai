@@ -23,6 +23,8 @@ def _version_key(report: dict[str, Any], model_dir: Path) -> str:
         return "6"
     if ver.startswith("5") or "v5" in name:
         return "5"
+    if ver.startswith("4.4.1") or "v4.4.1" in name or "v4_4_1" in name:
+        return "4.4.1"
     if ver.startswith("4.1") or "v4.1" in name or "v4_1" in name:
         return "4.1"
     if ver.startswith("4") or "v4" in name:
@@ -64,6 +66,12 @@ def _version_story(version: str) -> tuple[str, str]:
             "Next-action policy — v4 architecture, larger replay cut",
             "Same card-conditioned placement stack as v4.0; retrained on the expanded "
             "RoyaleAPI dump (~28k raw replays). Compare against v4.0 in the v4.1 compare report.",
+        ),
+        "4.4.1": (
+            "Next-action policy — selected-card, multimodal placement",
+            "Warm-started from v4.4 on the expanded replay cut. The placement head is "
+            "conditioned on the card actually selected, while offline and phone harnesses "
+            "decode controlled samples from the five strongest 18×32 placement tiles.",
         ),
         "5": (
             "Next-action policy — human mimic that hides from the style judge",

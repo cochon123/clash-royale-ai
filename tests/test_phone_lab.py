@@ -155,6 +155,16 @@ def test_logic_xy_to_uv_own_side_is_high_v():
     assert abs(v2) < 1e-6
 
 
+def test_roboflow_v3_card_labels_normalize_to_policy_ids():
+    from cr_replay_pipeline.phone_lab.hand_detect import normalize_detector_label
+
+    assert normalize_detector_label("archer_queen") == "archer-queen"
+    assert normalize_detector_label("archers evoluted.png") == "archers-evo"
+    assert normalize_detector_label("giant_hero.png") == "giant"
+    assert normalize_detector_label("giant_snowball.png") == "giant-snowball"
+    assert normalize_detector_label("0") is None
+
+
 def test_find_hand_slot_normalizes_names():
     from cr_replay_pipeline.phone_lab.battle import (
         find_hand_slot,
@@ -226,7 +236,7 @@ def test_validate_deck_and_elixir():
     assert abs(elixir.values["pixel8"] - 1.0) < 1e-6
 
 
-def test_pixel8_skin_fallback_never_invents_a_whole_hand():
+def test_pixel8_unknown_skin_is_never_invented():
     from cr_replay_pipeline.phone_lab.server import LabState
 
     blank = [
@@ -243,7 +253,7 @@ def test_pixel8_skin_fallback_never_invents_a_whole_hand():
         {"slot": 3, "card_name": "arrows", "confidence": 0.9},
     ]
     inferred = LabState._assume_unknown_musketeer_pixel8("pixel8", one_missing)
-    assert inferred[2]["card_name"] == "musketeer"
+    assert inferred[2]["card_name"] is None
 
 
 def test_battle_start_validation_without_phones():
@@ -278,6 +288,59 @@ def test_battle_start_validation_without_phones():
     assert not runner.running
 
 
+def test_mixed_manual_ai_is_rejected_without_manual_event_capture():
+    from cr_replay_pipeline.phone_lab.battle import BattleConfig, BattleRunner, PRESET_DECKS
+
+    runner = BattleRunner(detect_hand=lambda _p: [], execute_action=lambda *_a: {})
+    try:
+        runner.start(
+            BattleConfig(
+                decks={
+                    "pixel8": list(PRESET_DECKS["hog_cycle_2.6"]),
+                    "pixel9": list(PRESET_DECKS["logbait"]),
+                },
+                controllers={"pixel8": "policy_bc_v4.4.1", "pixel9": "manual"},
+            )
+        )
+        assert False, "expected model-faithfulness validation error"
+    except ValueError as exc:
+        assert "manual deployments" in str(exc)
+
+
+def test_phone_execution_never_substitutes_a_different_ranked_card():
+    from cr_replay_pipeline.phone_lab.battle import BattleConfig, BattleRunner, PRESET_DECKS
+
+    hand = [
+        {"slot": 0, "card_name": "cannon"},
+        {"slot": 1, "card_name": "ice-spirit"},
+        {"slot": 2, "card_name": "skeletons"},
+        {"slot": 3, "card_name": "the-log"},
+    ]
+    taps = []
+    runner = BattleRunner(
+        detect_hand=lambda _p: list(hand),
+        execute_action=lambda *args: taps.append(args) or {},
+    )
+    runner._config = BattleConfig(
+        decks={
+            "pixel8": list(PRESET_DECKS["hog_cycle_2.6"]),
+            "pixel9": list(PRESET_DECKS["logbait"]),
+        },
+        controllers={"pixel8": "manual", "pixel9": "manual"},
+    )
+    runner._costs = {"hog-rider": 4, "cannon": 3, "ice-spirit": 1}
+    runner._hands["pixel8"] = list(hand)
+    runner._hand_at["pixel8"] = 10**12
+    pred = {
+        "card": "hog-rider",
+        "ranked_slots": [{"card": "cannon", "prob": 0.4}],
+        "x": 9000,
+        "y": 8000,
+    }
+    assert not runner._try_execute("pixel8", pred, 5.0, settle_sleep=0, force_hand=False)
+    assert taps == []
+
+
 def test_flip_logic_y_and_resolve_playable():
     from cr_replay_pipeline.phone_lab.battle import (
         flip_logic_y,
@@ -307,9 +370,9 @@ def test_flip_logic_y_and_resolve_playable():
     }
     costs = {"hog-rider": 4, "cannon": 3, "ice-spirit": 1, "skeletons": 1}
     got = resolve_playable_card(pred, hand, costs)
-    assert got == ("cannon", 0, 3)
+    assert got is None
     affordable = resolve_playable_card(pred, hand, costs, available_elixir=1.5)
-    assert affordable == ("ice-spirit", 1, 1)
+    assert affordable is None
 
 
 def test_phone_battle_view_flips_opponent_y():
@@ -416,8 +479,9 @@ def test_plan_delay_does_not_force_alternation():
         },
         controllers={"pixel8": "manual", "pixel9": "manual"},
     )
-    # No history → normal capped delay.
-    assert runner._plan_delay("pixel8", 5.0) == MAX_PLAN_DELAY_S
+    # Learned delays survive unchanged inside the model's 12-second range.
+    assert runner._plan_delay("pixel8", 5.0) == 5.0
+    assert runner._plan_delay("pixel8", 20.0) == MAX_PLAN_DELAY_S
     runner._events = [
         {
             "seconds": 1.0,
@@ -429,8 +493,8 @@ def test_plan_delay_does_not_force_alternation():
         }
     ]
     # Neither the previous actor nor its opponent receives special priority.
-    assert runner._plan_delay("pixel8", 2.5) == MAX_PLAN_DELAY_S
-    assert runner._plan_delay("pixel9", 2.5) == MAX_PLAN_DELAY_S
+    assert runner._plan_delay("pixel8", 2.5) == 2.5
+    assert runner._plan_delay("pixel9", 2.5) == 2.5
 
 
 def test_empty_hands_auto_stop_battle():

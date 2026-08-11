@@ -1,0 +1,27 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": 4.805159256930724,
+    "val_loss": 6.115531107274498,
+    "val_slot_top1": 0.5563989493722741,
+    "val_slot_top3": 0.9398539723848768,
+    "val_type_acc": 0.9973252367526928,
+    "val_zone_acc": 0.44555290488927446,
+    "val_xy_mae": 5173.382729101906,
+    "val_tile_acc": 0.08005012168967927,
+    "val_tile_class_acc": 0.15265428082604401,
+    "val_tile_top5_acc": 0.3818646232439336,
+    "val_tile_nll": 4.394227090515359,
+    "val_tile_entropy_bits": 4.692265092334091,
+    "val_tile_effective_count": 25.85309490167538,
+    "val_tile_top1_mass": 0.21453342080624718,
+    "val_tile_top5_mass": 0.5169059266963405,
+    "val_timing_mae": 1.5105715530826809,
+    "val_model_x_std": 0.19133412837982178,
+    "val_model_y_std": 0.19155678153038025,
+    "val_argmax_x_std": 0.27256155014038086,
+    "val_argmax_y_std": 0.23065824806690216,
+    "val_n": 41499,
+    "lr": 9.829629131445342e-05
+  }
+]

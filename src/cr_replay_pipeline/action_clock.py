@@ -288,12 +288,22 @@ def rollout_policy_battles_with_clock(
     threat_dim: int = 0,
     use_clock_actor: bool = True,
     use_clock_delay: bool = True,
+    placement_decode: str | None = None,
+    placement_temperature: float = 0.6,
+    placement_top_k: int | None = 5,
+    think_steps: int = 0,
 ) -> list[BattleExample]:
-    """Rollout variant: clock samples replace hardcoded side flip and/or timing.
+    """Rollout variant whose actor/delay come from the learned action clock.
 
-    Leaves ``rollout_policy_battles`` untouched for the v2/v3 training path.
+    Card, type and placement still go through the shared deployment inference
+    path, including selected-card conditioning and the checkpoint decoder.
     """
+    from .policy_infer import predict_next_action
+
     model.eval()
+    resolved_placement_decode = placement_decode or (
+        "sample" if getattr(model, "placement_card_mode", "soft") == "selected" else "expected"
+    )
     rng = random.Random(seed)
     chosen = list(seed_battles)
     rng.shuffle(chosen)
@@ -308,76 +318,22 @@ def rollout_policy_battles_with_clock(
         next_side = battle.events[warmup_events]["side"]
 
         for _ in range(max_new_events):
-            dummy = {
-                "seconds": seconds + 1.0,
-                "side": next_side,
-                "event_type": "card_play",
-                "card": battle.team_deck[0]
-                if next_side == "team"
-                else battle.opponent_deck[0],
-                "x": 9000,
-                "y": 8000 if next_side == "team" else 24000,
-            }
-            probe = BattleExample(
+            current = BattleExample(
                 battle_id=battle.battle_id + "-clock-rollout",
                 team_deck=battle.team_deck,
                 opponent_deck=battle.opponent_deck,
                 team_wins=battle.team_wins,
-                events=tuple(events) + (dummy,),
+                events=tuple(events),
             )
-            sample = encode_policy_sample(
-                probe,
-                len(events),
-                vocab,
-                costs,
-                max_context=max_context,
-                threat_dim=threat_dim,
+            pred = predict_next_action(
+                model, vocab, costs, current, device,
+                acting_side=next_side, temperature=temperature, slot_decode="sample",
+                max_context=max_context, threat_dim=threat_dim,
+                placement_decode=resolved_placement_decode,
+                placement_temperature=placement_temperature,
+                placement_top_k=placement_top_k, think_steps=think_steps,
+                now_seconds=seconds, rng=rng,
             )
-            if sample is None:
-                break
-            (
-                continuous,
-                card_ids,
-                team_deck,
-                opp_deck,
-                global_feat,
-                slot_feats,
-                hand_mask,
-                _slot,
-                _type,
-                _zone,
-                _xy,
-                _timing,
-                length,
-            ) = sample
-            out = model(
-                continuous.unsqueeze(0).to(device),
-                card_ids.unsqueeze(0).to(device),
-                team_deck.unsqueeze(0).to(device),
-                opp_deck.unsqueeze(0).to(device),
-                global_feat.unsqueeze(0).to(device),
-                length.unsqueeze(0).to(device),
-                slot_feats.unsqueeze(0).to(device),
-                hand_mask.unsqueeze(0).to(device),
-            )
-            logits = out["slot_logits"][0] / max(temperature, 1e-3)
-            probs = torch.softmax(logits, dim=-1).cpu().numpy()
-            slot = int(rng.choices(range(8), weights=probs.tolist(), k=1)[0])
-            acting_deck = battle.team_deck if next_side == "team" else battle.opponent_deck
-            card = acting_deck[slot]
-            event_type = (
-                "ability_activation"
-                if int(out["type_logits"][0].argmax().item()) == 1
-                else "card_play"
-            )
-            xy = out["xy"][0].cpu().numpy()
-            x = int(np.clip(xy[0] * 18000.0, 3000, 15000))
-            y_norm = float(xy[1])
-            if next_side == "opponent":
-                y_norm = 1.0 - y_norm
-            y = int(np.clip(y_norm * 32000.0, 500, 31500))
-            if event_type == "ability_activation":
-                x, y = 9000, 16000
 
             if use_clock_delay:
                 # Delay conditioned on state *before* this play (last committed event).
@@ -394,21 +350,21 @@ def rollout_policy_battles_with_clock(
                     costs,
                 )
                 if feat is None:
-                    dt = float(np.clip(np.expm1(out["timing"][0].item()), 0.2, 12.0))
+                    dt = float(pred["delay_seconds"])
                 else:
                     dt = clock.sample_delay(feat, rng)
             else:
-                dt = float(np.clip(np.expm1(out["timing"][0].item()), 0.2, 12.0))
+                dt = float(pred["delay_seconds"])
 
             seconds = min(330.0, seconds + dt)
             events.append(
                 {
                     "seconds": seconds,
                     "side": next_side,
-                    "event_type": event_type,
-                    "card": card,
-                    "x": x,
-                    "y": y,
+                    "event_type": pred["event_type"],
+                    "card": pred["card"],
+                    "x": pred["x"],
+                    "y": pred["y"],
                 }
             )
 

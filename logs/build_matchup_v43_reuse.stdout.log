@@ -1,0 +1,14 @@
+Loading battles ...
+Cached 46579 battles -> /home/cochon/Documents/mini-project/clash-royale-ai/data/winner_battles_cache.pkl
+loaded v4: 511 rollouts
+loaded v4.1: 511 rollouts
+loaded v4.2: 511 rollouts
+loaded v4.3: 511 rollouts
+loaded v5: 511 rollouts
+Paired shared pool: 511
+v4: paired=511
+v4.1: paired=511
+v4.2: paired=511
+v4.3: paired=511
+v5: paired=511
+wrote /home/cochon/Documents/mini-project/clash-royale-ai/reports/policy_bc_v4_3_matchup.json traj 8 meanAbsZ {'v4': 1.321, 'v4.1': 1.321, 'v4.2': 1.206, 'v4.3': 1.311, 'v5': 0.623}

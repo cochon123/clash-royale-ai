@@ -235,13 +235,15 @@ def build_parser() -> argparse.ArgumentParser:
     train_policy.add_argument(
         "--version",
         default="2",
-        choices=["2", "3", "4", "4.1", "4.2", "4.3", "5", "6", "6.1", "7"],
+        choices=["2", "3", "4", "4.1", "4.2", "4.3", "4.4", "4.4.1", "5", "6", "6.1", "7"],
         help=(
             "2=cycle features; 3=threat+reaction; "
             "4=v3 + jointly trained card-conditioned placement; "
             "4.1=same architecture as 4, new data cut; "
             "4.2=v4.1 plus mirrored training augmentation; "
             "4.3=v4.2 recipe + larger trunk + toggled latent think loop for inference compute; "
+            "4.4=v4.2 trunk size + v4.3 data recipe + tile heatmap placement + think loop (default K=3); "
+            "4.4.1=v4.4 warm-start + exact selected-card placement conditioning and diverse rollout decoding; "
             "5=v4.1 + style feature matching + REINFORCE vs style judge; "
             "6=v4 trunk + card-conditioned placement heatmap + hidden opponent deck augmentation; "
             "6.1=v4.1 warm-start + frozen incumbent heads + tile-head-only isolation; "
@@ -314,7 +316,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--max-think-steps",
         type=int,
         default=None,
-        help="Max latent refine steps (v4.3 defaults to 8; 0 disables think loop)",
+        help="Max latent refine steps (v4.3 defaults to 8, v4.4 to 3; 0 disables think loop)",
     )
     train_policy.add_argument(
         "--eval-think-steps",
@@ -406,8 +408,8 @@ def build_parser() -> argparse.ArgumentParser:
     predict_policy.add_argument(
         "--think-steps",
         type=int,
-        default=0,
-        help="v4.3 latent think depth (0=off/fast; higher spends more compute)",
+        default=None,
+        help="Force latent think depth; omitted uses the checkpoint evaluation depth",
     )
 
     matchup = commands.add_parser(
@@ -427,6 +429,31 @@ def build_parser() -> argparse.ArgumentParser:
     matchup.add_argument("--min-n", type=int, default=60)
     matchup.add_argument("--seed", type=int, default=42)
     matchup.add_argument("--device", default=None)
+
+    matchup_lineage = commands.add_parser(
+        "eval-matchup-lineage",
+        help=(
+            "Shared-schedule wincon matchups across policy versions; "
+            "HTML report compares human vs AI favorite win rates"
+        ),
+    )
+    matchup_lineage.add_argument("--input", default="data/raw")
+    matchup_lineage.add_argument(
+        "--policy",
+        action="append",
+        dest="policies",
+        default=None,
+        help="label:path:color (repeatable). Defaults to v4…v5 lineage.",
+    )
+    matchup_lineage.add_argument("--winner-dir", default="models/winner_predictor")
+    matchup_lineage.add_argument("--card-costs", default="data/card_costs.json")
+    matchup_lineage.add_argument("--output", default="reports/matchup_lineage.json")
+    matchup_lineage.add_argument("--html", default="reports/matchup_lineage.html")
+    matchup_lineage.add_argument("--games", type=int, default=80)
+    matchup_lineage.add_argument("--top-k", type=int, default=8)
+    matchup_lineage.add_argument("--min-n", type=int, default=80)
+    matchup_lineage.add_argument("--seed", type=int, default=42)
+    matchup_lineage.add_argument("--device", default=None)
 
     royale = commands.add_parser(
         "battle-royale",
@@ -582,7 +609,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     phone_lab.add_argument(
         "--yolo-model",
-        default="/home/cochon/Documents/ClashRoyaleAI/models/yolo/card_detector.pt",
+        default="models/card_detector_clash_cards_v3.pt",
     )
     phone_lab.add_argument(
         "--card-costs", default="data/card_costs.json"
@@ -601,6 +628,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--policy-v42", default="models/policy_bc_v4.2_full",
         help="full-data v4.2 checkpoint exposed as policy_bc_v4.2",
     )
+    phone_lab.add_argument("--policy-v43", default="models/policy_bc_v4.3")
+    phone_lab.add_argument("--policy-v44", default="models/policy_bc_v4.4")
+    phone_lab.add_argument("--policy-v441", default="models/policy_bc_v4.4.1")
     phone_lab.add_argument(
         "--mirror-tta",
         action="store_true",
@@ -609,8 +639,8 @@ def build_parser() -> argparse.ArgumentParser:
     phone_lab.add_argument(
         "--think-steps",
         type=int,
-        default=0,
-        help="v4.3 latent think depth for live policy battles (0=off)",
+        default=None,
+        help="Force latent think depth; omitted uses each checkpoint's evaluation depth",
     )
     phone_lab.add_argument(
         "--no-open",
@@ -1092,6 +1122,8 @@ def main() -> None:
             output = "models/policy_bc_v5"
         elif args.version == "3" and output == "models/policy_bc":
             output = "models/policy_bc_v3"
+        elif args.version in {"4.4", "4.4.1"} and output == "models/policy_bc":
+            output = f"models/policy_bc_v{args.version}"
         elif args.version == "4.3" and output == "models/policy_bc":
             output = "models/policy_bc_v4.3"
         elif args.version == "4.2" and output == "models/policy_bc":
@@ -1141,6 +1173,8 @@ def main() -> None:
             from .policy_train import train_policy_model
 
             warmstart_dir = args.warmstart_dir
+            if args.version == "4.4.1" and warmstart_dir == "models/policy_bc_v4.1":
+                warmstart_dir = "models/policy_bc_v4.4"
             if args.version == "7" and warmstart_dir == "models/policy_bc_v4.1":
                 warmstart_dir = "models/policy_bc_v6_1"
 
@@ -1153,7 +1187,7 @@ def main() -> None:
                         realism_model_dir=args.realism_model_dir,
                         epochs=args.epochs,
                         batch_size=args.batch_size
-                        or (512 if args.version in {"4.2", "4.3", "7"} else 256),
+                        or (512 if args.version in {"4.2", "4.3", "4.4", "4.4.1", "7"} else 256),
                         learning_rate=args.lr,
                         d_model=args.d_model,
                         num_layers=args.num_layers,
@@ -1165,14 +1199,14 @@ def main() -> None:
                         version=args.version,
                         reaction_weight=args.reaction_weight,
                         mirror_training=args.mirror_training
-                        or args.version in {"4.2", "4.3"},
+                        or args.version in {"4.2", "4.3", "4.4", "4.4.1"},
                         training_log_path=args.training_log_path,
                         reaction_repeats=args.reaction_repeats,
                         hide_opponent_deck=args.version == "6",
                         hide_opponent_prob=args.hide_opponent_prob,
                         warmstart_dir=(
                             warmstart_dir
-                            if args.version in {"6.1", "7"}
+                            if args.version in {"4.4.1", "6.1", "7"}
                             else None
                         ),
                         freeze_backbone=(
@@ -1231,6 +1265,10 @@ def main() -> None:
                 name = "policy_bc_v6.html"
             elif "v5" in md:
                 name = "policy_bc_v5.html"
+            elif "v4.4.1" in md or "v4_4_1" in md:
+                name = "policy_bc_v4_4_1.html"
+            elif "v4.4" in md or "v4_4" in md:
+                name = "policy_bc_v4_4.html"
             elif "v4.3" in md or "v4_3" in md:
                 name = "policy_bc_v4_3.html"
             elif "v4.2" in md or "v4_2" in md:
@@ -1264,6 +1302,20 @@ def main() -> None:
             path = render_policy_v5_report(
                 model_dir=args.model_dir,
                 battle_royale_path=Path(args.output_dir) / "battle_royale_v5.json",
+                output_path=Path(args.output_dir) / name,
+            )
+        elif "v4.4.1" in model_dir_s or "v4_4_1" in model_dir_s or (name and "v4_4_1" in name):
+            from .policy_v441_report import render_policy_v441_report
+
+            path = render_policy_v441_report(
+                model_dir=args.model_dir,
+                output_path=Path(args.output_dir) / name,
+            )
+        elif "v4.4" in model_dir_s or "v4_4" in model_dir_s or (name and "v4_4" in name):
+            from .policy_v44_report import render_policy_v44_report
+
+            path = render_policy_v44_report(
+                model_dir=args.model_dir,
                 output_path=Path(args.output_dir) / name,
             )
         elif "v4.3" in model_dir_s or "v4_3" in model_dir_s or (name and "v4_3" in name):
@@ -1327,6 +1379,42 @@ def main() -> None:
                     winner_dir=args.winner_dir,
                     card_costs_path=args.card_costs,
                     output_path=args.output,
+                    games_per_matchup=args.games,
+                    top_k=args.top_k,
+                    min_n=args.min_n,
+                    seed=args.seed,
+                    device_name=args.device,
+                ),
+                indent=2,
+                ensure_ascii=False,
+                default=str,
+            )
+        )
+    elif args.command == "eval-matchup-lineage":
+        from .matchup_eval import DEFAULT_LINEAGE_POLICIES, evaluate_matchup_lineage
+
+        policy_specs = None
+        if args.policies:
+            policy_specs = []
+            for raw in args.policies:
+                parts = raw.split(":", 2)
+                if len(parts) != 3:
+                    raise SystemExit(
+                        f"--policy expects label:path:color, got {raw!r}"
+                    )
+                policy_specs.append((parts[0], parts[1], parts[2]))
+        else:
+            policy_specs = list(DEFAULT_LINEAGE_POLICIES)
+
+        print(
+            json.dumps(
+                evaluate_matchup_lineage(
+                    input_dir=args.input,
+                    policy_specs=policy_specs,
+                    winner_dir=args.winner_dir,
+                    card_costs_path=args.card_costs,
+                    output_path=args.output,
+                    html_output=args.html,
                     games_per_matchup=args.games,
                     top_k=args.top_k,
                     min_n=args.min_n,
@@ -1498,6 +1586,9 @@ def main() -> None:
                 policy_v4=args.policy_v4,
                 policy_v41=args.policy_v41,
                 policy_v42=args.policy_v42,
+                policy_v43=args.policy_v43,
+                policy_v44=args.policy_v44,
+                policy_v441=args.policy_v441,
                 mirror_tta=args.mirror_tta,
                 think_steps=args.think_steps,
                 open_browser=not args.no_open,

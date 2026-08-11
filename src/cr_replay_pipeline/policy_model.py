@@ -276,6 +276,7 @@ class PolicyBC(nn.Module):
         num_zones: int = NUM_ZONES,
         card_conditioned_placement: bool = False,
         placement_mode: str = "xy",
+        placement_card_mode: str = "soft",
         arena_memory_channels: int = 0,
         arena_hidden_channels: int = 32,
         arena_memory_version: str = "none",
@@ -287,6 +288,7 @@ class PolicyBC(nn.Module):
         self.d_model = d_model
         self.card_conditioned_placement = card_conditioned_placement
         self.placement_mode = str(placement_mode)
+        self.placement_card_mode = str(placement_card_mode)
         self.arena_memory_channels = int(arena_memory_channels)
         self.arena_hidden_channels = int(arena_hidden_channels)
         self.arena_memory_version = str(arena_memory_version)
@@ -294,6 +296,8 @@ class PolicyBC(nn.Module):
         self.max_think_steps = int(max_think_steps)
         if self.placement_mode not in {"xy", "heatmap"}:
             raise ValueError(f"Unknown placement_mode: {self.placement_mode}")
+        if self.placement_card_mode not in {"soft", "selected"}:
+            raise ValueError(f"Unknown placement_card_mode: {self.placement_card_mode}")
         rows = torch.arange(TILE_ROWS, dtype=torch.float32).repeat_interleave(TILE_COLS)
         cols = torch.arange(TILE_COLS, dtype=torch.float32).repeat(TILE_ROWS)
         self.register_buffer(
@@ -392,6 +396,7 @@ class PolicyBC(nn.Module):
         team_embeds: torch.Tensor,
         slot_logits: torch.Tensor,
         target_slots: torch.Tensor | None,
+        placement_slots: torch.Tensor | None,
     ) -> torch.Tensor:
         """Card embedding used to condition zone/XY.
 
@@ -400,6 +405,13 @@ class PolicyBC(nn.Module):
         (the probe showed oracle helps but e2e-on-frozen-argmax did not).
         Eval: soft mixture (≈ argmax when confident).
         """
+        if self.placement_card_mode == "selected":
+            selected = placement_slots
+            if selected is None:
+                selected = target_slots if self.training and target_slots is not None else slot_logits.argmax(dim=-1)
+            batch = torch.arange(team_embeds.size(0), device=team_embeds.device)
+            return team_embeds[batch, selected]
+
         probs = F.softmax(slot_logits, dim=-1)
         soft = (probs.unsqueeze(-1) * team_embeds).sum(dim=1)
         if target_slots is None or not self.training:
@@ -421,6 +433,7 @@ class PolicyBC(nn.Module):
         slot_features: torch.Tensor,
         hand_mask: torch.Tensor | None = None,
         target_slots: torch.Tensor | None = None,
+        placement_slots: torch.Tensor | None = None,
         arena_permutation: torch.Tensor | None = None,
         disable_arena: bool = False,
         zero_arena_memory: bool = False,
@@ -472,7 +485,7 @@ class PolicyBC(nn.Module):
         debug: dict[str, torch.Tensor] = {}
         if self.card_conditioned_placement:
             card_ctx = self._placement_card_context(
-                team_embeds, slot_logits, target_slots
+                team_embeds, slot_logits, target_slots, placement_slots
             )
             place_in = torch.cat([fused, card_ctx], dim=-1)
             zone_logits = self.zone_head(place_in)
