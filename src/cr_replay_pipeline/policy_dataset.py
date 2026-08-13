@@ -680,6 +680,7 @@ class PolicyActionDataset(Dataset):
         hide_opponent_prob: float = 0.0,
         mirror_augmentation: bool = False,
         stream_cache_size: int | None = None,
+        winner_only: bool = False,
     ):
         self.max_context = max_context
         self.battles = battles
@@ -691,6 +692,7 @@ class PolicyActionDataset(Dataset):
         self.hide_opponent_prob = float(hide_opponent_prob)
         self.reaction_weight = reaction_weight
         self.mirror_augmentation = bool(mirror_augmentation)
+        self.winner_only = bool(winner_only)
         self.stream_cache_size = (
             max(1, int(stream_cache_size)) if stream_cache_size is not None else None
         )
@@ -712,6 +714,10 @@ class PolicyActionDataset(Dataset):
             other: list[int] = []
             for event_index in candidates:
                 target = battle.events[event_index]
+                if self.winner_only:
+                    winner_side = "team" if bool(battle.team_wins) else "opponent"
+                    if target["side"] != winner_side:
+                        continue
                 acting = (
                     battle.opponent_deck
                     if target["side"] == "opponent"
@@ -1002,6 +1008,7 @@ def create_policy_dataloaders(
     num_workers: int = 0,
     mirror_augmentation: bool = False,
     stream_cache_size: int | None = None,
+    winner_only: bool = False,
 ) -> tuple[DataLoader, DataLoader, DataLoader]:
     train_ds = PolicyActionDataset(
         train_battles,
@@ -1020,6 +1027,7 @@ def create_policy_dataloaders(
         hide_opponent_prob=hide_opponent_prob,
         mirror_augmentation=mirror_augmentation,
         stream_cache_size=stream_cache_size,
+        winner_only=winner_only,
     )
     val_ds = PolicyActionDataset(
         val_battles,
@@ -1035,6 +1043,7 @@ def create_policy_dataloaders(
         prefer_reactions=False,
         reaction_repeats=1,
         stream_cache_size=stream_cache_size,
+        winner_only=winner_only,
     )
     test_ds = PolicyActionDataset(
         test_battles,
@@ -1050,6 +1059,7 @@ def create_policy_dataloaders(
         prefer_reactions=False,
         reaction_repeats=1,
         stream_cache_size=stream_cache_size,
+        winner_only=winner_only,
     )
     return (
         DataLoader(

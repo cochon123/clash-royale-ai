@@ -43,11 +43,11 @@ DEFAULT_DECKS = {
         "knight",
         "archers",
         "minions",
+        "skeletons",
         "arrows",
         "fireball",
         "giant",
         "mini-pekka",
-        "musketeer",
     ],
     "pixel9": [
         "mortar",
@@ -360,6 +360,7 @@ class BattleConfig:
     policy_dirs: dict[str, Path] = field(default_factory=lambda: dict(DEFAULT_POLICY_DIRS))
     mirror_tta: bool = False
     think_steps: int | None = None
+    stop_on_empty_hands: bool = True
 
 
 class BattleRunner:
@@ -397,6 +398,11 @@ class BattleRunner:
     @property
     def running(self) -> bool:
         return self._running
+
+    def events_snapshot(self) -> list[dict[str, Any]]:
+        """Return a stable copy for data collectors and reports."""
+        with self._lock:
+            return [dict(event) for event in self._events]
 
     def status(self) -> dict[str, Any]:
         with self._lock:
@@ -482,6 +488,7 @@ class BattleRunner:
             policy_dirs=config.policy_dirs,
             mirror_tta=config.mirror_tta,
             think_steps=config.think_steps,
+            stop_on_empty_hands=config.stop_on_empty_hands,
         )
 
         needed = {c for c in controllers.values() if c != CONTROLLER_MANUAL}
@@ -610,7 +617,8 @@ class BattleRunner:
         if ctrl == CONTROLLER_MANUAL:
             return None
         hand = self._hands.get(phone) or []
-        hand_cards = set(detected_hand_cards(hand))
+        declared = set(self._config.decks[phone])
+        hand_cards = set(detected_hand_cards(hand)) & declared
         if not hand_cards:
             return None
         bundle = self._policies[ctrl]
@@ -735,12 +743,18 @@ class BattleRunner:
                         "err",
                     )
                     if empty_streak >= MAX_EMPTY_HAND_STREAK:
+                        if self._config.stop_on_empty_hands:
+                            self._append_log(
+                                "stopping: YOLO lost both hands "
+                                "(match over / overlay / wrong screen?)",
+                                "err",
+                            )
+                            break
                         self._append_log(
-                            "stopping: YOLO lost both hands "
-                            "(match over / overlay / wrong screen?)",
-                            "err",
+                            "both hands temporarily hidden; collection mode keeps waiting",
+                            "info",
                         )
-                        break
+                        empty_streak = 0
                     time.sleep(0.35)
                     continue
                 empty_streak = 0

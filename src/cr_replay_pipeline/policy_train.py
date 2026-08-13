@@ -480,6 +480,7 @@ def _train_policy_model_impl(
     training_log_path: str | Path | None = None,
     max_think_steps: int | None = None,
     eval_think_steps: int | None = None,
+    winner_only: bool = False,
 ) -> dict[str, Any]:
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -499,7 +500,9 @@ def _train_policy_model_impl(
     use_v3 = version.startswith("3") or use_v4
     use_v43 = version.startswith("4.3")
     use_v44 = version.startswith("4.4")
-    use_v441 = version.startswith("4.4.1")
+    use_v442 = version.startswith("4.4.2")
+    use_v441 = version.startswith("4.4.1") or use_v442
+    winner_only = bool(winner_only or use_v442)
     card_conditioned_placement = use_v4
     # v4.4 / v6+: classify an 18×32 tile heatmap instead of regressing one XY mean.
     placement_mode = "heatmap" if (use_v6 or use_v44) else "xy"
@@ -532,7 +535,9 @@ def _train_policy_model_impl(
         model_version = "6.1.0" if use_v61 else "6.0.0"
     elif use_v4:
         # "4" / "4.0" → 4.0.0; "4.1"/"4.2"/"4.3"/"4.4" keep their minor versions.
-        if use_v441:
+        if use_v442:
+            model_name, model_version = "policy-bc-v4.4.2", "4.4.2"
+        elif use_v441:
             model_name, model_version = "policy-bc-v4.4.1", "4.4.1"
         else:
             parts = version.split(".")
@@ -592,7 +597,7 @@ def _train_policy_model_impl(
     battles = collect_battles(
         input_dir,
         min_card_plays=min_card_plays,
-        require_decisive_result=False,
+        require_decisive_result=winner_only,
     )
     manifest: dict[str, Any] | None = None
     if write_split_manifest:
@@ -675,12 +680,14 @@ def _train_policy_model_impl(
         hide_opponent_prob=hide_opponent_prob,
         mirror_augmentation=lazy_mirror_training,
         stream_cache_size=256 if use_v441 else None,
+        winner_only=winner_only,
     )
     print(
         f"Training {model_name} (threat_dim={threat_dim}, "
         f"card_conditioned_placement={card_conditioned_placement}, "
         f"placement_mode={placement_mode}, "
         f"placement_card_mode={placement_card_mode}, "
+        f"winner_only={winner_only}, "
         f"reaction_weight={rw}, reaction_repeats={rr}, "
         f"max_think_steps={max_think_steps}, eval_think_steps={eval_think_steps})",
         flush=True,
@@ -1028,6 +1035,7 @@ def _train_policy_model_impl(
                         "trainable_parameters": sum(p.numel() for p in trainable_parameters),
                         "max_think_steps": max_think_steps,
                         "eval_think_steps": eval_think_steps,
+                        "winner_only": winner_only,
                     },
                     "created_at": created_at,
                     "epoch": epoch,
@@ -1179,6 +1187,7 @@ def _train_policy_model_impl(
                 "trainable_parameters": sum(p.numel() for p in trainable_parameters),
                 "max_think_steps": max_think_steps,
                 "eval_think_steps": eval_think_steps,
+                "winner_only": winner_only,
             },
             "created_at": created_at,
         },
@@ -1226,7 +1235,20 @@ def _train_policy_model_impl(
     elif use_v4:
         lessons = list(v4_lessons)
         if model_version.startswith("4.4"):
-            if model_version == "4.4.1":
+            if model_version == "4.4.2":
+                lessons.insert(
+                    0,
+                    "v4.4.2 is trained only on the eventual winner's actions from decisive replays; the full opponent context remains visible, but loser actions are not imitation targets.",
+                )
+                lessons.insert(
+                    1,
+                    "Winner-side targets are perspective-normalized at encode time, so the same checkpoint can play either physical arena side without receiving the outcome label at inference.",
+                )
+                lessons.insert(
+                    2,
+                    "This is an offline winner-move prior, not proof of live win rate: validate with held-out winner actions and offline policy matchups before phone play.",
+                )
+            elif model_version == "4.4.1":
                 lessons.insert(
                     0,
                     "v4.4.1 warm-starts from v4.4 on a fresh expanded-data split and conditions placement on the card actually selected, removing the train/eval soft-card mismatch.",
@@ -1236,15 +1258,15 @@ def _train_policy_model_impl(
                     "The shared rollout and phone harness decodes placement with temperature-0.6 sampling over the top five tiles; diversity is measured on the same 18×32 grid as the head.",
                 )
             lessons.insert(
-                2 if model_version == "4.4.1" else 0,
+                3 if model_version == "4.4.2" else (2 if model_version == "4.4.1" else 0),
                 "v4.4 keeps the v4.2 trunk size and v4.3 data recipe, but replaces XY regression with a card-conditioned 18×32 tile heatmap so placement can be multimodal.",
             )
             lessons.insert(
-                3 if model_version == "4.4.1" else 1,
+                4 if model_version == "4.4.2" else (3 if model_version == "4.4.1" else 1),
                 "Primary placement signal is tile cross-entropy; expected XY is kept for compatibility. Think loop defaults to max K=3 for a cheap compute dial.",
             )
             lessons.insert(
-                4 if model_version == "4.4.1" else 2,
+                5 if model_version == "4.4.2" else (4 if model_version == "4.4.1" else 2),
                 "Judge v4.4 on tile_class_acc / tile_top5_acc and placement spread, not only soft within-tile MAE from the XY mean.",
             )
         elif model_version.startswith("4.3"):
@@ -1325,6 +1347,7 @@ def _train_policy_model_impl(
             "lazy_mirror_training": lazy_mirror_training,
             "max_think_steps": max_think_steps,
             "eval_think_steps": eval_think_steps,
+            "winner_only": winner_only,
         },
         "data": {
             "battles_total": len(battles),

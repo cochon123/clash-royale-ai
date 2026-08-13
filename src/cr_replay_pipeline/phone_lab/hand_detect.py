@@ -14,7 +14,7 @@ from PIL import Image
 DEFAULT_YOLO = Path(
     os.environ.get(
         "CR_CARD_DETECTOR_MODEL",
-        "models/card_detector_clash_cards_v3.pt",
+        "/home/cochon/Documents/ClashRoyaleAI/models/yolo/card_detector.pt",
     )
 )
 # Match the dual-phone v8 detector; do not force a tiny imgsz (hurts accuracy).

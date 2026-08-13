@@ -546,3 +546,124 @@ def test_empty_hands_auto_stop_battle():
     assert execs["n"] == 0
     messages = " ".join(line["message"] for line in runner.status()["log"])
     assert "YOLO lost both hands" in messages or "all AI hands empty" in messages
+
+
+def test_tower_hp_reader_assigns_nearby_numeric_tokens():
+    from PIL import Image
+
+    from cr_replay_pipeline.phone_lab.tower_data import OcrToken, TowerHpReader
+
+    class FakeOcr:
+        def tokens(self, _image):
+            return [
+                OcrToken("3052", 0.99, 202, 199, [[0, 0]] * 4),
+                OcrToken("4824", 0.98, 500, 155, [[0, 0]] * 4),
+                OcrToken("3052", 0.97, 792, 199, [[0, 0]] * 4),
+                OcrToken("2870", 0.96, 202, 627, [[0, 0]] * 4),
+                OcrToken("4824", 0.95, 500, 735, [[0, 0]] * 4),
+                OcrToken("301", 0.94, 792, 627, [[0, 0]] * 4),
+                OcrToken("10", 1.0, 500, 950, [[0, 0]] * 4),
+            ]
+
+    reader = TowerHpReader(FakeOcr())
+    hp, _tokens = reader.read(Image.new("RGB", (1000, 1000)))
+    assert hp["opponent_left_princess"]["hp"] == 3052
+    assert hp["opponent_king"]["hp"] == 4824
+    assert hp["team_right_princess"]["hp"] == 301
+
+
+def test_tower_hp_reader_tracks_activated_king_bar_position():
+    from PIL import Image
+
+    from cr_replay_pipeline.phone_lab.tower_data import OcrToken, TowerHpReader
+
+    class FakeOcr:
+        def tokens(self, _image):
+            return [
+                # Activated opponent king HP is visibly higher than its dormant
+                # label; this is the actual geometry from the saved Pixel 9 run.
+                OcrToken("3984", 0.999, 0.520 * 1080, 0.095 * 2424, [[0, 0]] * 4),
+                OcrToken("4793", 0.999, 0.520 * 1080, 0.756 * 2424, [[0, 0]] * 4),
+            ]
+
+    hp, _tokens = TowerHpReader(FakeOcr()).read(Image.new("RGB", (1080, 2424)))
+    assert hp["opponent_king"]["hp"] == 3984
+    assert hp["team_king"]["hp"] == 4793
+
+
+def test_phone_lab_ui_exposes_tower_collection_controls():
+    from cr_replay_pipeline.phone_lab.server import UI_PATH
+
+    html = UI_PATH.read_text(encoding="utf-8")
+    assert 'id="modeTower"' in html
+    assert 'id="towerCalBtn"' in html
+    assert 'id="towerStartBtn"' in html
+    assert 'id="towerWork"' in html
+    assert 'id="towerEta"' in html
+
+
+def test_tower_hp_decrease_requires_two_frames_and_uses_newer_value():
+    from cr_replay_pipeline.phone_lab.tower_data import stabilize_tower_hp
+
+    key = "opponent_left_princess"
+    stable = {key: 3052}
+    pending = {}
+    first = {key: {"hp": 2302, "confidence": 0.99}}
+    stabilize_tower_hp(first, stable, 4, pending)
+    assert first[key]["hp"] == 3052
+    assert first[key]["label_source"] == "pending_decrease"
+
+    # The newer OCR value is still lower than the physical trajectory but
+    # corrects the transient false-low 2302 reading from the prior frame.
+    second = {key: {"hp": 2940, "confidence": 0.99}}
+    stabilize_tower_hp(second, stable, 5, pending)
+    assert second[key]["hp"] == 2940
+    assert second[key]["label_source"] == "ocr_confirmed_decrease"
+
+    impossible_increase = {key: {"hp": 3000, "confidence": 0.99}}
+    stabilize_tower_hp(impossible_increase, stable, 6, pending)
+    assert impossible_increase[key]["hp"] == 2940
+    assert impossible_increase[key]["label_source"] == "monotonic_carry_forward"
+
+
+def test_tower_hp_high_quality_decrease_is_not_delayed():
+    from cr_replay_pipeline.phone_lab.tower_data import stabilize_tower_hp
+
+    key = "opponent_king"
+    stable = {key: 4824}
+    pending = {}
+    reading = {
+        key: {
+            "hp": 4684,
+            "confidence": 0.98,
+            "ocr_score": 0.999,
+            "distance": 0.004,
+        }
+    }
+    stabilize_tower_hp(reading, stable, 34, pending)
+    assert reading[key]["hp"] == 4684
+    assert reading[key]["label_source"] == "ocr_direct_decrease"
+    assert stable[key] == 4684
+
+
+def test_destroyed_princess_inferred_only_with_active_king_and_missing_label():
+    from cr_replay_pipeline.phone_lab.tower_data import (
+        TOWER_KEYS,
+        infer_destroyed_towers,
+    )
+
+    stable = {key: (4824 if "_king" in key else 3052) for key in TOWER_KEYS}
+    stable["opponent_right_princess"] = 1475
+    hp = {key: {"ocr_observed": False} for key in TOWER_KEYS}
+    hp["opponent_king"] = {
+        "hp": 4824,
+        "ocr_observed": True,
+        "layout": "activated",
+    }
+    missing = {}
+    destroyed = set()
+    infer_destroyed_towers(hp, stable, missing, destroyed)
+    assert destroyed == set()
+    infer_destroyed_towers(hp, stable, missing, destroyed)
+    assert destroyed == {"opponent_right_princess"}
+    assert stable["opponent_right_princess"] == 0

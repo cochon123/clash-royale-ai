@@ -11,6 +11,7 @@ From what we know so far, every previous attempt at this used **Reinforcement Le
 ### Why Data-Based
 
 - **Playing the game is expensive.** Getting the AI to actually play the game is a costly process that we should only do at the very end, once we have our final models — or when we are 95% sure it is unavoidable to continue.
+- **The trade of.** The policy sees previous card deployments, not current troops, health, death, targeting, pathing, or real elixir. we can use tricks to make it sees stuff like elexir for example.
 - **Test without playing.** If we can test something without actually running the game, we should do that.
 
 ## Training Reports
@@ -41,6 +42,9 @@ The report must include:
   - `reports/policy_bc_v4_showcase.html`
 
 > These are just the minimum — the actual report should include more model-specific content: diagrams, graphics, images, possibly interactive stuff.
+
+## Versioning
+When I ask you to commit and push do it on github and on huggingface.
 
 ## Hardware / Compute
 

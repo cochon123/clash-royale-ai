@@ -6,6 +6,7 @@ import html
 from pathlib import Path
 from typing import Any
 
+from .report_kit import FONT_LINKS, favicon_link
 from .winner_report import (
     _base_styles,
     _chart_script,
@@ -25,6 +26,8 @@ def _version_key(report: dict[str, Any], model_dir: Path) -> str:
         return "5"
     if ver.startswith("4.4.1") or "v4.4.1" in name or "v4_4_1" in name:
         return "4.4.1"
+    if ver.startswith("4.4.2") or "v4.4.2" in name or "v4_4_2" in name:
+        return "4.4.2"
     if ver.startswith("4.1") or "v4.1" in name or "v4_1" in name:
         return "4.1"
     if ver.startswith("4") or "v4" in name:
@@ -72,6 +75,12 @@ def _version_story(version: str) -> tuple[str, str]:
             "Warm-started from v4.4 on the expanded replay cut. The placement head is "
             "conditioned on the card actually selected, while offline and phone harnesses "
             "decode controlled samples from the five strongest 18×32 placement tiles.",
+        ),
+        "4.4.2": (
+            "Next-action policy — winner-move prior",
+            "Warm-started from v4.4.1 and trained only on actions taken by the eventual "
+            "winner in decisive replays. The offline battle royale tests whether that "
+            "prior transfers into heterogeneous policy-vs-policy play.",
         ),
         "5": (
             "Next-action policy — human mimic that hides from the style judge",
@@ -297,12 +306,71 @@ def render_policy_report(
     </section>
 """
 
+    battle_royale_section = ""
+    if version == "4.4.2":
+        royale_path = Path("reports/battle_royale_v4_4_2.json")
+        if royale_path.exists():
+            import json
+
+            with royale_path.open(encoding="utf-8") as handle:
+                royale = json.load(handle)
+            standings = royale.get("standings") or []
+            target = next(
+                (row for row in standings if row.get("policy_id") == report.get("model_name")),
+                None,
+            )
+            standing_rows = "".join(
+                f"<tr{' class=champ' if row.get('policy_id') == report.get('model_name') else ''}>"
+                f"<td>{row.get('rank', '—')}</td><td>{html.escape(str(row.get('policy_id', '—')))}</td>"
+                f"<td>{row.get('wins', 0)}–{row.get('losses', 0)}</td>"
+                f"<td>{_fmt_pct(row.get('win_rate'))}</td><td>{row.get('games', 0)}</td>"
+                f"<td>{_fmt_float(row.get('elo'), 0)}</td></tr>"
+                for row in standings
+            )
+            direct_rows = "".join(
+                f"<tr><td>{html.escape(str(pair.get('a', '—')))}</td>"
+                f"<td>{html.escape(str(pair.get('b', '—')))}</td>"
+                f"<td>{pair.get('a_wins', 0)}–{pair.get('b_wins', 0)}</td>"
+                f"<td>{_fmt_pct(pair.get('coverage'))}</td></tr>"
+                for pair in (royale.get("pairs") or [])
+                if report.get("model_name") in {pair.get("a"), pair.get("b")}
+            )
+            target_summary = (
+                f"v4.4.2 finished #{target.get('rank')} with {target.get('wins')}–{target.get('losses')} "
+                f"({(target.get('win_rate') or 0.0):.1%}) across {target.get('games')} confident games; "
+                f"the champion was {html.escape(str(royale.get('champion', '—')))}."
+                if target
+                else "v4.4.2 was not present in the final standings."
+            )
+            battle_royale_section = f"""
+    <section class="report-section">
+      <h2>Offline battle royale · v4 family</h2>
+      <p class="caption">{target_summary} The round robin used 48 games per pair, 1,008 games total, and kept only winner-predictor decisions with calibrated confidence ≥80%. This is sequence-level offline self-play, not a live-game win rate.</p>
+      <p class="callout"><a href="battle_royale_v4_4_2.html">Open the full battle royale report →</a> standings, pair results, confidence coverage and sampled games.</p>
+      <div class="block-grid" style="margin-top:20px">
+        <div class="block">
+          <h2>Final standings</h2>
+          <table><thead><tr><th>#</th><th>Policy</th><th>W–L</th><th>Win rate</th><th>Confident games</th><th>Elo</th></tr></thead>
+          <tbody>{standing_rows}</tbody></table>
+        </div>
+        <div class="block">
+          <h2>v4.4.2 head-to-head</h2>
+          <table><thead><tr><th>Seat A</th><th>Seat B</th><th>Score</th><th>Coverage</th></tr></thead>
+          <tbody>{direct_rows}</tbody></table>
+          <p class="caption">In every direct pairing, the second score is v4.4.2’s wins: it went 15–8 vs v4, 14–6 vs v4.1, 13–11 vs v4.2, 16–7 vs v4.3, 17–7 vs v4.4, and 7–6 vs v4.4.1.</p>
+        </div>
+      </div>
+    </section>
+"""
+
     body = f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Policy BC report — {html.escape(report.get("model_name", "policy-bc-v1"))}</title>
+  {favicon_link()}
+  {FONT_LINKS}
   <style>{_base_styles()}
     .callout {{
       margin-top: 16px; padding: 12px 16px; border-radius: 12px;
@@ -417,6 +485,8 @@ def render_policy_report(
     </section>
 
     {style_section}
+
+    {battle_royale_section}
 
     <section class="report-section block-grid">
       <div class="block block-wide">

@@ -13,6 +13,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .report_kit import FONT_LINKS, favicon_link
 from .winner_report import (
     _base_styles,
     _chart_script,
@@ -191,16 +192,14 @@ def render_policy_v5_report(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PolicyBC v5 — hide from the style judge</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@450;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  {favicon_link()}
+  {FONT_LINKS}
   <style>
   {_base_styles()}
   body {{
-    font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
     background:
-      radial-gradient(1200px 600px at 10% -10%, rgba(34,211,238,0.10), transparent 55%),
-      radial-gradient(900px 500px at 90% 0%, rgba(251,191,36,0.08), transparent 50%),
+      radial-gradient(circle at 12% -8%, #16384a 0, transparent 34%),
+      radial-gradient(circle at 90% 0, #1d3f32 0, transparent 28%),
       var(--bg);
   }}
   .hero {{

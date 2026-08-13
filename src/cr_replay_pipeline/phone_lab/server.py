@@ -32,6 +32,7 @@ from .calibration import (
     rect_center,
 )
 from .hand_detect import HandDetector
+from .tower_data import CollectionConfig, TowerDataCollector
 from .stream_source import (
     ACTION_DOWN,
     ACTION_MOVE,
@@ -52,6 +53,7 @@ _TOUCH_ACTIONS = {
 }
 
 UI_PATH = Path(__file__).with_name("ui.html")
+FAVICON_PATH = Path(__file__).resolve().parents[1] / "assets" / "favicon.png"
 
 # Binary frame: [u8 flags][payload]
 FLAG_CONFIG = 0x01
@@ -88,6 +90,14 @@ class LabState:
             detect_hand=self._battle_detect_hand,
             execute_action=self._battle_execute,
         )
+        self.tower_data = TowerDataCollector(
+            phones=self.phones,
+            battle=self.battle,
+            card_costs_path=self.card_costs_path,
+            policy_dirs=self.policy_dirs,
+            mirror_tta=self.mirror_tta,
+            think_steps=self.think_steps,
+        )
 
     def start(self) -> None:
         # Stagger USB/scrcpy startups — launching both at once often stalls one phone.
@@ -97,6 +107,7 @@ class LabState:
             stream.start()
 
     def stop(self) -> None:
+        self.tower_data.stop()
         self.battle.stop()
         for stream in self.streams.values():
             stream.stop()
@@ -314,6 +325,15 @@ def make_handler(state: LabState):
                 self.end_headers()
                 self.wfile.write(html)
                 return
+            if path in {"/favicon.png", "/favicon.ico"}:
+                icon = FAVICON_PATH.read_bytes()
+                self.send_response(200)
+                self.send_header("Content-Type", "image/png")
+                self.send_header("Content-Length", str(len(icon)))
+                self.send_header("Cache-Control", "public, max-age=86400")
+                self.end_headers()
+                self.wfile.write(icon)
+                return
             if path == "/api/status":
                 _json_response(
                     self,
@@ -334,6 +354,7 @@ def make_handler(state: LabState):
                         "detector": state.detector.status,
                         "transport": "scrcpy-h264-websocket",
                         "battle": state.battle.status(),
+                        "tower_data": state.tower_data.status(),
                         "default_controllers": dict(DEFAULT_CONTROLLERS),
                         "mirror_tta": state.mirror_tta,
                         "think_steps": state.think_steps,
@@ -345,6 +366,9 @@ def make_handler(state: LabState):
                 return
             if path == "/api/battle/status":
                 _json_response(self, 200, state.battle.status())
+                return
+            if path == "/api/tower-data/status":
+                _json_response(self, 200, state.tower_data.status())
                 return
             if path.startswith("/ws/"):
                 key = path.rsplit("/", 1)[-1]
@@ -441,6 +465,43 @@ def make_handler(state: LabState):
                 if path == "/api/battle/stop":
                     state.battle.stop()
                     _json_response(self, 200, state.battle.status())
+                    return
+                if path == "/api/tower-data/start":
+                    pixel8 = payload.get("pixel8") or {}
+                    pixel9 = payload.get("pixel9") or {}
+                    cfg = CollectionConfig(
+                        games=int(payload.get("games") or 2),
+                        sample_interval_s=float(payload.get("sample_interval_s") or 2.0),
+                        decks={
+                            "pixel8": list(pixel8.get("deck") or []),
+                            "pixel9": list(pixel9.get("deck") or []),
+                        },
+                        controllers={
+                            "pixel8": str(
+                                pixel8.get("controller")
+                                or DEFAULT_CONTROLLERS["pixel8"]
+                            ),
+                            "pixel9": str(
+                                pixel9.get("controller")
+                                or DEFAULT_CONTROLLERS["pixel9"]
+                            ),
+                        },
+                        timeout_s=float(payload.get("timeout_s") or 330.0),
+                        observer_phone=str(payload.get("observer_phone") or "pixel9"),
+                    )
+                    out = state.tower_data.start(cfg)
+                    _json_response(self, 200, out)
+                    return
+                if path == "/api/tower-data/calibrate":
+                    out = state.tower_data.set_calibration(
+                        str(payload.get("phone") or "pixel9"),
+                        payload.get("centres") or {},
+                    )
+                    _json_response(self, 200, out)
+                    return
+                if path == "/api/tower-data/stop":
+                    state.tower_data.stop()
+                    _json_response(self, 200, state.tower_data.status())
                     return
             except Exception as exc:  # noqa: BLE001
                 _json_response(self, 500, {"error": str(exc)})

@@ -12,6 +12,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from .report_kit import FONT_LINKS, favicon_link, shared_styles
+
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -159,74 +161,20 @@ def render_policy_v44_report(
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PolicyBC v4.4 — tile heatmap training report</title>
+{favicon_link()}
+{FONT_LINKS}
 <style>
-:root{{--bg:#071018;--panel:#0d171f;--line:#1e3140;--text:#edf4f8;--muted:#8aa3b3;--green:#70e1b1;--gold:#ffca63;--blue:#70a1ff;--sky:#38bdf8;--red:#ff7e78;--star:#e8f58b;--ink:#061018}}
-*{{box-sizing:border-box}}html{{scroll-behavior:smooth}}
-body{{margin:0;background:radial-gradient(circle at 12% -8%,#16384a 0,transparent 34%),radial-gradient(circle at 90% 0,#1d3f32 0,transparent 28%),var(--bg);color:var(--text);font:15px/1.55 "IBM Plex Sans",ui-sans-serif,system-ui,sans-serif}}
-body:before{{content:"";position:fixed;inset:0;pointer-events:none;opacity:.045;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,#000,transparent 72%)}}
-main{{width:min(1220px,calc(100% - 36px));margin:auto;padding:52px 0 90px}}
-.eyebrow{{font:700 11px/1.2 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--sky)}}
-h1{{font-size:clamp(42px,7.4vw,82px);line-height:.92;letter-spacing:-.065em;margin:18px 0 22px;max-width:980px}}
-h1 em{{color:var(--sky);font-style:normal}}
-h2{{font-size:clamp(25px,4vw,40px);letter-spacing:-.04em;margin:0 0 10px}}h3{{font-size:17px;margin:0 0 8px}}
-p{{color:var(--muted);margin:0}}.lede{{font-size:clamp(17px,2.1vw,22px);max-width:860px;color:#bdd0db}}
-.hero{{padding:18px 0 48px}}.stamp{{margin-top:20px;color:#607888;font:12px "IBM Plex Mono",ui-monospace,monospace}}
-.verdict{{margin-top:38px;border:1px solid #2f6f8a;background:linear-gradient(135deg,rgba(56,189,248,.14),rgba(112,225,177,.05));border-radius:22px;padding:24px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start}}
-.verdict .mark{{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;background:var(--sky);color:var(--ink);font-size:22px;font-weight:900}}
-.verdict strong{{display:block;font-size:20px;margin-bottom:5px}}
-.section{{border-top:1px solid var(--line);padding:52px 0}}
-.section-head{{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:26px}}.section-head p{{max-width:560px}}
-.kpis{{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}}
-.kpi,.card{{border:1px solid var(--line);background:linear-gradient(160deg,rgba(17,28,37,.94),rgba(8,14,20,.94));border-radius:18px;padding:20px;position:relative;overflow:hidden}}
-.kpi:after{{content:"";position:absolute;width:100px;height:100px;border-radius:50%;background:var(--tone,var(--sky));filter:blur(55px);opacity:.14;right:-30px;top:-35px}}
-.kpi span{{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}}
-.kpi b{{display:block;font-size:clamp(24px,3.4vw,38px);letter-spacing:-.045em;margin:6px 0 2px}}.kpi small{{color:#6f8796}}
-.grid2{{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}}
-.grid3{{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}}
-.illus{{width:100%;height:auto;display:block;border-radius:14px;background:#08131a}}
-.metric-table{{width:100%;border-collapse:separate;border-spacing:0}}
-.metric-table th,.metric-table td{{padding:13px 14px;border-bottom:1px solid var(--line);text-align:right}}
-.metric-table th:first-child,.metric-table td:first-child{{text-align:left}}
-.metric-table thead th{{font:700 11px "IBM Plex Mono",ui-monospace,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}}
-.metric-table tbody tr:hover{{background:#12202a}}.winner{{color:var(--sky);font-weight:750}}
-.metric-note{{font-size:11px;color:#617888;display:block}}
-.star-col{{background:rgba(56,189,248,.05);border-left:1px solid #2f6f8a!important}}
-.bars{{display:grid;gap:14px;margin-top:8px}}
-.bar-row{{display:grid;grid-template-columns:90px 1fr 88px;gap:12px;align-items:center}}
-.bar-track{{height:13px;border-radius:99px;background:#08131a;overflow:hidden;border:1px solid #1c2d38}}
-.bar-fill{{height:100%;width:0;border-radius:99px;background:var(--tone);transition:width 1s cubic-bezier(.2,.8,.2,1)}}
-.bar-value{{font:700 12px "IBM Plex Mono",ui-monospace,monospace;text-align:right}}
-.chip{{display:inline-block;padding:4px 8px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font:11px "IBM Plex Mono",ui-monospace,monospace;margin-right:6px}}
-.expr{{margin-top:14px;padding:14px 16px;border:1px dashed #355065;border-radius:12px;background:#0a151c;font:13px/1.55 "IBM Plex Mono",ui-monospace,monospace;color:#c5d7e2}}
-.expr b{{color:var(--sky)}}
-.callout{{border-left:3px solid var(--gold);padding:15px 18px;background:#19180f;border-radius:0 12px 12px 0;margin-top:18px;color:#d7cfaf}}
-.lesson .n{{font:800 12px "IBM Plex Mono",ui-monospace,monospace;color:var(--sky)}}.lesson h3{{margin:14px 0 7px}}.lesson p{{font-size:13px}}
-.chart-card{{padding:22px}}.chart-tools{{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0}}
-button{{border:1px solid var(--line);background:#0a151c;color:var(--muted);border-radius:10px;padding:8px 11px;font:600 12px "IBM Plex Mono",ui-monospace,monospace;cursor:pointer}}
-button:hover{{border-color:#416a80;color:var(--text)}}button.active{{background:var(--sky);color:var(--ink);border-color:var(--sky)}}
-#curve{{width:100%;height:360px;display:block}}
-.gridline{{stroke:#1e3140;stroke-width:1}}.axis-label{{fill:#668090;font:11px "IBM Plex Mono",ui-monospace,monospace}}
-.curve{{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}}.point{{cursor:crosshair}}
-.tooltip{{position:fixed;pointer-events:none;z-index:9;background:#edf4f8;color:#071018;border-radius:10px;padding:8px 10px;font:12px "IBM Plex Mono",ui-monospace,monospace;box-shadow:0 8px 28px #0008;opacity:0;transform:translate(-50%,-120%)}}
-.foot{{padding-top:26px;color:#55707f;font:11px "IBM Plex Mono",ui-monospace,monospace}}
-.mode-label{{font:700 12px "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}}
-.mode-bad{{color:#ff7e78}}.mode-good{{color:#38bdf8}}
-.replay-chips{{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}}
-.replay-chip{{border:1px solid var(--line);background:#0a151c;color:var(--muted);border-radius:999px;padding:8px 13px;font:700 12px "IBM Plex Mono",ui-monospace,monospace;cursor:pointer}}
-.replay-chip:hover{{border-color:#416a80;color:var(--text)}}
-.replay-chip.active{{border-color:var(--sky);background:rgba(56,189,248,.14);color:var(--text)}}
-.triple-grid{{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}}
-.replay-pane h3{{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;font-size:15px}}
-.pane-score{{font:700 11px "IBM Plex Mono",ui-monospace,monospace;color:var(--muted)}}
-.arena{{width:100%;max-width:280px;height:auto;display:block;margin:0 auto;border-radius:12px}}
-.anim-toolbar{{display:flex;align-items:center;gap:12px;margin-top:14px}}
-.anim-scrubber{{flex:1;accent-color:var(--sky)}}
-.anim-readout,.replay-log{{font:12px "IBM Plex Mono",ui-monospace,monospace;color:var(--muted);margin-top:8px}}
-@media(max-width:980px){{.kpis,.grid2,.grid3,.triple-grid{{grid-template-columns:1fr}}}}
+{shared_styles()}
+.illus {{width:100%;height:auto;display:block;border-radius:14px;background:#08131a}}
+.star-col {{background:rgba(56,189,248,.05);border-left:1px solid #2f6f8a!important}}
+.mode-label {{font:700 12px "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}}
+.mode-bad {{color:var(--red)}}.mode-good {{color:var(--sky)}}
+.triple-grid {{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}}
+.replay-pane h3 {{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;font-size:15px}}
+.pane-score {{font:700 11px "IBM Plex Mono",ui-monospace,monospace;color:var(--muted)}}
+.chart-card {{padding:22px}}
+@media(max-width:980px){{.triple-grid{{grid-template-columns:1fr}}}}
 </style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body><main>
 <header class="hero">
@@ -538,7 +486,7 @@ const compact=n=>n>=1e6?(n/1e6).toFixed(2)+'m':n>=1e3?(n/1e3).toFixed(1)+'k':fmt
     for(let i=0;i<5;i++){{const yy=p.t+i*(H-p.t-p.b)/4,v=hi-i*(hi-lo)/4;out+=`<line class="gridline" x1="${{p.l}}" y1="${{yy}}" x2="${{W-p.r}}" y2="${{yy}}"/><text class="axis-label" x="${{p.l-10}}" y="${{yy+4}}" text-anchor="end">${{active.includes('loss')?v.toFixed(2):pct(v)}}</text>`}}
     const rows=hist.slice(0,Math.ceil(hist.length*reveal));
     const pts=rows.map(r=>[x(r.epoch),y(r[active]),r]);
-    out+=`<path class="curve" stroke="#38bdf8" d="${{pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ')}}"/>`;
+    out+=`<path class="curve" pathLength="1" stroke="#38bdf8" d="${{pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ')}}"/>`;
     out+=pts.map(q=>`<circle class="point" data-epoch="${{q[2].epoch}}" data-value="${{q[2][active]}}" fill="#38bdf8" cx="${{q[0]}}" cy="${{q[1]}}" r="4"/>`).join('');
     if(ref!=null){{const sy=y(ref); out+=`<line stroke="#e8f58b" stroke-dasharray="4 5" x1="${{p.l}}" y1="${{sy}}" x2="${{W-p.r}}" y2="${{sy}}"/><circle fill="#e8f58b" cx="${{W-p.r-8}}" cy="${{sy}}" r="6"/>`;}}
     svg.innerHTML=out;

@@ -8,6 +8,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from .report_kit import FONT_LINKS, favicon_link, shared_styles
+
 
 def _fmt_pct(value: float | None, digits: int = 1) -> str:
     if value is None:
@@ -52,334 +54,7 @@ def _report_timestamp(model_dir: Path, *candidates: str) -> str:
 
 
 def _base_styles() -> str:
-    return """
-    :root {
-      color-scheme: dark;
-      --bg: #0a0f18;
-      --line: #1e293b;
-      --line-soft: #141c28;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --accent: #60a5fa;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.55;
-    }
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 40px 24px 80px;
-    }
-    h1 {
-      margin: 14px 0 10px;
-      font-size: clamp(1.75rem, 3vw, 2.25rem);
-      letter-spacing: -0.03em;
-      font-weight: 650;
-    }
-    h2 {
-      margin: 0 0 14px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    p, li { color: var(--muted); margin: 0 0 10px; }
-    a { color: var(--accent); }
-    .report-header { padding-bottom: 28px; }
-    .report-header p { max-width: 720px; }
-    .meta { font-size: 0.92rem; color: #64748b; }
-    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
-    .badge {
-      font-size: 11px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #94a3b8;
-    }
-    .badge + .badge::before {
-      content: "·";
-      margin-right: 8px;
-      color: #334155;
-    }
-    .report-section {
-      padding: 28px 0;
-      border-top: 1px solid var(--line-soft);
-    }
-    .report-section:first-of-type { border-top: none; padding-top: 0; }
-    .kpi-row {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 28px 20px;
-    }
-    .kpi-label {
-      display: block;
-      font-size: 11px;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: #64748b;
-      margin-bottom: 6px;
-    }
-    .kpi-value {
-      display: block;
-      font-size: clamp(1.35rem, 2.5vw, 1.75rem);
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--text);
-    }
-    .block-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 36px 40px;
-    }
-    .block-wide { grid-column: 1 / -1; }
-    .chart-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 64px;
-    }
-    .chart-block {
-      width: 100%;
-    }
-    .chart-wrap {
-      position: relative;
-      width: 100%;
-    }
-    svg.chart {
-      width: 100%;
-      height: auto;
-      min-height: 480px;
-      aspect-ratio: 1000 / 540;
-      display: block;
-      overflow: visible;
-    }
-    svg.chart-interactive .chart-lines polyline {
-      transition: stroke-width 0.15s ease, opacity 0.15s ease;
-    }
-    svg.chart-interactive:hover .chart-lines polyline {
-      stroke-width: 4.5;
-    }
-    .chart-tooltip {
-      position: absolute;
-      top: 12px;
-      left: 0;
-      min-width: 180px;
-      padding: 14px 16px;
-      border-radius: 12px;
-      border: 1px solid #334155;
-      background: rgba(10, 15, 24, 0.94);
-      backdrop-filter: blur(8px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(4px);
-      transition: opacity 0.12s ease, transform 0.12s ease;
-      z-index: 2;
-      font-size: 14px;
-      color: #cbd5e1;
-    }
-    .chart-tooltip.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .chart-tooltip-title {
-      font-size: 12px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #64748b;
-      margin-bottom: 10px;
-    }
-    .chart-tooltip-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-    .chart-tooltip-row:last-child { margin-bottom: 0; }
-    .chart-tooltip-row strong {
-      margin-left: auto;
-      color: #f1f5f9;
-      font-weight: 600;
-    }
-    .chart-tooltip-swatch {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      flex-shrink: 0;
-    }
-    .legend {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-      font-size: 14px;
-      color: #64748b;
-    }
-    .legend-interactive {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 5px 10px;
-      border: 1px solid #243044;
-      border-radius: 999px;
-      background: transparent;
-      color: #94a3b8;
-      font: inherit;
-      font-size: 13px;
-      line-height: 1.2;
-      cursor: pointer;
-      transition: opacity 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-    }
-    .legend-item:hover {
-      border-color: #475569;
-      color: #cbd5e1;
-    }
-    .legend-item.is-on {
-      color: #e2e8f0;
-      border-color: #334155;
-    }
-    .legend-item.is-off {
-      opacity: 0.4;
-    }
-    .legend-item.is-off .legend-label {
-      text-decoration: line-through;
-    }
-    .legend-item.is-off .legend-preview {
-      opacity: 0.35;
-      border-top-color: #475569;
-    }
-    .legend-preview {
-      width: 16px;
-      border-top: 2px solid var(--legend-color, #64748b);
-      flex-shrink: 0;
-    }
-    .legend-item.legend-dashed .legend-preview {
-      border-top-style: dashed;
-    }
-    .legend-label {
-      white-space: nowrap;
-    }
-    .dot {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      margin-right: 6px;
-      vertical-align: middle;
-      flex-shrink: 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-    th, td {
-      padding: 10px 0;
-      border-bottom: 1px solid var(--line-soft);
-      text-align: left;
-    }
-    th {
-      color: #64748b;
-      font-weight: 500;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .diagram {
-      margin: 0;
-      padding: 0 0 0 16px;
-      border-left: 2px solid #334155;
-      background: none;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 13px;
-      line-height: 1.65;
-      color: #94a3b8;
-      white-space: pre-wrap;
-    }
-    .media {
-      width: 100%;
-      display: block;
-      border-radius: 6px;
-    }
-    .caption { font-size: 13px; color: #64748b; margin-top: 10px; }
-    .chart-animation {
-      width: 100%;
-    }
-    .anim-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 14px 18px;
-      margin-top: 20px;
-    }
-    .anim-btn {
-      padding: 10px 18px;
-      border-radius: 999px;
-      border: 1px solid #334155;
-      background: #111827;
-      color: #e2e8f0;
-      font: inherit;
-      font-size: 14px;
-      cursor: pointer;
-      transition: border-color 0.15s ease, background 0.15s ease;
-    }
-    .anim-btn-icon {
-      width: 38px;
-      height: 38px;
-      padding: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .anim-btn:hover {
-      border-color: #60a5fa;
-      background: #172033;
-    }
-    .anim-icon {
-      width: 15px;
-      height: 15px;
-      fill: currentColor;
-      display: block;
-    }
-    .anim-icon[hidden] {
-      display: none;
-    }
-    .anim-scrubber {
-      flex: 1 1 220px;
-      min-width: 180px;
-      accent-color: #60a5fa;
-      cursor: pointer;
-    }
-    .anim-readout {
-      flex: 1 1 100%;
-      font-size: 14px;
-      color: #94a3b8;
-      font-variant-numeric: tabular-nums;
-    }
-    .anim-readout strong {
-      color: #e2e8f0;
-      font-weight: 600;
-    }
-    svg.chart-dual .chart-refline {
-      stroke-dasharray: 6 5;
-      opacity: 0.75;
-    }
-    .lessons { margin: 0; padding-left: 18px; }
-    .lessons li { margin-bottom: 10px; }
-    @media (max-width: 820px) {
-      .kpi-row, .block-grid, .chart-grid { grid-template-columns: 1fr; }
-    }
-    """
+    return shared_styles()
 
 
 def _chart_script() -> str:
@@ -619,6 +294,7 @@ def _chart_script() -> str:
           linesGroup.appendChild(area);
         }
         const line = svgEl("polyline", {
+          class: entry.dashed ? "curve-dashed" : "curve",
           points: entry.values.map((value, index) => px(index) + "," + py(value)).join(" "),
           fill: "none",
           stroke: entry.color,
@@ -628,6 +304,7 @@ def _chart_script() -> str:
           "stroke-dasharray": entry.dashed ? "8 6" : "none",
           opacity: entry.dashed ? 0.85 : 1,
         });
+        if (!entry.dashed) line.setAttribute("pathLength", "1");
         linesGroup.appendChild(line);
         return { area: area, line: line, visible: true };
       });
@@ -881,6 +558,7 @@ def _chart_script() -> str:
         const py = def.axis === "left" ? pyLeft : pyRight;
         const source = def.staticCurve || stages[0].confidence_curve;
         const line = svgEl("polyline", {
+          class: def.dashed ? "curve-dashed" : "curve",
           points: curvePoints(source, def.field, px, py),
           fill: "none",
           stroke: def.color,
@@ -890,6 +568,7 @@ def _chart_script() -> str:
           "stroke-dasharray": def.dashed ? "8 6" : "none",
           opacity: def.dashed ? 0.85 : 1,
         });
+        if (!def.dashed) line.setAttribute("pathLength", "1");
         linesGroup.appendChild(line);
         return { def: def, line: line, visible: true, py: py };
       });
@@ -1127,6 +806,8 @@ def render_hgb_report(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Winner predictor report — HGB ensemble v1</title>
+  {favicon_link()}
+  {FONT_LINKS}
   <style>{_base_styles()}</style>
 </head>
 <body>
@@ -1315,6 +996,8 @@ def render_transformer_report(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Winner predictor report — Transformer v1</title>
+  {favicon_link()}
+  {FONT_LINKS}
   <style>{_base_styles()}</style>
 </head>
 <body>

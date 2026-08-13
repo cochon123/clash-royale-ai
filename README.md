@@ -239,7 +239,31 @@ cr-replays phone-lab-calibrate --phone pixel8
 # then restart phone-lab so TEST uses the new points
 ```
 
-Requires `adb` and the phones unlocked. Calibration JSON lives in `data/phone_lab/calibrations/` (seeded from the old dual-phone unified zones; scaled per device resolution). Hand detection defaults to `models/card_detector_clash_cards_v3.pt`, trained from [Roboflow clash-cards v3](https://universe.roboflow.com/new-workspace-v9zo5/clash-cards-1nnw7/dataset/3). Set `CR_CARD_DETECTOR_MODEL` or use `--yolo-model` to override it.
+Requires `adb` and the phones unlocked. Calibration JSON lives in `data/phone_lab/calibrations/` (seeded from the old dual-phone unified zones; scaled per device resolution). Hand detection defaults to the previous detector at `/home/cochon/Documents/ClashRoyaleAI/models/yolo/card_detector.pt`. Set `CR_CARD_DETECTOR_MODEL` or use `--yolo-model` to override it.
+
+The **Tower data** tab runs the complete friend-battle loop without manual
+phone taps: it dismisses old result sheets, challenges `cochon` from Pixel 8,
+accepts on Pixel 9, lets both selected policies play, and samples all six tower
+HP labels. Each game stores `battle.json`, raw OCR in `tower_hp.jsonl`, corrected
+labels in `tower_hp_relabelled.jsonl`, and a full-frame WEBP beside every sample
+under `data/tower_hp_runs/`. The optional calibration button asks for the six HP
+label centres on Pixel 9. The defaults match the current 1080×2424 battle UI.
+
+The browser shows work completed, sample count, and a decreasing worst-case
+ETA. The same status can be streamed in a terminal:
+
+```bash
+watch -n 2 'curl -s http://127.0.0.1:8766/api/tower-data/status | jq "{phase,work,eta_s,samples,error}"'
+```
+
+HP is weak supervision, not ground truth. Clean OCR at either dormant or
+activated king-bar geometry is accepted immediately; borderline decreases need
+confirmation and values may never increase. Princess destruction is inferred
+only when exactly one tower on that side was damaged, its label disappears for
+two samples, and the king bar activates. Ambiguous cases remain nonzero for
+offline audit. Every row carries `game_phase`, `training_mask`, label source,
+and per-tower `training_weight`, while every original frame is retained so
+labels can be rebuilt without replaying an expensive match.
 
 Train the detector locally with:
 

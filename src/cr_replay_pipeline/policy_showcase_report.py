@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .report_kit import FONT_LINKS, favicon_link
 from .winner_report import _base_styles, _fmt_pct, _json_script
 
 
@@ -206,6 +207,8 @@ def render_policy_showcase_report(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PolicyBC v4 — what actually got better</title>
+  {favicon_link()}
+  {FONT_LINKS}
   <style>{_base_styles()}{_showcase_styles()}</style>
 </head>
 <body>
@@ -440,7 +443,7 @@ def _showcase_styles() -> str:
     .hero-score-value.down { color: #f87171; }
 
     .play-btn {
-      background: linear-gradient(120deg, #6366f1, #22d3ee);
+      background: var(--sky);
       color: #06111f; border: 0; border-radius: 999px; padding: 9px 20px;
       font-weight: 700; cursor: pointer; font-size: 0.9rem;
     }
@@ -460,7 +463,7 @@ def _showcase_styles() -> str:
     }
     .race-fill {
       position: absolute; inset: 0 auto 0 0; width: 0%;
-      background: linear-gradient(90deg, #6366f1, #22d3ee);
+      background: var(--sky);
       transition: width 1.1s cubic-bezier(.22,1,.36,1);
     }
     .race-ghost {
@@ -517,8 +520,7 @@ def _showcase_styles() -> str:
       background: rgba(148,163,184,0.1); border: 1px solid rgba(148,163,184,0.2);
       color: #e2e8f0; border-radius: 999px; padding: 6px 13px; font-size: 0.82rem; cursor: pointer;
     }
-    .chip:hover { border-color: #22d3ee88; }
-    .chip.active { background: linear-gradient(120deg, #6366f1, #22d3ee); color: #06111f; font-weight: 700; border-color: transparent; }
+    .chip.active { background: var(--sky); color: var(--ink); font-weight: 700; border-color: var(--sky); }
     .chip .chip-n { opacity: 0.65; font-size: 0.72rem; margin-left: 5px; }
     .switch { display: flex; gap: 9px; align-items: flex-start; font-size: 0.84rem; color: #cbd5f5; cursor: pointer; }
     .lab-readout { margin-top: 18px; display: grid; gap: 10px; }

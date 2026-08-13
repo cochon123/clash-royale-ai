@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .report_kit import FONT_LINKS, favicon_link, shared_styles
+
 
 def write_matchup_lineage_report(
     payload: dict[str, Any],
@@ -21,64 +23,15 @@ def write_matchup_lineage_report(
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Matchup lineage — human vs AI win rates</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+@@FAVICON@@
+@@FONT_LINKS@@
 <style>
-:root{--bg:#07100e;--panel:#0d1916;--line:#20332d;--text:#edf7f2;--muted:#91a9a0;--green:#70e1b1;--gold:#ffca63;--blue:#70a1ff;--red:#ff7e78;--star:#e8f58b;--ink:#06100d}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(circle at 12% -10%,#1d3f32 0,transparent 34%),radial-gradient(circle at 92% 0%,#3a3418 0,transparent 28%),var(--bg);color:var(--text);font:15px/1.55 "IBM Plex Sans",ui-sans-serif,system-ui,sans-serif}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.045;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,#000,transparent 70%)}
-main{width:min(1180px,calc(100% - 36px));margin:auto;padding:48px 0 96px}
-.eyebrow{font:700 11px/1.2 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--star)}
-h1{font-size:clamp(38px,6.8vw,74px);line-height:.94;letter-spacing:-.065em;margin:16px 0 18px;max-width:920px}
-h1 em{color:var(--star);font-style:normal}
-h2{font-size:clamp(24px,3.6vw,36px);letter-spacing:-.04em;margin:0 0 8px}
-h3{font-size:17px;margin:0 0 8px}
-p{color:var(--muted);margin:0}.lede{font-size:clamp(16px,2vw,20px);max-width:820px;color:#bfd0ca}
-.stamp{margin-top:18px;color:#607d72;font:12px "IBM Plex Mono",ui-monospace,monospace}
-.verdict{margin-top:34px;border:1px solid #5d6b34;background:linear-gradient(135deg,rgba(232,245,139,.12),rgba(112,225,177,.05));border-radius:22px;padding:22px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start}
-.verdict .mark{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--star);color:var(--ink);font-size:22px;font-weight:900}
-.verdict strong{display:block;font-size:19px;margin-bottom:4px}
-.section{border-top:1px solid var(--line);padding:46px 0}
-.section-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:22px}.section-head p{max-width:540px}
-.card,.kpi{border:1px solid var(--line);background:linear-gradient(160deg,rgba(17,33,29,.94),rgba(8,17,14,.94));border-radius:18px;padding:20px;position:relative;overflow:hidden}
-.kpi:after{content:"";position:absolute;width:100px;height:100px;border-radius:50%;background:var(--tone,var(--star));filter:blur(55px);opacity:.12;right:-30px;top:-35px}
-.kpi span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
-.kpi b{display:block;font-size:clamp(24px,3.2vw,36px);letter-spacing:-.045em;margin:6px 0 2px}.kpi small{color:#789188}
-.match-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 18px}
-.match-chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 8px}
-.match-chip{border:1px solid var(--line);background:#0a1512;color:var(--muted);border-radius:999px;padding:9px 14px;font:700 12px "IBM Plex Mono",ui-monospace,monospace;cursor:pointer;transition:transform .18s ease,border-color .18s,background .18s,color .18s}
-.match-chip:hover{border-color:#416459;color:var(--text);transform:translateY(-1px)}
-.match-chip.active{background:var(--tone,var(--star));color:var(--ink);border-color:transparent;box-shadow:0 0 24px color-mix(in srgb,var(--tone,var(--star)) 35%,transparent)}
-.compare-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:14px}
+@@SHARED_STYLES@@
 .delta-chart{width:100%;height:auto;display:block}
-.expr{margin-top:14px;padding:12px 14px;border:1px dashed #355247;border-radius:12px;color:#9bb6ad;font:12px/1.45 "IBM Plex Mono",ui-monospace,monospace}
-.expr b{color:var(--text)}
-.bars{display:grid;gap:10px}
-.bar-row{display:grid;grid-template-columns:54px 1fr 64px;gap:10px;align-items:center}
-.bar-track{height:12px;border-radius:99px;background:#08110f;border:1px solid #1c2d28;overflow:hidden}
-.bar-fill{height:100%;width:0;background:var(--tone,var(--star));border-radius:99px;transition:width .7s cubic-bezier(.2,.8,.2,1)}
-.bar-value{font:700 12px "IBM Plex Mono",ui-monospace,monospace;text-align:right;color:var(--muted)}
-.callout{border:1px solid #355247;border-radius:12px;padding:12px 14px;color:#9bb6ad;font-size:13px;background:rgba(8,20,16,.55)}
-.callout b{color:var(--text)}
-.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
-th:first-child,td:first-child{text-align:left}
-thead th{font:700 11px "IBM Plex Mono",ui-monospace,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:#0a1512;position:sticky;top:0}
-tbody tr:hover{background:#13231e}
-.flip{color:var(--red);font-weight:700}.ok{color:var(--green)}
-.human{color:var(--gold)}
-.lessons{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.lesson .n{font:700 11px "IBM Plex Mono",ui-monospace,monospace;color:var(--star);letter-spacing:.1em;margin-bottom:10px}
-.foot{color:#607d72;font:12px "IBM Plex Mono",ui-monospace,monospace;padding-top:10px}
-.tip{position:fixed;pointer-events:none;z-index:40;background:#0f1f1a;border:1px solid #355247;color:var(--text);padding:8px 10px;border-radius:10px;font:12px/1.35 "IBM Plex Mono",ui-monospace,monospace;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:280px}
+.flip{color:var(--red);font-weight:700}.ok{color:var(--green)}.human{color:var(--gold)}
+thead th{position:sticky;top:0;background:var(--panel)}
+.tip{position:fixed;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:280px;opacity:0}
 .tip.on{opacity:1;transform:none}
-@media (max-width:900px){
-  .match-kpis,.compare-grid,.lessons{grid-template-columns:1fr}
-  .verdict{grid-template-columns:1fr}
-}
 </style>
 </head>
 <body>
@@ -284,5 +237,11 @@ display = JSON.parse(JSON.stringify(byId[activeId]));
 </body>
 </html>
 """
-    out.write_text(html.replace("__PAYLOAD__", data), encoding="utf-8")
+    out.write_text(
+        html.replace("__PAYLOAD__", data)
+        .replace("@@FAVICON@@", favicon_link())
+        .replace("@@FONT_LINKS@@", FONT_LINKS)
+        .replace("@@SHARED_STYLES@@", shared_styles()),
+        encoding="utf-8",
+    )
     return out

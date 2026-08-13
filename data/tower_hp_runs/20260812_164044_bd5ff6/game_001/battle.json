@@ -1,0 +1,599 @@
+{
+  "battle_status": {
+    "controllers": {
+      "pixel8": "policy_bc_v4",
+      "pixel9": "policy_bc_v4"
+    },
+    "decks": {
+      "pixel8": [
+        "knight",
+        "archers",
+        "skeletons",
+        "arrows",
+        "fireball",
+        "giant",
+        "mini-pekka",
+        "musketeer"
+      ],
+      "pixel9": [
+        "mortar",
+        "knight",
+        "archers",
+        "skeletons",
+        "barbarian-barrel",
+        "arrows",
+        "mini-pekka",
+        "rocket"
+      ]
+    },
+    "elixir": {
+      "pixel8": 3.11,
+      "pixel9": 9.11
+    },
+    "error": null,
+    "events": 7,
+    "hands": {
+      "pixel8": [
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 0
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 1
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "pixel9": [
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 0
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 1
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ]
+    },
+    "log": [
+      {
+        "level": "ok",
+        "message": "pixel8 hand: ['giant', 'skeletons', 'knight', 'minions']",
+        "t": 0.0
+      },
+      {
+        "level": "err",
+        "message": "pixel8: detected ['minions'] not in declared deck \u2014 fix the deck pickers or plays will look random",
+        "t": 0.0
+      },
+      {
+        "level": "ok",
+        "message": "pixel9 hand: ['knight', 'archers', 'mortar', 'mini-pekka']",
+        "t": 0.0
+      },
+      {
+        "level": "ok",
+        "message": "battle started",
+        "t": 0.0
+      },
+      {
+        "level": "err",
+        "message": "pixel9: tap not confirmed \u2014 slot 0 still shows knight",
+        "t": 1.7
+      },
+      {
+        "level": "ok",
+        "message": "  1.7s  pixel8  knight  uv=(0.46,0.61)  elixir\u21922.6 [sample / expected / K=0 ]",
+        "t": 2.2
+      },
+      {
+        "level": "err",
+        "message": "pixel9: tap not confirmed \u2014 slot 2 still shows mortar",
+        "t": 4.2
+      },
+      {
+        "level": "err",
+        "message": "pixel8: tap not confirmed \u2014 slot 1 still shows skeletons",
+        "t": 6.0
+      },
+      {
+        "level": "ok",
+        "message": "  6.1s  pixel8  skeletons  uv=(0.44,0.55)  elixir\u21923.2 [sample / expected / K=0 ]",
+        "t": 6.6
+      },
+      {
+        "level": "err",
+        "message": "pixel9: tap not confirmed \u2014 slot 1 still shows archers",
+        "t": 8.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait elixir (4.4 < 5) for giant",
+        "t": 9.5
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 9.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait elixir (4.5 < 5) for giant",
+        "t": 9.7
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 9.9
+      },
+      {
+        "level": "err",
+        "message": "pixel8: tap not confirmed \u2014 slot 2 still shows mini-pekka",
+        "t": 10.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait elixir (4.7 < 5) for giant",
+        "t": 10.4
+      },
+      {
+        "level": "ok",
+        "message": " 10.4s  pixel9  barbarian-barrel  uv=(0.65,0.69)  elixir\u21926.7 [sample / expected / K=0 ]",
+        "t": 10.8
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 10.8
+      },
+      {
+        "level": "err",
+        "message": "pixel8: tap not confirmed \u2014 slot 0 still shows giant",
+        "t": 14.0
+      },
+      {
+        "level": "ok",
+        "message": " 14.1s  pixel8  giant  uv=(0.37,0.56)  elixir\u21921.1 [sample / expected / K=0 ]",
+        "t": 14.9
+      },
+      {
+        "level": "err",
+        "message": "pixel9: tap not confirmed \u2014 slot 1 still shows skeletons",
+        "t": 16.6
+      },
+      {
+        "level": "ok",
+        "message": " 16.7s  pixel9  skeletons  uv=(0.67,0.68)  elixir\u21928.0 [sample / expected / K=0 ]",
+        "t": 17.1
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 17.1
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 17.1
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 17.3
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 17.3
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 17.5
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 17.5
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 17.6
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 17.6
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 17.8
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 17.9
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 18.1
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 18.2
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (1/6)",
+        "t": 18.5
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (2/6)",
+        "t": 18.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait elixir (2.9 < 3) for arrows",
+        "t": 19.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait elixir (2.9 < 3) for arrows",
+        "t": 19.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait elixir (3.0 < 3) for arrows",
+        "t": 19.5
+      },
+      {
+        "level": "err",
+        "message": "pixel8: tap not confirmed \u2014 slot 1 still shows arrows",
+        "t": 20.1
+      },
+      {
+        "level": "ok",
+        "message": " 20.2s  pixel8  arrows  uv=(0.27,0.34)  elixir\u21920.2 [sample / expected / K=0 ]",
+        "t": 20.6
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (1/6)",
+        "t": 20.6
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (2/6)",
+        "t": 21.0
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 21.3
+      },
+      {
+        "level": "ok",
+        "message": " 21.5s  pixel9  knight  uv=(0.73,0.65)  elixir\u21926.7 [sample / expected / K=0 ]",
+        "t": 21.9
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 21.9
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 22.1
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 22.3
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 22.4
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 22.7
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 22.9
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 23.0
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 23.0
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 23.2
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 23.2
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 23.3
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 23.3
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 23.5
+      },
+      {
+        "level": "err",
+        "message": "pixel9 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 23.5
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 23.7
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 23.8
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 24.0
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 24.1
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 24.3
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 24.4
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (1/6)",
+        "t": 24.7
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (2/6)",
+        "t": 25.1
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (3/6)",
+        "t": 25.4
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 25.8
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 25.9
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 26.1
+      },
+      {
+        "level": "err",
+        "message": "pixel8 predict failed: none of prefer_cards exists in the acting deck",
+        "t": 26.2
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (1/6)",
+        "t": 26.5
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (2/6)",
+        "t": 26.9
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (3/6)",
+        "t": 27.2
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (4/6)",
+        "t": 27.6
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (5/6)",
+        "t": 27.9
+      },
+      {
+        "level": "err",
+        "message": "all AI hands empty (6/6)",
+        "t": 28.3
+      },
+      {
+        "level": "err",
+        "message": "stopping: YOLO lost both hands (match over / overlay / wrong screen?)",
+        "t": 28.3
+      },
+      {
+        "level": "info",
+        "message": "battle stopped",
+        "t": 28.3
+      }
+    ],
+    "match_time": 28.29,
+    "next": {
+      "pixel8": {
+        "controller": "policy_bc_v4",
+        "skip": "empty_hand"
+      },
+      "pixel9": {
+        "controller": "policy_bc_v4",
+        "skip": "empty_hand"
+      }
+    },
+    "protocol": {
+      "history": "confirmed deployments only",
+      "placement": "checkpoint rollout decoder conditioned on selected card",
+      "scheduler": "two-sided predicted-delay race",
+      "slot": "checkpoint rollout decoder + detected-hand hard mask",
+      "think_steps": null
+    },
+    "running": false
+  },
+  "duration_s": 30.968,
+  "events": [
+    {
+      "card": "knight",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "placement_decode": "expected",
+      "seconds": 1.7431566715240479,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 8229,
+      "y": 12341
+    },
+    {
+      "card": "skeletons",
+      "event_type": "card_play",
+      "model_slot": 2,
+      "placement_decode": "expected",
+      "seconds": 6.143147706985474,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 8000,
+      "y": 14454
+    },
+    {
+      "card": "barbarian-barrel",
+      "event_type": "card_play",
+      "model_slot": 4,
+      "placement_decode": "expected",
+      "seconds": 10.393670082092285,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 11783,
+      "y": 9983
+    },
+    {
+      "card": "giant",
+      "event_type": "card_play",
+      "model_slot": 5,
+      "placement_decode": "expected",
+      "seconds": 14.14816665649414,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 6725,
+      "y": 14103
+    },
+    {
+      "card": "skeletons",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "placement_decode": "expected",
+      "seconds": 16.74331831932068,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 12011,
+      "y": 10159
+    },
+    {
+      "card": "arrows",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "placement_decode": "expected",
+      "seconds": 20.2017605304718,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 4782,
+      "y": 21171
+    },
+    {
+      "card": "knight",
+      "event_type": "card_play",
+      "model_slot": 1,
+      "placement_decode": "expected",
+      "seconds": 21.54330062866211,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 13227,
+      "y": 11286
+    }
+  ],
+  "game": 1,
+  "started_at": "2026-08-12T22:41:52.091680+00:00"
+}

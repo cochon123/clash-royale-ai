@@ -1,0 +1,1989 @@
+Loading battles from data/raw ...
+Loaded 50918 battles from cache (data/winner_battles_cache.pkl)
+Memory-safe lazy mirroring enabled: 45,826 source battles; encoded streams are shared
+Training policy-bc-v4.4.2 (threat_dim=14, card_conditioned_placement=True, placement_mode=heatmap, placement_card_mode=selected, winner_only=True, reaction_weight=3.0, reaction_repeats=2, max_think_steps=3, eval_think_steps=3)
+Samples train/val/test: 1482692/23284/23868 on cuda
+Warm-started from models/policy_bc_v4.4.2 (missing=0, unexpected=0)
+progress phase=4.4.2 epoch=1/9 batch=1/2896 work=0.0% elapsed=1s ETA=16483s tile_loss=3.3025
+progress phase=4.4.2 epoch=1/9 batch=25/2896 work=0.1% elapsed=6s ETA=6748s tile_loss=3.5255
+progress phase=4.4.2 epoch=1/9 batch=50/2896 work=0.2% elapsed=12s ETA=6436s tile_loss=3.1742
+progress phase=4.4.2 epoch=1/9 batch=75/2896 work=0.3% elapsed=18s ETA=6348s tile_loss=3.0880
+progress phase=4.4.2 epoch=1/9 batch=100/2896 work=0.4% elapsed=24s ETA=6283s tile_loss=3.0894
+progress phase=4.4.2 epoch=1/9 batch=125/2896 work=0.5% elapsed=30s ETA=6241s tile_loss=3.1473
+progress phase=4.4.2 epoch=1/9 batch=150/2896 work=0.6% elapsed=36s ETA=6199s tile_loss=3.3987
+progress phase=4.4.2 epoch=1/9 batch=175/2896 work=0.7% elapsed=42s ETA=6164s tile_loss=3.3574
+progress phase=4.4.2 epoch=1/9 batch=200/2896 work=0.8% elapsed=48s ETA=6148s tile_loss=3.4339
+progress phase=4.4.2 epoch=1/9 batch=225/2896 work=0.9% elapsed=53s ETA=6140s tile_loss=3.0046
+progress phase=4.4.2 epoch=1/9 batch=250/2896 work=1.0% elapsed=59s ETA=6122s tile_loss=3.3128
+progress phase=4.4.2 epoch=1/9 batch=275/2896 work=1.1% elapsed=65s ETA=6128s tile_loss=3.1599
+progress phase=4.4.2 epoch=1/9 batch=300/2896 work=1.2% elapsed=71s ETA=6118s tile_loss=3.3097
+progress phase=4.4.2 epoch=1/9 batch=325/2896 work=1.2% elapsed=77s ETA=6106s tile_loss=3.2302
+progress phase=4.4.2 epoch=1/9 batch=350/2896 work=1.3% elapsed=83s ETA=6089s tile_loss=3.2760
+progress phase=4.4.2 epoch=1/9 batch=375/2896 work=1.4% elapsed=89s ETA=6077s tile_loss=3.1119
+progress phase=4.4.2 epoch=1/9 batch=400/2896 work=1.5% elapsed=95s ETA=6083s tile_loss=3.3461
+progress phase=4.4.2 epoch=1/9 batch=425/2896 work=1.6% elapsed=101s ETA=6070s tile_loss=3.1279
+progress phase=4.4.2 epoch=1/9 batch=450/2896 work=1.7% elapsed=106s ETA=6061s tile_loss=3.4141
+progress phase=4.4.2 epoch=1/9 batch=475/2896 work=1.8% elapsed=112s ETA=6053s tile_loss=3.3639
+progress phase=4.4.2 epoch=1/9 batch=500/2896 work=1.9% elapsed=118s ETA=6040s tile_loss=3.0671
+progress phase=4.4.2 epoch=1/9 batch=525/2896 work=2.0% elapsed=124s ETA=6045s tile_loss=3.4040
+progress phase=4.4.2 epoch=1/9 batch=550/2896 work=2.1% elapsed=130s ETA=6040s tile_loss=3.4072
+progress phase=4.4.2 epoch=1/9 batch=575/2896 work=2.2% elapsed=137s ETA=6054s tile_loss=3.1088
+progress phase=4.4.2 epoch=1/9 batch=600/2896 work=2.3% elapsed=142s ETA=6045s tile_loss=3.3108
+progress phase=4.4.2 epoch=1/9 batch=625/2896 work=2.4% elapsed=148s ETA=6038s tile_loss=3.3241
+progress phase=4.4.2 epoch=1/9 batch=650/2896 work=2.5% elapsed=154s ETA=6028s tile_loss=3.2280
+progress phase=4.4.2 epoch=1/9 batch=675/2896 work=2.6% elapsed=160s ETA=6019s tile_loss=3.4501
+progress phase=4.4.2 epoch=1/9 batch=700/2896 work=2.7% elapsed=166s ETA=6020s tile_loss=3.4188
+progress phase=4.4.2 epoch=1/9 batch=725/2896 work=2.8% elapsed=172s ETA=6019s tile_loss=3.3757
+progress phase=4.4.2 epoch=1/9 batch=750/2896 work=2.9% elapsed=178s ETA=6011s tile_loss=3.2531
+progress phase=4.4.2 epoch=1/9 batch=775/2896 work=3.0% elapsed=184s ETA=6010s tile_loss=3.2357
+progress phase=4.4.2 epoch=1/9 batch=800/2896 work=3.1% elapsed=190s ETA=6002s tile_loss=3.1848
+progress phase=4.4.2 epoch=1/9 batch=825/2896 work=3.2% elapsed=196s ETA=6000s tile_loss=3.1798
+progress phase=4.4.2 epoch=1/9 batch=850/2896 work=3.3% elapsed=202s ETA=5992s tile_loss=3.1645
+progress phase=4.4.2 epoch=1/9 batch=875/2896 work=3.4% elapsed=208s ETA=5984s tile_loss=3.1224
+progress phase=4.4.2 epoch=1/9 batch=900/2896 work=3.5% elapsed=214s ETA=5977s tile_loss=3.3985
+progress phase=4.4.2 epoch=1/9 batch=925/2896 work=3.5% elapsed=220s ETA=5969s tile_loss=3.5048
+progress phase=4.4.2 epoch=1/9 batch=950/2896 work=3.6% elapsed=226s ETA=5963s tile_loss=3.3498
+progress phase=4.4.2 epoch=1/9 batch=975/2896 work=3.7% elapsed=231s ETA=5955s tile_loss=3.4084
+progress phase=4.4.2 epoch=1/9 batch=1000/2896 work=3.8% elapsed=237s ETA=5951s tile_loss=3.4357
+progress phase=4.4.2 epoch=1/9 batch=1025/2896 work=3.9% elapsed=243s ETA=5942s tile_loss=3.5093
+progress phase=4.4.2 epoch=1/9 batch=1050/2896 work=4.0% elapsed=249s ETA=5936s tile_loss=3.5997
+progress phase=4.4.2 epoch=1/9 batch=1075/2896 work=4.1% elapsed=255s ETA=5929s tile_loss=3.3198
+progress phase=4.4.2 epoch=1/9 batch=1100/2896 work=4.2% elapsed=261s ETA=5921s tile_loss=3.5462
+progress phase=4.4.2 epoch=1/9 batch=1125/2896 work=4.3% elapsed=267s ETA=5915s tile_loss=3.1310
+progress phase=4.4.2 epoch=1/9 batch=1150/2896 work=4.4% elapsed=273s ETA=5908s tile_loss=3.4226
+progress phase=4.4.2 epoch=1/9 batch=1175/2896 work=4.5% elapsed=279s ETA=5902s tile_loss=3.3849
+progress phase=4.4.2 epoch=1/9 batch=1200/2896 work=4.6% elapsed=285s ETA=5896s tile_loss=3.1777
+progress phase=4.4.2 epoch=1/9 batch=1225/2896 work=4.7% elapsed=291s ETA=5894s tile_loss=3.2680
+progress phase=4.4.2 epoch=1/9 batch=1250/2896 work=4.8% elapsed=297s ETA=5893s tile_loss=2.9648
+progress phase=4.4.2 epoch=1/9 batch=1275/2896 work=4.9% elapsed=303s ETA=5887s tile_loss=3.4802
+progress phase=4.4.2 epoch=1/9 batch=1300/2896 work=5.0% elapsed=309s ETA=5879s tile_loss=3.2127
+progress phase=4.4.2 epoch=1/9 batch=1325/2896 work=5.1% elapsed=315s ETA=5872s tile_loss=3.0392
+progress phase=4.4.2 epoch=1/9 batch=1350/2896 work=5.2% elapsed=320s ETA=5867s tile_loss=3.4840
+progress phase=4.4.2 epoch=1/9 batch=1375/2896 work=5.3% elapsed=326s ETA=5860s tile_loss=3.6071
+progress phase=4.4.2 epoch=1/9 batch=1400/2896 work=5.4% elapsed=332s ETA=5853s tile_loss=3.3361
+progress phase=4.4.2 epoch=1/9 batch=1425/2896 work=5.5% elapsed=338s ETA=5846s tile_loss=3.2103
+progress phase=4.4.2 epoch=1/9 batch=1450/2896 work=5.6% elapsed=344s ETA=5839s tile_loss=3.2440
+progress phase=4.4.2 epoch=1/9 batch=1475/2896 work=5.7% elapsed=350s ETA=5831s tile_loss=3.2006
+progress phase=4.4.2 epoch=1/9 batch=1500/2896 work=5.8% elapsed=356s ETA=5823s tile_loss=3.1157
+progress phase=4.4.2 epoch=1/9 batch=1525/2896 work=5.9% elapsed=361s ETA=5816s tile_loss=3.3242
+progress phase=4.4.2 epoch=1/9 batch=1550/2896 work=5.9% elapsed=367s ETA=5809s tile_loss=3.4771
+progress phase=4.4.2 epoch=1/9 batch=1575/2896 work=6.0% elapsed=373s ETA=5802s tile_loss=3.1984
+progress phase=4.4.2 epoch=1/9 batch=1600/2896 work=6.1% elapsed=379s ETA=5794s tile_loss=3.2853
+progress phase=4.4.2 epoch=1/9 batch=1625/2896 work=6.2% elapsed=385s ETA=5787s tile_loss=3.1846
+progress phase=4.4.2 epoch=1/9 batch=1650/2896 work=6.3% elapsed=391s ETA=5782s tile_loss=3.2588
+progress phase=4.4.2 epoch=1/9 batch=1675/2896 work=6.4% elapsed=397s ETA=5780s tile_loss=3.1672
+progress phase=4.4.2 epoch=1/9 batch=1700/2896 work=6.5% elapsed=403s ETA=5775s tile_loss=3.2477
+progress phase=4.4.2 epoch=1/9 batch=1725/2896 work=6.6% elapsed=409s ETA=5769s tile_loss=3.3471
+progress phase=4.4.2 epoch=1/9 batch=1750/2896 work=6.7% elapsed=415s ETA=5762s tile_loss=3.3902
+progress phase=4.4.2 epoch=1/9 batch=1775/2896 work=6.8% elapsed=421s ETA=5756s tile_loss=3.3729
+progress phase=4.4.2 epoch=1/9 batch=1800/2896 work=6.9% elapsed=427s ETA=5751s tile_loss=3.2155
+progress phase=4.4.2 epoch=1/9 batch=1825/2896 work=7.0% elapsed=433s ETA=5748s tile_loss=3.2773
+progress phase=4.4.2 epoch=1/9 batch=1850/2896 work=7.1% elapsed=439s ETA=5741s tile_loss=3.2873
+progress phase=4.4.2 epoch=1/9 batch=1875/2896 work=7.2% elapsed=445s ETA=5735s tile_loss=3.4022
+progress phase=4.4.2 epoch=1/9 batch=1900/2896 work=7.3% elapsed=450s ETA=5729s tile_loss=3.0325
+progress phase=4.4.2 epoch=1/9 batch=1925/2896 work=7.4% elapsed=456s ETA=5723s tile_loss=3.1882
+progress phase=4.4.2 epoch=1/9 batch=1950/2896 work=7.5% elapsed=462s ETA=5716s tile_loss=3.1255
+progress phase=4.4.2 epoch=1/9 batch=1975/2896 work=7.6% elapsed=468s ETA=5710s tile_loss=3.4111
+progress phase=4.4.2 epoch=1/9 batch=2000/2896 work=7.7% elapsed=474s ETA=5708s tile_loss=3.4262
+progress phase=4.4.2 epoch=1/9 batch=2025/2896 work=7.8% elapsed=480s ETA=5702s tile_loss=3.4097
+progress phase=4.4.2 epoch=1/9 batch=2050/2896 work=7.9% elapsed=486s ETA=5695s tile_loss=3.3254
+progress phase=4.4.2 epoch=1/9 batch=2075/2896 work=8.0% elapsed=492s ETA=5690s tile_loss=3.2889
+progress phase=4.4.2 epoch=1/9 batch=2100/2896 work=8.1% elapsed=498s ETA=5686s tile_loss=3.5998
+progress phase=4.4.2 epoch=1/9 batch=2125/2896 work=8.2% elapsed=504s ETA=5680s tile_loss=2.9198
+progress phase=4.4.2 epoch=1/9 batch=2150/2896 work=8.2% elapsed=510s ETA=5675s tile_loss=3.1461
+progress phase=4.4.2 epoch=1/9 batch=2175/2896 work=8.3% elapsed=516s ETA=5670s tile_loss=3.2112
+progress phase=4.4.2 epoch=1/9 batch=2200/2896 work=8.4% elapsed=522s ETA=5664s tile_loss=3.1764
+progress phase=4.4.2 epoch=1/9 batch=2225/2896 work=8.5% elapsed=528s ETA=5658s tile_loss=3.2679
+progress phase=4.4.2 epoch=1/9 batch=2250/2896 work=8.6% elapsed=534s ETA=5652s tile_loss=3.5396
+progress phase=4.4.2 epoch=1/9 batch=2275/2896 work=8.7% elapsed=540s ETA=5646s tile_loss=3.2113
+progress phase=4.4.2 epoch=1/9 batch=2300/2896 work=8.8% elapsed=546s ETA=5642s tile_loss=3.1680
+progress phase=4.4.2 epoch=1/9 batch=2325/2896 work=8.9% elapsed=552s ETA=5636s tile_loss=3.5645
+progress phase=4.4.2 epoch=1/9 batch=2350/2896 work=9.0% elapsed=558s ETA=5629s tile_loss=3.3058
+progress phase=4.4.2 epoch=1/9 batch=2375/2896 work=9.1% elapsed=564s ETA=5622s tile_loss=3.2405
+progress phase=4.4.2 epoch=1/9 batch=2400/2896 work=9.2% elapsed=569s ETA=5615s tile_loss=3.0771
+progress phase=4.4.2 epoch=1/9 batch=2425/2896 work=9.3% elapsed=575s ETA=5608s tile_loss=3.1706
+progress phase=4.4.2 epoch=1/9 batch=2450/2896 work=9.4% elapsed=581s ETA=5602s tile_loss=3.2017
+progress phase=4.4.2 epoch=1/9 batch=2475/2896 work=9.5% elapsed=587s ETA=5595s tile_loss=3.2511
+progress phase=4.4.2 epoch=1/9 batch=2500/2896 work=9.6% elapsed=593s ETA=5591s tile_loss=3.2476
+progress phase=4.4.2 epoch=1/9 batch=2525/2896 work=9.7% elapsed=599s ETA=5585s tile_loss=3.2710
+progress phase=4.4.2 epoch=1/9 batch=2550/2896 work=9.8% elapsed=605s ETA=5579s tile_loss=3.0944
+progress phase=4.4.2 epoch=1/9 batch=2575/2896 work=9.9% elapsed=611s ETA=5573s tile_loss=3.4994
+progress phase=4.4.2 epoch=1/9 batch=2600/2896 work=10.0% elapsed=617s ETA=5566s tile_loss=3.1371
+progress phase=4.4.2 epoch=1/9 batch=2625/2896 work=10.1% elapsed=623s ETA=5560s tile_loss=3.2042
+progress phase=4.4.2 epoch=1/9 batch=2650/2896 work=10.2% elapsed=628s ETA=5553s tile_loss=3.4071
+progress phase=4.4.2 epoch=1/9 batch=2675/2896 work=10.3% elapsed=634s ETA=5546s tile_loss=3.2874
+progress phase=4.4.2 epoch=1/9 batch=2700/2896 work=10.4% elapsed=640s ETA=5540s tile_loss=3.2649
+progress phase=4.4.2 epoch=1/9 batch=2725/2896 work=10.5% elapsed=646s ETA=5533s tile_loss=3.1865
+progress phase=4.4.2 epoch=1/9 batch=2750/2896 work=10.6% elapsed=652s ETA=5527s tile_loss=3.6131
+progress phase=4.4.2 epoch=1/9 batch=2775/2896 work=10.6% elapsed=658s ETA=5520s tile_loss=3.2216
+progress phase=4.4.2 epoch=1/9 batch=2800/2896 work=10.7% elapsed=664s ETA=5513s tile_loss=3.3844
+progress phase=4.4.2 epoch=1/9 batch=2825/2896 work=10.8% elapsed=669s ETA=5507s tile_loss=3.2769
+progress phase=4.4.2 epoch=1/9 batch=2850/2896 work=10.9% elapsed=675s ETA=5500s tile_loss=3.5191
+progress phase=4.4.2 epoch=1/9 batch=2875/2896 work=11.0% elapsed=681s ETA=5495s tile_loss=3.6867
+progress phase=4.4.2 epoch=1/9 batch=2896/2896 work=11.1% elapsed=686s ETA=5490s tile_loss=3.2847
+epoch 01  train_loss=4.6520  val_slot@1=0.562  val_zone=0.458  val_tile=0.089  val_tile_cls=0.165  val_tile@5=0.399  val_loss=6.0979
+progress phase=4.4.2 epoch=2/9 batch=1/2896 work=11.1% elapsed=699s ETA=5586s tile_loss=3.2068
+progress phase=4.4.2 epoch=2/9 batch=25/2896 work=11.2% elapsed=704s ETA=5579s tile_loss=3.0365
+progress phase=4.4.2 epoch=2/9 batch=50/2896 work=11.3% elapsed=710s ETA=5571s tile_loss=3.2999
+progress phase=4.4.2 epoch=2/9 batch=75/2896 work=11.4% elapsed=716s ETA=5562s tile_loss=3.0710
+progress phase=4.4.2 epoch=2/9 batch=100/2896 work=11.5% elapsed=722s ETA=5558s tile_loss=3.2188
+progress phase=4.4.2 epoch=2/9 batch=125/2896 work=11.6% elapsed=728s ETA=5551s tile_loss=3.2949
+progress phase=4.4.2 epoch=2/9 batch=150/2896 work=11.7% elapsed=734s ETA=5545s tile_loss=3.5074
+progress phase=4.4.2 epoch=2/9 batch=175/2896 work=11.8% elapsed=739s ETA=5536s tile_loss=3.4934
+progress phase=4.4.2 epoch=2/9 batch=200/2896 work=11.9% elapsed=746s ETA=5531s tile_loss=3.1514
+progress phase=4.4.2 epoch=2/9 batch=225/2896 work=12.0% elapsed=751s ETA=5523s tile_loss=3.4345
+progress phase=4.4.2 epoch=2/9 batch=250/2896 work=12.1% elapsed=757s ETA=5516s tile_loss=3.3340
+progress phase=4.4.2 epoch=2/9 batch=275/2896 work=12.2% elapsed=763s ETA=5507s tile_loss=3.4709
+progress phase=4.4.2 epoch=2/9 batch=300/2896 work=12.3% elapsed=768s ETA=5498s tile_loss=3.1745
+progress phase=4.4.2 epoch=2/9 batch=325/2896 work=12.4% elapsed=774s ETA=5490s tile_loss=3.1834
+progress phase=4.4.2 epoch=2/9 batch=350/2896 work=12.5% elapsed=780s ETA=5482s tile_loss=3.5628
+progress phase=4.4.2 epoch=2/9 batch=375/2896 work=12.5% elapsed=785s ETA=5473s tile_loss=3.4221
+progress phase=4.4.2 epoch=2/9 batch=400/2896 work=12.6% elapsed=792s ETA=5468s tile_loss=3.3502
+progress phase=4.4.2 epoch=2/9 batch=425/2896 work=12.7% elapsed=798s ETA=5463s tile_loss=3.4095
+progress phase=4.4.2 epoch=2/9 batch=450/2896 work=12.8% elapsed=804s ETA=5456s tile_loss=3.1637
+progress phase=4.4.2 epoch=2/9 batch=475/2896 work=12.9% elapsed=810s ETA=5450s tile_loss=3.1765
+progress phase=4.4.2 epoch=2/9 batch=500/2896 work=13.0% elapsed=815s ETA=5443s tile_loss=3.1540
+progress phase=4.4.2 epoch=2/9 batch=525/2896 work=13.1% elapsed=821s ETA=5435s tile_loss=3.4176
+progress phase=4.4.2 epoch=2/9 batch=550/2896 work=13.2% elapsed=827s ETA=5428s tile_loss=3.2537
+progress phase=4.4.2 epoch=2/9 batch=575/2896 work=13.3% elapsed=833s ETA=5420s tile_loss=3.4595
+progress phase=4.4.2 epoch=2/9 batch=600/2896 work=13.4% elapsed=839s ETA=5413s tile_loss=3.2538
+progress phase=4.4.2 epoch=2/9 batch=625/2896 work=13.5% elapsed=844s ETA=5406s tile_loss=3.2650
+progress phase=4.4.2 epoch=2/9 batch=650/2896 work=13.6% elapsed=850s ETA=5398s tile_loss=3.4384
+progress phase=4.4.2 epoch=2/9 batch=675/2896 work=13.7% elapsed=856s ETA=5392s tile_loss=3.2769
+progress phase=4.4.2 epoch=2/9 batch=700/2896 work=13.8% elapsed=862s ETA=5385s tile_loss=3.4602
+progress phase=4.4.2 epoch=2/9 batch=725/2896 work=13.9% elapsed=868s ETA=5379s tile_loss=3.3471
+progress phase=4.4.2 epoch=2/9 batch=750/2896 work=14.0% elapsed=874s ETA=5373s tile_loss=3.2299
+progress phase=4.4.2 epoch=2/9 batch=775/2896 work=14.1% elapsed=880s ETA=5366s tile_loss=3.2142
+progress phase=4.4.2 epoch=2/9 batch=800/2896 work=14.2% elapsed=886s ETA=5360s tile_loss=3.1184
+progress phase=4.4.2 epoch=2/9 batch=825/2896 work=14.3% elapsed=892s ETA=5354s tile_loss=3.2883
+progress phase=4.4.2 epoch=2/9 batch=850/2896 work=14.4% elapsed=898s ETA=5348s tile_loss=3.3446
+progress phase=4.4.2 epoch=2/9 batch=875/2896 work=14.5% elapsed=903s ETA=5341s tile_loss=3.5570
+progress phase=4.4.2 epoch=2/9 batch=900/2896 work=14.6% elapsed=909s ETA=5334s tile_loss=3.3754
+progress phase=4.4.2 epoch=2/9 batch=925/2896 work=14.7% elapsed=915s ETA=5327s tile_loss=3.1801
+progress phase=4.4.2 epoch=2/9 batch=950/2896 work=14.8% elapsed=921s ETA=5321s tile_loss=3.2643
+progress phase=4.4.2 epoch=2/9 batch=975/2896 work=14.9% elapsed=927s ETA=5316s tile_loss=3.2866
+progress phase=4.4.2 epoch=2/9 batch=1000/2896 work=14.9% elapsed=933s ETA=5309s tile_loss=3.2216
+progress phase=4.4.2 epoch=2/9 batch=1025/2896 work=15.0% elapsed=939s ETA=5303s tile_loss=3.3199
+progress phase=4.4.2 epoch=2/9 batch=1050/2896 work=15.1% elapsed=945s ETA=5296s tile_loss=3.2762
+progress phase=4.4.2 epoch=2/9 batch=1075/2896 work=15.2% elapsed=951s ETA=5290s tile_loss=3.1630
+progress phase=4.4.2 epoch=2/9 batch=1100/2896 work=15.3% elapsed=957s ETA=5283s tile_loss=3.2111
+progress phase=4.4.2 epoch=2/9 batch=1125/2896 work=15.4% elapsed=962s ETA=5275s tile_loss=3.2201
+progress phase=4.4.2 epoch=2/9 batch=1150/2896 work=15.5% elapsed=968s ETA=5268s tile_loss=3.1781
+progress phase=4.4.2 epoch=2/9 batch=1175/2896 work=15.6% elapsed=974s ETA=5261s tile_loss=3.6155
+progress phase=4.4.2 epoch=2/9 batch=1200/2896 work=15.7% elapsed=980s ETA=5255s tile_loss=3.3917
+progress phase=4.4.2 epoch=2/9 batch=1225/2896 work=15.8% elapsed=986s ETA=5248s tile_loss=3.2355
+progress phase=4.4.2 epoch=2/9 batch=1250/2896 work=15.9% elapsed=992s ETA=5243s tile_loss=3.0186
+progress phase=4.4.2 epoch=2/9 batch=1275/2896 work=16.0% elapsed=998s ETA=5236s tile_loss=3.3877
+progress phase=4.4.2 epoch=2/9 batch=1300/2896 work=16.1% elapsed=1003s ETA=5229s tile_loss=3.4330
+progress phase=4.4.2 epoch=2/9 batch=1325/2896 work=16.2% elapsed=1009s ETA=5224s tile_loss=3.1311
+progress phase=4.4.2 epoch=2/9 batch=1350/2896 work=16.3% elapsed=1015s ETA=5217s tile_loss=3.0834
+progress phase=4.4.2 epoch=2/9 batch=1375/2896 work=16.4% elapsed=1021s ETA=5211s tile_loss=3.0608
+progress phase=4.4.2 epoch=2/9 batch=1400/2896 work=16.5% elapsed=1027s ETA=5204s tile_loss=3.1763
+progress phase=4.4.2 epoch=2/9 batch=1425/2896 work=16.6% elapsed=1033s ETA=5197s tile_loss=3.3082
+progress phase=4.4.2 epoch=2/9 batch=1450/2896 work=16.7% elapsed=1038s ETA=5189s tile_loss=3.2867
+progress phase=4.4.2 epoch=2/9 batch=1475/2896 work=16.8% elapsed=1044s ETA=5182s tile_loss=3.0665
+progress phase=4.4.2 epoch=2/9 batch=1500/2896 work=16.9% elapsed=1050s ETA=5176s tile_loss=3.2950
+progress phase=4.4.2 epoch=2/9 batch=1525/2896 work=17.0% elapsed=1056s ETA=5170s tile_loss=3.5179
+progress phase=4.4.2 epoch=2/9 batch=1550/2896 work=17.1% elapsed=1062s ETA=5163s tile_loss=3.5997
+progress phase=4.4.2 epoch=2/9 batch=1575/2896 work=17.2% elapsed=1068s ETA=5156s tile_loss=3.2320
+progress phase=4.4.2 epoch=2/9 batch=1600/2896 work=17.2% elapsed=1073s ETA=5149s tile_loss=3.0813
+progress phase=4.4.2 epoch=2/9 batch=1625/2896 work=17.3% elapsed=1079s ETA=5142s tile_loss=3.1628
+progress phase=4.4.2 epoch=2/9 batch=1650/2896 work=17.4% elapsed=1085s ETA=5136s tile_loss=3.2497
+progress phase=4.4.2 epoch=2/9 batch=1675/2896 work=17.5% elapsed=1091s ETA=5130s tile_loss=3.2254
+progress phase=4.4.2 epoch=2/9 batch=1700/2896 work=17.6% elapsed=1097s ETA=5123s tile_loss=3.1141
+progress phase=4.4.2 epoch=2/9 batch=1725/2896 work=17.7% elapsed=1103s ETA=5116s tile_loss=3.2983
+progress phase=4.4.2 epoch=2/9 batch=1750/2896 work=17.8% elapsed=1108s ETA=5110s tile_loss=3.0631
+progress phase=4.4.2 epoch=2/9 batch=1775/2896 work=17.9% elapsed=1114s ETA=5104s tile_loss=3.3446
+progress phase=4.4.2 epoch=2/9 batch=1800/2896 work=18.0% elapsed=1120s ETA=5098s tile_loss=3.0744
+progress phase=4.4.2 epoch=2/9 batch=1825/2896 work=18.1% elapsed=1126s ETA=5092s tile_loss=3.1692
+progress phase=4.4.2 epoch=2/9 batch=1850/2896 work=18.2% elapsed=1132s ETA=5085s tile_loss=3.1247
+progress phase=4.4.2 epoch=2/9 batch=1875/2896 work=18.3% elapsed=1138s ETA=5078s tile_loss=3.3384
+progress phase=4.4.2 epoch=2/9 batch=1900/2896 work=18.4% elapsed=1144s ETA=5072s tile_loss=3.2632
+progress phase=4.4.2 epoch=2/9 batch=1925/2896 work=18.5% elapsed=1150s ETA=5066s tile_loss=3.0680
+progress phase=4.4.2 epoch=2/9 batch=1950/2896 work=18.6% elapsed=1156s ETA=5061s tile_loss=3.1571
+progress phase=4.4.2 epoch=2/9 batch=1975/2896 work=18.7% elapsed=1162s ETA=5054s tile_loss=3.0009
+progress phase=4.4.2 epoch=2/9 batch=2000/2896 work=18.8% elapsed=1167s ETA=5048s tile_loss=3.0878
+progress phase=4.4.2 epoch=2/9 batch=2025/2896 work=18.9% elapsed=1173s ETA=5041s tile_loss=3.3428
+progress phase=4.4.2 epoch=2/9 batch=2050/2896 work=19.0% elapsed=1179s ETA=5034s tile_loss=3.2425
+progress phase=4.4.2 epoch=2/9 batch=2075/2896 work=19.1% elapsed=1185s ETA=5027s tile_loss=3.0074
+progress phase=4.4.2 epoch=2/9 batch=2100/2896 work=19.2% elapsed=1191s ETA=5021s tile_loss=3.3094
+progress phase=4.4.2 epoch=2/9 batch=2125/2896 work=19.3% elapsed=1196s ETA=5014s tile_loss=3.1815
+progress phase=4.4.2 epoch=2/9 batch=2150/2896 work=19.4% elapsed=1202s ETA=5008s tile_loss=3.2898
+progress phase=4.4.2 epoch=2/9 batch=2175/2896 work=19.5% elapsed=1208s ETA=5000s tile_loss=3.4486
+progress phase=4.4.2 epoch=2/9 batch=2200/2896 work=19.6% elapsed=1214s ETA=4993s tile_loss=3.4657
+progress phase=4.4.2 epoch=2/9 batch=2225/2896 work=19.6% elapsed=1219s ETA=4986s tile_loss=3.3097
+progress phase=4.4.2 epoch=2/9 batch=2250/2896 work=19.7% elapsed=1225s ETA=4980s tile_loss=3.4991
+progress phase=4.4.2 epoch=2/9 batch=2275/2896 work=19.8% elapsed=1231s ETA=4973s tile_loss=3.1272
+progress phase=4.4.2 epoch=2/9 batch=2300/2896 work=19.9% elapsed=1237s ETA=4966s tile_loss=3.4059
+progress phase=4.4.2 epoch=2/9 batch=2325/2896 work=20.0% elapsed=1242s ETA=4960s tile_loss=3.1534
+progress phase=4.4.2 epoch=2/9 batch=2350/2896 work=20.1% elapsed=1248s ETA=4953s tile_loss=3.1432
+progress phase=4.4.2 epoch=2/9 batch=2375/2896 work=20.2% elapsed=1254s ETA=4946s tile_loss=3.3061
+progress phase=4.4.2 epoch=2/9 batch=2400/2896 work=20.3% elapsed=1260s ETA=4939s tile_loss=3.1978
+progress phase=4.4.2 epoch=2/9 batch=2425/2896 work=20.4% elapsed=1265s ETA=4932s tile_loss=3.3184
+progress phase=4.4.2 epoch=2/9 batch=2450/2896 work=20.5% elapsed=1271s ETA=4926s tile_loss=3.4178
+progress phase=4.4.2 epoch=2/9 batch=2475/2896 work=20.6% elapsed=1277s ETA=4919s tile_loss=3.3113
+progress phase=4.4.2 epoch=2/9 batch=2500/2896 work=20.7% elapsed=1283s ETA=4912s tile_loss=2.9328
+progress phase=4.4.2 epoch=2/9 batch=2525/2896 work=20.8% elapsed=1288s ETA=4906s tile_loss=3.5145
+progress phase=4.4.2 epoch=2/9 batch=2550/2896 work=20.9% elapsed=1295s ETA=4901s tile_loss=3.3835
+progress phase=4.4.2 epoch=2/9 batch=2575/2896 work=21.0% elapsed=1301s ETA=4895s tile_loss=3.3628
+progress phase=4.4.2 epoch=2/9 batch=2600/2896 work=21.1% elapsed=1306s ETA=4889s tile_loss=3.1735
+progress phase=4.4.2 epoch=2/9 batch=2625/2896 work=21.2% elapsed=1312s ETA=4883s tile_loss=3.0769
+progress phase=4.4.2 epoch=2/9 batch=2650/2896 work=21.3% elapsed=1318s ETA=4877s tile_loss=3.4465
+progress phase=4.4.2 epoch=2/9 batch=2675/2896 work=21.4% elapsed=1324s ETA=4870s tile_loss=3.2689
+progress phase=4.4.2 epoch=2/9 batch=2700/2896 work=21.5% elapsed=1330s ETA=4864s tile_loss=3.1859
+progress phase=4.4.2 epoch=2/9 batch=2725/2896 work=21.6% elapsed=1336s ETA=4857s tile_loss=3.2401
+progress phase=4.4.2 epoch=2/9 batch=2750/2896 work=21.7% elapsed=1341s ETA=4851s tile_loss=3.2231
+progress phase=4.4.2 epoch=2/9 batch=2775/2896 work=21.8% elapsed=1347s ETA=4844s tile_loss=3.2686
+progress phase=4.4.2 epoch=2/9 batch=2800/2896 work=21.9% elapsed=1353s ETA=4837s tile_loss=3.3552
+progress phase=4.4.2 epoch=2/9 batch=2825/2896 work=21.9% elapsed=1358s ETA=4830s tile_loss=3.0982
+progress phase=4.4.2 epoch=2/9 batch=2850/2896 work=22.0% elapsed=1364s ETA=4824s tile_loss=3.3783
+progress phase=4.4.2 epoch=2/9 batch=2875/2896 work=22.1% elapsed=1370s ETA=4817s tile_loss=2.8541
+progress phase=4.4.2 epoch=2/9 batch=2896/2896 work=22.2% elapsed=1375s ETA=4811s tile_loss=3.1617
+epoch 02  train_loss=4.6419  val_slot@1=0.563  val_zone=0.457  val_tile=0.093  val_tile_cls=0.163  val_tile@5=0.399  val_loss=6.0740
+progress phase=4.4.2 epoch=3/9 batch=1/2896 work=22.2% elapsed=1386s ETA=4850s tile_loss=3.2545
+progress phase=4.4.2 epoch=3/9 batch=25/2896 work=22.3% elapsed=1391s ETA=4843s tile_loss=3.2135
+progress phase=4.4.2 epoch=3/9 batch=50/2896 work=22.4% elapsed=1397s ETA=4835s tile_loss=3.5338
+progress phase=4.4.2 epoch=3/9 batch=75/2896 work=22.5% elapsed=1403s ETA=4828s tile_loss=3.3842
+progress phase=4.4.2 epoch=3/9 batch=100/2896 work=22.6% elapsed=1408s ETA=4821s tile_loss=3.3481
+progress phase=4.4.2 epoch=3/9 batch=125/2896 work=22.7% elapsed=1414s ETA=4814s tile_loss=3.2659
+progress phase=4.4.2 epoch=3/9 batch=150/2896 work=22.8% elapsed=1419s ETA=4807s tile_loss=3.0064
+progress phase=4.4.2 epoch=3/9 batch=175/2896 work=22.9% elapsed=1425s ETA=4800s tile_loss=3.3600
+progress phase=4.4.2 epoch=3/9 batch=200/2896 work=23.0% elapsed=1431s ETA=4793s tile_loss=3.6652
+progress phase=4.4.2 epoch=3/9 batch=225/2896 work=23.1% elapsed=1436s ETA=4786s tile_loss=3.2994
+progress phase=4.4.2 epoch=3/9 batch=250/2896 work=23.2% elapsed=1442s ETA=4778s tile_loss=3.2883
+progress phase=4.4.2 epoch=3/9 batch=275/2896 work=23.3% elapsed=1448s ETA=4772s tile_loss=3.5551
+progress phase=4.4.2 epoch=3/9 batch=300/2896 work=23.4% elapsed=1454s ETA=4765s tile_loss=3.4221
+progress phase=4.4.2 epoch=3/9 batch=325/2896 work=23.5% elapsed=1459s ETA=4759s tile_loss=3.3795
+progress phase=4.4.2 epoch=3/9 batch=350/2896 work=23.6% elapsed=1465s ETA=4753s tile_loss=3.0142
+progress phase=4.4.2 epoch=3/9 batch=375/2896 work=23.7% elapsed=1471s ETA=4746s tile_loss=2.8830
+progress phase=4.4.2 epoch=3/9 batch=400/2896 work=23.8% elapsed=1477s ETA=4739s tile_loss=3.1650
+progress phase=4.4.2 epoch=3/9 batch=425/2896 work=23.9% elapsed=1482s ETA=4733s tile_loss=3.3672
+progress phase=4.4.2 epoch=3/9 batch=450/2896 work=23.9% elapsed=1488s ETA=4726s tile_loss=3.3133
+progress phase=4.4.2 epoch=3/9 batch=475/2896 work=24.0% elapsed=1494s ETA=4719s tile_loss=3.3798
+progress phase=4.4.2 epoch=3/9 batch=500/2896 work=24.1% elapsed=1499s ETA=4712s tile_loss=2.9829
+progress phase=4.4.2 epoch=3/9 batch=525/2896 work=24.2% elapsed=1505s ETA=4705s tile_loss=3.4149
+progress phase=4.4.2 epoch=3/9 batch=550/2896 work=24.3% elapsed=1511s ETA=4698s tile_loss=3.1275
+progress phase=4.4.2 epoch=3/9 batch=575/2896 work=24.4% elapsed=1517s ETA=4692s tile_loss=3.5091
+progress phase=4.4.2 epoch=3/9 batch=600/2896 work=24.5% elapsed=1522s ETA=4685s tile_loss=3.1860
+progress phase=4.4.2 epoch=3/9 batch=625/2896 work=24.6% elapsed=1528s ETA=4678s tile_loss=3.3937
+progress phase=4.4.2 epoch=3/9 batch=650/2896 work=24.7% elapsed=1534s ETA=4672s tile_loss=3.3176
+progress phase=4.4.2 epoch=3/9 batch=675/2896 work=24.8% elapsed=1539s ETA=4665s tile_loss=3.0186
+progress phase=4.4.2 epoch=3/9 batch=700/2896 work=24.9% elapsed=1545s ETA=4658s tile_loss=3.2799
+progress phase=4.4.2 epoch=3/9 batch=725/2896 work=25.0% elapsed=1551s ETA=4652s tile_loss=3.1592
+progress phase=4.4.2 epoch=3/9 batch=750/2896 work=25.1% elapsed=1557s ETA=4645s tile_loss=3.5269
+progress phase=4.4.2 epoch=3/9 batch=775/2896 work=25.2% elapsed=1562s ETA=4639s tile_loss=3.5426
+progress phase=4.4.2 epoch=3/9 batch=800/2896 work=25.3% elapsed=1568s ETA=4632s tile_loss=3.4001
+progress phase=4.4.2 epoch=3/9 batch=825/2896 work=25.4% elapsed=1574s ETA=4625s tile_loss=3.3062
+progress phase=4.4.2 epoch=3/9 batch=850/2896 work=25.5% elapsed=1580s ETA=4620s tile_loss=3.1776
+progress phase=4.4.2 epoch=3/9 batch=875/2896 work=25.6% elapsed=1586s ETA=4613s tile_loss=3.1471
+progress phase=4.4.2 epoch=3/9 batch=900/2896 work=25.7% elapsed=1591s ETA=4607s tile_loss=3.0976
+progress phase=4.4.2 epoch=3/9 batch=925/2896 work=25.8% elapsed=1597s ETA=4600s tile_loss=3.0468
+progress phase=4.4.2 epoch=3/9 batch=950/2896 work=25.9% elapsed=1603s ETA=4594s tile_loss=3.3773
+progress phase=4.4.2 epoch=3/9 batch=975/2896 work=26.0% elapsed=1609s ETA=4588s tile_loss=3.4001
+progress phase=4.4.2 epoch=3/9 batch=1000/2896 work=26.1% elapsed=1615s ETA=4583s tile_loss=3.5458
+progress phase=4.4.2 epoch=3/9 batch=1025/2896 work=26.2% elapsed=1621s ETA=4576s tile_loss=3.3682
+progress phase=4.4.2 epoch=3/9 batch=1050/2896 work=26.3% elapsed=1627s ETA=4570s tile_loss=3.3226
+progress phase=4.4.2 epoch=3/9 batch=1075/2896 work=26.3% elapsed=1632s ETA=4563s tile_loss=3.2291
+progress phase=4.4.2 epoch=3/9 batch=1100/2896 work=26.4% elapsed=1638s ETA=4556s tile_loss=3.0459
+progress phase=4.4.2 epoch=3/9 batch=1125/2896 work=26.5% elapsed=1644s ETA=4550s tile_loss=3.1699
+progress phase=4.4.2 epoch=3/9 batch=1150/2896 work=26.6% elapsed=1649s ETA=4543s tile_loss=3.6863
+progress phase=4.4.2 epoch=3/9 batch=1175/2896 work=26.7% elapsed=1655s ETA=4536s tile_loss=3.4128
+progress phase=4.4.2 epoch=3/9 batch=1200/2896 work=26.8% elapsed=1661s ETA=4530s tile_loss=3.0026
+progress phase=4.4.2 epoch=3/9 batch=1225/2896 work=26.9% elapsed=1667s ETA=4524s tile_loss=3.2276
+progress phase=4.4.2 epoch=3/9 batch=1250/2896 work=27.0% elapsed=1672s ETA=4517s tile_loss=3.1170
+progress phase=4.4.2 epoch=3/9 batch=1275/2896 work=27.1% elapsed=1678s ETA=4511s tile_loss=3.4249
+progress phase=4.4.2 epoch=3/9 batch=1300/2896 work=27.2% elapsed=1684s ETA=4505s tile_loss=3.1830
+progress phase=4.4.2 epoch=3/9 batch=1325/2896 work=27.3% elapsed=1690s ETA=4498s tile_loss=3.5164
+progress phase=4.4.2 epoch=3/9 batch=1350/2896 work=27.4% elapsed=1695s ETA=4492s tile_loss=3.3343
+progress phase=4.4.2 epoch=3/9 batch=1375/2896 work=27.5% elapsed=1701s ETA=4486s tile_loss=3.2998
+progress phase=4.4.2 epoch=3/9 batch=1400/2896 work=27.6% elapsed=1707s ETA=4479s tile_loss=3.2660
+progress phase=4.4.2 epoch=3/9 batch=1425/2896 work=27.7% elapsed=1713s ETA=4473s tile_loss=3.2887
+progress phase=4.4.2 epoch=3/9 batch=1450/2896 work=27.8% elapsed=1718s ETA=4466s tile_loss=3.3013
+progress phase=4.4.2 epoch=3/9 batch=1475/2896 work=27.9% elapsed=1724s ETA=4460s tile_loss=3.4826
+progress phase=4.4.2 epoch=3/9 batch=1500/2896 work=28.0% elapsed=1730s ETA=4453s tile_loss=3.2126
+progress phase=4.4.2 epoch=3/9 batch=1525/2896 work=28.1% elapsed=1736s ETA=4447s tile_loss=3.2830
+progress phase=4.4.2 epoch=3/9 batch=1550/2896 work=28.2% elapsed=1741s ETA=4440s tile_loss=3.1471
+progress phase=4.4.2 epoch=3/9 batch=1575/2896 work=28.3% elapsed=1747s ETA=4434s tile_loss=3.1306
+progress phase=4.4.2 epoch=3/9 batch=1600/2896 work=28.4% elapsed=1753s ETA=4427s tile_loss=3.3260
+progress phase=4.4.2 epoch=3/9 batch=1625/2896 work=28.5% elapsed=1758s ETA=4421s tile_loss=3.3603
+progress phase=4.4.2 epoch=3/9 batch=1650/2896 work=28.6% elapsed=1764s ETA=4415s tile_loss=3.5553
+progress phase=4.4.2 epoch=3/9 batch=1675/2896 work=28.6% elapsed=1770s ETA=4408s tile_loss=3.3268
+progress phase=4.4.2 epoch=3/9 batch=1700/2896 work=28.7% elapsed=1776s ETA=4403s tile_loss=3.4299
+progress phase=4.4.2 epoch=3/9 batch=1725/2896 work=28.8% elapsed=1782s ETA=4397s tile_loss=3.3904
+progress phase=4.4.2 epoch=3/9 batch=1750/2896 work=28.9% elapsed=1788s ETA=4390s tile_loss=3.1974
+progress phase=4.4.2 epoch=3/9 batch=1775/2896 work=29.0% elapsed=1794s ETA=4384s tile_loss=3.5263
+progress phase=4.4.2 epoch=3/9 batch=1800/2896 work=29.1% elapsed=1799s ETA=4378s tile_loss=3.3080
+progress phase=4.4.2 epoch=3/9 batch=1825/2896 work=29.2% elapsed=1805s ETA=4372s tile_loss=3.0370
+progress phase=4.4.2 epoch=3/9 batch=1850/2896 work=29.3% elapsed=1811s ETA=4365s tile_loss=3.2616
+progress phase=4.4.2 epoch=3/9 batch=1875/2896 work=29.4% elapsed=1817s ETA=4359s tile_loss=3.2177
+progress phase=4.4.2 epoch=3/9 batch=1900/2896 work=29.5% elapsed=1823s ETA=4353s tile_loss=2.8803
+progress phase=4.4.2 epoch=3/9 batch=1925/2896 work=29.6% elapsed=1828s ETA=4347s tile_loss=3.4829
+progress phase=4.4.2 epoch=3/9 batch=1950/2896 work=29.7% elapsed=1834s ETA=4340s tile_loss=3.3355
+progress phase=4.4.2 epoch=3/9 batch=1975/2896 work=29.8% elapsed=1840s ETA=4334s tile_loss=3.4237
+progress phase=4.4.2 epoch=3/9 batch=2000/2896 work=29.9% elapsed=1845s ETA=4327s tile_loss=3.1992
+progress phase=4.4.2 epoch=3/9 batch=2025/2896 work=30.0% elapsed=1851s ETA=4321s tile_loss=3.1926
+progress phase=4.4.2 epoch=3/9 batch=2050/2896 work=30.1% elapsed=1857s ETA=4315s tile_loss=3.2419
+progress phase=4.4.2 epoch=3/9 batch=2075/2896 work=30.2% elapsed=1863s ETA=4310s tile_loss=3.2596
+progress phase=4.4.2 epoch=3/9 batch=2100/2896 work=30.3% elapsed=1869s ETA=4304s tile_loss=3.3140
+progress phase=4.4.2 epoch=3/9 batch=2125/2896 work=30.4% elapsed=1875s ETA=4299s tile_loss=3.3443
+progress phase=4.4.2 epoch=3/9 batch=2150/2896 work=30.5% elapsed=1881s ETA=4292s tile_loss=3.1274
+progress phase=4.4.2 epoch=3/9 batch=2175/2896 work=30.6% elapsed=1887s ETA=4287s tile_loss=3.2927
+progress phase=4.4.2 epoch=3/9 batch=2200/2896 work=30.7% elapsed=1893s ETA=4281s tile_loss=3.3641
+progress phase=4.4.2 epoch=3/9 batch=2225/2896 work=30.8% elapsed=1899s ETA=4275s tile_loss=3.0888
+progress phase=4.4.2 epoch=3/9 batch=2250/2896 work=30.9% elapsed=1905s ETA=4269s tile_loss=3.0226
+progress phase=4.4.2 epoch=3/9 batch=2275/2896 work=31.0% elapsed=1910s ETA=4262s tile_loss=3.2576
+progress phase=4.4.2 epoch=3/9 batch=2300/2896 work=31.0% elapsed=1916s ETA=4256s tile_loss=3.2863
+progress phase=4.4.2 epoch=3/9 batch=2325/2896 work=31.1% elapsed=1922s ETA=4249s tile_loss=3.1396
+progress phase=4.4.2 epoch=3/9 batch=2350/2896 work=31.2% elapsed=1927s ETA=4243s tile_loss=3.2503
+progress phase=4.4.2 epoch=3/9 batch=2375/2896 work=31.3% elapsed=1933s ETA=4236s tile_loss=3.1488
+progress phase=4.4.2 epoch=3/9 batch=2400/2896 work=31.4% elapsed=1939s ETA=4230s tile_loss=3.4341
+progress phase=4.4.2 epoch=3/9 batch=2425/2896 work=31.5% elapsed=1944s ETA=4223s tile_loss=3.2341
+progress phase=4.4.2 epoch=3/9 batch=2450/2896 work=31.6% elapsed=1950s ETA=4217s tile_loss=2.9648
+progress phase=4.4.2 epoch=3/9 batch=2475/2896 work=31.7% elapsed=1956s ETA=4210s tile_loss=3.0540
+progress phase=4.4.2 epoch=3/9 batch=2500/2896 work=31.8% elapsed=1961s ETA=4203s tile_loss=3.4124
+progress phase=4.4.2 epoch=3/9 batch=2525/2896 work=31.9% elapsed=1967s ETA=4197s tile_loss=3.3576
+progress phase=4.4.2 epoch=3/9 batch=2550/2896 work=32.0% elapsed=1973s ETA=4191s tile_loss=3.2915
+progress phase=4.4.2 epoch=3/9 batch=2575/2896 work=32.1% elapsed=1978s ETA=4185s tile_loss=3.4467
+progress phase=4.4.2 epoch=3/9 batch=2600/2896 work=32.2% elapsed=1984s ETA=4178s tile_loss=3.0446
+progress phase=4.4.2 epoch=3/9 batch=2625/2896 work=32.3% elapsed=1990s ETA=4172s tile_loss=3.2857
+progress phase=4.4.2 epoch=3/9 batch=2650/2896 work=32.4% elapsed=1995s ETA=4165s tile_loss=3.1686
+progress phase=4.4.2 epoch=3/9 batch=2675/2896 work=32.5% elapsed=2001s ETA=4159s tile_loss=3.1834
+progress phase=4.4.2 epoch=3/9 batch=2700/2896 work=32.6% elapsed=2007s ETA=4152s tile_loss=3.3098
+progress phase=4.4.2 epoch=3/9 batch=2725/2896 work=32.7% elapsed=2012s ETA=4146s tile_loss=3.4866
+progress phase=4.4.2 epoch=3/9 batch=2750/2896 work=32.8% elapsed=2018s ETA=4139s tile_loss=3.4857
+progress phase=4.4.2 epoch=3/9 batch=2775/2896 work=32.9% elapsed=2024s ETA=4133s tile_loss=3.1651
+progress phase=4.4.2 epoch=3/9 batch=2800/2896 work=33.0% elapsed=2029s ETA=4126s tile_loss=3.1516
+progress phase=4.4.2 epoch=3/9 batch=2825/2896 work=33.1% elapsed=2035s ETA=4120s tile_loss=3.1683
+progress phase=4.4.2 epoch=3/9 batch=2850/2896 work=33.2% elapsed=2040s ETA=4114s tile_loss=3.3464
+progress phase=4.4.2 epoch=3/9 batch=2875/2896 work=33.3% elapsed=2046s ETA=4107s tile_loss=3.3458
+progress phase=4.4.2 epoch=3/9 batch=2896/2896 work=33.3% elapsed=2051s ETA=4102s tile_loss=3.6953
+epoch 03  train_loss=4.6483  val_slot@1=0.566  val_zone=0.460  val_tile=0.093  val_tile_cls=0.161  val_tile@5=0.397  val_loss=6.0755
+progress phase=4.4.2 epoch=4/9 batch=1/2896 work=33.3% elapsed=2062s ETA=4123s tile_loss=3.1321
+progress phase=4.4.2 epoch=4/9 batch=25/2896 work=33.4% elapsed=2068s ETA=4117s tile_loss=3.2701
+progress phase=4.4.2 epoch=4/9 batch=50/2896 work=33.5% elapsed=2073s ETA=4111s tile_loss=3.0296
+progress phase=4.4.2 epoch=4/9 batch=75/2896 work=33.6% elapsed=2079s ETA=4104s tile_loss=3.5816
+progress phase=4.4.2 epoch=4/9 batch=100/2896 work=33.7% elapsed=2085s ETA=4098s tile_loss=3.0234
+progress phase=4.4.2 epoch=4/9 batch=125/2896 work=33.8% elapsed=2090s ETA=4091s tile_loss=3.2833
+progress phase=4.4.2 epoch=4/9 batch=150/2896 work=33.9% elapsed=2096s ETA=4085s tile_loss=3.3434
+progress phase=4.4.2 epoch=4/9 batch=175/2896 work=34.0% elapsed=2101s ETA=4078s tile_loss=3.1033
+progress phase=4.4.2 epoch=4/9 batch=200/2896 work=34.1% elapsed=2107s ETA=4072s tile_loss=3.3021
+progress phase=4.4.2 epoch=4/9 batch=225/2896 work=34.2% elapsed=2113s ETA=4065s tile_loss=3.0436
+progress phase=4.4.2 epoch=4/9 batch=250/2896 work=34.3% elapsed=2118s ETA=4059s tile_loss=3.2023
+progress phase=4.4.2 epoch=4/9 batch=275/2896 work=34.4% elapsed=2124s ETA=4052s tile_loss=3.2234
+progress phase=4.4.2 epoch=4/9 batch=300/2896 work=34.5% elapsed=2129s ETA=4046s tile_loss=3.1318
+progress phase=4.4.2 epoch=4/9 batch=325/2896 work=34.6% elapsed=2135s ETA=4039s tile_loss=3.3174
+progress phase=4.4.2 epoch=4/9 batch=350/2896 work=34.7% elapsed=2141s ETA=4033s tile_loss=3.3526
+progress phase=4.4.2 epoch=4/9 batch=375/2896 work=34.8% elapsed=2146s ETA=4026s tile_loss=3.1329
+progress phase=4.4.2 epoch=4/9 batch=400/2896 work=34.9% elapsed=2152s ETA=4020s tile_loss=3.2743
+progress phase=4.4.2 epoch=4/9 batch=425/2896 work=35.0% elapsed=2158s ETA=4014s tile_loss=3.3617
+progress phase=4.4.2 epoch=4/9 batch=450/2896 work=35.1% elapsed=2164s ETA=4008s tile_loss=3.0711
+progress phase=4.4.2 epoch=4/9 batch=475/2896 work=35.2% elapsed=2169s ETA=4001s tile_loss=3.5020
+progress phase=4.4.2 epoch=4/9 batch=500/2896 work=35.3% elapsed=2175s ETA=3995s tile_loss=3.3120
+progress phase=4.4.2 epoch=4/9 batch=525/2896 work=35.3% elapsed=2181s ETA=3988s tile_loss=3.0037
+progress phase=4.4.2 epoch=4/9 batch=550/2896 work=35.4% elapsed=2186s ETA=3982s tile_loss=3.1754
+progress phase=4.4.2 epoch=4/9 batch=575/2896 work=35.5% elapsed=2192s ETA=3976s tile_loss=3.4124
+progress phase=4.4.2 epoch=4/9 batch=600/2896 work=35.6% elapsed=2197s ETA=3969s tile_loss=3.1708
+progress phase=4.4.2 epoch=4/9 batch=625/2896 work=35.7% elapsed=2203s ETA=3963s tile_loss=3.4133
+progress phase=4.4.2 epoch=4/9 batch=650/2896 work=35.8% elapsed=2209s ETA=3956s tile_loss=3.5551
+progress phase=4.4.2 epoch=4/9 batch=675/2896 work=35.9% elapsed=2214s ETA=3950s tile_loss=3.1293
+progress phase=4.4.2 epoch=4/9 batch=700/2896 work=36.0% elapsed=2220s ETA=3943s tile_loss=3.2477
+progress phase=4.4.2 epoch=4/9 batch=725/2896 work=36.1% elapsed=2226s ETA=3937s tile_loss=3.0848
+progress phase=4.4.2 epoch=4/9 batch=750/2896 work=36.2% elapsed=2231s ETA=3931s tile_loss=3.2634
+progress phase=4.4.2 epoch=4/9 batch=775/2896 work=36.3% elapsed=2237s ETA=3924s tile_loss=2.9072
+progress phase=4.4.2 epoch=4/9 batch=800/2896 work=36.4% elapsed=2243s ETA=3918s tile_loss=3.3870
+progress phase=4.4.2 epoch=4/9 batch=825/2896 work=36.5% elapsed=2248s ETA=3912s tile_loss=3.1628
+progress phase=4.4.2 epoch=4/9 batch=850/2896 work=36.6% elapsed=2254s ETA=3906s tile_loss=3.4265
+progress phase=4.4.2 epoch=4/9 batch=875/2896 work=36.7% elapsed=2260s ETA=3899s tile_loss=3.5016
+progress phase=4.4.2 epoch=4/9 batch=900/2896 work=36.8% elapsed=2265s ETA=3893s tile_loss=3.4821
+progress phase=4.4.2 epoch=4/9 batch=925/2896 work=36.9% elapsed=2271s ETA=3886s tile_loss=3.4057
+progress phase=4.4.2 epoch=4/9 batch=950/2896 work=37.0% elapsed=2277s ETA=3880s tile_loss=3.3095
+progress phase=4.4.2 epoch=4/9 batch=975/2896 work=37.1% elapsed=2282s ETA=3874s tile_loss=3.3328
+progress phase=4.4.2 epoch=4/9 batch=1000/2896 work=37.2% elapsed=2288s ETA=3867s tile_loss=3.1605
+progress phase=4.4.2 epoch=4/9 batch=1025/2896 work=37.3% elapsed=2294s ETA=3861s tile_loss=3.2295
+progress phase=4.4.2 epoch=4/9 batch=1050/2896 work=37.4% elapsed=2299s ETA=3855s tile_loss=3.1650
+progress phase=4.4.2 epoch=4/9 batch=1075/2896 work=37.5% elapsed=2305s ETA=3848s tile_loss=3.1235
+progress phase=4.4.2 epoch=4/9 batch=1100/2896 work=37.6% elapsed=2310s ETA=3842s tile_loss=3.2577
+progress phase=4.4.2 epoch=4/9 batch=1125/2896 work=37.6% elapsed=2316s ETA=3836s tile_loss=3.2630
+progress phase=4.4.2 epoch=4/9 batch=1150/2896 work=37.7% elapsed=2322s ETA=3829s tile_loss=3.4399
+progress phase=4.4.2 epoch=4/9 batch=1175/2896 work=37.8% elapsed=2327s ETA=3823s tile_loss=2.9508
+progress phase=4.4.2 epoch=4/9 batch=1200/2896 work=37.9% elapsed=2333s ETA=3817s tile_loss=3.3790
+progress phase=4.4.2 epoch=4/9 batch=1225/2896 work=38.0% elapsed=2339s ETA=3810s tile_loss=3.6650
+progress phase=4.4.2 epoch=4/9 batch=1250/2896 work=38.1% elapsed=2344s ETA=3804s tile_loss=3.2797
+progress phase=4.4.2 epoch=4/9 batch=1275/2896 work=38.2% elapsed=2350s ETA=3798s tile_loss=3.5695
+progress phase=4.4.2 epoch=4/9 batch=1300/2896 work=38.3% elapsed=2356s ETA=3792s tile_loss=3.3544
+progress phase=4.4.2 epoch=4/9 batch=1325/2896 work=38.4% elapsed=2362s ETA=3786s tile_loss=3.2155
+progress phase=4.4.2 epoch=4/9 batch=1350/2896 work=38.5% elapsed=2367s ETA=3779s tile_loss=3.2755
+progress phase=4.4.2 epoch=4/9 batch=1375/2896 work=38.6% elapsed=2373s ETA=3773s tile_loss=3.4117
+progress phase=4.4.2 epoch=4/9 batch=1400/2896 work=38.7% elapsed=2379s ETA=3767s tile_loss=3.0650
+progress phase=4.4.2 epoch=4/9 batch=1425/2896 work=38.8% elapsed=2384s ETA=3760s tile_loss=3.2447
+progress phase=4.4.2 epoch=4/9 batch=1450/2896 work=38.9% elapsed=2390s ETA=3754s tile_loss=3.5785
+progress phase=4.4.2 epoch=4/9 batch=1475/2896 work=39.0% elapsed=2395s ETA=3748s tile_loss=3.3840
+progress phase=4.4.2 epoch=4/9 batch=1500/2896 work=39.1% elapsed=2401s ETA=3741s tile_loss=3.2071
+progress phase=4.4.2 epoch=4/9 batch=1525/2896 work=39.2% elapsed=2407s ETA=3735s tile_loss=3.2582
+progress phase=4.4.2 epoch=4/9 batch=1550/2896 work=39.3% elapsed=2412s ETA=3729s tile_loss=3.0790
+progress phase=4.4.2 epoch=4/9 batch=1575/2896 work=39.4% elapsed=2418s ETA=3722s tile_loss=3.5067
+progress phase=4.4.2 epoch=4/9 batch=1600/2896 work=39.5% elapsed=2423s ETA=3716s tile_loss=3.2255
+progress phase=4.4.2 epoch=4/9 batch=1625/2896 work=39.6% elapsed=2429s ETA=3710s tile_loss=3.2271
+progress phase=4.4.2 epoch=4/9 batch=1650/2896 work=39.7% elapsed=2434s ETA=3703s tile_loss=3.2045
+progress phase=4.4.2 epoch=4/9 batch=1675/2896 work=39.8% elapsed=2440s ETA=3697s tile_loss=3.3129
+progress phase=4.4.2 epoch=4/9 batch=1700/2896 work=39.9% elapsed=2446s ETA=3691s tile_loss=3.1426
+progress phase=4.4.2 epoch=4/9 batch=1725/2896 work=40.0% elapsed=2451s ETA=3685s tile_loss=3.2991
+progress phase=4.4.2 epoch=4/9 batch=1750/2896 work=40.0% elapsed=2457s ETA=3678s tile_loss=3.3407
+progress phase=4.4.2 epoch=4/9 batch=1775/2896 work=40.1% elapsed=2463s ETA=3672s tile_loss=3.1047
+progress phase=4.4.2 epoch=4/9 batch=1800/2896 work=40.2% elapsed=2468s ETA=3666s tile_loss=3.0512
+progress phase=4.4.2 epoch=4/9 batch=1825/2896 work=40.3% elapsed=2474s ETA=3659s tile_loss=3.2047
+progress phase=4.4.2 epoch=4/9 batch=1850/2896 work=40.4% elapsed=2479s ETA=3653s tile_loss=2.9783
+progress phase=4.4.2 epoch=4/9 batch=1875/2896 work=40.5% elapsed=2485s ETA=3647s tile_loss=3.4485
+progress phase=4.4.2 epoch=4/9 batch=1900/2896 work=40.6% elapsed=2491s ETA=3640s tile_loss=3.0879
+progress phase=4.4.2 epoch=4/9 batch=1925/2896 work=40.7% elapsed=2496s ETA=3634s tile_loss=3.1564
+progress phase=4.4.2 epoch=4/9 batch=1950/2896 work=40.8% elapsed=2502s ETA=3628s tile_loss=3.2027
+progress phase=4.4.2 epoch=4/9 batch=1975/2896 work=40.9% elapsed=2507s ETA=3622s tile_loss=3.2048
+progress phase=4.4.2 epoch=4/9 batch=2000/2896 work=41.0% elapsed=2513s ETA=3615s tile_loss=3.3286
+progress phase=4.4.2 epoch=4/9 batch=2025/2896 work=41.1% elapsed=2519s ETA=3609s tile_loss=3.3899
+progress phase=4.4.2 epoch=4/9 batch=2050/2896 work=41.2% elapsed=2524s ETA=3603s tile_loss=3.4734
+progress phase=4.4.2 epoch=4/9 batch=2075/2896 work=41.3% elapsed=2530s ETA=3597s tile_loss=3.1576
+progress phase=4.4.2 epoch=4/9 batch=2100/2896 work=41.4% elapsed=2536s ETA=3591s tile_loss=3.5241
+progress phase=4.4.2 epoch=4/9 batch=2125/2896 work=41.5% elapsed=2541s ETA=3585s tile_loss=3.2870
+progress phase=4.4.2 epoch=4/9 batch=2150/2896 work=41.6% elapsed=2547s ETA=3578s tile_loss=3.3689
+progress phase=4.4.2 epoch=4/9 batch=2175/2896 work=41.7% elapsed=2553s ETA=3572s tile_loss=3.2974
+progress phase=4.4.2 epoch=4/9 batch=2200/2896 work=41.8% elapsed=2558s ETA=3566s tile_loss=3.0721
+progress phase=4.4.2 epoch=4/9 batch=2225/2896 work=41.9% elapsed=2564s ETA=3560s tile_loss=3.1636
+progress phase=4.4.2 epoch=4/9 batch=2250/2896 work=42.0% elapsed=2569s ETA=3553s tile_loss=3.3297
+progress phase=4.4.2 epoch=4/9 batch=2275/2896 work=42.1% elapsed=2575s ETA=3547s tile_loss=3.1458
+progress phase=4.4.2 epoch=4/9 batch=2300/2896 work=42.2% elapsed=2581s ETA=3541s tile_loss=3.3742
+progress phase=4.4.2 epoch=4/9 batch=2325/2896 work=42.3% elapsed=2586s ETA=3535s tile_loss=3.3714
+progress phase=4.4.2 epoch=4/9 batch=2350/2896 work=42.3% elapsed=2592s ETA=3529s tile_loss=3.3025
+progress phase=4.4.2 epoch=4/9 batch=2375/2896 work=42.4% elapsed=2598s ETA=3522s tile_loss=3.1994
+progress phase=4.4.2 epoch=4/9 batch=2400/2896 work=42.5% elapsed=2603s ETA=3516s tile_loss=3.4355
+progress phase=4.4.2 epoch=4/9 batch=2425/2896 work=42.6% elapsed=2609s ETA=3510s tile_loss=3.3408
+progress phase=4.4.2 epoch=4/9 batch=2450/2896 work=42.7% elapsed=2615s ETA=3504s tile_loss=3.3159
+progress phase=4.4.2 epoch=4/9 batch=2475/2896 work=42.8% elapsed=2620s ETA=3498s tile_loss=3.2644
+progress phase=4.4.2 epoch=4/9 batch=2500/2896 work=42.9% elapsed=2626s ETA=3491s tile_loss=3.2552
+progress phase=4.4.2 epoch=4/9 batch=2525/2896 work=43.0% elapsed=2632s ETA=3485s tile_loss=3.2234
+progress phase=4.4.2 epoch=4/9 batch=2550/2896 work=43.1% elapsed=2637s ETA=3479s tile_loss=3.5542
+progress phase=4.4.2 epoch=4/9 batch=2575/2896 work=43.2% elapsed=2643s ETA=3473s tile_loss=3.1013
+progress phase=4.4.2 epoch=4/9 batch=2600/2896 work=43.3% elapsed=2649s ETA=3467s tile_loss=3.2029
+progress phase=4.4.2 epoch=4/9 batch=2625/2896 work=43.4% elapsed=2654s ETA=3461s tile_loss=3.1175
+progress phase=4.4.2 epoch=4/9 batch=2650/2896 work=43.5% elapsed=2660s ETA=3455s tile_loss=3.4360
+progress phase=4.4.2 epoch=4/9 batch=2675/2896 work=43.6% elapsed=2666s ETA=3449s tile_loss=3.3155
+progress phase=4.4.2 epoch=4/9 batch=2700/2896 work=43.7% elapsed=2671s ETA=3442s tile_loss=3.1087
+progress phase=4.4.2 epoch=4/9 batch=2725/2896 work=43.8% elapsed=2677s ETA=3436s tile_loss=3.1678
+progress phase=4.4.2 epoch=4/9 batch=2750/2896 work=43.9% elapsed=2682s ETA=3430s tile_loss=3.2832
+progress phase=4.4.2 epoch=4/9 batch=2775/2896 work=44.0% elapsed=2688s ETA=3424s tile_loss=3.2694
+progress phase=4.4.2 epoch=4/9 batch=2800/2896 work=44.1% elapsed=2694s ETA=3418s tile_loss=3.3395
+progress phase=4.4.2 epoch=4/9 batch=2825/2896 work=44.2% elapsed=2700s ETA=3412s tile_loss=3.5126
+progress phase=4.4.2 epoch=4/9 batch=2850/2896 work=44.3% elapsed=2705s ETA=3406s tile_loss=3.3625
+progress phase=4.4.2 epoch=4/9 batch=2875/2896 work=44.4% elapsed=2711s ETA=3400s tile_loss=3.2005
+progress phase=4.4.2 epoch=4/9 batch=2896/2896 work=44.4% elapsed=2716s ETA=3395s tile_loss=3.3331
+epoch 04  train_loss=4.6336  val_slot@1=0.564  val_zone=0.463  val_tile=0.094  val_tile_cls=0.165  val_tile@5=0.399  val_loss=6.0963
+progress phase=4.4.2 epoch=5/9 batch=1/2896 work=44.4% elapsed=2727s ETA=3408s tile_loss=3.3412
+progress phase=4.4.2 epoch=5/9 batch=25/2896 work=44.5% elapsed=2732s ETA=3402s tile_loss=3.2705
+progress phase=4.4.2 epoch=5/9 batch=50/2896 work=44.6% elapsed=2738s ETA=3396s tile_loss=3.2415
+progress phase=4.4.2 epoch=5/9 batch=75/2896 work=44.7% elapsed=2744s ETA=3390s tile_loss=3.2016
+progress phase=4.4.2 epoch=5/9 batch=100/2896 work=44.8% elapsed=2749s ETA=3383s tile_loss=3.4184
+progress phase=4.4.2 epoch=5/9 batch=125/2896 work=44.9% elapsed=2755s ETA=3377s tile_loss=3.4845
+progress phase=4.4.2 epoch=5/9 batch=150/2896 work=45.0% elapsed=2760s ETA=3371s tile_loss=3.4803
+progress phase=4.4.2 epoch=5/9 batch=175/2896 work=45.1% elapsed=2766s ETA=3365s tile_loss=3.1590
+progress phase=4.4.2 epoch=5/9 batch=200/2896 work=45.2% elapsed=2772s ETA=3359s tile_loss=3.4988
+progress phase=4.4.2 epoch=5/9 batch=225/2896 work=45.3% elapsed=2778s ETA=3353s tile_loss=3.2326
+progress phase=4.4.2 epoch=5/9 batch=250/2896 work=45.4% elapsed=2783s ETA=3347s tile_loss=3.2148
+progress phase=4.4.2 epoch=5/9 batch=275/2896 work=45.5% elapsed=2789s ETA=3341s tile_loss=3.4799
+progress phase=4.4.2 epoch=5/9 batch=300/2896 work=45.6% elapsed=2794s ETA=3334s tile_loss=3.3119
+progress phase=4.4.2 epoch=5/9 batch=325/2896 work=45.7% elapsed=2800s ETA=3328s tile_loss=3.2254
+progress phase=4.4.2 epoch=5/9 batch=350/2896 work=45.8% elapsed=2806s ETA=3322s tile_loss=3.0135
+progress phase=4.4.2 epoch=5/9 batch=375/2896 work=45.9% elapsed=2811s ETA=3316s tile_loss=3.2735
+progress phase=4.4.2 epoch=5/9 batch=400/2896 work=46.0% elapsed=2817s ETA=3310s tile_loss=3.1905
+progress phase=4.4.2 epoch=5/9 batch=425/2896 work=46.1% elapsed=2823s ETA=3304s tile_loss=3.1625
+progress phase=4.4.2 epoch=5/9 batch=450/2896 work=46.2% elapsed=2829s ETA=3298s tile_loss=3.1455
+progress phase=4.4.2 epoch=5/9 batch=475/2896 work=46.3% elapsed=2834s ETA=3292s tile_loss=3.2284
+progress phase=4.4.2 epoch=5/9 batch=500/2896 work=46.4% elapsed=2840s ETA=3285s tile_loss=3.1140
+progress phase=4.4.2 epoch=5/9 batch=525/2896 work=46.5% elapsed=2846s ETA=3279s tile_loss=3.2885
+progress phase=4.4.2 epoch=5/9 batch=550/2896 work=46.6% elapsed=2851s ETA=3273s tile_loss=3.2245
+progress phase=4.4.2 epoch=5/9 batch=575/2896 work=46.7% elapsed=2857s ETA=3267s tile_loss=3.0203
+progress phase=4.4.2 epoch=5/9 batch=600/2896 work=46.7% elapsed=2862s ETA=3261s tile_loss=3.3898
+progress phase=4.4.2 epoch=5/9 batch=625/2896 work=46.8% elapsed=2868s ETA=3255s tile_loss=3.2270
+progress phase=4.4.2 epoch=5/9 batch=650/2896 work=46.9% elapsed=2874s ETA=3249s tile_loss=3.2905
+progress phase=4.4.2 epoch=5/9 batch=675/2896 work=47.0% elapsed=2879s ETA=3242s tile_loss=3.4147
+progress phase=4.4.2 epoch=5/9 batch=700/2896 work=47.1% elapsed=2885s ETA=3236s tile_loss=3.1070
+progress phase=4.4.2 epoch=5/9 batch=725/2896 work=47.2% elapsed=2890s ETA=3230s tile_loss=3.5661
+progress phase=4.4.2 epoch=5/9 batch=750/2896 work=47.3% elapsed=2896s ETA=3224s tile_loss=3.2634
+progress phase=4.4.2 epoch=5/9 batch=775/2896 work=47.4% elapsed=2902s ETA=3218s tile_loss=3.3801
+progress phase=4.4.2 epoch=5/9 batch=800/2896 work=47.5% elapsed=2907s ETA=3212s tile_loss=3.2371
+progress phase=4.4.2 epoch=5/9 batch=825/2896 work=47.6% elapsed=2913s ETA=3205s tile_loss=3.3179
+progress phase=4.4.2 epoch=5/9 batch=850/2896 work=47.7% elapsed=2919s ETA=3199s tile_loss=3.2512
+progress phase=4.4.2 epoch=5/9 batch=875/2896 work=47.8% elapsed=2924s ETA=3193s tile_loss=3.0071
+progress phase=4.4.2 epoch=5/9 batch=900/2896 work=47.9% elapsed=2930s ETA=3187s tile_loss=3.2793
+progress phase=4.4.2 epoch=5/9 batch=925/2896 work=48.0% elapsed=2936s ETA=3181s tile_loss=3.2441
+progress phase=4.4.2 epoch=5/9 batch=950/2896 work=48.1% elapsed=2941s ETA=3175s tile_loss=3.2454
+progress phase=4.4.2 epoch=5/9 batch=975/2896 work=48.2% elapsed=2947s ETA=3169s tile_loss=3.3306
+progress phase=4.4.2 epoch=5/9 batch=1000/2896 work=48.3% elapsed=2953s ETA=3163s tile_loss=3.2798
+progress phase=4.4.2 epoch=5/9 batch=1025/2896 work=48.4% elapsed=2958s ETA=3157s tile_loss=3.2286
+progress phase=4.4.2 epoch=5/9 batch=1050/2896 work=48.5% elapsed=2964s ETA=3151s tile_loss=3.3468
+progress phase=4.4.2 epoch=5/9 batch=1075/2896 work=48.6% elapsed=2970s ETA=3145s tile_loss=3.3867
+progress phase=4.4.2 epoch=5/9 batch=1100/2896 work=48.7% elapsed=2975s ETA=3139s tile_loss=3.3775
+progress phase=4.4.2 epoch=5/9 batch=1125/2896 work=48.8% elapsed=2981s ETA=3132s tile_loss=3.0752
+progress phase=4.4.2 epoch=5/9 batch=1150/2896 work=48.9% elapsed=2987s ETA=3126s tile_loss=3.5776
+progress phase=4.4.2 epoch=5/9 batch=1175/2896 work=49.0% elapsed=2992s ETA=3120s tile_loss=3.4095
+progress phase=4.4.2 epoch=5/9 batch=1200/2896 work=49.0% elapsed=2998s ETA=3114s tile_loss=3.2279
+progress phase=4.4.2 epoch=5/9 batch=1225/2896 work=49.1% elapsed=3003s ETA=3108s tile_loss=3.1157
+progress phase=4.4.2 epoch=5/9 batch=1250/2896 work=49.2% elapsed=3009s ETA=3102s tile_loss=3.4456
+progress phase=4.4.2 epoch=5/9 batch=1275/2896 work=49.3% elapsed=3015s ETA=3096s tile_loss=3.4293
+progress phase=4.4.2 epoch=5/9 batch=1300/2896 work=49.4% elapsed=3021s ETA=3090s tile_loss=3.2217
+progress phase=4.4.2 epoch=5/9 batch=1325/2896 work=49.5% elapsed=3026s ETA=3084s tile_loss=3.4535
+progress phase=4.4.2 epoch=5/9 batch=1350/2896 work=49.6% elapsed=3032s ETA=3078s tile_loss=3.3051
+progress phase=4.4.2 epoch=5/9 batch=1375/2896 work=49.7% elapsed=3038s ETA=3072s tile_loss=3.2687
+progress phase=4.4.2 epoch=5/9 batch=1400/2896 work=49.8% elapsed=3043s ETA=3066s tile_loss=3.1842
+progress phase=4.4.2 epoch=5/9 batch=1425/2896 work=49.9% elapsed=3049s ETA=3060s tile_loss=3.2814
+progress phase=4.4.2 epoch=5/9 batch=1450/2896 work=50.0% elapsed=3054s ETA=3054s tile_loss=3.2837
+progress phase=4.4.2 epoch=5/9 batch=1475/2896 work=50.1% elapsed=3060s ETA=3047s tile_loss=3.4417
+progress phase=4.4.2 epoch=5/9 batch=1500/2896 work=50.2% elapsed=3066s ETA=3041s tile_loss=3.1714
+progress phase=4.4.2 epoch=5/9 batch=1525/2896 work=50.3% elapsed=3071s ETA=3035s tile_loss=3.2884
+progress phase=4.4.2 epoch=5/9 batch=1550/2896 work=50.4% elapsed=3077s ETA=3029s tile_loss=3.1460
+progress phase=4.4.2 epoch=5/9 batch=1575/2896 work=50.5% elapsed=3083s ETA=3023s tile_loss=3.0809
+progress phase=4.4.2 epoch=5/9 batch=1600/2896 work=50.6% elapsed=3088s ETA=3017s tile_loss=3.4448
+progress phase=4.4.2 epoch=5/9 batch=1625/2896 work=50.7% elapsed=3094s ETA=3011s tile_loss=3.3812
+progress phase=4.4.2 epoch=5/9 batch=1650/2896 work=50.8% elapsed=3099s ETA=3005s tile_loss=3.2255
+progress phase=4.4.2 epoch=5/9 batch=1675/2896 work=50.9% elapsed=3105s ETA=2999s tile_loss=3.2703
+progress phase=4.4.2 epoch=5/9 batch=1700/2896 work=51.0% elapsed=3111s ETA=2993s tile_loss=3.3185
+progress phase=4.4.2 epoch=5/9 batch=1725/2896 work=51.1% elapsed=3117s ETA=2987s tile_loss=3.4082
+progress phase=4.4.2 epoch=5/9 batch=1750/2896 work=51.2% elapsed=3122s ETA=2981s tile_loss=3.2962
+progress phase=4.4.2 epoch=5/9 batch=1775/2896 work=51.3% elapsed=3128s ETA=2975s tile_loss=3.3986
+progress phase=4.4.2 epoch=5/9 batch=1800/2896 work=51.4% elapsed=3134s ETA=2969s tile_loss=3.1592
+progress phase=4.4.2 epoch=5/9 batch=1825/2896 work=51.4% elapsed=3139s ETA=2963s tile_loss=3.2712
+progress phase=4.4.2 epoch=5/9 batch=1850/2896 work=51.5% elapsed=3145s ETA=2957s tile_loss=3.1115
+progress phase=4.4.2 epoch=5/9 batch=1875/2896 work=51.6% elapsed=3150s ETA=2951s tile_loss=3.3392
+progress phase=4.4.2 epoch=5/9 batch=1900/2896 work=51.7% elapsed=3156s ETA=2945s tile_loss=3.1928
+progress phase=4.4.2 epoch=5/9 batch=1925/2896 work=51.8% elapsed=3162s ETA=2938s tile_loss=3.1717
+progress phase=4.4.2 epoch=5/9 batch=1950/2896 work=51.9% elapsed=3167s ETA=2932s tile_loss=3.1843
+progress phase=4.4.2 epoch=5/9 batch=1975/2896 work=52.0% elapsed=3173s ETA=2926s tile_loss=3.0382
+progress phase=4.4.2 epoch=5/9 batch=2000/2896 work=52.1% elapsed=3179s ETA=2920s tile_loss=3.5042
+progress phase=4.4.2 epoch=5/9 batch=2025/2896 work=52.2% elapsed=3184s ETA=2914s tile_loss=3.1998
+progress phase=4.4.2 epoch=5/9 batch=2050/2896 work=52.3% elapsed=3190s ETA=2908s tile_loss=3.2904
+progress phase=4.4.2 epoch=5/9 batch=2075/2896 work=52.4% elapsed=3196s ETA=2902s tile_loss=3.0504
+progress phase=4.4.2 epoch=5/9 batch=2100/2896 work=52.5% elapsed=3201s ETA=2896s tile_loss=3.3839
+progress phase=4.4.2 epoch=5/9 batch=2125/2896 work=52.6% elapsed=3207s ETA=2890s tile_loss=3.1853
+progress phase=4.4.2 epoch=5/9 batch=2150/2896 work=52.7% elapsed=3213s ETA=2884s tile_loss=3.4215
+progress phase=4.4.2 epoch=5/9 batch=2175/2896 work=52.8% elapsed=3218s ETA=2878s tile_loss=3.0244
+progress phase=4.4.2 epoch=5/9 batch=2200/2896 work=52.9% elapsed=3224s ETA=2872s tile_loss=3.0479
+progress phase=4.4.2 epoch=5/9 batch=2225/2896 work=53.0% elapsed=3230s ETA=2866s tile_loss=3.3245
+progress phase=4.4.2 epoch=5/9 batch=2250/2896 work=53.1% elapsed=3235s ETA=2860s tile_loss=3.1960
+progress phase=4.4.2 epoch=5/9 batch=2275/2896 work=53.2% elapsed=3241s ETA=2854s tile_loss=3.2014
+progress phase=4.4.2 epoch=5/9 batch=2300/2896 work=53.3% elapsed=3247s ETA=2848s tile_loss=3.3594
+progress phase=4.4.2 epoch=5/9 batch=2325/2896 work=53.4% elapsed=3252s ETA=2842s tile_loss=3.0600
+progress phase=4.4.2 epoch=5/9 batch=2350/2896 work=53.5% elapsed=3258s ETA=2836s tile_loss=3.1914
+progress phase=4.4.2 epoch=5/9 batch=2375/2896 work=53.6% elapsed=3263s ETA=2830s tile_loss=3.0703
+progress phase=4.4.2 epoch=5/9 batch=2400/2896 work=53.7% elapsed=3269s ETA=2824s tile_loss=3.3333
+progress phase=4.4.2 epoch=5/9 batch=2425/2896 work=53.7% elapsed=3275s ETA=2818s tile_loss=3.1853
+progress phase=4.4.2 epoch=5/9 batch=2450/2896 work=53.8% elapsed=3280s ETA=2812s tile_loss=3.3841
+progress phase=4.4.2 epoch=5/9 batch=2475/2896 work=53.9% elapsed=3286s ETA=2806s tile_loss=3.2081
+progress phase=4.4.2 epoch=5/9 batch=2500/2896 work=54.0% elapsed=3292s ETA=2800s tile_loss=2.9774
+progress phase=4.4.2 epoch=5/9 batch=2525/2896 work=54.1% elapsed=3297s ETA=2794s tile_loss=3.1638
+progress phase=4.4.2 epoch=5/9 batch=2550/2896 work=54.2% elapsed=3303s ETA=2788s tile_loss=3.0727
+progress phase=4.4.2 epoch=5/9 batch=2575/2896 work=54.3% elapsed=3309s ETA=2782s tile_loss=3.2399
+progress phase=4.4.2 epoch=5/9 batch=2600/2896 work=54.4% elapsed=3315s ETA=2776s tile_loss=3.4393
+progress phase=4.4.2 epoch=5/9 batch=2625/2896 work=54.5% elapsed=3320s ETA=2770s tile_loss=2.9710
+progress phase=4.4.2 epoch=5/9 batch=2650/2896 work=54.6% elapsed=3326s ETA=2764s tile_loss=3.2157
+progress phase=4.4.2 epoch=5/9 batch=2675/2896 work=54.7% elapsed=3332s ETA=2758s tile_loss=3.3281
+progress phase=4.4.2 epoch=5/9 batch=2700/2896 work=54.8% elapsed=3337s ETA=2752s tile_loss=2.9643
+progress phase=4.4.2 epoch=5/9 batch=2725/2896 work=54.9% elapsed=3343s ETA=2746s tile_loss=3.2738
+progress phase=4.4.2 epoch=5/9 batch=2750/2896 work=55.0% elapsed=3348s ETA=2740s tile_loss=3.2212
+progress phase=4.4.2 epoch=5/9 batch=2775/2896 work=55.1% elapsed=3354s ETA=2734s tile_loss=2.8848
+progress phase=4.4.2 epoch=5/9 batch=2800/2896 work=55.2% elapsed=3360s ETA=2728s tile_loss=3.0987
+progress phase=4.4.2 epoch=5/9 batch=2825/2896 work=55.3% elapsed=3365s ETA=2722s tile_loss=3.0961
+progress phase=4.4.2 epoch=5/9 batch=2850/2896 work=55.4% elapsed=3371s ETA=2716s tile_loss=3.3920
+progress phase=4.4.2 epoch=5/9 batch=2875/2896 work=55.5% elapsed=3377s ETA=2710s tile_loss=3.1944
+progress phase=4.4.2 epoch=5/9 batch=2896/2896 work=55.6% elapsed=3381s ETA=2705s tile_loss=3.3415
+epoch 05  train_loss=4.6191  val_slot@1=0.565  val_zone=0.460  val_tile=0.094  val_tile_cls=0.163  val_tile@5=0.398  val_loss=6.0639
+progress phase=4.4.2 epoch=6/9 batch=1/2896 work=55.6% elapsed=3392s ETA=2713s tile_loss=2.9856
+progress phase=4.4.2 epoch=6/9 batch=25/2896 work=55.7% elapsed=3398s ETA=2708s tile_loss=3.1806
+progress phase=4.4.2 epoch=6/9 batch=50/2896 work=55.7% elapsed=3404s ETA=2702s tile_loss=3.4312
+progress phase=4.4.2 epoch=6/9 batch=75/2896 work=55.8% elapsed=3409s ETA=2696s tile_loss=3.5830
+progress phase=4.4.2 epoch=6/9 batch=100/2896 work=55.9% elapsed=3415s ETA=2690s tile_loss=3.1416
+progress phase=4.4.2 epoch=6/9 batch=125/2896 work=56.0% elapsed=3421s ETA=2684s tile_loss=3.4501
+progress phase=4.4.2 epoch=6/9 batch=150/2896 work=56.1% elapsed=3426s ETA=2678s tile_loss=3.1641
+progress phase=4.4.2 epoch=6/9 batch=175/2896 work=56.2% elapsed=3432s ETA=2672s tile_loss=3.1231
+progress phase=4.4.2 epoch=6/9 batch=200/2896 work=56.3% elapsed=3438s ETA=2666s tile_loss=3.2920
+progress phase=4.4.2 epoch=6/9 batch=225/2896 work=56.4% elapsed=3443s ETA=2660s tile_loss=3.4410
+progress phase=4.4.2 epoch=6/9 batch=250/2896 work=56.5% elapsed=3449s ETA=2654s tile_loss=3.0775
+progress phase=4.4.2 epoch=6/9 batch=275/2896 work=56.6% elapsed=3455s ETA=2648s tile_loss=3.3531
+progress phase=4.4.2 epoch=6/9 batch=300/2896 work=56.7% elapsed=3460s ETA=2642s tile_loss=3.3370
+progress phase=4.4.2 epoch=6/9 batch=325/2896 work=56.8% elapsed=3466s ETA=2636s tile_loss=3.3592
+progress phase=4.4.2 epoch=6/9 batch=350/2896 work=56.9% elapsed=3471s ETA=2630s tile_loss=3.3326
+progress phase=4.4.2 epoch=6/9 batch=375/2896 work=57.0% elapsed=3477s ETA=2624s tile_loss=3.0880
+progress phase=4.4.2 epoch=6/9 batch=400/2896 work=57.1% elapsed=3482s ETA=2617s tile_loss=3.2237
+progress phase=4.4.2 epoch=6/9 batch=425/2896 work=57.2% elapsed=3488s ETA=2611s tile_loss=3.0341
+progress phase=4.4.2 epoch=6/9 batch=450/2896 work=57.3% elapsed=3494s ETA=2605s tile_loss=3.2044
+progress phase=4.4.2 epoch=6/9 batch=475/2896 work=57.4% elapsed=3500s ETA=2600s tile_loss=3.3825
+progress phase=4.4.2 epoch=6/9 batch=500/2896 work=57.5% elapsed=3505s ETA=2594s tile_loss=3.2762
+progress phase=4.4.2 epoch=6/9 batch=525/2896 work=57.6% elapsed=3511s ETA=2588s tile_loss=3.1813
+progress phase=4.4.2 epoch=6/9 batch=550/2896 work=57.7% elapsed=3517s ETA=2582s tile_loss=3.3436
+progress phase=4.4.2 epoch=6/9 batch=575/2896 work=57.8% elapsed=3522s ETA=2576s tile_loss=3.1553
+progress phase=4.4.2 epoch=6/9 batch=600/2896 work=57.9% elapsed=3528s ETA=2570s tile_loss=3.0975
+progress phase=4.4.2 epoch=6/9 batch=625/2896 work=58.0% elapsed=3533s ETA=2564s tile_loss=3.2482
+progress phase=4.4.2 epoch=6/9 batch=650/2896 work=58.0% elapsed=3539s ETA=2558s tile_loss=3.1620
+progress phase=4.4.2 epoch=6/9 batch=675/2896 work=58.1% elapsed=3545s ETA=2552s tile_loss=3.4775
+progress phase=4.4.2 epoch=6/9 batch=700/2896 work=58.2% elapsed=3550s ETA=2546s tile_loss=3.1130
+progress phase=4.4.2 epoch=6/9 batch=725/2896 work=58.3% elapsed=3556s ETA=2540s tile_loss=3.5470
+progress phase=4.4.2 epoch=6/9 batch=750/2896 work=58.4% elapsed=3562s ETA=2534s tile_loss=3.4307
+progress phase=4.4.2 epoch=6/9 batch=775/2896 work=58.5% elapsed=3567s ETA=2528s tile_loss=3.3251
+progress phase=4.4.2 epoch=6/9 batch=800/2896 work=58.6% elapsed=3573s ETA=2522s tile_loss=3.3411
+progress phase=4.4.2 epoch=6/9 batch=825/2896 work=58.7% elapsed=3579s ETA=2516s tile_loss=3.1476
+progress phase=4.4.2 epoch=6/9 batch=850/2896 work=58.8% elapsed=3584s ETA=2510s tile_loss=3.4711
+progress phase=4.4.2 epoch=6/9 batch=875/2896 work=58.9% elapsed=3590s ETA=2504s tile_loss=3.2637
+progress phase=4.4.2 epoch=6/9 batch=900/2896 work=59.0% elapsed=3596s ETA=2498s tile_loss=3.2037
+progress phase=4.4.2 epoch=6/9 batch=925/2896 work=59.1% elapsed=3602s ETA=2492s tile_loss=3.4171
+progress phase=4.4.2 epoch=6/9 batch=950/2896 work=59.2% elapsed=3607s ETA=2486s tile_loss=3.1398
+progress phase=4.4.2 epoch=6/9 batch=975/2896 work=59.3% elapsed=3613s ETA=2480s tile_loss=2.8778
+progress phase=4.4.2 epoch=6/9 batch=1000/2896 work=59.4% elapsed=3618s ETA=2474s tile_loss=3.1726
+progress phase=4.4.2 epoch=6/9 batch=1025/2896 work=59.5% elapsed=3624s ETA=2468s tile_loss=3.2643
+progress phase=4.4.2 epoch=6/9 batch=1050/2896 work=59.6% elapsed=3630s ETA=2462s tile_loss=3.2411
+progress phase=4.4.2 epoch=6/9 batch=1075/2896 work=59.7% elapsed=3635s ETA=2456s tile_loss=3.2591
+progress phase=4.4.2 epoch=6/9 batch=1100/2896 work=59.8% elapsed=3641s ETA=2450s tile_loss=3.2842
+progress phase=4.4.2 epoch=6/9 batch=1125/2896 work=59.9% elapsed=3647s ETA=2444s tile_loss=3.1391
+progress phase=4.4.2 epoch=6/9 batch=1150/2896 work=60.0% elapsed=3652s ETA=2438s tile_loss=3.2018
+progress phase=4.4.2 epoch=6/9 batch=1175/2896 work=60.1% elapsed=3658s ETA=2432s tile_loss=3.3569
+progress phase=4.4.2 epoch=6/9 batch=1200/2896 work=60.2% elapsed=3663s ETA=2426s tile_loss=3.3680
+progress phase=4.4.2 epoch=6/9 batch=1225/2896 work=60.3% elapsed=3669s ETA=2420s tile_loss=3.3895
+progress phase=4.4.2 epoch=6/9 batch=1250/2896 work=60.4% elapsed=3675s ETA=2414s tile_loss=3.1433
+progress phase=4.4.2 epoch=6/9 batch=1275/2896 work=60.4% elapsed=3680s ETA=2408s tile_loss=3.2018
+progress phase=4.4.2 epoch=6/9 batch=1300/2896 work=60.5% elapsed=3686s ETA=2402s tile_loss=3.3656
+progress phase=4.4.2 epoch=6/9 batch=1325/2896 work=60.6% elapsed=3692s ETA=2396s tile_loss=3.0397
+progress phase=4.4.2 epoch=6/9 batch=1350/2896 work=60.7% elapsed=3698s ETA=2390s tile_loss=3.4561
+progress phase=4.4.2 epoch=6/9 batch=1375/2896 work=60.8% elapsed=3703s ETA=2385s tile_loss=3.3635
+progress phase=4.4.2 epoch=6/9 batch=1400/2896 work=60.9% elapsed=3709s ETA=2379s tile_loss=3.3641
+progress phase=4.4.2 epoch=6/9 batch=1425/2896 work=61.0% elapsed=3714s ETA=2373s tile_loss=2.8274
+progress phase=4.4.2 epoch=6/9 batch=1450/2896 work=61.1% elapsed=3720s ETA=2367s tile_loss=3.3156
+progress phase=4.4.2 epoch=6/9 batch=1475/2896 work=61.2% elapsed=3726s ETA=2361s tile_loss=3.1935
+progress phase=4.4.2 epoch=6/9 batch=1500/2896 work=61.3% elapsed=3731s ETA=2355s tile_loss=3.1091
+progress phase=4.4.2 epoch=6/9 batch=1525/2896 work=61.4% elapsed=3737s ETA=2349s tile_loss=3.1457
+progress phase=4.4.2 epoch=6/9 batch=1550/2896 work=61.5% elapsed=3743s ETA=2343s tile_loss=3.4832
+progress phase=4.4.2 epoch=6/9 batch=1575/2896 work=61.6% elapsed=3748s ETA=2337s tile_loss=3.3298
+progress phase=4.4.2 epoch=6/9 batch=1600/2896 work=61.7% elapsed=3754s ETA=2331s tile_loss=3.1173
+progress phase=4.4.2 epoch=6/9 batch=1625/2896 work=61.8% elapsed=3760s ETA=2325s tile_loss=3.4720
+progress phase=4.4.2 epoch=6/9 batch=1650/2896 work=61.9% elapsed=3765s ETA=2319s tile_loss=3.4143
+progress phase=4.4.2 epoch=6/9 batch=1675/2896 work=62.0% elapsed=3771s ETA=2313s tile_loss=3.2460
+progress phase=4.4.2 epoch=6/9 batch=1700/2896 work=62.1% elapsed=3777s ETA=2307s tile_loss=3.3154
+progress phase=4.4.2 epoch=6/9 batch=1725/2896 work=62.2% elapsed=3782s ETA=2301s tile_loss=2.9917
+progress phase=4.4.2 epoch=6/9 batch=1750/2896 work=62.3% elapsed=3788s ETA=2295s tile_loss=3.5128
+progress phase=4.4.2 epoch=6/9 batch=1775/2896 work=62.4% elapsed=3794s ETA=2289s tile_loss=3.3258
+progress phase=4.4.2 epoch=6/9 batch=1800/2896 work=62.5% elapsed=3799s ETA=2283s tile_loss=3.4535
+progress phase=4.4.2 epoch=6/9 batch=1825/2896 work=62.6% elapsed=3805s ETA=2277s tile_loss=3.3418
+progress phase=4.4.2 epoch=6/9 batch=1850/2896 work=62.7% elapsed=3810s ETA=2271s tile_loss=3.1558
+progress phase=4.4.2 epoch=6/9 batch=1875/2896 work=62.7% elapsed=3816s ETA=2265s tile_loss=3.2455
+progress phase=4.4.2 epoch=6/9 batch=1900/2896 work=62.8% elapsed=3822s ETA=2259s tile_loss=3.2983
+progress phase=4.4.2 epoch=6/9 batch=1925/2896 work=62.9% elapsed=3827s ETA=2254s tile_loss=3.0889
+progress phase=4.4.2 epoch=6/9 batch=1950/2896 work=63.0% elapsed=3833s ETA=2248s tile_loss=3.3751
+progress phase=4.4.2 epoch=6/9 batch=1975/2896 work=63.1% elapsed=3839s ETA=2242s tile_loss=3.3000
+progress phase=4.4.2 epoch=6/9 batch=2000/2896 work=63.2% elapsed=3844s ETA=2236s tile_loss=3.2519
+progress phase=4.4.2 epoch=6/9 batch=2025/2896 work=63.3% elapsed=3850s ETA=2230s tile_loss=3.1919
+progress phase=4.4.2 epoch=6/9 batch=2050/2896 work=63.4% elapsed=3856s ETA=2224s tile_loss=3.2325
+progress phase=4.4.2 epoch=6/9 batch=2075/2896 work=63.5% elapsed=3861s ETA=2218s tile_loss=3.1724
+progress phase=4.4.2 epoch=6/9 batch=2100/2896 work=63.6% elapsed=3867s ETA=2212s tile_loss=2.9290
+progress phase=4.4.2 epoch=6/9 batch=2125/2896 work=63.7% elapsed=3872s ETA=2206s tile_loss=3.5231
+progress phase=4.4.2 epoch=6/9 batch=2150/2896 work=63.8% elapsed=3878s ETA=2200s tile_loss=3.3295
+progress phase=4.4.2 epoch=6/9 batch=2175/2896 work=63.9% elapsed=3884s ETA=2194s tile_loss=3.3020
+progress phase=4.4.2 epoch=6/9 batch=2200/2896 work=64.0% elapsed=3890s ETA=2188s tile_loss=3.2593
+progress phase=4.4.2 epoch=6/9 batch=2225/2896 work=64.1% elapsed=3895s ETA=2182s tile_loss=3.2077
+progress phase=4.4.2 epoch=6/9 batch=2250/2896 work=64.2% elapsed=3901s ETA=2176s tile_loss=3.2467
+progress phase=4.4.2 epoch=6/9 batch=2275/2896 work=64.3% elapsed=3907s ETA=2170s tile_loss=3.3579
+progress phase=4.4.2 epoch=6/9 batch=2300/2896 work=64.4% elapsed=3912s ETA=2164s tile_loss=3.2074
+progress phase=4.4.2 epoch=6/9 batch=2325/2896 work=64.5% elapsed=3918s ETA=2159s tile_loss=3.3826
+progress phase=4.4.2 epoch=6/9 batch=2350/2896 work=64.6% elapsed=3923s ETA=2153s tile_loss=2.9468
+progress phase=4.4.2 epoch=6/9 batch=2375/2896 work=64.7% elapsed=3929s ETA=2147s tile_loss=3.0947
+progress phase=4.4.2 epoch=6/9 batch=2400/2896 work=64.8% elapsed=3935s ETA=2141s tile_loss=3.2912
+progress phase=4.4.2 epoch=6/9 batch=2425/2896 work=64.9% elapsed=3940s ETA=2135s tile_loss=3.0304
+progress phase=4.4.2 epoch=6/9 batch=2450/2896 work=65.0% elapsed=3946s ETA=2129s tile_loss=3.2184
+progress phase=4.4.2 epoch=6/9 batch=2475/2896 work=65.1% elapsed=3951s ETA=2123s tile_loss=3.3913
+progress phase=4.4.2 epoch=6/9 batch=2500/2896 work=65.1% elapsed=3957s ETA=2117s tile_loss=3.2248
+progress phase=4.4.2 epoch=6/9 batch=2525/2896 work=65.2% elapsed=3963s ETA=2111s tile_loss=3.1710
+progress phase=4.4.2 epoch=6/9 batch=2550/2896 work=65.3% elapsed=3968s ETA=2105s tile_loss=3.3598
+progress phase=4.4.2 epoch=6/9 batch=2575/2896 work=65.4% elapsed=3974s ETA=2099s tile_loss=3.2291
+progress phase=4.4.2 epoch=6/9 batch=2600/2896 work=65.5% elapsed=3980s ETA=2093s tile_loss=3.2280
+progress phase=4.4.2 epoch=6/9 batch=2625/2896 work=65.6% elapsed=3986s ETA=2088s tile_loss=3.0043
+progress phase=4.4.2 epoch=6/9 batch=2650/2896 work=65.7% elapsed=3991s ETA=2082s tile_loss=3.1397
+progress phase=4.4.2 epoch=6/9 batch=2675/2896 work=65.8% elapsed=3997s ETA=2076s tile_loss=3.3252
+progress phase=4.4.2 epoch=6/9 batch=2700/2896 work=65.9% elapsed=4003s ETA=2070s tile_loss=3.0976
+progress phase=4.4.2 epoch=6/9 batch=2725/2896 work=66.0% elapsed=4008s ETA=2064s tile_loss=3.3584
+progress phase=4.4.2 epoch=6/9 batch=2750/2896 work=66.1% elapsed=4014s ETA=2058s tile_loss=3.3697
+progress phase=4.4.2 epoch=6/9 batch=2775/2896 work=66.2% elapsed=4019s ETA=2052s tile_loss=3.2003
+progress phase=4.4.2 epoch=6/9 batch=2800/2896 work=66.3% elapsed=4025s ETA=2046s tile_loss=3.1966
+progress phase=4.4.2 epoch=6/9 batch=2825/2896 work=66.4% elapsed=4031s ETA=2040s tile_loss=3.1100
+progress phase=4.4.2 epoch=6/9 batch=2850/2896 work=66.5% elapsed=4036s ETA=2034s tile_loss=3.2475
+progress phase=4.4.2 epoch=6/9 batch=2875/2896 work=66.6% elapsed=4042s ETA=2028s tile_loss=3.3955
+progress phase=4.4.2 epoch=6/9 batch=2896/2896 work=66.7% elapsed=4047s ETA=2023s tile_loss=3.2265
+epoch 06  train_loss=4.6054  val_slot@1=0.566  val_zone=0.461  val_tile=0.094  val_tile_cls=0.165  val_tile@5=0.401  val_loss=6.0528
+progress phase=4.4.2 epoch=7/9 batch=1/2896 work=66.7% elapsed=4058s ETA=2029s tile_loss=3.2928
+progress phase=4.4.2 epoch=7/9 batch=25/2896 work=66.8% elapsed=4063s ETA=2023s tile_loss=3.3279
+progress phase=4.4.2 epoch=7/9 batch=50/2896 work=66.9% elapsed=4069s ETA=2017s tile_loss=3.3031
+progress phase=4.4.2 epoch=7/9 batch=75/2896 work=67.0% elapsed=4075s ETA=2011s tile_loss=3.0966
+progress phase=4.4.2 epoch=7/9 batch=100/2896 work=67.1% elapsed=4080s ETA=2005s tile_loss=3.2519
+progress phase=4.4.2 epoch=7/9 batch=125/2896 work=67.1% elapsed=4086s ETA=1999s tile_loss=3.3636
+progress phase=4.4.2 epoch=7/9 batch=150/2896 work=67.2% elapsed=4092s ETA=1993s tile_loss=3.2416
+progress phase=4.4.2 epoch=7/9 batch=175/2896 work=67.3% elapsed=4097s ETA=1987s tile_loss=3.2087
+progress phase=4.4.2 epoch=7/9 batch=200/2896 work=67.4% elapsed=4103s ETA=1982s tile_loss=3.4367
+progress phase=4.4.2 epoch=7/9 batch=225/2896 work=67.5% elapsed=4109s ETA=1976s tile_loss=3.0701
+progress phase=4.4.2 epoch=7/9 batch=250/2896 work=67.6% elapsed=4114s ETA=1970s tile_loss=3.0755
+progress phase=4.4.2 epoch=7/9 batch=275/2896 work=67.7% elapsed=4120s ETA=1964s tile_loss=3.2746
+progress phase=4.4.2 epoch=7/9 batch=300/2896 work=67.8% elapsed=4126s ETA=1958s tile_loss=3.2209
+progress phase=4.4.2 epoch=7/9 batch=325/2896 work=67.9% elapsed=4131s ETA=1952s tile_loss=3.1812
+progress phase=4.4.2 epoch=7/9 batch=350/2896 work=68.0% elapsed=4137s ETA=1946s tile_loss=3.3403
+progress phase=4.4.2 epoch=7/9 batch=375/2896 work=68.1% elapsed=4143s ETA=1940s tile_loss=3.1537
+progress phase=4.4.2 epoch=7/9 batch=400/2896 work=68.2% elapsed=4148s ETA=1934s tile_loss=3.0040
+progress phase=4.4.2 epoch=7/9 batch=425/2896 work=68.3% elapsed=4154s ETA=1928s tile_loss=3.3610
+progress phase=4.4.2 epoch=7/9 batch=450/2896 work=68.4% elapsed=4159s ETA=1922s tile_loss=3.1727
+progress phase=4.4.2 epoch=7/9 batch=475/2896 work=68.5% elapsed=4165s ETA=1916s tile_loss=3.4034
+progress phase=4.4.2 epoch=7/9 batch=500/2896 work=68.6% elapsed=4171s ETA=1911s tile_loss=3.3089
+progress phase=4.4.2 epoch=7/9 batch=525/2896 work=68.7% elapsed=4177s ETA=1905s tile_loss=3.3278
+progress phase=4.4.2 epoch=7/9 batch=550/2896 work=68.8% elapsed=4182s ETA=1899s tile_loss=3.4434
+progress phase=4.4.2 epoch=7/9 batch=575/2896 work=68.9% elapsed=4188s ETA=1893s tile_loss=3.3090
+progress phase=4.4.2 epoch=7/9 batch=600/2896 work=69.0% elapsed=4194s ETA=1887s tile_loss=3.2914
+progress phase=4.4.2 epoch=7/9 batch=625/2896 work=69.1% elapsed=4199s ETA=1881s tile_loss=3.2627
+progress phase=4.4.2 epoch=7/9 batch=650/2896 work=69.2% elapsed=4205s ETA=1875s tile_loss=3.2570
+progress phase=4.4.2 epoch=7/9 batch=675/2896 work=69.3% elapsed=4210s ETA=1869s tile_loss=3.2644
+progress phase=4.4.2 epoch=7/9 batch=700/2896 work=69.4% elapsed=4216s ETA=1863s tile_loss=3.2578
+progress phase=4.4.2 epoch=7/9 batch=725/2896 work=69.4% elapsed=4222s ETA=1857s tile_loss=3.1018
+progress phase=4.4.2 epoch=7/9 batch=750/2896 work=69.5% elapsed=4227s ETA=1851s tile_loss=3.1739
+progress phase=4.4.2 epoch=7/9 batch=775/2896 work=69.6% elapsed=4233s ETA=1845s tile_loss=3.3295
+progress phase=4.4.2 epoch=7/9 batch=800/2896 work=69.7% elapsed=4239s ETA=1839s tile_loss=2.9286
+progress phase=4.4.2 epoch=7/9 batch=825/2896 work=69.8% elapsed=4244s ETA=1834s tile_loss=2.9711
+progress phase=4.4.2 epoch=7/9 batch=850/2896 work=69.9% elapsed=4250s ETA=1828s tile_loss=3.3291
+progress phase=4.4.2 epoch=7/9 batch=875/2896 work=70.0% elapsed=4255s ETA=1822s tile_loss=3.1444
+progress phase=4.4.2 epoch=7/9 batch=900/2896 work=70.1% elapsed=4261s ETA=1816s tile_loss=3.1906
+progress phase=4.4.2 epoch=7/9 batch=925/2896 work=70.2% elapsed=4267s ETA=1810s tile_loss=3.2461
+progress phase=4.4.2 epoch=7/9 batch=950/2896 work=70.3% elapsed=4273s ETA=1804s tile_loss=3.3526
+progress phase=4.4.2 epoch=7/9 batch=975/2896 work=70.4% elapsed=4278s ETA=1798s tile_loss=3.3626
+progress phase=4.4.2 epoch=7/9 batch=1000/2896 work=70.5% elapsed=4284s ETA=1792s tile_loss=3.2120
+progress phase=4.4.2 epoch=7/9 batch=1025/2896 work=70.6% elapsed=4290s ETA=1786s tile_loss=3.4706
+progress phase=4.4.2 epoch=7/9 batch=1050/2896 work=70.7% elapsed=4295s ETA=1781s tile_loss=3.0778
+progress phase=4.4.2 epoch=7/9 batch=1075/2896 work=70.8% elapsed=4301s ETA=1775s tile_loss=3.0368
+progress phase=4.4.2 epoch=7/9 batch=1100/2896 work=70.9% elapsed=4307s ETA=1769s tile_loss=3.1753
+progress phase=4.4.2 epoch=7/9 batch=1125/2896 work=71.0% elapsed=4312s ETA=1763s tile_loss=3.4475
+progress phase=4.4.2 epoch=7/9 batch=1150/2896 work=71.1% elapsed=4318s ETA=1757s tile_loss=3.0319
+progress phase=4.4.2 epoch=7/9 batch=1175/2896 work=71.2% elapsed=4323s ETA=1751s tile_loss=3.2113
+progress phase=4.4.2 epoch=7/9 batch=1200/2896 work=71.3% elapsed=4329s ETA=1745s tile_loss=3.2542
+progress phase=4.4.2 epoch=7/9 batch=1225/2896 work=71.4% elapsed=4335s ETA=1739s tile_loss=3.0678
+progress phase=4.4.2 epoch=7/9 batch=1250/2896 work=71.5% elapsed=4340s ETA=1733s tile_loss=3.1406
+progress phase=4.4.2 epoch=7/9 batch=1275/2896 work=71.6% elapsed=4346s ETA=1727s tile_loss=3.3446
+progress phase=4.4.2 epoch=7/9 batch=1300/2896 work=71.7% elapsed=4352s ETA=1721s tile_loss=3.2903
+progress phase=4.4.2 epoch=7/9 batch=1325/2896 work=71.8% elapsed=4358s ETA=1716s tile_loss=3.3703
+progress phase=4.4.2 epoch=7/9 batch=1350/2896 work=71.8% elapsed=4363s ETA=1710s tile_loss=3.2627
+progress phase=4.4.2 epoch=7/9 batch=1375/2896 work=71.9% elapsed=4369s ETA=1704s tile_loss=3.3225
+progress phase=4.4.2 epoch=7/9 batch=1400/2896 work=72.0% elapsed=4374s ETA=1698s tile_loss=3.0889
+progress phase=4.4.2 epoch=7/9 batch=1425/2896 work=72.1% elapsed=4380s ETA=1692s tile_loss=3.0996
+progress phase=4.4.2 epoch=7/9 batch=1450/2896 work=72.2% elapsed=4386s ETA=1686s tile_loss=3.5309
+progress phase=4.4.2 epoch=7/9 batch=1475/2896 work=72.3% elapsed=4391s ETA=1680s tile_loss=3.3177
+progress phase=4.4.2 epoch=7/9 batch=1500/2896 work=72.4% elapsed=4397s ETA=1674s tile_loss=3.5170
+progress phase=4.4.2 epoch=7/9 batch=1525/2896 work=72.5% elapsed=4403s ETA=1668s tile_loss=3.2177
+progress phase=4.4.2 epoch=7/9 batch=1550/2896 work=72.6% elapsed=4408s ETA=1663s tile_loss=3.3039
+progress phase=4.4.2 epoch=7/9 batch=1575/2896 work=72.7% elapsed=4414s ETA=1657s tile_loss=3.5491
+progress phase=4.4.2 epoch=7/9 batch=1600/2896 work=72.8% elapsed=4420s ETA=1651s tile_loss=3.2180
+progress phase=4.4.2 epoch=7/9 batch=1625/2896 work=72.9% elapsed=4425s ETA=1645s tile_loss=3.2672
+progress phase=4.4.2 epoch=7/9 batch=1650/2896 work=73.0% elapsed=4431s ETA=1639s tile_loss=3.3540
+progress phase=4.4.2 epoch=7/9 batch=1675/2896 work=73.1% elapsed=4436s ETA=1633s tile_loss=3.5401
+progress phase=4.4.2 epoch=7/9 batch=1700/2896 work=73.2% elapsed=4442s ETA=1627s tile_loss=3.2929
+progress phase=4.4.2 epoch=7/9 batch=1725/2896 work=73.3% elapsed=4448s ETA=1621s tile_loss=3.1233
+progress phase=4.4.2 epoch=7/9 batch=1750/2896 work=73.4% elapsed=4454s ETA=1616s tile_loss=3.1553
+progress phase=4.4.2 epoch=7/9 batch=1775/2896 work=73.5% elapsed=4459s ETA=1610s tile_loss=3.4408
+progress phase=4.4.2 epoch=7/9 batch=1800/2896 work=73.6% elapsed=4465s ETA=1604s tile_loss=3.2260
+progress phase=4.4.2 epoch=7/9 batch=1825/2896 work=73.7% elapsed=4471s ETA=1598s tile_loss=3.2162
+progress phase=4.4.2 epoch=7/9 batch=1850/2896 work=73.8% elapsed=4476s ETA=1592s tile_loss=3.2973
+progress phase=4.4.2 epoch=7/9 batch=1875/2896 work=73.9% elapsed=4482s ETA=1586s tile_loss=3.0081
+progress phase=4.4.2 epoch=7/9 batch=1900/2896 work=74.0% elapsed=4487s ETA=1580s tile_loss=3.6402
+progress phase=4.4.2 epoch=7/9 batch=1925/2896 work=74.1% elapsed=4493s ETA=1574s tile_loss=3.0302
+progress phase=4.4.2 epoch=7/9 batch=1950/2896 work=74.1% elapsed=4499s ETA=1568s tile_loss=3.3172
+progress phase=4.4.2 epoch=7/9 batch=1975/2896 work=74.2% elapsed=4504s ETA=1563s tile_loss=3.4539
+progress phase=4.4.2 epoch=7/9 batch=2000/2896 work=74.3% elapsed=4510s ETA=1557s tile_loss=3.2443
+progress phase=4.4.2 epoch=7/9 batch=2025/2896 work=74.4% elapsed=4516s ETA=1551s tile_loss=3.3099
+progress phase=4.4.2 epoch=7/9 batch=2050/2896 work=74.5% elapsed=4521s ETA=1545s tile_loss=3.2237
+progress phase=4.4.2 epoch=7/9 batch=2075/2896 work=74.6% elapsed=4527s ETA=1539s tile_loss=3.0391
+progress phase=4.4.2 epoch=7/9 batch=2100/2896 work=74.7% elapsed=4532s ETA=1533s tile_loss=3.1815
+progress phase=4.4.2 epoch=7/9 batch=2125/2896 work=74.8% elapsed=4538s ETA=1527s tile_loss=3.0359
+progress phase=4.4.2 epoch=7/9 batch=2150/2896 work=74.9% elapsed=4544s ETA=1521s tile_loss=3.0182
+progress phase=4.4.2 epoch=7/9 batch=2175/2896 work=75.0% elapsed=4549s ETA=1516s tile_loss=3.1590
+progress phase=4.4.2 epoch=7/9 batch=2200/2896 work=75.1% elapsed=4555s ETA=1510s tile_loss=3.2493
+progress phase=4.4.2 epoch=7/9 batch=2225/2896 work=75.2% elapsed=4561s ETA=1504s tile_loss=3.2614
+progress phase=4.4.2 epoch=7/9 batch=2250/2896 work=75.3% elapsed=4566s ETA=1498s tile_loss=3.5031
+progress phase=4.4.2 epoch=7/9 batch=2275/2896 work=75.4% elapsed=4572s ETA=1492s tile_loss=3.1628
+progress phase=4.4.2 epoch=7/9 batch=2300/2896 work=75.5% elapsed=4577s ETA=1486s tile_loss=3.3453
+progress phase=4.4.2 epoch=7/9 batch=2325/2896 work=75.6% elapsed=4583s ETA=1480s tile_loss=3.1309
+progress phase=4.4.2 epoch=7/9 batch=2350/2896 work=75.7% elapsed=4589s ETA=1474s tile_loss=3.2212
+progress phase=4.4.2 epoch=7/9 batch=2375/2896 work=75.8% elapsed=4594s ETA=1469s tile_loss=3.3751
+progress phase=4.4.2 epoch=7/9 batch=2400/2896 work=75.9% elapsed=4600s ETA=1463s tile_loss=2.9814
+progress phase=4.4.2 epoch=7/9 batch=2425/2896 work=76.0% elapsed=4606s ETA=1457s tile_loss=3.1782
+progress phase=4.4.2 epoch=7/9 batch=2450/2896 work=76.1% elapsed=4611s ETA=1451s tile_loss=3.2818
+progress phase=4.4.2 epoch=7/9 batch=2475/2896 work=76.2% elapsed=4617s ETA=1445s tile_loss=3.1617
+progress phase=4.4.2 epoch=7/9 batch=2500/2896 work=76.3% elapsed=4623s ETA=1439s tile_loss=3.3044
+progress phase=4.4.2 epoch=7/9 batch=2525/2896 work=76.4% elapsed=4628s ETA=1433s tile_loss=3.0306
+progress phase=4.4.2 epoch=7/9 batch=2550/2896 work=76.5% elapsed=4634s ETA=1427s tile_loss=3.2301
+progress phase=4.4.2 epoch=7/9 batch=2575/2896 work=76.5% elapsed=4639s ETA=1422s tile_loss=3.3438
+progress phase=4.4.2 epoch=7/9 batch=2600/2896 work=76.6% elapsed=4645s ETA=1416s tile_loss=3.2933
+progress phase=4.4.2 epoch=7/9 batch=2625/2896 work=76.7% elapsed=4651s ETA=1410s tile_loss=3.4839
+progress phase=4.4.2 epoch=7/9 batch=2650/2896 work=76.8% elapsed=4657s ETA=1404s tile_loss=3.1036
+progress phase=4.4.2 epoch=7/9 batch=2675/2896 work=76.9% elapsed=4662s ETA=1398s tile_loss=2.9569
+progress phase=4.4.2 epoch=7/9 batch=2700/2896 work=77.0% elapsed=4668s ETA=1392s tile_loss=3.1051
+progress phase=4.4.2 epoch=7/9 batch=2725/2896 work=77.1% elapsed=4674s ETA=1386s tile_loss=3.1604
+progress phase=4.4.2 epoch=7/9 batch=2750/2896 work=77.2% elapsed=4679s ETA=1381s tile_loss=3.0519
+progress phase=4.4.2 epoch=7/9 batch=2775/2896 work=77.3% elapsed=4685s ETA=1375s tile_loss=3.1458
+progress phase=4.4.2 epoch=7/9 batch=2800/2896 work=77.4% elapsed=4691s ETA=1369s tile_loss=3.2633
+progress phase=4.4.2 epoch=7/9 batch=2825/2896 work=77.5% elapsed=4696s ETA=1363s tile_loss=3.1622
+progress phase=4.4.2 epoch=7/9 batch=2850/2896 work=77.6% elapsed=4702s ETA=1357s tile_loss=3.1235
+progress phase=4.4.2 epoch=7/9 batch=2875/2896 work=77.7% elapsed=4707s ETA=1351s tile_loss=3.5602
+progress phase=4.4.2 epoch=7/9 batch=2896/2896 work=77.8% elapsed=4712s ETA=1346s tile_loss=3.2984
+epoch 07  train_loss=4.5946  val_slot@1=0.565  val_zone=0.461  val_tile=0.094  val_tile_cls=0.164  val_tile@5=0.401  val_loss=6.0663
+progress phase=4.4.2 epoch=8/9 batch=1/2896 work=77.8% elapsed=4723s ETA=1349s tile_loss=3.3672
+progress phase=4.4.2 epoch=8/9 batch=25/2896 work=77.9% elapsed=4729s ETA=1344s tile_loss=3.1982
+progress phase=4.4.2 epoch=8/9 batch=50/2896 work=78.0% elapsed=4734s ETA=1338s tile_loss=3.3314
+progress phase=4.4.2 epoch=8/9 batch=75/2896 work=78.1% elapsed=4740s ETA=1332s tile_loss=3.3327
+progress phase=4.4.2 epoch=8/9 batch=100/2896 work=78.2% elapsed=4746s ETA=1326s tile_loss=3.2413
+progress phase=4.4.2 epoch=8/9 batch=125/2896 work=78.3% elapsed=4752s ETA=1320s tile_loss=3.1462
+progress phase=4.4.2 epoch=8/9 batch=150/2896 work=78.4% elapsed=4757s ETA=1314s tile_loss=2.9365
+progress phase=4.4.2 epoch=8/9 batch=175/2896 work=78.4% elapsed=4763s ETA=1308s tile_loss=3.0627
+progress phase=4.4.2 epoch=8/9 batch=200/2896 work=78.5% elapsed=4768s ETA=1303s tile_loss=3.1702
+progress phase=4.4.2 epoch=8/9 batch=225/2896 work=78.6% elapsed=4774s ETA=1297s tile_loss=3.0984
+progress phase=4.4.2 epoch=8/9 batch=250/2896 work=78.7% elapsed=4780s ETA=1291s tile_loss=3.0753
+progress phase=4.4.2 epoch=8/9 batch=275/2896 work=78.8% elapsed=4785s ETA=1285s tile_loss=3.1389
+progress phase=4.4.2 epoch=8/9 batch=300/2896 work=78.9% elapsed=4791s ETA=1279s tile_loss=3.2585
+progress phase=4.4.2 epoch=8/9 batch=325/2896 work=79.0% elapsed=4797s ETA=1273s tile_loss=3.0750
+progress phase=4.4.2 epoch=8/9 batch=350/2896 work=79.1% elapsed=4802s ETA=1267s tile_loss=3.3623
+progress phase=4.4.2 epoch=8/9 batch=375/2896 work=79.2% elapsed=4808s ETA=1261s tile_loss=3.1330
+progress phase=4.4.2 epoch=8/9 batch=400/2896 work=79.3% elapsed=4814s ETA=1256s tile_loss=3.2248
+progress phase=4.4.2 epoch=8/9 batch=425/2896 work=79.4% elapsed=4819s ETA=1250s tile_loss=3.2641
+progress phase=4.4.2 epoch=8/9 batch=450/2896 work=79.5% elapsed=4825s ETA=1244s tile_loss=3.2170
+progress phase=4.4.2 epoch=8/9 batch=475/2896 work=79.6% elapsed=4831s ETA=1238s tile_loss=3.1798
+progress phase=4.4.2 epoch=8/9 batch=500/2896 work=79.7% elapsed=4836s ETA=1232s tile_loss=3.1970
+progress phase=4.4.2 epoch=8/9 batch=525/2896 work=79.8% elapsed=4842s ETA=1226s tile_loss=3.2480
+progress phase=4.4.2 epoch=8/9 batch=550/2896 work=79.9% elapsed=4847s ETA=1220s tile_loss=2.9614
+progress phase=4.4.2 epoch=8/9 batch=575/2896 work=80.0% elapsed=4853s ETA=1214s tile_loss=3.4415
+progress phase=4.4.2 epoch=8/9 batch=600/2896 work=80.1% elapsed=4859s ETA=1209s tile_loss=3.3692
+progress phase=4.4.2 epoch=8/9 batch=625/2896 work=80.2% elapsed=4864s ETA=1203s tile_loss=3.2784
+progress phase=4.4.2 epoch=8/9 batch=650/2896 work=80.3% elapsed=4870s ETA=1197s tile_loss=3.0896
+progress phase=4.4.2 epoch=8/9 batch=675/2896 work=80.4% elapsed=4876s ETA=1191s tile_loss=3.1284
+progress phase=4.4.2 epoch=8/9 batch=700/2896 work=80.5% elapsed=4881s ETA=1185s tile_loss=3.2178
+progress phase=4.4.2 epoch=8/9 batch=725/2896 work=80.6% elapsed=4887s ETA=1179s tile_loss=3.2024
+progress phase=4.4.2 epoch=8/9 batch=750/2896 work=80.7% elapsed=4893s ETA=1173s tile_loss=3.2154
+progress phase=4.4.2 epoch=8/9 batch=775/2896 work=80.8% elapsed=4898s ETA=1168s tile_loss=3.2178
+progress phase=4.4.2 epoch=8/9 batch=800/2896 work=80.8% elapsed=4904s ETA=1162s tile_loss=3.0670
+progress phase=4.4.2 epoch=8/9 batch=825/2896 work=80.9% elapsed=4910s ETA=1156s tile_loss=3.1140
+progress phase=4.4.2 epoch=8/9 batch=850/2896 work=81.0% elapsed=4915s ETA=1150s tile_loss=3.2707
+progress phase=4.4.2 epoch=8/9 batch=875/2896 work=81.1% elapsed=4921s ETA=1144s tile_loss=3.2463
+progress phase=4.4.2 epoch=8/9 batch=900/2896 work=81.2% elapsed=4927s ETA=1138s tile_loss=3.3966
+progress phase=4.4.2 epoch=8/9 batch=925/2896 work=81.3% elapsed=4933s ETA=1133s tile_loss=3.5172
+progress phase=4.4.2 epoch=8/9 batch=950/2896 work=81.4% elapsed=4938s ETA=1127s tile_loss=3.2313
+progress phase=4.4.2 epoch=8/9 batch=975/2896 work=81.5% elapsed=4944s ETA=1121s tile_loss=3.2319
+progress phase=4.4.2 epoch=8/9 batch=1000/2896 work=81.6% elapsed=4950s ETA=1115s tile_loss=3.0049
+progress phase=4.4.2 epoch=8/9 batch=1025/2896 work=81.7% elapsed=4955s ETA=1109s tile_loss=3.1247
+progress phase=4.4.2 epoch=8/9 batch=1050/2896 work=81.8% elapsed=4961s ETA=1103s tile_loss=3.2471
+progress phase=4.4.2 epoch=8/9 batch=1075/2896 work=81.9% elapsed=4967s ETA=1097s tile_loss=3.3621
+progress phase=4.4.2 epoch=8/9 batch=1100/2896 work=82.0% elapsed=4972s ETA=1092s tile_loss=3.0323
+progress phase=4.4.2 epoch=8/9 batch=1125/2896 work=82.1% elapsed=4978s ETA=1086s tile_loss=3.2487
+progress phase=4.4.2 epoch=8/9 batch=1150/2896 work=82.2% elapsed=4983s ETA=1080s tile_loss=3.3236
+progress phase=4.4.2 epoch=8/9 batch=1175/2896 work=82.3% elapsed=4989s ETA=1074s tile_loss=3.1572
+progress phase=4.4.2 epoch=8/9 batch=1200/2896 work=82.4% elapsed=4995s ETA=1068s tile_loss=3.2182
+progress phase=4.4.2 epoch=8/9 batch=1225/2896 work=82.5% elapsed=5000s ETA=1062s tile_loss=3.3949
+progress phase=4.4.2 epoch=8/9 batch=1250/2896 work=82.6% elapsed=5006s ETA=1056s tile_loss=3.0432
+progress phase=4.4.2 epoch=8/9 batch=1275/2896 work=82.7% elapsed=5012s ETA=1051s tile_loss=3.4370
+progress phase=4.4.2 epoch=8/9 batch=1300/2896 work=82.8% elapsed=5017s ETA=1045s tile_loss=3.2856
+progress phase=4.4.2 epoch=8/9 batch=1325/2896 work=82.9% elapsed=5023s ETA=1039s tile_loss=3.2139
+progress phase=4.4.2 epoch=8/9 batch=1350/2896 work=83.0% elapsed=5029s ETA=1033s tile_loss=3.0988
+progress phase=4.4.2 epoch=8/9 batch=1375/2896 work=83.1% elapsed=5034s ETA=1027s tile_loss=3.0423
+progress phase=4.4.2 epoch=8/9 batch=1400/2896 work=83.1% elapsed=5040s ETA=1021s tile_loss=3.5194
+progress phase=4.4.2 epoch=8/9 batch=1425/2896 work=83.2% elapsed=5046s ETA=1016s tile_loss=3.0057
+progress phase=4.4.2 epoch=8/9 batch=1450/2896 work=83.3% elapsed=5051s ETA=1010s tile_loss=3.4126
+progress phase=4.4.2 epoch=8/9 batch=1475/2896 work=83.4% elapsed=5057s ETA=1004s tile_loss=3.4023
+progress phase=4.4.2 epoch=8/9 batch=1500/2896 work=83.5% elapsed=5062s ETA=998s tile_loss=3.2872
+progress phase=4.4.2 epoch=8/9 batch=1525/2896 work=83.6% elapsed=5068s ETA=992s tile_loss=3.1465
+progress phase=4.4.2 epoch=8/9 batch=1550/2896 work=83.7% elapsed=5074s ETA=986s tile_loss=3.3485
+progress phase=4.4.2 epoch=8/9 batch=1575/2896 work=83.8% elapsed=5079s ETA=980s tile_loss=3.0238
+progress phase=4.4.2 epoch=8/9 batch=1600/2896 work=83.9% elapsed=5085s ETA=975s tile_loss=3.1308
+progress phase=4.4.2 epoch=8/9 batch=1625/2896 work=84.0% elapsed=5091s ETA=969s tile_loss=3.0810
+progress phase=4.4.2 epoch=8/9 batch=1650/2896 work=84.1% elapsed=5096s ETA=963s tile_loss=3.1554
+progress phase=4.4.2 epoch=8/9 batch=1675/2896 work=84.2% elapsed=5102s ETA=957s tile_loss=3.0766
+progress phase=4.4.2 epoch=8/9 batch=1700/2896 work=84.3% elapsed=5108s ETA=951s tile_loss=3.1149
+progress phase=4.4.2 epoch=8/9 batch=1725/2896 work=84.4% elapsed=5113s ETA=945s tile_loss=3.0718
+progress phase=4.4.2 epoch=8/9 batch=1750/2896 work=84.5% elapsed=5119s ETA=940s tile_loss=3.0143
+progress phase=4.4.2 epoch=8/9 batch=1775/2896 work=84.6% elapsed=5125s ETA=934s tile_loss=3.4067
+progress phase=4.4.2 epoch=8/9 batch=1800/2896 work=84.7% elapsed=5130s ETA=928s tile_loss=3.3109
+progress phase=4.4.2 epoch=8/9 batch=1825/2896 work=84.8% elapsed=5136s ETA=922s tile_loss=3.4629
+progress phase=4.4.2 epoch=8/9 batch=1850/2896 work=84.9% elapsed=5142s ETA=916s tile_loss=3.2787
+progress phase=4.4.2 epoch=8/9 batch=1875/2896 work=85.0% elapsed=5147s ETA=910s tile_loss=3.1912
+progress phase=4.4.2 epoch=8/9 batch=1900/2896 work=85.1% elapsed=5153s ETA=905s tile_loss=3.3970
+progress phase=4.4.2 epoch=8/9 batch=1925/2896 work=85.2% elapsed=5159s ETA=899s tile_loss=3.2908
+progress phase=4.4.2 epoch=8/9 batch=1950/2896 work=85.3% elapsed=5164s ETA=893s tile_loss=3.2711
+progress phase=4.4.2 epoch=8/9 batch=1975/2896 work=85.4% elapsed=5170s ETA=887s tile_loss=3.2397
+progress phase=4.4.2 epoch=8/9 batch=2000/2896 work=85.5% elapsed=5176s ETA=881s tile_loss=3.3186
+progress phase=4.4.2 epoch=8/9 batch=2025/2896 work=85.5% elapsed=5181s ETA=875s tile_loss=3.2466
+progress phase=4.4.2 epoch=8/9 batch=2050/2896 work=85.6% elapsed=5187s ETA=870s tile_loss=3.3458
+progress phase=4.4.2 epoch=8/9 batch=2075/2896 work=85.7% elapsed=5193s ETA=864s tile_loss=3.0835
+progress phase=4.4.2 epoch=8/9 batch=2100/2896 work=85.8% elapsed=5198s ETA=858s tile_loss=3.1892
+progress phase=4.4.2 epoch=8/9 batch=2125/2896 work=85.9% elapsed=5204s ETA=852s tile_loss=2.9232
+progress phase=4.4.2 epoch=8/9 batch=2150/2896 work=86.0% elapsed=5209s ETA=846s tile_loss=3.2201
+progress phase=4.4.2 epoch=8/9 batch=2175/2896 work=86.1% elapsed=5215s ETA=840s tile_loss=3.2179
+progress phase=4.4.2 epoch=8/9 batch=2200/2896 work=86.2% elapsed=5221s ETA=835s tile_loss=3.4995
+progress phase=4.4.2 epoch=8/9 batch=2225/2896 work=86.3% elapsed=5227s ETA=829s tile_loss=3.2593
+progress phase=4.4.2 epoch=8/9 batch=2250/2896 work=86.4% elapsed=5232s ETA=823s tile_loss=3.3685
+progress phase=4.4.2 epoch=8/9 batch=2275/2896 work=86.5% elapsed=5238s ETA=817s tile_loss=3.3098
+progress phase=4.4.2 epoch=8/9 batch=2300/2896 work=86.6% elapsed=5244s ETA=811s tile_loss=3.3489
+progress phase=4.4.2 epoch=8/9 batch=2325/2896 work=86.7% elapsed=5249s ETA=805s tile_loss=3.3980
+progress phase=4.4.2 epoch=8/9 batch=2350/2896 work=86.8% elapsed=5255s ETA=800s tile_loss=3.3547
+progress phase=4.4.2 epoch=8/9 batch=2375/2896 work=86.9% elapsed=5260s ETA=794s tile_loss=3.0029
+progress phase=4.4.2 epoch=8/9 batch=2400/2896 work=87.0% elapsed=5266s ETA=788s tile_loss=3.2821
+progress phase=4.4.2 epoch=8/9 batch=2425/2896 work=87.1% elapsed=5272s ETA=782s tile_loss=3.2379
+progress phase=4.4.2 epoch=8/9 batch=2450/2896 work=87.2% elapsed=5277s ETA=776s tile_loss=3.4158
+progress phase=4.4.2 epoch=8/9 batch=2475/2896 work=87.3% elapsed=5283s ETA=770s tile_loss=2.9225
+progress phase=4.4.2 epoch=8/9 batch=2500/2896 work=87.4% elapsed=5289s ETA=765s tile_loss=3.2018
+progress phase=4.4.2 epoch=8/9 batch=2525/2896 work=87.5% elapsed=5294s ETA=759s tile_loss=3.2529
+progress phase=4.4.2 epoch=8/9 batch=2550/2896 work=87.6% elapsed=5300s ETA=753s tile_loss=3.4504
+progress phase=4.4.2 epoch=8/9 batch=2575/2896 work=87.7% elapsed=5306s ETA=747s tile_loss=3.1453
+progress phase=4.4.2 epoch=8/9 batch=2600/2896 work=87.8% elapsed=5312s ETA=741s tile_loss=3.0932
+progress phase=4.4.2 epoch=8/9 batch=2625/2896 work=87.8% elapsed=5317s ETA=735s tile_loss=3.0901
+progress phase=4.4.2 epoch=8/9 batch=2650/2896 work=87.9% elapsed=5323s ETA=730s tile_loss=3.3799
+progress phase=4.4.2 epoch=8/9 batch=2675/2896 work=88.0% elapsed=5328s ETA=724s tile_loss=3.0693
+progress phase=4.4.2 epoch=8/9 batch=2700/2896 work=88.1% elapsed=5334s ETA=718s tile_loss=2.9484
+progress phase=4.4.2 epoch=8/9 batch=2725/2896 work=88.2% elapsed=5340s ETA=712s tile_loss=3.2796
+progress phase=4.4.2 epoch=8/9 batch=2750/2896 work=88.3% elapsed=5345s ETA=706s tile_loss=3.4076
+progress phase=4.4.2 epoch=8/9 batch=2775/2896 work=88.4% elapsed=5351s ETA=701s tile_loss=3.3070
+progress phase=4.4.2 epoch=8/9 batch=2800/2896 work=88.5% elapsed=5357s ETA=695s tile_loss=3.2920
+progress phase=4.4.2 epoch=8/9 batch=2825/2896 work=88.6% elapsed=5362s ETA=689s tile_loss=3.2552
+progress phase=4.4.2 epoch=8/9 batch=2850/2896 work=88.7% elapsed=5368s ETA=683s tile_loss=3.5158
+progress phase=4.4.2 epoch=8/9 batch=2875/2896 work=88.8% elapsed=5374s ETA=677s tile_loss=3.3151
+progress phase=4.4.2 epoch=8/9 batch=2896/2896 work=88.9% elapsed=5379s ETA=672s tile_loss=3.3312
+epoch 08  train_loss=4.5874  val_slot@1=0.566  val_zone=0.462  val_tile=0.094  val_tile_cls=0.165  val_tile@5=0.400  val_loss=6.0593
+progress phase=4.4.2 epoch=9/9 batch=1/2896 work=88.9% elapsed=5390s ETA=673s tile_loss=3.2115
+progress phase=4.4.2 epoch=9/9 batch=25/2896 work=89.0% elapsed=5395s ETA=668s tile_loss=3.3889
+progress phase=4.4.2 epoch=9/9 batch=50/2896 work=89.1% elapsed=5401s ETA=662s tile_loss=3.4474
+progress phase=4.4.2 epoch=9/9 batch=75/2896 work=89.2% elapsed=5407s ETA=656s tile_loss=3.1327
+progress phase=4.4.2 epoch=9/9 batch=100/2896 work=89.3% elapsed=5412s ETA=650s tile_loss=3.4266
+progress phase=4.4.2 epoch=9/9 batch=125/2896 work=89.4% elapsed=5418s ETA=645s tile_loss=3.3467
+progress phase=4.4.2 epoch=9/9 batch=150/2896 work=89.5% elapsed=5424s ETA=639s tile_loss=3.2975
+progress phase=4.4.2 epoch=9/9 batch=175/2896 work=89.6% elapsed=5429s ETA=633s tile_loss=3.1580
+progress phase=4.4.2 epoch=9/9 batch=200/2896 work=89.7% elapsed=5435s ETA=627s tile_loss=3.1006
+progress phase=4.4.2 epoch=9/9 batch=225/2896 work=89.8% elapsed=5440s ETA=621s tile_loss=3.4227
+progress phase=4.4.2 epoch=9/9 batch=250/2896 work=89.8% elapsed=5446s ETA=615s tile_loss=3.2365
+progress phase=4.4.2 epoch=9/9 batch=275/2896 work=89.9% elapsed=5452s ETA=610s tile_loss=3.2619
+progress phase=4.4.2 epoch=9/9 batch=300/2896 work=90.0% elapsed=5457s ETA=604s tile_loss=3.4017
+progress phase=4.4.2 epoch=9/9 batch=325/2896 work=90.1% elapsed=5463s ETA=598s tile_loss=3.2526
+progress phase=4.4.2 epoch=9/9 batch=350/2896 work=90.2% elapsed=5469s ETA=592s tile_loss=3.3362
+progress phase=4.4.2 epoch=9/9 batch=375/2896 work=90.3% elapsed=5474s ETA=586s tile_loss=3.2836
+progress phase=4.4.2 epoch=9/9 batch=400/2896 work=90.4% elapsed=5480s ETA=580s tile_loss=3.4473
+progress phase=4.4.2 epoch=9/9 batch=425/2896 work=90.5% elapsed=5486s ETA=575s tile_loss=3.0244
+progress phase=4.4.2 epoch=9/9 batch=450/2896 work=90.6% elapsed=5491s ETA=569s tile_loss=3.4323
+progress phase=4.4.2 epoch=9/9 batch=475/2896 work=90.7% elapsed=5497s ETA=563s tile_loss=3.5143
+progress phase=4.4.2 epoch=9/9 batch=500/2896 work=90.8% elapsed=5503s ETA=557s tile_loss=3.1968
+progress phase=4.4.2 epoch=9/9 batch=525/2896 work=90.9% elapsed=5508s ETA=551s tile_loss=3.3878
+progress phase=4.4.2 epoch=9/9 batch=550/2896 work=91.0% elapsed=5514s ETA=545s tile_loss=3.2792
+progress phase=4.4.2 epoch=9/9 batch=575/2896 work=91.1% elapsed=5520s ETA=540s tile_loss=3.2609
+progress phase=4.4.2 epoch=9/9 batch=600/2896 work=91.2% elapsed=5525s ETA=534s tile_loss=3.3026
+progress phase=4.4.2 epoch=9/9 batch=625/2896 work=91.3% elapsed=5531s ETA=528s tile_loss=3.2636
+progress phase=4.4.2 epoch=9/9 batch=650/2896 work=91.4% elapsed=5536s ETA=522s tile_loss=3.5274
+progress phase=4.4.2 epoch=9/9 batch=675/2896 work=91.5% elapsed=5542s ETA=516s tile_loss=3.2346
+progress phase=4.4.2 epoch=9/9 batch=700/2896 work=91.6% elapsed=5548s ETA=510s tile_loss=3.1501
+progress phase=4.4.2 epoch=9/9 batch=725/2896 work=91.7% elapsed=5553s ETA=505s tile_loss=3.1664
+progress phase=4.4.2 epoch=9/9 batch=750/2896 work=91.8% elapsed=5559s ETA=499s tile_loss=3.1071
+progress phase=4.4.2 epoch=9/9 batch=775/2896 work=91.9% elapsed=5565s ETA=493s tile_loss=3.2652
+progress phase=4.4.2 epoch=9/9 batch=800/2896 work=92.0% elapsed=5570s ETA=487s tile_loss=3.1482
+progress phase=4.4.2 epoch=9/9 batch=825/2896 work=92.1% elapsed=5576s ETA=481s tile_loss=3.3013
+progress phase=4.4.2 epoch=9/9 batch=850/2896 work=92.2% elapsed=5582s ETA=475s tile_loss=3.4577
+progress phase=4.4.2 epoch=9/9 batch=875/2896 work=92.2% elapsed=5587s ETA=470s tile_loss=3.2215
+progress phase=4.4.2 epoch=9/9 batch=900/2896 work=92.3% elapsed=5593s ETA=464s tile_loss=3.4636
+progress phase=4.4.2 epoch=9/9 batch=925/2896 work=92.4% elapsed=5599s ETA=458s tile_loss=3.2609
+progress phase=4.4.2 epoch=9/9 batch=950/2896 work=92.5% elapsed=5604s ETA=452s tile_loss=3.1921
+progress phase=4.4.2 epoch=9/9 batch=975/2896 work=92.6% elapsed=5610s ETA=446s tile_loss=3.2492
+progress phase=4.4.2 epoch=9/9 batch=1000/2896 work=92.7% elapsed=5616s ETA=441s tile_loss=3.2334
+progress phase=4.4.2 epoch=9/9 batch=1025/2896 work=92.8% elapsed=5621s ETA=435s tile_loss=2.9264
+progress phase=4.4.2 epoch=9/9 batch=1050/2896 work=92.9% elapsed=5627s ETA=429s tile_loss=3.1981
+progress phase=4.4.2 epoch=9/9 batch=1075/2896 work=93.0% elapsed=5633s ETA=423s tile_loss=3.1181
+progress phase=4.4.2 epoch=9/9 batch=1100/2896 work=93.1% elapsed=5638s ETA=417s tile_loss=2.9997
+progress phase=4.4.2 epoch=9/9 batch=1125/2896 work=93.2% elapsed=5644s ETA=411s tile_loss=3.1735
+progress phase=4.4.2 epoch=9/9 batch=1150/2896 work=93.3% elapsed=5650s ETA=406s tile_loss=3.2029
+progress phase=4.4.2 epoch=9/9 batch=1175/2896 work=93.4% elapsed=5655s ETA=400s tile_loss=2.9339
+progress phase=4.4.2 epoch=9/9 batch=1200/2896 work=93.5% elapsed=5661s ETA=394s tile_loss=3.1324
+progress phase=4.4.2 epoch=9/9 batch=1225/2896 work=93.6% elapsed=5667s ETA=388s tile_loss=3.2818
+progress phase=4.4.2 epoch=9/9 batch=1250/2896 work=93.7% elapsed=5672s ETA=382s tile_loss=3.2635
+progress phase=4.4.2 epoch=9/9 batch=1275/2896 work=93.8% elapsed=5678s ETA=377s tile_loss=3.3623
+progress phase=4.4.2 epoch=9/9 batch=1300/2896 work=93.9% elapsed=5683s ETA=371s tile_loss=3.3239
+progress phase=4.4.2 epoch=9/9 batch=1325/2896 work=94.0% elapsed=5689s ETA=365s tile_loss=3.3348
+progress phase=4.4.2 epoch=9/9 batch=1350/2896 work=94.1% elapsed=5695s ETA=359s tile_loss=3.0055
+progress phase=4.4.2 epoch=9/9 batch=1375/2896 work=94.2% elapsed=5701s ETA=353s tile_loss=3.2755
+progress phase=4.4.2 epoch=9/9 batch=1400/2896 work=94.3% elapsed=5706s ETA=347s tile_loss=3.4549
+progress phase=4.4.2 epoch=9/9 batch=1425/2896 work=94.4% elapsed=5712s ETA=342s tile_loss=3.6225
+progress phase=4.4.2 epoch=9/9 batch=1450/2896 work=94.5% elapsed=5717s ETA=336s tile_loss=3.2929
+progress phase=4.4.2 epoch=9/9 batch=1475/2896 work=94.5% elapsed=5723s ETA=330s tile_loss=3.3035
+progress phase=4.4.2 epoch=9/9 batch=1500/2896 work=94.6% elapsed=5729s ETA=324s tile_loss=3.1764
+progress phase=4.4.2 epoch=9/9 batch=1525/2896 work=94.7% elapsed=5734s ETA=318s tile_loss=3.2367
+progress phase=4.4.2 epoch=9/9 batch=1550/2896 work=94.8% elapsed=5740s ETA=313s tile_loss=3.3737
+progress phase=4.4.2 epoch=9/9 batch=1575/2896 work=94.9% elapsed=5746s ETA=307s tile_loss=3.2635
+progress phase=4.4.2 epoch=9/9 batch=1600/2896 work=95.0% elapsed=5751s ETA=301s tile_loss=3.0193
+progress phase=4.4.2 epoch=9/9 batch=1625/2896 work=95.1% elapsed=5757s ETA=295s tile_loss=3.1687
+progress phase=4.4.2 epoch=9/9 batch=1650/2896 work=95.2% elapsed=5763s ETA=289s tile_loss=3.1882
+progress phase=4.4.2 epoch=9/9 batch=1675/2896 work=95.3% elapsed=5768s ETA=284s tile_loss=3.4524
+progress phase=4.4.2 epoch=9/9 batch=1700/2896 work=95.4% elapsed=5774s ETA=278s tile_loss=3.1241
+progress phase=4.4.2 epoch=9/9 batch=1725/2896 work=95.5% elapsed=5780s ETA=272s tile_loss=3.2281
+progress phase=4.4.2 epoch=9/9 batch=1750/2896 work=95.6% elapsed=5785s ETA=266s tile_loss=3.0483
+progress phase=4.4.2 epoch=9/9 batch=1775/2896 work=95.7% elapsed=5791s ETA=260s tile_loss=3.2589
+progress phase=4.4.2 epoch=9/9 batch=1800/2896 work=95.8% elapsed=5797s ETA=254s tile_loss=3.1315
+progress phase=4.4.2 epoch=9/9 batch=1825/2896 work=95.9% elapsed=5803s ETA=249s tile_loss=3.3049
+progress phase=4.4.2 epoch=9/9 batch=1850/2896 work=96.0% elapsed=5808s ETA=243s tile_loss=3.2821
+progress phase=4.4.2 epoch=9/9 batch=1875/2896 work=96.1% elapsed=5814s ETA=237s tile_loss=3.1488
+progress phase=4.4.2 epoch=9/9 batch=1900/2896 work=96.2% elapsed=5819s ETA=231s tile_loss=3.0597
+progress phase=4.4.2 epoch=9/9 batch=1925/2896 work=96.3% elapsed=5825s ETA=225s tile_loss=3.0453
+progress phase=4.4.2 epoch=9/9 batch=1950/2896 work=96.4% elapsed=5831s ETA=220s tile_loss=3.2850
+progress phase=4.4.2 epoch=9/9 batch=1975/2896 work=96.5% elapsed=5836s ETA=214s tile_loss=3.2372
+progress phase=4.4.2 epoch=9/9 batch=2000/2896 work=96.6% elapsed=5842s ETA=208s tile_loss=3.2836
+progress phase=4.4.2 epoch=9/9 batch=2025/2896 work=96.7% elapsed=5848s ETA=202s tile_loss=3.0921
+progress phase=4.4.2 epoch=9/9 batch=2050/2896 work=96.8% elapsed=5853s ETA=196s tile_loss=3.2763
+progress phase=4.4.2 epoch=9/9 batch=2075/2896 work=96.9% elapsed=5859s ETA=191s tile_loss=3.1714
+progress phase=4.4.2 epoch=9/9 batch=2100/2896 work=96.9% elapsed=5865s ETA=185s tile_loss=3.1983
+progress phase=4.4.2 epoch=9/9 batch=2125/2896 work=97.0% elapsed=5870s ETA=179s tile_loss=3.3248
+progress phase=4.4.2 epoch=9/9 batch=2150/2896 work=97.1% elapsed=5876s ETA=173s tile_loss=3.4129
+progress phase=4.4.2 epoch=9/9 batch=2175/2896 work=97.2% elapsed=5881s ETA=167s tile_loss=3.1214
+progress phase=4.4.2 epoch=9/9 batch=2200/2896 work=97.3% elapsed=5887s ETA=162s tile_loss=3.3092
+progress phase=4.4.2 epoch=9/9 batch=2225/2896 work=97.4% elapsed=5893s ETA=156s tile_loss=3.4569
+progress phase=4.4.2 epoch=9/9 batch=2250/2896 work=97.5% elapsed=5899s ETA=150s tile_loss=3.1484
+progress phase=4.4.2 epoch=9/9 batch=2275/2896 work=97.6% elapsed=5904s ETA=144s tile_loss=3.2807
+progress phase=4.4.2 epoch=9/9 batch=2300/2896 work=97.7% elapsed=5910s ETA=138s tile_loss=3.4913
+progress phase=4.4.2 epoch=9/9 batch=2325/2896 work=97.8% elapsed=5916s ETA=132s tile_loss=3.2547
+progress phase=4.4.2 epoch=9/9 batch=2350/2896 work=97.9% elapsed=5921s ETA=127s tile_loss=3.2698
+progress phase=4.4.2 epoch=9/9 batch=2375/2896 work=98.0% elapsed=5927s ETA=121s tile_loss=3.3200
+progress phase=4.4.2 epoch=9/9 batch=2400/2896 work=98.1% elapsed=5933s ETA=115s tile_loss=3.0047
+progress phase=4.4.2 epoch=9/9 batch=2425/2896 work=98.2% elapsed=5938s ETA=109s tile_loss=3.2724
+progress phase=4.4.2 epoch=9/9 batch=2450/2896 work=98.3% elapsed=5944s ETA=103s tile_loss=3.2497
+progress phase=4.4.2 epoch=9/9 batch=2475/2896 work=98.4% elapsed=5950s ETA=98s tile_loss=3.0615
+progress phase=4.4.2 epoch=9/9 batch=2500/2896 work=98.5% elapsed=5955s ETA=92s tile_loss=3.3637
+progress phase=4.4.2 epoch=9/9 batch=2525/2896 work=98.6% elapsed=5961s ETA=86s tile_loss=2.8633
+progress phase=4.4.2 epoch=9/9 batch=2550/2896 work=98.7% elapsed=5966s ETA=80s tile_loss=3.0087
+progress phase=4.4.2 epoch=9/9 batch=2575/2896 work=98.8% elapsed=5972s ETA=74s tile_loss=3.0907
+progress phase=4.4.2 epoch=9/9 batch=2600/2896 work=98.9% elapsed=5978s ETA=69s tile_loss=3.3507
+progress phase=4.4.2 epoch=9/9 batch=2625/2896 work=99.0% elapsed=5984s ETA=63s tile_loss=3.0607
+progress phase=4.4.2 epoch=9/9 batch=2650/2896 work=99.1% elapsed=5989s ETA=57s tile_loss=3.1452
+progress phase=4.4.2 epoch=9/9 batch=2675/2896 work=99.2% elapsed=5995s ETA=51s tile_loss=2.9982
+progress phase=4.4.2 epoch=9/9 batch=2700/2896 work=99.2% elapsed=6001s ETA=45s tile_loss=3.3228
+progress phase=4.4.2 epoch=9/9 batch=2725/2896 work=99.3% elapsed=6006s ETA=40s tile_loss=3.4012
+progress phase=4.4.2 epoch=9/9 batch=2750/2896 work=99.4% elapsed=6012s ETA=34s tile_loss=3.0556
+progress phase=4.4.2 epoch=9/9 batch=2775/2896 work=99.5% elapsed=6018s ETA=28s tile_loss=3.0641
+progress phase=4.4.2 epoch=9/9 batch=2800/2896 work=99.6% elapsed=6023s ETA=22s tile_loss=3.2099
+progress phase=4.4.2 epoch=9/9 batch=2825/2896 work=99.7% elapsed=6029s ETA=16s tile_loss=3.0689
+progress phase=4.4.2 epoch=9/9 batch=2850/2896 work=99.8% elapsed=6034s ETA=11s tile_loss=3.3538
+progress phase=4.4.2 epoch=9/9 batch=2875/2896 work=99.9% elapsed=6040s ETA=5s tile_loss=3.4635
+progress phase=4.4.2 epoch=9/9 batch=2896/2896 work=100.0% elapsed=6045s ETA=0s tile_loss=3.3083
+epoch 09  train_loss=4.5819  val_slot@1=0.566  val_zone=0.462  val_tile=0.095  val_tile_cls=0.165  val_tile@5=0.400  val_loss=6.0651
+Rolling out policy continuations for realism scoring ...
+{
+  "test": {
+    "loss": 6.0332610150601,
+    "slot_top1": 0.5677476118652589,
+    "slot_top3": 0.9447377241494889,
+    "type_acc": 0.9977794536618066,
+    "zone_acc": 0.46170604994134407,
+    "xy_mae": 5087.787351265292,
+    "tile_acc": 0.0920479302832244,
+    "tile_class_acc": 0.1661220043572985,
+    "tile_top5_acc": 0.40619239148650915,
+    "tile_nll": 4.33805433157922,
+    "tile_entropy_bits": 4.486445198551342,
+    "tile_effective_count": 22.415817321953966,
+    "tile_top1_mass": 0.23753680706583558,
+    "tile_top5_mass": 0.5495126748856176,
+    "timing_mae": 1.4466147099145397,
+    "n": 23868,
+    "model_x_std": 0.1960471123456955,
+    "model_y_std": 0.19657081365585327,
+    "argmax_x_std": 0.26805350184440613,
+    "argmax_y_std": 0.23380613327026367
+  },
+  "baselines": {
+    "frequency": {
+      "name": "online_frequency",
+      "slot_top1": 0.12098346223982896,
+      "slot_top3": 0.39693768471357604,
+      "n": 159030
+    },
+    "cycle": {
+      "name": "approx_cycle",
+      "slot_top1": 0.19809469911337482,
+      "slot_top3": 0.6188329246054204,
+      "n": 159030
+    },
+    "chance_slot_top1": 0.125
+  },
+  "rollouts": {
+    "available": true,
+    "n": 95,
+    "mean_score_real": 0.8729784873701104,
+    "mean_score_policy": 0.973383278812396,
+    "mean_score_easy": 8.294153910167582e-05,
+    "mean_score_medium": 4.933140716279038e-05,
+    "policy_vs_easy_lift": 0.9733003372732942,
+    "policy_vs_medium_lift": 0.9733339474052332,
+    "policy_gap_to_real": -0.10040479144228553,
+    "placement_diversity": {
+      "human": {
+        "battles": 95.0,
+        "mean_unique_tiles": 25.50526315789474,
+        "mean_max_tile_share": 0.1159142072255904
+      },
+      "policy": {
+        "battles": 95.0,
+        "mean_unique_tiles": 19.189473684210526,
+        "mean_max_tile_share": 0.2226315789473684
+      },
+      "grid": "18x32",
+      "decode": "sample",
+      "temperature": 0.6,
+      "top_k": 5
+    }
+  },
+  "live_play_readiness": {
+    "ready_for_live_smoke_test": true,
+    "checks": {
+      "beats_baselines": true,
+      "slot_floor": true,
+      "zone_floor": true,
+      "tile_or_zone": true,
+      "rollout_beats_easy": true,
+      "rollout_not_collapsed": true,
+      "rollout_near_real": true
+    },
+    "rationale": "All offline gates passed; a short supervised live smoke test is justified."
+  }
+}
+Wrote models/policy_bc_v4.4.2/report.json
+{
+  "model_name": "policy-bc-v4.4.2",
+  "model_version": "4.4.2",
+  "created_at": "2026-08-12T01:58:47Z",
+  "seconds": 6133.7,
+  "compute": {
+    "device": "cuda",
+    "framework": "pytorch",
+    "parameters": 967442,
+    "d_model": 160,
+    "num_layers": 2,
+    "epochs_requested": 9,
+    "epochs_ran": 9,
+    "batch_size": 512,
+    "gradient_accumulation_steps": 1,
+    "learning_rate": 0.0001,
+    "dropout": 0.2,
+    "max_context": 64,
+    "max_samples_per_battle": 40,
+    "global_dim": 62,
+    "threat_dim": 14,
+    "card_conditioned_placement": true,
+    "placement_mode": "heatmap",
+    "placement_card_mode": "selected",
+    "rollout_placement_decode": "sample",
+    "rollout_placement_temperature": 0.6,
+    "rollout_placement_top_k": 5,
+    "rollout_slot_decode": "sample",
+    "rollout_slot_temperature": 0.8,
+    "rollout_scheduling": "race",
+    "reaction_weight": 3.0,
+    "reaction_repeats": 2,
+    "reaction_seconds": 5.0,
+    "max_battles": null,
+    "hide_opponent_deck": false,
+    "hide_opponent_prob": 0.0,
+    "loss_kwargs": {
+      "zone_weight": 1.1,
+      "xy_weight": 0.0,
+      "tile_weight": 0.55,
+      "slot_weight": 1.4
+    },
+    "warmstart": {
+      "dir": "models/policy_bc_v4.4.2",
+      "missing_keys": [],
+      "unexpected_keys": []
+    },
+    "training_log_path": "models/policy_bc_v4.4.2/training.log",
+    "freeze_backbone": false,
+    "training_stage": null,
+    "arena_control": "aligned",
+    "arena_memory_channels": 0,
+    "arena_hidden_channels": 32,
+    "arena_memory_version": "none",
+    "arena_gate_bias": -2.2,
+    "split_manifest": "data/splits/policy_v4_4_2_winner_seed42.json",
+    "manifest_hash": "55a5c3104ba18f2aea703596253f1be4b6e1cac42c9041cd30dba093b36f8f37",
+    "progress_path": "models/policy_bc_v4.4.2/progress.jsonl",
+    "log_path": null,
+    "trainable_parameters": 967442,
+    "mirror_training": true,
+    "lazy_mirror_training": true,
+    "max_think_steps": 3,
+    "eval_think_steps": 3,
+    "winner_only": true
+  },
+  "data": {
+    "battles_total": 50918,
+    "min_card_plays": 12,
+    "train_samples": 1482692,
+    "val_samples": 23284,
+    "test_samples": 23868,
+    "vocab_size": 126,
+    "splits": [
+      {
+        "split": "train",
+        "battles": 45826,
+        "team_win_rate": 0.5038406144983197,
+        "mean_events": 64.69192161654956
+      },
+      {
+        "split": "val",
+        "battles": 2546,
+        "team_win_rate": 0.5106048703849175,
+        "mean_events": 64.44540455616654
+      },
+      {
+        "split": "test",
+        "battles": 2546,
+        "team_win_rate": 0.49803613511390415,
+        "mean_events": 65.95797329143755
+      }
+    ]
+  },
+  "baselines": {
+    "frequency": {
+      "name": "online_frequency",
+      "slot_top1": 0.12098346223982896,
+      "slot_top3": 0.39693768471357604,
+      "n": 159030
+    },
+    "cycle": {
+      "name": "approx_cycle",
+      "slot_top1": 0.19809469911337482,
+      "slot_top3": 0.6188329246054204,
+      "n": 159030
+    },
+    "chance_slot_top1": 0.125
+  },
+  "val": {
+    "loss": 6.065095383187999,
+    "slot_top1": 0.5657533069919258,
+    "slot_top3": 0.9449407318330184,
+    "type_acc": 0.9985827177460918,
+    "zone_acc": 0.46181927503865317,
+    "xy_mae": 5128.205731403539,
+    "tile_acc": 0.0946143274351486,
+    "tile_class_acc": 0.16547844013056176,
+    "tile_top5_acc": 0.4002319189142759,
+    "tile_nll": 4.380311951197375,
+    "timing_mae": 1.4679899178016556,
+    "model_x_std": 0.19841791689395905,
+    "model_y_std": 0.1970653086900711
+  },
+  "test": {
+    "loss": 6.0332610150601,
+    "slot_top1": 0.5677476118652589,
+    "slot_top3": 0.9447377241494889,
+    "type_acc": 0.9977794536618066,
+    "zone_acc": 0.46170604994134407,
+    "xy_mae": 5087.787351265292,
+    "tile_acc": 0.0920479302832244,
+    "tile_class_acc": 0.1661220043572985,
+    "tile_top5_acc": 0.40619239148650915,
+    "tile_nll": 4.33805433157922,
+    "tile_entropy_bits": 4.486445198551342,
+    "tile_effective_count": 22.415817321953966,
+    "tile_top1_mass": 0.23753680706583558,
+    "tile_top5_mass": 0.5495126748856176,
+    "timing_mae": 1.4466147099145397,
+    "n": 23868,
+    "model_x_std": 0.1960471123456955,
+    "model_y_std": 0.19657081365585327,
+    "argmax_x_std": 0.26805350184440613,
+    "argmax_y_std": 0.23380613327026367
+  },
+  "test_think_off": {
+    "loss": 6.0315358283671925,
+    "slot_top1": 0.5648986090162561,
+    "slot_top3": 0.9440673705379587,
+    "type_acc": 0.997737556561086,
+    "zone_acc": 0.4540388805094687,
+    "xy_mae": 5138.619694779622,
+    "tile_acc": 0.08178314060667002,
+    "tile_class_acc": 0.1611362493715435,
+    "tile_top5_acc": 0.4004524886877828,
+    "tile_nll": 4.345169980301816,
+    "tile_entropy_bits": 4.689968993281407,
+    "tile_effective_count": 25.81198153237186,
+    "tile_top1_mass": 0.2187305617935797,
+    "tile_top5_mass": 0.5175641633486536,
+    "timing_mae": 1.470233192910536,
+    "n": 23868,
+    "model_x_std": 0.18879668414592743,
+    "model_y_std": 0.1954212337732315,
+    "argmax_x_std": 0.26851239800453186,
+    "argmax_y_std": 0.23627270758152008
+  },
+  "rollouts": {
+    "available": true,
+    "n": 95,
+    "mean_score_real": 0.8729784873701104,
+    "mean_score_policy": 0.973383278812396,
+    "mean_score_easy": 8.294153910167582e-05,
+    "mean_score_medium": 4.933140716279038e-05,
+    "policy_vs_easy_lift": 0.9733003372732942,
+    "policy_vs_medium_lift": 0.9733339474052332,
+    "policy_gap_to_real": -0.10040479144228553,
+    "placement_diversity": {
+      "human": {
+        "battles": 95.0,
+        "mean_unique_tiles": 25.50526315789474,
+        "mean_max_tile_share": 0.1159142072255904
+      },
+      "policy": {
+        "battles": 95.0,
+        "mean_unique_tiles": 19.189473684210526,
+        "mean_max_tile_share": 0.2226315789473684
+      },
+      "grid": "18x32",
+      "decode": "sample",
+      "temperature": 0.6,
+      "top_k": 5
+    }
+  },
+  "rollout_hist": {
+    "real": [
+      0.9962333537213935,
+      0.9896533043062415,
+      0.1927199419136231,
+      0.7929068494920518,
+      0.85780408509327,
+      0.6835539316099153,
+      0.9729764575011288,
+      0.9726970714174324,
+      0.9332709225506657,
+      0.995248609912156,
+      0.9308179730069995,
+      0.3492648724728123,
+      0.9903732156242623,
+      0.7517310353780309,
+      0.9348626134571072,
+      0.7193984849679583,
+      0.9252351355372146,
+      0.9759935822968598,
+      0.9140611069230751,
+      0.9851104782148224,
+      0.9281222046301567,
+      0.8869888581819512,
+      0.9475036144376576,
+      0.9949934806947516,
+      0.9335912362517228,
+      0.9819419366203632,
+      0.8777414102602552,
+      0.9912881240361996,
+      0.929285098751156,
+      0.8712362129049588,
+      0.9599770338303443,
+      0.9968902752471419,
+      0.9405224901636835,
+      0.9846184622206183,
+      0.9611130876899313,
+      0.6826882706864844,
+      0.9328945749660104,
+      0.9266113265463338,
+      0.8919699588061957,
+      0.9722992835082489,
+      0.9567588702473133,
+      0.9936008027761556,
+      0.6353187019474548,
+      0.989648219753802,
+      0.9798428589088504,
+      0.7952860461856378,
+      0.42089283762153656,
+      0.9642002855706235,
+      0.5514356089266168,
+      0.8020958069432994,
+      0.9791167080921344,
+      0.9752978775185155,
+      0.7865474734565446,
+      0.9867784282079863,
+      0.971688021725415,
+      0.9660960140850582,
+      0.3822172484850753,
+      0.9914541036897516,
+      0.9772808253790839,
+      0.5332897779694076,
+      0.6969430985301116,
+      0.8973468773988638,
+      0.47173708737537623,
+      0.9747222367332956,
+      0.9800787090199601,
+      0.8876783821285478,
+      0.9660125758311836,
+      0.5653674617423479,
+      0.995779499871741,
+      0.9936142011709989,
+      0.9580225982951326,
+      0.9195669241932775,
+      0.9796220230726193,
+      0.9761612603903005,
+      0.789077288175547,
+      0.9806300781145669,
+      0.737004489389148,
+      0.9824110040250028,
+      0.9302600511769159,
+      0.5588296017728471,
+      0.9915026937815007,
+      0.9481662649961263,
+      0.942788895183692,
+      0.487357422882908,
+      0.946504829905186,
+      0.9934306713094301,
+      0.9915166444181506,
+      0.9678108711133653,
+      0.9712220718520168,
+      0.9382783242746362,
+      0.9562386779668588,
+      0.7654931141538662,
+      0.926554922691494,
+      0.9587687452142675,
+      0.8114202186877465
+    ],
+    "policy": [
+      0.9916126411764541,
+      0.9865519084098393,
+      0.9975577663027269,
+      0.9969683026155954,
+      0.9977183139634973,
+      0.9901565055043406,
+      0.9966789797383241,
+      0.9978122470468903,
+      0.9963173956999876,
+      0.9982404100876916,
+      0.9963471489625184,
+      0.9027425892081762,
+      0.9992128276615397,
+      0.9980666761722993,
+      0.996758528216226,
+      0.9948593259445827,
+      0.9977916574857009,
+      0.9966693854569656,
+      0.9918734157185976,
+      0.998737164523387,
+      0.9951492212884911,
+      0.9954466492855361,
+      0.9940599211763359,
+      0.9985823946213487,
+      0.9981956979319787,
+      0.8488749292521218,
+      0.9967914188387731,
+      0.9913519967816986,
+      0.9995748319020218,
+      0.9307216911203046,
+      0.9959197837254338,
+      0.9982941920253691,
+      0.9941265561747571,
+      0.9975384295638451,
+      0.9992443589622342,
+      0.9952901576645194,
+      0.9993574470193757,
+      0.9964555759310811,
+      0.9985235629615069,
+      0.015478463836203426,
+      0.9723378343713466,
+      0.853626033104681,
+      0.9936727633933647,
+      0.9960621557650952,
+      0.9983194458471528,
+      0.9969299168199768,
+      0.9982896554977905,
+      0.9992042084252473,
+      0.9879340980468021,
+      0.9962025300733809,
+      0.9986787884026976,
+      0.9963608694737903,
+      0.9973262310962969,
+      0.9924553252593404,
+      0.9986722050383201,
+      0.9986182662030726,
+      0.9987513316063141,
+      0.9958653126320572,
+      0.997988274778617,
+      0.9982673696710347,
+      0.9980236586416708,
+      0.995571752893983,
+      0.9983474330159056,
+      0.9976659027526333,
+      0.9977961242571899,
+      0.9989051601987473,
+      0.9987987567596658,
+      0.9975757650368896,
+      0.985064151311565,
+      0.9992725315652835,
+      0.9823312593723008,
+      0.9972148403641746,
+      0.994742916320149,
+      0.9731290909362086,
+      0.999342035692326,
+      0.9982059419288978,
+      0.9965634447947702,
+      0.9928547965304287,
+      0.9842096567307208,
+      0.9972992555205459,
+      0.9991946734177507,
+      0.9969197338688537,
+      0.9987560521790311,
+      0.9982276042107955,
+      0.9993413574986443,
+      0.9977481271998554,
+      0.9965205012704615,
+      0.9996418667337625,
+      0.9970869818923306,
+      0.9979802194372677,
+      0.9973538731771981,
+      0.9982109650537103,
+      0.9981494703603463,
+      0.9982682908173401,
+      0.28788420997154834
+    ],
+    "easy": [
+      0.00018664984637657914,
+      9.94787576702169e-05,
+      0.0001248239151512626,
+      5.4282240310914403e-05,
+      7.310769689005905e-05,
+      4.256813936562815e-05,
+      7.794522348184058e-05,
+      7.522136783144747e-05,
+      3.5818456294716985e-05,
+      0.00014416630148149896,
+      6.630965245237036e-05,
+      0.00014004369860928266,
+      2.8213083300195777e-05,
+      2.248211548631907e-05,
+      8.633986270245254e-05,
+      7.08665929797e-05,
+      3.558012695128446e-05,
+      1.1447839397372892e-05,
+      2.3514563299451902e-05,
+      3.3789365641960134e-05,
+      8.27646800597371e-05,
+      0.00016026109198335236,
+      5.325919792829616e-05,
+      7.479275107137715e-05,
+      7.229478785475145e-05,
+      0.0002168741894723247,
+      3.924984711856152e-05,
+      4.373781833445217e-05,
+      6.340276936627204e-05,
+      4.0600752117559074e-05,
+      0.00017236274536601114,
+      3.166681071755457e-05,
+      2.980463601535303e-05,
+      4.55137547282588e-05,
+      2.6502241479807435e-05,
+      0.00012304883081046026,
+      0.00022078021830010855,
+      0.00018598843286414394,
+      4.5815159667074885e-05,
+      2.8131745282798697e-05,
+      3.4664123013713486e-05,
+      2.1398182221032528e-05,
+      5.0641245635982866e-05,
+      0.0003902194937626878,
+      0.00010250508430681157,
+      9.90149183724541e-05,
+      7.224817631780082e-05,
+      0.00016422031788382733,
+      5.7516054256999145e-05,
+      7.760866607586033e-05,
+      3.3027518965915015e-05,
+      5.392981630826498e-05,
+      7.839155758129472e-05,
+      3.107871209105331e-05,
+      4.216077897182259e-05,
+      7.054006365041289e-05,
+      1.5165721166607087e-05,
+      0.00010110415297452348,
+      4.6005269235955915e-05,
+      3.875391782347178e-05,
+      4.9330376253922465e-05,
+      4.470823763043845e-05,
+      4.603114181601624e-05,
+      0.00011479132718082438,
+      0.0005605051101467452,
+      2.1648056978798033e-05,
+      8.103661587903951e-05,
+      0.00015427656202809777,
+      5.3461842248601505e-05,
+      9.674464146415779e-05,
+      2.4936959170775767e-05,
+      0.00015526808010233367,
+      0.0001346206544964724,
+      7.952020526137307e-05,
+      5.663091104051835e-05,
+      0.00013214934520667116,
+      1.2164849998003629e-05,
+      2.7313945606038914e-05,
+      5.492910558538993e-05,
+      3.05428824024722e-05,
+      3.6967802000744157e-05,
+      1.9500454799885204e-05,
+      5.8544665033359925e-05,
+      7.475845952614473e-05,
+      3.0952529407056596e-05,
+      7.620866199505162e-05,
+      4.8816076702625874e-05,
+      7.713034360824089e-05,
+      0.0001473358428338564,
+      9.43326873783228e-05,
+      2.8177668415874494e-05,
+      0.00025080048211614776,
+      3.497815030977461e-05,
+      0.0001728214361584546,
+      2.7815027047672733e-05
+    ],
+    "medium": [
+      3.927569805107051e-05,
+      4.64353883438182e-05,
+      5.934154938686975e-05,
+      6.115263600181205e-05,
+      3.1361218960056995e-05,
+      3.5300166675308034e-05,
+      5.430970003078912e-05,
+      3.7796386400463135e-05,
+      7.648121321592355e-06,
+      4.61612409082658e-05,
+      4.6841749196214033e-05,
+      7.467894024029173e-05,
+      3.320025922694432e-05,
+      2.0928943033710535e-05,
+      2.3991787264682753e-05,
+      4.5130534809713805e-05,
+      4.3423255999532676e-05,
+      1.9351473413169257e-05,
+      5.959484034813719e-05,
+      3.773754876215886e-05,
+      4.3646892172780554e-05,
+      0.0001364232902132496,
+      1.653646001048238e-05,
+      3.09602497538067e-05,
+      0.00011855303407888731,
+      9.280774051752506e-05,
+      1.92870527098204e-05,
+      2.630090843231835e-05,
+      8.19970399197511e-05,
+      3.652765810935226e-05,
+      3.067517896698795e-05,
+      3.660633910005425e-05,
+      2.8954778393107776e-05,
+      4.957978210577468e-05,
+      6.603826013494265e-05,
+      5.877336749162215e-05,
+      8.410396628498602e-05,
+      4.2221542914311985e-05,
+      8.557549799071527e-05,
+      8.570344526718374e-05,
+      1.924763006374609e-05,
+      6.073998486187452e-05,
+      2.6133698710182626e-05,
+      3.164780416014006e-05,
+      2.8200543924463156e-05,
+      8.416342929860772e-05,
+      5.0420187712701355e-05,
+      2.9444851083439673e-05,
+      2.4782868547110624e-05,
+      5.107529749758965e-05,
+      3.9242205086841066e-05,
+      6.20776256304383e-05,
+      1.1813872414328716e-05,
+      7.949071254193711e-05,
+      5.5797711953708256e-05,
+      8.034976828127921e-05,
+      1.850643420960912e-05,
+      7.98058049371819e-05,
+      6.42583959918841e-05,
+      2.8429190851864096e-05,
+      2.2818872136299944e-05,
+      3.462983178956321e-05,
+      3.490286409385955e-05,
+      4.6069052156585144e-05,
+      5.500317837665992e-05,
+      3.164268904919809e-05,
+      6.0969090778739376e-05,
+      5.6587515999808235e-05,
+      4.214453213904813e-05,
+      5.973304602096098e-05,
+      1.3987260414975615e-05,
+      3.511894438027237e-05,
+      0.0001350836045804037,
+      0.00010292418771065868,
+      0.00011807396737414344,
+      1.7837174065788088e-05,
+      1.9114555505011887e-05,
+      3.7614251875001944e-05,
+      3.8940478772391954e-05,
+      7.084782663762574e-05,
+      3.0048894107435084e-05,
+      0.0001273897472266848,
+      3.144348549489251e-05,
+      4.405762846677083e-05,
+      5.393387011455184e-05,
+      3.839634037452812e-05,
+      4.6650947919519275e-05,
+      0.00011282280010725634,
+      5.6719956257660265e-05,
+      4.273080313633635e-05,
+      3.992481373314927e-05,
+      2.218350264620294e-05,
+      2.706321421394923e-05,
+      2.950700871131623e-05,
+      2.900580339664801e-05
+    ]
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 4.6519715202282805,
+      "val_loss": 6.097901727842248,
+      "val_slot_top1": 0.5623174712248754,
+      "val_slot_top3": 0.945155471568459,
+      "val_type_acc": 0.9985397697990036,
+      "val_zone_acc": 0.45821164748325033,
+      "val_xy_mae": 5135.130400704346,
+      "val_tile_acc": 0.0891599381549562,
+      "val_tile_class_acc": 0.16483422092423983,
+      "val_tile_top5_acc": 0.39851400103075074,
+      "val_tile_nll": 4.39191068076858,
+      "val_tile_entropy_bits": 4.441129667737234,
+      "val_tile_effective_count": 21.722671998609748,
+      "val_tile_top1_mass": 0.24001295577617593,
+      "val_tile_top5_mass": 0.5577981369209912,
+      "val_timing_mae": 1.4782817547642024,
+      "val_model_x_std": 0.19486401975154877,
+      "val_model_y_std": 0.19129708409309387,
+      "val_argmax_x_std": 0.2706143856048584,
+      "val_argmax_y_std": 0.22884085774421692,
+      "val_n": 23284,
+      "lr": 9.698463103929542e-05
+    },
+    {
+      "epoch": 2,
+      "train_loss": 4.641879729638442,
+      "val_loss": 6.073982570482337,
+      "val_slot_top1": 0.5626181068544923,
+      "val_slot_top3": 0.9442965126266964,
+      "val_type_acc": 0.9985397697990036,
+      "val_zone_acc": 0.4570091049647827,
+      "val_xy_mae": 5143.588419086068,
+      "val_tile_acc": 0.09272461776327091,
+      "val_tile_class_acc": 0.1633310427761553,
+      "val_tile_top5_acc": 0.39868579281910327,
+      "val_tile_nll": 4.377854712086022,
+      "val_tile_entropy_bits": 4.518771713039265,
+      "val_tile_effective_count": 22.92375874445621,
+      "val_tile_top1_mass": 0.23563948924384603,
+      "val_tile_top5_mass": 0.546231930248927,
+      "val_timing_mae": 1.4773615142607317,
+      "val_model_x_std": 0.19811511039733887,
+      "val_model_y_std": 0.19645729660987854,
+      "val_argmax_x_std": 0.26856544613838196,
+      "val_argmax_y_std": 0.23456692695617676,
+      "val_n": 23284,
+      "lr": 8.830222215594889e-05
+    },
+    {
+      "epoch": 3,
+      "train_loss": 4.64825645023288,
+      "val_loss": 6.0755166903786035,
+      "val_slot_top1": 0.5657962549390139,
+      "val_slot_top3": 0.9449407318330184,
+      "val_type_acc": 0.9985397697990036,
+      "val_zone_acc": 0.4603590448376568,
+      "val_xy_mae": 5143.09007258203,
+      "val_tile_acc": 0.09293935749871156,
+      "val_tile_class_acc": 0.1611406974746607,
+      "val_tile_top5_acc": 0.3968390310943137,
+      "val_tile_nll": 4.380180087578581,
+      "val_tile_entropy_bits": 4.524722960576469,
+      "val_tile_effective_count": 23.018516630815725,
+      "val_tile_top1_mass": 0.2307414546534688,
+      "val_tile_top5_mass": 0.5424771023009615,
+      "val_timing_mae": 1.47372042012571,
+      "val_model_x_std": 0.1986999362707138,
+      "val_model_y_std": 0.19571460783481598,
+      "val_argmax_x_std": 0.27045267820358276,
+      "val_argmax_y_std": 0.23361153900623322,
+      "val_n": 23284,
+      "lr": 7.500000000000001e-05
+    },
+    {
+      "epoch": 4,
+      "train_loss": 4.633556100874316,
+      "val_loss": 6.096340936163197,
+      "val_slot_top1": 0.5641212850025769,
+      "val_slot_top3": 0.945155471568459,
+      "val_type_acc": 0.9985397697990036,
+      "val_zone_acc": 0.4630218175571208,
+      "val_xy_mae": 5125.540193909981,
+      "val_tile_acc": 0.09435663975261982,
+      "val_tile_class_acc": 0.16457653324171104,
+      "val_tile_top5_acc": 0.39911527228998456,
+      "val_tile_nll": 4.399408138283666,
+      "val_tile_entropy_bits": 4.431075695924508,
+      "val_tile_effective_count": 21.57181551710503,
+      "val_tile_top1_mass": 0.24367780084156168,
+      "val_tile_top5_mass": 0.5586308943121484,
+      "val_timing_mae": 1.4687151834330308,
+      "val_model_x_std": 0.19674870371818542,
+      "val_model_y_std": 0.19714972376823425,
+      "val_argmax_x_std": 0.2670864164829254,
+      "val_argmax_y_std": 0.23355039954185486,
+      "val_n": 23284,
+      "lr": 5.868240888334653e-05
+    },
+    {
+      "epoch": 5,
+      "train_loss": 4.619113307055189,
+      "val_loss": 6.063940618349158,
+      "val_slot_top1": 0.5648943480501633,
+      "val_slot_top3": 0.9449407318330184,
+      "val_type_acc": 0.9985827177460918,
+      "val_zone_acc": 0.4598436694725992,
+      "val_xy_mae": 5132.511166466243,
+      "val_tile_acc": 0.09379831644047415,
+      "val_tile_class_acc": 0.1627297715169215,
+      "val_tile_top5_acc": 0.39799862566569316,
+      "val_tile_nll": 4.378330615393752,
+      "val_tile_entropy_bits": 4.500334581913479,
+      "val_tile_effective_count": 22.632665232842424,
+      "val_tile_top1_mass": 0.23665867480926958,
+      "val_tile_top5_mass": 0.5473943532404059,
+      "val_timing_mae": 1.468075821559836,
+      "val_model_x_std": 0.19894376397132874,
+      "val_model_y_std": 0.19320271909236908,
+      "val_argmax_x_std": 0.2719666063785553,
+      "val_argmax_y_std": 0.22971169650554657,
+      "val_n": 23284,
+      "lr": 4.131759111665349e-05
+    },
+    {
+      "epoch": 6,
+      "train_loss": 4.60542692581593,
+      "val_loss": 6.052793990010801,
+      "val_slot_top1": 0.5658821508331902,
+      "val_slot_top3": 0.9453702113038996,
+      "val_type_acc": 0.9985827177460918,
+      "val_zone_acc": 0.46143274351485997,
+      "val_xy_mae": 5124.338182872359,
+      "val_tile_acc": 0.09366947259920975,
+      "val_tile_class_acc": 0.16547844013056176,
+      "val_tile_top5_acc": 0.40091908606768595,
+      "val_tile_nll": 4.370240384986404,
+      "val_tile_entropy_bits": 4.4935917384926345,
+      "val_tile_effective_count": 22.52713188105312,
+      "val_tile_top1_mass": 0.2368322373091857,
+      "val_tile_top5_mass": 0.5493715656846071,
+      "val_timing_mae": 1.4703122053619841,
+      "val_model_x_std": 0.19631214439868927,
+      "val_model_y_std": 0.1975456029176712,
+      "val_argmax_x_std": 0.2669239342212677,
+      "val_argmax_y_std": 0.2353547066450119,
+      "val_n": 23284,
+      "lr": 2.500000000000001e-05
+    },
+    {
+      "epoch": 7,
+      "train_loss": 4.594599620413385,
+      "val_loss": 6.0662977073503574,
+      "val_slot_top1": 0.5651090877856039,
+      "val_slot_top3": 0.9453272633568115,
+      "val_type_acc": 0.9985827177460918,
+      "val_zone_acc": 0.4609603160968906,
+      "val_xy_mae": 5130.538191461948,
+      "val_tile_acc": 0.09448548359388421,
+      "val_tile_class_acc": 0.16384641814121284,
+      "val_tile_top5_acc": 0.40057550249098095,
+      "val_tile_nll": 4.380387891262509,
+      "val_tile_entropy_bits": 4.464978397476204,
+      "val_tile_effective_count": 22.08474696086607,
+      "val_tile_top1_mass": 0.23960515769194377,
+      "val_tile_top5_mass": 0.5537293340266519,
+      "val_timing_mae": 1.4690665523736794,
+      "val_model_x_std": 0.19891421496868134,
+      "val_model_y_std": 0.1969725638628006,
+      "val_argmax_x_std": 0.27048927545547485,
+      "val_argmax_y_std": 0.2334406077861786,
+      "val_n": 23284,
+      "lr": 1.1697777844051105e-05
+    },
+    {
+      "epoch": 8,
+      "train_loss": 4.587355436294119,
+      "val_loss": 6.059308445971945,
+      "val_slot_top1": 0.5655815152035732,
+      "val_slot_top3": 0.9456708469335166,
+      "val_type_acc": 0.9985827177460918,
+      "val_zone_acc": 0.4619910668270057,
+      "val_xy_mae": 5122.930274007902,
+      "val_tile_acc": 0.09427074385844357,
+      "val_tile_class_acc": 0.1653925442363855,
+      "val_tile_top5_acc": 0.4001030750730115,
+      "val_tile_nll": 4.376929207942552,
+      "val_tile_entropy_bits": 4.48027373318655,
+      "val_tile_effective_count": 22.320133223610217,
+      "val_tile_top1_mass": 0.23759663111154739,
+      "val_tile_top5_mass": 0.5515875738524342,
+      "val_timing_mae": 1.4678433563594167,
+      "val_model_x_std": 0.1971823126077652,
+      "val_model_y_std": 0.196863055229187,
+      "val_argmax_x_std": 0.2687654495239258,
+      "val_argmax_y_std": 0.23387034237384796,
+      "val_n": 23284,
+      "lr": 3.0153689607045845e-06
+    },
+    {
+      "epoch": 9,
+      "train_loss": 4.58194982132859,
+      "val_loss": 6.065095383187999,
+      "val_slot_top1": 0.5657533069919258,
+      "val_slot_top3": 0.9449407318330184,
+      "val_type_acc": 0.9985827177460918,
+      "val_zone_acc": 0.46181927503865317,
+      "val_xy_mae": 5128.205731403539,
+      "val_tile_acc": 0.0946143274351486,
+      "val_tile_class_acc": 0.16547844013056176,
+      "val_tile_top5_acc": 0.4002319189142759,
+      "val_tile_nll": 4.380311951197375,
+      "val_tile_entropy_bits": 4.459542703554815,
+      "val_tile_effective_count": 22.001694025559985,
+      "val_tile_top1_mass": 0.2398791889045845,
+      "val_tile_top5_mass": 0.5550913913125866,
+      "val_timing_mae": 1.4679899178016556,
+      "val_model_x_std": 0.19841791689395905,
+      "val_model_y_std": 0.1970653086900711,
+      "val_argmax_x_std": 0.2695956826210022,
+      "val_argmax_y_std": 0.23395587503910065,
+      "val_n": 23284,
+      "lr": 0.0
+    }
+  ],
+  "checkpoint": "models/policy_bc_v4.4.2/best_model.pt",
+  "lessons": [
+    "v4.4.2 is trained only on the eventual winner's actions from decisive replays; the full opponent context remains visible, but loser actions are not imitation targets.",
+    "Winner-side targets are perspective-normalized at encode time, so the same checkpoint can play either physical arena side without receiving the outcome label at inference.",
+    "This is an offline winner-move prior, not proof of live win rate: validate with held-out winner actions and offline policy matchups before phone play.",
+    "v4.4 keeps the v4.2 trunk size and v4.3 data recipe, but replaces XY regression with a card-conditioned 18×32 tile heatmap so placement can be multimodal.",
+    "Primary placement signal is tile cross-entropy; expected XY is kept for compatibility. Think loop defaults to max K=3 for a cheap compute dial.",
+    "Judge v4.4 on tile_class_acc / tile_top5_acc and placement spread, not only soft within-tile MAE from the XY mean.",
+    "v4 keeps v3 threat conditioning + reaction upweight; adds jointly trained card-conditioned zone/XY heads.",
+    "Offline probe: oracle card conditioning lifted zone to ~52%; e2e on frozen argmax did not — so v4 trains placement with the trunk (70% teacher / 30% soft slot mix).",
+    "Hand-audit showed exact cycle reconstruction does not move slot accuracy — heuristic hand masks stay.",
+    "Rollout autopsy blamed XY for most collapses; judge v4 on zone/XY MAE and collapse rate, not the auto live-play flag.",
+    "Action-clock initiative (+6pp) is for rollout harness next — not baked into this checkpoint."
+  ],
+  "live_play_readiness": {
+    "ready_for_live_smoke_test": true,
+    "checks": {
+      "beats_baselines": true,
+      "slot_floor": true,
+      "zone_floor": true,
+      "tile_or_zone": true,
+      "rollout_beats_easy": true,
+      "rollout_not_collapsed": true,
+      "rollout_near_real": true
+    },
+    "rationale": "All offline gates passed; a short supervised live smoke test is justified."
+  }
+}

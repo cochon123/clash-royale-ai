@@ -235,7 +235,7 @@ def build_parser() -> argparse.ArgumentParser:
     train_policy.add_argument(
         "--version",
         default="2",
-        choices=["2", "3", "4", "4.1", "4.2", "4.3", "4.4", "4.4.1", "5", "6", "6.1", "7"],
+        choices=["2", "3", "4", "4.1", "4.2", "4.3", "4.4", "4.4.1", "4.4.2", "5", "6", "6.1", "7"],
         help=(
             "2=cycle features; 3=threat+reaction; "
             "4=v3 + jointly trained card-conditioned placement; "
@@ -244,6 +244,7 @@ def build_parser() -> argparse.ArgumentParser:
             "4.3=v4.2 recipe + larger trunk + toggled latent think loop for inference compute; "
             "4.4=v4.2 trunk size + v4.3 data recipe + tile heatmap placement + think loop (default K=3); "
             "4.4.1=v4.4 warm-start + exact selected-card placement conditioning and diverse rollout decoding; "
+            "4.4.2=v4.4.1 warm-start trained only on eventual-winner actions from decisive replays; "
             "5=v4.1 + style feature matching + REINFORCE vs style judge; "
             "6=v4 trunk + card-conditioned placement heatmap + hidden opponent deck augmentation; "
             "6.1=v4.1 warm-start + frozen incumbent heads + tile-head-only isolation; "
@@ -323,6 +324,11 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=None,
         help="Fixed think depth used for val/test checkpoint selection (default=max)",
+    )
+    train_policy.add_argument(
+        "--winner-only",
+        action="store_true",
+        help="Train action heads only on the eventual winner's actions from decisive replays",
     )
 
     manifest_policy = commands.add_parser(
@@ -609,7 +615,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     phone_lab.add_argument(
         "--yolo-model",
-        default="models/card_detector_clash_cards_v3.pt",
+        default="/home/cochon/Documents/ClashRoyaleAI/models/yolo/card_detector.pt",
     )
     phone_lab.add_argument(
         "--card-costs", default="data/card_costs.json"
@@ -1122,7 +1128,7 @@ def main() -> None:
             output = "models/policy_bc_v5"
         elif args.version == "3" and output == "models/policy_bc":
             output = "models/policy_bc_v3"
-        elif args.version in {"4.4", "4.4.1"} and output == "models/policy_bc":
+        elif args.version in {"4.4", "4.4.1", "4.4.2"} and output == "models/policy_bc":
             output = f"models/policy_bc_v{args.version}"
         elif args.version == "4.3" and output == "models/policy_bc":
             output = "models/policy_bc_v4.3"
@@ -1175,6 +1181,8 @@ def main() -> None:
             warmstart_dir = args.warmstart_dir
             if args.version == "4.4.1" and warmstart_dir == "models/policy_bc_v4.1":
                 warmstart_dir = "models/policy_bc_v4.4"
+            if args.version == "4.4.2" and warmstart_dir == "models/policy_bc_v4.1":
+                warmstart_dir = "models/policy_bc_v4.4.1"
             if args.version == "7" and warmstart_dir == "models/policy_bc_v4.1":
                 warmstart_dir = "models/policy_bc_v6_1"
 
@@ -1187,7 +1195,7 @@ def main() -> None:
                         realism_model_dir=args.realism_model_dir,
                         epochs=args.epochs,
                         batch_size=args.batch_size
-                        or (512 if args.version in {"4.2", "4.3", "4.4", "4.4.1", "7"} else 256),
+                        or (512 if args.version in {"4.2", "4.3", "4.4", "4.4.1", "4.4.2", "7"} else 256),
                         learning_rate=args.lr,
                         d_model=args.d_model,
                         num_layers=args.num_layers,
@@ -1199,14 +1207,14 @@ def main() -> None:
                         version=args.version,
                         reaction_weight=args.reaction_weight,
                         mirror_training=args.mirror_training
-                        or args.version in {"4.2", "4.3", "4.4", "4.4.1"},
+                        or args.version in {"4.2", "4.3", "4.4", "4.4.1", "4.4.2"},
                         training_log_path=args.training_log_path,
                         reaction_repeats=args.reaction_repeats,
                         hide_opponent_deck=args.version == "6",
                         hide_opponent_prob=args.hide_opponent_prob,
                         warmstart_dir=(
                             warmstart_dir
-                            if args.version in {"4.4.1", "6.1", "7"}
+                            if args.version in {"4.4.1", "4.4.2", "6.1", "7"}
                             else None
                         ),
                         freeze_backbone=(
@@ -1220,6 +1228,7 @@ def main() -> None:
                         progress_path=args.progress_path,
                         max_think_steps=args.max_think_steps,
                         eval_think_steps=args.eval_think_steps,
+                        winner_only=args.winner_only or args.version == "4.4.2",
                     ),
                     indent=2,
                     ensure_ascii=False,
@@ -1265,6 +1274,8 @@ def main() -> None:
                 name = "policy_bc_v6.html"
             elif "v5" in md:
                 name = "policy_bc_v5.html"
+            elif "v4.4.2" in md or "v4_4_2" in md:
+                name = "policy_bc_v4_4_2.html"
             elif "v4.4.1" in md or "v4_4_1" in md:
                 name = "policy_bc_v4_4_1.html"
             elif "v4.4" in md or "v4_4" in md:
@@ -1303,6 +1314,13 @@ def main() -> None:
                 model_dir=args.model_dir,
                 battle_royale_path=Path(args.output_dir) / "battle_royale_v5.json",
                 output_path=Path(args.output_dir) / name,
+            )
+        elif "v4.4.2" in model_dir_s or "v4_4_2" in model_dir_s or (name and "v4_4_2" in name):
+            from .policy_report import render_policy_report
+
+            path = render_policy_report(
+                args.model_dir,
+                Path(args.output_dir) / name,
             )
         elif "v4.4.1" in model_dir_s or "v4_4_1" in model_dir_s or (name and "v4_4_1" in name):
             from .policy_v441_report import render_policy_v441_report

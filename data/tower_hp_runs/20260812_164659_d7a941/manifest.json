@@ -1,0 +1,47 @@
+{
+  "complete": true,
+  "config": {
+    "controllers": {
+      "pixel8": "policy_bc_v4",
+      "pixel9": "policy_bc_v4"
+    },
+    "decks": {
+      "pixel8": [
+        "knight",
+        "archers",
+        "minions",
+        "skeletons",
+        "arrows",
+        "fireball",
+        "giant",
+        "mini-pekka"
+      ],
+      "pixel9": [
+        "mortar",
+        "knight",
+        "archers",
+        "skeletons",
+        "barbarian-barrel",
+        "arrows",
+        "mini-pekka",
+        "rocket"
+      ]
+    },
+    "games": 1,
+    "observer_phone": "pixel9",
+    "sample_interval_s": 2.0,
+    "timeout_s": 330.0
+  },
+  "created_at": "2026-08-12T22:46:59.648142+00:00",
+  "elapsed_s": 239.86,
+  "error": null,
+  "games_done": 1,
+  "notes": [
+    "All actions are confirmed deployments from the live harness.",
+    "Every HP row retains full-frame WEBP evidence for relabeling.",
+    "OCR confidence is not ground truth; audit before model training."
+  ],
+  "samples": 61,
+  "schema_version": 1,
+  "updated_at": "2026-08-12T22:50:59.506248+00:00"
+}

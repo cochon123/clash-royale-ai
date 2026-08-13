@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .report_kit import FONT_LINKS, favicon_link
 from .winner_report import _base_styles, _fmt_pct, _json_script
 
 
@@ -109,6 +110,8 @@ def write_battle_royale_report(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Battle Royale — {_esc(report.get('model_name', 'policy-battle-royale'))}</title>
+  {favicon_link()}
+  {FONT_LINKS}
   <style>
     {_base_styles()}
     .podium {{

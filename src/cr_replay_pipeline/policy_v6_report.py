@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .report_kit import FONT_LINKS, favicon_link
 from .winner_report import (
     _base_styles,
     _chart_script,
@@ -179,18 +180,13 @@ def render_policy_v6_report(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PolicyBC @@MODEL_VERSION@@ — heatmap experiment report</title>
+  @@FAVICON@@
+  @@FONT_LINKS@@
   <style>
   @@BASE_STYLES@@
   :root {
-    --cyan:#22d3ee; --mint:#34d399; --amber:#fbbf24; --red:#fb7185;
-    --violet:#a78bfa; --panel:rgba(15,23,42,.72); --panel-2:rgba(19,28,44,.76);
-  }
-  body {
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background:
-      radial-gradient(900px 520px at 82% -6%, rgba(167,139,250,.14), transparent 58%),
-      radial-gradient(780px 480px at 4% 5%, rgba(34,211,238,.11), transparent 55%),
-      #080d15;
+    --cyan: var(--sky); --mint: var(--green); --amber: var(--gold);
+    --violet: var(--blue); --panel-2: #12202a;
   }
   main { max-width:1240px; }
   .mono { font-family:"IBM Plex Mono", "SFMono-Regular", Consolas, monospace; font-variant-numeric:tabular-nums; }
@@ -517,6 +513,8 @@ setDecode("expected");
 
     replacements = {
         "@@BASE_STYLES@@": _base_styles(),
+        "@@FONT_LINKS@@": FONT_LINKS,
+        "@@FAVICON@@": favicon_link(),
         "@@CHART_SCRIPT@@": _chart_script(),
         "@@MODEL_NAME@@": html.escape(str(report.get("model_name", "policy-bc-v6"))),
         "@@MODEL_VERSION@@": html.escape(str(report.get("model_version", "6.0.0"))),

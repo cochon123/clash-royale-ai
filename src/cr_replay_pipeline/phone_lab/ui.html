@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CR Phone Lab</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -365,6 +366,24 @@
       min-height: 0;
       flex: 1;
     }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 7px;
+    }
+    .metric {
+      background: #fffdf7;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px;
+    }
+    .metric b { display:block; font-family:Syne,sans-serif; font-size:18px; }
+    .metric span { color:var(--muted); font-size:9px; text-transform:uppercase; }
+    .tower-reading { font-size:10px; line-height:1.55; }
+    input[type="number"] {
+      width: 100%; border:1px solid var(--line); background:#fffdf7;
+      border-radius:8px; padding:7px; font:inherit;
+    }
     @media (max-width: 980px) {
       body { grid-template-columns: 1fr; }
       .phones { grid-template-columns: 1fr 1fr; min-height: 55vh; }
@@ -380,6 +399,7 @@
         <div class="mode-switch" style="margin-top:8px">
           <button type="button" id="modeCalibrate" class="active">Calibrate</button>
           <button type="button" id="modeBattle">Battle</button>
+          <button type="button" id="modeTower">Tower data</button>
         </div>
       </div>
       <div class="meta">
@@ -516,6 +536,46 @@
         </div>
       </div>
     </div>
+
+    <div id="panelTower" class="hidden battle-panel">
+      <div>
+        <h2>tower data</h2>
+        <p class="caption">Autonomously opens a friend 1v1, runs both policies, reads six tower HP values, saves evidence, and repeats.</p>
+      </div>
+
+      <section class="block">
+        <label class="title">tower-label calibration</label>
+        <p class="caption" id="towerCalPrompt">Optional: while a battle is visible, click the six HP labels on Pixel 9 when prompted. Defaults are used otherwise.</p>
+        <button type="button" class="ghost" id="towerCalBtn">Calibrate on Pixel 9</button>
+      </section>
+
+      <section class="block">
+        <label class="title">collection</label>
+        <div class="row">
+          <label style="flex:1;font-size:10px">games<input id="towerGames" type="number" min="1" max="50" value="2" /></label>
+          <label style="flex:1;font-size:10px">sample every (s)<input id="towerInterval" type="number" min="0.5" max="10" step="0.5" value="2" /></label>
+        </div>
+        <p class="caption">Uses the decks and controllers selected in Battle. Pixel 8 challenges <b>cochon</b>; Pixel 9 accepts.</p>
+      </section>
+
+      <button type="button" class="primary" id="towerStartBtn">Collect data</button>
+      <button type="button" class="primary stop hidden" id="towerStopBtn">Stop collection</button>
+
+      <div class="metric-grid">
+        <div class="metric"><b id="towerWork">0/0</b><span>work done</span></div>
+        <div class="metric"><b id="towerEta">—</b><span>estimated left</span></div>
+        <div class="metric"><b id="towerSamples">0</b><span>HP samples</span></div>
+        <div class="metric"><b id="towerPhase">idle</b><span>phase</span></div>
+      </div>
+      <section class="block">
+        <label class="title">latest OCR</label>
+        <div class="tower-reading" id="towerReading">No samples yet.</div>
+      </section>
+      <section class="block" style="min-height:0;flex:1">
+        <label class="title">collector log</label>
+        <div class="battle-log" id="towerLog"></div>
+      </section>
+    </div>
   </aside>
 
   <script>
@@ -553,7 +613,14 @@
         pixel9: DEFAULT_DECKS.pixel9.slice(),
       },
       battleRunning: false,
+      towerRunning: false,
+      towerCal: { active: false, phone: "pixel9", index: 0, points: {} },
     };
+
+    const TOWER_KEYS = [
+      "opponent_left_princess", "opponent_king", "opponent_right_princess",
+      "team_left_princess", "team_king", "team_right_princess",
+    ];
 
     const logEl = document.getElementById("log");
     function log(msg, cls) {
@@ -694,6 +761,10 @@
         const xy = this.eventToVideoXY(ev);
         if (!xy) return;
         this.showTouchDot(ev);
+        if (state.towerCal.active && state.towerCal.phone === this.phone) {
+          if (action === "up") captureTowerCalibrationPoint(this.phone, xy, this.canvas);
+          return;
+        }
         if (action === "up" && this.touchDot) {
           setTimeout(() => this.touchDot.classList.remove("on"), 120);
         }
@@ -865,8 +936,10 @@
       state.mode = mode;
       document.getElementById("modeCalibrate").classList.toggle("active", mode === "calibrate");
       document.getElementById("modeBattle").classList.toggle("active", mode === "battle");
+      document.getElementById("modeTower").classList.toggle("active", mode === "tower");
       document.getElementById("panelCalibrate").classList.toggle("hidden", mode !== "calibrate");
       document.getElementById("panelBattle").classList.toggle("hidden", mode !== "battle");
+      document.getElementById("panelTower").classList.toggle("hidden", mode !== "tower");
     }
 
     function renderHand(phone) {
@@ -1208,6 +1281,109 @@
       }
     }
 
+    function fmtEta(seconds) {
+      if (!Number.isFinite(Number(seconds))) return "—";
+      const s = Math.max(0, Math.round(Number(seconds)));
+      const m = Math.floor(s / 60);
+      return m ? `${m}m ${s % 60}s` : `${s}s`;
+    }
+
+    function applyTowerStatus(t) {
+      state.towerRunning = !!t.running;
+      document.getElementById("towerStartBtn").classList.toggle("hidden", state.towerRunning);
+      document.getElementById("towerStopBtn").classList.toggle("hidden", !state.towerRunning);
+      document.getElementById("towerWork").textContent = t.work || `${t.games_done || 0}/${t.games_total || 0}`;
+      document.getElementById("towerEta").textContent = fmtEta(t.eta_s);
+      document.getElementById("towerSamples").textContent = String(t.samples || 0);
+      document.getElementById("towerPhase").textContent = t.phase || "idle";
+      const hp = t.last_hp || {};
+      const reading = TOWER_KEYS.map((key) => {
+        const row = hp[key] || {};
+        const value = row.hp == null ? "—" : row.hp;
+        const conf = row.confidence == null ? "" : ` (${Math.round(row.confidence * 100)}%)`;
+        return `${key.replaceAll("_", " ")}: ${value}${conf}`;
+      });
+      document.getElementById("towerReading").textContent = reading.join("\n");
+      const root = document.getElementById("towerLog");
+      root.innerHTML = "";
+      for (const line of [...(t.log || [])].reverse()) {
+        const el = document.createElement("div");
+        if (line.level === "ok") el.className = "ok";
+        if (line.level === "err") el.className = "err";
+        el.textContent = line.message;
+        root.appendChild(el);
+      }
+      if (t.error) {
+        const el = document.createElement("div"); el.className = "err";
+        el.textContent = t.error; root.prepend(el);
+      }
+    }
+
+    async function refreshTower() {
+      if (state.mode !== "tower" && !state.towerRunning) return;
+      try { applyTowerStatus(await fetchJSON("/api/tower-data/status")); } catch (_) {}
+    }
+
+    function beginTowerCalibration() {
+      if (state.towerRunning) return;
+      state.towerCal = { active: true, phone: "pixel9", index: 0, points: {} };
+      document.getElementById("towerCalBtn").classList.add("active");
+      document.getElementById("towerCalPrompt").textContent =
+        `Click ${TOWER_KEYS[0].replaceAll("_", " ")} HP label on Pixel 9.`;
+    }
+
+    async function captureTowerCalibrationPoint(phone, xy, canvas) {
+      const cal = state.towerCal;
+      if (!cal.active || cal.phone !== phone) return;
+      const key = TOWER_KEYS[cal.index];
+      cal.points[key] = [xy.x / Math.max(1, canvas.width), xy.y / Math.max(1, canvas.height)];
+      cal.index += 1;
+      if (cal.index < TOWER_KEYS.length) {
+        document.getElementById("towerCalPrompt").textContent =
+          `Click ${TOWER_KEYS[cal.index].replaceAll("_", " ")} HP label on Pixel 9.`;
+        return;
+      }
+      cal.active = false;
+      document.getElementById("towerCalBtn").classList.remove("active");
+      try {
+        const out = await fetchJSON("/api/tower-data/calibrate", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone, centres: cal.points }),
+        });
+        applyTowerStatus(out);
+        document.getElementById("towerCalPrompt").textContent =
+          "Calibration saved for this server session. Ready to collect.";
+      } catch (err) {
+        document.getElementById("towerCalPrompt").textContent = `Calibration failed: ${err.message}`;
+      }
+    }
+
+    async function startTowerCollection() {
+      const body = {
+        games: Number(document.getElementById("towerGames").value || 2),
+        sample_interval_s: Number(document.getElementById("towerInterval").value || 2),
+        observer_phone: "pixel9",
+        pixel8: { deck: state.decks.pixel8.slice(), controller: document.getElementById("ctrl-pixel8").value },
+        pixel9: { deck: state.decks.pixel9.slice(), controller: document.getElementById("ctrl-pixel9").value },
+      };
+      try {
+        applyTowerStatus(await fetchJSON("/api/tower-data/start", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }));
+      } catch (err) {
+        applyTowerStatus({ error: err.message, phase: "error", log: [] });
+      }
+    }
+
+    async function stopTowerCollection() {
+      try {
+        applyTowerStatus(await fetchJSON("/api/tower-data/stop", {
+          method: "POST", headers: { "Content-Type": "application/json" }, body: "{}",
+        }));
+      } catch (_) {}
+    }
+
     async function loadCards() {
       const data = await fetchJSON("/api/cards");
       state.cards = data.cards || [];
@@ -1234,6 +1410,7 @@
 
     document.getElementById("modeCalibrate").addEventListener("click", () => setMode("calibrate"));
     document.getElementById("modeBattle").addEventListener("click", () => setMode("battle"));
+    document.getElementById("modeTower").addEventListener("click", () => setMode("tower"));
     document.getElementById("detectBtn").addEventListener("click", detectAll);
     document.getElementById("testBtn").addEventListener("click", runTest);
     document.getElementById("autoBtn").addEventListener("click", (ev) => {
@@ -1245,6 +1422,9 @@
     document.getElementById("presetPixel9").addEventListener("click", () => applyPreset("pixel9"));
     document.getElementById("battleStartBtn").addEventListener("click", startBattle);
     document.getElementById("battleStopBtn").addEventListener("click", stopBattle);
+    document.getElementById("towerCalBtn").addEventListener("click", beginTowerCalibration);
+    document.getElementById("towerStartBtn").addEventListener("click", startTowerCollection);
+    document.getElementById("towerStopBtn").addEventListener("click", stopTowerCollection);
 
     renderSlotPick();
     renderHand("pixel9");
@@ -1261,11 +1441,12 @@
     setInterval(() => {
       refreshStatus().catch(() => {});
       refreshBattle().catch(() => {});
+      refreshTower().catch(() => {});
     }, 1000);
     // Keep the server-side battle loop supplied from decoded scrcpy frames.
     // Requests do not overlap per phone; YOLO receives only four small crops.
     setInterval(() => {
-      if (!state.battleRunning) return;
+      if (!state.battleRunning && !state.towerRunning) return;
       detectPhone("pixel8", { reason: "battle-feed" }).catch(() => {});
       detectPhone("pixel9", { reason: "battle-feed" }).catch(() => {});
     }, 500);

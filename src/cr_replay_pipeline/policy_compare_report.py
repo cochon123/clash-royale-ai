@@ -9,6 +9,7 @@ from typing import Any
 
 from datetime import datetime, timezone
 
+from .report_kit import FONT_LINKS, favicon_link
 from .winner_report import (
     _base_styles,
     _chart_script,
@@ -246,6 +247,8 @@ def render_policy_compare_report(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Policy BC — {new_name} vs {old_name}</title>
+  {favicon_link()}
+  {FONT_LINKS}
   <style>
     {_base_styles()}
     :root {{

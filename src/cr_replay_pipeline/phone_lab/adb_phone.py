@@ -171,6 +171,12 @@ class AdbPhone:
             err = result.stderr.decode("utf-8", errors="replace")
             raise RuntimeError(f"tap failed on {self.serial}: {err}")
 
+    def back(self) -> None:
+        result = self._adb("shell", "input", "keyevent", "4", timeout=6)
+        if result.returncode != 0:
+            err = result.stderr.decode("utf-8", errors="replace")
+            raise RuntimeError(f"back failed on {self.serial}: {err}")
+
     def swipe(
         self, x1: int, y1: int, x2: int, y2: int, duration_ms: int = 160
     ) -> None:
