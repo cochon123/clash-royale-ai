@@ -1122,7 +1122,7 @@
       if (!player || !player.frames || !Array.isArray(rects) || rects.length !== 4) return null;
       if (performance.now() - player.lastDraw > 750) return null;
       const source = player.canvas;
-      return rects.map((rect) => {
+      const cropDataUrl = (rect, quality = 0.78) => {
         const width = Math.max(1, Number(rect.x_max) - Number(rect.x_min));
         const height = Math.max(1, Number(rect.y_max) - Number(rect.y_min));
         const crop = document.createElement("canvas");
@@ -1133,21 +1133,35 @@
           Number(rect.x_min), Number(rect.y_min), width, height,
           0, 0, width, height,
         );
-        return crop.toDataURL("image/jpeg", 0.78);
-      });
+        return crop.toDataURL("image/jpeg", quality);
+      };
+      const elixirRect = {
+        x_min: Math.round(source.width * 0.270),
+        y_min: Math.round(source.height * 0.969),
+        x_max: Math.round(source.width * 0.974),
+        y_max: Math.round(source.height * 0.991),
+      };
+      return {
+        cards: rects.map((rect) => cropDataUrl(rect)),
+        elixir: cropDataUrl(elixirRect, 0.90),
+      };
     }
 
     async function detectPhone(phone, { reason = "manual" } = {}) {
       if (state.detectInFlight[phone]) return null;
       state.detectInFlight[phone] = true;
       try {
-        const crops = streamCropDataUrls(phone);
-        const data = await fetchJSON(crops ? "/api/detect-crops" : "/api/detect", {
+        const cropData = streamCropDataUrls(phone);
+        const data = await fetchJSON(cropData ? "/api/detect-crops" : "/api/detect", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(crops ? { phone, crops } : { phone }),
+          body: JSON.stringify(cropData ? {
+            phone,
+            crops: cropData.cards,
+            elixir_crop: cropData.elixir,
+          } : { phone }),
         });
-        const payload = crops ? data : data[phone];
+        const payload = cropData ? data : data[phone];
         applyHand(phone, payload.slots);
         const n = payload.slots.filter((s) => s.card_name).length;
         if (reason !== "battle-feed") {

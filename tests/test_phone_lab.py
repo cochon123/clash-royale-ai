@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from PIL import Image, ImageDraw
+
 from cr_replay_pipeline.phone_lab.calibration import (
     arena_uv_to_pixel,
     card_slot_rects_for_size,
@@ -21,7 +23,6 @@ from cr_replay_pipeline.phone_lab.stream_source import (
     pack_touch_event,
 )
 from cr_replay_pipeline.phone_lab.websocket_util import accept_key
-
 
 CALIB_DIR = Path("data/phone_lab/calibrations")
 
@@ -197,22 +198,25 @@ def test_find_hand_slot_normalizes_names():
         {"knight": 3, "mortar": 4, "archers": 3},
     )
     assert got == ("knight", 0, 3)
-    assert hand_confirms_play(
-        evo_hand,
-        [
-            {"slot": 0, "card_name": "ice-spirit"},
-            *evo_hand[1:],
-        ],
-        0,
-        "knight",
-    ) is True
+    assert (
+        hand_confirms_play(
+            evo_hand,
+            [
+                {"slot": 0, "card_name": "ice-spirit"},
+                *evo_hand[1:],
+            ],
+            0,
+            "knight",
+        )
+        is True
+    )
     assert hand_confirms_play(evo_hand, evo_hand, 0, "knight") is False
 
 
 def test_validate_deck_and_elixir():
     from cr_replay_pipeline.phone_lab.battle import (
-        ElixirTracker,
         PRESET_DECKS,
+        ElixirTracker,
         validate_deck,
     )
 
@@ -234,14 +238,28 @@ def test_validate_deck_and_elixir():
     elixir.last_t = 240.0
     elixir.update(240.9)
     assert abs(elixir.values["pixel8"] - 1.0) < 1e-6
+    elixir.reconcile("pixel8", 2.25)
+    assert elixir.values["pixel8"] == 2.25
+
+
+def test_visual_elixir_bar_estimate_and_absent_screen():
+    from cr_replay_pipeline.phone_lab.elixir import estimate_elixir_bar
+
+    bar = Image.new("RGB", (200, 20), (12, 50, 95))
+    ImageDraw.Draw(bar).rectangle((0, 0, 59, 19), fill=(220, 48, 236))
+    observed = estimate_elixir_bar(bar)
+    assert observed["confidence"] > 0.9
+    assert abs(observed["value"] - 3.0) < 0.1
+
+    absent = estimate_elixir_bar(Image.new("RGB", (200, 20), (12, 12, 12)))
+    assert absent["value"] is None
+    assert absent["confidence"] == 0.0
 
 
 def test_pixel8_unknown_skin_is_never_invented():
     from cr_replay_pipeline.phone_lab.server import LabState
 
-    blank = [
-        {"slot": i, "card_name": None, "confidence": 0.0} for i in range(4)
-    ]
+    blank = [{"slot": i, "card_name": None, "confidence": 0.0} for i in range(4)]
     assert all(
         row["card_name"] is None
         for row in LabState._assume_unknown_musketeer_pixel8("pixel8", blank)
@@ -263,9 +281,7 @@ def test_battle_start_validation_without_phones():
 
     def detect(_phone):
         calls["detect"] += 1
-        return [
-            {"slot": i, "card_name": None, "confidence": 0.0} for i in range(4)
-        ]
+        return [{"slot": i, "card_name": None, "confidence": 0.0} for i in range(4)]
 
     def execute(*_args):
         calls["exec"] += 1
@@ -289,7 +305,11 @@ def test_battle_start_validation_without_phones():
 
 
 def test_mixed_manual_ai_is_rejected_without_manual_event_capture():
-    from cr_replay_pipeline.phone_lab.battle import BattleConfig, BattleRunner, PRESET_DECKS
+    from cr_replay_pipeline.phone_lab.battle import (
+        PRESET_DECKS,
+        BattleConfig,
+        BattleRunner,
+    )
 
     runner = BattleRunner(detect_hand=lambda _p: [], execute_action=lambda *_a: {})
     try:
@@ -308,7 +328,11 @@ def test_mixed_manual_ai_is_rejected_without_manual_event_capture():
 
 
 def test_phone_execution_never_substitutes_a_different_ranked_card():
-    from cr_replay_pipeline.phone_lab.battle import BattleConfig, BattleRunner, PRESET_DECKS
+    from cr_replay_pipeline.phone_lab.battle import (
+        PRESET_DECKS,
+        BattleConfig,
+        BattleRunner,
+    )
 
     hand = [
         {"slot": 0, "card_name": "cannon"},
@@ -337,7 +361,9 @@ def test_phone_execution_never_substitutes_a_different_ranked_card():
         "x": 9000,
         "y": 8000,
     }
-    assert not runner._try_execute("pixel8", pred, 5.0, settle_sleep=0, force_hand=False)
+    assert not runner._try_execute(
+        "pixel8", pred, 5.0, settle_sleep=0, force_hand=False
+    )
     assert taps == []
 
 
@@ -445,9 +471,9 @@ def test_phone_battle_view_flips_opponent_y():
 
 def test_plan_delay_does_not_force_alternation():
     from cr_replay_pipeline.phone_lab.battle import (
+        MAX_PLAN_DELAY_S,
         BattleConfig,
         BattleRunner,
-        MAX_PLAN_DELAY_S,
     )
 
     runner = BattleRunner(
@@ -600,6 +626,7 @@ def test_phone_lab_ui_exposes_tower_collection_controls():
     assert 'id="towerStartBtn"' in html
     assert 'id="towerWork"' in html
     assert 'id="towerEta"' in html
+    assert "elixir_crop" in html
 
 
 def test_tower_hp_decrease_requires_two_frames_and_uses_newer_value():

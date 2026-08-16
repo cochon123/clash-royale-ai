@@ -1,0 +1,6010 @@
+{
+  "attempts": [
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.1413891559932381,
+        "captured_at": 264700.073762468,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.724
+      },
+      "elixir_before": {
+        "age_s": 0.14116667700000107,
+        "captured_at": 264699.57199958,
+        "confidence": 0.9963,
+        "continuity": 0.9917,
+        "reason": "purple_fill",
+        "value": 7.928
+      },
+      "hand_after": [
+        {
+          "card_name": "archers",
+          "confidence": 0.844190776348114,
+          "slot": 0
+        },
+        {
+          "card_name": "minions",
+          "confidence": 0.950375497341156,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9265528917312622,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "archers",
+          "confidence": 0.8427441716194153,
+          "slot": 0
+        },
+        {
+          "card_name": "minions",
+          "confidence": 0.9511609673500061,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9204232692718506,
+          "slot": 2
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.8318812251091003,
+          "slot": 3
+        }
+      ],
+      "intended_card": "knight",
+      "outcome": "confirmed",
+      "seconds": 1.2982466220855713,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 8362,
+      "y": 10551
+    },
+    {
+      "confirmation_method": "stable_slot+elixir",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.03167907299939543,
+        "captured_at": 264702.646115359,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "elixir_before": {
+        "age_s": 0.1906496630399488,
+        "captured_at": 264701.603354042,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 8.896
+      },
+      "hand_after": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.5998530387878418,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8457345366477966,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9564682245254517,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "archers",
+          "confidence": 0.8242217898368835,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8737841844558716,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9432969689369202,
+          "slot": 3
+        }
+      ],
+      "intended_card": "archers",
+      "outcome": "confirmed",
+      "seconds": 3.3791563510894775,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 9484,
+      "y": 5370
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.06876876205205917,
+        "captured_at": 264706.063032584,
+        "confidence": 0.994,
+        "continuity": 0.9868,
+        "reason": "purple_fill",
+        "value": 4.967
+      },
+      "elixir_before": {
+        "age_s": 0.3287560929893516,
+        "captured_at": 264705.059417204,
+        "confidence": 0.9957,
+        "continuity": 0.9905,
+        "reason": "purple_fill",
+        "value": 6.941
+      },
+      "hand_after": [
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 0
+        },
+        {
+          "card_name": "minions",
+          "confidence": 0.9545027017593384,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9223070740699768,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.8927627801895142,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "archers",
+          "confidence": 0.8477733731269836,
+          "slot": 0
+        },
+        {
+          "card_name": "minions",
+          "confidence": 0.9507861137390137,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9226667284965515,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.8920864462852478,
+          "slot": 3
+        }
+      ],
+      "intended_card": "archers",
+      "outcome": "confirmed",
+      "seconds": 6.973280906677246,
+      "side": "pixel8",
+      "slot": 0,
+      "x": 8531,
+      "y": 7947
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 2,
+      "elixir_after": {
+        "age_s": 0.0031294799991883337,
+        "captured_at": 264710.602377878,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 8.896
+      },
+      "elixir_before": {
+        "age_s": 0.27929249400040135,
+        "captured_at": 264708.13957285,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 7.926
+      },
+      "hand_after": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9872063398361206,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8863522410392761,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9484854340553284,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9863989353179932,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8915812373161316,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9482892155647278,
+          "slot": 3
+        }
+      ],
+      "intended_card": "barbarian-barrel",
+      "outcome": "unconfirmed",
+      "seconds": 10.003992080688477,
+      "side": "pixel9",
+      "slot": 1,
+      "x": 12353,
+      "y": 11608
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.2869152710190974,
+        "captured_at": 264711.065591977,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 2.993
+      },
+      "elixir_before": {
+        "age_s": 0.15806743601569906,
+        "captured_at": 264710.567608168,
+        "confidence": 0.995,
+        "continuity": 0.989,
+        "reason": "purple_fill",
+        "value": 5.954
+      },
+      "hand_after": [
+        {
+          "card_name": "arrows",
+          "confidence": 0.9212510585784912,
+          "slot": 0
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.6483513116836548,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "arrows",
+          "confidence": 0.9226384162902832,
+          "slot": 0
+        },
+        {
+          "card_name": "minions",
+          "confidence": 0.9521098732948303,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9202477931976318,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9117341637611389,
+          "slot": 3
+        }
+      ],
+      "intended_card": "minions",
+      "outcome": "confirmed",
+      "seconds": 12.310831308364868,
+      "side": "pixel8",
+      "slot": 1,
+      "x": 9190,
+      "y": 13158
+    },
+    {
+      "confirmation_method": "stable_slot+elixir",
+      "cost": 2,
+      "elixir_after": {
+        "age_s": 0.10270909802056849,
+        "captured_at": 264713.59623951,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 7.926
+      },
+      "elixir_before": {
+        "age_s": 0.21073904604418203,
+        "captured_at": 264712.626394071,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 9.866
+      },
+      "hand_after": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9865043759346008,
+          "slot": 0
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.556935727596283,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9472254514694214,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9864668250083923,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8781208992004395,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9320343136787415,
+          "slot": 3
+        }
+      ],
+      "intended_card": "barbarian-barrel",
+      "outcome": "confirmed",
+      "seconds": 14.422264099121094,
+      "side": "pixel9",
+      "slot": 1,
+      "x": 11512,
+      "y": 11771
+    },
+    {
+      "confirmation_method": "stable_slot",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.029293409024830908,
+        "captured_at": 264717.599203031,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 7.926
+      },
+      "elixir_before": {
+        "age_s": 0.20698687201365829,
+        "captured_at": 264716.559779508,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 7.926
+      },
+      "hand_after": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.5861679911613464,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7345491051673889,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.94755619764328,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9889476299285889,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7236767411231995,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9534379243850708,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "confirmed",
+      "seconds": 18.351902961730957,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 11457,
+      "y": 12843
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.08841695199953392,
+        "captured_at": 264722.077467755,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "elixir_before": {
+        "age_s": 0.6226515059825033,
+        "captured_at": 264720.559971402,
+        "confidence": 0.9957,
+        "continuity": 0.9905,
+        "reason": "purple_fill",
+        "value": 6.941
+      },
+      "hand_after": [
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9576109647750854,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9084063172340393,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "arrows",
+          "confidence": 0.9258586168289185,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9609683752059937,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9206031560897827,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9117856025695801,
+          "slot": 3
+        }
+      ],
+      "intended_card": "arrows",
+      "outcome": "confirmed",
+      "seconds": 22.767772674560547,
+      "side": "pixel8",
+      "slot": 0,
+      "x": 5962,
+      "y": 21333
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.004802973009645939,
+        "captured_at": 264725.607738857,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 6.957
+      },
+      "elixir_before": {
+        "age_s": 0.3584914089879021,
+        "captured_at": 264724.624376409,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 9.866
+      },
+      "hand_after": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9516010880470276,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7520614862442017,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9489774107933044,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7245074510574341,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.949128270149231,
+          "slot": 3
+        }
+      ],
+      "intended_card": "arrows",
+      "outcome": "confirmed",
+      "seconds": 26.568008184432983,
+      "side": "pixel9",
+      "slot": 3,
+      "x": 12716,
+      "y": 13140
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.06496549595613033,
+        "captured_at": 264731.661650123,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "elixir_before": {
+        "age_s": 0.2807070760172792,
+        "captured_at": 264730.10286921,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 7.926
+      },
+      "hand_after": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.5758084058761597,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mortar",
+          "confidence": 0.9457094073295593,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9621335864067078,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7591010928153992,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mortar",
+          "confidence": 0.949524462223053,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mini-pekka",
+      "outcome": "confirmed",
+      "seconds": 31.96871781349182,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 11912,
+      "y": 10712
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.04347248299745843,
+        "captured_at": 264735.59382106,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 2.074
+      },
+      "elixir_before": {
+        "age_s": 0.1274737780331634,
+        "captured_at": 264734.647395522,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.017
+      },
+      "hand_after": [
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "archers",
+          "confidence": 0.8383191823959351,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mortar",
+          "confidence": 0.9550802111625671,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mortar",
+      "outcome": "confirmed",
+      "seconds": 36.359994888305664,
+      "side": "pixel9",
+      "slot": 3,
+      "x": 12157,
+      "y": 12571
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.087230417993851,
+        "captured_at": 264736.061582428,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 7.993
+      },
+      "elixir_before": {
+        "age_s": 0.08717655297368765,
+        "captured_at": 264735.560408469,
+        "confidence": 0.9967,
+        "continuity": 0.9926,
+        "reason": "purple_fill",
+        "value": 8.914
+      },
+      "hand_after": [
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9579033851623535,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9221829771995544,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9130094051361084,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9898774027824402,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9605509042739868,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9259611368179321,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9000326991081238,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "confirmed",
+      "seconds": 37.23275876045227,
+      "side": "pixel8",
+      "slot": 0,
+      "x": 7784,
+      "y": 11669
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 5,
+      "elixir_after": {
+        "age_s": 0.055962306971196085,
+        "captured_at": 264737.079766237,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "elixir_before": {
+        "age_s": 0.21183668699814007,
+        "captured_at": 264736.061582428,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 7.993
+      },
+      "hand_after": [
+        {
+          "card_name": "knight",
+          "confidence": 0.8072459697723389,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9541568160057068,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.8944184184074402,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9579033851623535,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9221829771995544,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9130094051361084,
+          "slot": 3
+        }
+      ],
+      "intended_card": "giant",
+      "outcome": "confirmed",
+      "seconds": 37.858529567718506,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 5903,
+      "y": 14140
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.09058162797009572,
+        "captured_at": 264738.561116998,
+        "confidence": 0.9795,
+        "continuity": 0.9545,
+        "reason": "purple_fill",
+        "value": 1.447
+      },
+      "elixir_before": {
+        "age_s": 0.3364385520108044,
+        "captured_at": 264737.573298325,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "hand_after": [
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "knight",
+          "confidence": 0.7866973876953125,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9536157846450806,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9064810276031494,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "intended_card": "knight",
+      "outcome": "confirmed",
+      "seconds": 39.49487781524658,
+      "side": "pixel8",
+      "slot": 0,
+      "x": 6082,
+      "y": 14121
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 2,
+      "elixir_after": {
+        "age_s": 0.06662675604457036,
+        "captured_at": 264742.098380856,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 2.074
+      },
+      "elixir_before": {
+        "age_s": 0.20755706302588806,
+        "captured_at": 264741.095451322,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "hand_after": [
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "archers",
+          "confidence": 0.8078621625900269,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.909238874912262,
+          "slot": 3
+        }
+      ],
+      "intended_card": "barbarian-barrel",
+      "outcome": "confirmed",
+      "seconds": 42.8881516456604,
+      "side": "pixel9",
+      "slot": 3,
+      "x": 13848,
+      "y": 9626
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.04918008798267692,
+        "captured_at": 264747.55952262,
+        "confidence": 0.9693,
+        "continuity": 0.9318,
+        "reason": "purple_fill",
+        "value": 1.447
+      },
+      "elixir_before": {
+        "age_s": 0.2885994859971106,
+        "captured_at": 264746.578092987,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "hand_after": [
+        {
+          "card_name": "minions",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "minions",
+          "confidence": 0.8002505302429199,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.959481954574585,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9179986119270325,
+          "slot": 2
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.8964693546295166,
+          "slot": 3
+        }
+      ],
+      "intended_card": "archers",
+      "outcome": "confirmed",
+      "seconds": 48.451817989349365,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 6536,
+      "y": 10099
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.017117322015110403,
+        "captured_at": 264750.59625676,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 4.013
+      },
+      "elixir_before": {
+        "age_s": 0.37554513302166015,
+        "captured_at": 264749.609372694,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.017
+      },
+      "hand_after": [
+        {
+          "card_name": "archers",
+          "confidence": 0.8467763066291809,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "archers",
+          "confidence": 0.8430670499801636,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9652873873710632,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "confirmed",
+      "seconds": 51.57001972198486,
+      "side": "pixel9",
+      "slot": 3,
+      "x": 12706,
+      "y": 9840
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.04139279498485848,
+        "captured_at": 264757.557902729,
+        "confidence": 0.9852,
+        "continuity": 0.9672,
+        "reason": "purple_fill",
+        "value": 2.007
+      },
+      "elixir_before": {
+        "age_s": 0.0937316829804331,
+        "captured_at": 264756.560845654,
+        "confidence": 0.9925,
+        "continuity": 0.9833,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "hand_after": [
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.6102354526519775,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "minions",
+          "confidence": 0.8317989110946655,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9625731110572815,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.8808669447898865,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8665997982025146,
+          "slot": 3
+        }
+      ],
+      "intended_card": "minions",
+      "outcome": "confirmed",
+      "seconds": 58.23971199989319,
+      "side": "pixel8",
+      "slot": 0,
+      "x": 4032,
+      "y": 12575
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.01357545197242871,
+        "captured_at": 264760.618874858,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 4.95
+      },
+      "elixir_before": {
+        "age_s": 0.4450476779602468,
+        "captured_at": 264759.604504114,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 6.957
+      },
+      "hand_after": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.5989065766334534,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9561253786087036,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "archers",
+          "confidence": 0.8414876461029053,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7143969535827637,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9437035322189331,
+          "slot": 3
+        }
+      ],
+      "intended_card": "archers",
+      "outcome": "confirmed",
+      "seconds": 61.63470101356506,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 12804,
+      "y": 10242
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.018541464989539236,
+        "captured_at": 264767.117800766,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 6.957
+      },
+      "elixir_before": {
+        "age_s": 0.31301786395488307,
+        "captured_at": 264764.599065978,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "hand_after": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9369751214981079,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7500801682472229,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9590072631835938,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.964621365070343,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7528253793716431,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9440731406211853,
+          "slot": 3
+        }
+      ],
+      "intended_card": "arrows",
+      "outcome": "unconfirmed",
+      "seconds": 66.49721431732178,
+      "side": "pixel9",
+      "slot": 3,
+      "x": 14516,
+      "y": 20446
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.04675743100233376,
+        "captured_at": 264769.061301406,
+        "confidence": 0.994,
+        "continuity": 0.9868,
+        "reason": "purple_fill",
+        "value": 4.967
+      },
+      "elixir_before": {
+        "age_s": 0.17827461095293984,
+        "captured_at": 264767.078338514,
+        "confidence": 0.994,
+        "continuity": 0.9868,
+        "reason": "purple_fill",
+        "value": 4.967
+      },
+      "hand_after": [
+        {
+          "card_name": "giant",
+          "confidence": 0.9657953977584839,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9651052355766296,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9015205502510071,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8404167294502258,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9898160696029663,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9609977602958679,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9236304759979248,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8780152797698975,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "unconfirmed",
+      "seconds": 68.84174132347107,
+      "side": "pixel8",
+      "slot": 0,
+      "x": 4418,
+      "y": 19691
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.08249040704686195,
+        "captured_at": 264771.599984606,
+        "confidence": 0.995,
+        "continuity": 0.989,
+        "reason": "purple_fill",
+        "value": 5.954
+      },
+      "elixir_before": {
+        "age_s": 0.15124105499126017,
+        "captured_at": 264769.572206356,
+        "confidence": 0.994,
+        "continuity": 0.9868,
+        "reason": "purple_fill",
+        "value": 4.967
+      },
+      "hand_after": [
+        {
+          "card_name": "giant",
+          "confidence": 0.9505367875099182,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.960761308670044,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9249830842018127,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.879462718963623,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "giant",
+          "confidence": 0.9657953977584839,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9651052355766296,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9015205502510071,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8404167294502258,
+          "slot": 3
+        }
+      ],
+      "intended_card": "arrows",
+      "outcome": "unconfirmed",
+      "seconds": 71.30860424041748,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 3961,
+      "y": 21952
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 6,
+      "elixir_after": {
+        "age_s": 0.02164776501012966,
+        "captured_at": 264773.106522311,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.043
+      },
+      "elixir_before": {
+        "age_s": 0.04575902101350948,
+        "captured_at": 264772.099806328,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 8.896
+      },
+      "hand_after": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9435077905654907,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9651804566383362,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7105280756950378,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9415189623832703,
+          "slot": 3
+        }
+      ],
+      "intended_card": "rocket",
+      "outcome": "confirmed",
+      "seconds": 73.73072457313538,
+      "side": "pixel9",
+      "slot": 1,
+      "x": 14155,
+      "y": 16019
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 5,
+      "elixir_after": {
+        "age_s": 0.16219447401817888,
+        "captured_at": 264777.564973738,
+        "confidence": 0.9901,
+        "continuity": 0.978,
+        "reason": "purple_fill",
+        "value": 2.993
+      },
+      "elixir_before": {
+        "age_s": 0.12287373398430645,
+        "captured_at": 264776.560609504,
+        "confidence": 0.9963,
+        "continuity": 0.9917,
+        "reason": "purple_fill",
+        "value": 7.928
+      },
+      "hand_after": [
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8934252262115479,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "giant",
+          "confidence": 0.9532126784324646,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9596689343452454,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.8708449602127075,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8853809237480164,
+          "slot": 3
+        }
+      ],
+      "intended_card": "giant",
+      "outcome": "confirmed",
+      "seconds": 78.26863050460815,
+      "side": "pixel8",
+      "slot": 0,
+      "x": 5680,
+      "y": 7226
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.005435020022559911,
+        "captured_at": 264783.056207361,
+        "confidence": 0.9693,
+        "continuity": 0.9318,
+        "reason": "purple_fill",
+        "value": 1.447
+      },
+      "elixir_before": {
+        "age_s": 0.13370928395306692,
+        "captured_at": 264782.06622669,
+        "confidence": 0.994,
+        "continuity": 0.9868,
+        "reason": "purple_fill",
+        "value": 4.967
+      },
+      "hand_after": [
+        {
+          "card_name": "knight",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "knight",
+          "confidence": 0.7401102185249329,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9586979746818542,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9255468845367432,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.882225751876831,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mini-pekka",
+      "outcome": "confirmed",
+      "seconds": 83.78508281707764,
+      "side": "pixel8",
+      "slot": 2,
+      "x": 3803,
+      "y": 13977
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.012444973981473595,
+        "captured_at": 264785.129521133,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 4.013
+      },
+      "elixir_before": {
+        "age_s": 0.5080820639850572,
+        "captured_at": 264784.104680648,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 6.957
+      },
+      "hand_after": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.5120359063148499,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9479384422302246,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9628461003303528,
+          "slot": 0
+        },
+        {
+          "card_name": "mortar",
+          "confidence": 0.9248130321502686,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9482551217079163,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mortar",
+      "outcome": "confirmed",
+      "seconds": 86.19781017303467,
+      "side": "pixel9",
+      "slot": 1,
+      "x": 11940,
+      "y": 11100
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.003993774007540196,
+        "captured_at": 264789.564774802,
+        "confidence": 0.7852,
+        "continuity": 0.5227,
+        "reason": "purple_fill",
+        "value": 1.447
+      },
+      "elixir_before": {
+        "age_s": 0.145116534025874,
+        "captured_at": 264787.594213761,
+        "confidence": 0.9904,
+        "continuity": 0.9787,
+        "reason": "purple_fill",
+        "value": 3.092
+      },
+      "hand_after": [
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 0
+        },
+        {
+          "card_name": "freeze",
+          "confidence": 0.707128643989563,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "knight",
+          "confidence": 0.6574409008026123,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.9561102390289307,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9603695273399353,
+          "slot": 3
+        }
+      ],
+      "intended_card": "knight",
+      "outcome": "confirmed",
+      "seconds": 89.32450127601624,
+      "side": "pixel8",
+      "slot": 0,
+      "x": 5889,
+      "y": 13244
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 2,
+      "elixir_after": {
+        "age_s": 0.11716416099807248,
+        "captured_at": 264791.604364265,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "elixir_before": {
+        "age_s": 0.14252041600411758,
+        "captured_at": 264789.611644923,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.017
+      },
+      "hand_after": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9635541439056396,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8791379928588867,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.945244550704956,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9664642214775085,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8500920534133911,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.94669109582901,
+          "slot": 3
+        }
+      ],
+      "intended_card": "barbarian-barrel",
+      "outcome": "unconfirmed",
+      "seconds": 91.33931159973145,
+      "side": "pixel9",
+      "slot": 1,
+      "x": 13893,
+      "y": 11376
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.0075524739804677665,
+        "captured_at": 264794.595116475,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 6.957
+      },
+      "elixir_before": {
+        "age_s": 0.23741379601415247,
+        "captured_at": 264792.093901672,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "hand_after": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9567447900772095,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8812961578369141,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9579691290855408,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9635541439056396,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8791379928588867,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.945244550704956,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mini-pekka",
+      "outcome": "unconfirmed",
+      "seconds": 93.91648626327515,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 13893,
+      "y": 11376
+    },
+    {
+      "confirmation_method": "stable_slot+elixir",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.11024024902144447,
+        "captured_at": 264795.602540373,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.043
+      },
+      "elixir_before": {
+        "age_s": 0.2559445379883982,
+        "captured_at": 264794.595116475,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 6.957
+      },
+      "hand_after": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.5671675205230713,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8727396130561829,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9554165601730347,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9567447900772095,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8812961578369141,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9579691290855408,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mini-pekka",
+      "outcome": "confirmed",
+      "seconds": 96.43624520301819,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 13893,
+      "y": 11376
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 2,
+      "elixir_after": {
+        "age_s": 0.07231513800797984,
+        "captured_at": 264799.097866853,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 2.074
+      },
+      "elixir_before": {
+        "age_s": 0.21585924795363098,
+        "captured_at": 264798.092599262,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "hand_after": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9833936095237732,
+          "slot": 0
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9877513647079468,
+          "slot": 0
+        },
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.9030231237411499,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9519767761230469,
+          "slot": 3
+        }
+      ],
+      "intended_card": "barbarian-barrel",
+      "outcome": "confirmed",
+      "seconds": 99.89359951019287,
+      "side": "pixel9",
+      "slot": 1,
+      "x": 14374,
+      "y": 9858
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.03314346302067861,
+        "captured_at": 264802.079884381,
+        "confidence": 0.9852,
+        "continuity": 0.9672,
+        "reason": "purple_fill",
+        "value": 2.007
+      },
+      "elixir_before": {
+        "age_s": 0.18255756999133155,
+        "captured_at": 264801.068196406,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "hand_after": [
+        {
+          "card_name": "minions",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "minions",
+          "confidence": 0.8114266395568848,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9657886028289795,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.9442553520202637,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.869251012802124,
+          "slot": 3
+        }
+      ],
+      "intended_card": "archers",
+      "outcome": "confirmed",
+      "seconds": 102.83588933944702,
+      "side": "pixel8",
+      "slot": 2,
+      "x": 4779,
+      "y": 13071
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 3.275997005403042e-05,
+        "captured_at": 264808.335430001,
+        "confidence": 0.9942,
+        "continuity": 0.987,
+        "reason": "purple_fill",
+        "value": 2.026
+      },
+      "elixir_before": {
+        "age_s": 0.09281159396050498,
+        "captured_at": 264805.618750856,
+        "confidence": 0.997,
+        "continuity": 0.9932,
+        "reason": "purple_fill",
+        "value": 4.95
+      },
+      "hand_after": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9815894961357117,
+          "slot": 0
+        },
+        {
+          "card_name": "archers-evo",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.987263023853302,
+          "slot": 0
+        },
+        {
+          "card_name": "archers-evo",
+          "confidence": 0.7444178462028503,
+          "slot": 1
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.5340344905853271,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9547082781791687,
+          "slot": 3
+        }
+      ],
+      "intended_card": "knight",
+      "outcome": "unconfirmed",
+      "seconds": 107.29669380187988,
+      "side": "pixel9",
+      "slot": 2,
+      "x": 13182,
+      "y": 11762
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.03126830200199038,
+        "captured_at": 264809.572433073,
+        "confidence": 0.9693,
+        "continuity": 0.9318,
+        "reason": "purple_fill",
+        "value": 1.447
+      },
+      "elixir_before": {
+        "age_s": 0.39981654699658975,
+        "captured_at": 264808.055792577,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "hand_after": [
+        {
+          "card_name": "minions",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9753647446632385,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "minions",
+          "confidence": 0.840196430683136,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.9669501781463623,
+          "slot": 1
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9716131687164307,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9165264368057251,
+          "slot": 3
+        }
+      ],
+      "intended_card": "arrows",
+      "outcome": "confirmed",
+      "seconds": 110.04077053070068,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 3523,
+      "y": 13688
+    },
+    {
+      "confirmation_method": "stable_slot",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.08511120895855129,
+        "captured_at": 264813.093848809,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "elixir_before": {
+        "age_s": 0.08779826498357579,
+        "captured_at": 264812.097250293,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "hand_after": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.5397980809211731,
+          "slot": 0
+        },
+        {
+          "card_name": "archers-evo",
+          "confidence": 0.7360303401947021,
+          "slot": 1
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9437052011489868,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9861609935760498,
+          "slot": 0
+        },
+        {
+          "card_name": "archers-evo",
+          "confidence": 0.7210027575492859,
+          "slot": 1
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9504044651985168,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "confirmed",
+      "seconds": 113.77017712593079,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 12488,
+      "y": 8586
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.009860965015832335,
+        "captured_at": 264817.097608309,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 4.013
+      },
+      "elixir_before": {
+        "age_s": 0.38592695799889043,
+        "captured_at": 264816.093932806,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "hand_after": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.5524595379829407,
+          "slot": 0
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.5425837635993958,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9510030746459961,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.5524595379829407,
+          "slot": 0
+        },
+        {
+          "card_name": "archers-evo",
+          "confidence": 0.7234706878662109,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7942730784416199,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9414443373680115,
+          "slot": 3
+        }
+      ],
+      "intended_card": "archers",
+      "outcome": "confirmed",
+      "seconds": 118.06500911712646,
+      "side": "pixel9",
+      "slot": 1,
+      "x": 11471,
+      "y": 3969
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.016340390022378415,
+        "captured_at": 264822.061384353,
+        "confidence": 0.995,
+        "continuity": 0.989,
+        "reason": "purple_fill",
+        "value": 5.954
+      },
+      "elixir_before": {
+        "age_s": 0.3664729360025376,
+        "captured_at": 264821.058601682,
+        "confidence": 0.9967,
+        "continuity": 0.9926,
+        "reason": "purple_fill",
+        "value": 8.914
+      },
+      "hand_after": [
+        {
+          "card_name": "minions",
+          "confidence": 0.8266724348068237,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9748172760009766,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9087430238723755,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "minions",
+          "confidence": 0.8291364312171936,
+          "slot": 0
+        },
+        {
+          "card_name": "fireball",
+          "confidence": 0.959211528301239,
+          "slot": 1
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9725410342216492,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.8999261856079102,
+          "slot": 3
+        }
+      ],
+      "intended_card": "fireball",
+      "outcome": "confirmed",
+      "seconds": 123.01021456718445,
+      "side": "pixel8",
+      "slot": 1,
+      "x": 4694,
+      "y": 10064
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.06973375100642443,
+        "captured_at": 264827.104651197,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 9.866
+      },
+      "elixir_before": {
+        "age_s": 0.28566190402489156,
+        "captured_at": 264824.599806854,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 8.896
+      },
+      "hand_after": [
+        {
+          "card_name": "mortar-evo",
+          "confidence": 0.503468930721283,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9245805144309998,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7346512079238892,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9420117735862732,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.5524595379829407,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9445315003395081,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.8058840036392212,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9479401707649231,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mini-pekka",
+      "outcome": "unconfirmed",
+      "seconds": 126.47059774398804,
+      "side": "pixel9",
+      "slot": 1,
+      "x": 13082,
+      "y": 16033
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.09694775001844391,
+        "captured_at": 264828.060088192,
+        "confidence": 0.9963,
+        "continuity": 0.9917,
+        "reason": "purple_fill",
+        "value": 7.928
+      },
+      "elixir_before": {
+        "age_s": 0.22674304898828268,
+        "captured_at": 264827.067955358,
+        "confidence": 0.9967,
+        "continuity": 0.9926,
+        "reason": "purple_fill",
+        "value": 8.882
+      },
+      "hand_after": [
+        {
+          "card_name": "minions",
+          "confidence": 0.873516857624054,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9249181151390076,
+          "slot": 1
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9203965067863464,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "minions",
+          "confidence": 0.8314245939254761,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9249758720397949,
+          "slot": 1
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9741750955581665,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9046868085861206,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "confirmed",
+      "seconds": 128.8798279762268,
+      "side": "pixel8",
+      "slot": 2,
+      "x": 4727,
+      "y": 7272
+    },
+    {
+      "confirmation_method": "stable_slot+elixir",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.048829488980118185,
+        "captured_at": 264830.568871945,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "elixir_before": {
+        "age_s": 0.5505186259979382,
+        "captured_at": 264828.601888799,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 9.866
+      },
+      "hand_after": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.5526771545410156,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9440388083457947,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.8133876919746399,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9418765902519226,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "mortar-evo",
+          "confidence": 0.503468930721283,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9532061815261841,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.743960976600647,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9457572102546692,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mortar",
+      "outcome": "confirmed",
+      "seconds": 130.73754262924194,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 11097,
+      "y": 11779
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 5,
+      "elixir_after": {
+        "age_s": 3.334000939503312e-05,
+        "captured_at": 264833.44015894,
+        "confidence": 0.9976,
+        "continuity": 0.9947,
+        "reason": "purple_fill",
+        "value": 4.961
+      },
+      "elixir_before": {
+        "age_s": 1.162928417965304,
+        "captured_at": 264829.562336502,
+        "confidence": 0.9967,
+        "continuity": 0.9926,
+        "reason": "purple_fill",
+        "value": 8.914
+      },
+      "hand_after": [
+        {
+          "card_name": "minions",
+          "confidence": 0.9554362297058105,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9540560245513916,
+          "slot": 1
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.9575690031051636,
+          "slot": 2
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "minions",
+          "confidence": 0.8284213542938232,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.92594313621521,
+          "slot": 1
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.8263705372810364,
+          "slot": 2
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.890489399433136,
+          "slot": 3
+        }
+      ],
+      "intended_card": "giant",
+      "outcome": "confirmed",
+      "seconds": 132.3104109764099,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 5259,
+      "y": 9117
+    },
+    {
+      "confirmation_method": "stable_slot+elixir",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.03471782000269741,
+        "captured_at": 264835.562879525,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "elixir_before": {
+        "age_s": 0.05287717405008152,
+        "captured_at": 264833.44015894,
+        "confidence": 0.9976,
+        "continuity": 0.9947,
+        "reason": "purple_fill",
+        "value": 4.961
+      },
+      "hand_after": [
+        {
+          "card_name": "minions",
+          "confidence": 0.8337697386741638,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9290124177932739,
+          "slot": 1
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.8422750234603882,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8634855151176453,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "minions",
+          "confidence": 0.9554362297058105,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9540560245513916,
+          "slot": 1
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.9575690031051636,
+          "slot": 2
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "intended_card": "archers",
+      "outcome": "confirmed",
+      "seconds": 135.0781774520874,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 5808,
+      "y": 11414
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 6,
+      "elixir_after": {
+        "age_s": 0.11185688700061291,
+        "captured_at": 264836.602876041,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "elixir_before": {
+        "age_s": 0.014658202009741217,
+        "captured_at": 264835.597417614,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 8.896
+      },
+      "hand_after": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8950735926628113,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9390425682067871,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9526346325874329,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8779935836791992,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9463599324226379,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7814610600471497,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9508413672447205,
+          "slot": 3
+        }
+      ],
+      "intended_card": "rocket",
+      "outcome": "confirmed",
+      "seconds": 137.19725155830383,
+      "side": "pixel9",
+      "slot": 2,
+      "x": 13511,
+      "y": 14396
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 2,
+      "elixir_after": {
+        "age_s": 0.07609793299343437,
+        "captured_at": 264840.062122396,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "elixir_before": {
+        "age_s": 0.5959616550244391,
+        "captured_at": 264837.594113066,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "hand_after": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.884412944316864,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9577442407608032,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9425981640815735,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8570520877838135,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9417745471000671,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9525179266929626,
+          "slot": 3
+        }
+      ],
+      "intended_card": "barbarian-barrel",
+      "outcome": "unconfirmed",
+      "seconds": 139.7752285003662,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 14242,
+      "y": 16540
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.014760076999664307,
+        "captured_at": 264841.56183801,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 4.934
+      },
+      "elixir_before": {
+        "age_s": 0.09268691798206419,
+        "captured_at": 264840.851968106,
+        "confidence": 0.9983,
+        "continuity": 0.9963,
+        "reason": "purple_fill",
+        "value": 7.066
+      },
+      "hand_after": [
+        {
+          "card_name": "minions",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9410482048988342,
+          "slot": 1
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.7794358134269714,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8831251263618469,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "minions",
+          "confidence": 0.9546355605125427,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9540560245513916,
+          "slot": 1
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.9590142369270325,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9602196216583252,
+          "slot": 3
+        }
+      ],
+      "intended_card": "minions",
+      "outcome": "confirmed",
+      "seconds": 142.5298182964325,
+      "side": "pixel8",
+      "slot": 0,
+      "x": 4403,
+      "y": 13297
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.02098868798930198,
+        "captured_at": 264843.100297631,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 4.013
+      },
+      "elixir_before": {
+        "age_s": 0.47581338399322703,
+        "captured_at": 264842.113703583,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 6.957
+      },
+      "hand_after": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8621074557304382,
+          "slot": 0
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.5898937582969666,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9568251967430115,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8312495350837708,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9579666256904602,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9554949402809143,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mini-pekka",
+      "outcome": "confirmed",
+      "seconds": 144.17466807365417,
+      "side": "pixel9",
+      "slot": 1,
+      "x": 14225,
+      "y": 19698
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.005440158012788743,
+        "captured_at": 264845.059640377,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 4.704
+      },
+      "elixir_before": {
+        "age_s": 0.37384774402016774,
+        "captured_at": 264844.063766689,
+        "confidence": 0.9957,
+        "continuity": 0.9905,
+        "reason": "purple_fill",
+        "value": 6.941
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9099351167678833,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.906816840171814,
+          "slot": 1
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8880388736724854,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.8760008811950684,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9244620203971863,
+          "slot": 1
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.8257739543914795,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8663182258605957,
+          "slot": 3
+        }
+      ],
+      "intended_card": "knight",
+      "outcome": "confirmed",
+      "seconds": 146.02275967597961,
+      "side": "pixel8",
+      "slot": 2,
+      "x": 4479,
+      "y": 11792
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.055858651001472026,
+        "captured_at": 264846.596622016,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.151
+      },
+      "elixir_before": {
+        "age_s": 0.046012181031983346,
+        "captured_at": 264846.104956897,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "hand_after": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8694223165512085,
+          "slot": 0
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.952534556388855,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.883465588092804,
+          "slot": 0
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9627089500427246,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9543251991271973,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "confirmed",
+      "seconds": 147.73609566688538,
+      "side": "pixel9",
+      "slot": 1,
+      "x": 14055,
+      "y": 18741
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.06145137798739597,
+        "captured_at": 264849.128522582,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "elixir_before": {
+        "age_s": 0.24741428199922666,
+        "captured_at": 264847.599273257,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "hand_after": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.832260251045227,
+          "slot": 0
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.8671082258224487,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8651490211486816,
+          "slot": 0
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9498749375343323,
+          "slot": 3
+        }
+      ],
+      "intended_card": "arrows",
+      "outcome": "confirmed",
+      "seconds": 149.43183541297913,
+      "side": "pixel9",
+      "slot": 3,
+      "x": 14382,
+      "y": 22242
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.09062062500743195,
+        "captured_at": 264850.060127635,
+        "confidence": 0.9957,
+        "continuity": 0.9905,
+        "reason": "purple_fill",
+        "value": 6.941
+      },
+      "elixir_before": {
+        "age_s": 0.3255389900295995,
+        "captured_at": 264849.081581602,
+        "confidence": 0.9944,
+        "continuity": 0.9875,
+        "reason": "purple_fill",
+        "value": 7.895
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9270244240760803,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9269425868988037,
+          "slot": 1
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8605498671531677,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.934634804725647,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9312050342559814,
+          "slot": 1
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9763981103897095,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8569010496139526,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "confirmed",
+      "seconds": 150.99224519729614,
+      "side": "pixel8",
+      "slot": 2,
+      "x": 5275,
+      "y": 10323
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.09088184998836368,
+        "captured_at": 264852.118729274,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.01
+      },
+      "elixir_before": {
+        "age_s": 0.47233665495878085,
+        "captured_at": 264850.607903867,
+        "confidence": 0.997,
+        "continuity": 0.9933,
+        "reason": "purple_fill",
+        "value": 5.017
+      },
+      "hand_after": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8683443665504456,
+          "slot": 0
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mortar",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8756961822509766,
+          "slot": 0
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.9146125912666321,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mortar",
+          "confidence": 0.9579328894615173,
+          "slot": 3
+        }
+      ],
+      "intended_card": "archers",
+      "outcome": "confirmed",
+      "seconds": 152.66537308692932,
+      "side": "pixel9",
+      "slot": 1,
+      "x": 12815,
+      "y": 11350
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 5,
+      "elixir_after": {
+        "age_s": 0.053614058007951826,
+        "captured_at": 264853.060508483,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 4.967
+      },
+      "elixir_before": {
+        "age_s": 0.048762472986709327,
+        "captured_at": 264852.564076624,
+        "confidence": 0.9967,
+        "continuity": 0.9926,
+        "reason": "purple_fill",
+        "value": 8.914
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.8664777874946594,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9171329736709595,
+          "slot": 1
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8531835079193115,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9048240184783936,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9199012517929077,
+          "slot": 1
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9496911764144897,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.862850546836853,
+          "slot": 3
+        }
+      ],
+      "intended_card": "giant",
+      "outcome": "confirmed",
+      "seconds": 154.19799304008484,
+      "side": "pixel8",
+      "slot": 2,
+      "x": 4385,
+      "y": 13240
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.06266901298658922,
+        "captured_at": 264856.059882303,
+        "confidence": 0.9852,
+        "continuity": 0.9672,
+        "reason": "purple_fill",
+        "value": 2.007
+      },
+      "elixir_before": {
+        "age_s": 0.05610825802432373,
+        "captured_at": 264855.083810422,
+        "confidence": 0.994,
+        "continuity": 0.9868,
+        "reason": "purple_fill",
+        "value": 4.967
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9168568849563599,
+          "slot": 0
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.933714747428894,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.9546610713005066,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.865296483039856,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mini-pekka",
+      "outcome": "confirmed",
+      "seconds": 156.72505021095276,
+      "side": "pixel8",
+      "slot": 1,
+      "x": 3901,
+      "y": 20683
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.07316495600389317,
+        "captured_at": 264858.123790827,
+        "confidence": 0.9963,
+        "continuity": 0.9917,
+        "reason": "purple_fill",
+        "value": 4.013
+      },
+      "elixir_before": {
+        "age_s": 0.44281873397994787,
+        "captured_at": 264856.094009889,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "hand_after": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.871769368648529,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9128732085227966,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8609694838523865,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7546968460083008,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mortar",
+          "confidence": 0.9487212896347046,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mortar",
+      "outcome": "confirmed",
+      "seconds": 158.12197470664978,
+      "side": "pixel9",
+      "slot": 3,
+      "x": 12735,
+      "y": 13367
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 2,
+      "elixir_after": {
+        "age_s": 0.02742268203292042,
+        "captured_at": 264860.620119488,
+        "confidence": 0.997,
+        "continuity": 0.9933,
+        "reason": "purple_fill",
+        "value": 5.017
+      },
+      "elixir_before": {
+        "age_s": 0.4673649200121872,
+        "captured_at": 264858.123790827,
+        "confidence": 0.9963,
+        "continuity": 0.9917,
+        "reason": "purple_fill",
+        "value": 4.013
+      },
+      "hand_after": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8782561421394348,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.8663114309310913,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.871769368648529,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9128732085227966,
+          "slot": 3
+        }
+      ],
+      "intended_card": "barbarian-barrel",
+      "outcome": "unconfirmed",
+      "seconds": 160.17631316184998,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 14073,
+      "y": 11622
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.11661816400010139,
+        "captured_at": 264861.570860377,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.191
+      },
+      "elixir_before": {
+        "age_s": 0.072260509012267,
+        "captured_at": 264861.111642456,
+        "confidence": 0.995,
+        "continuity": 0.9889,
+        "reason": "purple_fill",
+        "value": 5.921
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.9401990175247192,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8610395193099976,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9199059009552002,
+          "slot": 0
+        },
+        {
+          "card_name": "minions",
+          "confidence": 0.9575228691101074,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.9430033564567566,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8810895681381226,
+          "slot": 3
+        }
+      ],
+      "intended_card": "minions",
+      "outcome": "confirmed",
+      "seconds": 162.76906037330627,
+      "side": "pixel8",
+      "slot": 1,
+      "x": 4760,
+      "y": 20369
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 2,
+      "elixir_after": {
+        "age_s": 0.13255772402044386,
+        "captured_at": 264862.596421241,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 4.281
+      },
+      "elixir_before": {
+        "age_s": 0.13133950799237937,
+        "captured_at": 264862.096101312,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "hand_after": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.5463718175888062,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9122539162635803,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "barbarian-barrel",
+          "confidence": 0.8910749554634094,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7130362391471863,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.874911904335022,
+          "slot": 3
+        }
+      ],
+      "intended_card": "barbarian-barrel",
+      "outcome": "confirmed",
+      "seconds": 163.81258702278137,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 14025,
+      "y": 12512
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.0024023359874263406,
+        "captured_at": 264864.563886735,
+        "confidence": 0.9852,
+        "continuity": 0.9672,
+        "reason": "purple_fill",
+        "value": 2.007
+      },
+      "elixir_before": {
+        "age_s": 0.3707699440419674,
+        "captured_at": 264863.567517004,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9006917476654053,
+          "slot": 0
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.8833717703819275,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.9413736462593079,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8583206534385681,
+          "slot": 3
+        }
+      ],
+      "intended_card": "knight",
+      "outcome": "confirmed",
+      "seconds": 165.5234019756317,
+      "side": "pixel8",
+      "slot": 1,
+      "x": 4754,
+      "y": 21053
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 4,
+      "elixir_after": {
+        "age_s": 0.003665950964204967,
+        "captured_at": 264865.602136988,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 4.013
+      },
+      "elixir_before": {
+        "age_s": 0.005813780997414142,
+        "captured_at": 264865.098503656,
+        "confidence": 0.9978,
+        "continuity": 0.9952,
+        "reason": "purple_fill",
+        "value": 6.923
+      },
+      "hand_after": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9889750480651855,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9883165955543518,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7192111015319824,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.8972437381744385,
+          "slot": 3
+        }
+      ],
+      "intended_card": "mini-pekka",
+      "outcome": "confirmed",
+      "seconds": 166.68945956230164,
+      "side": "pixel9",
+      "slot": 3,
+      "x": 12895,
+      "y": 11380
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.002581954002380371,
+        "captured_at": 264869.06933842,
+        "confidence": 0.994,
+        "continuity": 0.9868,
+        "reason": "purple_fill",
+        "value": 4.967
+      },
+      "elixir_before": {
+        "age_s": 0.18529797898372635,
+        "captured_at": 264867.063102258,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9440162777900696,
+          "slot": 0
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9915459752082825,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.9421184659004211,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8881422877311707,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9245511889457703,
+          "slot": 0
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9900296330451965,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.9492543339729309,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8607756495475769,
+          "slot": 3
+        }
+      ],
+      "intended_card": "arrows",
+      "outcome": "unconfirmed",
+      "seconds": 168.83350229263306,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 5326,
+      "y": 20585
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.00013986998237669468,
+        "captured_at": 264870.104967461,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.151
+      },
+      "elixir_before": {
+        "age_s": 0.006372083036694676,
+        "captured_at": 264869.597850604,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "hand_after": [
+        {
+          "card_name": "snowball",
+          "confidence": 0.492195725440979,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9544938206672668,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9848485589027405,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7238069176673889,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9565666317939758,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "confirmed",
+      "seconds": 171.18938302993774,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 12609,
+      "y": 9669
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.006503085023723543,
+        "captured_at": 264871.560236567,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "elixir_before": {
+        "age_s": 0.4147749320254661,
+        "captured_at": 264870.5749346,
+        "confidence": 0.995,
+        "continuity": 0.989,
+        "reason": "purple_fill",
+        "value": 5.954
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9222916960716248,
+          "slot": 0
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9908418655395508,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8556060194969177,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.925894021987915,
+          "slot": 0
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9901279807090759,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.9408777356147766,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.8893521428108215,
+          "slot": 3
+        }
+      ],
+      "intended_card": "archers",
+      "outcome": "confirmed",
+      "seconds": 172.57485270500183,
+      "side": "pixel8",
+      "slot": 2,
+      "x": 5776,
+      "y": 16097
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 3,
+      "elixir_after": null,
+      "elixir_before": {
+        "age_s": 0.48260561196366325,
+        "captured_at": 264871.595433533,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.953
+      },
+      "hand_after": [
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "archers",
+          "confidence": 0.8574100732803345,
+          "slot": 0
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.7509617805480957,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9497154951095581,
+          "slot": 3
+        }
+      ],
+      "intended_card": "archers",
+      "outcome": "unconfirmed",
+      "seconds": 173.66319227218628,
+      "side": "pixel9",
+      "slot": 0,
+      "x": 13325,
+      "y": 10848
+    }
+  ],
+  "battle_status": {
+    "attempts": 63,
+    "controllers": {
+      "pixel8": "policy_bc_v4",
+      "pixel9": "policy_bc_v4"
+    },
+    "decks": {
+      "pixel8": [
+        "knight",
+        "archers",
+        "minions",
+        "skeletons",
+        "arrows",
+        "fireball",
+        "giant",
+        "mini-pekka"
+      ],
+      "pixel9": [
+        "mortar",
+        "knight",
+        "archers",
+        "skeletons",
+        "barbarian-barrel",
+        "arrows",
+        "mini-pekka",
+        "rocket"
+      ]
+    },
+    "elixir": {
+      "pixel8": 10.0,
+      "pixel9": 10.0
+    },
+    "error": null,
+    "events": 51,
+    "hands": {
+      "pixel8": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "heal-spirit",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "pixel9": [
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 0
+        },
+        {
+          "card_name": "heal-spirit",
+          "confidence": 0.5559231042861938,
+          "slot": 1
+        },
+        {
+          "card_name": "rocket",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ]
+    },
+    "log": [
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 177.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.0
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.2
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.3
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.5
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.7
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.8
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 178.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.0
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.2
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.3
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.4
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.6
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.6
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.7
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.8
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 179.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.0
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.1
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.1
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.2
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.4
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.7
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.8
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.9
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 180.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.1
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.1
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.2
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.4
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.5
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.7
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.8
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.9
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 181.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.1
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.1
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.2
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.3
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.5
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.6
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.6
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.7
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.9
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 182.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 183.0
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 183.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 183.2
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 183.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 183.3
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 183.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 183.4
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 183.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 183.7
+      },
+      {
+        "level": "info",
+        "message": "pixel9: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 183.7
+      },
+      {
+        "level": "info",
+        "message": "battle stopped",
+        "t": 183.8
+      }
+    ],
+    "match_time": 183.8,
+    "next": {
+      "pixel8": {
+        "card": "archers",
+        "controller": "policy_bc_v4",
+        "delay_seconds": 1.8629026243780153,
+        "event_type": "card_play",
+        "hand_mask": [
+          false,
+          true,
+          false,
+          false,
+          true,
+          true,
+          false,
+          false
+        ],
+        "mirror_tta": false,
+        "observed_now_seconds": 183.61950850486755,
+        "phone": "pixel8",
+        "placement_decode": "expected",
+        "placement_temperature": 1.0,
+        "placement_top_k": null,
+        "ranked_slots": [
+          {
+            "card": "archers",
+            "legal": true,
+            "prob": 0.8761416077613831,
+            "raw_prob": 0.8742667436599731,
+            "slot": 1
+          },
+          {
+            "card": "arrows",
+            "legal": true,
+            "prob": 0.09020617604255676,
+            "raw_prob": 0.09001313894987106,
+            "slot": 4
+          },
+          {
+            "card": "fireball",
+            "legal": true,
+            "prob": 0.03365219756960869,
+            "raw_prob": 0.03358018398284912,
+            "slot": 5
+          },
+          {
+            "card": "knight",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00042797724017873406,
+            "slot": 0
+          },
+          {
+            "card": "minions",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00042797724017873406,
+            "slot": 2
+          },
+          {
+            "card": "skeletons",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00042797724017873406,
+            "slot": 3
+          },
+          {
+            "card": "giant",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00042797724017873406,
+            "slot": 6
+          },
+          {
+            "card": "mini-pekka",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00042797724017873406,
+            "slot": 7
+          }
+        ],
+        "slot": 1,
+        "slot_decode": "sample",
+        "slot_temperature": 0.8,
+        "think_steps": 0,
+        "tile": null,
+        "top3": [
+          {
+            "card": "archers",
+            "legal": true,
+            "prob": 0.8761416077613831,
+            "raw_prob": 0.8742667436599731,
+            "slot": 1
+          },
+          {
+            "card": "arrows",
+            "legal": true,
+            "prob": 0.09020617604255676,
+            "raw_prob": 0.09001313894987106,
+            "slot": 4
+          },
+          {
+            "card": "fireball",
+            "legal": true,
+            "prob": 0.03365219756960869,
+            "raw_prob": 0.03358018398284912,
+            "slot": 5
+          }
+        ],
+        "x": 5150,
+        "y": 16755,
+        "zone": 9,
+        "zone_from_xy": 6
+      },
+      "pixel9": {
+        "card": "arrows",
+        "controller": "policy_bc_v4",
+        "delay_seconds": 1.0882043240126442,
+        "event_type": "card_play",
+        "hand_mask": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          true
+        ],
+        "mirror_tta": false,
+        "observed_now_seconds": 183.61950850486755,
+        "phone": "pixel9",
+        "placement_decode": "expected",
+        "placement_temperature": 1.0,
+        "placement_top_k": null,
+        "ranked_slots": [
+          {
+            "card": "arrows",
+            "legal": true,
+            "prob": 0.7320403456687927,
+            "raw_prob": 0.7243836522102356,
+            "slot": 5
+          },
+          {
+            "card": "rocket",
+            "legal": true,
+            "prob": 0.26795968413352966,
+            "raw_prob": 0.26515698432922363,
+            "slot": 7
+          },
+          {
+            "card": "mortar",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00174323795363307,
+            "slot": 0
+          },
+          {
+            "card": "knight",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00174323795363307,
+            "slot": 1
+          },
+          {
+            "card": "archers",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00174323795363307,
+            "slot": 2
+          },
+          {
+            "card": "skeletons",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00174323795363307,
+            "slot": 3
+          },
+          {
+            "card": "barbarian-barrel",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00174323795363307,
+            "slot": 4
+          },
+          {
+            "card": "mini-pekka",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00174323795363307,
+            "slot": 6
+          }
+        ],
+        "slot": 5,
+        "slot_decode": "sample",
+        "slot_temperature": 0.8,
+        "think_steps": 0,
+        "tile": null,
+        "top3": [
+          {
+            "card": "arrows",
+            "legal": true,
+            "prob": 0.7320403456687927,
+            "raw_prob": 0.7243836522102356,
+            "slot": 5
+          },
+          {
+            "card": "rocket",
+            "legal": true,
+            "prob": 0.26795968413352966,
+            "raw_prob": 0.26515698432922363,
+            "slot": 7
+          },
+          {
+            "card": "mortar",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.00174323795363307,
+            "slot": 0
+          }
+        ],
+        "x": 14320,
+        "y": 15250,
+        "zone": 8,
+        "zone_from_xy": 8
+      }
+    },
+    "protocol": {
+      "history": "confirmed deployments only",
+      "placement": "checkpoint rollout decoder conditioned on selected card",
+      "scheduler": "two-sided predicted-delay race",
+      "slot": "checkpoint rollout decoder + detected-hand hard mask",
+      "think_steps": null
+    },
+    "running": false
+  },
+  "duration_s": 183.895,
+  "events": [
+    {
+      "card": "knight",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "observed_elixir_after": 5.724,
+      "observed_elixir_before": 7.928,
+      "placement_decode": "expected",
+      "seconds": 1.2982466220855713,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 8362,
+      "y": 10551
+    },
+    {
+      "card": "archers",
+      "confirmation_method": "stable_slot+elixir",
+      "event_type": "card_play",
+      "model_slot": 2,
+      "observed_elixir_after": 5.953,
+      "observed_elixir_before": 8.896,
+      "placement_decode": "expected",
+      "seconds": 3.3791563510894775,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 9484,
+      "y": 5370
+    },
+    {
+      "card": "archers",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 1,
+      "observed_elixir_after": 4.967,
+      "observed_elixir_before": 6.941,
+      "placement_decode": "expected",
+      "seconds": 6.973280906677246,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 8531,
+      "y": 7947
+    },
+    {
+      "card": "minions",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 2,
+      "observed_elixir_after": 2.993,
+      "observed_elixir_before": 5.954,
+      "placement_decode": "expected",
+      "seconds": 12.310831308364868,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 9190,
+      "y": 13158
+    },
+    {
+      "card": "barbarian-barrel",
+      "confirmation_method": "stable_slot+elixir",
+      "event_type": "card_play",
+      "model_slot": 4,
+      "observed_elixir_after": 7.926,
+      "observed_elixir_before": 9.866,
+      "placement_decode": "expected",
+      "seconds": 14.422264099121094,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 11512,
+      "y": 11771
+    },
+    {
+      "card": "skeletons",
+      "confirmation_method": "stable_slot",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "observed_elixir_after": 7.926,
+      "observed_elixir_before": 7.926,
+      "placement_decode": "expected",
+      "seconds": 18.351902961730957,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 11457,
+      "y": 12843
+    },
+    {
+      "card": "arrows",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 4,
+      "observed_elixir_after": 3.947,
+      "observed_elixir_before": 6.941,
+      "placement_decode": "expected",
+      "seconds": 22.767772674560547,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 5962,
+      "y": 21333
+    },
+    {
+      "card": "arrows",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 5,
+      "observed_elixir_after": 6.957,
+      "observed_elixir_before": 9.866,
+      "placement_decode": "expected",
+      "seconds": 26.568008184432983,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 12716,
+      "y": 13140
+    },
+    {
+      "card": "mini-pekka",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 6,
+      "observed_elixir_after": 3.98,
+      "observed_elixir_before": 7.926,
+      "placement_decode": "expected",
+      "seconds": 31.96871781349182,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 11912,
+      "y": 10712
+    },
+    {
+      "card": "mortar",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "observed_elixir_after": 2.074,
+      "observed_elixir_before": 5.017,
+      "placement_decode": "expected",
+      "seconds": 36.359994888305664,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 12157,
+      "y": 12571
+    },
+    {
+      "card": "skeletons",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "observed_elixir_after": 7.993,
+      "observed_elixir_before": 8.914,
+      "placement_decode": "expected",
+      "seconds": 37.23275876045227,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 7784,
+      "y": 11669
+    },
+    {
+      "card": "giant",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 6,
+      "observed_elixir_after": 3.947,
+      "observed_elixir_before": 7.993,
+      "placement_decode": "expected",
+      "seconds": 37.858529567718506,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 5903,
+      "y": 14140
+    },
+    {
+      "card": "knight",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "observed_elixir_after": 1.447,
+      "observed_elixir_before": 3.947,
+      "placement_decode": "expected",
+      "seconds": 39.49487781524658,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 6082,
+      "y": 14121
+    },
+    {
+      "card": "barbarian-barrel",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 4,
+      "observed_elixir_after": 2.074,
+      "observed_elixir_before": 3.98,
+      "placement_decode": "expected",
+      "seconds": 42.8881516456604,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 13848,
+      "y": 9626
+    },
+    {
+      "card": "archers",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 1,
+      "observed_elixir_after": 1.447,
+      "observed_elixir_before": 3.947,
+      "placement_decode": "expected",
+      "seconds": 48.451817989349365,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 6536,
+      "y": 10099
+    },
+    {
+      "card": "skeletons",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "observed_elixir_after": 4.013,
+      "observed_elixir_before": 5.017,
+      "placement_decode": "expected",
+      "seconds": 51.57001972198486,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 12706,
+      "y": 9840
+    },
+    {
+      "card": "minions",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 2,
+      "observed_elixir_after": 2.007,
+      "observed_elixir_before": 3.947,
+      "placement_decode": "expected",
+      "seconds": 58.23971199989319,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 4032,
+      "y": 12575
+    },
+    {
+      "card": "archers",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 2,
+      "observed_elixir_after": 4.95,
+      "observed_elixir_before": 6.957,
+      "placement_decode": "expected",
+      "seconds": 61.63470101356506,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 12804,
+      "y": 10242
+    },
+    {
+      "card": "rocket",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 7,
+      "observed_elixir_after": 3.043,
+      "observed_elixir_before": 8.896,
+      "placement_decode": "expected",
+      "seconds": 73.73072457313538,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 14155,
+      "y": 16019
+    },
+    {
+      "card": "giant",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 6,
+      "observed_elixir_after": 2.993,
+      "observed_elixir_before": 7.928,
+      "placement_decode": "expected",
+      "seconds": 78.26863050460815,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 5680,
+      "y": 7226
+    },
+    {
+      "card": "mini-pekka",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 7,
+      "observed_elixir_after": 1.447,
+      "observed_elixir_before": 4.967,
+      "placement_decode": "expected",
+      "seconds": 83.78508281707764,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 3803,
+      "y": 13977
+    },
+    {
+      "card": "mortar",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "observed_elixir_after": 4.013,
+      "observed_elixir_before": 6.957,
+      "placement_decode": "expected",
+      "seconds": 86.19781017303467,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 11940,
+      "y": 11100
+    },
+    {
+      "card": "knight",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "observed_elixir_after": 1.447,
+      "observed_elixir_before": 3.092,
+      "placement_decode": "expected",
+      "seconds": 89.32450127601624,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 5889,
+      "y": 13244
+    },
+    {
+      "card": "mini-pekka",
+      "confirmation_method": "stable_slot+elixir",
+      "event_type": "card_play",
+      "model_slot": 6,
+      "observed_elixir_after": 3.043,
+      "observed_elixir_before": 6.957,
+      "placement_decode": "expected",
+      "seconds": 96.43624520301819,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 13893,
+      "y": 11376
+    },
+    {
+      "card": "barbarian-barrel",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 4,
+      "observed_elixir_after": 2.074,
+      "observed_elixir_before": 3.98,
+      "placement_decode": "expected",
+      "seconds": 99.89359951019287,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 14374,
+      "y": 9858
+    },
+    {
+      "card": "archers",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 1,
+      "observed_elixir_after": 2.007,
+      "observed_elixir_before": 3.947,
+      "placement_decode": "expected",
+      "seconds": 102.83588933944702,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 4779,
+      "y": 13071
+    },
+    {
+      "card": "arrows",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 4,
+      "observed_elixir_after": 1.447,
+      "observed_elixir_before": 3.947,
+      "placement_decode": "expected",
+      "seconds": 110.04077053070068,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 3523,
+      "y": 13688
+    },
+    {
+      "card": "skeletons",
+      "confirmation_method": "stable_slot",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "observed_elixir_after": 3.98,
+      "observed_elixir_before": 3.98,
+      "placement_decode": "expected",
+      "seconds": 113.77017712593079,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 12488,
+      "y": 8586
+    },
+    {
+      "card": "archers",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 2,
+      "observed_elixir_after": 4.013,
+      "observed_elixir_before": 5.953,
+      "placement_decode": "expected",
+      "seconds": 118.06500911712646,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 11471,
+      "y": 3969
+    },
+    {
+      "card": "fireball",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 5,
+      "observed_elixir_after": 5.954,
+      "observed_elixir_before": 8.914,
+      "placement_decode": "expected",
+      "seconds": 123.01021456718445,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 4694,
+      "y": 10064
+    },
+    {
+      "card": "skeletons",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "observed_elixir_after": 7.928,
+      "observed_elixir_before": 8.882,
+      "placement_decode": "expected",
+      "seconds": 128.8798279762268,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 4727,
+      "y": 7272
+    },
+    {
+      "card": "mortar",
+      "confirmation_method": "stable_slot+elixir",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "observed_elixir_after": 5.953,
+      "observed_elixir_before": 9.866,
+      "placement_decode": "expected",
+      "seconds": 130.73754262924194,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 11097,
+      "y": 11779
+    },
+    {
+      "card": "giant",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 6,
+      "observed_elixir_after": 4.961,
+      "observed_elixir_before": 8.914,
+      "placement_decode": "expected",
+      "seconds": 132.3104109764099,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 5259,
+      "y": 9117
+    },
+    {
+      "card": "archers",
+      "confirmation_method": "stable_slot+elixir",
+      "event_type": "card_play",
+      "model_slot": 1,
+      "observed_elixir_after": 3.98,
+      "observed_elixir_before": 4.961,
+      "placement_decode": "expected",
+      "seconds": 135.0781774520874,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 5808,
+      "y": 11414
+    },
+    {
+      "card": "rocket",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 7,
+      "observed_elixir_after": 3.98,
+      "observed_elixir_before": 8.896,
+      "placement_decode": "expected",
+      "seconds": 137.19725155830383,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 13511,
+      "y": 14396
+    },
+    {
+      "card": "minions",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 2,
+      "observed_elixir_after": 4.934,
+      "observed_elixir_before": 7.066,
+      "placement_decode": "expected",
+      "seconds": 142.5298182964325,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 4403,
+      "y": 13297
+    },
+    {
+      "card": "mini-pekka",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 6,
+      "observed_elixir_after": 4.013,
+      "observed_elixir_before": 6.957,
+      "placement_decode": "expected",
+      "seconds": 144.17466807365417,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 14225,
+      "y": 19698
+    },
+    {
+      "card": "knight",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "observed_elixir_after": 4.704,
+      "observed_elixir_before": 6.941,
+      "placement_decode": "expected",
+      "seconds": 146.02275967597961,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 4479,
+      "y": 11792
+    },
+    {
+      "card": "skeletons",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "observed_elixir_after": 5.151,
+      "observed_elixir_before": 5.953,
+      "placement_decode": "expected",
+      "seconds": 147.73609566688538,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 14055,
+      "y": 18741
+    },
+    {
+      "card": "arrows",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 5,
+      "observed_elixir_after": 3.98,
+      "observed_elixir_before": 5.953,
+      "placement_decode": "expected",
+      "seconds": 149.43183541297913,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 14382,
+      "y": 22242
+    },
+    {
+      "card": "skeletons",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "observed_elixir_after": 6.941,
+      "observed_elixir_before": 7.895,
+      "placement_decode": "expected",
+      "seconds": 150.99224519729614,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 5275,
+      "y": 10323
+    },
+    {
+      "card": "archers",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 2,
+      "observed_elixir_after": 3.01,
+      "observed_elixir_before": 5.017,
+      "placement_decode": "expected",
+      "seconds": 152.66537308692932,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 12815,
+      "y": 11350
+    },
+    {
+      "card": "giant",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 6,
+      "observed_elixir_after": 4.967,
+      "observed_elixir_before": 8.914,
+      "placement_decode": "expected",
+      "seconds": 154.19799304008484,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 4385,
+      "y": 13240
+    },
+    {
+      "card": "mini-pekka",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 7,
+      "observed_elixir_after": 2.007,
+      "observed_elixir_before": 4.967,
+      "placement_decode": "expected",
+      "seconds": 156.72505021095276,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 3901,
+      "y": 20683
+    },
+    {
+      "card": "mortar",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "observed_elixir_after": 4.013,
+      "observed_elixir_before": 5.953,
+      "placement_decode": "expected",
+      "seconds": 158.12197470664978,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 12735,
+      "y": 13367
+    },
+    {
+      "card": "minions",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 2,
+      "observed_elixir_after": 3.191,
+      "observed_elixir_before": 5.921,
+      "placement_decode": "expected",
+      "seconds": 162.76906037330627,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 4760,
+      "y": 20369
+    },
+    {
+      "card": "barbarian-barrel",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 4,
+      "observed_elixir_after": 4.281,
+      "observed_elixir_before": 5.953,
+      "placement_decode": "expected",
+      "seconds": 163.81258702278137,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 14025,
+      "y": 12512
+    },
+    {
+      "card": "knight",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "observed_elixir_after": 2.007,
+      "observed_elixir_before": 3.947,
+      "placement_decode": "expected",
+      "seconds": 165.5234019756317,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 4754,
+      "y": 21053
+    },
+    {
+      "card": "mini-pekka",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 6,
+      "observed_elixir_after": 4.013,
+      "observed_elixir_before": 6.923,
+      "placement_decode": "expected",
+      "seconds": 166.68945956230164,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 12895,
+      "y": 11380
+    },
+    {
+      "card": "skeletons",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "observed_elixir_after": 5.151,
+      "observed_elixir_before": 5.953,
+      "placement_decode": "expected",
+      "seconds": 171.18938302993774,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 12609,
+      "y": 9669
+    },
+    {
+      "card": "archers",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 1,
+      "observed_elixir_after": 3.98,
+      "observed_elixir_before": 5.954,
+      "placement_decode": "expected",
+      "seconds": 172.57485270500183,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 5776,
+      "y": 16097
+    }
+  ],
+  "game": 1,
+  "saved_at": "2026-08-16T02:42:19.414210+00:00",
+  "started_at": "2026-08-16T02:39:15.519344+00:00"
+}

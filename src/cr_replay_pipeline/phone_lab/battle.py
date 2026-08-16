@@ -69,8 +69,14 @@ MAX_EMPTY_HAND_STREAK = 6
 # The model was trained and evaluated with delays clipped to this range.
 MAX_PLAN_DELAY_S = 12.0
 MIN_DELAY_S = 0.05
-POST_PLAY_SLEEP_S = 0.28  # just enough for CR to accept the next tap
+POST_PLAY_SLEEP_S = 0.35
 HAND_MAX_AGE_S = 0.55  # reuse YOLO result unless older than this
+ELIXIR_MAX_AGE_S = 1.25
+ELIXIR_MIN_CONFIDENCE = 0.72
+CONFIRM_TIMEOUT_S = 1.8
+CONFIRM_POLL_S = 0.12
+CONFIRM_STABLE_FRAMES = 2
+HAND_MIN_CONFIDENCE = 0.50
 
 PRESET_DECKS: dict[str, list[str]] = {
     "hog_cycle_2.6": [
@@ -203,7 +209,8 @@ def detected_hand_cards(hand_slots: list[dict[str, Any]]) -> list[str]:
     out: list[str] = []
     for slot in hand_slots:
         name = base_card(slot.get("card_name"))
-        if name:
+        confidence = float(slot.get("confidence", 1.0))
+        if name and confidence >= HAND_MIN_CONFIDENCE:
             out.append(name)
     return out
 
@@ -341,6 +348,10 @@ class ElixirTracker:
         self.values[phone] -= float(cost)
         return True
 
+    def reconcile(self, phone: str, observed: int | float) -> None:
+        """Anchor simulated state to the game's visually observed bar."""
+        self.values[phone] = max(0.0, min(self.MAX_ELIXIR, float(observed)))
+
 
 @dataclass
 class PolicyBundle:
@@ -357,7 +368,9 @@ class BattleConfig:
     controllers: dict[str, str]
     timeout_s: float = 300.0
     card_costs_path: Path = Path("data/card_costs.json")
-    policy_dirs: dict[str, Path] = field(default_factory=lambda: dict(DEFAULT_POLICY_DIRS))
+    policy_dirs: dict[str, Path] = field(
+        default_factory=lambda: dict(DEFAULT_POLICY_DIRS)
+    )
     mirror_tta: bool = False
     think_steps: int | None = None
     stop_on_empty_hands: bool = True
@@ -371,10 +384,12 @@ class BattleRunner:
         *,
         detect_hand: Callable[[str], list[dict[str, Any]]],
         execute_action: Callable[[str, int, float, float], dict[str, Any]],
+        observe_elixir: Callable[[str], dict[str, Any] | None] | None = None,
         log: Callable[[str, str], None] | None = None,
     ):
         self._detect_hand = detect_hand
         self._execute_action = execute_action
+        self._observe_elixir = observe_elixir
         self._log = log or (lambda msg, level="info": None)
         self._lock = threading.Lock()
         self._thread: threading.Thread | None = None
@@ -382,12 +397,14 @@ class BattleRunner:
         self._running = False
         self._elixir = ElixirTracker()
         self._events: list[dict[str, Any]] = []
+        self._attempts: list[dict[str, Any]] = []
         self._log_lines: list[dict[str, Any]] = []
         self._hands: dict[str, list[dict[str, Any]]] = {k: [] for k in PHONE_KEYS}
         self._hand_at: dict[str, float] = {k: 0.0 for k in PHONE_KEYS}
         self._next: dict[str, dict[str, Any] | None] = {k: None for k in PHONE_KEYS}
         self._config: BattleConfig | None = None
         self._policies: dict[str, PolicyBundle] = {}
+        self._policy_cache: dict[tuple[str, str], PolicyBundle] = {}
         self._costs: dict[str, int] = {}
         self._started_at = 0.0
         self._match_time = 0.0
@@ -403,6 +420,10 @@ class BattleRunner:
         """Return a stable copy for data collectors and reports."""
         with self._lock:
             return [dict(event) for event in self._events]
+
+    def attempts_snapshot(self) -> list[dict[str, Any]]:
+        with self._lock:
+            return [dict(attempt) for attempt in self._attempts]
 
     def status(self) -> dict[str, Any]:
         with self._lock:
@@ -444,13 +465,12 @@ class BattleRunner:
                     "scheduler": "two-sided predicted-delay race",
                     "slot": "checkpoint rollout decoder + detected-hand hard mask",
                     "placement": "checkpoint rollout decoder conditioned on selected card",
-                    "think_steps": (
-                        self._config.think_steps if self._config else None
-                    ),
+                    "think_steps": (self._config.think_steps if self._config else None),
                     "history": "confirmed deployments only",
                 },
                 "log": list(self._log_lines[-80:]),
                 "events": len(self._events),
+                "attempts": len(self._attempts),
             }
 
     def stop(self) -> None:
@@ -499,10 +519,15 @@ class BattleRunner:
                 raise FileNotFoundError(
                     f"missing policy checkpoint: {path / 'best_model.pt'}"
                 )
-            model, vocab, cfg, device = load_policy(path)
-            policies[key] = PolicyBundle(
-                key=key, model=model, vocab=vocab, cfg=cfg, device=device
-            )
+            cache_key = (key, str(path.resolve()))
+            bundle = self._policy_cache.get(cache_key)
+            if bundle is None:
+                model, vocab, cfg, device = load_policy(path)
+                bundle = PolicyBundle(
+                    key=key, model=model, vocab=vocab, cfg=cfg, device=device
+                )
+                self._policy_cache[cache_key] = bundle
+            policies[key] = bundle
 
         self.stop()
         self._stop.clear()
@@ -511,6 +536,7 @@ class BattleRunner:
         self._policies = policies
         self._costs = costs
         self._events = []
+        self._attempts = []
         self._log_lines = []
         self._next = {k: None for k in PHONE_KEYS}
         self._hand_at = {k: 0.0 for k in PHONE_KEYS}
@@ -542,14 +568,10 @@ class BattleRunner:
     def _ai_phones(self) -> list[str]:
         assert self._config is not None
         return [
-            k
-            for k in PHONE_KEYS
-            if self._config.controllers[k] != CONTROLLER_MANUAL
+            k for k in PHONE_KEYS if self._config.controllers[k] != CONTROLLER_MANUAL
         ]
 
-    def _refresh_hand(
-        self, phone: str, *, force: bool = False
-    ) -> list[dict[str, Any]]:
+    def _refresh_hand(self, phone: str, *, force: bool = False) -> list[dict[str, Any]]:
         age = time.time() - self._hand_at.get(phone, 0.0)
         if (
             not force
@@ -667,7 +689,9 @@ class BattleRunner:
                     self._next[phone] = {"controller": CONTROLLER_MANUAL}
                 continue
             # Prefer cached hand; force only when empty/stale.
-            hand = self._refresh_hand(phone, force=hand_is_empty(self._hands.get(phone) or []))
+            hand = self._refresh_hand(
+                phone, force=hand_is_empty(self._hands.get(phone) or [])
+            )
             if hand_is_empty(hand):
                 with self._lock:
                     self._next[phone] = {
@@ -687,7 +711,9 @@ class BattleRunner:
                     "err",
                 )
                 continue
-            delay = self._plan_delay(phone, float(pred.get("delay_seconds") or MIN_DELAY_S))
+            delay = self._plan_delay(
+                phone, float(pred.get("delay_seconds") or MIN_DELAY_S)
+            )
             last_event_t = float(self._events[-1]["seconds"]) if self._events else 0.0
             candidates.append(
                 {
@@ -708,9 +734,7 @@ class BattleRunner:
                 names = [s.get("card_name") or "?" for s in slots]
                 self._append_log(f"{key} hand: {names}", "ok")
                 deck_set = set(self._config.decks[key])
-                mystery = [
-                    n for n in detected_hand_cards(slots) if n not in deck_set
-                ]
+                mystery = [n for n in detected_hand_cards(slots) if n not in deck_set]
                 if mystery:
                     self._append_log(
                         f"{key}: detected {mystery} not in declared deck — "
@@ -733,9 +757,7 @@ class BattleRunner:
                     if hand_is_empty(self._hands.get(phone) or []):
                         self._refresh_hand(phone, force=True)
 
-                nonempty = [
-                    p for p in ai_phones if not hand_is_empty(self._hands[p])
-                ]
+                nonempty = [p for p in ai_phones if not hand_is_empty(self._hands[p])]
                 if ai_phones and not nonempty:
                     empty_streak += 1
                     self._append_log(
@@ -805,6 +827,55 @@ class BattleRunner:
                 self._running = False
             self._append_log("battle stopped", "info")
 
+    def _fresh_observed_elixir(
+        self, phone: str, *, reconcile: bool = False
+    ) -> dict[str, Any] | None:
+        if self._observe_elixir is None:
+            return None
+        observation = self._observe_elixir(phone)
+        if not observation or observation.get("value") is None:
+            return None
+        if float(observation.get("confidence") or 0.0) < ELIXIR_MIN_CONFIDENCE:
+            return None
+        if float(observation.get("age_s", 999.0)) > ELIXIR_MAX_AGE_S:
+            return None
+        clean = dict(observation)
+        clean["value"] = float(clean["value"])
+        if reconcile:
+            self._elixir.reconcile(phone, clean["value"])
+        return clean
+
+    @staticmethod
+    def _hand_frame_stamp(hand: list[dict[str, Any]]) -> float:
+        return max((float(row.get("_captured_at") or 0.0) for row in hand), default=0.0)
+
+    def _elixir_confirms_spend(
+        self,
+        before: dict[str, Any] | None,
+        after: dict[str, Any] | None,
+        cost: int,
+        match_t: float,
+    ) -> bool:
+        if before is None or after is None:
+            return False
+        if float(after.get("captured_at") or 0.0) <= float(
+            before.get("captured_at") or 0.0
+        ):
+            return False
+        elapsed = max(
+            0.0,
+            float(after["captured_at"]) - float(before["captured_at"]),
+        )
+        drop = float(before["value"]) - float(after["value"])
+        # Between the two visual samples, regeneration can hide part of the
+        # spend.  Capping at 10 can only make the raw drop stronger evidence.
+        possible_spend = drop + elapsed * self._elixir.rate(match_t)
+        return drop >= 0.20 and drop <= cost + 0.8 and possible_spend >= cost - 0.75
+
+    def _record_attempt(self, attempt: dict[str, Any]) -> None:
+        with self._lock:
+            self._attempts.append(attempt)
+
     def _try_execute(
         self,
         phone: str,
@@ -832,10 +903,21 @@ class BattleRunner:
             return False
         cost = int(self._costs.get(card, 4))
 
-        if not self._elixir.can_afford(phone, cost):
+        observed_before = self._fresh_observed_elixir(phone, reconcile=True)
+        if self._observe_elixir is not None and observed_before is None:
             self._append_log(
-                f"{phone}: wait elixir ({self._elixir.values[phone]:.1f} < {cost}) "
-                f"for {card}",
+                f"{phone}: wait — no fresh high-confidence elixir observation",
+                "info",
+            )
+            return False
+        available = (
+            float(observed_before["value"])
+            if observed_before is not None
+            else self._elixir.values[phone]
+        )
+        if available + 1e-6 < cost + 0.08:
+            self._append_log(
+                f"{phone}: wait elixir ({available:.1f} < {cost}) for {card}",
                 "info",
             )
             return False
@@ -847,25 +929,121 @@ class BattleRunner:
             self._append_log(f"{phone}: tap failed: {exc}", "err")
             return False
 
-        # Do not mutate policy history or estimated elixir merely because ADB/scrcpy
-        # accepted the input. Confirm that Clash Royale actually replaced the slot.
+        attempt: dict[str, Any] = {
+            "seconds": match_t,
+            "side": phone,
+            "intended_card": card,
+            "slot": slot,
+            "cost": cost,
+            "x": int(pred.get("x") or 9000),
+            "y": int(pred.get("y") or 8000),
+            "elixir_before": observed_before,
+            "hand_before": [
+                {
+                    "slot": row.get("slot"),
+                    "card_name": row.get("card_name"),
+                    "confidence": row.get("confidence"),
+                }
+                for row in hand
+            ],
+        }
+
+        # A deployment is accepted only after fresh, stable post-action evidence.
+        # This covers game/UI latency and prevents one YOLO flicker from creating
+        # a phantom card event.
         if settle_sleep > 0:
             time.sleep(settle_sleep)
-        self._hand_at[phone] = 0.0
-        after_hand = self._refresh_hand(phone, force=True)
-        confirmed = hand_confirms_play(hand, after_hand, slot, card)
-        if confirmed is None:
+        deadline = time.monotonic() + CONFIRM_TIMEOUT_S
+        seen_stamps: set[float] = set()
+        changed_name: str | None = None
+        changed_streak = 0
+        confirmed = False
+        confirmation_method = "none"
+        after_hand = hand
+        observed_after: dict[str, Any] | None = None
+        selected_confidence = float(
+            next(
+                (
+                    row.get("confidence") or 0.0
+                    for row in hand
+                    if row.get("slot") == slot
+                ),
+                0.0,
+            )
+        )
+        while time.monotonic() < deadline and not self._stop.is_set():
             self._hand_at[phone] = 0.0
             after_hand = self._refresh_hand(phone, force=True)
-            confirmed = hand_confirms_play(hand, after_hand, slot, card)
-        if confirmed is not True:
+            stamp = self._hand_frame_stamp(after_hand)
+            if stamp and stamp not in seen_stamps:
+                seen_stamps.add(stamp)
+                after_card = next(
+                    (
+                        base_card(row.get("card_name"))
+                        for row in after_hand
+                        if row.get("slot") == slot
+                    ),
+                    None,
+                )
+                slot_changed = hand_confirms_play(hand, after_hand, slot, card)
+                if slot_changed is True and after_card:
+                    if after_card == changed_name:
+                        changed_streak += 1
+                    else:
+                        changed_name = after_card
+                        changed_streak = 1
+                elif slot_changed is False:
+                    changed_name = None
+                    changed_streak = 0
+
+                candidate_after = self._fresh_observed_elixir(phone)
+                if candidate_after is not None:
+                    observed_after = candidate_after
+                spend_seen = self._elixir_confirms_spend(
+                    observed_before, observed_after, cost, match_t
+                )
+                stable_change = changed_streak >= CONFIRM_STABLE_FRAMES
+                if stable_change and (
+                    spend_seen or observed_after is None or cost == 1
+                ):
+                    confirmed = True
+                    confirmation_method = (
+                        "stable_slot+elixir" if spend_seen else "stable_slot"
+                    )
+                    break
+                if spend_seen and selected_confidence >= 0.60:
+                    confirmed = True
+                    confirmation_method = "elixir_drop"
+                    break
+            time.sleep(CONFIRM_POLL_S)
+
+        if observed_after is not None:
+            self._elixir.reconcile(phone, float(observed_after["value"]))
+        attempt.update(
+            {
+                "outcome": "confirmed" if confirmed else "unconfirmed",
+                "confirmation_method": confirmation_method,
+                "elixir_after": observed_after,
+                "hand_after": [
+                    {
+                        "slot": row.get("slot"),
+                        "card_name": row.get("card_name"),
+                        "confidence": row.get("confidence"),
+                    }
+                    for row in after_hand
+                ],
+            }
+        )
+        self._record_attempt(attempt)
+        if not confirmed:
             self._append_log(
-                f"{phone}: tap not confirmed — slot {slot} still shows {card}",
+                f"{phone}: deployment unresolved — slot {slot}, intended {card}",
                 "err",
             )
             return False
 
-        self._elixir.spend(phone, cost)
+        if observed_after is None:
+            self._elixir.spend(phone, cost)
         event = {
             "seconds": match_t,
             "side": phone,
@@ -878,6 +1056,13 @@ class BattleRunner:
             "slot_decode": pred.get("slot_decode"),
             "placement_decode": pred.get("placement_decode"),
             "think_steps": pred.get("think_steps"),
+            "confirmation_method": confirmation_method,
+            "observed_elixir_before": (
+                observed_before.get("value") if observed_before else None
+            ),
+            "observed_elixir_after": (
+                observed_after.get("value") if observed_after else None
+            ),
         }
         with self._lock:
             self._events.append(event)

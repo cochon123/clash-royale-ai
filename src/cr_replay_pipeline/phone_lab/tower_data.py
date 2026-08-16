@@ -8,6 +8,8 @@ import time so the rest of phone-lab still works on machines without RapidOCR.
 
 from __future__ import annotations
 
+import ctypes
+import gc
 import io
 import json
 import re
@@ -23,7 +25,7 @@ from typing import Any
 import numpy as np
 from PIL import Image
 
-from .battle import BattleConfig, PHONE_KEYS
+from .battle import PHONE_KEYS, BattleConfig
 
 TOWER_KEYS = (
     "opponent_left_princess",
@@ -40,6 +42,23 @@ DEFAULT_MAX_HP = {"princess": 3052, "king": 4824}
 RAPIDOCR_SITE = Path(
     "/home/cochon/.local/share/flameshot-ocr/venv/lib/python3.14/site-packages"
 )
+
+
+def _release_native_ocr_buffers() -> None:
+    """Return OpenCV/ONNX temporary allocations to the OS.
+
+    RapidOCR's full-frame detector uses dynamically-sized native buffers.  On
+    glibc those buffers remain in malloc arenas after each inference, which made
+    a long collection grow by roughly 40--60 MB per sample.  Python GC alone
+    cannot release them; ``malloc_trim`` can.
+    """
+    gc.collect()
+    try:
+        libc = ctypes.CDLL("libc.so.6")
+        libc.malloc_trim(0)
+    except (OSError, AttributeError):
+        # Non-glibc platforms still benefit from dropping Python references.
+        pass
 
 
 def utc_now() -> str:
@@ -94,7 +113,22 @@ class RapidOcrReader:
                 sys.path.insert(0, str(RAPIDOCR_SITE))
             from rapidocr import RapidOCR  # type: ignore[import-not-found]
 
-            self._engine = RapidOCR(params={"Global.log_level": "warning"})
+            self._engine = RapidOCR(
+                params={
+                    "Global.log_level": "warning",
+                    # Clash UI text is horizontal, so the orientation model is
+                    # pure overhead.  Bound OCR to two CPU workers so YOLO,
+                    # policy inference, streaming, and the browser stay fluid.
+                    "Global.use_cls": False,
+                    "EngineConfig.onnxruntime.intra_op_num_threads": 2,
+                    "EngineConfig.onnxruntime.inter_op_num_threads": 1,
+                    # Downscale the long edge rather than upscaling the short
+                    # edge of a portrait screenshot.  960 px retains the tower
+                    # digits while substantially reducing detector work.
+                    "Det.limit_type": "max",
+                    "Det.limit_side_len": 960,
+                }
+            )
             self.error = None
             return self._engine
         except Exception as exc:  # noqa: BLE001
@@ -105,24 +139,32 @@ class RapidOcrReader:
         if isinstance(image, bytes):
             image = Image.open(io.BytesIO(image)).convert("RGB")
         arr = np.asarray(image.convert("RGB"))
-        with self._lock:
-            out = self._load()(arr)
-        boxes = out.boxes if out and out.boxes is not None else []
-        texts = out.txts if out and out.txts is not None else []
-        scores = out.scores if out and out.scores is not None else []
-        result: list[OcrToken] = []
-        for box, text, score in zip(boxes, texts, scores):
-            points = [[float(p[0]), float(p[1])] for p in box]
-            result.append(
-                OcrToken(
-                    text=str(text),
-                    score=float(score),
-                    cx=sum(p[0] for p in points) / len(points),
-                    cy=sum(p[1] for p in points) / len(points),
-                    box=points,
+        try:
+            with self._lock:
+                out = self._load()(arr)
+            boxes = out.boxes if out and out.boxes is not None else []
+            texts = out.txts if out and out.txts is not None else []
+            scores = out.scores if out and out.scores is not None else []
+            result: list[OcrToken] = []
+            for box, text, score in zip(boxes, texts, scores):
+                points = [[float(p[0]), float(p[1])] for p in box]
+                result.append(
+                    OcrToken(
+                        text=str(text),
+                        score=float(score),
+                        cx=sum(p[0] for p in points) / len(points),
+                        cy=sum(p[1] for p in points) / len(points),
+                        box=points,
+                    )
                 )
-            )
-        return result
+            return result
+        finally:
+            # Drop RapidOCROutput.imgs and its native backing allocations before
+            # the next sample.  This is the critical long-run RAM bound.
+            if "out" in locals():
+                del out
+            del arr
+            _release_native_ocr_buffers()
 
 
 class TowerHpReader:
@@ -197,9 +239,7 @@ class TowerHpReader:
                         + 2.4 * ((token.cy - ey) / max(height, 1)) ** 2
                     )
                     ** 0.5
-                    for ex, ey in self._candidate_centres(
-                        key, centre, width, height
-                    )
+                    for ex, ey in self._candidate_centres(key, centre, width, height)
                 )
                 if best is None or dist < best[0]:
                     best = (dist, i, token)
@@ -225,7 +265,8 @@ class TowerHpReader:
                         for _ex, ey in self._candidate_centres(
                             key, centres[key], width, height
                         )[1:]
-                    ) < 0.04
+                    )
+                    < 0.04
                     else "dormant"
                 ),
             }
@@ -247,7 +288,9 @@ def stabilize_tower_hp(
     pending_hp = pending_hp if pending_hp is not None else {}
     for key, reading in hp.items():
         value = reading.get("hp")
-        maximum = DEFAULT_MAX_HP["king"] if "_king" in key else DEFAULT_MAX_HP["princess"]
+        maximum = (
+            DEFAULT_MAX_HP["king"] if "_king" in key else DEFAULT_MAX_HP["princess"]
+        )
         valid = (
             value is not None
             and 0 <= int(value) <= maximum
@@ -329,16 +372,14 @@ def infer_destroyed_towers(
         damaged_lanes = [
             lane
             for lane in ("left", "right")
-            if stable_hp[f"{side}_{lane}_princess"]
-            < DEFAULT_MAX_HP["princess"]
+            if stable_hp[f"{side}_{lane}_princess"] < DEFAULT_MAX_HP["princess"]
         ]
         for lane in ("left", "right"):
             key = f"{side}_{lane}_princess"
             if key in destroyed:
                 continue
-            if (
-                stable_hp[key] < DEFAULT_MAX_HP["princess"]
-                and not hp[key].get("ocr_observed")
+            if stable_hp[key] < DEFAULT_MAX_HP["princess"] and not hp[key].get(
+                "ocr_observed"
             ):
                 missing_streak[key] = missing_streak.get(key, 0) + 1
             else:
@@ -404,9 +445,7 @@ def relabel_saved_game(
             phase = "result"
         row["game_phase"] = phase
         row["training_mask"] = phase == "battle"
-        hp = stabilize_tower_hp(
-            hp, stable_hp, sample_index, pending_hp
-        )
+        hp = stabilize_tower_hp(hp, stable_hp, sample_index, pending_hp)
         for key, breakpoints in audited_hp_from.items():
             applicable = [
                 value
@@ -423,7 +462,8 @@ def relabel_saved_game(
                 reading["confidence"] = 1.0
                 reading["label_source"] = "hp_visible_audit"
         destroyed = {
-            key for key, first_sample in destroyed_from.items()
+            key
+            for key, first_sample in destroyed_from.items()
             if sample_index >= first_sample
         }
         for key in destroyed:
@@ -581,7 +621,9 @@ class TowerDataCollector:
         self._log = []
         self._running = True
         self._phase = "starting"
-        self._thread = threading.Thread(target=self._run, name="tower-data", daemon=True)
+        self._thread = threading.Thread(
+            target=self._run, name="tower-data", daemon=True
+        )
         self._thread.start()
         return self.status()
 
@@ -618,7 +660,9 @@ class TowerDataCollector:
         while not self._stop.is_set() and time.monotonic() < deadline:
             matches = [t for t in self._tokens(phone) if self._matches(t, choices)]
             if matches:
-                token = max(matches, key=lambda t: t.cy) if prefer_lowest else matches[0]
+                token = (
+                    max(matches, key=lambda t: t.cy) if prefer_lowest else matches[0]
+                )
                 self.phones[phone].tap(round(token.cx), round(token.cy))
                 self._say(f"{phone}: tapped {token.text!r}")
                 return True
@@ -634,9 +678,7 @@ class TowerDataCollector:
             # text before using stable bottom navigation coordinates.
             tokens = self._tokens(key)
             result_buttons = [
-                token
-                for token in tokens
-                if self._matches(token, ("ok", "continue"))
+                token for token in tokens if self._matches(token, ("ok", "continue"))
             ]
             if result_buttons:
                 button = max(result_buttons, key=lambda token: token.cy)
@@ -677,7 +719,10 @@ class TowerDataCollector:
         self._phase = "accepting_invite"
         time.sleep(1.0)
         if not self._tap_text(
-            "pixel9", ("friendly battle", "friendly"), timeout_s=18.0, prefer_lowest=True
+            "pixel9",
+            ("friendly battle", "friendly"),
+            timeout_s=18.0,
+            prefer_lowest=True,
         ):
             raise RuntimeError("Pixel 9 did not expose the Friendly Battle invite")
         self._say("friendly battle accepted", "ok")
@@ -687,7 +732,9 @@ class TowerDataCollector:
     def _dismiss_results(self) -> None:
         self._phase = "dismissing_results"
         for key in PHONE_KEYS:
-            if self._tap_text(key, ("ok", "continue"), timeout_s=3.0, prefer_lowest=True):
+            if self._tap_text(
+                key, ("ok", "continue"), timeout_s=3.0, prefer_lowest=True
+            ):
                 continue
             # Result buttons are bottom-centre. A fallback tap is safe here and
             # is followed by a fresh OCR-driven Social navigation next game.
@@ -704,14 +751,18 @@ class TowerDataCollector:
         normalized = self._centres.get(observer)
         if normalized:
             width, height = self.phones[observer].width, self.phones[observer].height
-            centres = {key: (u * width, v * height) for key, (u, v) in normalized.items()}
+            centres = {
+                key: (u * width, v * height) for key, (u, v) in normalized.items()
+            }
         else:
             centres = self.hp_reader.expected_centres(
                 self.phones[observer].width, self.phones[observer].height
             )
         sample_index = 0
         stable_hp = {
-            key: (DEFAULT_MAX_HP["king"] if "_king" in key else DEFAULT_MAX_HP["princess"])
+            key: (
+                DEFAULT_MAX_HP["king"] if "_king" in key else DEFAULT_MAX_HP["princess"]
+            )
             for key in TOWER_KEYS
         }
         pending_hp: dict[str, int] = {}
@@ -741,7 +792,12 @@ class TowerDataCollector:
             _append_jsonl(sample_path, row)
             # Save one compact evidence image per sample. PNG preserves the glyphs
             # exactly; labels can be corrected later without replaying a match.
-            image.save(crops_dir / f"sample_{sample_index:04d}.webp", "WEBP", quality=88)
+            image.save(
+                crops_dir / f"sample_{sample_index:04d}.webp",
+                "WEBP",
+                quality=88,
+                method=0,
+            )
             with self._lock:
                 self._samples += 1
                 self._last_hp = hp
@@ -819,6 +875,7 @@ class TowerDataCollector:
                         "saved_at": utc_now(),
                         "duration_s": round(time.monotonic() - battle_started, 3),
                         "events": self.battle.events_snapshot(),
+                        "attempts": self.battle.attempts_snapshot(),
                         "battle_status": self.battle.status(),
                     },
                 )

@@ -1,0 +1,1526 @@
+{
+  "attempts": [
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.17287130800002615,
+        "captured_at": 419.071993439,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.329
+      },
+      "elixir_before": {
+        "age_s": 0.14911116400003266,
+        "captured_at": 418.594034982,
+        "confidence": 0.9963,
+        "continuity": 0.9917,
+        "reason": "purple_fill",
+        "value": 7.928
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9089775085449219,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9413875937461853,
+          "slot": 1
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9504441618919373,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9274260997772217,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9586485624313354,
+          "slot": 1
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9492730498313904,
+          "slot": 2
+        },
+        {
+          "card_name": "minions",
+          "confidence": 0.9530121088027954,
+          "slot": 3
+        }
+      ],
+      "intended_card": "minions",
+      "outcome": "confirmed",
+      "seconds": 1.298253059387207,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 7811,
+      "y": 11989
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.02044052600001578,
+        "captured_at": 421.139842571,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 7.926
+      },
+      "elixir_before": {
+        "age_s": 0.38395929200004275,
+        "captured_at": 420.107580586,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 8.896
+      },
+      "hand_after": [
+        {
+          "card_name": "ice-golem",
+          "confidence": 0.9760051369667053,
+          "slot": 0
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.9335901141166687,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.5653929710388184,
+          "slot": 2
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "ice-golem",
+          "confidence": 0.9738947153091431,
+          "slot": 0
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.9313946962356567,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.5653929710388184,
+          "slot": 2
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9686194658279419,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "confirmed",
+      "seconds": 3.046504497528076,
+      "side": "pixel9",
+      "slot": 3,
+      "x": 9774,
+      "y": 9267
+    },
+    {
+      "confirmation_method": "stable_slot+elixir",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.04140118300000495,
+        "captured_at": 425.107588884,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 7.926
+      },
+      "elixir_before": {
+        "age_s": 0.5149628240000084,
+        "captured_at": 422.57038659,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 8.896
+      },
+      "hand_after": [
+        {
+          "card_name": "ice-golem",
+          "confidence": 0.9719426035881042,
+          "slot": 0
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.9265406131744385,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.5653929710388184,
+          "slot": 2
+        },
+        {
+          "card_name": "miner",
+          "confidence": 0.9557298421859741,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "ice-golem",
+          "confidence": 0.9759539365768433,
+          "slot": 0
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.9315061569213867,
+          "slot": 1
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.5653929710388184,
+          "slot": 2
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "confirmed",
+      "seconds": 5.640490293502808,
+      "side": "pixel9",
+      "slot": 3,
+      "x": 10738,
+      "y": 10590
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.008681154000043989,
+        "captured_at": 426.213171823,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 5.164
+      },
+      "elixir_before": {
+        "age_s": 0.12333702599994467,
+        "captured_at": 425.572079011,
+        "confidence": 0.9963,
+        "continuity": 0.9917,
+        "reason": "purple_fill",
+        "value": 7.928
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9151394367218018,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9611522555351257,
+          "slot": 1
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9605185389518738,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9186505675315857,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9560461640357971,
+          "slot": 1
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9587488770484924,
+          "slot": 2
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.819091796875,
+          "slot": 3
+        }
+      ],
+      "intended_card": "knight",
+      "outcome": "confirmed",
+      "seconds": 8.250564813613892,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 7275,
+      "y": 9462
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 5,
+      "elixir_after": {
+        "age_s": 0.0002705090000176824,
+        "captured_at": 431.562884016,
+        "confidence": 0.9852,
+        "continuity": 0.9672,
+        "reason": "purple_fill",
+        "value": 2.007
+      },
+      "elixir_before": {
+        "age_s": 0.37870171100001926,
+        "captured_at": 430.101539113,
+        "confidence": 0.995,
+        "continuity": 0.989,
+        "reason": "purple_fill",
+        "value": 5.954
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.5395088195800781,
+          "slot": 1
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9254469871520996,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9548712372779846,
+          "slot": 1
+        },
+        {
+          "card_name": "giant",
+          "confidence": 0.9586309790611267,
+          "slot": 2
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.8900343179702759,
+          "slot": 3
+        }
+      ],
+      "intended_card": "giant",
+      "outcome": "confirmed",
+      "seconds": 13.035331010818481,
+      "side": "pixel8",
+      "slot": 2,
+      "x": 5635,
+      "y": 18335
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 1,
+      "elixir_after": {
+        "age_s": 0.07380157099998996,
+        "captured_at": 435.135303635,
+        "confidence": 0.9852,
+        "continuity": 0.9672,
+        "reason": "purple_fill",
+        "value": 2.007
+      },
+      "elixir_before": {
+        "age_s": 0.0025092689999723916,
+        "captured_at": 433.0892729,
+        "confidence": 0.9852,
+        "continuity": 0.9672,
+        "reason": "purple_fill",
+        "value": 2.007
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.5411592721939087,
+          "slot": 1
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 2
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.6717212796211243,
+          "slot": 1
+        },
+        {
+          "card_name": "skeletons",
+          "confidence": 0.9744945764541626,
+          "slot": 2
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ],
+      "intended_card": "skeletons",
+      "outcome": "unconfirmed",
+      "seconds": 15.646966934204102,
+      "side": "pixel8",
+      "slot": 2,
+      "x": 5956,
+      "y": 17032
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.045313118999956714,
+        "captured_at": 440.568960418,
+        "confidence": 0.9693,
+        "continuity": 0.9318,
+        "reason": "purple_fill",
+        "value": 1.447
+      },
+      "elixir_before": {
+        "age_s": 0.06864910199999485,
+        "captured_at": 439.563784519,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9618743062019348,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.8225200176239014,
+          "slot": 2
+        },
+        {
+          "card_name": "archers",
+          "confidence": 0.8288240432739258,
+          "slot": 3
+        }
+      ],
+      "intended_card": "archers",
+      "outcome": "confirmed",
+      "seconds": 22.187617778778076,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 5944,
+      "y": 17028
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.051567443999999796,
+        "captured_at": 449.565131424,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "elixir_before": {
+        "age_s": 0.05722778599999856,
+        "captured_at": 447.57411351,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9047600030899048,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9527975916862488,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9058291912078857,
+          "slot": 2
+        },
+        {
+          "card_name": "minions",
+          "confidence": 0.9575101137161255,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9040477871894836,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9572837948799133,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.8915107250213623,
+          "slot": 2
+        },
+        {
+          "card_name": "minions",
+          "confidence": 0.9466254115104675,
+          "slot": 3
+        }
+      ],
+      "intended_card": "minions",
+      "outcome": "unconfirmed",
+      "seconds": 30.186523914337158,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 5390,
+      "y": 18753
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.027811237999969762,
+        "captured_at": 451.06711194,
+        "confidence": 0.9852,
+        "continuity": 0.9672,
+        "reason": "purple_fill",
+        "value": 2.007
+      },
+      "elixir_before": {
+        "age_s": 0.03475741600004767,
+        "captured_at": 450.07805546,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.5814230442047119,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9047600030899048,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9527975916862488,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9058291912078857,
+          "slot": 2
+        },
+        {
+          "card_name": "minions",
+          "confidence": 0.9575101137161255,
+          "slot": 3
+        }
+      ],
+      "intended_card": "minions",
+      "outcome": "confirmed",
+      "seconds": 32.667996406555176,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 5390,
+      "y": 18753
+    },
+    {
+      "confirmation_method": "none",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.11422483799998417,
+        "captured_at": 457.565953445,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "elixir_before": {
+        "age_s": 0.05099513800001887,
+        "captured_at": 455.565945239,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.98
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9079475402832031,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9643344283103943,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.869293212890625,
+          "slot": 2
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.8088905811309814,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9360232949256897,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9558138847351074,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.9178785085678101,
+          "slot": 2
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.8087115287780762,
+          "slot": 3
+        }
+      ],
+      "intended_card": "arrows",
+      "outcome": "unconfirmed",
+      "seconds": 38.17212390899658,
+      "side": "pixel8",
+      "slot": 1,
+      "x": 6540,
+      "y": 21988
+    },
+    {
+      "confirmation_method": "elixir_drop",
+      "cost": 3,
+      "elixir_after": {
+        "age_s": 0.10960994700002402,
+        "captured_at": 459.082421765,
+        "confidence": 0.9852,
+        "continuity": 0.9672,
+        "reason": "purple_fill",
+        "value": 2.007
+      },
+      "elixir_before": {
+        "age_s": 0.003279190999990078,
+        "captured_at": 458.073392382,
+        "confidence": 1.0,
+        "continuity": 1.0,
+        "reason": "purple_fill",
+        "value": 3.947
+      },
+      "hand_after": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "hand_before": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.9079475402832031,
+          "slot": 0
+        },
+        {
+          "card_name": "arrows",
+          "confidence": 0.9643344283103943,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.869293212890625,
+          "slot": 2
+        },
+        {
+          "card_name": "knight",
+          "confidence": 0.8088905811309814,
+          "slot": 3
+        }
+      ],
+      "intended_card": "knight",
+      "outcome": "confirmed",
+      "seconds": 40.63184690475464,
+      "side": "pixel8",
+      "slot": 3,
+      "x": 6540,
+      "y": 21988
+    }
+  ],
+  "battle_status": {
+    "attempts": 11,
+    "controllers": {
+      "pixel8": "policy_bc_v4",
+      "pixel9": "policy_bc_v4"
+    },
+    "decks": {
+      "pixel8": [
+        "knight",
+        "archers",
+        "minions",
+        "skeletons",
+        "arrows",
+        "fireball",
+        "giant",
+        "mini-pekka"
+      ],
+      "pixel9": [
+        "mortar",
+        "knight",
+        "archers",
+        "skeletons",
+        "barbarian-barrel",
+        "arrows",
+        "mini-pekka",
+        "rocket"
+      ]
+    },
+    "elixir": {
+      "pixel8": 6.76,
+      "pixel9": 10.0
+    },
+    "error": null,
+    "events": 8,
+    "hands": {
+      "pixel8": [
+        {
+          "card_name": "fireball",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "heal-spirit",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "mini-pekka",
+          "confidence": 0.58,
+          "slot": 2
+        },
+        {
+          "card_name": null,
+          "confidence": 0.0,
+          "slot": 3
+        }
+      ],
+      "pixel9": [
+        {
+          "card_name": "heal-spirit",
+          "confidence": 0.58,
+          "slot": 0
+        },
+        {
+          "card_name": "snowball",
+          "confidence": 0.58,
+          "slot": 1
+        },
+        {
+          "card_name": "heal-spirit",
+          "confidence": 0.5244196653366089,
+          "slot": 2
+        },
+        {
+          "card_name": "miner",
+          "confidence": 0.58,
+          "slot": 3
+        }
+      ]
+    },
+    "log": [
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 44.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 45.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 45.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 45.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 45.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 45.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 45.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 45.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 45.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 46.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 46.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 46.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 46.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 46.6
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 46.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 46.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 47.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 47.1
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 47.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 47.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 47.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 47.6
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 47.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 47.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 48.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 48.1
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 48.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 48.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 48.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 48.6
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 48.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 48.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 49.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 49.1
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 49.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 49.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 49.6
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 49.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 49.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 50.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 50.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 50.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 50.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 50.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 50.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 50.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 50.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 51.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 51.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 51.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 51.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 51.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 51.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 51.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 51.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 52.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 52.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 52.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 52.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 52.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 52.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 52.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 53.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 53.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 53.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 53.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 53.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 53.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 53.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 53.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 54.0
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 54.2
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 54.3
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 54.4
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 54.5
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 54.7
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 54.8
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 54.9
+      },
+      {
+        "level": "info",
+        "message": "pixel8: wait \u2014 no fresh high-confidence elixir observation",
+        "t": 55.2
+      },
+      {
+        "level": "info",
+        "message": "battle stopped",
+        "t": 55.3
+      }
+    ],
+    "match_time": 55.3,
+    "next": {
+      "pixel8": {
+        "card": "fireball",
+        "controller": "policy_bc_v4",
+        "delay_seconds": 2.669902798860425,
+        "event_type": "card_play",
+        "hand_mask": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          true
+        ],
+        "mirror_tta": false,
+        "observed_now_seconds": 55.16697144508362,
+        "phone": "pixel8",
+        "placement_decode": "expected",
+        "placement_temperature": 1.0,
+        "placement_top_k": null,
+        "ranked_slots": [
+          {
+            "card": "mini-pekka",
+            "legal": true,
+            "prob": 0.785286009311676,
+            "raw_prob": 0.725204348564148,
+            "slot": 7
+          },
+          {
+            "card": "fireball",
+            "legal": true,
+            "prob": 0.21471400558948517,
+            "raw_prob": 0.19828639924526215,
+            "slot": 5
+          },
+          {
+            "card": "knight",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.012751540169119835,
+            "slot": 0
+          },
+          {
+            "card": "archers",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.012751540169119835,
+            "slot": 1
+          },
+          {
+            "card": "minions",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.012751540169119835,
+            "slot": 2
+          },
+          {
+            "card": "skeletons",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.012751540169119835,
+            "slot": 3
+          },
+          {
+            "card": "arrows",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.012751540169119835,
+            "slot": 4
+          },
+          {
+            "card": "giant",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.012751540169119835,
+            "slot": 6
+          }
+        ],
+        "slot": 5,
+        "slot_decode": "sample",
+        "slot_temperature": 0.8,
+        "think_steps": 0,
+        "tile": null,
+        "top3": [
+          {
+            "card": "mini-pekka",
+            "legal": true,
+            "prob": 0.785286009311676,
+            "raw_prob": 0.725204348564148,
+            "slot": 7
+          },
+          {
+            "card": "fireball",
+            "legal": true,
+            "prob": 0.21471400558948517,
+            "raw_prob": 0.19828639924526215,
+            "slot": 5
+          },
+          {
+            "card": "knight",
+            "legal": false,
+            "prob": 0.0,
+            "raw_prob": 0.012751540169119835,
+            "slot": 0
+          }
+        ],
+        "x": 6320,
+        "y": 22523,
+        "zone": 9,
+        "zone_from_xy": 9
+      },
+      "pixel9": null
+    },
+    "protocol": {
+      "history": "confirmed deployments only",
+      "placement": "checkpoint rollout decoder conditioned on selected card",
+      "scheduler": "two-sided predicted-delay race",
+      "slot": "checkpoint rollout decoder + detected-hand hard mask",
+      "think_steps": null
+    },
+    "running": false
+  },
+  "duration_s": 55.336,
+  "events": [
+    {
+      "card": "minions",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 2,
+      "observed_elixir_after": 5.329,
+      "observed_elixir_before": 7.928,
+      "placement_decode": "expected",
+      "seconds": 1.298253059387207,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 7811,
+      "y": 11989
+    },
+    {
+      "card": "skeletons",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "observed_elixir_after": 7.926,
+      "observed_elixir_before": 8.896,
+      "placement_decode": "expected",
+      "seconds": 3.046504497528076,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 9774,
+      "y": 9267
+    },
+    {
+      "card": "skeletons",
+      "confirmation_method": "stable_slot+elixir",
+      "event_type": "card_play",
+      "model_slot": 3,
+      "observed_elixir_after": 7.926,
+      "observed_elixir_before": 8.896,
+      "placement_decode": "expected",
+      "seconds": 5.640490293502808,
+      "side": "pixel9",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 10738,
+      "y": 10590
+    },
+    {
+      "card": "knight",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "observed_elixir_after": 5.164,
+      "observed_elixir_before": 7.928,
+      "placement_decode": "expected",
+      "seconds": 8.250564813613892,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 7275,
+      "y": 9462
+    },
+    {
+      "card": "giant",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 6,
+      "observed_elixir_after": 2.007,
+      "observed_elixir_before": 5.954,
+      "placement_decode": "expected",
+      "seconds": 13.035331010818481,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 5635,
+      "y": 18335
+    },
+    {
+      "card": "archers",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 1,
+      "observed_elixir_after": 1.447,
+      "observed_elixir_before": 3.947,
+      "placement_decode": "expected",
+      "seconds": 22.187617778778076,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 5944,
+      "y": 17028
+    },
+    {
+      "card": "minions",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 2,
+      "observed_elixir_after": 2.007,
+      "observed_elixir_before": 3.947,
+      "placement_decode": "expected",
+      "seconds": 32.667996406555176,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 5390,
+      "y": 18753
+    },
+    {
+      "card": "knight",
+      "confirmation_method": "elixir_drop",
+      "event_type": "card_play",
+      "model_slot": 0,
+      "observed_elixir_after": 2.007,
+      "observed_elixir_before": 3.947,
+      "placement_decode": "expected",
+      "seconds": 40.63184690475464,
+      "side": "pixel8",
+      "slot_decode": "sample",
+      "think_steps": 0,
+      "tile": null,
+      "x": 6540,
+      "y": 21988
+    }
+  ],
+  "game": 1,
+  "saved_at": "2026-08-16T03:41:42.911040+00:00",
+  "started_at": "2026-08-16T03:40:47.574583+00:00"
+}

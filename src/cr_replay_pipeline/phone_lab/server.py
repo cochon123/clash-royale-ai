@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 
 from PIL import Image
 
+from . import websocket_util as ws
 from .adb_phone import AdbPhone
 from .battle import (
     DEFAULT_CONTROLLERS,
@@ -27,12 +28,12 @@ from .calibration import (
     card_slot_rects,
     card_slot_rects_for_size,
     load_scaled_calibration,
-    resolve_placement,
     public_calibration,
     rect_center,
+    resolve_placement,
 )
+from .elixir import crop_elixir_bar, estimate_elixir_bar
 from .hand_detect import HandDetector
-from .tower_data import CollectionConfig, TowerDataCollector
 from .stream_source import (
     ACTION_DOWN,
     ACTION_MOVE,
@@ -41,7 +42,7 @@ from .stream_source import (
     ScrcpyStream,
     VideoPacket,
 )
-from . import websocket_util as ws
+from .tower_data import CollectionConfig, TowerDataCollector
 
 _TOUCH_ACTIONS = {
     "down": ACTION_DOWN,
@@ -86,9 +87,12 @@ class LabState:
         }
         self._detected_hands: dict[str, list[dict[str, Any]]] = {}
         self._detected_hands_at: dict[str, float] = {}
+        self._stable_hand_slots: dict[str, dict[int, dict[str, Any]]] = {}
+        self._observed_elixir: dict[str, dict[str, Any]] = {}
         self.battle = BattleRunner(
             detect_hand=self._battle_detect_hand,
             execute_action=self._battle_execute,
+            observe_elixir=self._battle_observe_elixir,
         )
         self.tower_data = TowerDataCollector(
             phones=self.phones,
@@ -129,16 +133,54 @@ class LabState:
     def _battle_execute(
         self, phone_key: str, slot: int, u: float, v: float
     ) -> dict[str, Any]:
+        # Once an action starts, never carry the old identity through a grey
+        # transition in the selected slot.  A failed drag must be visually read
+        # again; a successful one must reveal the newly cycled card.
+        with self.lock:
+            self._stable_hand_slots.setdefault(phone_key, {}).pop(slot, None)
         result = self.test_action(phone_key, slot, u=u, v=v)
         # Require a crop captured after the tap for deployment confirmation.
         with self.lock:
             self._detected_hands_at[phone_key] = 0.0
         return result
 
-    def _cache_detected_hand(self, key: str, slots: list[dict[str, Any]]) -> None:
+    def _battle_observe_elixir(self, key: str) -> dict[str, Any] | None:
         with self.lock:
-            self._detected_hands[key] = [dict(row) for row in slots]
-            self._detected_hands_at[key] = time.monotonic()
+            observation = self._observed_elixir.get(key)
+            if not observation:
+                return None
+            out = dict(observation)
+        out["age_s"] = max(0.0, time.monotonic() - float(out["captured_at"]))
+        return out
+
+    def _cache_detected_hand(self, key: str, slots: list[dict[str, Any]]) -> None:
+        captured_at = time.monotonic()
+        with self.lock:
+            stable = self._stable_hand_slots.setdefault(key, {})
+            cached = []
+            for row in slots:
+                slot = int(row["slot"])
+                if row.get("card_name") and float(row.get("confidence") or 0.0) >= 0.50:
+                    row["identity_source"] = "detector"
+                    stable[slot] = dict(row)
+                elif slot in stable:
+                    prior = stable[slot]
+                    row["card_name"] = prior.get("card_name")
+                    row["confidence"] = min(0.58, float(prior.get("confidence") or 0.0))
+                    row["identity_source"] = "retained_through_grey"
+                row["_captured_at"] = captured_at
+                cached.append(dict(row))
+            self._detected_hands[key] = cached
+            self._detected_hands_at[key] = captured_at
+
+    def _cache_observed_elixir(self, key: str, observation: dict[str, Any]) -> None:
+        clean = dict(observation)
+        clean["captured_at"] = time.monotonic()
+        with self.lock:
+            self._observed_elixir[key] = clean
+
+    def observed_elixir_status(self) -> dict[str, dict[str, Any]]:
+        return {key: (self._battle_observe_elixir(key) or {}) for key in self.phones}
 
     def capture_png(self, key: str) -> bytes:
         return self.phones[key].screencap_png_fast()
@@ -195,16 +237,24 @@ class LabState:
         slots = self._assume_unknown_musketeer_pixel8(key, slots)
         public_slots = self._public_slots(slots)
         self._cache_detected_hand(key, public_slots)
+        screen = Image.open(io.BytesIO(png)).convert("RGB")
+        elixir = estimate_elixir_bar(crop_elixir_bar(screen))
+        self._cache_observed_elixir(key, elixir)
         ms = int((time.perf_counter() - t0) * 1000)
         return {
             "phone": key,
             "slots": public_slots,
+            "elixir": elixir,
             "ms": ms,
             "source": "screencap",
         }
 
     def detect_phone_crops(
-        self, key: str, crop_data_urls: list[str]
+        self,
+        key: str,
+        crop_data_urls: list[str],
+        *,
+        elixir_data_url: str | None = None,
     ) -> dict[str, Any]:
         if key not in self.phones:
             raise KeyError(f"unknown phone {key}")
@@ -223,10 +273,17 @@ class LabState:
         slots = self._assume_unknown_musketeer_pixel8(key, slots)
         public_slots = self._public_slots(slots)
         self._cache_detected_hand(key, public_slots)
+        elixir: dict[str, Any] | None = None
+        if elixir_data_url:
+            raw = elixir_data_url.split(",", 1)[-1]
+            elixir_image = Image.open(io.BytesIO(base64.b64decode(raw))).convert("RGB")
+            elixir = estimate_elixir_bar(elixir_image)
+            self._cache_observed_elixir(key, elixir)
         ms = int((time.perf_counter() - t0) * 1000)
         return {
             "phone": key,
             "slots": public_slots,
+            "elixir": elixir,
             "ms": ms,
             "source": "stream-crops",
         }
@@ -261,19 +318,23 @@ class LabState:
             if stream.control_ready and stream.width > 0 and stream.height > 0:
                 transport = "scrcpy"
 
-                def stream_tap(point: tuple[int, int]) -> None:
-                    x = round(point[0] * stream.width / max(phone.width, 1))
-                    y = round(point[1] * stream.height / max(phone.height, 1))
-                    stream.inject_touch(ACTION_DOWN, x, y, pressure=1.0)
-                    stream.inject_touch(ACTION_UP, x, y, pressure=0.0)
-
-                stream_tap(card_xy)
-                time.sleep(0.12)
-                stream_tap(place_xy)
+                start_x = round(card_xy[0] * stream.width / max(phone.width, 1))
+                start_y = round(card_xy[1] * stream.height / max(phone.height, 1))
+                end_x = round(place_xy[0] * stream.width / max(phone.width, 1))
+                end_y = round(place_xy[1] * stream.height / max(phone.height, 1))
+                stream.inject_touch(ACTION_DOWN, start_x, start_y, pressure=1.0)
+                for step in range(1, 7):
+                    alpha = step / 6.0
+                    stream.inject_touch(
+                        ACTION_MOVE,
+                        round(start_x + (end_x - start_x) * alpha),
+                        round(start_y + (end_y - start_y) * alpha),
+                        pressure=1.0,
+                    )
+                    time.sleep(0.025)
+                stream.inject_touch(ACTION_UP, end_x, end_y, pressure=0.0)
             else:
-                phone.tap(*card_xy)
-                time.sleep(0.12)
-                phone.tap(*place_xy)
+                phone.swipe(*card_xy, *place_xy, duration_ms=180)
         # Hand refresh is done client-side from the live frame (~1500ms later).
         return {
             "phone": phone_key,
@@ -284,6 +345,7 @@ class LabState:
             "card_tap": list(card_xy),
             "place_tap": list(place_xy),
             "transport": transport,
+            "gesture": "drag",
         }
 
 
@@ -355,6 +417,7 @@ def make_handler(state: LabState):
                         "transport": "scrcpy-h264-websocket",
                         "battle": state.battle.status(),
                         "tower_data": state.tower_data.status(),
+                        "observed_elixir": state.observed_elixir_status(),
                         "default_controllers": dict(DEFAULT_CONTROLLERS),
                         "mirror_tta": state.mirror_tta,
                         "think_steps": state.think_steps,
@@ -405,7 +468,15 @@ def make_handler(state: LabState):
                     crops = payload.get("crops") or []
                     if not isinstance(crops, list):
                         raise ValueError("crops must be a list")
-                    out = state.detect_phone_crops(phone, [str(c) for c in crops])
+                    out = state.detect_phone_crops(
+                        phone,
+                        [str(c) for c in crops],
+                        elixir_data_url=(
+                            str(payload["elixir_crop"])
+                            if payload.get("elixir_crop")
+                            else None
+                        ),
+                    )
                     _json_response(self, 200, out)
                     return
                 if path == "/api/test-action":
@@ -471,7 +542,9 @@ def make_handler(state: LabState):
                     pixel9 = payload.get("pixel9") or {}
                     cfg = CollectionConfig(
                         games=int(payload.get("games") or 2),
-                        sample_interval_s=float(payload.get("sample_interval_s") or 2.0),
+                        sample_interval_s=float(
+                            payload.get("sample_interval_s") or 2.0
+                        ),
                         decks={
                             "pixel8": list(pixel8.get("deck") or []),
                             "pixel9": list(pixel9.get("deck") or []),
@@ -523,7 +596,9 @@ def make_handler(state: LabState):
             try:
                 # Wait briefly for codec/size from an active session.
                 deadline = time.time() + 4.0
-                while time.time() < deadline and (stream.width <= 0 or stream.height <= 0):
+                while time.time() < deadline and (
+                    stream.width <= 0 or stream.height <= 0
+                ):
                     if stream.stats().get("error"):
                         break
                     time.sleep(0.05)
