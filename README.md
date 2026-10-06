@@ -7,6 +7,10 @@ ability activations instead of silently dropping them.
 See [the investigation report](docs/investigation.md) for the old-pipeline
 audit, corpus measurements, and retraining recommendation.
 
+![Policy v5 report hero](reports/v5_shots/final_hero.png)
+
+*Hero of the policy v5 report ([`reports/policy_bc_v5.html`](reports/policy_bc_v5.html)). v5 keeps the v4.1 trunk and trains against a frozen human-versus-AI style discriminator: moment matching on timing and placement tells, plus a REINFORCE polish on clock-aware rollouts.*
+
 ## What the investigation found
 
 RoyaleAPI replay payloads expose an ability activation with:
@@ -297,6 +301,20 @@ zone/XY heads (offline probe finding). The HTML report includes a live-play
 readiness checklist — treat it as suspect until rollout XY/initiative gates
 are fixed; only smoke-test on the real client after those pass.
 
+The frames below are from the policy v5 report ([`reports/policy_bc_v5.html`](reports/policy_bc_v5.html)).
+
+![Policy v5 training timeline across three runs](reports/v5_shots/timeline.png)
+
+*Training timeline parsed from [`logs/policy_bc_v5.log`](logs/policy_bc_v5.log): 21 epochs across three runs. Run 1 died on the first polish, run 2 is where REINFORCE landed, and run 3 resumed and stalled.*
+
+![Policy v5 behavior-cloning, style-match, and slot curves](reports/v5_shots/final_charts.png)
+
+*Behavior-cloning loss, style-match loss, and validation slot accuracy against tell distance. Style-match loss falls as batch moments move closer to human replays.*
+
+![Policy v5 tell map for humans, v5, and v4.1](reports/v5_shots/tells.png)
+
+*Tell map for human replays, v5, and v4.1. Closer to the human ring means the frozen style judge sees less distance on that feature.*
+
 ### Interactive showcase (v4 vs v3)
 
 Because each training run sees a different snapshot of the growing replay
@@ -332,6 +350,10 @@ Every model/experiment report has its own visual language via `report_kit.py`:
 | `winner_hgb_v1.html` | Full-game winner judge | Risk–coverage dial |
 | `winner_transformer_v1.html` | Prefix winner probe | Match-timeline scrubber |
 
+![Full policy v5 report page](reports/v5_shots/final_full3.png)
+
+*The same policy v5 page in one capture, including the v4.1-versus-v5 architecture diff and the two style-judge protocols (clock-aware deploy, and the legacy alternation harness). The timeline, curves, and tell map above are pieces of this page.*
+
 ### Matchup stress test
 
 Mine win-condition matchups that favor one side in the corpus, then run the
@@ -343,6 +365,10 @@ cr-replays eval-matchups --games 48 --top-k 6
 ```
 
 Results land in `reports/matchup_eval.json`.
+
+![Timing gap, placement spread, cloning gates, and battle royale](reports/v5_shots/final_br.png)
+
+*Bottom of the policy v5 report: timing tells, placement spread, cloning-quality gates, and the offline battle royale. The full standings table is [`reports/battle_royale_v5.html`](reports/battle_royale_v5.html).*
 
 ### Defense evals
 
@@ -389,6 +415,10 @@ In addition to `hgb_ensemble.pkl` and `hgb_report.json`, training writes:
 - `accuracy_vs_confidence.json`, containing both curves;
 - `confidence_training_stages.json`, recording every cumulative tree stage;
 - `accuracy_vs_confidence_training.mp4`, a Matplotlib animation of those stages.
+
+![Held-out winner accuracy and coverage versus confidence](reports/winner_accuracy_vs_confidence.png)
+
+*Held-out test curves from [`models/winner_predictor/accuracy_vs_confidence.json`](models/winner_predictor/accuracy_vs_confidence.json), redrawn by [`scripts/plot_winner_confidence.py`](scripts/plot_winner_confidence.py). Accuracy is the left axis and coverage is the right axis. The previous model is dashed and the improved model is solid.*
 
 ## Hugging Face artifacts
 
