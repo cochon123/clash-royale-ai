@@ -56,3 +56,16 @@ When you launch a run, provide a command that lets me **stream the evolution of 
 
 - A column for an **estimation of the amount of time left**
 - A column for the **amount of work done so far**
+
+## Cursor Cloud specific instructions
+
+Dependencies are locked in `uv.lock`. Install with `uv sync --frozen --inexact`, then install `pytest` into that virtualenv. `pytest` is required to run `tests/` and is not a project dependency, so a plain `uv sync` removes it. The README `python -m venv` plus `pip install -e .` path is the fallback when `uv` is not available.
+
+`cr-replays` and `pytest` resolve from `.venv/bin` (also linked on `PATH` as `/usr/local/bin/cr-replays` and `/usr/local/bin/pytest` after the cloud install).
+
+Offline checks do not need `CR_TOKEN`, a GPU, or phones:
+
+- `pytest`
+- `cr-replays clean --input tests/fixtures --output /tmp/cr-clean --audit-only`
+
+`cr-replays serve` is the local ingest service at `http://127.0.0.1:8765/health`. Start it only while collecting replays. Phone lab (`cr-replays phone-lab`) needs `adb` and unlocked phones and is outside this environment.
