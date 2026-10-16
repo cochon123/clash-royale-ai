@@ -88,28 +88,38 @@ echo '6e5eacf500b64292bfb73c49797c1958f6ee44646e43e868039ae7feb573ff75  jadx-hea
   | sha256sum -c -
 export REA_JADX_MCP_JAR="$HOME/.local/share/rea/android/jadx-headless-mcp-0.7.1-all.jar"
 npm install --global rea-agents
-rea inspect-android-package var/clash-royale/base.apk --json
+export REA_JADX_HEAP_MIB=2048
+rea inspect-android-package var/clash-royale/base.apk --format json
 cr-replays local-match-prepare --apk var/clash-royale/base.apk
 ```
 
 `local-match-prepare` writes `var/clash-royale/prepare-status.json` (package,
 version name, version code, sha256, size, XAPK layout, native library names).
 It does not extract DEX, the asset pack, or `.so` files into git. REA's stdout
-stays under `var/clash-royale/` as well.
+stays under `var/clash-royale/` as well. Put Node.js 22.19 or newer on `PATH`
+before `npm` and `rea` (`rea-agents` 6.5.0 refuses 22.14). `ps` must be procps.
+`REA_JADX_HEAP_MIB=2048` fit a 16 GB cloud VM; the 32 GB box can go higher.
 
-Node on `PATH` must be 22.19 or newer (`rea-agents` 6.5.0 refuses 22.14).
-`ps` must be procps. Set `REA_JADX_HEAP_MIB` if the machine is tight on RAM
-(2048 was used on a 16 GB cloud VM; the 32 GB box can go higher).
+On 2026-10-16 that inspect command exited 0 against `base.apk`. REA 6.5.0 /
+JADX 0.7.1 (jar sha256 `6e5eacf5…ff75`) reported package
+`com.supercell.clashroyale`, versionName `160402020`, versionCode `160402020`,
+minSdk 29, targetSdk 35, and 15874 classes. Signature verification was
+`not_performed`. The decoded manifest has `android:host="link.clashroyale.com"`
+and `android:requiredSplitTypes="base__abi,base__density"`, and it has no
+`127.0.0.1`. JADX does not verify split APKs or native libraries. The prepare
+scan of `config.arm64_v8a.apk` covered `libsupercell_clashroyale.so` and
+`libg.so`; neither contains `127.0.0.1`. `libg.so` contains
+`https://android.googlesource.com` and nothing that listens for a battle.
+
+That is the blocker. There is no concrete local combat interface to wire into
+`cr-local-match/1`. `real_engine` stays false. The built-in harness is not the
+combat engine. Do not patch the client to dial Supercell. The smallest next
+step is a process you control on `http://127.0.0.1:8790` that speaks
+`cr-local-match/1`, sets `real_engine` true, and actually resolves combat.
 
 On the 3060 / 13th-gen i5 / 32 GB machine, `/dev/kvm` is the right place to run
-an emulator later. This cloud VM also has `/dev/kvm`. Inspection of version
-`160402020` did not find a local combat interface: the base manifest is a split
-(`requiredSplitTypes` `base__abi,base__density`), DEX has no `127.0.0.1`, and
-`libsupercell_clashroyale.so` / `libg.so` in `config.arm64_v8a.apk` have no
-`127.0.0.1` either. `libg.so` contains `https://android.googlesource.com` and
-nothing that listens for a battle. The built-in harness is not that engine.
-Do not point the client at Supercell. A local engine replaces the resolver by
-listening on loopback.
+an emulator later. This cloud VM also has `/dev/kvm`. An emulator would still
+not create the missing battle resolver.
 
 ## 3. Start the control server
 

@@ -534,9 +534,11 @@ watch -n 1 'curl -s http://127.0.0.1:8770/api/match/table'
 The table columns are work done (`work`), simulated time, time left
 (`left_s`), and wall-clock ETA (`eta_s`). The XAPK is a split; prepare keeps
 only `var/clash-royale/base.apk` and records package, version, size, and
-sha256. REA inspects that base APK. It does not ship Supercell's server, and
-this process never dials one. The built-in harness is not the combat engine.
-Version `160402020` still has no local battle interface. See
+sha256. `rea inspect-android-package --format json` on that base APK (JADX
+0.7.1) reports `com.supercell.clashroyale` version `160402020` and does not
+execute it. REA does not ship Supercell's server, and this process never dials
+one. The built-in harness is not the combat engine. Version `160402020` still
+has no local battle interface. See
 [docs/local_match.md](docs/local_match.md).
 
 ## Hugging Face artifacts
