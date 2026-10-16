@@ -21,6 +21,11 @@ from cr_replay_pipeline.local_match.engine import (
     add_elixir,
     row_bounds,
 )
+from cr_replay_pipeline.local_match.native_replay import (
+    CREATE_GAME_MAIN,
+    ReplayEngineUnavailable,
+    replay_towers,
+)
 from cr_replay_pipeline.local_match.prepare import (
     APKPURE_XAPK_URL,
     PACKAGE,
@@ -462,6 +467,33 @@ def test_xapk_prepare_keeps_only_the_base_split(tmp_path: Path):
     assert not (out / "install_time_asset_pack.apk").exists()
     assert report["local_battle"]["real_engine"] is False
     assert report["local_battle"]["executed_apk"] is False
+
+
+def test_replay_towers_does_not_invent_hit_points():
+    actions = [
+        {"card_id": 26000000, "tile_col": 10, "tile_row": 4, "seconds": 3.2, "side": "red"}
+    ]
+    with pytest.raises(ReplayEngineUnavailable, match="No tower HP was read from libg.so"):
+        replay_towers(
+            red_deck=["knight"] * 8,
+            blue_deck=["archers"] * 8,
+            actions=actions,
+        )
+    with pytest.raises(ValueError, match="8 cards"):
+        replay_towers(red_deck=["knight"], blue_deck=["archers"] * 8, actions=[])
+
+
+def test_harness_snapshot_has_no_tower_hp():
+    catalog = load_catalog()
+    harness = Harness(catalog, seed=1)
+    harness.start(cards_for_preset("hog_cycle_2.6"), cards_for_preset("logbait"))
+    harness.advance_to(2.0)
+    snap = harness.snapshot()
+    assert snap["real_engine"] is False
+    assert snap["combat"] is False
+    assert "tower_hp" not in snap
+    assert "crowns" not in snap
+    assert CREATE_GAME_MAIN.startswith("Java_com_supercell_titan_GameApp_")
 
 
 def test_xapk_with_the_wrong_package_is_not_extracted(tmp_path: Path):
