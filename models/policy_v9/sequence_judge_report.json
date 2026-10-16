@@ -1,0 +1,253 @@
+{
+  "kind": "classifier",
+  "model_name": "v9 sequence-only winner judge",
+  "version": "1.0",
+  "created_at": "2026-10-12T04:24:13.391591+00:00",
+  "status": "completed",
+  "train_battles": 15000,
+  "train_actions": 30000,
+  "validation_battles": 262,
+  "test_battles": 262,
+  "compute": {
+    "device": "CPU \u00b7 2 threads",
+    "precision": "float64 features",
+    "threads": 2
+  },
+  "parameters": "180 boosting stages + 128 extra trees",
+  "history": [
+    {
+      "epoch": 1,
+      "winner_accuracy": 0.7061068702290076,
+      "validation_nll": 0.681952069654098
+    },
+    {
+      "epoch": 5,
+      "winner_accuracy": 0.7175572519083969,
+      "validation_nll": 0.6427635337153076
+    },
+    {
+      "epoch": 10,
+      "winner_accuracy": 0.7213740458015268,
+      "validation_nll": 0.6079831803071977
+    },
+    {
+      "epoch": 15,
+      "winner_accuracy": 0.7213740458015268,
+      "validation_nll": 0.5811796790961583
+    },
+    {
+      "epoch": 20,
+      "winner_accuracy": 0.7175572519083969,
+      "validation_nll": 0.562306655209842
+    },
+    {
+      "epoch": 25,
+      "winner_accuracy": 0.7175572519083969,
+      "validation_nll": 0.5480307068043409
+    },
+    {
+      "epoch": 30,
+      "winner_accuracy": 0.7099236641221374,
+      "validation_nll": 0.5390139250614927
+    },
+    {
+      "epoch": 35,
+      "winner_accuracy": 0.7137404580152672,
+      "validation_nll": 0.5306275083460749
+    },
+    {
+      "epoch": 40,
+      "winner_accuracy": 0.7290076335877863,
+      "validation_nll": 0.5230224328354854
+    },
+    {
+      "epoch": 45,
+      "winner_accuracy": 0.7366412213740458,
+      "validation_nll": 0.5182328059151274
+    },
+    {
+      "epoch": 50,
+      "winner_accuracy": 0.7442748091603053,
+      "validation_nll": 0.5133499417429518
+    },
+    {
+      "epoch": 55,
+      "winner_accuracy": 0.7480916030534351,
+      "validation_nll": 0.5086099213418922
+    },
+    {
+      "epoch": 60,
+      "winner_accuracy": 0.7480916030534351,
+      "validation_nll": 0.5043828707708145
+    },
+    {
+      "epoch": 65,
+      "winner_accuracy": 0.7404580152671756,
+      "validation_nll": 0.500923413252352
+    },
+    {
+      "epoch": 70,
+      "winner_accuracy": 0.7366412213740458,
+      "validation_nll": 0.49773876175386134
+    },
+    {
+      "epoch": 75,
+      "winner_accuracy": 0.7442748091603053,
+      "validation_nll": 0.49508999492573785
+    },
+    {
+      "epoch": 80,
+      "winner_accuracy": 0.7595419847328244,
+      "validation_nll": 0.4915170429125127
+    },
+    {
+      "epoch": 85,
+      "winner_accuracy": 0.7595419847328244,
+      "validation_nll": 0.4896515667335259
+    },
+    {
+      "epoch": 90,
+      "winner_accuracy": 0.7633587786259542,
+      "validation_nll": 0.48760682933288335
+    },
+    {
+      "epoch": 95,
+      "winner_accuracy": 0.7557251908396947,
+      "validation_nll": 0.48559263991603496
+    },
+    {
+      "epoch": 100,
+      "winner_accuracy": 0.7519083969465649,
+      "validation_nll": 0.4848511088754665
+    },
+    {
+      "epoch": 105,
+      "winner_accuracy": 0.7519083969465649,
+      "validation_nll": 0.4839770741275539
+    },
+    {
+      "epoch": 110,
+      "winner_accuracy": 0.7519083969465649,
+      "validation_nll": 0.48348446319514976
+    },
+    {
+      "epoch": 115,
+      "winner_accuracy": 0.7557251908396947,
+      "validation_nll": 0.4821244970097822
+    },
+    {
+      "epoch": 120,
+      "winner_accuracy": 0.7557251908396947,
+      "validation_nll": 0.481519169190262
+    },
+    {
+      "epoch": 125,
+      "winner_accuracy": 0.7557251908396947,
+      "validation_nll": 0.4809961436551535
+    },
+    {
+      "epoch": 130,
+      "winner_accuracy": 0.7557251908396947,
+      "validation_nll": 0.48091742579645064
+    },
+    {
+      "epoch": 135,
+      "winner_accuracy": 0.7519083969465649,
+      "validation_nll": 0.48044240876728966
+    },
+    {
+      "epoch": 140,
+      "winner_accuracy": 0.7519083969465649,
+      "validation_nll": 0.47931132015500794
+    },
+    {
+      "epoch": 145,
+      "winner_accuracy": 0.7595419847328244,
+      "validation_nll": 0.47865548079123776
+    },
+    {
+      "epoch": 150,
+      "winner_accuracy": 0.7595419847328244,
+      "validation_nll": 0.4783894851227949
+    },
+    {
+      "epoch": 155,
+      "winner_accuracy": 0.7595419847328244,
+      "validation_nll": 0.47885192892402223
+    },
+    {
+      "epoch": 160,
+      "winner_accuracy": 0.7557251908396947,
+      "validation_nll": 0.4782997319864312
+    },
+    {
+      "epoch": 165,
+      "winner_accuracy": 0.7519083969465649,
+      "validation_nll": 0.47837452859216223
+    },
+    {
+      "epoch": 170,
+      "winner_accuracy": 0.7595419847328244,
+      "validation_nll": 0.47875177171106675
+    },
+    {
+      "epoch": 175,
+      "winner_accuracy": 0.7633587786259542,
+      "validation_nll": 0.47797574258169234
+    },
+    {
+      "epoch": 180,
+      "winner_accuracy": 0.7633587786259542,
+      "validation_nll": 0.47764505610066965
+    }
+  ],
+  "test_accuracy": 0.7557251908396947,
+  "test_auc": 0.8450277048702246,
+  "test_logloss": 0.47478730140524456,
+  "test_brier": 0.16008358042865686,
+  "hgb_weight": 0.5,
+  "elapsed_seconds": 71.22942001400042,
+  "chart_keys": [
+    [
+      "winner_accuracy",
+      "HGB judge accuracy",
+      "accuracy"
+    ],
+    [
+      "validation_nll",
+      "HGB judge test NLL",
+      "loss"
+    ]
+  ],
+  "description": "Sequence-only outcome prediction from real replay histories. Official elixir/leak tables are excluded so generated sequences can use the same feature contract. Curves show the HGB component; final metrics use the validation-selected HGB/ExtraTrees blend.",
+  "contract": {
+    "cache": {
+      "cache_version": "v9-causal-shards-1",
+      "observation": "causal-observation-1",
+      "source": {
+        "source": "/home/cochon/Documents/mini-project/clash-royale-ai/data/raw",
+        "file_count": 64275,
+        "digest": "346201a2d03b5ae08ff83c40ae5ccc776ecceed5ec3c844ed2f817eea5c33281"
+      },
+      "metadata_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "costs_sha256": "393e31c77a4801fb253c65e599373d58a5bbb7d8bdd493cdf2d93fabdbe027b4",
+      "manifest_sha256": "524a6dfa3d1c8947d59d363b83f915907ee7131f96f3733b96c365cdef4fd24c",
+      "vocab_sha256": "f7a320ef93c1524a46af8881fd0409351440382f6c0f34df443991c24422ed6d",
+      "holdout_sha256": "ba9ba13ba14eebf45fc56218724483bd8855731e26a0f2a205ca9c386af46564",
+      "encoder_sha256": "8d1d6fb96a0654d1a9ac2bb8f0c26095f44638f3c987d70cd75b95752fa580f7",
+      "storage": "fp16 event features, fp32 globals/cycle/labels",
+      "all_card_actions": true,
+      "max_context": 64,
+      "reaction_repeats": 1,
+      "reference_ancestry_caveat": "Common holdout of final legacy manifests; older warm-start ancestors have incomplete lineage. Final untouched holdout is authoritative."
+    },
+    "training_ids_sha256": "73e081c9ecbea8bdf184c23c6e86ada2b85739cbe3d3cdc0446b6eb908dfa35c",
+    "calibration_ids_sha256": "284291f4a6a2794ee1fb739fd8e4c5fb0cd52b8884e5ef5890891348633634b2",
+    "test_ids_sha256": "b2be400f77d0a9c3d97ec44dc18d5aaff607bdab087c51006a201093c27e9601"
+  },
+  "lessons": [
+    "The judge was fitted and calibrated without the final policy holdout.",
+    "Calibration on real replay outcomes need not transfer to generated deployment histories.",
+    "A judge-favored synthetic sequence does not prove that a policy can win an actual game."
+  ]
+}

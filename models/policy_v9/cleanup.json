@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "verified_at": "2026-10-12T11:06:26.758500+00:00",
+  "training_jobs_active": false,
+  "resident_services": {
+    "lettera-qwen-asr.service": "active",
+    "comfyui.service": "active"
+  },
+  "replay_collector": "active",
+  "stopped_timers": [
+    "cr-v9-recovery.timer",
+    "cr-v9-deadline.timer"
+  ],
+  "scheduled_task_id": "scheduled-task:command:mcp:bf7db261-8dd2-4ddf-9847-00d7e2c2f237:schedule-task:v9-overnight-monitor-20261011",
+  "scheduled_task_enabled": false,
+  "scheduled_next_run": null,
+  "reason": "Queue, frozen evaluation, export and final report verification completed before deadline; further training would not change the predeclared final comparison."
+}

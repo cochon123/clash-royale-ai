@@ -1,0 +1,27 @@
+{
+  "variants": [
+    "baseline",
+    "clock",
+    "memory",
+    "shuffled",
+    "frozen_time"
+  ],
+  "initial_screen": [
+    "baseline",
+    "clock"
+  ],
+  "memory_requires": "clock_gate at equal completed epoch",
+  "controls_require": "memory_gate, then a newly budgeted suite",
+  "suite_seconds": 10800,
+  "run_seconds": 0,
+  "epochs": 12,
+  "d_model": 160,
+  "dropout": 0.2,
+  "reaction_repeats_train": 2,
+  "equal_exposure": "compare at last shared completed epoch; selected checkpoints are labeled separately",
+  "test_access": "none; validation-only screening",
+  "promotion": "manual evidence review, paired battle CIs, then two more seeds",
+  "clock_gate": "both actor rates >= 1e-3; clock NLL better than empirical; card/joint regression <= 0.5 pp",
+  "memory_gate": "+1 pp card or joint, card regression <=0.5 pp; aligned must beat shuffled and frozen time in a later suite",
+  "board_oracle": "separate annotated-game experiment; never inferred from deployment history"
+}

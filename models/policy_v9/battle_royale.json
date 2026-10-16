@@ -1,0 +1,1639 @@
+{
+  "created_at": "2026-10-12T10:44:41.453041+00:00",
+  "status": "completed",
+  "games": 192,
+  "planned_games": 192,
+  "summary": [
+    {
+      "left": "v4.4.1",
+      "right": "v4.4.2",
+      "generated_sequences": 64,
+      "mean_judge_probability_left": 0.49967451049313705,
+      "judge_favored_left_fraction": 0.421875
+    },
+    {
+      "left": "v4.4.1",
+      "right": "v9",
+      "generated_sequences": 64,
+      "mean_judge_probability_left": 0.5072566185324705,
+      "judge_favored_left_fraction": 0.53125
+    },
+    {
+      "left": "v4.4.2",
+      "right": "v9",
+      "generated_sequences": 64,
+      "mean_judge_probability_left": 0.49397446532524736,
+      "judge_favored_left_fraction": 0.5
+    }
+  ],
+  "records": [
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 0,
+      "judge_team_probability": 0.6100562642471608,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 0,
+      "judge_team_probability": 0.6947322575186639,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 1,
+      "judge_team_probability": 0.5183787946596079,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 1,
+      "judge_team_probability": 0.7069004557418601,
+      "judge_confidence_on_real_replays": 0.7777777777777778
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 2,
+      "judge_team_probability": 0.5674544240994738,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 2,
+      "judge_team_probability": 0.298253423829628,
+      "judge_confidence_on_real_replays": 0.7777777777777778
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 3,
+      "judge_team_probability": 0.6379363727210092,
+      "judge_confidence_on_real_replays": 0.6641012818761954
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 3,
+      "judge_team_probability": 0.628448699441128,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 4,
+      "judge_team_probability": 0.7579907750796381,
+      "judge_confidence_on_real_replays": 0.8571428571428571
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 4,
+      "judge_team_probability": 0.46985388682032503,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 5,
+      "judge_team_probability": 0.6308312307035407,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 5,
+      "judge_team_probability": 0.827239893327098,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 6,
+      "judge_team_probability": 0.5806525084211116,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 6,
+      "judge_team_probability": 0.2849082341620462,
+      "judge_confidence_on_real_replays": 0.8181818181818182
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 7,
+      "judge_team_probability": 0.2535919469619046,
+      "judge_confidence_on_real_replays": 0.8402334704331108
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 7,
+      "judge_team_probability": 0.45254502254087486,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 8,
+      "judge_team_probability": 0.23722797968745035,
+      "judge_confidence_on_real_replays": 0.8571428571428571
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 8,
+      "judge_team_probability": 0.2397279464495182,
+      "judge_confidence_on_real_replays": 0.8571428571428571
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 9,
+      "judge_team_probability": 0.4343767126954343,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 9,
+      "judge_team_probability": 0.5345948352327917,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 10,
+      "judge_team_probability": 0.3351992886822331,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 10,
+      "judge_team_probability": 0.11453367774960183,
+      "judge_confidence_on_real_replays": 1.0
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 11,
+      "judge_team_probability": 0.304089762209758,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 11,
+      "judge_team_probability": 0.5417424549333416,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 12,
+      "judge_team_probability": 0.6954033779224605,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 12,
+      "judge_team_probability": 0.5201870703775591,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 13,
+      "judge_team_probability": 0.413744216506203,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 13,
+      "judge_team_probability": 0.5091670188179603,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 14,
+      "judge_team_probability": 0.2421124464033554,
+      "judge_confidence_on_real_replays": 0.8571428571428571
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 14,
+      "judge_team_probability": 0.5601464457122983,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 15,
+      "judge_team_probability": 0.4613686088106109,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 15,
+      "judge_team_probability": 0.5267908241182784,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 16,
+      "judge_team_probability": 0.24030268150841572,
+      "judge_confidence_on_real_replays": 0.8571428571428571
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 16,
+      "judge_team_probability": 0.5645145991599403,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 17,
+      "judge_team_probability": 0.5219525867879544,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 17,
+      "judge_team_probability": 0.249906603143355,
+      "judge_confidence_on_real_replays": 0.8503737584466804
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 18,
+      "judge_team_probability": 0.4983842865577028,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 18,
+      "judge_team_probability": 0.5088641538893697,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 19,
+      "judge_team_probability": 0.49734467540030225,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 19,
+      "judge_team_probability": 0.11735249484533303,
+      "judge_confidence_on_real_replays": 1.0
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 20,
+      "judge_team_probability": 0.7458608464378405,
+      "judge_confidence_on_real_replays": 0.8387278218959019
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 20,
+      "judge_team_probability": 0.5179567243969501,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 21,
+      "judge_team_probability": 0.5269682565368068,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 21,
+      "judge_team_probability": 0.6984085864084746,
+      "judge_confidence_on_real_replays": 0.7777777777777778
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 22,
+      "judge_team_probability": 0.46904318153058305,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 22,
+      "judge_team_probability": 0.4192316620807068,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 23,
+      "judge_team_probability": 0.45572286053694866,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 23,
+      "judge_team_probability": 0.4174027967366536,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 24,
+      "judge_team_probability": 0.759909494497502,
+      "judge_confidence_on_real_replays": 0.8571428571428571
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 24,
+      "judge_team_probability": 0.5282747781476237,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 25,
+      "judge_team_probability": 0.6771522457000002,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 25,
+      "judge_team_probability": 0.28377355331327286,
+      "judge_confidence_on_real_replays": 0.8181818181818182
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 26,
+      "judge_team_probability": 0.48677739380306406,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 26,
+      "judge_team_probability": 0.48171046977440113,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 27,
+      "judge_team_probability": 0.18719777442360802,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 27,
+      "judge_team_probability": 0.3124647356552406,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 28,
+      "judge_team_probability": 0.47711208131102867,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 28,
+      "judge_team_probability": 0.7596348785905125,
+      "judge_confidence_on_real_replays": 0.8571428571428571
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 29,
+      "judge_team_probability": 0.46055344811847465,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 29,
+      "judge_team_probability": 0.4793783534029634,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 30,
+      "judge_team_probability": 0.45728963455605265,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 30,
+      "judge_team_probability": 0.8004406139916989,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v4.4.2",
+      "case": 31,
+      "judge_team_probability": 0.45037180905533214,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v4.4.1",
+      "case": 31,
+      "judge_team_probability": 0.5641021447023276,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 0,
+      "judge_team_probability": 0.4858476035204481,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 0,
+      "judge_team_probability": 0.6732584284207805,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 1,
+      "judge_team_probability": 0.37752473335244546,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 1,
+      "judge_team_probability": 0.6049808334975882,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 2,
+      "judge_team_probability": 0.33401325979639196,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 2,
+      "judge_team_probability": 0.32373554155021295,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 3,
+      "judge_team_probability": 0.5731435154432123,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 3,
+      "judge_team_probability": 0.518170637396367,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 4,
+      "judge_team_probability": 0.7317786102542972,
+      "judge_confidence_on_real_replays": 0.8277510924929463
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 4,
+      "judge_team_probability": 0.7490584111059394,
+      "judge_confidence_on_real_replays": 0.8475259770404328
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 5,
+      "judge_team_probability": 0.8010993283646656,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 5,
+      "judge_team_probability": 0.758411009003303,
+      "judge_confidence_on_real_replays": 0.8571428571428571
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 6,
+      "judge_team_probability": 0.31408882017220163,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 6,
+      "judge_team_probability": 0.33031153442833816,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 7,
+      "judge_team_probability": 0.3611645186618617,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 7,
+      "judge_team_probability": 0.3733227738123714,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 8,
+      "judge_team_probability": 0.21797345684306207,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 8,
+      "judge_team_probability": 0.35468878366829193,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 9,
+      "judge_team_probability": 0.6662173706527827,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 9,
+      "judge_team_probability": 0.5124236627347565,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 10,
+      "judge_team_probability": 0.3936739727915848,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 10,
+      "judge_team_probability": 0.155042946106367,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 11,
+      "judge_team_probability": 0.7972978606061822,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 11,
+      "judge_team_probability": 0.23550619512934723,
+      "judge_confidence_on_real_replays": 0.8571428571428571
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 12,
+      "judge_team_probability": 0.5998023835450971,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 12,
+      "judge_team_probability": 0.46801447827937004,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 13,
+      "judge_team_probability": 0.37290075163891906,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 13,
+      "judge_team_probability": 0.8353455601124158,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 14,
+      "judge_team_probability": 0.5912414702704025,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 14,
+      "judge_team_probability": 0.5859096030443656,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 15,
+      "judge_team_probability": 0.5422940442325362,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 15,
+      "judge_team_probability": 0.4473817930237479,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 16,
+      "judge_team_probability": 0.2501270958558498,
+      "judge_confidence_on_real_replays": 0.8497670688894303
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 16,
+      "judge_team_probability": 0.29366375365388114,
+      "judge_confidence_on_real_replays": 0.7777777777777778
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 17,
+      "judge_team_probability": 0.2805676706237584,
+      "judge_confidence_on_real_replays": 0.8181818181818182
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 17,
+      "judge_team_probability": 0.29254683705491874,
+      "judge_confidence_on_real_replays": 0.7777777777777778
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 18,
+      "judge_team_probability": 0.5565302969849151,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 18,
+      "judge_team_probability": 0.6598950382578522,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 19,
+      "judge_team_probability": 0.5417848830976745,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 19,
+      "judge_team_probability": 0.2497684188044118,
+      "judge_confidence_on_real_replays": 0.8507539750736328
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 20,
+      "judge_team_probability": 0.7973000384067808,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 20,
+      "judge_team_probability": 0.9061435152596169,
+      "judge_confidence_on_real_replays": 1.0
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 21,
+      "judge_team_probability": 0.6811525941445787,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 21,
+      "judge_team_probability": 0.5180793930940089,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 22,
+      "judge_team_probability": 0.36889766389202,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 22,
+      "judge_team_probability": 0.582305746173392,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 23,
+      "judge_team_probability": 0.6204763653359432,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 23,
+      "judge_team_probability": 0.44471001914935615,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 24,
+      "judge_team_probability": 0.7402303939764481,
+      "judge_confidence_on_real_replays": 0.8333333333333334
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 24,
+      "judge_team_probability": 0.6312512514452899,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 25,
+      "judge_team_probability": 0.5439321106513952,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 25,
+      "judge_team_probability": 0.5246219174087077,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 26,
+      "judge_team_probability": 0.24739721294026668,
+      "judge_confidence_on_real_replays": 0.8571428571428571
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 26,
+      "judge_team_probability": 0.46305195628882695,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 27,
+      "judge_team_probability": 0.5435709799781483,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 27,
+      "judge_team_probability": 0.16238983116265734,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 28,
+      "judge_team_probability": 0.2106180000457813,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 28,
+      "judge_team_probability": 0.33344279954565215,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 29,
+      "judge_team_probability": 0.4954996746355532,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 29,
+      "judge_team_probability": 0.44907767182011604,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 30,
+      "judge_team_probability": 0.5278889998706279,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 30,
+      "judge_team_probability": 0.7875703847268731,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v4.4.1",
+      "opponent": "v9",
+      "case": 31,
+      "judge_team_probability": 0.49225546842936424,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.1",
+      "case": 31,
+      "judge_team_probability": 0.3697868377779617,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 0,
+      "judge_team_probability": 0.19620920359553679,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 0,
+      "judge_team_probability": 0.25857585690923274,
+      "judge_confidence_on_real_replays": 0.8333333333333334
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 1,
+      "judge_team_probability": 0.3530038135077195,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 1,
+      "judge_team_probability": 0.5802252237845639,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 2,
+      "judge_team_probability": 0.2296463532849174,
+      "judge_confidence_on_real_replays": 0.9304059291406142
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 2,
+      "judge_team_probability": 0.5617162269690339,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 3,
+      "judge_team_probability": 0.5449456889275042,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 3,
+      "judge_team_probability": 0.2716200512314133,
+      "judge_confidence_on_real_replays": 0.8181818181818182
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 4,
+      "judge_team_probability": 0.7427875877881474,
+      "judge_confidence_on_real_replays": 0.8333333333333334
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 4,
+      "judge_team_probability": 0.7295575943556881,
+      "judge_confidence_on_real_replays": 0.8181818181818182
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 5,
+      "judge_team_probability": 0.6116977185074316,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 5,
+      "judge_team_probability": 0.6430632183791947,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 6,
+      "judge_team_probability": 0.3967656793079203,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 6,
+      "judge_team_probability": 0.3529121626038001,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 7,
+      "judge_team_probability": 0.4685512141295116,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 7,
+      "judge_team_probability": 0.3733227738123714,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 8,
+      "judge_team_probability": 0.27449225268158883,
+      "judge_confidence_on_real_replays": 0.8181818181818182
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 8,
+      "judge_team_probability": 0.2683564894639168,
+      "judge_confidence_on_real_replays": 0.8270861564815122
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 9,
+      "judge_team_probability": 0.29693132975495795,
+      "judge_confidence_on_real_replays": 0.7777777777777778
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 9,
+      "judge_team_probability": 0.6472287233770229,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 10,
+      "judge_team_probability": 0.1635011106440175,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 10,
+      "judge_team_probability": 0.35054229196865605,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 11,
+      "judge_team_probability": 0.5315229961028474,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 11,
+      "judge_team_probability": 0.49208596651308656,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 12,
+      "judge_team_probability": 0.8330764783190494,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 12,
+      "judge_team_probability": 0.6571350450229929,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 13,
+      "judge_team_probability": 0.3751373163007201,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 13,
+      "judge_team_probability": 0.5485032470153401,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 14,
+      "judge_team_probability": 0.5357792245918038,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 14,
+      "judge_team_probability": 0.4365561896144072,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 15,
+      "judge_team_probability": 0.5007556976686574,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 15,
+      "judge_team_probability": 0.5106331898408913,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 16,
+      "judge_team_probability": 0.34557334013232144,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 16,
+      "judge_team_probability": 0.2643910969251855,
+      "judge_confidence_on_real_replays": 0.8333333333333334
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 17,
+      "judge_team_probability": 0.4079640427915536,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 17,
+      "judge_team_probability": 0.19707725844534724,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 18,
+      "judge_team_probability": 0.5537308178182485,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 18,
+      "judge_team_probability": 0.8348277421288375,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 19,
+      "judge_team_probability": 0.11657124484533302,
+      "judge_confidence_on_real_replays": 1.0
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 19,
+      "judge_team_probability": 0.4272197368523788,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 20,
+      "judge_team_probability": 0.8465117591959845,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 20,
+      "judge_team_probability": 0.6322270124994837,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 21,
+      "judge_team_probability": 0.4108225575571604,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 21,
+      "judge_team_probability": 0.5950771584861081,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 22,
+      "judge_team_probability": 0.6165965072168977,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 22,
+      "judge_team_probability": 0.2927814454605998,
+      "judge_confidence_on_real_replays": 0.7777777777777778
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 23,
+      "judge_team_probability": 0.5860526321368442,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 23,
+      "judge_team_probability": 0.39415854499516056,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 24,
+      "judge_team_probability": 0.6311139414404652,
+      "judge_confidence_on_real_replays": 0.625
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 24,
+      "judge_team_probability": 0.8570972637691952,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 25,
+      "judge_team_probability": 0.4903354468937617,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 25,
+      "judge_team_probability": 0.5347130491780564,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 26,
+      "judge_team_probability": 0.5401263603584121,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 26,
+      "judge_team_probability": 0.2869369118245875,
+      "judge_confidence_on_real_replays": 0.8181818181818182
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 27,
+      "judge_team_probability": 0.5435709799781483,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 27,
+      "judge_team_probability": 0.1814675067429769,
+      "judge_confidence_on_real_replays": 0.9411764705882353
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 28,
+      "judge_team_probability": 0.3367251326579955,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 28,
+      "judge_team_probability": 0.6846128730613301,
+      "judge_confidence_on_real_replays": 0.6774193548387096
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 29,
+      "judge_team_probability": 0.48787222594485624,
+      "judge_confidence_on_real_replays": 0.5
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 29,
+      "judge_team_probability": 0.4498776048091243,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 30,
+      "judge_team_probability": 0.5235960925828268,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 30,
+      "judge_team_probability": 0.5845969138334497,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v4.4.2",
+      "opponent": "v9",
+      "case": 31,
+      "judge_team_probability": 0.43039276578110164,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    },
+    {
+      "team": "v9",
+      "opponent": "v4.4.2",
+      "case": 31,
+      "judge_team_probability": 0.40889736175497365,
+      "judge_confidence_on_real_replays": 0.5915492957746479
+    }
+  ],
+  "judge_report": {
+    "kind": "classifier",
+    "model_name": "v9 sequence-only winner judge",
+    "version": "1.0",
+    "created_at": "2026-10-12T04:24:13.391591+00:00",
+    "status": "completed",
+    "train_battles": 15000,
+    "train_actions": 30000,
+    "validation_battles": 262,
+    "test_battles": 262,
+    "compute": {
+      "device": "CPU \u00b7 2 threads",
+      "precision": "float64 features",
+      "threads": 2
+    },
+    "parameters": "180 boosting stages + 128 extra trees",
+    "history": [
+      {
+        "epoch": 1,
+        "winner_accuracy": 0.7061068702290076,
+        "validation_nll": 0.681952069654098
+      },
+      {
+        "epoch": 5,
+        "winner_accuracy": 0.7175572519083969,
+        "validation_nll": 0.6427635337153076
+      },
+      {
+        "epoch": 10,
+        "winner_accuracy": 0.7213740458015268,
+        "validation_nll": 0.6079831803071977
+      },
+      {
+        "epoch": 15,
+        "winner_accuracy": 0.7213740458015268,
+        "validation_nll": 0.5811796790961583
+      },
+      {
+        "epoch": 20,
+        "winner_accuracy": 0.7175572519083969,
+        "validation_nll": 0.562306655209842
+      },
+      {
+        "epoch": 25,
+        "winner_accuracy": 0.7175572519083969,
+        "validation_nll": 0.5480307068043409
+      },
+      {
+        "epoch": 30,
+        "winner_accuracy": 0.7099236641221374,
+        "validation_nll": 0.5390139250614927
+      },
+      {
+        "epoch": 35,
+        "winner_accuracy": 0.7137404580152672,
+        "validation_nll": 0.5306275083460749
+      },
+      {
+        "epoch": 40,
+        "winner_accuracy": 0.7290076335877863,
+        "validation_nll": 0.5230224328354854
+      },
+      {
+        "epoch": 45,
+        "winner_accuracy": 0.7366412213740458,
+        "validation_nll": 0.5182328059151274
+      },
+      {
+        "epoch": 50,
+        "winner_accuracy": 0.7442748091603053,
+        "validation_nll": 0.5133499417429518
+      },
+      {
+        "epoch": 55,
+        "winner_accuracy": 0.7480916030534351,
+        "validation_nll": 0.5086099213418922
+      },
+      {
+        "epoch": 60,
+        "winner_accuracy": 0.7480916030534351,
+        "validation_nll": 0.5043828707708145
+      },
+      {
+        "epoch": 65,
+        "winner_accuracy": 0.7404580152671756,
+        "validation_nll": 0.500923413252352
+      },
+      {
+        "epoch": 70,
+        "winner_accuracy": 0.7366412213740458,
+        "validation_nll": 0.49773876175386134
+      },
+      {
+        "epoch": 75,
+        "winner_accuracy": 0.7442748091603053,
+        "validation_nll": 0.49508999492573785
+      },
+      {
+        "epoch": 80,
+        "winner_accuracy": 0.7595419847328244,
+        "validation_nll": 0.4915170429125127
+      },
+      {
+        "epoch": 85,
+        "winner_accuracy": 0.7595419847328244,
+        "validation_nll": 0.4896515667335259
+      },
+      {
+        "epoch": 90,
+        "winner_accuracy": 0.7633587786259542,
+        "validation_nll": 0.48760682933288335
+      },
+      {
+        "epoch": 95,
+        "winner_accuracy": 0.7557251908396947,
+        "validation_nll": 0.48559263991603496
+      },
+      {
+        "epoch": 100,
+        "winner_accuracy": 0.7519083969465649,
+        "validation_nll": 0.4848511088754665
+      },
+      {
+        "epoch": 105,
+        "winner_accuracy": 0.7519083969465649,
+        "validation_nll": 0.4839770741275539
+      },
+      {
+        "epoch": 110,
+        "winner_accuracy": 0.7519083969465649,
+        "validation_nll": 0.48348446319514976
+      },
+      {
+        "epoch": 115,
+        "winner_accuracy": 0.7557251908396947,
+        "validation_nll": 0.4821244970097822
+      },
+      {
+        "epoch": 120,
+        "winner_accuracy": 0.7557251908396947,
+        "validation_nll": 0.481519169190262
+      },
+      {
+        "epoch": 125,
+        "winner_accuracy": 0.7557251908396947,
+        "validation_nll": 0.4809961436551535
+      },
+      {
+        "epoch": 130,
+        "winner_accuracy": 0.7557251908396947,
+        "validation_nll": 0.48091742579645064
+      },
+      {
+        "epoch": 135,
+        "winner_accuracy": 0.7519083969465649,
+        "validation_nll": 0.48044240876728966
+      },
+      {
+        "epoch": 140,
+        "winner_accuracy": 0.7519083969465649,
+        "validation_nll": 0.47931132015500794
+      },
+      {
+        "epoch": 145,
+        "winner_accuracy": 0.7595419847328244,
+        "validation_nll": 0.47865548079123776
+      },
+      {
+        "epoch": 150,
+        "winner_accuracy": 0.7595419847328244,
+        "validation_nll": 0.4783894851227949
+      },
+      {
+        "epoch": 155,
+        "winner_accuracy": 0.7595419847328244,
+        "validation_nll": 0.47885192892402223
+      },
+      {
+        "epoch": 160,
+        "winner_accuracy": 0.7557251908396947,
+        "validation_nll": 0.4782997319864312
+      },
+      {
+        "epoch": 165,
+        "winner_accuracy": 0.7519083969465649,
+        "validation_nll": 0.47837452859216223
+      },
+      {
+        "epoch": 170,
+        "winner_accuracy": 0.7595419847328244,
+        "validation_nll": 0.47875177171106675
+      },
+      {
+        "epoch": 175,
+        "winner_accuracy": 0.7633587786259542,
+        "validation_nll": 0.47797574258169234
+      },
+      {
+        "epoch": 180,
+        "winner_accuracy": 0.7633587786259542,
+        "validation_nll": 0.47764505610066965
+      }
+    ],
+    "test_accuracy": 0.7557251908396947,
+    "test_auc": 0.8450277048702246,
+    "test_logloss": 0.47478730140524456,
+    "test_brier": 0.16008358042865686,
+    "hgb_weight": 0.5,
+    "elapsed_seconds": 71.22942001400042,
+    "chart_keys": [
+      [
+        "winner_accuracy",
+        "HGB judge accuracy",
+        "accuracy"
+      ],
+      [
+        "validation_nll",
+        "HGB judge test NLL",
+        "loss"
+      ]
+    ],
+    "description": "Sequence-only outcome prediction from real replay histories. Official elixir/leak tables are excluded so generated sequences can use the same feature contract. Curves show the HGB component; final metrics use the validation-selected HGB/ExtraTrees blend.",
+    "contract": {
+      "cache": {
+        "cache_version": "v9-causal-shards-1",
+        "observation": "causal-observation-1",
+        "source": {
+          "source": "/home/cochon/Documents/mini-project/clash-royale-ai/data/raw",
+          "file_count": 64275,
+          "digest": "346201a2d03b5ae08ff83c40ae5ccc776ecceed5ec3c844ed2f817eea5c33281"
+        },
+        "metadata_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "costs_sha256": "393e31c77a4801fb253c65e599373d58a5bbb7d8bdd493cdf2d93fabdbe027b4",
+        "manifest_sha256": "524a6dfa3d1c8947d59d363b83f915907ee7131f96f3733b96c365cdef4fd24c",
+        "vocab_sha256": "f7a320ef93c1524a46af8881fd0409351440382f6c0f34df443991c24422ed6d",
+        "holdout_sha256": "ba9ba13ba14eebf45fc56218724483bd8855731e26a0f2a205ca9c386af46564",
+        "encoder_sha256": "8d1d6fb96a0654d1a9ac2bb8f0c26095f44638f3c987d70cd75b95752fa580f7",
+        "storage": "fp16 event features, fp32 globals/cycle/labels",
+        "all_card_actions": true,
+        "max_context": 64,
+        "reaction_repeats": 1,
+        "reference_ancestry_caveat": "Common holdout of final legacy manifests; older warm-start ancestors have incomplete lineage. Final untouched holdout is authoritative."
+      },
+      "training_ids_sha256": "73e081c9ecbea8bdf184c23c6e86ada2b85739cbe3d3cdc0446b6eb908dfa35c",
+      "calibration_ids_sha256": "284291f4a6a2794ee1fb739fd8e4c5fb0cd52b8884e5ef5890891348633634b2",
+      "test_ids_sha256": "b2be400f77d0a9c3d97ec44dc18d5aaff607bdab087c51006a201093c27e9601"
+    },
+    "lessons": [
+      "The judge was fitted and calibrated without the final policy holdout.",
+      "Calibration on real replay outcomes need not transfer to generated deployment histories.",
+      "A judge-favored synthetic sequence does not prove that a policy can win an actual game."
+    ]
+  },
+  "decoder": {
+    "card": "sample at temperature .8 with inferred-hand mask",
+    "placement": "selected-card tile argmax",
+    "schedule": "shared alternating turns, uniform .5\u20134 s"
+  },
+  "elapsed_seconds": 31.677968940999563,
+  "limitations": [
+    "These are generated action histories, not a combat simulation.",
+    "Judge preferences are not actual win rates and do not affect promotion.",
+    "A shared turn schedule avoids favoring incompatible legacy and clock delay decoders."
+  ]
+}

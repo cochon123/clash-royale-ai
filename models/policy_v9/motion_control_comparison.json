@@ -1,0 +1,98 @@
+{
+  "purpose": "Diagnostic only; aligned ghost already failed the plain-control gate.",
+  "comparison": {
+    "battles": 524,
+    "actions": 28818,
+    "unit": "whole battle; equal battle-weighted interval",
+    "metrics": {
+      "card": {
+        "action_weighted_delta": 0.0002776042674668133,
+        "battle_weighted_delta": 0.000257074658293277,
+        "ci95_battle": [
+          -0.00048287078316207045,
+          0.0010403495864011343
+        ]
+      },
+      "cell": {
+        "action_weighted_delta": 0.0024984385818243027,
+        "battle_weighted_delta": 0.0027540854644030333,
+        "ci95_battle": [
+          0.00100071931083221,
+          0.004488112952094524
+        ]
+      },
+      "joint": {
+        "action_weighted_delta": 0.0023249357473105192,
+        "battle_weighted_delta": 0.0026705327909439802,
+        "ci95_battle": [
+          0.0010835105029400438,
+          0.00432287084404379
+        ]
+      },
+      "joint_nll": {
+        "action_weighted_delta": -0.007746776565909386,
+        "battle_weighted_delta": -0.008929488249123096,
+        "ci95_battle": [
+          -0.010985387139953673,
+          -0.00677164449589327
+        ]
+      },
+      "timing_mae": {
+        "action_weighted_delta": -0.00015642863581888378,
+        "battle_weighted_delta": -9.27480505197309e-05,
+        "ci95_battle": [
+          -0.0003798730627750047,
+          0.00020535455514618652
+        ]
+      },
+      "card_top3": {
+        "action_weighted_delta": -6.940106686670333e-05,
+        "battle_weighted_delta": 5.1939161494374275e-05,
+        "ci95_battle": [
+          -0.0004482105927309021,
+          0.0005717932726838621
+        ]
+      },
+      "card_nll": {
+        "action_weighted_delta": -5.890576358069666e-05,
+        "battle_weighted_delta": -2.665683496161364e-05,
+        "ci95_battle": [
+          -0.00014385461872734595,
+          9.216893231496215e-05
+        ]
+      },
+      "cell_teacher": {
+        "action_weighted_delta": 0.002706641796976328,
+        "battle_weighted_delta": 0.003452444449067116,
+        "ci95_battle": [
+          0.001472528517479077,
+          0.005544466094579548
+        ]
+      },
+      "cell_teacher_top5": {
+        "action_weighted_delta": 0.0014227218925952911,
+        "battle_weighted_delta": 0.0018154862336814404,
+        "ci95_battle": [
+          -3.945227490476097e-05,
+          0.003704495483543723
+        ]
+      },
+      "cell_teacher_near1": {
+        "action_weighted_delta": 0.00315774860791862,
+        "battle_weighted_delta": 0.004144764970988035,
+        "ci95_battle": [
+          0.0018135689722839742,
+          0.006572350102942436
+        ]
+      },
+      "tile_nll": {
+        "action_weighted_delta": -0.007687871810048819,
+        "battle_weighted_delta": -0.008902831934392452,
+        "ci95_battle": [
+          -0.010966776055283844,
+          -0.0067372028017416595
+        ]
+      }
+    }
+  }
+}

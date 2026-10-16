@@ -1,0 +1,17 @@
+{
+  "status": "experimental imitation policy; joint clock invalid",
+  "do_not_resume": true,
+  "empirical_reference": "models/policy_bc_v4.4.1",
+  "best_card_epoch_11": "not preserved as a separate checkpoint",
+  "head": "c850e141f1ade2b4ba0c72750e6bb902c8d2eb42",
+  "files": {
+    "working_tree.patch": "d5ae4d470284d41d46f09775713d336978dc32f5ec1e79b0eb5c7f575912733a",
+    "source.zip": "6e54b5a18911f7b120ecef14014d5387c00dd0adff5b2148faf7cefaa3759a69",
+    "last.pt": "40ebd15a5627254d63e48a77a524b85968a8712569f01785e5c0a5159143ccf5",
+    "best_model.pt": "8217b2bcacd51df77f5a9fa473d19d5e961d6d0723a0e5978e316bb4fd51d0f6",
+    "vocab.json": "b8d5c135e1c911b85243bcacfeddc34cd6cb1052560f74167f3cdbad9cbb333a",
+    "report.json": "8afa5cfac47e9e7706dc9e9d7f73e69a9fdcd2f844daa6d600cd7de8e565b8de",
+    "split_manifest.json": "b60ab8528b324a4c823a6498aff8576fb71085e30d74f1d21448d8c3ab2af644",
+    "training_stages.json": "a79c59c3595330797df17213e418ec366fad8845c7dc42aea75a1c009ecdad31"
+  }
+}

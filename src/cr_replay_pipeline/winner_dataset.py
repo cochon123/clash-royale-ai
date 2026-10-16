@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import pickle
 import random
 from dataclasses import dataclass
 from pathlib import Path
@@ -13,12 +12,24 @@ import torch
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, Dataset
 
+from .artifact_cache import (
+    DATASET_PREPROCESS_VERSION,
+    cache_payload_matches,
+    default_dataset_cache_path,
+    read_pickle,
+    source_fingerprint,
+    sha256_file,
+    sha256_json,
+    write_pickle,
+)
+from .feature_schema import CONTINUOUS_DIM, GLOBAL_DIM
 from .parser import ReplayParseError, parse_replay
+from .metadata import METADATA_MATCHING_VERSION
 
-CONTINUOUS_DIM = 28
-GLOBAL_DIM = 48
 DEFAULT_ELIXIR_COST = 4
 ABILITY_ELIXIR_COST = 1
+UNRESOLVED_ABILITY_DROP = "drop_event"
+UNRESOLVED_ABILITY_QUARANTINE = "quarantine"
 
 SPELL_CARDS = frozenset(
     {
@@ -104,6 +115,24 @@ class CardVocab:
             "vocab_size": self.vocab_size,
         }
 
+    def mapping_signature(self) -> str:
+        from .artifact_cache import sha256_json
+
+        return sha256_json(
+            {
+                "pad_id": self.pad_id,
+                "unk_id": self.unk_id,
+                "name_to_id": dict(sorted(self.name_to_id.items())),
+            }
+        )
+
+    def compatible_with(self, other: "CardVocab") -> bool:
+        return (
+            self.pad_id == other.pad_id
+            and self.unk_id == other.unk_id
+            and self.name_to_id == other.name_to_id
+        )
+
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> CardVocab:
         vocab = cls([])
@@ -151,30 +180,173 @@ def _deck_stats(deck: tuple[str, ...], costs: dict[str, int]) -> tuple[float, fl
     return mean, std, float(spells)
 
 
+def events_from_replay(
+    replay,
+    *,
+    metadata_record: dict | None = None,
+    legacy_roster: str | None = None,
+    unresolved_abilities: str = UNRESOLVED_ABILITY_DROP,
+) -> tuple[list[dict[str, Any]], list[str]]:
+    """Convert a parsed replay into training events.
+
+    Unresolved hero abilities are never stored as ``_ability`` with invented
+    coordinates. ``drop_event`` omits them; ``quarantine`` asks the caller to
+    reject the battle.
+    """
+    from .cleaner import LEGACY_ROSTERS, _label_abilities
+
+    if unresolved_abilities not in {
+        UNRESOLVED_ABILITY_DROP,
+        UNRESOLVED_ABILITY_QUARANTINE,
+        "preserve_event",
+    }:
+        raise ValueError(
+            "unresolved_abilities must be 'drop_event', 'quarantine', or 'preserve_event'"
+        )
+    roster = LEGACY_ROSTERS.get(legacy_roster) if legacy_roster else None
+    _label_abilities(replay, metadata_record, roster)
+
+    events: list[dict[str, Any]] = []
+    reasons: list[str] = []
+    unresolved = 0
+    for event in replay.events:
+        if event.event_type == "card_play":
+            if event.card is None or event.x is None or event.y is None:
+                continue
+            if not 0 <= int(event.x) < 18000 or not 0 <= int(event.y) < 32000:
+                continue
+            events.append(
+                {
+                    "seconds": float(event.seconds),
+                    "side": event.side,
+                    "event_type": "card_play",
+                    "card": event.card,
+                    "x": int(event.x),
+                    "y": int(event.y),
+                }
+            )
+            continue
+        if event.event_type != "ability_activation":
+            continue
+        card = event.ability_card or event.card
+        if not card:
+            unresolved += 1
+            reasons.append(f"unresolved_ability_{event.side}")
+            if unresolved_abilities != "preserve_event":
+                continue
+            card = "_unknown_ability"
+        events.append(
+            {
+                "seconds": float(event.seconds),
+                "side": event.side,
+                "event_type": "ability_activation",
+                "card": card,
+                "x": int(event.x) if event.x is not None else 0,
+                "y": int(event.y) if event.y is not None else 0,
+                "position_known": event.x is not None and event.y is not None,
+                "card_known": card != "_unknown_ability",
+            }
+        )
+    if unresolved:
+        reasons.append("unresolved_ability")
+    events.sort(key=lambda item: (item["seconds"], item["side"], item["card"]))
+    return events, sorted(set(reasons))
+
+
+def battle_example_from_replay(
+    replay,
+    *,
+    metadata_record: dict | None = None,
+    legacy_roster: str | None = None,
+    unresolved_abilities: str = UNRESOLVED_ABILITY_DROP,
+    require_decisive_result: bool = True,
+    min_card_plays: int = 12,
+) -> tuple[BattleExample | None, list[str]]:
+    team_crowns = replay.crowns.get("team")
+    opponent_crowns = replay.crowns.get("opponent")
+    reasons: list[str] = []
+    if require_decisive_result:
+        if team_crowns is None or opponent_crowns is None:
+            return None, ["missing_crowns"]
+        if team_crowns == opponent_crowns:
+            return None, ["draw"]
+    team_deck = tuple(replay.decks.get("team") or [])
+    opponent_deck = tuple(replay.decks.get("opponent") or [])
+    if len(team_deck) != 8 or len(opponent_deck) != 8:
+        return None, ["invalid_deck"]
+
+    events, ability_reasons = events_from_replay(
+        replay,
+        metadata_record=metadata_record,
+        legacy_roster=legacy_roster,
+        unresolved_abilities=unresolved_abilities,
+    )
+    reasons.extend(ability_reasons)
+    if unresolved_abilities == UNRESOLVED_ABILITY_QUARANTINE and "unresolved_ability" in reasons:
+        return None, sorted(set(reasons))
+    card_plays = sum(1 for event in events if event["event_type"] == "card_play")
+    if card_plays < min_card_plays:
+        return None, sorted(set(reasons + ["too_few_card_plays"]))
+    return (
+        BattleExample(
+            battle_id=replay.battle_id,
+            team_deck=team_deck,
+            opponent_deck=opponent_deck,
+            team_wins=(
+                1
+                if team_crowns is not None
+                and opponent_crowns is not None
+                and team_crowns > opponent_crowns
+                else 0
+            ),
+            events=tuple(events),
+        ),
+        sorted(set(reasons)),
+    )
+
+
 def collect_battles(
     input_dir: str | Path,
     min_card_plays: int = 12,
     cache_path: str | Path | None = None,
     require_decisive_result: bool = True,
+    metadata_path: str | Path | None = None,
+    legacy_roster: str | None = None,
+    unresolved_abilities: str = UNRESOLVED_ABILITY_DROP,
+    battle_ids: set[str] | None = None,
 ) -> list[BattleExample]:
     source = Path(input_dir)
+    fingerprint = source_fingerprint(source)
+    expected_identity = {
+        "source": fingerprint["source"],
+        "digest": fingerprint["digest"],
+        "file_count": fingerprint["file_count"],
+        "min_card_plays": min_card_plays,
+        "require_decisive_result": require_decisive_result,
+        "preprocess_version": DATASET_PREPROCESS_VERSION,
+        "metadata_path": str(Path(metadata_path).resolve()) if metadata_path else None,
+        "metadata_sha256": sha256_file(metadata_path) if metadata_path else None,
+        "metadata_matching_version": METADATA_MATCHING_VERSION if metadata_path else None,
+        "legacy_roster": legacy_roster,
+        "unresolved_abilities": unresolved_abilities,
+        "battle_ids": sorted(battle_ids) if battle_ids is not None else None,
+    }
     cache_file = (
         Path(cache_path)
         if cache_path is not None
-        else source.parent
-        / ("winner_battles_cache.pkl" if require_decisive_result else "policy_battles_cache.pkl")
+        else default_dataset_cache_path(
+            source,
+            kind="winner" if require_decisive_result else "policy",
+            digest=sha256_json(expected_identity),
+            min_card_plays=min_card_plays,
+        )
     )
-
-    file_count = sum(1 for _ in source.rglob("*.json"))
+    trust = os.environ.get("CR_REPLAY_TRUST_CACHE") == "1"
     if cache_file.exists():
         try:
-            with cache_file.open("rb") as handle:
-                cached = pickle.load(handle)
+            cached = read_pickle(cache_file)
             if (
-                isinstance(cached, dict)
-                and (os.environ.get("CR_REPLAY_TRUST_CACHE") == "1" or cached.get("file_count") == file_count)
-                and cached.get("min_card_plays") == min_card_plays
-                and cached.get("require_decisive_result", True) == require_decisive_result
+                cache_payload_matches(cached, expected_identity, trust=trust)
                 and isinstance(cached.get("battles"), list)
             ):
                 print(
@@ -186,11 +358,21 @@ def collect_battles(
         except Exception:
             pass
 
+    metadata_index = None
+    if metadata_path:
+        from .metadata import MetadataIndex
+
+        metadata_index = MetadataIndex.from_jsonl(metadata_path)
+
     battles: list[BattleExample] = []
     seen_ids: set[str] = set()
     seen_hashes: set[str] = set()
+    dropped_abilities = 0
+    quarantined = 0
 
     for path in sorted(source.rglob("*.json")):
+        if battle_ids is not None and path.stem not in battle_ids:
+            continue
         try:
             replay = parse_replay(path)
         except (ReplayParseError, OSError, ValueError, TypeError):
@@ -199,79 +381,44 @@ def collect_battles(
             continue
         seen_ids.add(replay.battle_id)
         seen_hashes.add(replay.content_hash)
-
-        team_crowns = replay.crowns.get("team")
-        opponent_crowns = replay.crowns.get("opponent")
-        if require_decisive_result:
-            if team_crowns is None or opponent_crowns is None:
-                continue
-            if team_crowns == opponent_crowns:
-                continue
-        team_deck = tuple(replay.decks.get("team") or [])
-        opponent_deck = tuple(replay.decks.get("opponent") or [])
-        if len(team_deck) != 8 or len(opponent_deck) != 8:
-            continue
-
-        events = []
-        for event in replay.events:
-            if event.event_type == "card_play":
-                if event.card is None or event.x is None or event.y is None:
-                    continue
-                events.append(
-                    {
-                        "seconds": float(event.seconds),
-                        "side": event.side,
-                        "event_type": "card_play",
-                        "card": event.card,
-                        "x": int(event.x),
-                        "y": int(event.y),
-                    }
-                )
-            elif event.event_type == "ability_activation":
-                events.append(
-                    {
-                        "seconds": float(event.seconds),
-                        "side": event.side,
-                        "event_type": "ability_activation",
-                        "card": event.ability_card or event.card or "_ability",
-                        "x": 9000,
-                        "y": 16000,
-                    }
-                )
-        card_plays = sum(1 for event in events if event["event_type"] == "card_play")
-        if card_plays < min_card_plays:
-            continue
-        events.sort(key=lambda item: (item["seconds"], item["side"], item["card"]))
-        battles.append(
-            BattleExample(
-                battle_id=replay.battle_id,
-                team_deck=team_deck,
-                opponent_deck=opponent_deck,
-                team_wins=(
-                    1
-                    if team_crowns is not None
-                    and opponent_crowns is not None
-                    and team_crowns > opponent_crowns
-                    else 0
-                ),
-                events=tuple(events),
-            )
+        record = None
+        if metadata_index is not None:
+            matched = metadata_index.match(replay)
+            record = matched.record
+        battle, reasons = battle_example_from_replay(
+            replay,
+            metadata_record=record,
+            legacy_roster=legacy_roster,
+            unresolved_abilities=unresolved_abilities,
+            require_decisive_result=require_decisive_result,
+            min_card_plays=min_card_plays,
         )
+        if "unresolved_ability" in reasons:
+            dropped_abilities += 1
+        if battle is None:
+            if "unresolved_ability" in reasons:
+                quarantined += 1
+            continue
+        battles.append(battle)
 
     try:
-        with cache_file.open("wb") as handle:
-            pickle.dump(
-                {
-                    "file_count": file_count,
-                    "min_card_plays": min_card_plays,
-                    "require_decisive_result": require_decisive_result,
-                    "battles": battles,
-                },
-                handle,
-            )
+        write_pickle(
+            cache_file,
+            {
+                **expected_identity,
+                "battles": battles,
+            },
+        )
         print(f"Cached {len(battles)} battles -> {cache_file}", flush=True)
     except OSError:
         pass
+    if dropped_abilities or quarantined:
+        print(
+            f"Ability handling ({unresolved_abilities}): "
+            f"{dropped_abilities} battles had unresolved activations; "
+            f"{quarantined} quarantined",
+            flush=True,
+        )
     return battles
 
 
@@ -280,15 +427,32 @@ def split_battles(
     val_fraction: float = 0.15,
     test_fraction: float = 0.15,
     seed: int = 42,
+    train_fraction: float | None = None,
 ) -> tuple[list[BattleExample], list[BattleExample], list[BattleExample]]:
+    """Shuffle, then partition train / validation / test in that order.
+
+    When ``train_fraction`` is set, the remainder is split evenly into
+    validation and test. Otherwise ``val_fraction`` and ``test_fraction``
+    size those splits and training receives the rest.
+    """
     ordered = list(battles)
     rng = random.Random(seed)
     rng.shuffle(ordered)
-    n_test = int(len(ordered) * test_fraction)
-    n_val = int(len(ordered) * val_fraction)
-    test = ordered[:n_test]
-    val = ordered[n_test : n_test + n_val]
-    train = ordered[n_test + n_val :]
+    n = len(ordered)
+    if train_fraction is not None:
+        if not 0.5 <= float(train_fraction) < 1.0:
+            raise ValueError("train_fraction must be in [0.5, 1.0)")
+        n_train = int(n * float(train_fraction))
+        n_val = int((n - n_train) / 2)
+    else:
+        n_val = int(n * val_fraction)
+        n_test = int(n * test_fraction)
+        n_train = n - n_val - n_test
+        if n_train < 0:
+            raise ValueError("val_fraction + test_fraction exceeds 1")
+    train = ordered[:n_train]
+    val = ordered[n_train : n_train + n_val]
+    test = ordered[n_train + n_val :]
     return train, val, test
 
 

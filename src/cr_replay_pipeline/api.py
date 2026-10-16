@@ -15,8 +15,9 @@ API_ROOT = "https://api.clashroyale.com/v1"
 
 
 class ClashRoyaleAPI:
-    def __init__(self, token: str | None = None, retries: int = 4):
-        self.token = token or os.environ.get("CR_TOKEN")
+    def __init__(self, token: str | None = None, retries: int = 4, token_file: str | Path | None = None):
+        source = token_file or os.environ.get("CR_TOKEN_FILE")
+        self.token = token or (Path(source).read_text().strip() if source else None) or os.environ.get("CR_TOKEN")
         if not self.token:
             raise ValueError("Set CR_TOKEN or pass a token explicitly")
         self.retries = retries
@@ -54,8 +55,9 @@ def discover_battles(
     limit: int = 1000,
     workers: int = 12,
     token: str | None = None,
+    token_file: str | Path | None = None,
 ) -> dict:
-    api = ClashRoyaleAPI(token=token)
+    api = ClashRoyaleAPI(token=token, token_file=token_file)
     players = api.leaderboard(limit)
     tags = [player["tag"] for player in players]
     battlelogs: list[list[dict]] = []
@@ -80,17 +82,31 @@ def discover_battles(
 
     destination = Path(output)
     destination.parent.mkdir(parents=True, exist_ok=True)
-    with destination.open("w", encoding="utf-8") as handle:
-        for record in sorted(
-            unique.values(), key=lambda row: row.get("battle_time") or "", reverse=True
-        ):
-            handle.write(json.dumps(record, ensure_ascii=False, separators=(",", ":")))
-            handle.write("\n")
+    # Preserve previously recovered metadata and never replace it with an empty
+    # discovery result after authorization/network failures.
+    def identity(record):
+        players=tuple(sorted((normalize_tag(p.get("tag")),p.get("crowns")) for side in ("team","opponent") for p in record.get(side,[])))
+        return record.get("battle_time"),players
+    from .metadata import normalize_tag
+    merged={}
+    if destination.exists():
+        for line in destination.read_text().splitlines():
+            if line.strip():
+                record=json.loads(line);merged[identity(record)]=record
+    merged.update({identity(record):record for record in unique.values()})
+    if unique:
+        temp=destination.with_suffix(destination.suffix+".tmp")
+        with temp.open("w",encoding="utf-8") as handle:
+            for record in sorted(merged.values(),key=lambda row:row.get("battle_time") or "",reverse=True):
+                handle.write(json.dumps(record,ensure_ascii=False,separators=(",",":"))+"\n")
+        temp.replace(destination)
 
     manifest = {
         "leaderboard_players": len(tags),
         "battlelog_failures": failures,
         "unique_battles": len(unique),
+        "total_metadata_battles": len(merged),
+        "existing_metadata_preserved": True,
         "output": str(destination),
     }
     destination.with_suffix(".manifest.json").write_text(

@@ -1,4 +1,84 @@
-# Clash Royale replay pipeline
+# Clash Royale AI
+
+A data-driven Clash Royale research project: collect replays, build causal
+observations, train action-sequence policies, and evaluate offline before
+spending time on live games.
+
+## Start here: where everything lives
+
+| What | Location | Contents |
+| --- | --- | --- |
+| Code and project history | [GitHub](https://github.com/cochon123/clash-royale-ai) | This repository: Python package, CLI, tests, collector extension, scripts and documentation |
+| Complete model/research snapshot | [Hugging Face artifacts](https://huggingface.co/Cochon123/clash-royale-ai-artifacts/tree/main) | `models/` with all locally available checkpoints, resumable runs, manifests and evaluation arrays; `reports/` including JSON evidence and HTML; available `logs/` |
+| Current replay/data snapshot | [Hugging Face dataset snapshots](https://huggingface.co/datasets/Cochon123/clash-royale-replays/tree/main/snapshots) | Dated compressed archives of raw replays, official metadata, cleaned legacy data, split manifests, tower-HP recordings, calibrations and frozen v9 cache metadata |
+| Latest policy result | [v9 report](reports/policy_v9.html), [export card](models/policy_v9/final_model/README.md), [run notes](docs/v9_overnight.md) | Experimental v9 export, final comparison, ablations, provenance and limitations |
+| Earlier experiment reasoning | [Controlled experiments](docs/controlled_experiments.md), [v8 review](docs/astra_v8_review_and_next_steps.md), [pipeline investigation](docs/investigation.md) | Experiment contracts, architecture reviews and data-quality findings |
+
+The consolidated Hugging Face repository is the current backup for **all model
+versions**, including v4.4.2, v8 and v9. The individual model repositories linked
+at the end of this README are historical releases. The dataset's older top-level
+`raw/` files are an earlier collection; use its dated `snapshots/` archive for
+the current corpus. Each new snapshot includes file checksums and counts.
+
+### Current result: v9 is experimental
+
+The 12 October 2026 export (`models/policy_v9/final_model/best.pt`) achieved
+56.23% card accuracy and 12.76% joint card-and-cell accuracy on the frozen
+1,000-battle comparison. v4.4.1 achieved 53.21% and 11.21%. **v9 was not
+promoted:** its +1.55 percentage-point joint gain missed the required +2-point
+threshold, and the extra seeds share a training donor. These are offline
+prediction metrics; no actual game win rate was measured. The final holdout
+has already been consumed and must not be reused for model selection.
+
+### Local directory map
+
+| Path | Purpose |
+| --- | --- |
+| `src/cr_replay_pipeline/` | Collection, cleaning, feature encoders, training, inference, evaluation, HTML reporting and phone lab |
+| `src/cr_replay_pipeline/v9_*.py` | v9 cache, trainer, suite, evaluator, inference/export, diagnostics and watchdog |
+| `extension/`, `systemd/` | Browser replay collector and persistent local ingest service |
+| `scripts/` | Experiment helpers, detector training, comparisons and Hugging Face publishing |
+| `tests/` | Pipeline, causal features, leakage, policy and integration checks |
+| `data/raw/`, `data/metadata/` | Collected replay payloads and official battle metadata (Hugging Face dataset) |
+| `data/splits/`, `data/card_costs.json` | Reserved battle IDs, split manifests and costs |
+| `data/tower_hp_runs/`, `data/board_oracle/`, `data/phone_lab/` | Recorded frames, weak HP labels, annotation queue and device calibration |
+| `data/v9_card_stats/` | Frozen external stats used by ghost experiments; not current-season ground truth |
+| `data/v9_cache/` | Rebuildable observation shards; snapshot includes contracts, costs, vocabulary, metadata and split manifest, but omits large arrays and pickle caches |
+| `models/policy_v9/final_model/` | Preselected seed42 inference export, costs, manifest and verification |
+| `models/policy_v9/` | Source runs, ablations, final holdout ledger/arrays, report, export and cleanup evidence |
+| `models/policy_bc*/`, other `models/` folders | Earlier policies, controlled experiments, winner/realism/style models and action clock |
+| `reports/`, `docs/`, `logs/` | Interactive HTML reports, written findings and available runtime logs |
+
+Binary models and caches are excluded from new Git commits. Older commits may
+still contain historical artifacts. Local collector SQLite databases, secrets,
+quarantined capture errors and regenerable multi-gigabyte caches are not
+published. Previously deleted log files remain available in Git history.
+
+### Restore models and data
+
+Install this project as described under Setup, then install the Hub client:
+
+```bash
+pip install huggingface_hub
+# Run at the project root; restores models/, reports/ and logs/.
+hf download Cochon123/clash-royale-ai-artifacts --local-dir . \
+  --include 'models/**' 'reports/**' 'logs/**' 'snapshot_manifest.json'
+# Download the dated dataset archive and its checksum manifest.
+hf download Cochon123/clash-royale-replays --repo-type dataset \
+  --include 'snapshots/**' --local-dir /tmp/clash-royale-data
+# Extract the chosen archive at the project root (it contains data/).
+tar -xzf /tmp/clash-royale-data/snapshots/data-2026-10-16.tar.gz
+```
+
+v9 training and inference also require PyTorch; install the CUDA build suitable
+for your system, or the CPU build for offline inference. Phone control requires
+ADB and a working card detector; no detector checkpoint is included here.
+
+Future artifact backups: `.venv/bin/python scripts/publish_huggingface.py`.
+This uploads artifacts and a dated data archive; commit and push code to GitHub
+separately. Upload progress shows work completed and estimated time remaining.
+
+## Replay pipeline background
 
 This repository replaces the old replay collector and CSV cleaner with a
 loss-aware pipeline. Its first goal is to preserve and label Hero/Champion
@@ -305,7 +385,7 @@ The frames below are from the policy v5 report ([`reports/policy_bc_v5.html`](re
 
 ![Policy v5 training timeline across three runs](reports/v5_shots/timeline.png)
 
-*Training timeline parsed from [`logs/policy_bc_v5.log`](logs/policy_bc_v5.log): 21 epochs across three runs. Run 1 died on the first polish, run 2 is where REINFORCE landed, and run 3 resumed and stalled.*
+*Training timeline parsed from the historical `logs/policy_bc_v5.log` (available in Git history): 21 epochs across three runs. Run 1 died on the first polish, run 2 is where REINFORCE landed, and run 3 resumed and stalled.*
 
 ![Policy v5 behavior-cloning, style-match, and slot curves](reports/v5_shots/final_charts.png)
 

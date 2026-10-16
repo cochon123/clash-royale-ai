@@ -30,10 +30,10 @@ from .policy_dataset import (
     collect_battles,
     create_policy_dataloaders,
     load_card_costs,
-    split_battles,
     summarize_split,
 )
 from .policy_infer import load_policy
+from .policy_manifest import resolve_battle_splits
 from .policy_model import NUM_ZONES, PolicyBC
 from .policy_train import _move_batch
 
@@ -514,6 +514,7 @@ def run_placement_probe(
     seed: int = 42,
     device_name: str | None = None,
     max_samples_per_battle: int | None = 40,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     started = time.time()
     created_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -533,7 +534,14 @@ def run_placement_probe(
 
     print(f"Loading battles from {input_dir} ...", flush=True)
     battles = collect_battles(input_dir, min_card_plays=min_card_plays)
-    train_battles, val_battles, test_battles = split_battles(battles, seed=seed)
+    train_battles, val_battles, test_battles, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        split_manifest=split_manifest,
+        model_dir=policy_dir,
+        create=False,
+        min_card_plays=min_card_plays,
+    )
     costs = load_card_costs(card_costs_path)
 
     # Match v3 sample construction (no reaction oversampling for fair placement eval).

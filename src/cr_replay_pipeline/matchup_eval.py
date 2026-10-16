@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import pickle
 import random
 from collections import Counter, defaultdict
 from dataclasses import dataclass
@@ -16,6 +15,7 @@ import torch
 
 from .policy_dataset import encode_policy_sample
 from .policy_infer import load_policy
+from .policy_manifest import resolve_battle_splits
 from .policy_model import PolicyBC
 from .winner_dataset import (
     DEFAULT_ELIXIR_COST,
@@ -24,9 +24,8 @@ from .winner_dataset import (
     CardVocab,
     collect_battles,
     load_card_costs,
-    split_battles,
 )
-from .winner_tabular import extract_tabular_features, swap_battle_perspective
+from .winner_tabular import load_winner_artifact, score_winner_battles
 
 
 @dataclass(frozen=True)
@@ -246,28 +245,8 @@ def _score_team_win_prob(
     battles: list[BattleExample],
     costs: dict[str, int],
 ) -> np.ndarray:
-    card_index = winner_artifact["card_index"]
-    hgb = winner_artifact["models"]["hist_gradient_boosting"]
-    trees = winner_artifact["models"]["extra_trees"]
-    w = float(winner_artifact["hgb_weight"])
-    official: dict[str, Any] = {}
-    feats = np.stack(
-        [extract_tabular_features(b, costs, card_index, official) for b in battles]
-    )
-    swapped = np.stack(
-        [
-            extract_tabular_features(
-                swap_battle_perspective(b), costs, card_index, official
-            )
-            for b in battles
-        ]
-    )
-    direct = w * hgb.predict_proba(feats)[:, 1] + (1.0 - w) * trees.predict_proba(feats)[:, 1]
-    reverse = 1.0 - (
-        w * hgb.predict_proba(swapped)[:, 1]
-        + (1.0 - w) * trees.predict_proba(swapped)[:, 1]
-    )
-    return (direct + reverse) / 2.0
+    p_team, _confidence = score_winner_battles(winner_artifact, battles, costs)
+    return p_team
 
 
 def evaluate_matchups(
@@ -281,21 +260,28 @@ def evaluate_matchups(
     min_n: int = 60,
     seed: int = 42,
     device_name: str | None = None,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     rng = random.Random(seed)
     print("Loading battles ...", flush=True)
     battles = collect_battles(input_dir)
-    # Discover matchups on full corpus; roll decks only from train to limit leakage
-    # into the winner model test set (winner was split with seed 42 too).
-    train, _val, _test = split_battles(battles, seed=42)
+    train, _val, _test, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=42,
+        split_manifest=split_manifest,
+        model_dir=policy_dir,
+        create=False,
+    )
     matchups = discover_matchups(train, min_n=min_n, top_k=top_k)
     if not matchups:
         raise RuntimeError("No matchups found with the current thresholds")
 
     costs = load_card_costs(card_costs_path)
     model, vocab, cfg, device = load_policy(policy_dir, device_name=device_name)
-    with Path(winner_dir, "hgb_ensemble.pkl").open("rb") as handle:
-        winner = pickle.load(handle)
+    winner = load_winner_artifact(
+        Path(winner_dir) / "hgb_sequence_ensemble.pkl",
+        expected_feature_set="sequence",
+    )
 
     print(
         f"Evaluating {len(matchups)} matchups × {games_per_matchup} games on {device}",
@@ -508,6 +494,7 @@ def evaluate_matchup_lineage(
     warmup_events: int = 10,
     max_new_events: int = 50,
     temperature: float = 0.85,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     """Mine shared wincon matchups, run each policy on the same schedule, report.
 
@@ -525,14 +512,22 @@ def evaluate_matchup_lineage(
     rng = random.Random(seed)
     print("Loading battles ...", flush=True)
     battles = collect_battles(input_dir)
-    train, _val, _test = split_battles(battles, seed=42)
+    train, _val, _test, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=42,
+        split_manifest=split_manifest,
+        model_dir=specs[0][1],
+        create=False,
+    )
     matchups = discover_matchups(train, min_n=min_n, top_k=top_k)
     if not matchups:
         raise RuntimeError("No matchups found with the current thresholds")
 
     costs = load_card_costs(card_costs_path)
-    with Path(winner_dir, "hgb_ensemble.pkl").open("rb") as handle:
-        winner = pickle.load(handle)
+    winner = load_winner_artifact(
+        Path(winner_dir) / "hgb_sequence_ensemble.pkl",
+        expected_feature_set="sequence",
+    )
 
     # Shared schedule: identical decks/seeds/seats for every policy.
     schedule: list[dict[str, Any]] = []

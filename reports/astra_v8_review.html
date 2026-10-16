@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Astra • v8, under the microscope</title>
+<style>
+:root{color-scheme:dark;--bg:#10131a;--panel:#191f29;--ink:#f0efe9;--muted:#afb8c6;--mint:#83e6bf;--orange:#ffb17e;--red:#ff848f}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.7 system-ui,sans-serif}a{color:var(--mint);text-underline-offset:3px}main{max-width:1040px;margin:auto;padding:42px 28px 90px}header{padding:34px 0 55px;border-bottom:1px solid #364150}header small{font:12px monospace;letter-spacing:3px;color:var(--mint)}header h1{font-size:clamp(45px,8vw,85px);line-height:1.03;letter-spacing:-3px;margin:25px 0}header p{max-width:680px;color:var(--muted);font-size:20px}.verdict{display:inline-block;padding:8px 15px;border:1px solid #826049;color:var(--orange);border-radius:30px;font-size:14px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:30px 0}.card{background:var(--panel);padding:24px;border-radius:15px}.card b{display:block;font-size:35px;line-height:1.3}.card small{color:var(--muted)}.card:nth-child(1) b{color:var(--red)}.card:nth-child(2) b{color:var(--mint)}h2{font-size:30px;line-height:1.25;margin:60px 0 20px;letter-spacing:-.7px}h3{font-size:21px;margin:34px 0 12px}p{margin:15px 0}article>h1{font-size:32px;margin-top:65px}article{max-width:900px}li{margin:8px 0}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.5;margin:25px 0;display:block;overflow:auto}th{text-align:left;color:var(--mint);background:#202937}th,td{padding:13px;border-bottom:1px solid #374150;min-width:90px}td:first-child{min-width:150px}tr:hover td{background:#1d2630}code{font: .88em ui-monospace,monospace;color:#ffe2b8;overflow-wrap:anywhere}pre{overflow:auto}.panel{background:var(--panel);padding:25px;border-radius:18px;margin-top:22px}.panel h2{margin:0 0 10px;font-size:25px}.controls{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}button{font:inherit;font-size:14px;cursor:pointer;padding:9px 14px;border:1px solid #526174;border-radius:30px;background:transparent;color:var(--ink)}button:hover,button[aria-pressed=true]{background:var(--mint);color:#13261f;border-color:var(--mint)}button:focus-visible{outline:3px solid var(--orange);outline-offset:4px}svg{display:block;width:100%;height:auto}svg text{font-family:system-ui,sans-serif}.curve{fill:none;stroke-width:3;stroke-dasharray:1600;stroke-dashoffset:1600;animation:draw 1.6s ease-out forwards}.pulse{animation:pulse 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}#readout{min-height:28px;color:var(--muted);font:14px monospace}#diagramText{color:var(--muted);font-size:15px;min-height:80px}.diagram-wrap{overflow:auto}.diagram-wrap svg{min-width:650px}.note{font-size:14px;color:var(--muted)}.jump{display:flex;gap:18px;font-size:14px;flex-wrap:wrap;margin-top:20px}footer{color:var(--muted);border-top:1px solid #374150;margin-top:60px;padding-top:25px;font-size:14px}@keyframes draw{to{stroke-dashoffset:0}}@keyframes pulse{50%{opacity:.3;transform:scale(.85)}}@media(max-width:640px){main{padding:24px 17px}.cards{grid-template-columns:1fr;gap:10px}.card{padding:16px}.card b{font-size:28px}.panel{padding:16px}body{font-size:16px}h2{font-size:26px}header h1{letter-spacing:-2px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}.curve{stroke-dashoffset:0}}
+</style>
+<main><header><small>FIELD NOTES / SEPTEMBER 2026</small><h1>v8, under<br>the microscope.</h1><p>The infrastructure improved. The checkpoint regressed. The next experiment should be smaller, sharper, and capable of proving us wrong.</p><span class="verdict">Recommendation: close this run. Keep the useful work.</span><div class="jump"><a href="#curves">Inspect the curves ↓</a><a href="#architecture">Inspect the mechanism ↓</a><a href="#review">Read the detailed plan ↓</a></div></header>
+<div class="cards"><div class="card"><small>MATCHED CARD ACCURACY</small><b>−5.29 pp</b><small>v8 versus v4.4.1 · 512 battles</small></div><div class="card"><small>TIMING MAE IMPROVEMENT</small><b>0.103 s</b><small>A real but limited benefit</small></div><div class="card"><small>UNIQUE TRAINING DECISIONS</small><b>124,272</b><small>Expanded to 317,036 training rows</small></div></div>
+<section class="panel" id="curves"><h2>One run. Several different stories.</h2><p class="note">Measured current-run history through early stopping at epoch 14. Select a metric; focus or hover a dot for exact values.</p><div class="controls" id="metrics"><button data-metric="loss" aria-pressed="true">Loss</button><button data-metric="card" aria-pressed="false">Card accuracy</button><button data-metric="tile" aria-pressed="false">Placement NLL</button><button data-metric="timing" aria-pressed="false">Timing MAE</button></div><svg id="chart" viewBox="0 0 900 330" role="img" aria-label="Training history"></svg><div id="readout" aria-live="polite"></div><p class="note">Loss uses different training weights and placement conditioning in training versus validation. Compare each trajectory; do not interpret the absolute gap as pure overfitting.</p></section>
+<section class="panel" id="architecture"><h2>Where the causal chain breaks</h2><div class="controls"><button id="current" aria-pressed="true">Implemented</button><button id="proposed" aria-pressed="false">Required contract</button></div><div class="diagram-wrap"><svg id="diagram" viewBox="0 0 900 175" role="img" aria-label="Observation, memory, clock, and action flow"></svg></div><p id="diagramText"></p></section>
+<article id="review"><h1>Astra's review of v8 and the next experiments</h1>
+<p>Review date: 6 September 2026. This is an implementation review and offline diagnostic, not a new trained model or a live-play evaluation. The implementation probe captured epoch 12; the matched comparison used v8's best-loss checkpoint at epoch 7. During this review, the trainer <strong>early-stopped at epoch 14, at 20:51:50 local time</strong>, after seven epochs without a better validation loss. I did not terminate it.</p>
+<p><strong>My recommendation: stop this v8 experiment, preserve its evidence, and do not scale it up. Keep the project and the pipeline improvements. Require a corrected, small, controlled comparison before another expensive model run.</strong></p>
+<p>I share the frustration behind the table. We have spent considerable effort increasing sophistication without establishing a reliable increase in playing strength. But “v8 is presently a worse checkpoint” and “the underlying idea cannot work” are different conclusions. The first is supported here. The second has not been tested properly.</p>
+<p>I also owe the original proposal some criticism: it bundled memory, clocks, placement, and supervision changes before we had a clean baseline. The 57–61% card target in my architecture report was an ambitious experimental target, not a calibrated forecast. I would now organize that proposal into much smaller experiments. More elaborate architecture is not evidence of progress.</p>
+<h2>What I inspected and ran</h2>
+<ul>
+<li>The committed pipeline repair, <code>c850e14</code>, and the uncommitted v8 implementation, dataset/inference integration, training, resumption, reports, and monitoring.</li>
+<li>The current run's stage history, progress stream, first-run report, checkpoint configuration, and canonical cache.</li>
+<li>All <strong>135 existing tests passed</strong> on CPU. One scheduler-order warning comes from a test. Passing tests did not cover the semantic failures below.</li>
+<li>A reproducible CPU implementation audit: causal query time, hazard gradients, attention dependence, zero-time dynamics, warm-start manifests, exact sample counts, and 32 validation-prefix forwards through a trained checkpoint.</li>
+<li>A new CPU comparison of v4.4.1 and v8 on the same 512 diagnostic battles, using 8,136 identical indexed card targets. It took approximately <strong>57 seconds</strong>. No model was trained, no live game was launched, and production source was not edited in this review.</li>
+</ul>
+<p>Evidence: <a href="../reports/astra_v8_evidence/implementation_audit.json">implementation audit</a>, <a href="../reports/astra_v8_evidence/v8_matched_probe.json">matched comparison</a>, <a href="../scripts/astra_v8_implementation_audit.py">audit script</a>, <a href="../scripts/astra_v8_matched_probe.py">comparison script</a>.</p>
+<h2>What the run actually says</h2>
+<p>The quoted <strong>48.3% test</strong> belongs to an earlier seven-epoch report. That archived report contains infinite total loss and NaN entropy. The current trainer uses BF16 with float32 loss calculations and has finite validation losses. These are separate artifacts; do not splice their curves together or assume every field in the older report is current.</p>
+<p><strong>Finalization update:</strong> the completed run reports <strong>48.07% test card accuracy</strong>, <strong>11.32% exact placement cell</strong>, <strong>8.42% joint card/cell</strong>, and <strong>1.790 s timing MAE</strong> on 17,220 indexed targets. The test total loss is finite at <strong>7.460</strong>. Test evaluation reloads the best-loss weights, rather than using the epoch-14 weights. Unfortunately, the final report's validation block still describes epoch 14, and the final checkpoint metadata labels the selected weights with epoch 14; these should be separated. The completed report snapshot is preserved in the implementation evidence.</p>
+<p>The current stage-history snapshot shows:</p>
+<table>
+<thead>
+<tr>
+<th>Epoch</th>
+<th style="text-align: right;">Training loss</th>
+<th style="text-align: right;">Validation loss</th>
+<th style="text-align: right;">Card accuracy</th>
+<th style="text-align: right;">Exact placement cell</th>
+<th style="text-align: right;">Placement NLL</th>
+<th style="text-align: right;">Timing MAE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7</td>
+<td style="text-align: right;">6.077</td>
+<td style="text-align: right;"><strong>7.464</strong></td>
+<td style="text-align: right;">47.66%</td>
+<td style="text-align: right;">10.67%</td>
+<td style="text-align: right;">4.698</td>
+<td style="text-align: right;">1.750 s</td>
+</tr>
+<tr>
+<td>8</td>
+<td style="text-align: right;">5.995</td>
+<td style="text-align: right;">7.491</td>
+<td style="text-align: right;">47.79%</td>
+<td style="text-align: right;">10.55%</td>
+<td style="text-align: right;">4.739</td>
+<td style="text-align: right;">1.744 s</td>
+</tr>
+<tr>
+<td>9</td>
+<td style="text-align: right;">5.925</td>
+<td style="text-align: right;">7.494</td>
+<td style="text-align: right;">47.81%</td>
+<td style="text-align: right;">11.06%</td>
+<td style="text-align: right;">4.739</td>
+<td style="text-align: right;">1.740 s</td>
+</tr>
+<tr>
+<td>10</td>
+<td style="text-align: right;">5.852</td>
+<td style="text-align: right;">7.513</td>
+<td style="text-align: right;">48.17%</td>
+<td style="text-align: right;">11.36%</td>
+<td style="text-align: right;">4.758</td>
+<td style="text-align: right;">1.740 s</td>
+</tr>
+<tr>
+<td>11</td>
+<td style="text-align: right;">5.779</td>
+<td style="text-align: right;">7.547</td>
+<td style="text-align: right;"><strong>48.67%</strong></td>
+<td style="text-align: right;">11.26%</td>
+<td style="text-align: right;">4.773</td>
+<td style="text-align: right;">1.735 s</td>
+</tr>
+<tr>
+<td>12</td>
+<td style="text-align: right;">5.708</td>
+<td style="text-align: right;">7.570</td>
+<td style="text-align: right;">47.93%</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr>
+<td>13</td>
+<td style="text-align: right;">5.674</td>
+<td style="text-align: right;">7.569</td>
+<td style="text-align: right;">48.16%</td>
+<td style="text-align: right;">11.09%</td>
+<td style="text-align: right;">4.792</td>
+<td style="text-align: right;">1.731 s</td>
+</tr>
+<tr>
+<td>14</td>
+<td style="text-align: right;">5.617</td>
+<td style="text-align: right;">7.591</td>
+<td style="text-align: right;">47.86%</td>
+<td style="text-align: right;">10.98%</td>
+<td style="text-align: right;">4.805</td>
+<td style="text-align: right;">1.735 s</td>
+</tr>
+</tbody>
+</table>
+<p>It has not literally stopped updating or learning. Between epochs 7 and 11, card accuracy gained about <strong>1.00 percentage point</strong>, while timing improved by only <strong>0.015 seconds</strong>. Placement NLL worsened, and placement entropy fell from <strong>5.32 to 5.06 bits</strong>. That combination is consistent with increasingly concentrated predictions that are not improving their probability estimates on validation data.</p>
+<p>This is enough to stop extending the run. It is not enough to diagnose every cause as overfitting: training uses reaction weighting and teacher-forced card conditioning, whereas validation uses predicted-card conditioning for placement. The absolute train–validation loss gap is consequently not an apples-to-apples generalization gap. Its late validation deterioration is still a real warning for the chosen evaluation procedure.</p>
+<p>The configuration is approximately <strong>2.397 million parameters</strong>, 5,000 training battles, 1,071 validation battles, and 1,072 test battles. The advertised <strong>317,036 rows are only 124,272 distinct battle/event pairs</strong>, expanded by mirroring and reaction repetition. Mirroring is useful; it does not create new independently observed situations. The canonical cache contains 57,334 battles, so this run is also a deliberately small corpus pilot.</p>
+<h2>A fairer checkpoint comparison</h2>
+<p>Your historical table mixes different populations, feature contracts, data quantities, training histories, and warm starts. The old timing leakage can improve card prediction too. Fixing it can lower an honest score. Sample counts alone cannot normalize any of these differences.</p>
+<p>I therefore reevaluated the existing v4.4.1 and v8 best-loss checkpoints using the current causal encoder, their own vocabularies, the same card-only targets from both sides, and only revealed opponent cards:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th style="text-align: right;">v4.4.1</th>
+<th style="text-align: right;">v8, epoch 7</th>
+<th style="text-align: right;">v8 minus v4.4.1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Correct card</td>
+<td style="text-align: right;"><strong>52.13%</strong></td>
+<td style="text-align: right;">46.84%</td>
+<td style="text-align: right;"><strong>−5.29 pp</strong></td>
+</tr>
+<tr>
+<td>Correct placement cell</td>
+<td style="text-align: right;"><strong>14.44%</strong></td>
+<td style="text-align: right;">11.76%</td>
+<td style="text-align: right;">−2.68 pp</td>
+</tr>
+<tr>
+<td>Correct card and cell</td>
+<td style="text-align: right;"><strong>11.21%</strong></td>
+<td style="text-align: right;">8.71%</td>
+<td style="text-align: right;">−2.50 pp</td>
+</tr>
+<tr>
+<td>Human cell in top five cells</td>
+<td style="text-align: right;"><strong>35.39%</strong></td>
+<td style="text-align: right;">30.30%</td>
+<td style="text-align: right;">−5.09 pp</td>
+</tr>
+<tr>
+<td>Timing MAE, lower is better</td>
+<td style="text-align: right;">1.881 s</td>
+<td style="text-align: right;"><strong>1.778 s</strong></td>
+<td style="text-align: right;"><strong>−0.103 s</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Using 2,000 paired resamples of whole battles, the 95% interval for the card difference is <strong>−6.41 to −4.19 percentage points</strong>. For joint card/cell accuracy it is <strong>−3.15 to −1.80 points</strong>. The timing difference interval is <strong>−0.129 to −0.078 seconds</strong>. The action-imitation regression is larger than the sampling uncertainty on this cohort.</p>
+<p>Limitations matter: these battles were excluded from the earlier checkpoint training caches/manifests and have zero ID overlap with v8's train/validation/test manifest. However, we already used this cohort to inform architecture design; it is a diagnostic set, not a pristine final benchmark. Preprocessing changed, so this comparison has 8,136 targets rather than the earlier report's 8,201. It also does <strong>not</strong> equalize how the models were trained. This compares existing checkpoints under a common input contract; it does not establish an intrinsic advantage of GRUs over memory tokens. Battle resampling measures cohort uncertainty, not variation across training seeds.</p>
+<h2>My assessment of the work</h2>
+<p>There is worthwhile engineering here. The repair commit has meaningful changes across 35 files, including named feature schemas, shared AUC computation, exact vocabulary compatibility, split persistence, stronger caches, explicit sequence-only judging, and removal of the hardcoded OCR environment import. The new trainer has atomic checkpoint replacement, optimizer/scheduler resumption, finite-precision handling, and useful work/ETA monitoring. The model remains within a sensible parameter budget.</p>
+<p>I would keep that infrastructure. I would not approve the claim that the original data/evaluation audit is completely closed, or that Stage A of the proposed architecture is correctly implemented. The missing pieces are behavioral contracts, not missing decorative components.</p>
+<table>
+<thead>
+<tr>
+<th>Original issue</th>
+<th>Assessment of the present code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Split integrity</td>
+<td>Much better: frozen manifests and required evaluation manifests. Ancestor exposure is still not enforced when an explicit different manifest is supplied.</td>
+</tr>
+<tr>
+<td>Causal threat and cycle time</td>
+<td>Future-target threat time and the opponent-event cycle-clock issue are repaired. The new observation-time path still leaves the main global state stale.</td>
+</tr>
+<tr>
+<td>Canonical ability attribution</td>
+<td>Cleaner attribution is called and unresolved-event handling is explicit. Training does not pass the metadata path, so metadata-based recovery is not actually wired into this run. Missing-coordinate abilities still receive center coordinates.</td>
+</tr>
+<tr>
+<td>Judge mismatch</td>
+<td>Sequence-only training/scoring paths and rejection of official-feature judges are good fixes. New code does not itself validate or retrain old judge artifacts.</td>
+</tr>
+<tr>
+<td>Cache correctness</td>
+<td>Source identity, preprocessing/configuration, and checkpoint-sensitive caches are major improvements. Metadata content is not fingerprinted; the trust override bypasses most checks.</td>
+</tr>
+<tr>
+<td>Mirror consistency</td>
+<td>Central transformation and asymmetric-example regression coverage are good improvements.</td>
+</tr>
+<tr>
+<td>AUC ties</td>
+<td>Shared sklearn-based implementation fixes the demonstrated error.</td>
+</tr>
+<tr>
+<td>Baseline populations</td>
+<td>Baselines now use the indexed evaluation dataset. The frequency/cycle baselines remain weak controls for judging architectural gains.</td>
+</tr>
+<tr>
+<td>Vocabulary compatibility</td>
+<td>Exact mappings and donor mapping preservation are substantial improvements.</td>
+</tr>
+<tr>
+<td>Configuration/reproducibility</td>
+<td>Fractions, schemas, stable seeds, and conditional style prose are improved. Resume provenance and capability flags still deserve stricter integration checks.</td>
+</tr>
+</tbody>
+</table>
+<h2>The architectural problems that change my recommendation</h2>
+<h3>1. The joint clock is trained to erase the opponent</h3>
+<p>The loss is <code>L = (lambda_own + lambda_opponent) * delay - log(lambda_own)</code>. The dataset swaps perspective according to the <em>future target's</em> actor, and the loss never receives an opponent-event label. For every positive delay, <code>dL/dlambda_opponent = delay &gt; 0</code>: minimizing this objective pushes the opponent rate downward. The module comment says competition trains the opponent rate; it trains it in the wrong direction for the intended task.</p>
+<p>This is not hypothetical. In 32 validation prefixes from the epoch-12 checkpoint, mean opponent rate was <strong>0.000100002</strong>, essentially the hard floor of <strong>0.0001</strong>. The implied opponent-next probability averaged <strong>0.044%</strong>. This small probe illustrates the failure; it is not a corpus estimate.</p>
+<p>Furthermore, live action inference still uses <code>expm1(out['timing'])</code>, clipped to 0.2–12 seconds. It does not schedule from <code>clock_rates</code>. The dashboard's “wait” hit rate measures timing error within a tolerance, not learned correctness of an explicit wait action.</p>
+<p>References: <code>event_clock.py:24</code>, <code>belief_policy.py:468</code>, <code>policy_dataset.py:646</code>, <code>policy_infer.py:309</code>.</p>
+<h3>2. Observation time does not reach the memory clock</h3>
+<p><code>encode_policy_sample</code> accepts an explicit current time, but the base global vector is still taken from the last event. The memory reads its query delay from that vector's <code>now</code> field. In a synthetic example, observation times <strong>35.5 and 40.5 seconds</strong> both encoded <code>now = 35.5</code>, and both produced <strong>query_dt = 0</strong>.</p>
+<p>Passing current time only to threat/cycle helpers does not repair the whole observation. Elixir, rolling windows, and other time-dependent state need one consistent observation contract too. The current time-transition unit test manually edits the global time tensor; it bypasses the actual encoder/inference path and therefore misses this failure.</p>
+<p>References: <code>policy_dataset.py:657</code>, <code>policy_dataset.py:666</code>, <code>belief_policy.py:323</code>.</p>
+<h3>3. Memory queries cannot select an event when there is only one key</h3>
+<p>Each memory-update attention call has one event as its sole key/value. Softmax over one key is always one. Changing the memory query therefore cannot change which information it receives. My probe changed the queries substantially and got <strong>exactly zero change in the attention output</strong>. Query/key gradients were approximately floating-point noise, while value-projection gradients were substantial.</p>
+<p>This does not mean the entire network is inert. The Transformer, value projections, time updates, and later memory interactions can learn. It means the purported selective read into different memory slots is absent: all slots on the selected side receive the same event contribution. With dropout, random differences are possible; those are not learned selection.</p>
+<p>Reference: <code>belief_policy.py:310</code>.</p>
+<h3>4. Zero elapsed time still changes state</h3>
+<p>The time transition adds a gated residual even when <code>dt = 0</code>. A random initialization changed a state coordinate by up to <strong>0.666</strong> at zero time. That scale is initialization-dependent; the identity violation follows directly from the code. A transition described as advancing state through elapsed time should satisfy <code>T(memory, 0) = memory</code>.</p>
+<p>The implementation also rebuilds memory from the bounded prefix on every forward pass. That is acceptable for a pilot, but it does not establish persistent state beyond the context window. The auxiliary activity targets are thresholds of the same next-event delay, not the proposed future multi-event supervision. No board-grounding stage has been implemented; that was intentionally a later stage, not a defect by itself.</p>
+<p>Reference: <code>belief_policy.py:97</code>.</p>
+<h3>5. Pipeline closure still matters</h3>
+<p>I reproduced an explicit new split being accepted with <strong>11 of 15 new test battles in the donor's training set</strong>. That is a synthetic warm-start test; this v8 was originally trained from scratch, so it is not evidence that this run has that contamination.</p>
+<p>The training call also omits metadata, and the cache identity records its path rather than its contents. Resolved ability activations can still carry invented center positions into unmasked placement losses. Dropping unknown activations is safer than inventing a card label, but it also erases an observed action and its timing/resource implications. A canonical event can preserve “an unknown ability happened” while masking unsupported card/placement labels.</p>
+<p>Finally, the final checkpoint writer labels best-loss weights with the last history epoch. The final report also combines the last epoch's validation metrics with the selected checkpoint's test metrics. Keep <code>weights_epoch</code>, <code>last_completed_epoch</code>, and <code>selected_metric</code> separate, and evaluate/report the selected checkpoint consistently. Do not silently resume different data/loss/configuration under one run ID merely because tensor shapes fit.</p>
+<p>References: <code>policy_manifest.py:188</code>, <code>policy_train.py:818</code>, <code>winner_dataset.py:243</code>, <code>winner_dataset.py:319</code>, <code>policy_train.py:1522</code>.</p>
+<h2>A concrete next plan</h2>
+<h3>Step 0 — Close this experiment cleanly</h3>
+<p>Do not add epochs, increase the corpus, tune loss weights against the test set, or warm-start a supposed v9 from this clock. Preserve the best-loss checkpoint, last checkpoint, exact code diff, configuration, manifests, source/cache identity, and logs together. Preserve a best-card checkpoint if one exists; epoch 11 cannot be reconstructed from its scalar metrics alone.</p>
+<p>Separate the first FP16-era report from the resumed finite-loss run. Mark the current checkpoint “experimental imitation policy; joint clock invalid.” Keep v4.4.1 as the empirical reference, not as proof of live readiness. The trainer's existing early stopping has now ended training at epoch 14; let its finalization finish and do not resume this objective. This review itself did not terminate it.</p>
+<h3>Step 1 — Fix the contracts before training</h3>
+<p>Build one observation object with battle ID, fixed agent perspective, current time, confirmed event prefix, revealed opponent information, feature schema, and provenance. Future labels belong in a separate object. Exercise exactly this object through training and deployment.</p>
+<p>Acceptance checks should demonstrate behavior:</p>
+<ul>
+<li>Changing a future target's timestamp/card/actor cannot change a fixed observation's tensors.</li>
+<li>Advancing time five seconds with no event advances the model query by five seconds and consistently updates time-dependent features. <code>T(m,0)=m</code> must hold.</li>
+<li>Clock examples include both actors under a fixed perspective. Mirroring or swapping an entire match changes actor labels consistently.</li>
+<li>A toy balanced competing-event process recovers nonzero rates for both actors. Zero-time/tied events and end-of-replay censoring have explicit semantics.</li>
+<li>Memory reads depend on the intended memory/event information and receive meaningful gradients. Add a multi-event distractor example, not just tensor-shape checks.</li>
+<li>Unknown abilities remain explicit uncertain observations; unsupported card/XY targets are masked. Wire metadata into the actual CLI-to-loader path and fingerprint it.</li>
+<li>Any train/validation/test overlap with any warm-start ancestor is rejected, including an explicitly supplied new manifest.</li>
+<li>Changing preprocessing, loss semantics, vocabulary, or corpus on resume requires a new run lineage. Verify end-to-end checkpoint selection and epoch metadata.</li>
+</ul>
+<p>These are cheap CPU acceptance tests. The current 135 passing tests are a starting point, not a reason to skip them.</p>
+<h3>Step 2 — Establish a clean, strong baseline</h3>
+<p>Train a v4.4.1-shaped policy <strong>from scratch</strong> on the same 5,000 training battles and exact sampled examples used by the corrected candidate. Keep card/placement heads, optimizer, reaction weighting, context, opponent information, and evaluation indices identical. Call it a baseline by its configuration, not another exciting version number.</p>
+<p>Use the already exposed validation/test artifacts as development evidence. Reserve a new, deduplicated, preferably later-time final holdout before the next comparison, checking all checkpoint ancestors. Do not consume that final holdout after every small choice. Record unique battles, distinct target decisions, augmentation repeats, and optimizer presentations separately.</p>
+<p>Include simple frequency/cycle controls on the same indices, but make the strong trained baseline the decision-maker. Compare both equal data exposure and actual wall time: a model needing five times the compute should demonstrate enough value to justify that cost.</p>
+<h3>Step 3 — Test the clock separately from memory</h3>
+<p>First attach a correctly supervised clock to the strong baseline. Use a fixed agent perspective and labels for <strong>which side acts next and when</strong>. A valid constant-rate competing-risk model is a reasonable first sanity check. A richer discrete hazard over 250 ms intervals can follow only if calibration shows the constant-rate assumption is limiting.</p>
+<p>Account for quiet intervals and right-censoring. Same-timestamp events should be grouped or treated as interval-censored, not given arbitrary causal order by card name. Duration-aware losses can avoid materializing every quiet tick as a huge dataset. Reaction oversampling must not silently redefine the natural timing distribution.</p>
+<p>Wire clock output into offline scheduling and test repeated queries with no new event. Report next-actor accuracy, survival calibration, clock NLL, and timing MAE against a simple empirical timing baseline. The present two rate outputs and “wait accuracy” display do not meet that standard.</p>
+<h3>Step 4 — Test the smallest useful memory</h3>
+<p>Only after the clock works, compare a small memory variant against the same baseline. Replace one-key attention with a meaningful learned gate depending on both memory slot and event, or let memory queries attend to several causally available events. Start with 8–16 slots if that makes the experiment cheaper; 24 is not a requirement.</p>
+<p>Use dynamics with a real zero-time identity—for example a learned decay toward a state-dependent baseline with rates held fixed between event updates. Keep event updates distinct from elapsed-time updates. Start without extra future heads or an offset decoder change.</p>
+<p>Run aligned-memory, shuffled-memory, and frozen-time controls. If aligned memory cannot beat the controls, retire it. Do not call the tokens troops, health estimates, or a world model until independent supervision supports that interpretation.</p>
+<h3>Step 5 — Use explicit continuation gates</h3>
+<p>The following are proposed engineering gates, not predicted gains:</p>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Proposed evidence required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Keep a clock variant</td>
+<td>Both actor rates behave sensibly; better held-out survival calibration/NLL; approximately 0.10 s or larger timing MAE improvement if MAE is the chosen benefit; no material action regression.</td>
+</tr>
+<tr>
+<td>Keep a memory variant</td>
+<td>About <strong>+1 pp card accuracy</strong>, or <strong>+1 pp joint card/cell accuracy</strong> with card no worse than −0.5 pp; paired uncertainty supports the claimed benefit; aligned beats shuffled/frozen controls.</td>
+</tr>
+<tr>
+<td>Fund confirmation</td>
+<td>One clean pilot clears the predeclared gate. Then repeat baseline and candidate with two additional seeds; report all three, not the best seed.</td>
+</tr>
+<tr>
+<td>Scale the corpus</td>
+<td>The benefit survives seed variation and equal-data comparison, with acceptable memory and measured inference latency. Then test 5k → 15k battles before a full-corpus run.</td>
+</tr>
+<tr>
+<td>Retire the memory branch</td>
+<td>No repeatable advantage after one corrected implementation and one bounded ablation round. Return to the simpler baseline.</td>
+</tr>
+</tbody>
+</table>
+<p>Begin with a <strong>three-GPU-hour ceiling</strong> for the first baseline/clock/memory screening round, timed on the actual machine. Current v8 is roughly 4½ minutes per epoch, so a 12-epoch pilot is around 55 minutes before overhead. Faster baseline runs may cost less; this is a budget, not a throughput guarantee. Equal-exposure comparisons and wall-time comparisons must be labeled separately. Fund extra seeds only after a promising result. Do not buy another overnight run just to see whether a stalled curve wakes up.</p>
+<h3>Step 6 — Evaluate the actual bottleneck, not only card top-1</h3>
+<p>Track card top-1/top-3 and NLL; placement conditional on the human card; greedy end-to-end card/placement; timing and actor calibration; legality; and inference latency at batch size one. A proper joint action likelihood uses the true card's conditional placement probability. Keep that separate from placement error after the model's greedy card choice. Current validation mixes those roles.</p>
+<p>Break results down by defense windows, spells, buildings, openings, late game, repeated matchups, unseen deck combinations, and observed/unknown abilities. Include probabilities assigned to human actions rather than assuming every different action is wrong. Inspect a small fixed set of failure cases manually, selected before model comparison, with event timelines and uncertainty displayed.</p>
+<p>The earlier human-card oracle probe suggested substantial placement uncertainty could be recovered when card choice was known. That makes a disciplined card/placement decomposition worth testing. It does not prove that search over the existing judge will select a winning action.</p>
+<h3>Step 7 — Investigate missing observations before inventing a larger network</h3>
+<p>Our fundamental input remains deployment history. It does not directly identify which units survived, current HP, targeting, or the exact fight outcome. A better memory can exploit predictable structure, but it cannot uniquely reconstruct information the record does not contain. I cannot quantify the irreducible error from the present experiments.</p>
+<p>Use existing recorded material first. Create a small synchronized, manually checked set of replay prefixes with actual tower HP and coarse troop presence in important regions. The earlier inventory had only ten games with HP-related material; many labels were carried forward rather than independent direct OCR observations. Split by game/session, never by adjacent frames.</p>
+<p>Perform an <strong>oracle information experiment</strong>: give a compact policy accurate coarse board labels on held-out annotated games. Compare it with the same model without those labels and with shuffled labels. If meaningful board information helps, improve the observation pipeline and collect passive replay coverage before adding more model capacity. If it does not help, inspect annotation alignment and task design before building a large vision system. This can remain data-driven imitation; adding board observations does not require jumping to live RL.</p>
+<p>If existing recordings cannot answer this question, make a specific passive-data collection plan. Live controlled games are for the later point where offline progress is credible and playing strength has become the remaining uncertainty. Neither human-style scores nor sequence-only winner judges can supply a justified win-rate forecast.</p>
+<h2>What gains I would actually claim</h2>
+<p>Right now I claim <strong>no playing-strength gain</strong>. The measured v8 checkpoint loses about 5.3 card points and 2.5 joint card/cell points to the existing reference on a common diagnostic cohort, while gaining about 0.10 seconds in timing MAE.</p>
+<p>Correctness repairs may lower scores further by removing shortcuts. Recovering the old checkpoint's performance is a useful near-term checkpoint, but it is not a numerical prediction for a new model trained from scratch. The next architecture should earn continued compute with a repeatable 1-point-scale action benefit or a clear timing/calibration benefit. We do not have evidence for a promised 60% card score, a particular live win rate, or “massive gains” from more tokens.</p>
+<h2>Astra's rambeling</h2>
+<p>I wanted the little memory tokens to remember a battle. At the moment, twelve of them are attending a meeting where there is exactly one slide, and everyone receives the same slide. Meanwhile, the opponent clock has discovered the most optimistic possible strategy: assume the opponent will almost never do anything.</p>
+<p>That is a wonderful personality for a garden ornament. It is less useful when a Hog Rider is crossing the bridge.</p>
+<p>The encouraging part is that these are concrete failures. “The model feels dumb” gives us nowhere to stand. “This loss mathematically rewards deleting the opponent” gives us a line of code, a toy process, and a test that can fail honestly.</p>
+<p>I still like the ambition. I like it more when the next experiment is small enough to embarrass the idea quickly. Give me one boring baseline, one functioning clock, and a memory module that can demonstrate why it deserves electricity. The fancy architecture can earn its cape later.</p></article>
+<footer>Authored interpretation is distinguished from measurements and proposed gates. No live games or training were launched for this review. <a href="../docs/astra_v8_review_and_next_steps.md">Markdown plan</a> · <a href="astra_v8_evidence/implementation_audit.json">Implementation evidence</a> · <a href="astra_v8_evidence/v8_matched_probe.json">Matched evidence</a> · <a href="astra_v8_architecture.html">Original proposal</a></footer></main>
+<script>
+const history=[{"epoch": 1, "train_loss": 7.709558222627852, "val_loss": 7.789503118726942, "val_card": 0.3788046324855962, "val_slot_top1": 0.3788046324855962, "val_slot_top3": 0.8526450561601583, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.2777163475528138, "val_xy_mae": 6315.5737374876335, "val_tile_acc": 0.020368969330151893, "val_tile_exact": 0.07373566897514985, "val_tile_near": 0.12803352150381192, "val_tile_class_acc": 0.07373566897514985, "val_tile_top5_acc": 0.21876273060583135, "val_tile_nll": 4.762207123603726, "val_joint_card_tile": 0.039981376942326716, "val_clock_nll": 2.076151672622582, "val_tile_entropy_bits": 6.60077759989661, "val_tile_effective_count": 97.05815965254847, "val_tile_top1_mass": 0.09944654813934203, "val_tile_top5_mass": 0.25925955727721567, "val_timing_mae": 1.8565662599155222, "val_wait": 0.5949484956061223, "val_wait_mae": 1.8565662599155222, "val_model_x_std": 0.11410622298717499, "val_model_y_std": 0.1520150899887085, "val_argmax_x_std": 0.25242605805397034, "val_argmax_y_std": 0.22244276106357574, "val_n": 17183, "lr": 0.00019876883405951377}, {"epoch": 2, "train_loss": 6.816115802654009, "val_loss": 7.719653680589464, "val_card": 0.4225688180178083, "val_slot_top1": 0.4225688180178083, "val_slot_top3": 0.8830821160449281, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.3153698422859803, "val_xy_mae": 6199.913333672816, "val_tile_acc": 0.02665425129488448, "val_tile_exact": 0.0839201536402258, "val_tile_near": 0.14584182040388757, "val_tile_class_acc": 0.0839201536402258, "val_tile_top5_acc": 0.24786125822033406, "val_tile_nll": 4.760743027563694, "val_joint_card_tile": 0.05761508467671536, "val_clock_nll": 2.0666202631081623, "val_tile_entropy_bits": 5.90296634819929, "val_tile_effective_count": 59.83701690245462, "val_tile_top1_mass": 0.1363041641367666, "val_tile_top5_mass": 0.3456718840213605, "val_timing_mae": 1.8383246491023757, "val_wait": 0.623697840889251, "val_wait_mae": 1.8383246491023757, "val_model_x_std": 0.1444200873374939, "val_model_y_std": 0.17768600583076477, "val_argmax_x_std": 0.25691044330596924, "val_argmax_y_std": 0.24710695445537567, "val_n": 17183, "lr": 0.00019510565162951537}, {"epoch": 3, "train_loss": 6.523920288478649, "val_loss": 7.637053129408095, "val_card": 0.4402025257521969, "val_slot_top1": 0.4402025257521969, "val_slot_top3": 0.8945469359250422, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.3289297561543386, "val_xy_mae": 6048.392175405925, "val_tile_acc": 0.02450096025141128, "val_tile_exact": 0.09555956468602689, "val_tile_near": 0.15945993132747482, "val_tile_class_acc": 0.09555956468602689, "val_tile_top5_acc": 0.2658441482860967, "val_tile_nll": 4.7546760307329325, "val_joint_card_tile": 0.06762497817610429, "val_clock_nll": 2.059312118790462, "val_tile_entropy_bits": 5.7548206584428465, "val_tile_effective_count": 53.997498100989795, "val_tile_top1_mass": 0.14086908018437086, "val_tile_top5_mass": 0.3635540147297514, "val_timing_mae": 1.8111711653149019, "val_wait": 0.6176453471454344, "val_wait_mae": 1.8111711653149019, "val_model_x_std": 0.14686614274978638, "val_model_y_std": 0.1700117439031601, "val_argmax_x_std": 0.2737402319908142, "val_argmax_y_std": 0.21852213144302368, "val_n": 17183, "lr": 0.0001891006524188368}, {"epoch": 4, "train_loss": 6.36535784444551, "val_loss": 7.57171018741749, "val_card": 0.45539195716696734, "val_slot_top1": 0.45539195716696734, "val_slot_top3": 0.9007740208345457, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.3409765465867427, "val_xy_mae": 5969.399094490193, "val_tile_acc": 0.029971483442937787, "val_tile_exact": 0.10137927020892742, "val_tile_near": 0.16743292789384856, "val_tile_class_acc": 0.10137927020892742, "val_tile_top5_acc": 0.28080079147995113, "val_tile_nll": 4.744867297855597, "val_joint_card_tile": 0.07431763952743992, "val_clock_nll": 2.0531835380091987, "val_tile_entropy_bits": 5.522228249624959, "val_tile_effective_count": 45.957494726888804, "val_tile_top1_mass": 0.1630552013032908, "val_tile_top5_mass": 0.4006798244192819, "val_timing_mae": 1.7879025889367086, "val_wait": 0.612465809230053, "val_wait_mae": 1.7879025889367086, "val_model_x_std": 0.14691200852394104, "val_model_y_std": 0.17828425765037537, "val_argmax_x_std": 0.26517757773399353, "val_argmax_y_std": 0.23440372943878174, "val_n": 17183, "lr": 0.00018090169943749476}, {"epoch": 5, "train_loss": 6.2521376892785945, "val_loss": 7.578039896929705, "val_card": 0.4644706977826922, "val_slot_top1": 0.4644706977826922, "val_slot_top3": 0.9064191351917593, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.3496479078158645, "val_xy_mae": 5927.623613273294, "val_tile_acc": 0.030902636326601875, "val_tile_exact": 0.10574404935110283, "val_tile_near": 0.17569690973636734, "val_tile_class_acc": 0.10574404935110283, "val_tile_top5_acc": 0.2882500145492638, "val_tile_nll": 4.75553794496309, "val_joint_card_tile": 0.07874061572484432, "val_clock_nll": 2.049488032772302, "val_tile_entropy_bits": 5.38962582682159, "val_tile_effective_count": 41.92171481969317, "val_tile_top1_mass": 0.1687393684655832, "val_tile_top5_mass": 0.41864761737050243, "val_timing_mae": 1.7749895538612468, "val_wait": 0.623290461502648, "val_wait_mae": 1.7749895538612468, "val_model_x_std": 0.14914114773273468, "val_model_y_std": 0.1842573881149292, "val_argmax_x_std": 0.2631838321685791, "val_argmax_y_std": 0.24003508687019348, "val_n": 17183, "lr": 0.00017071067811865476}, {"epoch": 6, "train_loss": 6.160767903287516, "val_loss": 7.522705244134974, "val_card": 0.4690100680905546, "val_slot_top1": 0.4690100680905546, "val_slot_top3": 0.9098527614502706, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.354478263399872, "val_xy_mae": 5921.419316148228, "val_tile_acc": 0.03509282430309026, "val_tile_exact": 0.10609323168247686, "val_tile_near": 0.17680265378571844, "val_tile_class_acc": 0.10609323168247686, "val_tile_top5_acc": 0.29278938485712624, "val_tile_nll": 4.744147247827727, "val_joint_card_tile": 0.0805447244369435, "val_clock_nll": 2.0454226788379453, "val_tile_entropy_bits": 5.358407010412158, "val_tile_effective_count": 41.02430564067158, "val_tile_top1_mass": 0.1706890896979945, "val_tile_top5_mass": 0.42204201927022994, "val_timing_mae": 1.7595573267226017, "val_wait": 0.6224757027294419, "val_wait_mae": 1.7595573267226017, "val_model_x_std": 0.15476591885089874, "val_model_y_std": 0.1929100900888443, "val_argmax_x_std": 0.2670130133628845, "val_argmax_y_std": 0.2449653297662735, "val_n": 17183, "lr": 0.00015877852522924732}, {"epoch": 7, "train_loss": 6.07651057010415, "val_loss": 7.463800024103235, "val_card": 0.4766338823255543, "val_slot_top1": 0.4766338823255543, "val_slot_top3": 0.9110167025548507, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.3689693301518943, "val_xy_mae": 5798.36630226823, "val_tile_acc": 0.0344526566955712, "val_tile_exact": 0.10667520223476692, "val_tile_near": 0.18017808298900076, "val_tile_class_acc": 0.10667520223476692, "val_tile_top5_acc": 0.2967467846126986, "val_tile_nll": 4.698038924054662, "val_joint_card_tile": 0.07990455682942443, "val_clock_nll": 2.0432679716300153, "val_tile_entropy_bits": 5.316765955327963, "val_tile_effective_count": 39.85713085482888, "val_tile_top1_mass": 0.17076263506545847, "val_tile_top5_mass": 0.4252405609524251, "val_timing_mae": 1.749844172180847, "val_wait": 0.6209625792934877, "val_wait_mae": 1.749844172180847, "val_model_x_std": 0.17070996761322021, "val_model_y_std": 0.18639935553073883, "val_argmax_x_std": 0.2787676751613617, "val_argmax_y_std": 0.23276832699775696, "val_n": 17183, "lr": 0.00014539904997395468}, {"epoch": 8, "train_loss": 5.994506751427402, "val_loss": 7.490710050088388, "val_card": 0.47791421754059243, "val_slot_top1": 0.47791421754059243, "val_slot_top3": 0.9112494907757668, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.3646627480649479, "val_xy_mae": 5855.912729878368, "val_tile_acc": 0.03701332712564744, "val_tile_exact": 0.10551126113018681, "val_tile_near": 0.1784903683873596, "val_tile_class_acc": 0.10551126113018681, "val_tile_top5_acc": 0.2964557993365536, "val_tile_nll": 4.738842258032672, "val_joint_card_tile": 0.07949717744282139, "val_clock_nll": 2.041574726461053, "val_tile_entropy_bits": 5.340941990309167, "val_tile_effective_count": 40.530666378533006, "val_tile_top1_mass": 0.16529827143450398, "val_tile_top5_mass": 0.4187869729259229, "val_timing_mae": 1.7444861220625263, "val_wait": 0.6356282372111971, "val_wait_mae": 1.7444861220625263, "val_model_x_std": 0.17336197197437286, "val_model_y_std": 0.19452565908432007, "val_argmax_x_std": 0.2724155783653259, "val_argmax_y_std": 0.24267004430294037, "val_n": 17183, "lr": 0.00013090169943749476}, {"epoch": 9, "train_loss": 5.924659011341845, "val_loss": 7.494342736844663, "val_card": 0.4781470057615085, "val_slot_top1": 0.4781470057615085, "val_slot_top3": 0.9153814816970262, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.36652505383227607, "val_xy_mae": 5788.405566184601, "val_tile_acc": 0.03899202700343363, "val_tile_exact": 0.11057440493511028, "val_tile_near": 0.1816330093697259, "val_tile_class_acc": 0.11057440493511028, "val_tile_top5_acc": 0.3042542047372403, "val_tile_nll": 4.739444520652055, "val_joint_card_tile": 0.08444392713728685, "val_clock_nll": 2.040274179988431, "val_tile_entropy_bits": 5.1807613571496445, "val_tile_effective_count": 36.271420889390086, "val_tile_top1_mass": 0.18017246864286435, "val_tile_top5_mass": 0.4471962586941087, "val_timing_mae": 1.7398344311983074, "val_wait": 0.6281790141418844, "val_wait_mae": 1.7398344311983074, "val_model_x_std": 0.1703784167766571, "val_model_y_std": 0.18492479622364044, "val_argmax_x_std": 0.27932775020599365, "val_argmax_y_std": 0.22824132442474365, "val_n": 17183, "lr": 0.00011564344650402312}, {"epoch": 10, "train_loss": 5.852103350188495, "val_loss": 7.51262046319467, "val_card": 0.4816970261304778, "val_slot_top1": 0.4816970261304778, "val_slot_top3": 0.91456672292382, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.36693243321887914, "val_xy_mae": 5748.749646271023, "val_tile_acc": 0.041552697433509866, "val_tile_exact": 0.11360065180701856, "val_tile_near": 0.18762730605831346, "val_tile_class_acc": 0.11360065180701856, "val_tile_top5_acc": 0.30600011639411046, "val_tile_nll": 4.758476757721567, "val_joint_card_tile": 0.08595705057324099, "val_clock_nll": 2.041833000314088, "val_tile_entropy_bits": 5.111666504609559, "val_tile_effective_count": 34.57521948563197, "val_tile_top1_mass": 0.1863843283136822, "val_tile_top5_mass": 0.4552141211331602, "val_timing_mae": 1.7401405373989394, "val_wait": 0.6331839608915789, "val_wait_mae": 1.7401405373989394, "val_model_x_std": 0.1657710075378418, "val_model_y_std": 0.18805190920829773, "val_argmax_x_std": 0.2661117911338806, "val_argmax_y_std": 0.23236273229122162, "val_n": 17183, "lr": 0.00010000000000000002}, {"epoch": 11, "train_loss": 5.778505551896848, "val_loss": 7.547066462481463, "val_card": 0.48670197288017225, "val_slot_top1": 0.48670197288017225, "val_slot_top3": 0.9145085258685911, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.3710062270849095, "val_xy_mae": 5756.194072629925, "val_tile_acc": 0.0408543327707618, "val_tile_exact": 0.11261130186812547, "val_tile_near": 0.18617237967758832, "val_tile_class_acc": 0.11261130186812547, "val_tile_top5_acc": 0.30471978117907234, "val_tile_nll": 4.773129403532186, "val_joint_card_tile": 0.08723738578827911, "val_clock_nll": 2.0398262182436744, "val_tile_entropy_bits": 5.05585575331314, "val_tile_effective_count": 33.26321596382449, "val_tile_top1_mass": 0.1886591679321584, "val_tile_top5_mass": 0.463148746891196, "val_timing_mae": 1.7345969135697574, "val_wait": 0.6312052610137927, "val_wait_mae": 1.7345969135697574, "val_model_x_std": 0.16968046128749847, "val_model_y_std": 0.19160518050193787, "val_argmax_x_std": 0.2687971293926239, "val_argmax_y_std": 0.2362382709980011, "val_n": 17183, "lr": 8.435655349597696e-05}, {"epoch": 12, "train_loss": 5.707843049957621, "val_loss": 7.569605219805682, "val_card": 0.4792527498108596, "val_slot_top1": 0.4792527498108596, "val_slot_top3": 0.9157306640284002, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.36821276843391726, "val_xy_mae": 5830.51012628761, "val_tile_acc": 0.042192865041028926, "val_tile_exact": 0.10766455217366001, "val_tile_near": 0.18198219170109992, "val_tile_class_acc": 0.10766455217366001, "val_tile_top5_acc": 0.30210091369376707, "val_tile_nll": 4.7907109518361395, "val_joint_card_tile": 0.08217424198335564, "val_clock_nll": 2.040666478855302, "val_tile_entropy_bits": 5.095078474594371, "val_tile_effective_count": 34.17995220645764, "val_tile_top1_mass": 0.1862295085876124, "val_tile_top5_mass": 0.45649779257102513, "val_timing_mae": 1.7379381554663573, "val_wait": 0.633882325554327, "val_wait_mae": 1.7379381554663573, "val_model_x_std": 0.1773921549320221, "val_model_y_std": 0.1982104331254959, "val_argmax_x_std": 0.2723042368888855, "val_argmax_y_std": 0.24203939735889435, "val_n": 17183, "lr": 6.909830056250529e-05}, {"epoch": 13, "train_loss": 5.673729854194108, "val_loss": 7.569087484147814, "val_card": 0.48158063202001977, "val_slot_top1": 0.48158063202001977, "val_slot_top3": 0.91514869347611, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.3728103357970087, "val_xy_mae": 5757.726947600826, "val_tile_acc": 0.043473200256067046, "val_tile_exact": 0.11086539021125531, "val_tile_near": 0.18640516789850434, "val_tile_class_acc": 0.11086539021125531, "val_tile_top5_acc": 0.3060583134493395, "val_tile_nll": 4.791666248114847, "val_joint_card_tile": 0.08421113891637083, "val_clock_nll": 2.039357976864056, "val_tile_entropy_bits": 5.021600335758362, "val_tile_effective_count": 32.48271541994529, "val_tile_top1_mass": 0.19057605361339067, "val_tile_top5_mass": 0.465807398740747, "val_timing_mae": 1.7311065421631413, "val_wait": 0.6251527672699762, "val_wait_mae": 1.7311065421631413, "val_model_x_std": 0.17833231389522552, "val_model_y_std": 0.19181375205516815, "val_argmax_x_std": 0.2719579041004181, "val_argmax_y_std": 0.23485273122787476, "val_n": 17183, "lr": 5.460095002604534e-05}, {"epoch": 14, "train_loss": 5.6166014605873675, "val_loss": 7.591008776205557, "val_card": 0.4786125822033405, "val_slot_top1": 0.4786125822033405, "val_slot_top3": 0.914333934702904, "val_type_acc": 0.9974975266251528, "val_zone_acc": 0.37123901530582554, "val_xy_mae": 5773.67563962201, "val_tile_acc": 0.04452074725018914, "val_tile_exact": 0.10981784321713321, "val_tile_near": 0.18547401501484026, "val_tile_class_acc": 0.10981784321713321, "val_tile_top5_acc": 0.3042542047372403, "val_tile_nll": 4.804509529931189, "val_joint_card_tile": 0.08351277425362277, "val_clock_nll": 2.0399926616351456, "val_tile_entropy_bits": 5.039542512927532, "val_tile_effective_count": 32.889211437061476, "val_tile_top1_mass": 0.18864775411617712, "val_tile_top5_mass": 0.4622239525393211, "val_timing_mae": 1.735219610782897, "val_wait": 0.6310306698481057, "val_wait_mae": 1.735219610782897, "val_model_x_std": 0.17939497530460358, "val_model_y_std": 0.19184891879558563, "val_argmax_x_std": 0.2751007080078125, "val_argmax_y_std": 0.23410147428512573, "val_n": 17183, "lr": 4.122147477075271e-05}];
+const colors=['#ffb17e','#83e6bf'];const chart=document.querySelector('#chart'),readout=document.querySelector('#readout');
+const spec={loss:{keys:['train_loss','val_loss'],names:['Training','Validation'],unit:'loss'},card:{keys:['val_card'],names:['Validation card'],unit:'%',mult:100},tile:{keys:['val_tile_nll'],names:['Validation placement'],unit:'NLL'},timing:{keys:['val_timing_mae'],names:['Validation timing'],unit:'seconds'}};
+function render(metric){const s=spec[metric],mult=s.mult||1;let vals=history.flatMap(r=>s.keys.map(k=>r[k]*mult));let lo=Math.min(...vals),hi=Math.max(...vals),pad=(hi-lo)*.15||.1;lo-=pad;hi+=pad;const x=e=>70+(e-1)*760/(history.length-1),y=v=>265-(v-lo)*220/(hi-lo);let out='';for(let i=0;i<5;i++){const v=lo+(hi-lo)*i/4;out+=`<line x1="70" y1="${y(v)}" x2="830" y2="${y(v)}" stroke="#34404e"/><text x="59" y="${y(v)+4}" text-anchor="end" fill="#afb8c6" font-size="12">${v.toFixed(2)}</text>`}history.forEach(r=>out+=`<text x="${x(r.epoch)}" y="290" text-anchor="middle" fill="#afb8c6" font-size="12">${r.epoch}</text>`);out+='<text x="450" y="322" text-anchor="middle" fill="#afb8c6" font-size="12">Completed epoch</text>';s.keys.forEach((k,j)=>{out+=`<path class="curve" stroke="${colors[j]}" d="${history.map((r,i)=>(i?'L':'M')+x(r.epoch)+','+y(r[k]*mult)).join(' ')}"/><text x="${80+j*200}" y="20" fill="${colors[j]}" font-size="13">${s.names[j]} · ${s.unit}</text>`;history.forEach(r=>out+=`<circle tabindex="0" role="img" aria-label="Epoch ${r.epoch}, ${s.names[j]}: ${(r[k]*mult).toFixed(3)} ${s.unit}" data-read="Epoch ${r.epoch} · ${s.names[j]} ${(r[k]*mult).toFixed(3)} ${s.unit}" cx="${x(r.epoch)}" cy="${y(r[k]*mult)}" r="5" fill="${colors[j]}"><title>${r[k]*mult}</title></circle>`)});chart.innerHTML=out;chart.setAttribute('aria-label',s.names.join(' and ')+' across '+history.length+' epochs');readout.textContent='Snapshot through epoch '+history.at(-1).epoch;chart.querySelectorAll('circle').forEach(n=>['mouseenter','focus'].forEach(event=>n.addEventListener(event,()=>readout.textContent=n.dataset.read)));document.querySelectorAll('[data-metric]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.metric===metric)))}
+document.querySelectorAll('[data-metric]').forEach(b=>b.onclick=()=>render(b.dataset.metric));render('loss');
+function mechanism(fixed){const d=document.querySelector('#diagram'),color=fixed?'#83e6bf':'#ff848f';const names=fixed?['Causal observation','Selective update','Valid event clock','Offline scheduler']:['Last-event globals','One-key attention','Own-only labels','Legacy timing head'];const sub=fixed?['One explicit current time','Memory + event gate','Both actors + survival','Consumes the clock']:['Query time stays zero','Identical event broadcast','Opponent rate → floor','Clock rates unused'];let svg='';names.forEach((n,i)=>{let x=10+i*225;svg+=`<rect x="${x}" y="35" width="205" height="100" rx="12" fill="#10131a" stroke="${color}"/><text x="${x+102}" y="72" text-anchor="middle" fill="#f0efe9" font-size="15">${n}</text><text x="${x+102}" y="101" text-anchor="middle" fill="#afb8c6" font-size="12">${sub[i]}</text>`;if(i<3)svg+=`<path d="M${x+207} 84 h15" stroke="${color}" stroke-width="2"/><circle class="pulse" cx="${x+215}" cy="84" r="4" fill="${color}"/>`});d.innerHTML=svg;document.querySelector('#diagramText').textContent=fixed?'Proposed acceptance contract, not an implemented repair. Test each link independently before training the combined system. A functioning event clock does not establish winning play.':'The modules exist, but these connections do not implement the intended behavior. The detailed review includes mathematical and checkpoint-level reproductions.';document.querySelector('#current').setAttribute('aria-pressed',String(!fixed));document.querySelector('#proposed').setAttribute('aria-pressed',String(fixed))};document.querySelector('#current').onclick=()=>mechanism(false);document.querySelector('#proposed').onclick=()=>mechanism(true);mechanism(false);
+</script></html>

@@ -1,0 +1,2690 @@
+{
+  "created_at": "2026-09-06T16:26:47.008957+00:00",
+  "seed": 20260906,
+  "compute": {
+    "device": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "torch": "2.13.0+cu130",
+    "threads": 4,
+    "training": false
+  },
+  "audit": {
+    "excluded_caches": {
+      "data/policy_battles_cache.pkl": {
+        "battles": 51055,
+        "file_count": 57584,
+        "sha256": "eefe0603363437fd1181e1a1026768a3466b057d616d89f3342bbe998b8f062f"
+      },
+      "data/winner_battles_cache.pkl": {
+        "battles": 50918,
+        "file_count": 57444,
+        "sha256": "f6fef7d08f87458f8ba062f03e3c6a2480ac5485fcb8c9a7e5c3a102398f1008"
+      }
+    },
+    "manifest_overlap": {
+      "policy_v4_4_1_seed42.json:test in policy_v4_4_2_winner_seed42.json:train": {
+        "overlap": 2304,
+        "test_total": 2553
+      },
+      "policy_v4_4_1_seed42.json:test in policy_v7_33558_seed42.json:train": {
+        "overlap": 1157,
+        "test_total": 2553
+      },
+      "policy_v4_4_1_seed42.json:test in policy_v7_pilot_5000_seed42.json:train": {
+        "overlap": 254,
+        "test_total": 2553
+      },
+      "policy_v4_4_2_winner_seed42.json:test in policy_v4_4_1_seed42.json:train": {
+        "overlap": 2275,
+        "test_total": 2546
+      },
+      "policy_v4_4_2_winner_seed42.json:test in policy_v7_33558_seed42.json:train": {
+        "overlap": 1153,
+        "test_total": 2546
+      },
+      "policy_v4_4_2_winner_seed42.json:test in policy_v7_pilot_5000_seed42.json:train": {
+        "overlap": 250,
+        "test_total": 2546
+      },
+      "policy_v7_33558_seed42.json:test in policy_v4_4_1_seed42.json:train": {
+        "overlap": 4550,
+        "test_total": 5033
+      },
+      "policy_v7_33558_seed42.json:test in policy_v4_4_2_winner_seed42.json:train": {
+        "overlap": 4531,
+        "test_total": 5033
+      },
+      "policy_v7_33558_seed42.json:test in policy_v7_pilot_5000_seed42.json:train": {
+        "overlap": 0,
+        "test_total": 5033
+      },
+      "policy_v7_pilot_5000_seed42.json:test in policy_v4_4_1_seed42.json:train": {
+        "overlap": 4550,
+        "test_total": 5033
+      },
+      "policy_v7_pilot_5000_seed42.json:test in policy_v4_4_2_winner_seed42.json:train": {
+        "overlap": 4531,
+        "test_total": 5033
+      },
+      "policy_v7_pilot_5000_seed42.json:test in policy_v7_33558_seed42.json:train": {
+        "overlap": 0,
+        "test_total": 5033
+      }
+    },
+    "ability_counts": {
+      "card_play": 3125470,
+      "ability_activation": 179542,
+      "ability_target_outside_deck": 173625,
+      "ability_target_in_deck": 5917
+    },
+    "raw_files": 64275,
+    "excluded_known_ids": 51055,
+    "candidate_files": 13220,
+    "raw_latest_mtime": 1786484558.495041,
+    "scanned": 1037,
+    "rejected": {
+      "not_eight_cards": 463,
+      "too_short": 62
+    },
+    "selected": 512,
+    "selection": "SHA256(filename) order; excluded union of both caches and all manifests, then exact normalized event/deck signatures; no mtime selection"
+  },
+  "towers": {
+    "runs": [
+      {
+        "path": "data/tower_hp_runs/20260815_203830_b4998f/manifest.json",
+        "complete": true,
+        "games_done": 1,
+        "samples": 59,
+        "error": null
+      },
+      {
+        "path": "data/tower_hp_runs/20260815_213808_394e91/manifest.json",
+        "complete": false,
+        "games_done": 0,
+        "samples": 0,
+        "error": "could not find cochon in Pixel 8 friend list"
+      },
+      {
+        "path": "data/tower_hp_runs/20260815_213837_5aecae/manifest.json",
+        "complete": false,
+        "games_done": 0,
+        "samples": 0,
+        "error": "Pixel 9 did not expose the Friendly Battle invite"
+      },
+      {
+        "path": "data/tower_hp_runs/20260815_214004_d71947/manifest.json",
+        "complete": false,
+        "games_done": 2,
+        "samples": 42,
+        "error": null
+      },
+      {
+        "path": "data/tower_hp_runs/20260815_215459_685544/manifest.json",
+        "complete": false,
+        "games_done": 0,
+        "samples": 0,
+        "error": "could not find cochon in Pixel 8 friend list"
+      },
+      {
+        "path": "data/tower_hp_runs/20260815_215545_fe5696/manifest.json",
+        "complete": false,
+        "games_done": 7,
+        "samples": 478,
+        "error": "could not recover pixel8 to the home screen"
+      }
+    ],
+    "games_with_hp_files": 10,
+    "hp_rows": 579,
+    "training_mask_rows": 559,
+    "tower_values": 3474,
+    "direct_ocr_values": 1743,
+    "label_sources": {
+      "known_friendly_max": 39,
+      "ocr_monotonic": 1597,
+      "monotonic_carry_forward": 1589,
+      "ocr_direct_decrease": 128,
+      "destroyed_ui_inference": 113,
+      "pending_decrease": 8
+    },
+    "frame_files": 579
+  },
+  "models": [
+    {
+      "model_dir": "models/policy_bc_v4.3",
+      "checkpoint_sha256": "fe172250e8d27b83684865a9fdccc6217807c3efe18e6c44f6f7595065490fd7",
+      "vocab_sha256": "60d2bfa48dd6e2d5722b10a95dd0a2249f65d9fab52a7920c6a23f8861ae5356",
+      "samples": 8201,
+      "battles": 512,
+      "seconds": 6.591370864014607,
+      "parameters": 2472626,
+      "config": {
+        "batch_size": 512,
+        "gradient_accumulation_steps": 1,
+        "d_model": 256,
+        "num_layers": 3,
+        "dropout": 0.2,
+        "max_context": 64,
+        "max_samples_per_battle": 40,
+        "min_context": 8,
+        "global_dim": 62,
+        "threat_dim": 14,
+        "reaction_seconds": 5.0,
+        "card_conditioned_placement": true,
+        "placement_mode": "xy",
+        "version": "4.3.0",
+        "warmstart": {},
+        "freeze_backbone": false,
+        "training_stage": null,
+        "arena_control": "aligned",
+        "arena_memory_channels": 0,
+        "arena_hidden_channels": 32,
+        "arena_memory_version": "none",
+        "arena_gate_bias": -2.2,
+        "split_manifest": null,
+        "manifest_hash": null,
+        "progress_path": "models/policy_bc_v4.3/progress.jsonl",
+        "log_path": null,
+        "trainable_parameters": 2472626,
+        "max_think_steps": 8,
+        "eval_think_steps": 8
+      },
+      "changed_threat_inputs": 2058,
+      "recoverable_delay_from_wincon_age": 1490,
+      "uniform_hand_baseline": 0.24504633581270577,
+      "prefix_frequency_baseline": 0.1194976222411901,
+      "metrics": {
+        "archived_contract": {
+          "card_top1": {
+            "mean": 0.5526155233383179,
+            "ci95": [
+              0.541423582490756,
+              0.5631925566478628
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9441531300544739,
+            "ci95": [
+              0.9381916372070945,
+              0.9494006629888458
+            ]
+          },
+          "card_nll": {
+            "mean": 1.0369151830673218,
+            "ci95": [
+              1.019884985829602,
+              1.0550546134927383
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.014754298143088818,
+            "ci95": [
+              0.011945734181754226,
+              0.01764293981202704
+            ]
+          },
+          "grid_top5": {
+            "mean": null,
+            "ci95": null
+          },
+          "grid_nll": {
+            "mean": null,
+            "ci95": null
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.010120716877281666,
+            "ci95": [
+              0.007923689068565297,
+              0.0124286196365493
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": null,
+            "ci95": null
+          },
+          "zone_top1": {
+            "mean": 0.45713937282562256,
+            "ci95": [
+              0.44550799452765044,
+              0.46805807986420134
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6305.60400390625,
+            "ci95": [
+              6190.487236143876,
+              6426.663333677694
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.4912683963775635,
+            "ci95": [
+              1.4484134867496858,
+              1.5349164863072708
+            ]
+          }
+        },
+        "causal_full_deck": {
+          "card_top1": {
+            "mean": 0.5262773036956787,
+            "ci95": [
+              0.5149536752363087,
+              0.536441069025367
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9309840202331543,
+            "ci95": [
+              0.9244984490131551,
+              0.9365358079701378
+            ]
+          },
+          "card_nll": {
+            "mean": 1.1450496912002563,
+            "ci95": [
+              1.1250057989455895,
+              1.1676206445897301
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.014144616201519966,
+            "ci95": [
+              0.011550328036378418,
+              0.016791255949310045
+            ]
+          },
+          "grid_top5": {
+            "mean": null,
+            "ci95": null
+          },
+          "grid_nll": {
+            "mean": null,
+            "ci95": null
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.009145226329565048,
+            "ci95": [
+              0.007136018468340554,
+              0.011250496623761473
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": null,
+            "ci95": null
+          },
+          "zone_top1": {
+            "mean": 0.42689916491508484,
+            "ci95": [
+              0.4154479366217175,
+              0.43769877872283874
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6581.67626953125,
+            "ci95": [
+              6458.189424653039,
+              6706.2618689034425
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.7849137783050537,
+            "ci95": [
+              1.7375333345570925,
+              1.8393979800921139
+            ]
+          }
+        },
+        "rollout_plus_1s": {
+          "card_top1": {
+            "mean": 0.5329837799072266,
+            "ci95": [
+              0.5218354298028788,
+              0.5434782608695652
+            ]
+          },
+          "card_top3": {
+            "mean": 0.936958909034729,
+            "ci95": [
+              0.9304651060031637,
+              0.9425931106048808
+            ]
+          },
+          "card_nll": {
+            "mean": 1.109774112701416,
+            "ci95": [
+              1.0925334726531433,
+              1.128613619699401
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.014388489536941051,
+            "ci95": [
+              0.011890370963374579,
+              0.017021329860473045
+            ]
+          },
+          "grid_top5": {
+            "mean": null,
+            "ci95": null
+          },
+          "grid_nll": {
+            "mean": null,
+            "ci95": null
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.0097549082711339,
+            "ci95": [
+              0.007705187995266994,
+              0.011930902422135688
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": null,
+            "ci95": null
+          },
+          "zone_top1": {
+            "mean": 0.4347030818462372,
+            "ci95": [
+              0.42325753907045494,
+              0.4456696758549616
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6499.72119140625,
+            "ci95": [
+              6379.856867919416,
+              6617.3972691044955
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.7061810493469238,
+            "ci95": [
+              1.6606464568883792,
+              1.7576136663965638
+            ]
+          }
+        },
+        "causal_revealed": {
+          "card_top1": {
+            "mean": 0.5253018140792847,
+            "ci95": [
+              0.5140906747702507,
+              0.5356543904181855
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9292769432067871,
+            "ci95": [
+              0.9225623759606979,
+              0.9352339354464075
+            ]
+          },
+          "card_nll": {
+            "mean": 1.1477739810943604,
+            "ci95": [
+              1.1274448268307324,
+              1.1705541261018937
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.014266552403569221,
+            "ci95": [
+              0.011636260138821703,
+              0.017011522598354076
+            ]
+          },
+          "grid_top5": {
+            "mean": null,
+            "ci95": null
+          },
+          "grid_nll": {
+            "mean": null,
+            "ci95": null
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.009389098733663559,
+            "ci95": [
+              0.0073461902355927205,
+              0.011574542339283072
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": null,
+            "ci95": null
+          },
+          "zone_top1": {
+            "mean": 0.4265333414077759,
+            "ci95": [
+              0.4157512278852604,
+              0.4378600593782264
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6587.13427734375,
+            "ci95": [
+              6464.649027079312,
+              6709.612461599064
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.7823514938354492,
+            "ci95": [
+              1.734440806597148,
+              1.8372597663716892
+            ]
+          }
+        },
+        "causal_revealed_neutral_xy": {
+          "card_top1": {
+            "mean": 0.5188391804695129,
+            "ci95": [
+              0.5069661765753373,
+              0.5303247936080818
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9281795024871826,
+            "ci95": [
+              0.9215176618728875,
+              0.9344052087199594
+            ]
+          },
+          "card_nll": {
+            "mean": 1.1653944253921509,
+            "ci95": [
+              1.1445784337280205,
+              1.1883088865756055
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.014144616201519966,
+            "ci95": [
+              0.011626069840360832,
+              0.016735975266270825
+            ]
+          },
+          "grid_top5": {
+            "mean": null,
+            "ci95": null
+          },
+          "grid_nll": {
+            "mean": null,
+            "ci95": null
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.00780392624437809,
+            "ci95": [
+              0.005932896163880282,
+              0.009715077752411063
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": null,
+            "ci95": null
+          },
+          "zone_top1": {
+            "mean": 0.30081698298454285,
+            "ci95": [
+              0.2898795363315225,
+              0.3120708591270501
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 7761.431640625,
+            "ci95": [
+              7647.010852910768,
+              7872.8314710513605
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.7989877462387085,
+            "ci95": [
+              1.7522588557523904,
+              1.8541504778188411
+            ]
+          }
+        },
+        "causal_revealed_oracle_card": {
+          "card_top1": {
+            "mean": 0.5253018140792847,
+            "ci95": [
+              0.5140906747702507,
+              0.5356543904181855
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9292769432067871,
+            "ci95": [
+              0.9225623759606979,
+              0.9352339354464075
+            ]
+          },
+          "card_nll": {
+            "mean": 1.1477739810943604,
+            "ci95": [
+              1.1274448268307324,
+              1.1705541261018937
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.014266552403569221,
+            "ci95": [
+              0.011636260138821703,
+              0.017011522598354076
+            ]
+          },
+          "grid_top5": {
+            "mean": null,
+            "ci95": null
+          },
+          "grid_nll": {
+            "mean": null,
+            "ci95": null
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.009389098733663559,
+            "ci95": [
+              0.0073461902355927205,
+              0.011574542339283072
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": null,
+            "ci95": null
+          },
+          "zone_top1": {
+            "mean": 0.4265333414077759,
+            "ci95": [
+              0.4157512278852604,
+              0.4378600593782264
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6587.13427734375,
+            "ci95": [
+              6464.649027079312,
+              6709.612461599064
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.7823514938354492,
+            "ci95": [
+              1.734440806597148,
+              1.8372597663716892
+            ]
+          }
+        }
+      },
+      "paired_deltas": {
+        "causal_full_deck minus archived_contract": {
+          "card_top1": {
+            "mean": -0.026338251307606697,
+            "ci95": [
+              -0.03148796769162415,
+              -0.02119737724842448
+            ]
+          },
+          "card_top3": {
+            "mean": -0.013169125653803349,
+            "ci95": [
+              -0.016527741247126894,
+              -0.010186564615864457
+            ]
+          },
+          "card_nll": {
+            "mean": 0.10813464969396591,
+            "ci95": [
+              0.09451272744840424,
+              0.12327358502987577
+            ]
+          },
+          "grid_top1": {
+            "mean": -0.0006096817669458687,
+            "ci95": [
+              -0.0023417731831826393,
+              0.0012347814379266167
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "grid_nll": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": -0.0009754907805472612,
+            "ci95": [
+              -0.0023506254757593376,
+              0.0003658921871646835
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "zone_top1": {
+            "mean": -0.030240215361118317,
+            "ci95": [
+              -0.035559965129644135,
+              -0.02497559291106662
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 276.07220458984375,
+            "ci95": [
+              237.76680576474416,
+              316.667179414976
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 0.29364535212516785,
+            "ci95": [
+              0.27350995192395877,
+              0.31587312009029367
+            ]
+          }
+        },
+        "causal_revealed minus causal_full_deck": {
+          "card_top1": {
+            "mean": -0.0009754907805472612,
+            "ci95": [
+              -0.0038592613960066577,
+              0.001680427336241041
+            ]
+          },
+          "card_top3": {
+            "mean": -0.001707108924165368,
+            "ci95": [
+              -0.003433552871551254,
+              -0.0002418036173686272
+            ]
+          },
+          "card_nll": {
+            "mean": 0.002724281046539545,
+            "ci95": [
+              0.0007033671315171242,
+              0.00501920964691505
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.00012193634756840765,
+            "ci95": [
+              -0.0006163195633284792,
+              0.0008590301318696234
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "grid_nll": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.0002438726951368153,
+            "ci95": [
+              -0.0006201474066511867,
+              0.0010853998739503929
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "zone_top1": {
+            "mean": -0.00036580904270522296,
+            "ci95": [
+              -0.002626372021135594,
+              0.002204365483789486
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 5.457425594329834,
+            "ci95": [
+              -0.8015038284428783,
+              11.129360667279478
+            ]
+          },
+          "timing_mae_s": {
+            "mean": -0.002562406472861767,
+            "ci95": [
+              -0.005407583074560946,
+              0.00019042027325514844
+            ]
+          }
+        },
+        "causal_revealed_oracle_card minus causal_revealed": {
+          "card_top1": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "card_top3": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "card_nll": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "grid_nll": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "causal_revealed_neutral_xy minus causal_revealed": {
+          "card_top1": {
+            "mean": -0.006462626624852419,
+            "ci95": [
+              -0.012843148587516364,
+              0.0004880078963234644
+            ]
+          },
+          "card_top3": {
+            "mean": -0.0010974270990118384,
+            "ci95": [
+              -0.0045871719502629475,
+              0.002767065998440814
+            ]
+          },
+          "card_nll": {
+            "mean": 0.017620379105210304,
+            "ci95": [
+              0.012294569333160593,
+              0.0229109225935929
+            ]
+          },
+          "grid_top1": {
+            "mean": -0.00012193634756840765,
+            "ci95": [
+              -0.00379717222910171,
+              0.003458324576793478
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "grid_nll": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": -0.001585172489285469,
+            "ci95": [
+              -0.004146818238772024,
+              0.0012391842677575795
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "zone_top1": {
+            "mean": -0.12571637332439423,
+            "ci95": [
+              -0.13761354088275482,
+              -0.1140726754913271
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 1174.2972412109375,
+            "ci95": [
+              1101.2627545735622,
+              1253.083691767507
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 0.016636250540614128,
+            "ci95": [
+              0.00966285270128912,
+              0.024605561880540035
+            ]
+          }
+        }
+      },
+      "columns": [
+        "card_top1",
+        "card_top3",
+        "card_nll",
+        "grid_top1",
+        "grid_top5",
+        "grid_nll",
+        "joint_card_grid_top1",
+        "card_top3_grid_top5_overlap",
+        "zone_top1",
+        "xy_l1_raw_units",
+        "timing_mae_s"
+      ],
+      "oracle_card_supported": false,
+      "sample_index_sha256": "54a55b73123e4b7eb15f90ee2a35b3c07ea0336158e2e186701d0e426dcb60dc"
+    },
+    {
+      "model_dir": "models/policy_bc_v4.4.1",
+      "checkpoint_sha256": "79cd8ffa8cd4728a305cdade3a84abe313172bd438a40f4d6d30711ff8b70763",
+      "vocab_sha256": "60d2bfa48dd6e2d5722b10a95dd0a2249f65d9fab52a7920c6a23f8861ae5356",
+      "samples": 8201,
+      "battles": 512,
+      "seconds": 5.001432175049558,
+      "parameters": 967442,
+      "config": {
+        "batch_size": 512,
+        "gradient_accumulation_steps": 1,
+        "d_model": 160,
+        "num_layers": 2,
+        "dropout": 0.2,
+        "max_context": 64,
+        "max_samples_per_battle": 40,
+        "min_context": 8,
+        "global_dim": 62,
+        "threat_dim": 14,
+        "reaction_seconds": 5.0,
+        "card_conditioned_placement": true,
+        "placement_mode": "heatmap",
+        "placement_card_mode": "selected",
+        "rollout_placement_decode": "sample",
+        "rollout_placement_temperature": 0.6,
+        "rollout_placement_top_k": 5,
+        "version": "4.4.1",
+        "warmstart": {
+          "dir": "models/policy_bc_v4.4.1",
+          "missing_keys": [],
+          "unexpected_keys": []
+        },
+        "freeze_backbone": false,
+        "training_stage": null,
+        "arena_control": "aligned",
+        "arena_memory_channels": 0,
+        "arena_hidden_channels": 32,
+        "arena_memory_version": "none",
+        "arena_gate_bias": -2.2,
+        "split_manifest": "data/splits/policy_v4_4_1_seed42.json",
+        "manifest_hash": "f62c53a0879a71f2faec745e7ab83b4554c7b382258713a8f34e96e96b47e191",
+        "progress_path": "models/policy_bc_v4.4.1/progress.jsonl",
+        "log_path": null,
+        "trainable_parameters": 967442,
+        "max_think_steps": 3,
+        "eval_think_steps": 3
+      },
+      "changed_threat_inputs": 2058,
+      "recoverable_delay_from_wincon_age": 1490,
+      "uniform_hand_baseline": 0.24504633581270577,
+      "prefix_frequency_baseline": 0.1194976222411901,
+      "metrics": {
+        "archived_contract": {
+          "card_top1": {
+            "mean": 0.5554200410842896,
+            "ci95": [
+              0.5440659142097879,
+              0.5662534189789461
+            ]
+          },
+          "card_top3": {
+            "mean": 0.946591854095459,
+            "ci95": [
+              0.9409681101860505,
+              0.9520355743300367
+            ]
+          },
+          "card_nll": {
+            "mean": 1.0192745923995972,
+            "ci95": [
+              1.0016349944819452,
+              1.0368738852466273
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.16741861402988434,
+            "ci95": [
+              0.15793718518199068,
+              0.17745691694395704
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.39714670181274414,
+            "ci95": [
+              0.3860685875772385,
+              0.40794477250202715
+            ]
+          },
+          "grid_nll": {
+            "mean": 4.355658054351807,
+            "ci95": [
+              4.289579975812741,
+              4.425003790207175
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.1342519223690033,
+            "ci95": [
+              0.1256718733074422,
+              0.1434434188135574
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.38970857858657837,
+            "ci95": [
+              0.37835180381389866,
+              0.40057490672077967
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.45604193210601807,
+            "ci95": [
+              0.44443422827019735,
+              0.4674288556104789
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6337.08642578125,
+            "ci95": [
+              6205.649247101531,
+              6466.60003969984
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.4822850227355957,
+            "ci95": [
+              1.4413162467265492,
+              1.5279150581682082
+            ]
+          }
+        },
+        "causal_full_deck": {
+          "card_top1": {
+            "mean": 0.5287160277366638,
+            "ci95": [
+              0.5172724997400011,
+              0.5392403972315257
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9341543912887573,
+            "ci95": [
+              0.9281426953657489,
+              0.9395341429556936
+            ]
+          },
+          "card_nll": {
+            "mean": 1.1177531480789185,
+            "ci95": [
+              1.0988902904656923,
+              1.1389228012012034
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.15046945214271545,
+            "ci95": [
+              0.14119923193341224,
+              0.1598632869226404
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.3680039048194885,
+            "ci95": [
+              0.35712291442965804,
+              0.3788500710157704
+            ]
+          },
+          "grid_nll": {
+            "mean": 4.514642238616943,
+            "ci95": [
+              4.448740528755924,
+              4.58378705540203
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.1194976195693016,
+            "ci95": [
+              0.11151418210362679,
+              0.12796801817449888
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.35946837067604065,
+            "ci95": [
+              0.34842706006226903,
+              0.37044693540200163
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.42360687255859375,
+            "ci95": [
+              0.4121162421448395,
+              0.4348146244883973
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6627.1318359375,
+            "ci95": [
+              6493.379572112451,
+              6765.68168062361
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.7836369276046753,
+            "ci95": [
+              1.7371229057621083,
+              1.8371107103615465
+            ]
+          }
+        },
+        "rollout_plus_1s": {
+          "card_top1": {
+            "mean": 0.5370076894760132,
+            "ci95": [
+              0.5252320819500957,
+              0.5477054012904452
+            ]
+          },
+          "card_top3": {
+            "mean": 0.938666045665741,
+            "ci95": [
+              0.9329443845941329,
+              0.9441457895950072
+            ]
+          },
+          "card_nll": {
+            "mean": 1.0861784219741821,
+            "ci95": [
+              1.0681497783037603,
+              1.105510142280665
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.15510304272174835,
+            "ci95": [
+              0.14610180548902285,
+              0.1647008639024271
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.37800267338752747,
+            "ci95": [
+              0.366495786251831,
+              0.38831481509217325
+            ]
+          },
+          "grid_nll": {
+            "mean": 4.474892616271973,
+            "ci95": [
+              4.409416712889132,
+              4.544857910025561
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.12474088370800018,
+            "ci95": [
+              0.11692921811927627,
+              0.1336433729041733
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.3700768053531647,
+            "ci95": [
+              0.35842374412797223,
+              0.3807898235727719
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.43531277775764465,
+            "ci95": [
+              0.42319516952142333,
+              0.4472695966101969
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6545.85302734375,
+            "ci95": [
+              6413.817742364103,
+              6677.287743856442
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.696480393409729,
+            "ci95": [
+              1.6517960601230959,
+              1.7478840901682005
+            ]
+          }
+        },
+        "causal_revealed": {
+          "card_top1": {
+            "mean": 0.529447615146637,
+            "ci95": [
+              0.518032235660589,
+              0.5398559242237977
+            ]
+          },
+          "card_top3": {
+            "mean": 0.934276282787323,
+            "ci95": [
+              0.9279697566455247,
+              0.9397767403670623
+            ]
+          },
+          "card_nll": {
+            "mean": 1.1187968254089355,
+            "ci95": [
+              1.0999420865710046,
+              1.1410578718943156
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.14998170733451843,
+            "ci95": [
+              0.14113076901997385,
+              0.1593640923289394
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.367272287607193,
+            "ci95": [
+              0.3564096301411338,
+              0.377922192508845
+            ]
+          },
+          "grid_nll": {
+            "mean": 4.523985385894775,
+            "ci95": [
+              4.458206983595769,
+              4.592970761478818
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.12010730057954788,
+            "ci95": [
+              0.11219605052053483,
+              0.12886861722580334
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.35898062586784363,
+            "ci95": [
+              0.3482978906149327,
+              0.3698438388659929
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.42628946900367737,
+            "ci95": [
+              0.41470874396839785,
+              0.4376076760936631
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6639.14892578125,
+            "ci95": [
+              6501.978967907443,
+              6777.7072018456
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.7851274013519287,
+            "ci95": [
+              1.7379721985331575,
+              1.8379508990612714
+            ]
+          }
+        },
+        "causal_revealed_neutral_xy": {
+          "card_top1": {
+            "mean": 0.5121326446533203,
+            "ci95": [
+              0.49988000165954,
+              0.5230025726866933
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9243994355201721,
+            "ci95": [
+              0.917220884352549,
+              0.9303654841716029
+            ]
+          },
+          "card_nll": {
+            "mean": 1.1527894735336304,
+            "ci95": [
+              1.13259030373658,
+              1.174880767702438
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.07255212962627411,
+            "ci95": [
+              0.06641314272088568,
+              0.07839629362448432
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.24277527630329132,
+            "ci95": [
+              0.23217868442733106,
+              0.2531620486292576
+            ]
+          },
+          "grid_nll": {
+            "mean": 5.266116619110107,
+            "ci95": [
+              5.197686000660572,
+              5.334993420837117
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.05743202194571495,
+            "ci95": [
+              0.052036439716805924,
+              0.06316604066731046
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.23801974952220917,
+            "ci95": [
+              0.2273914654500946,
+              0.24813133872838078
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.27216193079948425,
+            "ci95": [
+              0.2616760175883918,
+              0.2818083771944322
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 8114.68359375,
+            "ci95": [
+              7992.208350995097,
+              8237.293937292208
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.8363234996795654,
+            "ci95": [
+              1.7902202036223047,
+              1.8903729889243437
+            ]
+          }
+        },
+        "causal_revealed_oracle_card": {
+          "card_top1": {
+            "mean": 0.529447615146637,
+            "ci95": [
+              0.518032235660589,
+              0.5398559242237977
+            ]
+          },
+          "card_top3": {
+            "mean": 0.934276282787323,
+            "ci95": [
+              0.9279697566455247,
+              0.9397767403670623
+            ]
+          },
+          "card_nll": {
+            "mean": 1.1187968254089355,
+            "ci95": [
+              1.0999420865710046,
+              1.1410578718943156
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.22143641114234924,
+            "ci95": [
+              0.21019150104789017,
+              0.2324936359074823
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.5148152709007263,
+            "ci95": [
+              0.5024593512358481,
+              0.5264520293123093
+            ]
+          },
+          "grid_nll": {
+            "mean": 3.2537786960601807,
+            "ci95": [
+              3.21014515967463,
+              3.303307438409164
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.12010730057954788,
+            "ci95": [
+              0.11219605052053483,
+              0.12886861722580334
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.48177051544189453,
+            "ci95": [
+              0.46914627882126064,
+              0.4939545660251782
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.5599316954612732,
+            "ci95": [
+              0.5481786301369863,
+              0.5719250201751408
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 5072.41064453125,
+            "ci95": [
+              4969.5071124204005,
+              5178.208186032476
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.7851274013519287,
+            "ci95": [
+              1.7379721985331575,
+              1.8379508990612714
+            ]
+          }
+        }
+      },
+      "paired_deltas": {
+        "causal_full_deck minus archived_contract": {
+          "card_top1": {
+            "mean": -0.026704059913754463,
+            "ci95": [
+              -0.03255980050613605,
+              -0.021286059331844104
+            ]
+          },
+          "card_top3": {
+            "mean": -0.012437507510185242,
+            "ci95": [
+              -0.015413982234937115,
+              -0.009634695109824535
+            ]
+          },
+          "card_nll": {
+            "mean": 0.09847839921712875,
+            "ci95": [
+              0.08657163461219267,
+              0.1125511810607212
+            ]
+          },
+          "grid_top1": {
+            "mean": -0.016949152573943138,
+            "ci95": [
+              -0.020470149633365103,
+              -0.013514490663319669
+            ]
+          },
+          "grid_top5": {
+            "mean": -0.02914278768002987,
+            "ci95": [
+              -0.034220632280526436,
+              -0.024116072332033323
+            ]
+          },
+          "grid_nll": {
+            "mean": 0.15898412466049194,
+            "ci95": [
+              0.1327719010603195,
+              0.18661036006178305
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": -0.014754298143088818,
+            "ci95": [
+              -0.01811197822091297,
+              -0.01162780138369137
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": -0.030240215361118317,
+            "ci95": [
+              -0.035435472832952786,
+              -0.02532222482163102
+            ]
+          },
+          "zone_top1": {
+            "mean": -0.03243507072329521,
+            "ci95": [
+              -0.03815999575879513,
+              -0.026354085816958403
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 290.04541015625,
+            "ci95": [
+              244.4876951736636,
+              336.12322485598145
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 0.301351934671402,
+            "ci95": [
+              0.28229640180614124,
+              0.3221736156390226
+            ]
+          }
+        },
+        "causal_revealed minus causal_full_deck": {
+          "card_top1": {
+            "mean": 0.0007316180854104459,
+            "ci95": [
+              -0.0016254793060734905,
+              0.0030495348968086274
+            ]
+          },
+          "card_top3": {
+            "mean": 0.00012193634756840765,
+            "ci95": [
+              -0.0016961275630788032,
+              0.002045944354161397
+            ]
+          },
+          "card_nll": {
+            "mean": 0.0010438538156449795,
+            "ci95": [
+              -0.0010382178666565544,
+              0.0035991850989772587
+            ]
+          },
+          "grid_top1": {
+            "mean": -0.0004877453902736306,
+            "ci95": [
+              -0.0023111613898416324,
+              0.001494686484674579
+            ]
+          },
+          "grid_top5": {
+            "mean": -0.0007316180854104459,
+            "ci95": [
+              -0.0034644997058825245,
+              0.0020568737649447302
+            ]
+          },
+          "grid_nll": {
+            "mean": 0.00934284646064043,
+            "ci95": [
+              -0.0017124855420882045,
+              0.021601429477401624
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.0006096817669458687,
+            "ci95": [
+              -0.0010064148951158885,
+              0.002304064290254355
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": -0.0004877453902736306,
+            "ci95": [
+              -0.0031278188802967718,
+              0.0021648294845729955
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.0026825997047126293,
+            "ci95": [
+              0.0,
+              0.005499056398648569
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 12.016952514648438,
+            "ci95": [
+              -6.88098022381057,
+              29.599161676637596
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 0.0014904579147696495,
+            "ci95": [
+              -0.0017415115441507534,
+              0.005007066475895976
+            ]
+          }
+        },
+        "causal_revealed_oracle_card minus causal_revealed": {
+          "card_top1": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "card_top3": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "card_nll": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.07145470380783081,
+            "ci95": [
+              0.06506386947095466,
+              0.07741772790195971
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.14754298329353333,
+            "ci95": [
+              0.13829854818951526,
+              0.15639152836176198
+            ]
+          },
+          "grid_nll": {
+            "mean": -1.2702064514160156,
+            "ci95": [
+              -1.3323985033469001,
+              -1.211702502892067
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.1227899044752121,
+            "ci95": [
+              0.11458989149508844,
+              0.13069643851808393
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.13364224135875702,
+            "ci95": [
+              0.12450017488719646,
+              0.14205570897082437
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": -1566.7379150390625,
+            "ci95": [
+              -1653.9861305214638,
+              -1474.6829851669854
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "causal_revealed_neutral_xy minus causal_revealed": {
+          "card_top1": {
+            "mean": -0.017314961180090904,
+            "ci95": [
+              -0.024193969601224177,
+              -0.00999506976806759
+            ]
+          },
+          "card_top3": {
+            "mean": -0.009876844473183155,
+            "ci95": [
+              -0.014056476977553254,
+              -0.00565171396534547
+            ]
+          },
+          "card_nll": {
+            "mean": 0.03399258479475975,
+            "ci95": [
+              0.027347308822649824,
+              0.040737020940912076
+            ]
+          },
+          "grid_top1": {
+            "mean": -0.07742958515882492,
+            "ci95": [
+              -0.08498927487578656,
+              -0.06936976385105545
+            ]
+          },
+          "grid_top5": {
+            "mean": -0.12449701130390167,
+            "ci95": [
+              -0.13472201298016914,
+              -0.11489933566054279
+            ]
+          },
+          "grid_nll": {
+            "mean": 0.7421314716339111,
+            "ci95": [
+              0.6971021496267301,
+              0.7868009288420196
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": -0.06267528235912323,
+            "ci95": [
+              -0.06992111074749083,
+              -0.055087139706545184
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": -0.12096086144447327,
+            "ci95": [
+              -0.13097638234862133,
+              -0.11110505930767368
+            ]
+          },
+          "zone_top1": {
+            "mean": -0.15412753820419312,
+            "ci95": [
+              -0.1670290547048859,
+              -0.14198817765877997
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 1475.5350341796875,
+            "ci95": [
+              1379.1574701114976,
+              1576.7192127290132
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 0.05119616538286209,
+            "ci95": [
+              0.03935906715339481,
+              0.06295145178171592
+            ]
+          }
+        }
+      },
+      "columns": [
+        "card_top1",
+        "card_top3",
+        "card_nll",
+        "grid_top1",
+        "grid_top5",
+        "grid_nll",
+        "joint_card_grid_top1",
+        "card_top3_grid_top5_overlap",
+        "zone_top1",
+        "xy_l1_raw_units",
+        "timing_mae_s"
+      ],
+      "oracle_card_supported": true,
+      "sample_index_sha256": "54a55b73123e4b7eb15f90ee2a35b3c07ea0336158e2e186701d0e426dcb60dc"
+    },
+    {
+      "model_dir": "models/policy_bc_v4.4.2",
+      "checkpoint_sha256": "e0b7a48db490dffe7a2b26423c40e332bae4822e00b3cfa32a3ebe15a7b2247b",
+      "vocab_sha256": "60d2bfa48dd6e2d5722b10a95dd0a2249f65d9fab52a7920c6a23f8861ae5356",
+      "samples": 8201,
+      "battles": 512,
+      "seconds": 5.038498157984577,
+      "parameters": 967442,
+      "config": {
+        "batch_size": 512,
+        "gradient_accumulation_steps": 1,
+        "d_model": 160,
+        "num_layers": 2,
+        "dropout": 0.2,
+        "max_context": 64,
+        "max_samples_per_battle": 40,
+        "min_context": 8,
+        "global_dim": 62,
+        "threat_dim": 14,
+        "reaction_seconds": 5.0,
+        "card_conditioned_placement": true,
+        "placement_mode": "heatmap",
+        "placement_card_mode": "selected",
+        "rollout_placement_decode": "sample",
+        "rollout_placement_temperature": 0.6,
+        "rollout_placement_top_k": 5,
+        "rollout_slot_decode": "sample",
+        "rollout_slot_temperature": 0.8,
+        "rollout_scheduling": "race",
+        "version": "4.4.2",
+        "warmstart": {
+          "dir": "models/policy_bc_v4.4.2",
+          "missing_keys": [],
+          "unexpected_keys": []
+        },
+        "freeze_backbone": false,
+        "training_stage": null,
+        "arena_control": "aligned",
+        "arena_memory_channels": 0,
+        "arena_hidden_channels": 32,
+        "arena_memory_version": "none",
+        "arena_gate_bias": -2.2,
+        "split_manifest": "data/splits/policy_v4_4_2_winner_seed42.json",
+        "manifest_hash": "55a5c3104ba18f2aea703596253f1be4b6e1cac42c9041cd30dba093b36f8f37",
+        "progress_path": "models/policy_bc_v4.4.2/progress.jsonl",
+        "log_path": null,
+        "trainable_parameters": 967442,
+        "max_think_steps": 3,
+        "eval_think_steps": 3,
+        "winner_only": true
+      },
+      "changed_threat_inputs": 2058,
+      "recoverable_delay_from_wincon_age": 1490,
+      "uniform_hand_baseline": 0.24504633581270577,
+      "prefix_frequency_baseline": 0.1194976222411901,
+      "metrics": {
+        "archived_contract": {
+          "card_top1": {
+            "mean": 0.5561516880989075,
+            "ci95": [
+              0.5443949357278673,
+              0.5666265077770916
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9454944729804993,
+            "ci95": [
+              0.9393931924619625,
+              0.9509865094666916
+            ]
+          },
+          "card_nll": {
+            "mean": 1.0216645002365112,
+            "ci95": [
+              1.0035887459446349,
+              1.040135788999816
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.16388244926929474,
+            "ci95": [
+              0.15425519579837874,
+              0.1729992547420327
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.39385440945625305,
+            "ci95": [
+              0.38217974749317324,
+              0.4049237487744805
+            ]
+          },
+          "grid_nll": {
+            "mean": 4.405374526977539,
+            "ci95": [
+              4.338647988691454,
+              4.474830296265108
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.13266675174236298,
+            "ci95": [
+              0.12422294627490663,
+              0.14086039114869114
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.38592854142189026,
+            "ci95": [
+              0.3742575023676768,
+              0.3972377934483838
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.45884647965431213,
+            "ci95": [
+              0.44688399432610076,
+              0.46975660837536914
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6399.60498046875,
+            "ci95": [
+              6274.2548810312555,
+              6524.256663349674
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.4891833066940308,
+            "ci95": [
+              1.448157186118075,
+              1.5346739108136407
+            ]
+          }
+        },
+        "causal_full_deck": {
+          "card_top1": {
+            "mean": 0.5284721255302429,
+            "ci95": [
+              0.5166620244719548,
+              0.5390411733859716
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9318375587463379,
+            "ci95": [
+              0.9252843093692328,
+              0.9376719692683492
+            ]
+          },
+          "card_nll": {
+            "mean": 1.132079005241394,
+            "ci95": [
+              1.111920999797616,
+              1.153083235101497
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.14803072810173035,
+            "ci95": [
+              0.1390866614906486,
+              0.15668114661573074
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.36739420890808105,
+            "ci95": [
+              0.35619339325672245,
+              0.3783367817813254
+            ]
+          },
+          "grid_nll": {
+            "mean": 4.5623908042907715,
+            "ci95": [
+              4.493890490876222,
+              4.633489354826347
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.11986342817544937,
+            "ci95": [
+              0.11187706367924528,
+              0.12765571470056503
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.35812705755233765,
+            "ci95": [
+              0.3469038646812857,
+              0.36919112932435
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.42982563376426697,
+            "ci95": [
+              0.41760661321534404,
+              0.4411127379566471
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6693.98583984375,
+            "ci95": [
+              6565.276257632708,
+              6828.835425580856
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.791048288345337,
+            "ci95": [
+              1.7440660214232073,
+              1.8444903826562447
+            ]
+          }
+        },
+        "rollout_plus_1s": {
+          "card_top1": {
+            "mean": 0.5360321998596191,
+            "ci95": [
+              0.523838191709309,
+              0.5459557151590424
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9370808601379395,
+            "ci95": [
+              0.9307095943468577,
+              0.9429939455205254
+            ]
+          },
+          "card_nll": {
+            "mean": 1.093364953994751,
+            "ci95": [
+              1.074867997286105,
+              1.1129397255879196
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.15193268656730652,
+            "ci95": [
+              0.142484712749653,
+              0.16069790880372337
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.37714913487434387,
+            "ci95": [
+              0.3656236694038929,
+              0.3883960831165839
+            ]
+          },
+          "grid_nll": {
+            "mean": 4.5188422203063965,
+            "ci95": [
+              4.450686101591,
+              4.5896103164267075
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.12364345788955688,
+            "ci95": [
+              0.11564688595562635,
+              0.1318668185938365
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.36910131573677063,
+            "ci95": [
+              0.3577110341022599,
+              0.38025662000081045
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.43811729550361633,
+            "ci95": [
+              0.4263371498892444,
+              0.449261773352234
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6598.46630859375,
+            "ci95": [
+              6476.968691917564,
+              6730.249952701681
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.7038335800170898,
+            "ci95": [
+              1.6588326310501214,
+              1.7551114216192818
+            ]
+          }
+        },
+        "causal_revealed": {
+          "card_top1": {
+            "mean": 0.5287160277366638,
+            "ci95": [
+              0.5174097202576448,
+              0.5392390277759154
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9313498139381409,
+            "ci95": [
+              0.924504847714694,
+              0.9371371275524982
+            ]
+          },
+          "card_nll": {
+            "mean": 1.1328628063201904,
+            "ci95": [
+              1.1123245574330178,
+              1.1551632089812605
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.14693330228328705,
+            "ci95": [
+              0.137803604872386,
+              0.15557402745093582
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.36629679799079895,
+            "ci95": [
+              0.35485580719741805,
+              0.3768676971196233
+            ]
+          },
+          "grid_nll": {
+            "mean": 4.574708938598633,
+            "ci95": [
+              4.5046926060724255,
+              4.647448636956801
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.1192537471652031,
+            "ci95": [
+              0.11138675094897205,
+              0.12686367456478034
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.3571515679359436,
+            "ci95": [
+              0.3456472724310038,
+              0.36774244315528576
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.4286062717437744,
+            "ci95": [
+              0.41678940895395916,
+              0.4402099431714484
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 6703.203125,
+            "ci95": [
+              6572.8723985473725,
+              6840.9833230145
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.7927693128585815,
+            "ci95": [
+              1.745777634734115,
+              1.8468772737088486
+            ]
+          }
+        },
+        "causal_revealed_neutral_xy": {
+          "card_top1": {
+            "mean": 0.5056700110435486,
+            "ci95": [
+              0.4954637839605315,
+              0.5159608774584046
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9163516759872437,
+            "ci95": [
+              0.9088923683225018,
+              0.9228953105618983
+            ]
+          },
+          "card_nll": {
+            "mean": 1.1786777973175049,
+            "ci95": [
+              1.15766798209699,
+              1.2026273322132166
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.07511278986930847,
+            "ci95": [
+              0.06835632677313572,
+              0.08166440755973274
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.24216559529304504,
+            "ci95": [
+              0.23165577258541506,
+              0.2520887758957023
+            ]
+          },
+          "grid_nll": {
+            "mean": 5.331655979156494,
+            "ci95": [
+              5.257972869414433,
+              5.404142506479189
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.05901719257235527,
+            "ci95": [
+              0.053015710952847815,
+              0.06520749178857826
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.2363126426935196,
+            "ci95": [
+              0.2258016254512461,
+              0.246027562352842
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.27191805839538574,
+            "ci95": [
+              0.26065693311277466,
+              0.2830305251537504
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 8171.07666015625,
+            "ci95": [
+              8047.4386146731695,
+              8296.71106575759
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.840612530708313,
+            "ci95": [
+              1.7934990554787502,
+              1.8942471990402918
+            ]
+          }
+        },
+        "causal_revealed_oracle_card": {
+          "card_top1": {
+            "mean": 0.5287160277366638,
+            "ci95": [
+              0.5174097202576448,
+              0.5392390277759154
+            ]
+          },
+          "card_top3": {
+            "mean": 0.9313498139381409,
+            "ci95": [
+              0.924504847714694,
+              0.9371371275524982
+            ]
+          },
+          "card_nll": {
+            "mean": 1.1328628063201904,
+            "ci95": [
+              1.1123245574330178,
+              1.1551632089812605
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.22363126277923584,
+            "ci95": [
+              0.2127122012988308,
+              0.23439190646894908
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.5154249668121338,
+            "ci95": [
+              0.50249261340152,
+              0.5277621768734299
+            ]
+          },
+          "grid_nll": {
+            "mean": 3.2506158351898193,
+            "ci95": [
+              3.2053136294010702,
+              3.3002956855627406
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.1192537471652031,
+            "ci95": [
+              0.11138675094897205,
+              0.12686367456478034
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.48116081953048706,
+            "ci95": [
+              0.46791020491569146,
+              0.4935300485941178
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.5585904121398926,
+            "ci95": [
+              0.5469088566153338,
+              0.5698055946643
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 5065.013671875,
+            "ci95": [
+              4961.533498496457,
+              5171.395621938973
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 1.7927693128585815,
+            "ci95": [
+              1.745777634734115,
+              1.8468772737088486
+            ]
+          }
+        }
+      },
+      "paired_deltas": {
+        "causal_full_deck minus archived_contract": {
+          "card_top1": {
+            "mean": -0.027679551392793655,
+            "ci95": [
+              -0.03373227285687028,
+              -0.02200936786041273
+            ]
+          },
+          "card_top3": {
+            "mean": -0.013656871393322945,
+            "ci95": [
+              -0.016708888804726464,
+              -0.010674501732662475
+            ]
+          },
+          "card_nll": {
+            "mean": 0.1104145273566246,
+            "ci95": [
+              0.0970600499005393,
+              0.1258909189944218
+            ]
+          },
+          "grid_top1": {
+            "mean": -0.01585172489285469,
+            "ci95": [
+              -0.019181342655010335,
+              -0.012403126246443987
+            ]
+          },
+          "grid_top5": {
+            "mean": -0.026460187509655952,
+            "ci95": [
+              -0.03167314147054447,
+              -0.021577265863917505
+            ]
+          },
+          "grid_nll": {
+            "mean": 0.15701636672019958,
+            "ci95": [
+              0.12930849504616876,
+              0.18410686254188346
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": -0.012803317047655582,
+            "ci95": [
+              -0.01611396467139716,
+              -0.009709682158182931
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": -0.02780148759484291,
+            "ci95": [
+              -0.032962075851431516,
+              -0.022813388457574267
+            ]
+          },
+          "zone_top1": {
+            "mean": -0.029020851477980614,
+            "ci95": [
+              -0.03430729273653839,
+              -0.02342886494324473
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 294.38055419921875,
+            "ci95": [
+              246.9363283895046,
+              341.96685469660997
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 0.301864892244339,
+            "ci95": [
+              0.28245332406748985,
+              0.3230743829634918
+            ]
+          }
+        },
+        "causal_revealed minus causal_full_deck": {
+          "card_top1": {
+            "mean": 0.0002438726951368153,
+            "ci95": [
+              -0.0029779313318954058,
+              0.003215972343437805
+            ]
+          },
+          "card_top3": {
+            "mean": -0.0004877453902736306,
+            "ci95": [
+              -0.002557968893703605,
+              0.0012262498847045416
+            ]
+          },
+          "card_nll": {
+            "mean": 0.0007837312296032906,
+            "ci95": [
+              -0.00141021247891574,
+              0.0034947348712425323
+            ]
+          },
+          "grid_top1": {
+            "mean": -0.0010974270990118384,
+            "ci95": [
+              -0.0029810540753153446,
+              0.0009530465005537598
+            ]
+          },
+          "grid_top5": {
+            "mean": -0.0010974270990118384,
+            "ci95": [
+              -0.0036352190200870356,
+              0.0014432812299995709
+            ]
+          },
+          "grid_nll": {
+            "mean": 0.012317508459091187,
+            "ci95": [
+              -0.000994897215332191,
+              0.027547971090454083
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": -0.0006096817669458687,
+            "ci95": [
+              -0.0022894797904717567,
+              0.001195104298041452
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": -0.0009754907805472612,
+            "ci95": [
+              -0.0032711809150384437,
+              0.0012182690421350712
+            ]
+          },
+          "zone_top1": {
+            "mean": -0.0012193635338917375,
+            "ci95": [
+              -0.004167579860694113,
+              0.001617780732786422
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 9.2175931930542,
+            "ci95": [
+              -10.950805208158771,
+              30.96401459599028
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 0.001721100532449782,
+            "ci95": [
+              -0.0019326318704010247,
+              0.005750908280110476
+            ]
+          }
+        },
+        "causal_revealed_oracle_card minus causal_revealed": {
+          "card_top1": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "card_top3": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "card_nll": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "grid_top1": {
+            "mean": 0.07669796049594879,
+            "ci95": [
+              0.07015049429114532,
+              0.08283473404144068
+            ]
+          },
+          "grid_top5": {
+            "mean": 0.14912815392017365,
+            "ci95": [
+              0.14032873229204504,
+              0.1576714162894165
+            ]
+          },
+          "grid_nll": {
+            "mean": -1.3240927457809448,
+            "ci95": [
+              -1.3860617028272288,
+              -1.26292468565142
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": 0.12400926649570465,
+            "ci95": [
+              0.11601010493349787,
+              0.13180184833070294
+            ]
+          },
+          "zone_top1": {
+            "mean": 0.12998415529727936,
+            "ci95": [
+              0.12096946207770937,
+              0.1384690160671231
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": -1638.189697265625,
+            "ci95": [
+              -1731.2652104400825,
+              -1542.2397559290232
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "causal_revealed_neutral_xy minus causal_revealed": {
+          "card_top1": {
+            "mean": -0.023045970126986504,
+            "ci95": [
+              -0.030873340142229568,
+              -0.014816046694390034
+            ]
+          },
+          "card_top3": {
+            "mean": -0.014998170547187328,
+            "ci95": [
+              -0.019415624449533243,
+              -0.01060029764795167
+            ]
+          },
+          "card_nll": {
+            "mean": 0.045815106481313705,
+            "ci95": [
+              0.0379014166000566,
+              0.05406457521069741
+            ]
+          },
+          "grid_top1": {
+            "mean": -0.07182051241397858,
+            "ci95": [
+              -0.0795648645965253,
+              -0.06389597684017788
+            ]
+          },
+          "grid_top5": {
+            "mean": -0.1241312026977539,
+            "ci95": [
+              -0.13429856406186527,
+              -0.11408080114674221
+            ]
+          },
+          "grid_nll": {
+            "mean": 0.7569472789764404,
+            "ci95": [
+              0.7023567305778845,
+              0.8090357900544244
+            ]
+          },
+          "joint_card_grid_top1": {
+            "mean": -0.06023655831813812,
+            "ci95": [
+              -0.06702777035895563,
+              -0.05350841265580439
+            ]
+          },
+          "card_top3_grid_top5_overlap": {
+            "mean": -0.12083892524242401,
+            "ci95": [
+              -0.13137580793605183,
+              -0.11076979606595677
+            ]
+          },
+          "zone_top1": {
+            "mean": -0.15668821334838867,
+            "ci95": [
+              -0.16967840655368677,
+              -0.1435120276430225
+            ]
+          },
+          "xy_l1_raw_units": {
+            "mean": 1467.8739013671875,
+            "ci95": [
+              1360.5427925161512,
+              1570.294802404095
+            ]
+          },
+          "timing_mae_s": {
+            "mean": 0.047843217849731445,
+            "ci95": [
+              0.034414865845417766,
+              0.06070888257767474
+            ]
+          }
+        }
+      },
+      "columns": [
+        "card_top1",
+        "card_top3",
+        "card_nll",
+        "grid_top1",
+        "grid_top5",
+        "grid_nll",
+        "joint_card_grid_top1",
+        "card_top3_grid_top5_overlap",
+        "zone_top1",
+        "xy_l1_raw_units",
+        "timing_mae_s"
+      ],
+      "oracle_card_supported": true,
+      "sample_index_sha256": "54a55b73123e4b7eb15f90ee2a35b3c07ea0336158e2e186701d0e426dcb60dc"
+    }
+  ],
+  "methodology": [
+    "Evaluation only: no training or game execution.",
+    "Card-only targets, both players, fixed sampled indices after 8 events; max 24 per battle, stride 3.",
+    "Each checkpoint uses its own vocabulary. No old evaluation/rollout cache is read.",
+    "Frozen-model feature intervention is a distribution-shift diagnostic, not a retrained causal baseline.",
+    "Causal conditions query at the last observed event timestamp; actor identity is still supplied by the target.",
+    "Oracle-card condition supplies the demonstrated card only to placement; not deployable and not a win-rate ceiling.",
+    "Grid is legacy 32 columns x 18 rows; exact grid hits are not physical in-game tile accuracy.",
+    "Intervals: 1000 paired bootstrap resamples of battles. No correction for multiple exploratory comparisons.",
+    "Unseen excludes all available cache/manifests and exact canonical event signatures; unavailable historical parent manifests prevent a complete lineage proof."
+  ],
+  "seconds": 30.23971732100472
+}

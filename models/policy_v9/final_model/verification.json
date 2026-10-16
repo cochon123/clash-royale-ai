@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "tensor_equality": true,
+  "promoted": false,
+  "scope": "frozen export equality and causal inference on a training opening, no new holdout evaluation",
+  "verified_at": "2026-10-12T11:06:26.758500+00:00",
+  "source_sha256": "73eacd4733eb3d3ad053d46ff3fd0f047082ad25cd1d233e00d474b3df5065cf",
+  "deployment_sha256": "cbff36722ebe83e474228153c31f3b73b9cdf04f9291f3dd7e89e6d9ba937ee2"
+}

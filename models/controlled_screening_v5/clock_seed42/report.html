@@ -1,0 +1,88 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Controlled policy experiment</title><style>body{background:#121820;color:#e4f1eb;font:17px/1.6 system-ui;max-width:1000px;margin:40px auto;padding:20px}a{color:#8cdbb6}svg{width:100%}td,th{padding:10px;border-bottom:1px solid #456}table{display:block;overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere}polyline{stroke-dasharray:2000;stroke-dashoffset:2000;animation:draw 2s forwards}@keyframes draw{to{stroke-dashoffset:0}}@media(prefers-reduced-motion:reduce){polyline{animation:none;stroke-dashoffset:0}}</style><h1>Controlled policy experiment</h1><p>Validation screening only. Lower joint NLL is better. No live-win claim; no automatic corpus scaling.</p><svg viewBox="0 0 800 250" role="img" aria-label="Validation joint action negative log likelihood by completed epoch"><polyline fill="none" stroke="#8cdbb6" stroke-width="3" points="40.0,42.2 220.0,130.6 400.0,175.0 580.0,200.5 760.0,217.8"/></svg><table><thead><tr><th>Epoch</th><th>Train loss</th><th>Card</th><th>Joint</th><th>Joint NLL</th><th>Timing MAE</th></tr></thead><tbody><tr><td>1</td><td>6.534900778413832</td><td>0.41431018710136414</td><td>0.051756344735622406</td><td>5.623837471008301</td><td>1.8484071493148804</td></tr><tr><td>2</td><td>5.7763686808243015</td><td>0.4438073933124542</td><td>0.06389768421649933</td><td>5.229092121124268</td><td>1.822082757949829</td></tr><tr><td>3</td><td>5.483631127954543</td><td>0.46004772186279297</td><td>0.07194001972675323</td><td>5.030933856964111</td><td>1.7968287467956543</td></tr><tr><td>4</td><td>5.31790825800585</td><td>0.4730452001094818</td><td>0.07689514011144638</td><td>4.916989803314209</td><td>1.7758463621139526</td></tr><tr><td>5</td><td>5.207316364174861</td><td>0.4852384030818939</td><td>0.07930783927440643</td><td>4.839682579040527</td><td>1.7637935876846313</td></tr></tbody></table><h2>Provenance, compute and outcome</h2><pre>{
+  &quot;variant&quot;: &quot;clock&quot;,
+  &quot;seed&quot;: 42,
+  &quot;created_at&quot;: &quot;2026-09-07T15:54:59.870418+00:00&quot;,
+  &quot;contract&quot;: {
+    &quot;observation&quot;: &quot;causal-observation-1&quot;,
+    &quot;preprocess&quot;: 4,
+    &quot;source&quot;: {
+      &quot;source&quot;: &quot;/home/cochon/Documents/mini-project/clash-royale-ai/data/raw&quot;,
+      &quot;file_count&quot;: 64275,
+      &quot;digest&quot;: &quot;346201a2d03b5ae08ff83c40ae5ccc776ecceed5ec3c844ed2f817eea5c33281&quot;
+    },
+    &quot;metadata&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;,
+    &quot;costs&quot;: &quot;393e31c77a4801fb253c65e599373d58a5bbb7d8bdd493cdf2d93fabdbe027b4&quot;,
+    &quot;manifest&quot;: &quot;b60ab8528b324a4c823a6498aff8576fb71085e30d74f1d21448d8c3ab2af644&quot;,
+    &quot;final_holdout&quot;: &quot;ba9ba13ba14eebf45fc56218724483bd8855731e26a0f2a205ca9c386af46564&quot;,
+    &quot;samples_per_battle&quot;: 40,
+    &quot;d_model&quot;: 128,
+    &quot;batch_size&quot;: 128,
+    &quot;objective&quot;: &quot;joint-card-cell-nll+0.25-timing;clock=0.1;uniform-no-augmentation-v1&quot;,
+    &quot;source_code&quot;: &quot;c82a19388f42329a706e8159e2c1f7e54023562a1b9b610713391d25f1d19777&quot;,
+    &quot;metadata_records&quot;: 0
+  },
+  &quot;parameters&quot;: 516212,
+  &quot;device&quot;: &quot;cuda&quot;,
+  &quot;train_battles&quot;: 5000,
+  &quot;validation_battles&quot;: 1071,
+  &quot;unique_actions&quot;: 180683,
+  &quot;clock_intervals&quot;: 319553,
+  &quot;empirical_clock_rates&quot;: [
+    0.15605156881352542,
+    0.1559012315259635
+  ],
+  &quot;empirical_clock_validation&quot;: {
+    &quot;clock_nll&quot;: 2.854429244995117,
+    &quot;clock_median_mae&quot;: 2.0202579498291016
+  },
+  &quot;config&quot;: {
+    &quot;input&quot;: &quot;data/raw&quot;,
+    &quot;metadata&quot;: &quot;data/metadata/battles.jsonl&quot;,
+    &quot;costs&quot;: &quot;data/card_costs.json&quot;,
+    &quot;manifest&quot;: &quot;data/splits/policy_v8_pilot_5000_seed42.json&quot;,
+    &quot;final_holdout&quot;: &quot;data/splits/controlled_final_holdout.json&quot;,
+    &quot;output&quot;: &quot;models/controlled_screening_v5&quot;,
+    &quot;variant&quot;: &quot;screen&quot;,
+    &quot;epochs&quot;: 12,
+    &quot;patience&quot;: 3,
+    &quot;seed&quot;: 42,
+    &quot;batch_size&quot;: 128,
+    &quot;d_model&quot;: 128,
+    &quot;samples_per_battle&quot;: 40,
+    &quot;run_seconds&quot;: 3600,
+    &quot;suite_seconds&quot;: 10800,
+    &quot;device&quot;: null,
+    &quot;prepare&quot;: false,
+    &quot;_suite_started&quot;: 431502.02153158,
+    &quot;_suite_variant_index&quot;: 1,
+    &quot;_suite_variant_count&quot;: 3
+  },
+  &quot;model_config&quot;: {
+    &quot;variant&quot;: &quot;clock&quot;,
+    &quot;d_model&quot;: 128,
+    &quot;vocab_size&quot;: 126
+  },
+  &quot;status&quot;: &quot;budget_stopped&quot;,
+  &quot;weights_epoch&quot;: 5,
+  &quot;elapsed_seconds&quot;: 3600.078518132039,
+  &quot;selected_validation&quot;: {
+    &quot;epoch&quot;: 5,
+    &quot;train_loss&quot;: 5.207316364174861,
+    &quot;card&quot;: 0.4852384030818939,
+    &quot;cell&quot;: 0.10940175503492355,
+    &quot;joint&quot;: 0.07930783927440643,
+    &quot;joint_nll&quot;: 4.839682579040527,
+    &quot;timing_mae&quot;: 1.7637935876846313,
+    &quot;clock_nll&quot;: 2.5835230350494385,
+    &quot;actor_accuracy&quot;: 0.7256870865821838,
+    &quot;actor_brier&quot;: 0.18479624390602112,
+    &quot;mean_own_rate&quot;: 0.2080031782388687,
+    &quot;mean_opponent_rate&quot;: 0.1900836080312729,
+    &quot;survival_brier_2s&quot;: 0.21604466438293457,
+    &quot;survival_brier_5s&quot;: 0.11513634771108627,
+    &quot;survival_brier_10s&quot;: 0.034169748425483704,
+    &quot;clock_median_mae&quot;: 1.7856700420379639
+  },
+  &quot;last_completed_epoch&quot;: 5,
+  &quot;samples_presented&quot;: 955255
+}</pre></html>

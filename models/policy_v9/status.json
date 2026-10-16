@@ -1,0 +1,85 @@
+{
+  "status": "completed",
+  "phase": "completed",
+  "deadline": "2026-10-12T06:00:00-06:00",
+  "remaining_seconds": 4569.901698589325,
+  "jobs": [
+    {
+      "name": "scale_5k_seed42",
+      "status": "completed",
+      "epochs": 4
+    },
+    {
+      "name": "scale_15k_seed42",
+      "status": "completed",
+      "epochs": 4
+    },
+    {
+      "name": "base_full_seed42",
+      "status": "completed",
+      "epochs": 12
+    },
+    {
+      "name": "size_256_seed42",
+      "status": "completed",
+      "epochs": 2
+    },
+    {
+      "name": "control_seed42",
+      "status": "completed",
+      "epochs": 2
+    },
+    {
+      "name": "winner_seed42",
+      "status": "completed",
+      "epochs": 2
+    },
+    {
+      "name": "smooth_seed42",
+      "status": "completed",
+      "epochs": 2
+    },
+    {
+      "name": "advantage_seed42",
+      "status": "completed",
+      "epochs": 2,
+      "seconds": 761.7123244720024
+    },
+    {
+      "name": "ghost_seed42",
+      "status": "completed",
+      "epochs": 2,
+      "seconds": 937.5065895949992
+    },
+    {
+      "name": "ghost_shuffled_seed42",
+      "status": "completed",
+      "epochs": 2,
+      "seconds": 944.1210051460002
+    },
+    {
+      "name": "candidate_seed43",
+      "status": "completed",
+      "epochs": 2,
+      "seconds": 762.0165078589998
+    },
+    {
+      "name": "candidate_seed44",
+      "status": "completed",
+      "epochs": 2,
+      "seconds": 763.0295612340014
+    }
+  ],
+  "updated_at": "2026-10-12T10:43:50.098304+00:00",
+  "final_gate_pass": false,
+  "selected_recipe": {
+    "width": 160,
+    "base_epochs": 12,
+    "continuation_epochs": 2,
+    "options": {},
+    "seed42_source": "models/policy_v9/control_seed42",
+    "selection_metric": "validation joint discrete NLL",
+    "chosen_before_holdout": true,
+    "seed_reproduction": "shared_donor_continuations"
+  }
+}

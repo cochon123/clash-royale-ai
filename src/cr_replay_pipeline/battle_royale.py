@@ -7,10 +7,7 @@ standings. No live play.
 
 from __future__ import annotations
 
-import itertools
 import json
-import pickle
-import random
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -24,14 +21,14 @@ from .matchup_eval import _bootstrap_opening
 from .policy_dataset import encode_policy_sample
 from .policy_infer import load_policy
 from .policy_model import PolicyBC
+from .policy_manifest import resolve_battle_splits
 from .winner_dataset import (
     BattleExample,
     CardVocab,
     collect_battles,
     load_card_costs,
-    split_battles,
 )
-from .winner_tabular import extract_tabular_features, swap_battle_perspective
+from .winner_tabular import load_winner_artifact, score_winner_battles
 
 DEFAULT_POLICIES = (
     "models/policy_bc",
@@ -230,41 +227,8 @@ def _score_battles(
     battles: list[BattleExample],
     costs: dict[str, int],
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Return (P(team wins), calibrated confidence P(prediction correct))."""
-    card_index = winner_artifact["card_index"]
-    hgb = winner_artifact["models"]["hist_gradient_boosting"]
-    trees = winner_artifact["models"]["extra_trees"]
-    w = float(winner_artifact["hgb_weight"])
-    cw = float(winner_artifact["confidence_hgb_weight"])
-    calibrator = winner_artifact["confidence_calibrator"]
-    official: dict[str, Any] = {}
-    feats = np.stack(
-        [extract_tabular_features(b, costs, card_index, official) for b in battles]
-    )
-    swapped = np.stack(
-        [
-            extract_tabular_features(
-                swap_battle_perspective(b), costs, card_index, official
-            )
-            for b in battles
-        ]
-    )
-    hgb_direct = hgb.predict_proba(feats)[:, 1]
-    tree_direct = trees.predict_proba(feats)[:, 1]
-    hgb_rev = hgb.predict_proba(swapped)[:, 1]
-    tree_rev = trees.predict_proba(swapped)[:, 1]
-    direct = w * hgb_direct + (1.0 - w) * tree_direct
-    reverse = 1.0 - (w * hgb_rev + (1.0 - w) * tree_rev)
-    p_team = (direct + reverse) / 2.0
-
-    # Confidence head uses its own blend, then isotonic P(correct).
-    conf_direct = cw * hgb_direct + (1.0 - cw) * tree_direct
-    conf_rev = cw * hgb_rev + (1.0 - cw) * tree_rev
-    # Symmetric margin: how far the averaged prediction sits from a coin flip.
-    p_conf = (conf_direct + (1.0 - conf_rev)) / 2.0
-    raw_score = np.abs(p_conf - 0.5)
-    confidence = np.asarray(calibrator.predict(raw_score), dtype=np.float64)
-    return p_team.astype(np.float64), confidence
+    """Score generated sequences with the sequence-only winner judge."""
+    return score_winner_battles(winner_artifact, battles, costs)
 
 
 def _elo_update(
@@ -309,6 +273,7 @@ def run_battle_royale(
     warmup_events: int = 10,
     max_new_events: int = 50,
     temperature: float = 0.85,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     started = time.time()
     policy_dirs = list(policy_dirs or DEFAULT_POLICIES)
@@ -327,14 +292,25 @@ def run_battle_royale(
 
     print("Loading battles / decks ...", flush=True)
     battles = collect_battles(input_dir)
-    train, _val, _test = split_battles(battles, seed=42)
+    train, _val, _test, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=42,
+        split_manifest=split_manifest,
+        model_dir=policy_dirs[0],
+        create=False,
+    )
     deck_pool = [(b.team_deck, b.opponent_deck) for b in train if len(b.team_deck) == 8]
     if len(deck_pool) < 32:
         raise RuntimeError("Not enough train decks to sample matchups")
 
     costs = load_card_costs(card_costs_path)
-    with Path(winner_dir, "hgb_ensemble.pkl").open("rb") as handle:
-        winner = pickle.load(handle)
+    sequence_path = Path(winner_dir) / "hgb_sequence_ensemble.pkl"
+    if not sequence_path.exists():
+        raise FileNotFoundError(
+            "Battle royale needs the sequence-only winner judge at "
+            f"{sequence_path}. Retrain with: cr-replays train-winner-hgb"
+        )
+    winner = load_winner_artifact(sequence_path, expected_feature_set="sequence")
 
     rng = random.Random(seed)
     pairs = list(itertools.combinations(range(len(policies)), 2))

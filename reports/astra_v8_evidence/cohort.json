@@ -1,0 +1,3074 @@
+[
+  {
+    "battle_id": "00VYP2909PQ9",
+    "path": "data/raw/00VYP2909PQ9.json",
+    "sha256": "86aa28dbb8fa08ff3a37148eb724ac51b536d078c594aa47631dc5c6f851dbf3",
+    "decisive": true
+  },
+  {
+    "battle_id": "090PPRGJVVY8",
+    "path": "data/raw/090PPRGJVVY8.json",
+    "sha256": "6038db209d860be453ce40ac20185e8fc27d1d85830bf3ff809b8681edf9b08b",
+    "decisive": true
+  },
+  {
+    "battle_id": "082Y88RJ2QRR",
+    "path": "data/raw/082Y88RJ2QRR.json",
+    "sha256": "490374d65dfccc54a3831c69454d6bad6e6dc4b2677d0b4121761a9054dc007f",
+    "decisive": true
+  },
+  {
+    "battle_id": "02CY820R8P8Q",
+    "path": "data/raw/02CY820R8P8Q.json",
+    "sha256": "f8a2d69d76c7e68f842d1b5241b6bb092d27eb81d64d2a2813456a2ef8199f1e",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0LJ28LJ",
+    "path": "data/raw/00GYP0LJ28LJ.json",
+    "sha256": "f7a3989a2fea67f8ed27bf027688c0c05b79cd217bf99c0467a423f39624da5f",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPRP029CC",
+    "path": "data/raw/092PPRP029CC.json",
+    "sha256": "80125ac03e48586786de0a0e120252f0d3a71d7eb0e3eb3d208b376e65e33e67",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL8VCLRYJ",
+    "path": "data/raw/009YL8VCLRYJ.json",
+    "sha256": "add1a835b66630637aab484e5ef3ef569a5b4ed4ade4b12f374e10866ded2d54",
+    "decisive": true
+  },
+  {
+    "battle_id": "080Y8902YVLR",
+    "path": "data/raw/080Y8902YVLR.json",
+    "sha256": "42ed71498dfe35db916c361ca251fdea0012c6a610f1c8f92a92012630b6c4b0",
+    "decisive": true
+  },
+  {
+    "battle_id": "002YL8GQ880L",
+    "path": "data/raw/002YL8GQ880L.json",
+    "sha256": "bc819e11b873d250f06a9a2356e9738b6798bf39693a6f71ae4e5796e6b2e9ee",
+    "decisive": true
+  },
+  {
+    "battle_id": "090PPRRPPLVJ",
+    "path": "data/raw/090PPRRPPLVJ.json",
+    "sha256": "20742f20989b79a78881372707a4277cc3e9b52d53ed4bbabffd3cf79141c1d2",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQUYVRLP",
+    "path": "data/raw/09G9JQUYVRLP.json",
+    "sha256": "e825a6182843e1d727a8a3db1655db94cb726573b4adae4f7b2da0eaf607c97f",
+    "decisive": true
+  },
+  {
+    "battle_id": "098PPG8Q9GY2",
+    "path": "data/raw/098PPG8Q9GY2.json",
+    "sha256": "7055f4dd54d67688a61e1202730c43a30909b246191ac8fd2bdd2d7341e943ca",
+    "decisive": true
+  },
+  {
+    "battle_id": "09C9JGRC9G2Q",
+    "path": "data/raw/09C9JGRC9G2Q.json",
+    "sha256": "d0dfec4cbd3d9b8efb89799f6c422bd82b90b3c0409fa97e8effc88c2e5bfc96",
+    "decisive": true
+  },
+  {
+    "battle_id": "00CYP2VGLUJY",
+    "path": "data/raw/00CYP2VGLUJY.json",
+    "sha256": "182f38e0a8f8f39ae22b90d7bf61e5b374110a8b234c2fbc0fe48ce8e5bdd623",
+    "decisive": true
+  },
+  {
+    "battle_id": "08JPVQ8RJY90",
+    "path": "data/raw/08JPVQ8RJY90.json",
+    "sha256": "2c646904ed00f2f7dc7b1bd2caaea91f5e008b457820fee1b694b29194929640",
+    "decisive": true
+  },
+  {
+    "battle_id": "028YPQU09JG8",
+    "path": "data/raw/028YPQU09JG8.json",
+    "sha256": "3154e7b05edcd91aefb6df3d44a7a34b50c54dbc71b06300a2da9d3706816b88",
+    "decisive": true
+  },
+  {
+    "battle_id": "09R9JQGLQ0VJ",
+    "path": "data/raw/09R9JQGLQ0VJ.json",
+    "sha256": "b07c38393fb80fdc88a99f35ea89fdb719bc4479c861e6be3a204acd6358d918",
+    "decisive": true
+  },
+  {
+    "battle_id": "08JPVQPPLR89",
+    "path": "data/raw/08JPVQPPLR89.json",
+    "sha256": "ebb524669c5123563c530ee0098834310469a029ec978d5e78be88544d7b4a42",
+    "decisive": true
+  },
+  {
+    "battle_id": "02QY98V9PRVV",
+    "path": "data/raw/02QY98V9PRVV.json",
+    "sha256": "a0b06a0571c17e25414ed8de7d4bcfb60b51102c214e928610bc22b82d52c173",
+    "decisive": true
+  },
+  {
+    "battle_id": "02GY99U8QU8U",
+    "path": "data/raw/02GY99U8QU8U.json",
+    "sha256": "936d9b8080137529f24196a28a1469a6ad6dd0c5b535985591080832cc50a2a0",
+    "decisive": true
+  },
+  {
+    "battle_id": "08RPVLL0U8VV",
+    "path": "data/raw/08RPVLL0U8VV.json",
+    "sha256": "cfa272e8c20081d9f2dc329157886cc7ac61b5aeb0d9fb07e5b5a89d17f5f593",
+    "decisive": true
+  },
+  {
+    "battle_id": "028YPQU0VVYP",
+    "path": "data/raw/028YPQU0VVYP.json",
+    "sha256": "29465a4372806055fff45b4149e9cd10c02952378fda575d83b2b31f5d9dbc53",
+    "decisive": true
+  },
+  {
+    "battle_id": "082Y890LVRUQ",
+    "path": "data/raw/082Y890LVRUQ.json",
+    "sha256": "e500a2c11c73c920edf4f75f7201a48c8ff6549ff7e133563ad10ebba261eaeb",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVL8RPCJ9",
+    "path": "data/raw/08CPVL8RPCJ9.json",
+    "sha256": "60c71ebd7a2d7a0f31be1fcc3d4c79380b3ba9d90c9d172370b5b0862dbbb36a",
+    "decisive": true
+  },
+  {
+    "battle_id": "08GPVPQRY9GJ",
+    "path": "data/raw/08GPVPQRY9GJ.json",
+    "sha256": "dcc371abe3853457c4e2e8bb3b58e1a0f8b54ae10fe260770e8aac30c83d90e9",
+    "decisive": true
+  },
+  {
+    "battle_id": "02JY9P08V29G",
+    "path": "data/raw/02JY9P08V29G.json",
+    "sha256": "5c03b4a98a9da79386a517235858c29b6494f18e5ad52b57d7775669c2b1da76",
+    "decisive": true
+  },
+  {
+    "battle_id": "08RPVL9GJVGP",
+    "path": "data/raw/08RPVL9GJVGP.json",
+    "sha256": "2f18124f75771fde64242b2b41138be3dbf725593c9c52076c4d6db1461fcd37",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98LUPJQP",
+    "path": "data/raw/02LY98LUPJQP.json",
+    "sha256": "e419bc24c6a850fe720e41124a0e8b54f03807b3887e10bccd4077fa77b047b8",
+    "decisive": true
+  },
+  {
+    "battle_id": "028YPQV9P9GU",
+    "path": "data/raw/028YPQV9P9GU.json",
+    "sha256": "46ccc5fef0de1a5dce92cd6cc6a29f6c1b111731b208e6ef76b4865cb7f979e2",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQLG8RJU",
+    "path": "data/raw/02YYPQLG8RJU.json",
+    "sha256": "2d9c1d8972db47e084a99f330ee0b36ded24a7689ee44d780c30b7a2578b82fa",
+    "decisive": true
+  },
+  {
+    "battle_id": "02CY822QYP09",
+    "path": "data/raw/02CY822QYP09.json",
+    "sha256": "1efd97ec212bb524f28a22a955deaa21c16c8b2e8fb6ebd62cae2cb8d5d65502",
+    "decisive": true
+  },
+  {
+    "battle_id": "02JY99VG9QQQ",
+    "path": "data/raw/02JY99VG9QQQ.json",
+    "sha256": "edda050e566058eeff96b4e05b793fa4220af3067bd7cca76bf793c749c69aa5",
+    "decisive": true
+  },
+  {
+    "battle_id": "090PPRJ0RU2U",
+    "path": "data/raw/090PPRJ0RU2U.json",
+    "sha256": "90aeb4dc9cee5da3c06ea504fff595c5b39a4e36f9f4e0649287aa7ef336a8f7",
+    "decisive": true
+  },
+  {
+    "battle_id": "08UPPGQJQYLR",
+    "path": "data/raw/08UPPGQJQYLR.json",
+    "sha256": "98ec5176d4c6c5d2ab11d197dec5e477b2c5c3c67736053829bccb40d6fbdade",
+    "decisive": true
+  },
+  {
+    "battle_id": "09R9JQG2V8RQ",
+    "path": "data/raw/09R9JQG2V8RQ.json",
+    "sha256": "b14adcc2eaa549117861585d550e20ed9d929663755887d2eb0092c2882e920d",
+    "decisive": true
+  },
+  {
+    "battle_id": "090PPRQJV2QR",
+    "path": "data/raw/090PPRQJV2QR.json",
+    "sha256": "30cf4507c678ca0a289a67690c515475eb8590efb682163510d24f1c48982fa8",
+    "decisive": true
+  },
+  {
+    "battle_id": "08VPPG8RPUC2",
+    "path": "data/raw/08VPPG8RPUC2.json",
+    "sha256": "5688c75329f806607370552c8d709ad1a544ae7339d8929132e98f8259c49763",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPR99YJ0Y",
+    "path": "data/raw/092PPR99YJ0Y.json",
+    "sha256": "7bca207462fed5384ddcf284e32e51fd47f0d3559341fced9994c8fb98b752b2",
+    "decisive": true
+  },
+  {
+    "battle_id": "02RY9PPUJJVG",
+    "path": "data/raw/02RY9PPUJJVG.json",
+    "sha256": "18f33f2c09e5eca0c8a94e9a04e51bd974fc4e352c0e15d978a79ed85e906cc7",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP2PGG9VQ",
+    "path": "data/raw/00RYP2PGG9VQ.json",
+    "sha256": "afcf0f18bfe2a8354e3ca0b3273e8465cd45fe457d0bf6bf855800dceb337aff",
+    "decisive": true
+  },
+  {
+    "battle_id": "088Y2UPQV09Q",
+    "path": "data/raw/088Y2UPQV09Q.json",
+    "sha256": "113da0c6de738f53ba85c6d219986e067b3adbd3315c53d56e956be194169904",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP292LQ8C",
+    "path": "data/raw/00RYP292LQ8C.json",
+    "sha256": "286c53320fa8e202aefe62ee2510bcb89df7f33994e4ce133e58130485f2dc30",
+    "decisive": true
+  },
+  {
+    "battle_id": "02RY9PLPJRPG",
+    "path": "data/raw/02RY9PLPJRPG.json",
+    "sha256": "62af0e270b4cce32c7431ec3c8628ba7ca12285ad6f321e0977ea0caefdd969a",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLGCJ0UC",
+    "path": "data/raw/029YPLGCJ0UC.json",
+    "sha256": "c289634174567968642b2f29dd430fc145a7286a878c88ee245ba4d078c19a88",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JGGGR0PP",
+    "path": "data/raw/09J9JGGGR0PP.json",
+    "sha256": "82fdd5d82ced0187e0711ccf42af76f875b8d67ddff0381b069141217b6ef74b",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVL0RRQCR",
+    "path": "data/raw/08CPVL0RRQCR.json",
+    "sha256": "24342d1d2a5bd7efcb97fc6fd366458229ee552c4bfb7162f3821b7cc80633a5",
+    "decisive": true
+  },
+  {
+    "battle_id": "09PP9Y8VR9UC",
+    "path": "data/raw/09PP9Y8VR9UC.json",
+    "sha256": "9d9e941905f7dc5fa442f5e9cdf234df8de30daf406250d4801f38cfcfb825af",
+    "decisive": true
+  },
+  {
+    "battle_id": "09LP9Q9V9L2C",
+    "path": "data/raw/09LP9Q9V9L2C.json",
+    "sha256": "53062b5644342da05065b33963c8706dc6b9284328d1c1fcc5764684017dd814",
+    "decisive": true
+  },
+  {
+    "battle_id": "09C9JGR09R9L",
+    "path": "data/raw/09C9JGR09R9L.json",
+    "sha256": "e40196cefd833267023cf5908166f61aee170ffd12e9ead20773309678c9c206",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP20G9LPJ",
+    "path": "data/raw/00GYP20G9LPJ.json",
+    "sha256": "5042abec6dc57d3e4ce9c11cc18a5ebee4090fd70f298158c013d3140e31fdce",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY9822LJ09",
+    "path": "data/raw/02LY9822LJ09.json",
+    "sha256": "340527daf70b132d1833d62c5e0a772ba79ca04a5efad7eb27ec9febfad80e54",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQUPYLP2",
+    "path": "data/raw/09G9JQUPYLP2.json",
+    "sha256": "98fc702347645eb37c5ad4b139f6f20a15e01cb52d0282b2f6da133bc14e3e74",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0U0RPJQ",
+    "path": "data/raw/00GYP0U0RPJQ.json",
+    "sha256": "f6058708eb2cdefd2dc39a6419918d76bca673038a514c9bc71d4e218e4c09ee",
+    "decisive": true
+  },
+  {
+    "battle_id": "08JPVQ8C2Y88",
+    "path": "data/raw/08JPVQ8C2Y88.json",
+    "sha256": "1cf005a6e2ace6e07aeb12d9038e3464c58cab46c747bf7204c1d5946565e9ee",
+    "decisive": true
+  },
+  {
+    "battle_id": "02GY9PLPC8CV",
+    "path": "data/raw/02GY9PLPC8CV.json",
+    "sha256": "f35d9e2da213184e15aa1119ed6382834a29c70f9396b5c007b7f74469b2b0b4",
+    "decisive": true
+  },
+  {
+    "battle_id": "028YPQU9V2LU",
+    "path": "data/raw/028YPQU9V2LU.json",
+    "sha256": "5ee72e1268b8925ffa162bf6a8dfc9daf9433907ea203b95e7a4c29f4127af86",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLJ8QURG",
+    "path": "data/raw/029YPLJ8QURG.json",
+    "sha256": "43c613a97835aec8c37b156c0a047a0800fe9971f09ccc355a81fc12ddfb6f98",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPQLGG802",
+    "path": "data/raw/02PYPQLGG802.json",
+    "sha256": "7c9cc5c4e98d348b9d53c12a446bfe02157d0200891939cd1c8317966bfc1147",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0VJPCY0",
+    "path": "data/raw/00GYP0VJPCY0.json",
+    "sha256": "4c3e9f355daeee8c73f4d4d9bbc4d3fb796f8da39603e0d7be11b23526c4e9a3",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP2P9UQ9J",
+    "path": "data/raw/020YP2P9UQ9J.json",
+    "sha256": "d6c7fc163ffd7b7dc3cc8c773465360990c29cf15e8941e23d44f97cd6421da6",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQQY2URC",
+    "path": "data/raw/02YYPQQY2URC.json",
+    "sha256": "a83bdbbab973f49643739e28336f9ebacac7fd3f472187220fe09dd9a1b0278f",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL8UJUJVC",
+    "path": "data/raw/009YL8UJUJVC.json",
+    "sha256": "2758ef8353f6d19c459756d0ed2494db6984e56a68f0954f8dc2b125725d4a22",
+    "decisive": true
+  },
+  {
+    "battle_id": "08RPVLYUCU0R",
+    "path": "data/raw/08RPVLYUCU0R.json",
+    "sha256": "6d2fad35620906f0ad4242e18fd567c42428b747b0fa6ab383249809e0ee0c5c",
+    "decisive": true
+  },
+  {
+    "battle_id": "000YL0GCVJLY",
+    "path": "data/raw/000YL0GCVJLY.json",
+    "sha256": "b2efdb1befe078793dcc5ebd7aae928a01cd2e68d83a5f879d3ce00f2726726c",
+    "decisive": true
+  },
+  {
+    "battle_id": "00JYP88CV292",
+    "path": "data/raw/00JYP88CV292.json",
+    "sha256": "da221174909c089f0a77e89044f78c7a3c17c8b2c501895bc636d8284ce5b9f0",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP2P8GYYP",
+    "path": "data/raw/020YP2P8GYYP.json",
+    "sha256": "4e1c82615beebc8268d2079bea86ee05a759420be67f1bdc83bc132e7b5e1512",
+    "decisive": true
+  },
+  {
+    "battle_id": "02CY822Q8P2R",
+    "path": "data/raw/02CY822Q8P2R.json",
+    "sha256": "e4a03125b98af8eb14160be95b8c8d92e7a9f48c073b7e610759ea4ad3169df9",
+    "decisive": true
+  },
+  {
+    "battle_id": "08LY2JVLQJ2C",
+    "path": "data/raw/08LY2JVLQJ2C.json",
+    "sha256": "a180409ec6da779dd2cdebaa51284028e2268976967017dee64779828aa8bcd1",
+    "decisive": true
+  },
+  {
+    "battle_id": "080Y8988CRC2",
+    "path": "data/raw/080Y8988CRC2.json",
+    "sha256": "7d3dd91f6fe569ed9bc8c947061587beae6e42d11eecffe0285f151c06dbeb04",
+    "decisive": true
+  },
+  {
+    "battle_id": "02UY82PURR2Y",
+    "path": "data/raw/02UY82PURR2Y.json",
+    "sha256": "205838e689f0b6ad2e9cc280577ecc6ac846e9cc458be043e6562bc7754569a2",
+    "decisive": true
+  },
+  {
+    "battle_id": "00CYP2V8C0VU",
+    "path": "data/raw/00CYP2V8C0VU.json",
+    "sha256": "e290fd300465e592c0b70c70c661948bb1547c036123bbb645f8594330d049a0",
+    "decisive": true
+  },
+  {
+    "battle_id": "090PPRQY8CRP",
+    "path": "data/raw/090PPRQY8CRP.json",
+    "sha256": "97844aa8c80c5cb5bd645b7443f823812d880947c58e10eecb410d61de83bd79",
+    "decisive": true
+  },
+  {
+    "battle_id": "08JPVQ9J9LU0",
+    "path": "data/raw/08JPVQ9J9LU0.json",
+    "sha256": "95c26519ff807d5f6c013cf1908350faa14dee7b0029c06719df1eb93be8da83",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLJ8RURU",
+    "path": "data/raw/029YPLJ8RURU.json",
+    "sha256": "19d4ab99ffd0906bd1745cde24d79a5c7e9e10312d20fd80873a0a5b91f5ebb6",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPR99VVLP",
+    "path": "data/raw/092PPR99VVLP.json",
+    "sha256": "ee6270c2cafd9f67e0caeeb57d078ca3bb40ee4bcf65f54fd6048972b51f20ff",
+    "decisive": true
+  },
+  {
+    "battle_id": "008YL2GYLPVJ",
+    "path": "data/raw/008YL2GYLPVJ.json",
+    "sha256": "c246b0d1994144868f25b711eac4f679b10595710ae885e1c9b7f31e567d1b09",
+    "decisive": true
+  },
+  {
+    "battle_id": "080Y88LG2RGP",
+    "path": "data/raw/080Y88LG2RGP.json",
+    "sha256": "d78c7ac4df0294957cfd49522e5cf997d2b62065d052b23b8e8f111110ee0c75",
+    "decisive": true
+  },
+  {
+    "battle_id": "08GPVPGVLR8L",
+    "path": "data/raw/08GPVPGVLR8L.json",
+    "sha256": "7764b438c2db87b8f560555de23e2241597ef6547a23c749f7ab629b55beb96b",
+    "decisive": true
+  },
+  {
+    "battle_id": "008YL2GLQ28V",
+    "path": "data/raw/008YL2GLQ28V.json",
+    "sha256": "01f135a88bf6515c1ff53bbb8ad798539119d0d4c9bfdc329b2b6fe81b5ec221",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP2YGVGLJ",
+    "path": "data/raw/00RYP2YGVGLJ.json",
+    "sha256": "810db94e10fae91148d3f76d19f1d20c506cc1b29fabe6f71c819dfdf5d85644",
+    "decisive": true
+  },
+  {
+    "battle_id": "08LY2C0JV8UP",
+    "path": "data/raw/08LY2C0JV8UP.json",
+    "sha256": "b24655536d65b977ea9a03eb87ae2ebd749a70baba4ec68e45320328c4c48abc",
+    "decisive": true
+  },
+  {
+    "battle_id": "00UYP2CRJ8VC",
+    "path": "data/raw/00UYP2CRJ8VC.json",
+    "sha256": "72dbfb941c9f5907622ec72337bd1fb319bec671d68d02891a0bc358204f8038",
+    "decisive": true
+  },
+  {
+    "battle_id": "02GY9PLVJR0L",
+    "path": "data/raw/02GY9PLVJR0L.json",
+    "sha256": "d38f6ac86006dade1cfcef8ba7a7144ed2319595dfe2cd005f2d70ec0d4165bf",
+    "decisive": true
+  },
+  {
+    "battle_id": "00VYP80YC9YY",
+    "path": "data/raw/00VYP80YC9YY.json",
+    "sha256": "fb1d5dd7ab549cfb7ec709a2339d109d91394b67923821aa6b94ae40c31a9eb8",
+    "decisive": true
+  },
+  {
+    "battle_id": "082Y88VL9L9L",
+    "path": "data/raw/082Y88VL9L9L.json",
+    "sha256": "d535a240c9a4b4491ff0a6ab3e65311acf5342b178c192eb3b8e23db39d9ce77",
+    "decisive": true
+  },
+  {
+    "battle_id": "00VYP2VUUYU8",
+    "path": "data/raw/00VYP2VUUYU8.json",
+    "sha256": "749c6c9d32684c4aa2cb1860ddbcf1b61e4e600e7caadca1d3163800136d7e96",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98YVJU0C",
+    "path": "data/raw/02LY98YVJU0C.json",
+    "sha256": "02b384ed03f5a9d444f725ac5c0253bacd2e68cacdfecdc0f0d9266c51da545e",
+    "decisive": true
+  },
+  {
+    "battle_id": "00PYL2Y8JP2P",
+    "path": "data/raw/00PYL2Y8JP2P.json",
+    "sha256": "06b0457ba7a58622a680c53a7c25aecaebd4bc093d3a88046833451780c1dafd",
+    "decisive": true
+  },
+  {
+    "battle_id": "090PPRG2L9QL",
+    "path": "data/raw/090PPRG2L9QL.json",
+    "sha256": "fd09f66e4835062984da652763da9327744cb5cc70871ae1dc2a09f930bc2505",
+    "decisive": true
+  },
+  {
+    "battle_id": "02JY9P20P82U",
+    "path": "data/raw/02JY9P20P82U.json",
+    "sha256": "2349f1854898237f75bb2f0e731d2607723993c8b6a523488747b8e6a356c78d",
+    "decisive": true
+  },
+  {
+    "battle_id": "09R9JQGC0C9G",
+    "path": "data/raw/09R9JQGC0C9G.json",
+    "sha256": "0fd98c65126a7c8b58ce818ebe5d208a0636d53b519b9a4ad5106fcfa0d5be47",
+    "decisive": true
+  },
+  {
+    "battle_id": "002YL8YJ9J9V",
+    "path": "data/raw/002YL8YJ9J9V.json",
+    "sha256": "6b48cfcbd36705d2e1e51135081612f6db74c01e7439eec8d6e25aef98d52c5a",
+    "decisive": true
+  },
+  {
+    "battle_id": "02VY88YQ2VCV",
+    "path": "data/raw/02VY88YQ2VCV.json",
+    "sha256": "29c396b26353aac962fe3d19218abef29a3f595d2c988580e1113c1011c798c1",
+    "decisive": true
+  },
+  {
+    "battle_id": "09YP9Q8009QY",
+    "path": "data/raw/09YP9Q8009QY.json",
+    "sha256": "40012399255ebeb7c85d39122a1383ea8e6bc0875f9dd571dffd77c6d09b602b",
+    "decisive": true
+  },
+  {
+    "battle_id": "02VY88QJCYVY",
+    "path": "data/raw/02VY88QJCYVY.json",
+    "sha256": "9d890c8ba2f110a70acaa669d29a9a3425b21470dbfde4ff1ccc3a3612cd545c",
+    "decisive": true
+  },
+  {
+    "battle_id": "08QPVQ20ULJC",
+    "path": "data/raw/08QPVQ20ULJC.json",
+    "sha256": "67b57e348252a85fb2c34cb55581d3a38923c8ca376931f34270c7568c64eb40",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP2YQ920J",
+    "path": "data/raw/020YP2YQ920J.json",
+    "sha256": "fcc1d2e4074fcb80f41629353eaaa51b499245b445fe589950e66dd7bfa91d37",
+    "decisive": true
+  },
+  {
+    "battle_id": "08JPVQ2Y8LYV",
+    "path": "data/raw/08JPVQ2Y8LYV.json",
+    "sha256": "386df2ee0cbfc16a785348db80c6a98a9f2d86daa4744f979c725e20bb30683a",
+    "decisive": true
+  },
+  {
+    "battle_id": "002YL8RCQ9JV",
+    "path": "data/raw/002YL8RCQ9JV.json",
+    "sha256": "cfdd6dd5985770a3555caa1fce710b3e2b62b4b6a3108d873ca7905b2ec7766e",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP29LY8VQ",
+    "path": "data/raw/00RYP29LY8VQ.json",
+    "sha256": "18ec3e263b021c248629a60b8aae81b6f01777267f3bb25111984d4dc880603d",
+    "decisive": true
+  },
+  {
+    "battle_id": "00UYP82RCPQP",
+    "path": "data/raw/00UYP82RCPQP.json",
+    "sha256": "9474657259a49275808101c20c8587b29f24dff534554f315abfdfbd3b5427c9",
+    "decisive": true
+  },
+  {
+    "battle_id": "000YL0J29LYQ",
+    "path": "data/raw/000YL0J29LYQ.json",
+    "sha256": "bfba78f8a631ee199653ccd7bb1a8975ab83954d36d9a473ea9f530ad4489eee",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPQPJQ0CQ",
+    "path": "data/raw/02PYPQPJQ0CQ.json",
+    "sha256": "dda0d974fce59860803f02b8844aedada8d4cd9d7de71d305f57d43c214a7b5b",
+    "decisive": true
+  },
+  {
+    "battle_id": "089Y2UL8GVGV",
+    "path": "data/raw/089Y2UL8GVGV.json",
+    "sha256": "8c6a4ecc5ac766d8a4f2fb2e2455aa9b9be1baa823925de3ce96e4df4538ba16",
+    "decisive": true
+  },
+  {
+    "battle_id": "002YL2VCGQ0L",
+    "path": "data/raw/002YL2VCGQ0L.json",
+    "sha256": "7e95f78b86b0efbf26ed6cd6e203f9ea78e9b0e5cbe6a47f47dd7f396a21e588",
+    "decisive": true
+  },
+  {
+    "battle_id": "088Y2UPJ9YJU",
+    "path": "data/raw/088Y2UPJ9YJU.json",
+    "sha256": "1091bf58764a263aeb41c691a06c6394c2358b4e79a1ef4797d51e825f201fab",
+    "decisive": true
+  },
+  {
+    "battle_id": "02RY9PQG29CV",
+    "path": "data/raw/02RY9PQG29CV.json",
+    "sha256": "854036164e81819b9dfdd7823677b62674b622d3f90484cb0251ce62004cf899",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JR888CVC",
+    "path": "data/raw/09J9JR888CVC.json",
+    "sha256": "79e203a15735a6221ffdc623528a55a78c79d763258ef7c9e167747314484b50",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP0JR08V9",
+    "path": "data/raw/020YP0JR08V9.json",
+    "sha256": "63c0d88d06944cb32b2e2a0178c3c9fa43d22db916bc79b910e7c4df8ab90d20",
+    "decisive": true
+  },
+  {
+    "battle_id": "00JYP92V0GU9",
+    "path": "data/raw/00JYP92V0GU9.json",
+    "sha256": "c4865595c313ef314267941a0d909e303252841159ed407a80595d1d794e6e31",
+    "decisive": true
+  },
+  {
+    "battle_id": "02VY88QYVRL9",
+    "path": "data/raw/02VY88QYVRL9.json",
+    "sha256": "294ff4c17b0461b7ecb7b6a106717b6514751ee29a00d38ca50f789f96c6cbfc",
+    "decisive": true
+  },
+  {
+    "battle_id": "08YY2UJYCVY9",
+    "path": "data/raw/08YY2UJYCVY9.json",
+    "sha256": "e19da7d4fd64d89c955c46dc41732445e7d340b8ad8896dc8409a9c11657150c",
+    "decisive": true
+  },
+  {
+    "battle_id": "00UYP828UY9R",
+    "path": "data/raw/00UYP828UY9R.json",
+    "sha256": "e97f2f9ed87384b2cf8e69dfe2dff0c51530daef37df1b4d751b1a008c294164",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0JCGGVR",
+    "path": "data/raw/00GYP0JCGGVR.json",
+    "sha256": "dfa3a401f47f67fc7b94bd5e9595928401448c22ea143d5a9f1c0250fe6f6d95",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP0CUJL0U",
+    "path": "data/raw/00RYP0CUJL0U.json",
+    "sha256": "18744a95b027ffdd41842e9efb11887f8e6fbae2bbd0c6522053d3f8f179d5eb",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLGJRPPP",
+    "path": "data/raw/029YPLGJRPPP.json",
+    "sha256": "e455045f442eb73f581e565c8bcb9ac0b1209e47b2505fa89d72c483b6563fbf",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPR82LGJC",
+    "path": "data/raw/092PPR82LGJC.json",
+    "sha256": "0c75fa8ddb777cd2c9275f361aebbd4620c9094c2668aab4a2b4b49c51e39e58",
+    "decisive": true
+  },
+  {
+    "battle_id": "082Y88VGY2RU",
+    "path": "data/raw/082Y88VGY2RU.json",
+    "sha256": "f6ebcc1051b49adfc5d873a953a34986cfe0a731f96fa5f98e0688fb479d51d4",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPRPVJ982",
+    "path": "data/raw/092PPRPVJ982.json",
+    "sha256": "729f2a62e4b427c8254e1e11abe2a13be558ad2f5da5620424f45a87eb356b4e",
+    "decisive": true
+  },
+  {
+    "battle_id": "098PPG9QC98G",
+    "path": "data/raw/098PPG9QC98G.json",
+    "sha256": "42c4a6ae2e645fbd21a4d1668962b96ed178f5104204f79aa2afccac0bc26c66",
+    "decisive": true
+  },
+  {
+    "battle_id": "02QY98UGVJLG",
+    "path": "data/raw/02QY98UGVJLG.json",
+    "sha256": "5040b261ff5614cf8dd2c9ed7b8f46ee16d3964b0b69e2c62eb38145aecbed0b",
+    "decisive": true
+  },
+  {
+    "battle_id": "02QY98V9V90P",
+    "path": "data/raw/02QY98V9V90P.json",
+    "sha256": "199e44616367c7c91577249d5a73a808f90e0cc17265e77d451e0a50a5b0fef1",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPGVCVP0C",
+    "path": "data/raw/092PPGVCVP0C.json",
+    "sha256": "c79d0bab7d3c2d1bf9fc7accd20a97ce1ba82c0c0269dbe25f1af8c6c88b95cc",
+    "decisive": true
+  },
+  {
+    "battle_id": "09PP9Y9Y9PPQ",
+    "path": "data/raw/09PP9Y9Y9PPQ.json",
+    "sha256": "5b7881f005a8e87cff3c6fc93b2db9b792ee18a5b192e982a2aa8708a5276f2e",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQG9R09U",
+    "path": "data/raw/02YYPQG9R09U.json",
+    "sha256": "fa399d279349dece8283b3fa573b0ee433488cfe17d8599fdeae83c77b507557",
+    "decisive": true
+  },
+  {
+    "battle_id": "08YY2UC20RP2",
+    "path": "data/raw/08YY2UC20RP2.json",
+    "sha256": "5d4f97a60b26b229cdf3b678a6ef49fe0a83bd46c9ddf7e5c41eb3fd228d2086",
+    "decisive": true
+  },
+  {
+    "battle_id": "00JYP8PJ28VU",
+    "path": "data/raw/00JYP8PJ28VU.json",
+    "sha256": "c2877f9284767b47585a7eb9ea3b3a4c74862dae361c26a13cbfb3f470eeabe1",
+    "decisive": true
+  },
+  {
+    "battle_id": "09LP9QQJQJLQ",
+    "path": "data/raw/09LP9QQJQJLQ.json",
+    "sha256": "9d0ec939e99912e1009f914d487c5de1d98bd65cdce5703b5da01dbbd2be9e08",
+    "decisive": true
+  },
+  {
+    "battle_id": "008YL2GRC9LC",
+    "path": "data/raw/008YL2GRC9LC.json",
+    "sha256": "cef06495f22603f3baebb72f4cfd1ce8ba5f24500eec6ce6f515488aa7a79ed9",
+    "decisive": true
+  },
+  {
+    "battle_id": "099P9LU2CJ8G",
+    "path": "data/raw/099P9LU2CJ8G.json",
+    "sha256": "806c95023c13e43ae4b0ae512045f64777f338dd461203729585871414ce7eca",
+    "decisive": true
+  },
+  {
+    "battle_id": "090PPRJJ8L8Q",
+    "path": "data/raw/090PPRJJ8L8Q.json",
+    "sha256": "5bf1668a9075bb481c503d3a7cce7e7ef59446df920688d1111fdcdf99d98be3",
+    "decisive": true
+  },
+  {
+    "battle_id": "082Y88CJVLJY",
+    "path": "data/raw/082Y88CJVLJY.json",
+    "sha256": "b21f76d3584c7239bd0c136b8b20e9c2d9c6930388c44ff77fc07f65658fff4a",
+    "decisive": true
+  },
+  {
+    "battle_id": "02RY9PGLJ0Q0",
+    "path": "data/raw/02RY9PGLJ0Q0.json",
+    "sha256": "35d55ffbaaa32a68762849931d36460ba37c7c50e22738adf2bd291e1b234920",
+    "decisive": true
+  },
+  {
+    "battle_id": "00VYP80220VQ",
+    "path": "data/raw/00VYP80220VQ.json",
+    "sha256": "143a678dbb3cba769711152b7de8dc78f52e5979c88b90dea3d0d85ed0cff3d5",
+    "decisive": true
+  },
+  {
+    "battle_id": "00JYP90VRPV2",
+    "path": "data/raw/00JYP90VRPV2.json",
+    "sha256": "c14888944f95c01147f69b39bae00e25cfc930fcf521e9841956fd49937105e4",
+    "decisive": true
+  },
+  {
+    "battle_id": "00YYP2Y2V0J0",
+    "path": "data/raw/00YYP2Y2V0J0.json",
+    "sha256": "a138e28ad8b5ad66d75bb30626ce2ffb9e26986322a977c5a101d73c6c93f66b",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JR0JLVJ0",
+    "path": "data/raw/09J9JR0JLVJ0.json",
+    "sha256": "959b6c08b660a61f760591529bc64940e7a1d195119a00ebc3cd9209e7ba88cb",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPLUP9Y8L",
+    "path": "data/raw/02PYPLUP9Y8L.json",
+    "sha256": "1ccbb14208eee04f9728cebf2927e470602186e9973df01a952d28449b9c91a6",
+    "decisive": true
+  },
+  {
+    "battle_id": "00PYL2GLYGJL",
+    "path": "data/raw/00PYL2GLYGJL.json",
+    "sha256": "46878849c3698fe9e930f3f679215e1ea48a274fe0b86cf5f0b4848d8e591c0d",
+    "decisive": true
+  },
+  {
+    "battle_id": "028YPQRURQJ0",
+    "path": "data/raw/028YPQRURQJ0.json",
+    "sha256": "a35f8a4413d1720fb4e75ab307ac6b5deaf7ebf2be0b73586e4b73bee5d328a3",
+    "decisive": true
+  },
+  {
+    "battle_id": "098PPG90QPGU",
+    "path": "data/raw/098PPG90QPGU.json",
+    "sha256": "10d54a6168bc7bdea743842bd48d012747bd531c20fca79c1a5998af5dca6d71",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JR8Q29PU",
+    "path": "data/raw/09J9JR8Q29PU.json",
+    "sha256": "a973084ffbb1c2bf4fc20f1583be59b82b3f421abea5040938601f933a869567",
+    "decisive": true
+  },
+  {
+    "battle_id": "02RY9P9YJL9U",
+    "path": "data/raw/02RY9P9YJL9U.json",
+    "sha256": "a09b1b324349544f2804388b8486f47ea97c8759eaf89bc9f907e16893e357ac",
+    "decisive": true
+  },
+  {
+    "battle_id": "008YL2RJC8VU",
+    "path": "data/raw/008YL2RJC8VU.json",
+    "sha256": "4d815d0abc168fdbb45f633e09e3d728315e769c3fee2f736a307a39ca5fd2f7",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP220VVV2",
+    "path": "data/raw/020YP220VVV2.json",
+    "sha256": "b17b408a35c2219f77ac5c3b2d69ba11f003fa9ebf41956c8f8faaa2150b1391",
+    "decisive": true
+  },
+  {
+    "battle_id": "08QPVQ829JLU",
+    "path": "data/raw/08QPVQ829JLU.json",
+    "sha256": "5a8f9f9706d48c61b4e5b09a56ac421ff1336db311eca6e6257e426723567706",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLCY9CJ0",
+    "path": "data/raw/029YPLCY9CJ0.json",
+    "sha256": "88e50516b9fef275c9f7e7978f8f0591d37633c812939acfb19fa60c64292572",
+    "decisive": true
+  },
+  {
+    "battle_id": "08QPVQ9R90PQ",
+    "path": "data/raw/08QPVQ9R90PQ.json",
+    "sha256": "7c37ca57118a959f7b27b1bd6ae78dfb2286379a4fa0cd4cddcc482aad1aa35f",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVL9QCY9R",
+    "path": "data/raw/08CPVL9QCY9R.json",
+    "sha256": "a16c353fe1a03659361ef277e360b032cee030f5cd685451bf34f6dcc3067ea9",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQPGG8JQ",
+    "path": "data/raw/02YYPQPGG8JQ.json",
+    "sha256": "bbea510be723bfa8437f48f554d7d1849dbaddc5ebdd77bd0c60363565ac74a0",
+    "decisive": true
+  },
+  {
+    "battle_id": "080Y89090PQ8",
+    "path": "data/raw/080Y89090PQ8.json",
+    "sha256": "56b50a0fd42d964233fa5ff9f7a801e61056fee30ec790c904bb021b5ffc6eab",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98LLC29G",
+    "path": "data/raw/02LY98LLC29G.json",
+    "sha256": "62049ce46ad169e140c10d5bce70a3812a0cafe934ecad74d71c1fd87c747b7c",
+    "decisive": true
+  },
+  {
+    "battle_id": "00UYP808QJQP",
+    "path": "data/raw/00UYP808QJQP.json",
+    "sha256": "59e5a101d2c23dd237b999effcb1d99362d1c5518350073dbfa4942eea951abd",
+    "decisive": true
+  },
+  {
+    "battle_id": "02QY98Q8LG20",
+    "path": "data/raw/02QY98Q8LG20.json",
+    "sha256": "089dd16f5078defab58ef86265e054d877a60e99d90071c5fcbbcfb6454c27e7",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP2PP88GC",
+    "path": "data/raw/020YP2PP88GC.json",
+    "sha256": "5691ab59ebd94cd9946edcde55e31eef49a2123ccfa30eec23a31d124e9a1784",
+    "decisive": true
+  },
+  {
+    "battle_id": "00JYP92JUYJ2",
+    "path": "data/raw/00JYP92JUYJ2.json",
+    "sha256": "d3bbf1eae39063414db65c264f8e160e477f5b668ce76da72d490037cc67ba64",
+    "decisive": true
+  },
+  {
+    "battle_id": "00LYP8UPPCJ8",
+    "path": "data/raw/00LYP8UPPCJ8.json",
+    "sha256": "2c0fd615dbf486ec5e42c7a4cbc7012c756707dac40231b5739435947157fc58",
+    "decisive": true
+  },
+  {
+    "battle_id": "008YL292GLRY",
+    "path": "data/raw/008YL292GLRY.json",
+    "sha256": "0ee1687dc568d2146bd79030a5c11c88157bff6c04f5c4aa4b3e849ea7c6b478",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVL0GL0VU",
+    "path": "data/raw/08CPVL0GL0VU.json",
+    "sha256": "8e0582dbfd167700b4be72a16a954a102d39f72c792dbbc32e6c585ccc82dc4d",
+    "decisive": true
+  },
+  {
+    "battle_id": "080Y88UQ0L9Y",
+    "path": "data/raw/080Y88UQ0L9Y.json",
+    "sha256": "1df3a7ddf69de0d250b1f251e8d219b99cfbeae64ea5771cfbf49d8a7f6929f6",
+    "decisive": true
+  },
+  {
+    "battle_id": "02GY9PP0U0RR",
+    "path": "data/raw/02GY9PP0U0RR.json",
+    "sha256": "c14b23319f20694892003f8c339c93692ede34d6ef6c51a743ef7ade90afea8e",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP29VLLVL",
+    "path": "data/raw/00RYP29VLLVL.json",
+    "sha256": "7ee14e4f28ecc3fe47b37fb29408b35a3bc4d4f31925ca48ae8d2ac39143352e",
+    "decisive": true
+  },
+  {
+    "battle_id": "08QPVQP00GYQ",
+    "path": "data/raw/08QPVQP00GYQ.json",
+    "sha256": "8fe125ae3b9cbae1634c8d92fa47b90b9cc9dffe98217ccf05f36d4a0a637467",
+    "decisive": true
+  },
+  {
+    "battle_id": "08RPVLQGUQ9Q",
+    "path": "data/raw/08RPVLQGUQ9Q.json",
+    "sha256": "ba33a80d540649cdaddc2df13cbde1a1345b5980e72a9804a75367ea33800ce4",
+    "decisive": true
+  },
+  {
+    "battle_id": "000YL0RV8CQY",
+    "path": "data/raw/000YL0RV8CQY.json",
+    "sha256": "004e94760dc27fe11a1042a8ec6ed5de15b36fec6798c676dec2d53b8f4c69ac",
+    "decisive": true
+  },
+  {
+    "battle_id": "08GPVPRRCLLY",
+    "path": "data/raw/08GPVPRRCLLY.json",
+    "sha256": "37a3734da75dcf49acb00ad5e10ff48b1d81c0547fb655154d244b44bcb26468",
+    "decisive": true
+  },
+  {
+    "battle_id": "08QPVQ9GUU08",
+    "path": "data/raw/08QPVQ9GUU08.json",
+    "sha256": "af9d7458e1123e98bf0652fd55384902f3d76b8d6447b9ed65be8e320b1b756c",
+    "decisive": true
+  },
+  {
+    "battle_id": "00CYP2CVJVC2",
+    "path": "data/raw/00CYP2CVJVC2.json",
+    "sha256": "2904a0ea912d08431306745b299816b267c7edad2f83964959afd7a9fa6377d1",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY988R9VRV",
+    "path": "data/raw/02LY988R9VRV.json",
+    "sha256": "e8599714a8b0a62768d5952eed6bdc431d5b76dc3811e872e6be93311d3b17e0",
+    "decisive": true
+  },
+  {
+    "battle_id": "08VPPGG208UJ",
+    "path": "data/raw/08VPPGG208UJ.json",
+    "sha256": "8c7fec4392a120d94de3a10561f0e80e0f8d0f3490d9e2009014cce90c305873",
+    "decisive": true
+  },
+  {
+    "battle_id": "022YY9202C2J",
+    "path": "data/raw/022YY9202C2J.json",
+    "sha256": "471da78bc12550bf0939e0545ac52322e53d934cf18f3fb15580ad4efe8ac591",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVL2V88G8",
+    "path": "data/raw/08CPVL2V88G8.json",
+    "sha256": "48bae64848f4dd6e6a3a5fae4a6e4bf06103a16c15a8cd15b6be7c8e44ecb26a",
+    "decisive": true
+  },
+  {
+    "battle_id": "00LYP90G9V0J",
+    "path": "data/raw/00LYP90G9V0J.json",
+    "sha256": "8e51ba6bd379f2bbc412f476cefb14af78c7147d2e09ba3434a24b91d219c86a",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQQPRPJG",
+    "path": "data/raw/02YYPQQPRPJG.json",
+    "sha256": "7e1a457c55b558f7ac9c7a93ddf1b165192c47ae465a2d6461cd9e30a5191a81",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLC2GVC8",
+    "path": "data/raw/029YPLC2GVC8.json",
+    "sha256": "6371b36238cd93d6dc567385f86eafe875bb9f2f8015b3add7a36c6f85319e23",
+    "decisive": true
+  },
+  {
+    "battle_id": "00PYL2QYUQ99",
+    "path": "data/raw/00PYL2QYUQ99.json",
+    "sha256": "7f04dde4250a23628e25b88621751d62e44038fdf98773f46788b3a919903e9d",
+    "decisive": true
+  },
+  {
+    "battle_id": "022YY8ULJ2PY",
+    "path": "data/raw/022YY8ULJ2PY.json",
+    "sha256": "853512a3f38958601614a83e6b0f509d746556488ca33fda2a9e05839d4b1aac",
+    "decisive": true
+  },
+  {
+    "battle_id": "09C9JGGPGYRR",
+    "path": "data/raw/09C9JGGPGYRR.json",
+    "sha256": "700875bc54fe92f752ab4bfce80f7e48666a3dc606f5a22dadd47036fd34ddfa",
+    "decisive": true
+  },
+  {
+    "battle_id": "09YP9Q9JJPYR",
+    "path": "data/raw/09YP9Q9JJPYR.json",
+    "sha256": "7ad9e5b1f92f5990bafb8799d22fc59d3f21a8a778f5b8290fecdc00d65b8753",
+    "decisive": true
+  },
+  {
+    "battle_id": "08JPVQY2CJPY",
+    "path": "data/raw/08JPVQY2CJPY.json",
+    "sha256": "1b40536b27fb794af5bb02041bd6e0bd014817b23e990924679012615d694fe6",
+    "decisive": true
+  },
+  {
+    "battle_id": "089Y2UG0RJQ8",
+    "path": "data/raw/089Y2UG0RJQ8.json",
+    "sha256": "d988feca7afb43d0c9e4c872d92310ca2523b2f02249392f1294a767bb53c3db",
+    "decisive": true
+  },
+  {
+    "battle_id": "08PY2CU9U0LL",
+    "path": "data/raw/08PY2CU9U0LL.json",
+    "sha256": "9d43efc750d526e138667b82bd0a7486df219dfd269efab770045124472f6f73",
+    "decisive": true
+  },
+  {
+    "battle_id": "02CY8280UPG8",
+    "path": "data/raw/02CY8280UPG8.json",
+    "sha256": "bc4bd0886e3092d67093d7ddd90ef7c6df3753e82cdf4c69ed427e69d4668912",
+    "decisive": true
+  },
+  {
+    "battle_id": "00YYP28GL22U",
+    "path": "data/raw/00YYP28GL22U.json",
+    "sha256": "f95bc7ba376fd2960c3306a98d426c9204338fd0d048e4b8899ee29c99eb510c",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0UPVQV0",
+    "path": "data/raw/00GYP0UPVQV0.json",
+    "sha256": "47e6443d06d5e31cae39ebd42bbe9c9312c02c839130c62a2ac998ce3b1b883b",
+    "decisive": true
+  },
+  {
+    "battle_id": "08QPVQ9JJ8CQ",
+    "path": "data/raw/08QPVQ9JJ8CQ.json",
+    "sha256": "34593b4f33fdfb0545a20386691ece019a3da4ac1e07ae28d16455616128c425",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98L98J9U",
+    "path": "data/raw/02LY98L98J9U.json",
+    "sha256": "f0a70bd3ca1c57e77c99a55dff5cb1f0fea6d9a2ad9a9f5d6dcb7a0a4c3da756",
+    "decisive": true
+  },
+  {
+    "battle_id": "02JY9P2PR8P0",
+    "path": "data/raw/02JY9P2PR8P0.json",
+    "sha256": "a67a3c7643993173610098b230999dae7f5f15474f74874323fd19a806e0c492",
+    "decisive": true
+  },
+  {
+    "battle_id": "00LYP9080VUC",
+    "path": "data/raw/00LYP9080VUC.json",
+    "sha256": "2e13e21dc082d82b94472e6d39c6c7f6d1d175bf6cac77cd2db5d1ede708b846",
+    "decisive": true
+  },
+  {
+    "battle_id": "00CYP2UV9RQV",
+    "path": "data/raw/00CYP2UV9RQV.json",
+    "sha256": "859f523188a698a5aa0d902c19b3dd7c120c02bee717723f00f3bfb2e0dcb4f7",
+    "decisive": true
+  },
+  {
+    "battle_id": "00PYL2Y2UYPL",
+    "path": "data/raw/00PYL2Y2UYPL.json",
+    "sha256": "9e96bdbb42174a11ec5326679460ff4ad36a86333dbe66952d8e3bd86b1afec0",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL8V92CJ9",
+    "path": "data/raw/009YL8V92CJ9.json",
+    "sha256": "b5e793d57e84ca951b3bbe2105bbd20bdf0b5138e83830931ff1b2bfe829268e",
+    "decisive": true
+  },
+  {
+    "battle_id": "09LP9Q9QQQVL",
+    "path": "data/raw/09LP9Q9QQQVL.json",
+    "sha256": "311b57cecb690b03b43866118f3181cdd8117e92c97c6b194bb14499b20b7c88",
+    "decisive": true
+  },
+  {
+    "battle_id": "08PY2U090PUY",
+    "path": "data/raw/08PY2U090PUY.json",
+    "sha256": "41eb4c53fc9bb7b4cd4761067de6a441de738eda00d899602c601e7c9bba0ffc",
+    "decisive": true
+  },
+  {
+    "battle_id": "09R9JQ88PUG9",
+    "path": "data/raw/09R9JQ88PUG9.json",
+    "sha256": "4ca7dc5fd8e9d3c8a5d86267e58fd0d137626199c50171ef0fd5bf325d7554f2",
+    "decisive": true
+  },
+  {
+    "battle_id": "00PYL2L9C9L0",
+    "path": "data/raw/00PYL2L9C9L0.json",
+    "sha256": "b95a053a92dbb6096e6f39f2c6f96ed5f55b0a3a9ac13df927766d754b0c3672",
+    "decisive": true
+  },
+  {
+    "battle_id": "002YL8GUYU8C",
+    "path": "data/raw/002YL8GUYU8C.json",
+    "sha256": "911aee4619bb7541d8460d518399b71f8bc7b8197989152c495c77abe7c839f9",
+    "decisive": true
+  },
+  {
+    "battle_id": "090PPRG2GPPQ",
+    "path": "data/raw/090PPRG2GPPQ.json",
+    "sha256": "d6cca47ff5c8cefd73a51954e40978aaf8a189a7a3b48c4d3973f1ad210197a6",
+    "decisive": true
+  },
+  {
+    "battle_id": "02CY80LUUYUL",
+    "path": "data/raw/02CY80LUUYUL.json",
+    "sha256": "2d5c2ab8332b7c2b276589e621752c59431ce1da480b4a77b63c41cacba8f6b0",
+    "decisive": true
+  },
+  {
+    "battle_id": "00UYP2VR9QRV",
+    "path": "data/raw/00UYP2VR9QRV.json",
+    "sha256": "b7d8067370acf79ae6f51bc3e1a9e5d6d4fc4821f6ef915a55dec9270011f857",
+    "decisive": true
+  },
+  {
+    "battle_id": "09U9JGPQ2C02",
+    "path": "data/raw/09U9JGPQ2C02.json",
+    "sha256": "b6af7c4668ce386ba84f7fb1ce7bce14876583706dae2af36a1a6579632eba5b",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP2PV2L0R",
+    "path": "data/raw/00RYP2PV2L0R.json",
+    "sha256": "950e0a9bf87be8b256d298e56169d3a828825b8f9b068305a3893e8d9654326d",
+    "decisive": true
+  },
+  {
+    "battle_id": "09LP9QQRLG9J",
+    "path": "data/raw/09LP9QQRLG9J.json",
+    "sha256": "600cb8df343fa0dbb50c7f47c451719744ab2b9918cdc2efedc61a677ee1acb7",
+    "decisive": true
+  },
+  {
+    "battle_id": "000YL0R822UY",
+    "path": "data/raw/000YL0R822UY.json",
+    "sha256": "1bd874d9989a40e5ca68c286d433d7c6928c035ae0d67841b568aef000f1cac3",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLY8QPL9",
+    "path": "data/raw/029YPLY8QPL9.json",
+    "sha256": "cb2b0cccbd3b414eddb112cdcf5fb086eb7266a060db6979a40226c1e06406fe",
+    "decisive": true
+  },
+  {
+    "battle_id": "000YL0JCYCGC",
+    "path": "data/raw/000YL0JCYCGC.json",
+    "sha256": "2071de3775d9b0d0f7c83421a903c6e575813ce301d864d1448c5f6e0a1664a6",
+    "decisive": true
+  },
+  {
+    "battle_id": "08VPPGLV99PU",
+    "path": "data/raw/08VPPGLV99PU.json",
+    "sha256": "e238b29e40b91d50e66bdbe22eb85ba63e764b67a30250945758361fa26bf945",
+    "decisive": true
+  },
+  {
+    "battle_id": "00QYP8R08R0V",
+    "path": "data/raw/00QYP8R08R0V.json",
+    "sha256": "9e380b3a72364615001b16259da1d2b48f0350245c56ed776d5ac1235e00a1e8",
+    "decisive": true
+  },
+  {
+    "battle_id": "09PP9YYLQP9U",
+    "path": "data/raw/09PP9YYLQP9U.json",
+    "sha256": "b7b6ea8c2076b2e06dbe3b2405535a34f506935e711add1534c1b69641764b58",
+    "decisive": true
+  },
+  {
+    "battle_id": "00VYP80VGQLP",
+    "path": "data/raw/00VYP80VGQLP.json",
+    "sha256": "5b4d385b7b6ebe682580e9e585418497ed4673ed6f71f3d6c87d3d293a36ed85",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP28QYV88",
+    "path": "data/raw/00RYP28QYV88.json",
+    "sha256": "97a5fc8946f45066b40a911b442822f031de7ab06d432039eff5bbdd881f754b",
+    "decisive": true
+  },
+  {
+    "battle_id": "000YL0J2JU2C",
+    "path": "data/raw/000YL0J2JU2C.json",
+    "sha256": "08e70f3ebc90ec4effae09e39eeb46f44abaaa34dafbfa73ad35c006a1341f31",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP2PJVVCG",
+    "path": "data/raw/00RYP2PJVVCG.json",
+    "sha256": "67851b2b1c5731e96efda3d608dcd5fe09ce900a27abe107bc75d33054714ecb",
+    "decisive": true
+  },
+  {
+    "battle_id": "09R9JQGL8JVU",
+    "path": "data/raw/09R9JQGL8JVU.json",
+    "sha256": "c931d81f53ecb4326eacbe0be94283dc0aed7dea2fa7e54822d4a312728ec54b",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP2YUJRPP",
+    "path": "data/raw/00RYP2YUJRPP.json",
+    "sha256": "abea26b9d0cc6dfadf368f51e5ee7498ec6fa41cafcb4828543c1c5d1809f2ff",
+    "decisive": true
+  },
+  {
+    "battle_id": "09QP9Q8PP9P0",
+    "path": "data/raw/09QP9Q8PP9P0.json",
+    "sha256": "059de83e471f3cab2a382ef3766eda2444b441c054a0b7ea20882dda02c3c398",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL98099G9",
+    "path": "data/raw/009YL98099G9.json",
+    "sha256": "fb9a09ffda25e185d05cbb037b627069f2993ca1cc761b5f675ba71280750529",
+    "decisive": true
+  },
+  {
+    "battle_id": "00CYP2U8PL00",
+    "path": "data/raw/00CYP2U8PL00.json",
+    "sha256": "03271db75d5b236dcd2aed158834ba65495de23c732dfc07b95c71a983be42bb",
+    "decisive": true
+  },
+  {
+    "battle_id": "02GY9PL22Q9Y",
+    "path": "data/raw/02GY9PL22Q9Y.json",
+    "sha256": "3d448fd0a32cfc4c1aa795e7bde9963ebc10697278960d3220da03cd7c7125c7",
+    "decisive": true
+  },
+  {
+    "battle_id": "00PYL2GLJCL0",
+    "path": "data/raw/00PYL2GLJCL0.json",
+    "sha256": "4cb0cd078bcf8f6e49e0f7bbd0b2bca840bb8a319147e99f1810a9ffa3e39a1f",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLJCLU0Y",
+    "path": "data/raw/029YPLJCLU0Y.json",
+    "sha256": "a302a28e146ae21e1f9c7930508367ee4953f8a748c46b4b63c56114069ca272",
+    "decisive": true
+  },
+  {
+    "battle_id": "008YL292YG2G",
+    "path": "data/raw/008YL292YG2G.json",
+    "sha256": "721b719d298e9d3b4d4ff88da0d1dcd7255ba7491e01a75fe95fd45247b908b7",
+    "decisive": true
+  },
+  {
+    "battle_id": "00CYP2ULUG9J",
+    "path": "data/raw/00CYP2ULUG9J.json",
+    "sha256": "913deb9bebe46f466d529d4bf66e94978143ba5b62ee98c12d1a4b522ce17913",
+    "decisive": true
+  },
+  {
+    "battle_id": "08PY2U2URCUJ",
+    "path": "data/raw/08PY2U2URCUJ.json",
+    "sha256": "32bc3c3061efeca442dcd0cae1f219ec6afa066bb2f6b034a5f4e66ca8915a2f",
+    "decisive": true
+  },
+  {
+    "battle_id": "09QP9Q8YYRGP",
+    "path": "data/raw/09QP9Q8YYRGP.json",
+    "sha256": "d49d36f26e0e164c63d090c92541a78e2b3b0cf8ef753c3daebe34386fa7360a",
+    "decisive": true
+  },
+  {
+    "battle_id": "000YL0J2Y2U2",
+    "path": "data/raw/000YL0J2Y2U2.json",
+    "sha256": "e6340d2b1dbc156c4d50282bfa68b65c7ceb46c7ebce2775b4c5a6726f6fe2c2",
+    "decisive": true
+  },
+  {
+    "battle_id": "00CYP809PU9R",
+    "path": "data/raw/00CYP809PU9R.json",
+    "sha256": "0984aa2c3e5e69b241e864fe8b90ea663288aa8cd5ac56c84535ff9974216a22",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP2PPJP22",
+    "path": "data/raw/020YP2PPJP22.json",
+    "sha256": "d99038591342c82bbeb14e140eece0c8ad5dc9694789bd9b5ad9f0db58ca5109",
+    "decisive": true
+  },
+  {
+    "battle_id": "09C9JGGU2PV9",
+    "path": "data/raw/09C9JGGU2PV9.json",
+    "sha256": "01bd7f716a27b1c8d845099d248f40da2f31d94e77ff01f0ec3c6c48d9f3ed29",
+    "decisive": true
+  },
+  {
+    "battle_id": "08VPPGYU9RGG",
+    "path": "data/raw/08VPPGYU9RGG.json",
+    "sha256": "c471f0381e4055defd8f44e58665fe67f898d96ceef865e9858c1a5a675945eb",
+    "decisive": true
+  },
+  {
+    "battle_id": "08YY2U8PCCQG",
+    "path": "data/raw/08YY2U8PCCQG.json",
+    "sha256": "a26de8b32f2ea635a692872c8139906405376f5e2aac32033a67032620c8646a",
+    "decisive": true
+  },
+  {
+    "battle_id": "089Y2UPQQJGV",
+    "path": "data/raw/089Y2UPQQJGV.json",
+    "sha256": "a029ce97952471270a9362ca8751d41929d7d8398c68d027860a6aa55b5cff4a",
+    "decisive": true
+  },
+  {
+    "battle_id": "098PPG89YV2R",
+    "path": "data/raw/098PPG89YV2R.json",
+    "sha256": "278a598044380d2385c1e6b17c9415b282975388982c3ded5ebdfbb5a80be4ba",
+    "decisive": true
+  },
+  {
+    "battle_id": "08GPVPRYG8JY",
+    "path": "data/raw/08GPVPRYG8JY.json",
+    "sha256": "b97625dc54873f44777c056dc9c12720ebb60fdee96862080f76d626d7f73a9a",
+    "decisive": true
+  },
+  {
+    "battle_id": "02RY9PLJ0UQR",
+    "path": "data/raw/02RY9PLJ0UQR.json",
+    "sha256": "a8f00f25bfc9bffbb66b44dfcd940d67939ad25f81e7da9faaef753b43757240",
+    "decisive": true
+  },
+  {
+    "battle_id": "089Y2UYQC8Q9",
+    "path": "data/raw/089Y2UYQC8Q9.json",
+    "sha256": "5c091a231f28a940e9b9449c3724d730aa2836881fcfba93a412dde0f7e6a7e5",
+    "decisive": true
+  },
+  {
+    "battle_id": "02VY880VYYY2",
+    "path": "data/raw/02VY880VYYY2.json",
+    "sha256": "740d8d779c561b738ef4287bea7d159f11023afaf3e2a0fb0e86207534414f9b",
+    "decisive": true
+  },
+  {
+    "battle_id": "022YY90JUU8L",
+    "path": "data/raw/022YY90JUU8L.json",
+    "sha256": "d46bd7eb5c2a63739bfbd440c4ccc9473ce1ddbc60ba263483bf98bdf3d5aa60",
+    "decisive": true
+  },
+  {
+    "battle_id": "09LP9QLJLLU8",
+    "path": "data/raw/09LP9QLJLLU8.json",
+    "sha256": "00937637891d706a23a642ed8ab70d76bffce08bac186d8ef085b7936253a717",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP22GLUC0",
+    "path": "data/raw/020YP22GLUC0.json",
+    "sha256": "dd4b604ca6015db8e5f1fef121919d23c5d84ab98054e7df9c18144fd90353ea",
+    "decisive": true
+  },
+  {
+    "battle_id": "028YPQJ2JRRR",
+    "path": "data/raw/028YPQJ2JRRR.json",
+    "sha256": "13a390ed985376054d01d8d98ccc5fe53712f19dd69335573ff1b4d01a5e76f9",
+    "decisive": true
+  },
+  {
+    "battle_id": "08UPPGUCJV2R",
+    "path": "data/raw/08UPPGUCJV2R.json",
+    "sha256": "80faecf56a3404894b7bdb0ed81ae5c60bc9fc2aaf1a2b9e22e33f0f68305cb9",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLJUV0UC",
+    "path": "data/raw/029YPLJUV0UC.json",
+    "sha256": "feba29948fd8f8fc77bfaa4c329c1681485669233246b675f78c287db37fc512",
+    "decisive": true
+  },
+  {
+    "battle_id": "09LP9QYG8RGQ",
+    "path": "data/raw/09LP9QYG8RGQ.json",
+    "sha256": "e0c674dd654692c1be69e15624072b644b6d40b8a16d074b0a16c0e21251ca6f",
+    "decisive": true
+  },
+  {
+    "battle_id": "02GY9PL08UR8",
+    "path": "data/raw/02GY9PL08UR8.json",
+    "sha256": "cc406a12e97d8465b3a42aa1d74d5b73fbe1a830dfe61e88b9a9ad63a7fca0c1",
+    "decisive": true
+  },
+  {
+    "battle_id": "089Y2CQYGPR2",
+    "path": "data/raw/089Y2CQYGPR2.json",
+    "sha256": "1a1a1f74ccf856a8277a04b30a66b8da488dbd4116bdce6bd126d336b6b01acc",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPQQCCC0U",
+    "path": "data/raw/02PYPQQCCC0U.json",
+    "sha256": "2d0a0f8c7f65d06f5dbc5a94c80d0958e99f9349307be933ba8ad852656f6a05",
+    "decisive": true
+  },
+  {
+    "battle_id": "089Y2UYQ92Y0",
+    "path": "data/raw/089Y2UYQ92Y0.json",
+    "sha256": "993b35fefdea3cbb1364234d2e8dc63603d20f46516dbf18f0de98cbbab174d1",
+    "decisive": true
+  },
+  {
+    "battle_id": "08LY2C2J29CV",
+    "path": "data/raw/08LY2C2J29CV.json",
+    "sha256": "59ffa0e3c2420a57dfd120c4b1d83b111d817a45b82b44c414dfc190020bcf17",
+    "decisive": true
+  },
+  {
+    "battle_id": "089Y2ULGQ28R",
+    "path": "data/raw/089Y2ULGQ28R.json",
+    "sha256": "72d6a645cedd3dfe97ab83296f642df6c0c39d1f875366bc2c0d8bab6c94867d",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98LU9Y9V",
+    "path": "data/raw/02LY98LU9Y9V.json",
+    "sha256": "065f6e3486876d8a59822996494ba8bc1fd499d422207d856983af54577982cc",
+    "decisive": true
+  },
+  {
+    "battle_id": "09LP9Q80QG29",
+    "path": "data/raw/09LP9Q80QG29.json",
+    "sha256": "f0505f6d8fd9aeb8aa67727421791f4af9d5870ae09d008b58558fbc506d1ae4",
+    "decisive": true
+  },
+  {
+    "battle_id": "08YY2UC8U20J",
+    "path": "data/raw/08YY2UC8U20J.json",
+    "sha256": "047e9a31cc651ec6882804013fa9c1dd276904b76271382db10a1db52f59f2a9",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JGQPJYG8",
+    "path": "data/raw/09J9JGQPJYG8.json",
+    "sha256": "94ee31b47c481fcf7261a7a84596f7582941c322c75ead90749a21bfd4bf1015",
+    "decisive": true
+  },
+  {
+    "battle_id": "08PY2U0UR9QJ",
+    "path": "data/raw/08PY2U0UR9QJ.json",
+    "sha256": "eeb9601e0c264cf2c1b3039420193ef30f1d4c06b2cfa2d58f84e393ada39c27",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL92UCGLL",
+    "path": "data/raw/009YL92UCGLL.json",
+    "sha256": "92449d7fa08c10ecf733ce3bc01694acb6d5e9037aad0b3fa70cb2f281f05923",
+    "decisive": true
+  },
+  {
+    "battle_id": "09YP9Q8JQ80Q",
+    "path": "data/raw/09YP9Q8JQ80Q.json",
+    "sha256": "c991372b086a2092e82477b114aa91d465d5ba3e9801634a6a2e453281c8f1a2",
+    "decisive": true
+  },
+  {
+    "battle_id": "09C9JGG099V2",
+    "path": "data/raw/09C9JGG099V2.json",
+    "sha256": "ad5ea1f5e9ff9af8837a603a65c3e32ab61763be4c9e033dbbe0df7488ddda8b",
+    "decisive": true
+  },
+  {
+    "battle_id": "002YL8RC89CG",
+    "path": "data/raw/002YL8RC89CG.json",
+    "sha256": "a3bf9414feb2b2a6a280ea06f4a9f6c316558a2b9fa2a5c74a0edd018f5447c0",
+    "decisive": true
+  },
+  {
+    "battle_id": "00LYP8CVQ09V",
+    "path": "data/raw/00LYP8CVQ09V.json",
+    "sha256": "aa45cbf0f14cc77d05473083dfe0b3766d552fe7c4e183420d8c9cb683e5f769",
+    "decisive": true
+  },
+  {
+    "battle_id": "08YY2UYVVRL0",
+    "path": "data/raw/08YY2UYVVRL0.json",
+    "sha256": "46353c2fb5755964c33cf97282b236a504a20ddd5933bf0e8cadc23a74e1c6b4",
+    "decisive": true
+  },
+  {
+    "battle_id": "02CY80J0YP8V",
+    "path": "data/raw/02CY80J0YP8V.json",
+    "sha256": "6845ae55e53dfad173caf046946b7bb9578f2e67cd5d69b1f92ac7af9250bc28",
+    "decisive": true
+  },
+  {
+    "battle_id": "080Y88VCJQ92",
+    "path": "data/raw/080Y88VCJQ92.json",
+    "sha256": "0c95821195d5802f7205d3552f6a2770c703e35d0e8551330320319a93b9f313",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP2PU9JQC",
+    "path": "data/raw/020YP2PU9JQC.json",
+    "sha256": "23c61d1963226d7f2eb045bc19abe450c060e4257ed3ce0b8353c55b501bdc36",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0R9QC9V",
+    "path": "data/raw/00GYP0R9QC9V.json",
+    "sha256": "b2cea8c02d30b93327bbf606f5f4aeee65e133d8aaee5d4d9296c279877dad61",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP0VYPGYR",
+    "path": "data/raw/00RYP0VYPGYR.json",
+    "sha256": "03d91ca5f3b7861c9e3d7d6182a7bf87636480f022d9e4dfa08d4892e13682d2",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPR8GQ888",
+    "path": "data/raw/092PPR8GQ888.json",
+    "sha256": "3d94af4cc8dfdc33c4319dd3f519ee969844af50410435f0f00c67164771d9ce",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JR0JGLQY",
+    "path": "data/raw/09J9JR0JGLQY.json",
+    "sha256": "eed2c4925b7b40016f3bfb3ce54d96fabc40bf1b878f2e3fa2dd8723c898f3b3",
+    "decisive": true
+  },
+  {
+    "battle_id": "080Y88PL2LL8",
+    "path": "data/raw/080Y88PL2LL8.json",
+    "sha256": "fbb2612b6f179b5e0a3db54300ac5830637349829259ebcfa8a9f0968db0bde2",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQU0LJJP",
+    "path": "data/raw/09G9JQU0LJJP.json",
+    "sha256": "6922e1e4f8626fbd15fa65bd96183cbb1e8e3855162133b73d22150e6b346ea9",
+    "decisive": true
+  },
+  {
+    "battle_id": "08RPVLL9YQV8",
+    "path": "data/raw/08RPVLL9YQV8.json",
+    "sha256": "ca2347958638c1020c1bb979ae9da488002e607fcdf71c81a1331f46d991c04b",
+    "decisive": true
+  },
+  {
+    "battle_id": "00YYP0VVLLJQ",
+    "path": "data/raw/00YYP0VVLLJQ.json",
+    "sha256": "49530a7b3bd5f07a2f0a416dd233260b01efc925feef8d4828ad1034dd818528",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP28CJYVJ",
+    "path": "data/raw/020YP28CJYVJ.json",
+    "sha256": "c8210dc5c3bbdeac130697d4163a8869c6e331db184c1f162a12504800c6add9",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQLUCU9L",
+    "path": "data/raw/02YYPQLUCU9L.json",
+    "sha256": "8c22823d0c2c43e6f6b97225ce4daadc3c7c6a1e2b4824695848a97e43dd6345",
+    "decisive": true
+  },
+  {
+    "battle_id": "08JPVQ908JCP",
+    "path": "data/raw/08JPVQ908JCP.json",
+    "sha256": "cd31e956f0fe94a1972d10a67bc229694c5d2679df7ae20e1a973e6d6b215f78",
+    "decisive": true
+  },
+  {
+    "battle_id": "09U9JG9G9G0Q",
+    "path": "data/raw/09U9JG9G9G0Q.json",
+    "sha256": "22cccbd6c556b713a8d2937a75712f901f218b5fec95ec0a51ce0c14c8734e0f",
+    "decisive": true
+  },
+  {
+    "battle_id": "09QP9Q0GC8C0",
+    "path": "data/raw/09QP9Q0GC8C0.json",
+    "sha256": "8031a84e5120a5f9785e41f5750b233266d6c1123fc49fc38f12bb4c99f07dec",
+    "decisive": true
+  },
+  {
+    "battle_id": "028YPQRURRRG",
+    "path": "data/raw/028YPQRURRRG.json",
+    "sha256": "7c08c08584a245e10782ab29c85814f10bfe2c2371a912944789450f67f2b1d7",
+    "decisive": true
+  },
+  {
+    "battle_id": "08QPVQY0UR2Q",
+    "path": "data/raw/08QPVQY0UR2Q.json",
+    "sha256": "8aa7de4997aa1b12f427dbabfc9a05310c9887a14c55006d161892243828ede4",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPQLY2GRG",
+    "path": "data/raw/02PYPQLY2GRG.json",
+    "sha256": "ae17ac1169b22766f20b1134988500814ca8daea1b3d0634a5173d1b158b44fc",
+    "decisive": true
+  },
+  {
+    "battle_id": "02UY82YL80GG",
+    "path": "data/raw/02UY82YL80GG.json",
+    "sha256": "468329f1bcdda7ac765067c529befe3fca9b0a72cf7f07c52b351f5d39d1dc49",
+    "decisive": true
+  },
+  {
+    "battle_id": "02JY99VC8CU8",
+    "path": "data/raw/02JY99VC8CU8.json",
+    "sha256": "665e7d5f11e5657d65f00f0c3d5b6089e6f6cfae34f7ce778d7dd130a53960e5",
+    "decisive": true
+  },
+  {
+    "battle_id": "09PP9YQ8PYGU",
+    "path": "data/raw/09PP9YQ8PYGU.json",
+    "sha256": "53e272ef811f43d0af6e9f2d42c2ea32084ec41ca0a4a00d639a494135ff0cc3",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0UJQ8QQ",
+    "path": "data/raw/00GYP0UJQ8QQ.json",
+    "sha256": "dbf10b12ee417b9f29ee40ca5f593526ac968c71e1060fc3276f94ea7a64d418",
+    "decisive": true
+  },
+  {
+    "battle_id": "00VYP2VUJ09V",
+    "path": "data/raw/00VYP2VUJ09V.json",
+    "sha256": "83acfe0149f9851e3a721097b47cab0ef1091fe831325138dfec10ea9c60bf27",
+    "decisive": true
+  },
+  {
+    "battle_id": "002YL8RRYCLJ",
+    "path": "data/raw/002YL8RRYCLJ.json",
+    "sha256": "86284963ce50b8db26560dc33bb9cf182808cf1bfcb0f8c90ef57c23296b6f9d",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQJRJQ2R",
+    "path": "data/raw/09G9JQJRJQ2R.json",
+    "sha256": "3e55f68a4197bb68276400caa69a893c214e9f3abb8cf4aa2f7d5f2de3c600d1",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0J9GY8C",
+    "path": "data/raw/00GYP0J9GY8C.json",
+    "sha256": "6bbd364fea42840f2183f987fabd8cf3b70a0c1d414c02114adfeac1c1ea740a",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0VUVQJU",
+    "path": "data/raw/00GYP0VUVQJU.json",
+    "sha256": "a0928bbb27c1ddb3e8d134375f9446455c58d068238418bb33df323740e767f1",
+    "decisive": true
+  },
+  {
+    "battle_id": "09QP9Q0R9LVV",
+    "path": "data/raw/09QP9Q0R9LVV.json",
+    "sha256": "91bb4b90fa452afb2c6afa5eb374fd964236a2dcfa47cf7879607d72d28e3f3c",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98QJRUL8",
+    "path": "data/raw/02LY98QJRUL8.json",
+    "sha256": "8d7ee9054630ae8fdd4d2a15b8efd06e14bcccdd433d7edbe334c9ad26284a4a",
+    "decisive": true
+  },
+  {
+    "battle_id": "08UPPGUC8G8Y",
+    "path": "data/raw/08UPPGUC8G8Y.json",
+    "sha256": "58a34579f2e5f5f8fea701dae9ca633f85fb25e16201eacf254f8e1f64f6b296",
+    "decisive": true
+  },
+  {
+    "battle_id": "028YPQVPP0G8",
+    "path": "data/raw/028YPQVPP0G8.json",
+    "sha256": "5cc20e04c8912b3425fb30b3b9e79cb3eec20004dec076077216f38be68ec6d5",
+    "decisive": true
+  },
+  {
+    "battle_id": "09YP9LUJ2U9J",
+    "path": "data/raw/09YP9LUJ2U9J.json",
+    "sha256": "af0efd8b76125e263dc623a73eca825a8c1f70092d73e6f23206c0eb333df163",
+    "decisive": true
+  },
+  {
+    "battle_id": "08UPPGUV2LYU",
+    "path": "data/raw/08UPPGUV2LYU.json",
+    "sha256": "6472ec2a0b1bc6abbafb181db5e894408ed8edce213fa33ad40009fff95592b2",
+    "decisive": true
+  },
+  {
+    "battle_id": "08JPVQP8CUCU",
+    "path": "data/raw/08JPVQP8CUCU.json",
+    "sha256": "ea63c523efa126b5e6162dbbdd3380bc2c17e3be0cd20479d1ff5690f9862ef3",
+    "decisive": true
+  },
+  {
+    "battle_id": "099P9LJLYYGR",
+    "path": "data/raw/099P9LJLYYGR.json",
+    "sha256": "69b9964e32a27a116f06c923079d17b47c7aa83428d7c177d87599e5f39130b0",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP228QY8L",
+    "path": "data/raw/020YP228QY8L.json",
+    "sha256": "2be412e810477a9792a40241ad128d339f0cca8bf98799958d1261af24698336",
+    "decisive": true
+  },
+  {
+    "battle_id": "022YY92V90Q8",
+    "path": "data/raw/022YY92V90Q8.json",
+    "sha256": "6a3daedba53078c151638f87216bf1226b6bc4f0913df481ddab8b5c5a6070cd",
+    "decisive": true
+  },
+  {
+    "battle_id": "00JYP90VULR9",
+    "path": "data/raw/00JYP90VULR9.json",
+    "sha256": "350cc20b3fe625b6adef169e83abe88cf3874f112c2934c04c7621607de7e743",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98QQ88YV",
+    "path": "data/raw/02LY98QQ88YV.json",
+    "sha256": "bdf6f5be2703ff80f4fda4b97a2ddea38d125a7b58423f0cbe35d4079e91e0d1",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP2PR9VL0",
+    "path": "data/raw/020YP2PR9VL0.json",
+    "sha256": "5f5acf9dd7b1b83777e8597309f5cea001176d00a1055d70b2bf7404c8acd802",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQYLV8JG",
+    "path": "data/raw/02YYPQYLV8JG.json",
+    "sha256": "936c78725ab67a3d1e94ac02b23aa3e85243546d9cb05bb92a27e0372abaf371",
+    "decisive": true
+  },
+  {
+    "battle_id": "099P9LRJ0PLL",
+    "path": "data/raw/099P9LRJ0PLL.json",
+    "sha256": "8f2709de055dae6dc259b23c25244386ff5cbe5ebd5b215e7acd3ed0dd3f56b8",
+    "decisive": true
+  },
+  {
+    "battle_id": "088Y2U9R0CG8",
+    "path": "data/raw/088Y2U9R0CG8.json",
+    "sha256": "482178bf327eeaea94d3fd03b2830efde8c503a1f63cc06b2b086d37100d9ccb",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JGVPQJV9",
+    "path": "data/raw/09J9JGVPQJV9.json",
+    "sha256": "23178aeab4f5a0889ef1c168de3c2eb32673d3de9de8717771c14b59da2dd54b",
+    "decisive": true
+  },
+  {
+    "battle_id": "02VY88PJGGQQ",
+    "path": "data/raw/02VY88PJGGQQ.json",
+    "sha256": "c272834d69b3ca65cbf3adf617607571093a67348bd66eb42d64c10ee95648c5",
+    "decisive": true
+  },
+  {
+    "battle_id": "08YY2UUGCLQV",
+    "path": "data/raw/08YY2UUGCLQV.json",
+    "sha256": "e140ece609ff9649b317970da16314b4d9dd4b30fc992ab4e0b62ede85a79587",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPQYU9LUQ",
+    "path": "data/raw/02PYPQYU9LUQ.json",
+    "sha256": "71d1236154b5c71eec3ba81d5291c4512acc47cd09e73ee7eebd48808f8aa824",
+    "decisive": true
+  },
+  {
+    "battle_id": "08UPPR08QC0J",
+    "path": "data/raw/08UPPR08QC0J.json",
+    "sha256": "7b7665d24f5d7e9ebf30fad35cd04c8bc725a9f0d0e588101085d260d715f74d",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98RYG90Q",
+    "path": "data/raw/02LY98RYG90Q.json",
+    "sha256": "786a294749c7bcb12516aa97916acb13113de83bb22c0f9d9ee9695145a72361",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQC98YV9",
+    "path": "data/raw/09G9JQC98YV9.json",
+    "sha256": "0f60958a521e3b5e26859cb8eb83250439135f891ecc4ba195d2961d5e3c1436",
+    "decisive": true
+  },
+  {
+    "battle_id": "099P9LUQV9P9",
+    "path": "data/raw/099P9LUQV9P9.json",
+    "sha256": "f4d3720624d8689c897da82012aeabdd751056ac766f1de6e90640175230b4c9",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP299QQ2V",
+    "path": "data/raw/020YP299QQ2V.json",
+    "sha256": "40768d5a32c3fa084f3134197767e35c1d6c945315dfb3535c8e8f7a49a90752",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPR89RYJ8",
+    "path": "data/raw/092PPR89RYJ8.json",
+    "sha256": "f7b4f2ba784b032038e0aae06838f0297130f5aa250fadaa199f666fdacec2bf",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQUCPCLY",
+    "path": "data/raw/09G9JQUCPCLY.json",
+    "sha256": "3800722be7bd0ffcb8d652f0a5eab8cef3fcda6d986a051e3ee29f8810c8c54e",
+    "decisive": true
+  },
+  {
+    "battle_id": "02GY9PL9L0VL",
+    "path": "data/raw/02GY9PL9L0VL.json",
+    "sha256": "977bbac21fc2f2a185d458ee00b431d2e64de05ce52e9b953639ed9b6c566b3e",
+    "decisive": true
+  },
+  {
+    "battle_id": "02CY800LG0UJ",
+    "path": "data/raw/02CY800LG0UJ.json",
+    "sha256": "32362a1042cc33729a9166be12d585fc957abaeb9975e80d134bb62fa7112d69",
+    "decisive": true
+  },
+  {
+    "battle_id": "02JY99VCQY80",
+    "path": "data/raw/02JY99VCQY80.json",
+    "sha256": "26fbdccefe20b6ae30bfcae6dfcf5c639809fd153033e467d47d0a485e853383",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0V9VYUU",
+    "path": "data/raw/00GYP0V9VYUU.json",
+    "sha256": "880cf789f343778694cb61e2b9d5fa5d00ee944404dab2cb631ef87748971b8e",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL8UCCRR0",
+    "path": "data/raw/009YL8UCCRR0.json",
+    "sha256": "0a574e51fa4c76d74394311fc55446606b8da641c94285a037fdd33279b36ed8",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP2289290",
+    "path": "data/raw/020YP2289290.json",
+    "sha256": "ce4cb388ddda6e6e5a65ae851ccb0b7beb7043e7fe2e0ca22228c3e3b34a99db",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPQG0J0GR",
+    "path": "data/raw/02PYPQG0J0GR.json",
+    "sha256": "16fca4443090690e4fdcf5d858916fac6d03bd731698212cfb673479707a871a",
+    "decisive": true
+  },
+  {
+    "battle_id": "08GPVPRYCY9P",
+    "path": "data/raw/08GPVPRYCY9P.json",
+    "sha256": "0adf44fcf5c7bc416b6d9e612e324904241382cf998a2bac1aa41bb2c6335fde",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP29P22CP",
+    "path": "data/raw/020YP29P22CP.json",
+    "sha256": "eab18e99b33e211c8a8fd676c2f6dbe6a73057220f52eb010272c4c12bf7af35",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JGVCURRR",
+    "path": "data/raw/09J9JGVCURRR.json",
+    "sha256": "5d24f169b399aa8a1ac37782b79e4924d6211a9e51bbc8a5050d1f5908e958dc",
+    "decisive": true
+  },
+  {
+    "battle_id": "08JPVQ8QPVG8",
+    "path": "data/raw/08JPVQ8QPVG8.json",
+    "sha256": "55947dd942b73b25e5f261b062348008e754fddc4af1fd6b3f70cec34baaecd3",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQVLJC28",
+    "path": "data/raw/09G9JQVLJC28.json",
+    "sha256": "6d3c742ccd2712393f8b476fac2f44c3a807a34a47abf24e5fcf21d58b20e141",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVL2CRJLR",
+    "path": "data/raw/08CPVL2CRJLR.json",
+    "sha256": "9987aae9499796e2b6ae2fdcb2c2b1e846f18630544a64498c2af4cffdce77f2",
+    "decisive": true
+  },
+  {
+    "battle_id": "09R9JQYLGGQR",
+    "path": "data/raw/09R9JQYLGGQR.json",
+    "sha256": "362a9249180a07f3f24a79319f59223a20c6e38c065cac0c3af8dc8ecc3b34ea",
+    "decisive": true
+  },
+  {
+    "battle_id": "02CY829Q9LGV",
+    "path": "data/raw/02CY829Q9LGV.json",
+    "sha256": "93091756b5df195b95f4c7dd235a06f8b8de6652267b25299a1e2db4aec4766c",
+    "decisive": true
+  },
+  {
+    "battle_id": "00CYP2VG8R29",
+    "path": "data/raw/00CYP2VG8R29.json",
+    "sha256": "c42e5822346e38b522d4ed5d107f4317531452bc44a4c15f8a358a6ebba8c06d",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP298RJ9C",
+    "path": "data/raw/00RYP298RJ9C.json",
+    "sha256": "e651432031ba148d593c4f5901ea55cf68a42b21192d861157eb99fec076d7cb",
+    "decisive": true
+  },
+  {
+    "battle_id": "098PPG8QL0UR",
+    "path": "data/raw/098PPG8QL0UR.json",
+    "sha256": "e858d931b40d9289c8a97f06544bf01532f783bdf99e8348c6d1f7d81e235965",
+    "decisive": true
+  },
+  {
+    "battle_id": "02QY98CRP8UJ",
+    "path": "data/raw/02QY98CRP8UJ.json",
+    "sha256": "531a3439b367544a1b89ab667b4bed71b29321363b6e75834a0f0bd4e6c60947",
+    "decisive": true
+  },
+  {
+    "battle_id": "02CY829LU2L9",
+    "path": "data/raw/02CY829LU2L9.json",
+    "sha256": "162ae089be29362c525c1b09188e9aae847c35cce596678317f60e1eff3be850",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPR9QLRRC",
+    "path": "data/raw/092PPR9QLRRC.json",
+    "sha256": "2c485c40a2b586916f7c1876ee446f57b3e9f1a46262294853f9161ac35f287a",
+    "decisive": true
+  },
+  {
+    "battle_id": "08VPPGQV0P9R",
+    "path": "data/raw/08VPPGQV0P9R.json",
+    "sha256": "3fcc711e4886b453e6a58bf92095512cf3e4f4d460a6f8e06ca52daad4e00be5",
+    "decisive": true
+  },
+  {
+    "battle_id": "080Y890JRG02",
+    "path": "data/raw/080Y890JRG02.json",
+    "sha256": "e0d9011dd6d603dd263ade2dc5dc9beeb7f335156037f548f1d528181dffbfff",
+    "decisive": true
+  },
+  {
+    "battle_id": "02QY9902L9V8",
+    "path": "data/raw/02QY9902L9V8.json",
+    "sha256": "7ae1aaf8b2b1fc04c0d19da93b03d58d0e8faa3b4daf9eaf7a3d8b0c42aae9de",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP2PQ0QYU",
+    "path": "data/raw/00RYP2PQ0QYU.json",
+    "sha256": "76eb06d7ab261aabde36b6840f3a5cb90d348a767e8c676c0e7af320cc572461",
+    "decisive": true
+  },
+  {
+    "battle_id": "08LY2JVJCUGU",
+    "path": "data/raw/08LY2JVJCUGU.json",
+    "sha256": "4cfa2b43f71ffbe4c3081fbe2c0322152de222fbf7ffea42591e4f65fa9f7da1",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLUCRP20",
+    "path": "data/raw/029YPLUCRP20.json",
+    "sha256": "a127a6409894df0d429d69da20769dc217e7c5381e2c5a91cef4f4f5b5ac3ce4",
+    "decisive": true
+  },
+  {
+    "battle_id": "098PPG0QR82V",
+    "path": "data/raw/098PPG0QR82V.json",
+    "sha256": "91eedef73826e1be130d9cc0c3e8410f5b3e6a41737c3baafa95875400c348a6",
+    "decisive": true
+  },
+  {
+    "battle_id": "00LYP90988U9",
+    "path": "data/raw/00LYP90988U9.json",
+    "sha256": "9bec31818025c753366db4663b1e8d2ef7c0902a5a41b50d67ba9582e810977b",
+    "decisive": true
+  },
+  {
+    "battle_id": "098PPQRR09U8",
+    "path": "data/raw/098PPQRR09U8.json",
+    "sha256": "2b527b7f3379525a0e113238f9e45846144436f0fc9bd24385301b7c8314e4a1",
+    "decisive": true
+  },
+  {
+    "battle_id": "09YP9Q9YCJJP",
+    "path": "data/raw/09YP9Q9YCJJP.json",
+    "sha256": "ad16624bf7e8f4ea2a091e406a3fececf56c9ade8fd4f42a8698ec5f22eb96e7",
+    "decisive": true
+  },
+  {
+    "battle_id": "02VY88QLL02J",
+    "path": "data/raw/02VY88QLL02J.json",
+    "sha256": "01688b8bd589d85b79e7d1e2702e8ff2f486df0a0baa184244149baa6b6f7270",
+    "decisive": true
+  },
+  {
+    "battle_id": "098PPG28029Y",
+    "path": "data/raw/098PPG28029Y.json",
+    "sha256": "7b6a2098c76549addcee63e9bbabe9bffa11cee6d693b59fcffd415e9c504d5b",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVL9YJLQ9",
+    "path": "data/raw/08CPVL9YJLQ9.json",
+    "sha256": "cdb633d4fa44432e7910e58531bd5e55fe2f94b2fb417d0f5040e6cd3d9fb9b3",
+    "decisive": true
+  },
+  {
+    "battle_id": "088Y2U9LCVYP",
+    "path": "data/raw/088Y2U9LCVYP.json",
+    "sha256": "1a2fecca52016c1af2feefb1762172b555bd000f59f06eea3ff04a3dbd42fac6",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPQL0Y2GQ",
+    "path": "data/raw/02PYPQL0Y2GQ.json",
+    "sha256": "1ea9fcf06e05e4fc7dafb49d806828280c0132ce60f5e5a05983282d0b0e0b80",
+    "decisive": true
+  },
+  {
+    "battle_id": "089Y2UGCQYQ2",
+    "path": "data/raw/089Y2UGCQYQ2.json",
+    "sha256": "b5a37eac192096558e404d540649562b0e6c28590e15b84ca93812b03b634498",
+    "decisive": true
+  },
+  {
+    "battle_id": "08VPPG2UPVPR",
+    "path": "data/raw/08VPPG2UPVPR.json",
+    "sha256": "e68fb038f98fc43fdabf0e219517b6537ccc735936b6f536ef1ce6e7db35f3ea",
+    "decisive": true
+  },
+  {
+    "battle_id": "00UYP808CCUJ",
+    "path": "data/raw/00UYP808CCUJ.json",
+    "sha256": "2d17404c216a87e74c6e33701c11ddf853622f4c14d8f542b81fcf16dfcd1187",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLRGUQ8J",
+    "path": "data/raw/029YPLRGUQ8J.json",
+    "sha256": "9191c07fa8ed777d8a8be5d64991ef833b1a06e97121b3e6f10ce5fb34a19ff6",
+    "decisive": true
+  },
+  {
+    "battle_id": "002YL8G99029",
+    "path": "data/raw/002YL8G99029.json",
+    "sha256": "f10185cfd15afc3cf950a0aa4e57e71426ac519a1df03614ce58367a09cce223",
+    "decisive": true
+  },
+  {
+    "battle_id": "02RY9PLLRVG9",
+    "path": "data/raw/02RY9PLLRVG9.json",
+    "sha256": "30a87f7d2a060163d4d4ee194a0cc9d5d35d7d1cb672beeba076afa1a7663d22",
+    "decisive": true
+  },
+  {
+    "battle_id": "02RY9PG2PRRV",
+    "path": "data/raw/02RY9PG2PRRV.json",
+    "sha256": "5dfc77d96456e11ca81e517bc128d5844c9b8386b42eb27a7bc06399b6d4324a",
+    "decisive": true
+  },
+  {
+    "battle_id": "00YYP2P0LVQ2",
+    "path": "data/raw/00YYP2P0LVQ2.json",
+    "sha256": "5043d61eb05424492d260fee19707ff45c11d401758a319917f1d8bccc430c73",
+    "decisive": true
+  },
+  {
+    "battle_id": "09QP9LV0L2CV",
+    "path": "data/raw/09QP9LV0L2CV.json",
+    "sha256": "7b7bb3e233f1d714893a3411027368907ce9527356543a2aadf41262940a273d",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPRPUCPVR",
+    "path": "data/raw/092PPRPUCPVR.json",
+    "sha256": "d4e294aabffc5cdae62cfeb398cb0472703bfec541899fa125193c253848c8ac",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLUVQLGR",
+    "path": "data/raw/029YPLUVQLGR.json",
+    "sha256": "37370ee693272b4891208500bb72b8b190e375917b383a87e2a503189a867669",
+    "decisive": true
+  },
+  {
+    "battle_id": "080Y88VV98GV",
+    "path": "data/raw/080Y88VV98GV.json",
+    "sha256": "107406bfce06f685d6a6501cfa858a1f6f24f993fd2e6a3da01c062424416620",
+    "decisive": true
+  },
+  {
+    "battle_id": "02JY9P29Q92L",
+    "path": "data/raw/02JY9P29Q92L.json",
+    "sha256": "957b438f374d94fec93540bcf745923b7fe75f09796f2c9de1127d62c9d42ddc",
+    "decisive": true
+  },
+  {
+    "battle_id": "090PPRGRV9R9",
+    "path": "data/raw/090PPRGRV9R9.json",
+    "sha256": "4e35d1d6b5ee79d65b47d4cd5f679103038beca945ac07cc2a4ab84dddf5beba",
+    "decisive": true
+  },
+  {
+    "battle_id": "002YL8GVRVLP",
+    "path": "data/raw/002YL8GVRVLP.json",
+    "sha256": "506640069bac4340d11b57c50859fbb8d5bb738f5c2d3b1c71fb4165259532cb",
+    "decisive": true
+  },
+  {
+    "battle_id": "00RYP28RQ9LU",
+    "path": "data/raw/00RYP28RQ9LU.json",
+    "sha256": "134a4c5004e804146e08601ade760f3bcc304e82573052dd7fefe63d80ec7e8b",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP229PGYY",
+    "path": "data/raw/020YP229PGYY.json",
+    "sha256": "d5a3ebdbe25aa2a7703d7094e976836f466c1e9734ac7a49c67d5dd9e56394f0",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLJJ2Q2P",
+    "path": "data/raw/029YPLJJ2Q2P.json",
+    "sha256": "df0ab670645b768d516c9cc609e46ae4a34159ab7851a793baa31979cc51303d",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0VLVYV2",
+    "path": "data/raw/00GYP0VLVYV2.json",
+    "sha256": "21f66773be6cad79c37f1f0696ef607444855a35e5ee17d82db70e77997fb3e7",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL90JYUY2",
+    "path": "data/raw/009YL90JYUY2.json",
+    "sha256": "b1c0db5759a3591234adbcaf75ed830674cc8bc09d7a647f80ca016309c9f106",
+    "decisive": true
+  },
+  {
+    "battle_id": "02UY8292LRCG",
+    "path": "data/raw/02UY8292LRCG.json",
+    "sha256": "3534d2c9f1030e6b29e9ffcfefa8b56098312f3e4856c847f12dcb09607a5b63",
+    "decisive": true
+  },
+  {
+    "battle_id": "09QP9Q22YCQ0",
+    "path": "data/raw/09QP9Q22YCQ0.json",
+    "sha256": "665640690b12a438dcc2f5ba771f17cb1139f7ece63549a6c92fe4679ead7247",
+    "decisive": true
+  },
+  {
+    "battle_id": "02QY98UJ820Y",
+    "path": "data/raw/02QY98UJ820Y.json",
+    "sha256": "3008aa9b3c48314b2b4592a74ffd32b7fc6abf25ce136bdeb408cb5a4fe32019",
+    "decisive": true
+  },
+  {
+    "battle_id": "09C9JGRCQC2U",
+    "path": "data/raw/09C9JGRCQC2U.json",
+    "sha256": "9b13a6bb25e924b44d0bce572e4818129416de9ae6f7d87525b679b2c7bf8027",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPQ2JL2JY",
+    "path": "data/raw/02PYPQ2JL2JY.json",
+    "sha256": "42586516baecddd0052ea812ba22e0d768fafbaade0f8fa0a06363b2e813afb4",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQUL8LRC",
+    "path": "data/raw/09G9JQUL8LRC.json",
+    "sha256": "265df9ce63c3f3939ca22f8167131a713efb48e56ed56f8af825d9d9df82d5b6",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL90QUG9V",
+    "path": "data/raw/009YL90QUG9V.json",
+    "sha256": "142245ab99a3b6bd26c1ca2e44a8f3c033fda8c71d702054a2fec098dcb4ab2a",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVL29G0CL",
+    "path": "data/raw/08CPVL29G0CL.json",
+    "sha256": "9fa60cff0bfe0d9e244fac01537cc23afd4e42a937fffe72434f03fa4be5417c",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JGVUGGQQ",
+    "path": "data/raw/09J9JGVUGGQQ.json",
+    "sha256": "d53889e2f68158547445052021f175756ab3208c6a7cacb16eed487c4786ebe7",
+    "decisive": true
+  },
+  {
+    "battle_id": "09C9JGQURPJ8",
+    "path": "data/raw/09C9JGQURPJ8.json",
+    "sha256": "b1096dc438fc0f1ef0a2a6d7eee5798355e4ca7d7ccc629183e6c506c3bdcabd",
+    "decisive": true
+  },
+  {
+    "battle_id": "098PPQVGPYRG",
+    "path": "data/raw/098PPQVGPYRG.json",
+    "sha256": "bed14316474af068cd6cb0287acb828e206292244338b1dfdf9eee042fdb1be4",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JR99PR0Q",
+    "path": "data/raw/09J9JR99PR0Q.json",
+    "sha256": "c09747f1609d1d37e5cfcfc7a7aa482179dba235b21b43088f0f48653d340393",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JR2R2QPC",
+    "path": "data/raw/09J9JR2R2QPC.json",
+    "sha256": "b3db1c8e176bcedcbba26475b92c3a0ffba32baff4cdd8f080e466d346551472",
+    "decisive": true
+  },
+  {
+    "battle_id": "02JY9P28090J",
+    "path": "data/raw/02JY9P28090J.json",
+    "sha256": "b96ce7ae4f9e9d574fe9d26fa307f724fecea31119c2bc850aa54350d6632d0f",
+    "decisive": true
+  },
+  {
+    "battle_id": "00CYP2UCRUCU",
+    "path": "data/raw/00CYP2UCRUCU.json",
+    "sha256": "f49c7577549da8bce2a3da3c1ab715ad7e5618c08e2641a76570c7cc1079aa0b",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98R0YYUR",
+    "path": "data/raw/02LY98R0YYUR.json",
+    "sha256": "3795dff4a0b4c8ab14323c5f0cc425e28cfa65eca451e7aaa43e9998bba443fe",
+    "decisive": true
+  },
+  {
+    "battle_id": "00UYP82QJ2G0",
+    "path": "data/raw/00UYP82QJ2G0.json",
+    "sha256": "d51ba0de60dd7db38fd3d40b4f030bcbb7f2405b93ca62fbceb24d3cc8328536",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP29GL029",
+    "path": "data/raw/020YP29GL029.json",
+    "sha256": "0b5475006a6d69bf231605ec9946d601018f23b5a2ecd2d4accc07e8295caa01",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVL92YUGJ",
+    "path": "data/raw/08CPVL92YUGJ.json",
+    "sha256": "b3f9cf652b28b8b27870668e03788278ebe3f0c5b7b1b197191195ceb6cb47a1",
+    "decisive": true
+  },
+  {
+    "battle_id": "02RY9PGCUJLQ",
+    "path": "data/raw/02RY9PGCUJLQ.json",
+    "sha256": "c29c90233d2bf88ec8063e57d36affe702d2b91c531f5cc797a2afcc9e8ef99c",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP209RUVV",
+    "path": "data/raw/00GYP209RUVV.json",
+    "sha256": "27746cd034321ff81d6dca04d1dd18283189af9c6ebd340be4dee35c52e96cba",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVL0G2JRV",
+    "path": "data/raw/08CPVL0G2JRV.json",
+    "sha256": "2d1729521bcf69059903786df0a8592cb1f6bf9dcde82a2a5705d9e9d4bc94ef",
+    "decisive": true
+  },
+  {
+    "battle_id": "08RPVLPVYLRC",
+    "path": "data/raw/08RPVLPVYLRC.json",
+    "sha256": "bb075aa18835ee535d9b09024e9754412074f48b83773d79f365410c0717d268",
+    "decisive": true
+  },
+  {
+    "battle_id": "09U9JG9QVR2P",
+    "path": "data/raw/09U9JG9QVR2P.json",
+    "sha256": "86b9d255b232cda406cd6b3e07a4f65ee44aa07bdd27e97460f6d9506ba749a7",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQC0PJVG",
+    "path": "data/raw/09G9JQC0PJVG.json",
+    "sha256": "9c697c4f9ba8413b2b306221c18ded1196ac1eb6ab7aade63d0e24edabf6d26d",
+    "decisive": true
+  },
+  {
+    "battle_id": "00JYP8VLGCJQ",
+    "path": "data/raw/00JYP8VLGCJQ.json",
+    "sha256": "7e1e3eaaf90e0df1c38f17553f11b7bfc55fb837bcfb67cac2a3404a9f703d43",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPQLR2PVU",
+    "path": "data/raw/02PYPQLR2PVU.json",
+    "sha256": "d9d59426c95f00590985c018d2399271e3940a7f61734a7ca19c3d5d92ca718c",
+    "decisive": true
+  },
+  {
+    "battle_id": "022YY92RV92G",
+    "path": "data/raw/022YY92RV92G.json",
+    "sha256": "0c3e6b12c77950fd1266f61aa1173246cf057bcf55aeb09cb70c9eed0279e771",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVL9YU92L",
+    "path": "data/raw/08CPVL9YU92L.json",
+    "sha256": "d53b5423e3cceec5082daa850543bc5a4eb3d44ea921c0da9b9f829c438751f7",
+    "decisive": true
+  },
+  {
+    "battle_id": "02GY9P9QLPCL",
+    "path": "data/raw/02GY9P9QLPCL.json",
+    "sha256": "a7db1eeaac2d8af2a5b23454eed1551a548830c4b7e7db0bf96772caeb4452c7",
+    "decisive": true
+  },
+  {
+    "battle_id": "022YY998PPVY",
+    "path": "data/raw/022YY998PPVY.json",
+    "sha256": "e9c375e3fc0c9f47a72a8f3ea2eedce9fa617fdf1b07b906430bdba027c70ce8",
+    "decisive": true
+  },
+  {
+    "battle_id": "09QP9Q2G0J2P",
+    "path": "data/raw/09QP9Q2G0J2P.json",
+    "sha256": "39191d875cf01515c86018d30c5faa1b2842afc18e2d11b7b2fb59e559ee38de",
+    "decisive": true
+  },
+  {
+    "battle_id": "09C9JGJ9QRUG",
+    "path": "data/raw/09C9JGJ9QRUG.json",
+    "sha256": "6ebb9a4c7e91ee7bab1994a793fffc8adfb49cbbda819371a3f48d93284a14ea",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JR99922G",
+    "path": "data/raw/09J9JR99922G.json",
+    "sha256": "72395a33d933f23da319ed604c793a2dd7206d41f3c4b5c7287f1c9cf1856737",
+    "decisive": true
+  },
+  {
+    "battle_id": "00UYP80LL8LG",
+    "path": "data/raw/00UYP80LL8LG.json",
+    "sha256": "ce046fbfa9284aeaae50689dd82d2acb67c0b303b47a152311ef05c8a5223e44",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL8UULRYJ",
+    "path": "data/raw/009YL8UULRYJ.json",
+    "sha256": "60b6f17050ed009d22729df88b622aa6232f110a97da2572ea4452754af9c437",
+    "decisive": true
+  },
+  {
+    "battle_id": "08UPPGUUJ82P",
+    "path": "data/raw/08UPPGUUJ82P.json",
+    "sha256": "e5677ba057d228e611c5ae5c32a182d76c7e59f97cc892b9e8b32f84ea5fea3e",
+    "decisive": true
+  },
+  {
+    "battle_id": "09QP9LVPG89R",
+    "path": "data/raw/09QP9LVPG89R.json",
+    "sha256": "e0611f559355b088872a5bb8dac5c2f2326e0fdbe080fb6b12bc61b180dc8bd5",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQQUCCUU",
+    "path": "data/raw/02YYPQQUCCUU.json",
+    "sha256": "168e8e1abb79246f4edd1513620f405da9606d3d6d558a1ae305fbc355f21217",
+    "decisive": true
+  },
+  {
+    "battle_id": "02VY82LYVP2C",
+    "path": "data/raw/02VY82LYVP2C.json",
+    "sha256": "5e0931538b59876b284ff4f7552e39010499b87f0d51a9987d4a2aad542eef72",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQL8J9QC",
+    "path": "data/raw/02YYPQL8J9QC.json",
+    "sha256": "e7339ed94056ce23331c5a88042b95fe78128a32b111bdb5ea41039617beaab7",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL8VRRQL8",
+    "path": "data/raw/009YL8VRRQL8.json",
+    "sha256": "d384fe85a45d003d0ed724f83f6906c8532f883c524b01c8f61c8536e5d6d539",
+    "decisive": true
+  },
+  {
+    "battle_id": "08VPPGYCGJ8L",
+    "path": "data/raw/08VPPGYCGJ8L.json",
+    "sha256": "04f9e09f3f4a44e6d6f4654e834ee46e1e381307f5fb8cb352a8add07f35382c",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0U29GUQ",
+    "path": "data/raw/00GYP0U29GUQ.json",
+    "sha256": "138fc39b99844230178193a0710b957b455b746af2b9d67f4538b36a3360e59c",
+    "decisive": true
+  },
+  {
+    "battle_id": "099P9LVQ20L8",
+    "path": "data/raw/099P9LVQ20L8.json",
+    "sha256": "b240dd69f50bb1240864dc88ff0651c3370270c6b409d04a80092c63ba01a259",
+    "decisive": true
+  },
+  {
+    "battle_id": "08VPPG8VU80V",
+    "path": "data/raw/08VPPG8VU80V.json",
+    "sha256": "3621b526228f409d0ffcd7ed16e8a0d96b817fcc7fb4feab2c6b170191ad1d19",
+    "decisive": true
+  },
+  {
+    "battle_id": "00QYP8GYVJ9P",
+    "path": "data/raw/00QYP8GYVJ9P.json",
+    "sha256": "eb4de931b66f24f10a104bea988551ea2390d9ece9b2b9f4ac88fc9b2a78b9a4",
+    "decisive": true
+  },
+  {
+    "battle_id": "000YL0J2JUVR",
+    "path": "data/raw/000YL0J2JUVR.json",
+    "sha256": "4b7a67e791784be0fd0c8df98a210f7c78ef6c56329ab873f70637d272402605",
+    "decisive": true
+  },
+  {
+    "battle_id": "022YY92CGC9L",
+    "path": "data/raw/022YY92CGC9L.json",
+    "sha256": "97557928a10b741fd7de9e6364f69b53e4ea7470537b1f164eac7bbe753f5222",
+    "decisive": true
+  },
+  {
+    "battle_id": "00YYP298UJVY",
+    "path": "data/raw/00YYP298UJVY.json",
+    "sha256": "cfabb210afe4a64db8031cace00c94244a7bd008e8de9a564eeed0aba94d8922",
+    "decisive": true
+  },
+  {
+    "battle_id": "080Y898J8829",
+    "path": "data/raw/080Y898J8829.json",
+    "sha256": "c1f67289006587cdb24545549982be93dc7f5e9e0e3da515070d52579d477070",
+    "decisive": true
+  },
+  {
+    "battle_id": "08VPPGGPUC8U",
+    "path": "data/raw/08VPPGGPUC8U.json",
+    "sha256": "ac062025a7ec6b232dfa9f77cc02c4f75cf6355c8e869d028d6c56e1d6e2b271",
+    "decisive": true
+  },
+  {
+    "battle_id": "00LYP8CQ9JJL",
+    "path": "data/raw/00LYP8CQ9JJL.json",
+    "sha256": "2c9af27ff889f2c5b5643bb1719fcfe97d6a1f0318ae9ff9698573160ba4e49b",
+    "decisive": true
+  },
+  {
+    "battle_id": "022YY9299VUC",
+    "path": "data/raw/022YY9299VUC.json",
+    "sha256": "479784253007a24a624b71aa4e67714cadd3c53c7c29f24c1149994c285708b5",
+    "decisive": true
+  },
+  {
+    "battle_id": "00VYP80290Y8",
+    "path": "data/raw/00VYP80290Y8.json",
+    "sha256": "eb79a767be0e25caa986bd19358c75676523c70ae678aaac5c23e1ba0926de49",
+    "decisive": true
+  },
+  {
+    "battle_id": "02GY9PPRYL28",
+    "path": "data/raw/02GY9PPRYL28.json",
+    "sha256": "e0eb169ba67e2d7c481a5a571b295816d3c46058cf3614d600698d090b45e85d",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPR22LYRR",
+    "path": "data/raw/092PPR22LYRR.json",
+    "sha256": "be5feec394d7815964a13e06604a931a4ed5276b5d95b7004cb4a825abba84c9",
+    "decisive": true
+  },
+  {
+    "battle_id": "098PPG8000VV",
+    "path": "data/raw/098PPG8000VV.json",
+    "sha256": "be89fa06b4eac4d9879bf14336866a10f9d5db70205763dadd4a9e387e2be96f",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQC0QLG0",
+    "path": "data/raw/09G9JQC0QLG0.json",
+    "sha256": "fbf9b34013397c17975238d6d3edd7d858bab3077efec1d127dc9f62975d1424",
+    "decisive": true
+  },
+  {
+    "battle_id": "08LY2JC202LR",
+    "path": "data/raw/08LY2JC202LR.json",
+    "sha256": "22d39543d58c95f4dd6d7657c81e942af3c09a90b869215b17685fd300ba019d",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP2PLL2PG",
+    "path": "data/raw/020YP2PLL2PG.json",
+    "sha256": "36d507fd84148eb30fd16bc0d1848cee7f841cbefb4aacc20bdeb8226d9e00e0",
+    "decisive": true
+  },
+  {
+    "battle_id": "09YP9Q9Y9PRL",
+    "path": "data/raw/09YP9Q9Y9PRL.json",
+    "sha256": "6aef708cf251e8f4db57ad6f492c48d113b566c38d2f69f7e6d07af235baba23",
+    "decisive": true
+  },
+  {
+    "battle_id": "00VYP88QCRR8",
+    "path": "data/raw/00VYP88QCRR8.json",
+    "sha256": "3734f2556c4b00c1350f7afdec4a755bf845f03d8101fd20281843acbf5f4c3e",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98L9JG8J",
+    "path": "data/raw/02LY98L9JG8J.json",
+    "sha256": "24eb920ffaed78016a343e207a0d572e3aba519c2771d5d5080a205bb4b33435",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL90U2J8L",
+    "path": "data/raw/009YL90U2J8L.json",
+    "sha256": "9e1bef1a999e16a7e817412ac81400add5883216dfe85f3e5decda92f8145712",
+    "decisive": true
+  },
+  {
+    "battle_id": "09YP9Q8V8VUP",
+    "path": "data/raw/09YP9Q8V8VUP.json",
+    "sha256": "b24463351f4755134051584b33151bb6e0751ba0d9da696758658d6ed0603b35",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQ8GYCVR",
+    "path": "data/raw/02YYPQ8GYCVR.json",
+    "sha256": "0172d8969d5faf15172841f6a0362e46eb9e983294aa561cc2735299914188b1",
+    "decisive": true
+  },
+  {
+    "battle_id": "08PY2U02LJVJ",
+    "path": "data/raw/08PY2U02LJVJ.json",
+    "sha256": "ecc6617ee0b42fad211d8983d6c53c81896e233b770d6a10e78dce78d7eb03f9",
+    "decisive": true
+  },
+  {
+    "battle_id": "08CPVYUGQ8C0",
+    "path": "data/raw/08CPVYUGQ8C0.json",
+    "sha256": "2706b112696c1c3dccbb1d39afbf112ad78d9c816ecfc96e271133741a2956e8",
+    "decisive": true
+  },
+  {
+    "battle_id": "022YY90Y02L2",
+    "path": "data/raw/022YY90Y02L2.json",
+    "sha256": "675051127497ead170ee99bd1197125270fe7e894260d097e73fd109a1de3a74",
+    "decisive": true
+  },
+  {
+    "battle_id": "00VYP82VYPLV",
+    "path": "data/raw/00VYP82VYPLV.json",
+    "sha256": "cd52483747ccbfd202cf320da9a5b43f078f945a74fe5638666f8dd649c18bf2",
+    "decisive": true
+  },
+  {
+    "battle_id": "002YL8GRQQJL",
+    "path": "data/raw/002YL8GRQQJL.json",
+    "sha256": "03dff4e885cb28129fa7a662c3ae7255dfb97cdf75b65eb59b4e46ade0e05f54",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP28YR2CV",
+    "path": "data/raw/020YP28YR2CV.json",
+    "sha256": "b69d12e714087303d7e5b93744c8dced8056f1a3c091b8d5eedf09fe0c12b492",
+    "decisive": true
+  },
+  {
+    "battle_id": "092PPR9RQ2JJ",
+    "path": "data/raw/092PPR9RQ2JJ.json",
+    "sha256": "b0d24b9b5d06f4772197b2b1ee40db75660898d02f2c3f5174c70c0bde05f5c0",
+    "decisive": true
+  },
+  {
+    "battle_id": "08QPVQPLYC80",
+    "path": "data/raw/08QPVQPLYC80.json",
+    "sha256": "6d24904d5a61af261eae70a7bf169775fb3f94a9729cc458df11c2dc20945efa",
+    "decisive": true
+  },
+  {
+    "battle_id": "089Y2URP02V9",
+    "path": "data/raw/089Y2URP02V9.json",
+    "sha256": "6756b7afd0de39fb8dcb2f904b671fc49d65b8a9093574a9d59621bc2a5a19c6",
+    "decisive": true
+  },
+  {
+    "battle_id": "09R9JQQUY9R9",
+    "path": "data/raw/09R9JQQUY9R9.json",
+    "sha256": "2a75e8013116aba05d76fb33c96fe3b57db59ff6158b4be7c29f362b87a5ce2b",
+    "decisive": true
+  },
+  {
+    "battle_id": "02RY9PQGYLU2",
+    "path": "data/raw/02RY9PQGYLU2.json",
+    "sha256": "359b24f0a460ed4eb4df90a0bcc54fe5350ea7012bd5c857c2b7a9b8383d47ff",
+    "decisive": true
+  },
+  {
+    "battle_id": "09R9JQR2Y922",
+    "path": "data/raw/09R9JQR2Y922.json",
+    "sha256": "2740c3b2ad2ebf436c1713a21d1bc73388549b51016e6b4bf471fedf6b8a9a8f",
+    "decisive": true
+  },
+  {
+    "battle_id": "02GY9PQ02CQQ",
+    "path": "data/raw/02GY9PQ02CQQ.json",
+    "sha256": "ab217be5de28c598af54be70ebc605fede16a790e845eae7f03325ee66ce85f8",
+    "decisive": true
+  },
+  {
+    "battle_id": "02UY829GR9LP",
+    "path": "data/raw/02UY829GR9LP.json",
+    "sha256": "ce1a29839655d2498b45a475a81d9b9172b60b6eefb5a756528873ad981c6dcc",
+    "decisive": true
+  },
+  {
+    "battle_id": "028YPQJ2R2G2",
+    "path": "data/raw/028YPQJ2R2G2.json",
+    "sha256": "3e96fd98b4bbbed32e45464ab7d6c8639a167a9fb58815c28bfb62365b33e858",
+    "decisive": true
+  },
+  {
+    "battle_id": "080Y88JJPCQQ",
+    "path": "data/raw/080Y88JJPCQQ.json",
+    "sha256": "a9660d6f7adc86564d92bd617ca4f86e381e0990de2f40747e4bd3847a5c78c8",
+    "decisive": true
+  },
+  {
+    "battle_id": "00PYL2GYGRYR",
+    "path": "data/raw/00PYL2GYGRYR.json",
+    "sha256": "d7a407c0191e676e32aeb484d96760d510ffecbf30685d498b208c4cbb3f0448",
+    "decisive": true
+  },
+  {
+    "battle_id": "08UPPGUGUL8Y",
+    "path": "data/raw/08UPPGUGUL8Y.json",
+    "sha256": "fd0f68b0bcb3eb34b79a2f7dc480102a9262b625fd90dd24621695beec45273c",
+    "decisive": true
+  },
+  {
+    "battle_id": "088Y2U9GY9CL",
+    "path": "data/raw/088Y2U9GY9CL.json",
+    "sha256": "07b7a31fbf9c7a55597f4930b40a1377155d99e3c474a0c5ae6d2778d3acfb93",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPQYYVJPP",
+    "path": "data/raw/02PYPQYYVJPP.json",
+    "sha256": "07baca1483d4b829f097ca1f0905266fd00c9df83f61517372ae8e7106b7e934",
+    "decisive": true
+  },
+  {
+    "battle_id": "00YYP20LL8YR",
+    "path": "data/raw/00YYP20LL8YR.json",
+    "sha256": "5b7dfa6211f4837a49555a0c9801ab79ad0bfc61fcd30975c5ea6d442d523dc2",
+    "decisive": true
+  },
+  {
+    "battle_id": "09LP9QLQ2CYR",
+    "path": "data/raw/09LP9QLQ2CYR.json",
+    "sha256": "4e1669f49f9239b0001aad470f591c5ff0a7ada40c740f9a160e33c0298911df",
+    "decisive": true
+  },
+  {
+    "battle_id": "082Y88VQJCVV",
+    "path": "data/raw/082Y88VQJCVV.json",
+    "sha256": "91f73939edc4e4fd9b8841e051ce4330b5f7d38826affbd3bd5b08b7be9fb441",
+    "decisive": true
+  },
+  {
+    "battle_id": "00YYP22RL9G8",
+    "path": "data/raw/00YYP22RL9G8.json",
+    "sha256": "662661d9d2d1f158478c588b5c394937363cecf628e94e4c91e624cc6746b541",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQUCP8PR",
+    "path": "data/raw/09G9JQUCP8PR.json",
+    "sha256": "d12f84d9c4a92cd98fdf7ea861b94521360086d36f87ffb220d112a0b367ef8d",
+    "decisive": true
+  },
+  {
+    "battle_id": "09G9JQUP9RLJ",
+    "path": "data/raw/09G9JQUP9RLJ.json",
+    "sha256": "61aec7db5835e04c1cac8d4b4ca2f758e473eeeecdb01a85eccd01daa0dfabc4",
+    "decisive": true
+  },
+  {
+    "battle_id": "08RPVLPQ2QLJ",
+    "path": "data/raw/08RPVLPQ2QLJ.json",
+    "sha256": "dbc628f895e89ae0ee29108800acff848fafc2ccf8c2a7da3319e6b1d80c2ffe",
+    "decisive": true
+  },
+  {
+    "battle_id": "08UPPR0UGP0U",
+    "path": "data/raw/08UPPR0UGP0U.json",
+    "sha256": "76518350e1a0c4c1f41e0f3b7932ea30c4be31dfaad24e153360074988448685",
+    "decisive": true
+  },
+  {
+    "battle_id": "08YY2UGCYP8P",
+    "path": "data/raw/08YY2UGCYP8P.json",
+    "sha256": "9e71b4396cbb22ef104dfb72417a11992138035038be17eee589a267e3cba214",
+    "decisive": true
+  },
+  {
+    "battle_id": "002YL8LR8LUG",
+    "path": "data/raw/002YL8LR8LUG.json",
+    "sha256": "5f0f80bdf9734813e8dbaa1205508a96e634135fd5a1bfc9aa062c3b4ba8fbd6",
+    "decisive": true
+  },
+  {
+    "battle_id": "02JY99VPPVPV",
+    "path": "data/raw/02JY99VPPVPV.json",
+    "sha256": "8b48201fe0e9a14268796dd81ba109f330c892d01a613b3c5c987d9bb49415ed",
+    "decisive": true
+  },
+  {
+    "battle_id": "08QPVQPJ0U9R",
+    "path": "data/raw/08QPVQPJ0U9R.json",
+    "sha256": "3dcea20bb3ffdf318a8c67405d4c2aec7644d9209269066742984b461a5cb0e4",
+    "decisive": true
+  },
+  {
+    "battle_id": "090PPRQYJGCR",
+    "path": "data/raw/090PPRQYJGCR.json",
+    "sha256": "37961fb0782cdacb78d0293e2e5d6b9889b5a374797b3dd30ca8bf5e425d69bc",
+    "decisive": true
+  },
+  {
+    "battle_id": "08LY2JVJ99UL",
+    "path": "data/raw/08LY2JVJ99UL.json",
+    "sha256": "1904165e25aff38206c09b64ce4c8c9171829e67ac4771906a34642e820451b8",
+    "decisive": true
+  },
+  {
+    "battle_id": "02JY9P2GRJYP",
+    "path": "data/raw/02JY9P2GRJYP.json",
+    "sha256": "b43681d896e0ef19f718a7dc32630644702cd7b87b4f1f091e02a3738896f3d8",
+    "decisive": true
+  },
+  {
+    "battle_id": "099P9LCRCJP8",
+    "path": "data/raw/099P9LCRCJP8.json",
+    "sha256": "9339d27c650dd994a9a366b6335183b1d6fcc8ff411f1fb3ff7115d283cc6698",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQQ8JQ0U",
+    "path": "data/raw/02YYPQQ8JQ0U.json",
+    "sha256": "2c6ca1049c908265b134ed07342c261b7c6397052e3a3dbfc12924956421e482",
+    "decisive": true
+  },
+  {
+    "battle_id": "09C9JGQUVQCY",
+    "path": "data/raw/09C9JGQUVQCY.json",
+    "sha256": "0c6b15d6c8c25cc6ac82f28f1657d9a5144459aef2c11dbf744e4c7a28da374e",
+    "decisive": true
+  },
+  {
+    "battle_id": "09PP9YL9J02V",
+    "path": "data/raw/09PP9YL9J02V.json",
+    "sha256": "25b71e538ab2a94e4e80dcfc7923dbc025c8a9adc5e20e31c3025ec990c06a35",
+    "decisive": true
+  },
+  {
+    "battle_id": "09J9JR2RC9JQ",
+    "path": "data/raw/09J9JR2RC9JQ.json",
+    "sha256": "c12acb6cc9ce46f62af908fe75ed8b22005df311c905ae2f3af6d41f7190370a",
+    "decisive": true
+  },
+  {
+    "battle_id": "020YP09CJRYV",
+    "path": "data/raw/020YP09CJRYV.json",
+    "sha256": "7cdab5df86bddfe586b0e2e391fbe137fe7120342870a6f61e02687ba1d99048",
+    "decisive": true
+  },
+  {
+    "battle_id": "09C9JGRVL2GC",
+    "path": "data/raw/09C9JGRVL2GC.json",
+    "sha256": "c99bc5584a7c21699642b73eac6e04c03d7aa5820ddcd131d16f9fb7be5cca95",
+    "decisive": true
+  },
+  {
+    "battle_id": "02UY82YLGQV2",
+    "path": "data/raw/02UY82YLGQV2.json",
+    "sha256": "0661884b47892c5ce291ede7be068700e8fdf6beb8b3a93d3d8e7d2abaad8ceb",
+    "decisive": true
+  },
+  {
+    "battle_id": "09C9JGYUQCQR",
+    "path": "data/raw/09C9JGYUQCQR.json",
+    "sha256": "73f9b8ddaf7c1d65fbf9b307965c012cd7b8026d08bd033cacc1b8b3426e3540",
+    "decisive": true
+  },
+  {
+    "battle_id": "02RY9PPVVG0C",
+    "path": "data/raw/02RY9PPVVG0C.json",
+    "sha256": "9b3f6c3a1f28dd559b3bdb34c7e2f8ea15b2887519247214d8532ecc7dd0f908",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLJ9920V",
+    "path": "data/raw/029YPLJ9920V.json",
+    "sha256": "9874ec15bc8b03c0ff9ecd6234cdc396502516843db3bba1efcbab75df112fb6",
+    "decisive": true
+  },
+  {
+    "battle_id": "088Y2U9ULCYG",
+    "path": "data/raw/088Y2U9ULCYG.json",
+    "sha256": "dcf8158181a8d46696eb6c1d4f21d3488e48a49532e6aedb235d39e84a7f62af",
+    "decisive": true
+  },
+  {
+    "battle_id": "099P9LU2JG82",
+    "path": "data/raw/099P9LU2JG82.json",
+    "sha256": "70e2c65b877c027a7a5dbb755eb8be6574f4e5367cca5d158f57cce0660db0f8",
+    "decisive": true
+  },
+  {
+    "battle_id": "00GYP0CQUJ0U",
+    "path": "data/raw/00GYP0CQUJ0U.json",
+    "sha256": "5a634a1abf352955f5243eb4f7ef06882f24fa0a0387bf6e1d93c92f402ee5a0",
+    "decisive": true
+  },
+  {
+    "battle_id": "08LY2JVCYRJ0",
+    "path": "data/raw/08LY2JVCYRJ0.json",
+    "sha256": "172cceb4a3b6d6c3dae95e462aabad2c296068289f6faedee8e683bdb54658d5",
+    "decisive": true
+  },
+  {
+    "battle_id": "09QP9Q820CVV",
+    "path": "data/raw/09QP9Q820CVV.json",
+    "sha256": "fecdebe29813d7f40d3aa3828abab921d10d2c24f7d1b1bd573c03e8470936f5",
+    "decisive": true
+  },
+  {
+    "battle_id": "02UY82YL9UR0",
+    "path": "data/raw/02UY82YL9UR0.json",
+    "sha256": "47718f4831a95f892814286b85433c1fadfb1509dca37c52a1d25f6b77666a13",
+    "decisive": true
+  },
+  {
+    "battle_id": "00QYP8CPV8J8",
+    "path": "data/raw/00QYP8CPV8J8.json",
+    "sha256": "a92baa0b8fd651f8beb26b7092b6136b97ecff689499c45306591fc34fd3b38f",
+    "decisive": true
+  },
+  {
+    "battle_id": "08PY2CVCPUYU",
+    "path": "data/raw/08PY2CVCPUYU.json",
+    "sha256": "cbc63dcdd706b56bf74ca8aeb4e9bd257f1e7b4d0a961cda84e60aae296b37b6",
+    "decisive": true
+  },
+  {
+    "battle_id": "02PYPQQ2RJ0G",
+    "path": "data/raw/02PYPQQ2RJ0G.json",
+    "sha256": "eb8ddff369dc39f42e54d155018477f3c5b72df54ec52ea526574e39e42e68f8",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQLR9V8L",
+    "path": "data/raw/02YYPQLR9V8L.json",
+    "sha256": "d71d3bb2cc586b0da38986b8db3257d3f459c8edab2b66f2d124481056962ebb",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLC0CCVQ",
+    "path": "data/raw/029YPLC0CCVQ.json",
+    "sha256": "cc0ed0079f4dc7eedcec92e145ebb3bb9cc5cd1daec030478a41e7774d84d376",
+    "decisive": true
+  },
+  {
+    "battle_id": "02GY9PL2VLU0",
+    "path": "data/raw/02GY9PL2VLU0.json",
+    "sha256": "9112c4a2bf9d6498964bcd8279d56106889143cc67e09cdd5afac35972a95e2e",
+    "decisive": true
+  },
+  {
+    "battle_id": "02UY82L9LC9G",
+    "path": "data/raw/02UY82L9LC9G.json",
+    "sha256": "3569076c30105cafef315ec7b5c404a8a52074a3645aebf11791b1f2102837c0",
+    "decisive": true
+  },
+  {
+    "battle_id": "00UYP2UJY0V2",
+    "path": "data/raw/00UYP2UJY0V2.json",
+    "sha256": "4600ef48f4b2474c31e78ad1db99b9bb08912eae9e3c54f67deaddb1d378921b",
+    "decisive": true
+  },
+  {
+    "battle_id": "082Y890GYCUR",
+    "path": "data/raw/082Y890GYCUR.json",
+    "sha256": "e0636bdac5ebf83e8841e5d202ae0683f1bbf978bf6da0f54c5479680aa8156c",
+    "decisive": true
+  },
+  {
+    "battle_id": "02UY820VUU2L",
+    "path": "data/raw/02UY820VUU2L.json",
+    "sha256": "9ed81a8b295c04b876d92c2e8c987f1aaa43b3d4a872e972b244005d563789ff",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98GJCLQG",
+    "path": "data/raw/02LY98GJCLQG.json",
+    "sha256": "cd8f70ddd2c4c3fe5cf65a85b378bbfacccdc122a4060c83a98fda02846a980a",
+    "decisive": true
+  },
+  {
+    "battle_id": "00VYP82P8PLV",
+    "path": "data/raw/00VYP82P8PLV.json",
+    "sha256": "55e2f8b3f5c30b93b990e97bd74d58234fc3a92c00295a12d5d31d5b1d4b6831",
+    "decisive": true
+  },
+  {
+    "battle_id": "02CY8288L02Q",
+    "path": "data/raw/02CY8288L02Q.json",
+    "sha256": "b8f752677aeccc6f547eb443e7053475ebaef818d8d42538641f222a3bb797e6",
+    "decisive": true
+  },
+  {
+    "battle_id": "000YL0RUVJ00",
+    "path": "data/raw/000YL0RUVJ00.json",
+    "sha256": "2a3470e6a4cf3270aa43abd5560376747cc473c2ca3c90ab421d756599efaa01",
+    "decisive": true
+  },
+  {
+    "battle_id": "08PY2U8G2LR2",
+    "path": "data/raw/08PY2U8G2LR2.json",
+    "sha256": "d8beb7c922db43fd12dcbaab90a458fd5032229f301cb6cb31c8904eda7c03fd",
+    "decisive": true
+  },
+  {
+    "battle_id": "00CYP2UPCQQQ",
+    "path": "data/raw/00CYP2UPCQQQ.json",
+    "sha256": "5fed7f05f0f03b123f7cf54e137100755c80689f13a4f3aa33aa555df35bbccf",
+    "decisive": true
+  },
+  {
+    "battle_id": "02YYPQLCR8CC",
+    "path": "data/raw/02YYPQLCR8CC.json",
+    "sha256": "6be956438fefab7632f7f6fdbd00911df40e565ba33fb8ea4aa97919aeefc4a4",
+    "decisive": true
+  },
+  {
+    "battle_id": "029YPLU2P2YU",
+    "path": "data/raw/029YPLU2P2YU.json",
+    "sha256": "f0db7793c0e86de01d8f78d56b3706522fb2dbd46cbe7c244255b6ac6fe61e03",
+    "decisive": true
+  },
+  {
+    "battle_id": "02LY98Q2JJLJ",
+    "path": "data/raw/02LY98Q2JJLJ.json",
+    "sha256": "90b2bdba024d9c92ab44e6b42cd39112fbcd5a716b6c6bf04e74025b6669d179",
+    "decisive": true
+  },
+  {
+    "battle_id": "082Y88VYG9C2",
+    "path": "data/raw/082Y88VYG9C2.json",
+    "sha256": "57e0eed3ed99215596825ec1a358ce527ac1c1c8912cb4e7c48d8a0d63f10de2",
+    "decisive": true
+  },
+  {
+    "battle_id": "009YL8RLPJ8L",
+    "path": "data/raw/009YL8RLPJ8L.json",
+    "sha256": "0ef5ca600ab926952f417f402019a405dac2827394ff43cd71f2ffe9624fb53e",
+    "decisive": true
+  }
+]

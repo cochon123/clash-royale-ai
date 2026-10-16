@@ -1,0 +1,117 @@
+{
+  "baseline": "models/controlled_screening_gated/baseline_seed42",
+  "candidate": "models/controlled_screening_gated/clock_seed42",
+  "equal_epoch": 7,
+  "selected_epochs": {
+    "baseline": 12,
+    "candidate": 7
+  },
+  "wall_seconds": {
+    "baseline": 4920.432303451,
+    "candidate": 5873.468257684999
+  },
+  "limitations": "equal_epoch uses the last shared completed epoch. selected_checkpoint may mix unequal presentations. Intervals are battle resamples, not seeds.",
+  "equal_epoch_delta": {
+    "card": 0.0007264018058776855,
+    "cell": -0.00038914382457733154,
+    "joint": -0.0004150867462158203,
+    "joint_nll": 0.00608062744140625,
+    "timing_mae": -0.008893013000488281
+  },
+  "equal_epoch_baseline": {
+    "epoch": 7,
+    "train_loss": 4.725699563968162,
+    "card": 0.49437037110328674,
+    "cell": 0.11521299183368683,
+    "joint": 0.08493747562170029,
+    "joint_nll": 4.770594120025635,
+    "timing_mae": 1.7781174182891846,
+    "card_top3": 0.9235977530479431,
+    "card_nll": 1.142533540725708,
+    "cell_teacher": 0.16875940561294556,
+    "now_s": 135.64053344726562,
+    "opening_card": 0.5763607025146484,
+    "opening_joint": 0.10885459184646606,
+    "opening_n": 4924,
+    "mid_card": 0.48720425367355347,
+    "mid_joint": 0.08392608910799026,
+    "mid_n": 25868,
+    "late_card": 0.4662109911441803,
+    "late_joint": 0.07312355190515518,
+    "late_n": 7754,
+    "inference_ms_per_example": 0.03387299219070883
+  },
+  "equal_epoch_candidate": {
+    "epoch": 7,
+    "train_loss": 4.99353925925327,
+    "card": 0.49509677290916443,
+    "cell": 0.1148238480091095,
+    "joint": 0.08452238887548447,
+    "joint_nll": 4.776674747467041,
+    "timing_mae": 1.7692244052886963,
+    "card_top3": 0.9223524928092957,
+    "card_nll": 1.1432301998138428,
+    "cell_teacher": 0.17008249461650848,
+    "now_s": 135.64053344726562,
+    "opening_card": 0.5806255340576172,
+    "opening_joint": 0.10905767977237701,
+    "opening_n": 4924,
+    "mid_card": 0.48511675000190735,
+    "mid_joint": 0.08284366875886917,
+    "mid_n": 25868,
+    "late_card": 0.47407788038253784,
+    "late_joint": 0.07454217225313187,
+    "late_n": 7754,
+    "inference_ms_per_example": 0.032158335955045914,
+    "clock_nll": 2.57639217376709,
+    "actor_accuracy": 0.7295122146606445,
+    "actor_brier": 0.1822967529296875,
+    "mean_own_rate": 0.18631643056869507,
+    "mean_opponent_rate": 0.18666177988052368,
+    "survival_brier_2s": 0.21222113072872162,
+    "survival_brier_5s": 0.11527606844902039,
+    "survival_brier_10s": 0.034411851316690445,
+    "clock_median_mae": 1.751838207244873
+  },
+  "equal_epoch_rows": {
+    "battles": 1071,
+    "samples": 38546,
+    "delta": {
+      "card": {
+        "mean": 0.000726404832676053,
+        "ci95": [
+          -0.0022993993046565293,
+          0.0039163500302256855
+        ]
+      },
+      "cell": {
+        "mean": -0.00038914542528800666,
+        "ci95": [
+          -0.00242071998473738,
+          0.0017060426012153272
+        ]
+      },
+      "joint": {
+        "mean": -0.00041508846334181726,
+        "ci95": [
+          -0.0022949700532873527,
+          0.0014029991705647796
+        ]
+      },
+      "joint_nll": {
+        "mean": 0.006098488811403513,
+        "ci95": [
+          0.001970605390114707,
+          0.010383201034255524
+        ]
+      },
+      "timing_mae": {
+        "mean": -0.008894608356058598,
+        "ci95": [
+          -0.012569325322322297,
+          -0.0053849151018617375
+        ]
+      }
+    }
+  }
+}

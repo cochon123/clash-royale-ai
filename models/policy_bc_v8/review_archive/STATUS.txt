@@ -1,0 +1,17 @@
+experimental imitation policy; joint clock invalid
+
+Do not resume this objective. Do not warm-start a later model from this clock.
+Keep v4.4.1 as the empirical action-imitation reference.
+
+Preserved:
+- best-loss weights: best_model.pt (validation-loss selected; run finalized from epoch 14 metadata)
+- last weights: last.pt (epoch 14)
+- split_manifest.json, vocab.json, report.json, training_stages.json
+- source.zip and working_tree.patch from the review snapshot
+
+Not preserved:
+- a dedicated best-card checkpoint at epoch 11. That epoch cannot be reconstructed
+  from scalar metrics alone.
+
+The FP16-era artifacts live in models/policy_bc_v8/archive_fp16_epoch4/.
+The resumed finite-loss run is this directory plus models/policy_bc_v8/{best_model.pt,last.pt,report.json}.

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from cr_replay_pipeline.feature_schema import GLOBAL_INDEX
 from cr_replay_pipeline.policy_dataset import (
     GroupedBattleSampler,
     PolicyActionDataset,
@@ -342,6 +343,14 @@ def test_lazy_mirror_augmentation_shares_streams_and_reflects_x():
     assert torch.allclose(reflected[0][:, 5], original[0][:, 5])
     assert torch.allclose(reflected[10][0], 1.0 - original[10][0])
     assert torch.allclose(reflected[10][1], original[10][1])
+    assert torch.allclose(
+        reflected[4][GLOBAL_INDEX["team_left"]],
+        1.0 - original[4][GLOBAL_INDEX["team_left"]],
+    )
+    assert torch.allclose(
+        reflected[4][GLOBAL_INDEX["opp_left"]],
+        1.0 - original[4][GLOBAL_INDEX["opp_left"]],
+    )
     assert reflected[9].item() == xy_to_zone(*reflected[10].tolist())
 
 

@@ -28,13 +28,13 @@ from .policy_dataset import (
     recent_opponent_threat,
 )
 from .policy_infer import load_policy
+from .policy_manifest import resolve_battle_splits
 from .winner_dataset import (
     DEFAULT_ELIXIR_COST,
     WIN_CONDITIONISH,
     BattleExample,
     collect_battles,
     load_card_costs,
-    split_battles,
 )
 
 ZONE_ROWS = 4  # y bands: own back → enemy half
@@ -103,21 +103,29 @@ def build_policy_showcase(
     top_cards: int = 12,
     seed: int = 42,
     device_name: str | None = None,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     started = time.time()
     costs = load_card_costs(card_costs_path)
     battles = collect_battles(input_dir)
-    _train, _val, test = split_battles(battles, seed=seed)
+    _train, _val, test, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        split_manifest=split_manifest,
+        model_dir=new_policy_dir,
+        create=False,
+    )
 
     new_model, vocab, new_cfg, device = load_policy(
         new_policy_dir, device_name=device_name
     )
-    old_model, _old_vocab, old_cfg, _old_device = load_policy(
+    old_model, old_vocab, old_cfg, _old_device = load_policy(
         old_policy_dir, device_name=device_name
     )
     new_threat = int(new_cfg.get("threat_dim", 0))
     old_threat = int(old_cfg.get("threat_dim", 0))
     max_context = int(new_cfg.get("max_context", 64))
+    shared_vocab = vocab.compatible_with(old_vocab)
 
     rng = random.Random(seed)
     pool = list(test)
@@ -161,15 +169,15 @@ def build_policy_showcase(
             )
             if sample_new is None:
                 continue
-            if old_threat == new_threat:
+            if shared_vocab and old_threat == new_threat:
                 sample_old = sample_new
             else:
                 sample_old = encode_policy_sample(
                     battle,
                     event_index,
-                    vocab,
+                    old_vocab,
                     costs,
-                    max_context=max_context,
+                    max_context=int(old_cfg.get("max_context", max_context)),
                     threat_dim=old_threat,
                 )
                 if sample_old is None:

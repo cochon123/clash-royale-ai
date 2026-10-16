@@ -1,0 +1,12 @@
+{
+  "selection_sha256": "1a658f5e49da2ce2502b30ab40a798826edb00572443ee2f4919633162a9d749",
+  "status": "completed",
+  "scored": [
+    "v4_4_1",
+    "v4_4_2",
+    "v9_base_seed42",
+    "v9_seed42",
+    "v9_seed43",
+    "v9_seed44"
+  ]
+}

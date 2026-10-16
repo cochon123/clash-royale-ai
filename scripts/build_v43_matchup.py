@@ -22,12 +22,14 @@ from cr_replay_pipeline.style_train import (
     WARMUP_EVENTS,
     _feature_matrix,
     _load_rollout_cache,
+    _rollout_cache_expected,
     _rollout_cache_path,
     _score_style,
     generate_policy_rollouts,
     truncate_battle,
 )
-from cr_replay_pipeline.winner_dataset import collect_battles, load_card_costs, split_battles
+from cr_replay_pipeline.policy_manifest import resolve_battle_splits
+from cr_replay_pipeline.winner_dataset import collect_battles, load_card_costs
 
 ROOT = Path(__file__).resolve().parents[1]
 STYLE = ROOT / "models" / "style_discriminator"
@@ -64,7 +66,12 @@ def main() -> None:
     all_by_id = {b.battle_id: b for b in battles}
 
     if args.force:
-        _, _, test_split = split_battles(battles, seed=args.seed)
+        _, _, test_split, _manifest, _split_path = resolve_battle_splits(
+            battles,
+            seed=args.seed,
+            model_dir=STYLE,
+            create=False,
+        )
         rng = random.Random(args.seed + 3)
         test_pool = list(test_split)
         rng.shuffle(test_pool)
@@ -85,7 +92,12 @@ def main() -> None:
     else:
         for _label, policy_id, path, _color in POLICIES:
             cache = _rollout_cache_path(STYLE, policy_id, "test")
-            if _load_rollout_cache(cache) is None:
+            expected = _rollout_cache_expected(
+                policy_id=policy_id,
+                split_name="test",
+                policy_dir=ROOT / path,
+            )
+            if _load_rollout_cache(cache, expected) is None:
                 raise SystemExit(
                     f"Missing rollout cache {cache}. Re-run with --force to generate."
                 )
@@ -94,7 +106,16 @@ def main() -> None:
     ai_by_policy = {}
     id_sets = []
     for label, policy_id, _path, _color in POLICIES:
-        rolls = _load_rollout_cache(_rollout_cache_path(STYLE, policy_id, "test"))
+        rolls = _load_rollout_cache(
+            _rollout_cache_path(STYLE, policy_id, "test"),
+            _rollout_cache_expected(
+                policy_id=policy_id,
+                split_name="test",
+                policy_dir=ROOT / _path,
+            ),
+        )
+        if rolls is None:
+            raise SystemExit(f"Rollout cache for {policy_id} did not match checkpoint identity")
         mapped = {_seed_id(r.battle_id): r for r in rolls}
         ai_by_policy[label] = mapped
         id_sets.append(set(mapped))

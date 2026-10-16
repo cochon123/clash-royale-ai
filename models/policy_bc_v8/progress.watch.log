@@ -1,0 +1,2 @@
+# validation  device=cuda  params=2,396,720
+15:05:34  epoch 7 batch 2477 loss=6.024 acc=47.76%

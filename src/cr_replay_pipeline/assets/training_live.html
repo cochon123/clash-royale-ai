@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Astra live training</title>
+  @@FAVICON@@
+  @@FONTS@@
+  <style>
+@@SHARED_STYLES@@
+    :root {
+      --blue: #638bc4;
+      --green: #3dcc8a;
+      --violet: #9b7ed9;
+      --orange: #f29665;
+    }
+    body.live main {
+      width: min(1520px, calc(100% - 28px));
+      padding: 22px 0 56px;
+    }
+    .live-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+    h1.live-title {
+      font-size: clamp(1.85rem, 3.4vw, 2.7rem);
+      margin: 8px 0 8px;
+      max-width: none;
+    }
+    .status-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font: 700 11px/1 "IBM Plex Mono", ui-monospace, monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+    }
+    .live-pill i {
+      width: 8px; height: 8px; border-radius: 50%; background: currentColor;
+      box-shadow: 0 0 0 0 currentColor;
+    }
+    .live-pill.is-live { color: var(--green); border-color: #245c44; background: #10261c; }
+    .live-pill.is-live i { animation: pulse 1.6s ease-out infinite; }
+    .live-pill.is-wait { color: var(--gold); border-color: #5a4a20; background: #1a160c; }
+    .live-pill.is-quiet { color: var(--sky); border-color: #1e3f52; background: #0e1c24; }
+    .live-pill.is-stall { color: var(--red); border-color: #5a2a28; background: #1a1010; }
+    .live-pill.is-done { color: var(--sky); border-color: #1e3f52; background: #0e1c24; }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--green) 70%, transparent); }
+      100% { box-shadow: 0 0 0 10px transparent; }
+    }
+    .time-card {
+      min-width: min(420px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 16px 16px;
+    }
+    .time-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font: 12px "IBM Plex Mono", ui-monospace, monospace;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .time-meta strong { color: var(--text); font-weight: 700; }
+    .time-track {
+      height: 11px;
+      border-radius: 99px;
+      background: #08131a;
+      border: 1px solid #1c2d38;
+      overflow: hidden;
+    }
+    .time-fill {
+      height: 100%;
+      width: 0;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #3dcc8a, #638bc4);
+      transition: width 0.6s ease;
+    }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .kpi {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 13px 14px 12px;
+      border-top: 3px solid var(--tone, var(--line));
+    }
+    .kpi .lab {
+      font: 700 11px/1 "IBM Plex Mono", ui-monospace, monospace;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .kpi .v {
+      margin-top: 8px;
+      font: 700 28px/1 "IBM Plex Mono", ui-monospace, monospace;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+    }
+    .kpi .sub { margin-top: 6px; font: 12px "IBM Plex Mono", ui-monospace, monospace; color: #607888; }
+    .charts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px 14px 8px;
+    }
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .panel h3 {
+      margin: 0;
+      font: 700 11px/1 "IBM Plex Mono", ui-monospace, monospace;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    svg.live-chart {
+      width: 100%;
+      height: auto;
+      min-height: 240px;
+      aspect-ratio: 1000 / 380;
+      display: block;
+      overflow: visible;
+    }
+    svg.live-chart .curve { animation: none; stroke-dasharray: none; }
+    .bottom {
+      display: grid;
+      grid-template-columns: 1.05fr 0.9fr 1.2fr;
+      gap: 14px;
+    }
+    .log-box {
+      height: 290px;
+      overflow: auto;
+      font: 12px/1.5 "IBM Plex Mono", ui-monospace, monospace;
+      color: #c5d7e2;
+      background: #08131a;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      white-space: pre-wrap;
+    }
+    .log-box .live-line { color: var(--sky); }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      font: 13px "IBM Plex Mono", ui-monospace, monospace;
+    }
+    .stats dt { color: #607888; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .stats dd { margin: 0 0 6px; color: var(--text); }
+    .expr { margin-top: 16px; }
+    .waiting {
+      fill: #8aa3b3;
+      font: 14px "IBM Plex Sans", sans-serif;
+    }
+    @media (max-width: 1080px) {
+      .live-head, .kpis, .charts, .bottom { grid-template-columns: 1fr; }
+      .kpi .v { font-size: 24px; }
+    }
+  </style>
+</head>
+<body class="live" data-interval="@@INTERVAL@@">
+  <main>
+    <header class="live-head">
+      <div>
+        <div class="status-row">
+          <span class="eyebrow" id="modelName">Astra live</span>
+          <span class="live-pill is-wait" id="statusPill"><i></i><span>waiting</span></span>
+        </div>
+        <h1 class="live-title">Training, in the browser</h1>
+        <p class="lede" id="lede">Reading the trainer JSONL. Curves keep the full run from step 0 — terminal resolution is no longer the limit.</p>
+      </div>
+      <div class="time-card">
+        <div class="time-meta">
+          <span>work <strong id="workLabel">—</strong></span>
+          <span>elapsed <strong id="elapsedLabel">—</strong></span>
+          <span>ETA <strong id="etaLabel">—</strong></span>
+        </div>
+        <div class="time-track"><div class="time-fill" id="timeFill"></div></div>
+      </div>
+    </header>
+
+    <section class="kpis" aria-label="live scores">
+      <article class="kpi" style="--tone:#638bc4"><div class="lab">obj</div><div class="v" id="kpiObj">—</div><div class="sub" id="kpiObjSub">training objective</div></article>
+      <article class="kpi" style="--tone:#3dcc8a"><div class="lab">card</div><div class="v" id="kpiCard">—</div><div class="sub" id="kpiCardSub">next-card top-1</div></article>
+      <article class="kpi" style="--tone:#3dcc8a"><div class="lab">tile exact</div><div class="v" id="kpiTile">—</div><div class="sub" id="kpiTileSub">18×32 bin</div></article>
+      <article class="kpi" style="--tone:#9b7ed9"><div class="lab">tile 3×3</div><div class="v" id="kpiNear">—</div><div class="sub" id="kpiNearSub">Chebyshev ≤ 1</div></article>
+      <article class="kpi" style="--tone:#f29665"><div class="lab">wait</div><div class="v" id="kpiWait">—</div><div class="sub" id="kpiWaitSub">hit @ 1.5s</div></article>
+    </section>
+
+    <section class="charts">
+      <div class="panel">
+        <div class="panel-head"><h3>obj</h3><div class="legend" id="legObj"></div></div>
+        <div class="chart-wrap"><svg class="live-chart" id="chartObj" viewBox="0 0 1000 380"></svg></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>tile</h3><div class="legend" id="legTile"></div></div>
+        <div class="chart-wrap"><svg class="live-chart" id="chartTile" viewBox="0 0 1000 380"></svg></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>wait</h3><div class="legend" id="legWait"></div></div>
+        <div class="chart-wrap"><svg class="live-chart" id="chartWait" viewBox="0 0 1000 380"></svg></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>card</h3><div class="legend" id="legCard"></div></div>
+        <div class="chart-wrap"><svg class="live-chart" id="chartCard" viewBox="0 0 1000 380"></svg></div>
+      </div>
+    </section>
+
+    <section class="bottom">
+      <div class="panel">
+        <h3>hardware</h3>
+        <div class="bars" id="hwBars" style="margin-top:12px"></div>
+      </div>
+      <div class="panel">
+        <h3>run</h3>
+        <dl class="stats" id="runStats" style="margin-top:12px"></dl>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>log</h3><span class="mono" id="logMeta" style="color:#607888;font-size:12px"></span></div>
+        <div class="log-box" id="logBox">waiting for the trainer…</div>
+      </div>
+    </section>
+
+    <p class="expr">
+      Four panes on purpose: <b>obj</b> is the training objective (card CE + tile CE + competing-risk clock),
+      while the other three are percentages and must not share that axis.
+      <b>tile exact</b> is the 18×32 placement bin; <b>3×3</b> counts Chebyshev distance ≤ 1.
+      <b>wait</b> is the fraction of plays whose predicted delay is within 1.5s of the human.
+      Hover any chart for the value at that step; click a legend chip to hide a curve.
+    </p>
+  </main>
+  <script>
+@@KIT@@
+const INTERVAL = Math.max(500, Number(document.body.dataset.interval || 2000));
+const hidden = window.__liveHidden || (window.__liveHidden = {});
+const $ = (id) => document.getElementById(id);
+
+function fmtSec(v) {
+  v = Math.max(0, Number(v) || 0);
+  const h = Math.floor(v / 3600), m = Math.floor((v % 3600) / 60), s = Math.floor(v % 60);
+  if (h) return h + "h" + String(m).padStart(2, "0") + "m";
+  return String(m).padStart(2, "0") + "m" + String(s).padStart(2, "0") + "s";
+}
+function fmtStep(v) {
+  if (v >= 1e6) return (v / 1e6).toFixed(1) + "M";
+  if (v >= 10000) return Math.round(v / 1000) + "k";
+  if (v >= 1000) return (v / 1000).toFixed(1) + "k";
+  return String(Math.round(v));
+}
+function fmtBytes(mb) {
+  return mb >= 1024 ? (mb / 1024).toFixed(1) + "G" : Math.round(mb) + "M";
+}
+function num(v, d=3) { return v == null || !Number.isFinite(v) ? "—" : Number(v).toFixed(d); }
+function nearest(xs, x) {
+  if (!xs.length) return 0;
+  let lo = 0, hi = xs.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (xs[mid] < x) lo = mid + 1; else hi = mid;
+  }
+  if (lo > 0 && Math.abs(xs[lo - 1] - x) <= Math.abs(xs[lo] - x)) return lo - 1;
+  return lo;
+}
+function mountLegend(host, chartId, series) {
+  host.innerHTML = "";
+  series.forEach((s) => {
+    const on = hidden[chartId + ":" + s.id] !== false;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "legend-item " + (on ? "is-on" : "is-off");
+    btn.style.setProperty("--legend-color", s.color);
+    btn.innerHTML = `<span class="legend-preview" style="border-top-color:${s.color}"></span><span class="legend-label">${s.label}</span>`;
+    btn.onclick = () => {
+      hidden[chartId + ":" + s.id] = hidden[chartId + ":" + s.id] === false;
+      if (window.__lastState) drawAll(window.__lastState);
+    };
+    host.appendChild(btn);
+  });
+}
+function liveChart(svg, spec) {
+  const W = 1000, H = 380, p = { l: 58, r: 16, t: 14, b: 34 };
+  svg.innerHTML = "";
+  const wrap = svg.parentElement;
+  let tip = wrap.querySelector(":scope > .chart-tooltip");
+  if (!tip) {
+    tip = document.createElement("div");
+    tip.className = "chart-tooltip";
+    wrap.appendChild(tip);
+  }
+  const xs = spec.xs || [];
+  const series = spec.series.filter((s) => hidden[spec.id + ":" + s.id] !== false);
+  if (!xs.length || !series.some((s) => s.ys.some(Number.isFinite))) {
+    svg.appendChild(svgText({ x: 40, y: 40, class: "waiting" }, "waiting for batches…"));
+    return;
+  }
+  const xMin = 0;
+  const xMax = Math.max(xs[xs.length - 1], 1);
+  let yMin = spec.yMin, yMax = spec.yMax;
+  if (yMin == null || yMax == null) {
+    const vals = series.flatMap((s) => s.ys.filter(Number.isFinite));
+    yMin = 0;
+    yMax = Math.max(...vals, 1e-6) * 1.08;
+  }
+  if (yMax <= yMin) yMax = yMin + 1;
+  const xmap = (x) => p.l + ((x - xMin) / (xMax - xMin)) * (W - p.l - p.r);
+  const ymap = (v) => p.t + ((yMax - v) / (yMax - yMin)) * (H - p.t - p.b);
+  const yBase = ymap(spec.kind === "pct" ? 0 : yMin);
+  const fmtY = spec.kind === "pct"
+    ? (v) => (100 * v).toFixed(0) + "%"
+    : (v) => (Math.abs(v) >= 100 ? v.toFixed(1) : v.toFixed(2));
+  for (let i = 0; i < 5; i++) {
+    const v = yMax - i * (yMax - yMin) / 4;
+    const y = ymap(v);
+    svg.appendChild(el("line", { x1: p.l, x2: W - p.r, y1: y, y2: y, stroke: "#1e3140" }));
+    svg.appendChild(svgText({
+      x: p.l - 8, y: y + 4, "text-anchor": "end", fill: "#8aa3b3",
+      "font-size": 12, "font-family": "IBM Plex Mono, monospace"
+    }, fmtY(v)));
+  }
+  for (let i = 0; i < 5; i++) {
+    const v = xMin + i * (xMax - xMin) / 4;
+    svg.appendChild(svgText({
+      x: xmap(v), y: H - 8, "text-anchor": "middle", fill: "#8aa3b3",
+      "font-size": 12, "font-family": "IBM Plex Mono, monospace"
+    }, fmtStep(v)));
+  }
+  series.forEach((s) => {
+    const pts = [];
+    xs.forEach((x, i) => {
+      const y = s.ys[i];
+      if (Number.isFinite(y)) pts.push([xmap(x), ymap(y)]);
+    });
+    if (!pts.length) return;
+    const area = `M ${pts[0][0]} ${yBase} ` + pts.map((pt) => `L ${pt[0]} ${pt[1]}`).join(" ") + ` L ${pts[pts.length - 1][0]} ${yBase} Z`;
+    svg.appendChild(el("path", { d: area, fill: s.color, opacity: "0.16" }));
+    svg.appendChild(el("polyline", {
+      class: "curve",
+      points: pts.map((pt) => pt.join(",")).join(" "),
+      fill: "none", stroke: s.color, "stroke-width": "2.6",
+      "stroke-linecap": "round", "stroke-linejoin": "round"
+    }));
+  });
+  const hoverG = el("g", { opacity: "0" });
+  const cross = el("line", { y1: p.t, y2: H - p.b, stroke: "#38bdf8", "stroke-width": "1", "stroke-dasharray": "3 4" });
+  hoverG.appendChild(cross);
+  const dots = series.map((s) => {
+    const c = el("circle", { r: "5", fill: s.color, stroke: "#061018", "stroke-width": "2" });
+    hoverG.appendChild(c);
+    return c;
+  });
+  svg.appendChild(hoverG);
+  const overlay = el("rect", {
+    x: p.l, y: p.t, width: W - p.l - p.r, height: H - p.t - p.b, fill: "transparent", class: "chart-overlay"
+  });
+  svg.appendChild(overlay);
+  overlay.addEventListener("mousemove", (ev) => {
+    const box = svg.getBoundingClientRect();
+    const mx = ((ev.clientX - box.left) / box.width) * W;
+    const xVal = xMin + ((mx - p.l) / (W - p.l - p.r)) * (xMax - xMin);
+    const idx = nearest(xs, xVal);
+    const cx = xmap(xs[idx]);
+    cross.setAttribute("x1", cx); cross.setAttribute("x2", cx);
+    hoverG.setAttribute("opacity", "1");
+    let html = `<div class="chart-tooltip-title">step ${fmtStep(xs[idx])}</div>`;
+    series.forEach((s, si) => {
+      const v = s.ys[idx];
+      const dot = dots[si];
+      if (!Number.isFinite(v)) { dot.setAttribute("opacity", "0"); return; }
+      dot.setAttribute("opacity", "1");
+      dot.setAttribute("cx", cx);
+      dot.setAttribute("cy", ymap(v));
+      html += `<div class="chart-tooltip-row"><span class="chart-tooltip-swatch" style="background:${s.color}"></span>`
+        + `<span>${s.label}</span><strong>${spec.kind === "pct" ? pct(v, 2) : num(v, 3)}</strong></div>`;
+    });
+    tip.innerHTML = html;
+    tip.classList.add("visible");
+    const wr = wrap.getBoundingClientRect();
+    tip.style.left = Math.min(wr.width - 12, Math.max(8, ev.clientX - wr.left + 14)) + "px";
+    tip.style.top = "12px";
+  });
+  overlay.addEventListener("mouseleave", () => {
+    hoverG.setAttribute("opacity", "0");
+    tip.classList.remove("visible");
+  });
+}
+
+function setPill(kind, label) {
+  const pill = $("statusPill");
+  pill.className = "live-pill is-" + kind;
+  pill.querySelector("span").textContent = label;
+}
+function drawHw(hw) {
+  const rows = [
+    ["cpu", hw.cpu, (100 * (hw.cpu || 0)).toFixed(0) + "%", "#638bc4"],
+    ["ram", hw.ram, fmtBytes(hw.ram_used_mb || 0) + " / " + fmtBytes(hw.ram_total_mb || 0), "#9b7ed9"],
+    ["gpu", hw.gpu_util, (100 * (hw.gpu_util || 0)).toFixed(0) + "%  " + (hw.gpu_temp ? Math.round(hw.gpu_temp) + "°C" : ""), "#f29665"],
+    ["vram", hw.vram, fmtBytes(hw.vram_used_mb || 0) + " / " + fmtBytes(hw.vram_total_mb || 0), "#3dcc8a"],
+  ];
+  $("hwBars").innerHTML = rows.map(([name, frac, extra, tone]) => `
+    <div class="bar-row">
+      <div>${name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(100 * Math.min(Math.max(frac || 0, 0), 1))}%;background:${tone}"></div></div>
+      <div class="bar-value">${extra}</div>
+    </div>`).join("");
+}
+function drawAll(S) {
+  const latest = S.latest || {};
+  const run = S.run || {};
+  const series = S.series || { step: [], loss: [], card: [], tile_exact: [], tile_near: [], wait: [] };
+  $("modelName").textContent = run.title || latest.model_name || "Astra live";
+  $("lede").textContent = (run.device || "cuda") + " · " + (run.parameters ? (run.parameters / 1e6).toFixed(2) + "M params" : "—")
+    + " · batch " + (run.batch_size || "—") + " · " + (series.step.length || 0).toLocaleString() + " plotted points";
+  $("kpiObj").textContent = num(latest.loss, 3);
+  $("kpiCard").textContent = pct(latest.card ?? latest.acc, 2);
+  $("kpiTile").textContent = pct(latest.tile_exact, 2);
+  $("kpiNear").textContent = pct(latest.tile_near, 2);
+  $("kpiWait").textContent = pct(latest.wait, 2);
+  $("kpiCardSub").textContent = (S.val && S.val.card != null) ? "val " + pct(S.val.card, 2) : "next-card top-1";
+  $("kpiWaitSub").textContent = latest.wait_mae != null ? "MAE " + num(latest.wait_mae, 2) + "s" : "hit @ 1.5s";
+  const progress = Number(run.progress_percent || 0);
+  $("timeFill").style.width = Math.min(100, Math.max(0, progress)) + "%";
+  $("workLabel").textContent = progress.toFixed(1) + "%";
+  $("elapsedLabel").textContent = fmtSec(run.elapsed_seconds);
+  $("etaLabel").textContent = fmtSec(run.eta_seconds);
+  const age = S.age_seconds;
+  if (!S.ok) setPill("stall", "missing");
+  else if (S.waiting) setPill("wait", "waiting");
+  else if (progress >= 99.9) setPill("done", "done");
+  else if (age != null && age > 90) setPill("stall", "stalled");
+  else if (age != null && age > 12) setPill("quiet", "quiet");
+  else setPill("live", "live");
+
+  const xs = series.step;
+  const obj = [{ id: "obj", label: "obj", color: "#638bc4", ys: series.loss }];
+  const tile = [
+    { id: "exact", label: "exact", color: "#3dcc8a", ys: series.tile_exact },
+    { id: "near", label: "3×3", color: "#9b7ed9", ys: series.tile_near },
+  ];
+  const wait = [{ id: "wait", label: "wait", color: "#f29665", ys: series.wait }];
+  const card = [{ id: "card", label: "card", color: "#3dcc8a", ys: series.card }];
+  mountLegend($("legObj"), "obj", obj);
+  mountLegend($("legTile"), "tile", tile);
+  mountLegend($("legWait"), "wait", wait);
+  mountLegend($("legCard"), "card", card);
+  liveChart($("chartObj"), { id: "obj", xs, series: obj, kind: "obj" });
+  liveChart($("chartTile"), { id: "tile", xs, series: tile, kind: "pct", yMin: 0, yMax: 1 });
+  liveChart($("chartWait"), { id: "wait", xs, series: wait, kind: "pct", yMin: 0, yMax: 1 });
+  liveChart($("chartCard"), { id: "card", xs, series: card, kind: "pct", yMin: 0, yMax: 1 });
+
+  drawHw(S.hardware || {});
+  const stats = [
+    ["epoch", (run.epoch || 0) + " / " + (run.epochs || "—")],
+    ["batch", (run.batch || 0).toLocaleString() + " / " + (run.batches_total || "—")],
+    ["samples", (run.samples_done || 0).toLocaleString()],
+    ["it/s", num(run.its, 2)],
+    ["samples/s", num(run.samples_per_sec, 1)],
+    ["lr", run.lr != null ? Number(run.lr).toExponential(2) : "—"],
+    ["clock nll", num(latest.clock, 3)],
+    ["gpu", (S.hardware && S.hardware.gpu_name) || run.device || "—"],
+  ];
+  $("runStats").innerHTML = stats.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+
+  const log = (S.log || []).slice(-40);
+  const box = $("logBox");
+  const stick = box.scrollHeight - box.scrollTop - box.clientHeight < 40;
+  const body = log.map((line) => line.replace(/</g, "&lt;")).join("\n") || "waiting for the trainer…";
+  const live = S.live ? `\n<span class="live-line">${S.live.replace(/</g, "&lt;")}</span>` : "";
+  box.innerHTML = body + live;
+  if (stick) box.scrollTop = box.scrollHeight;
+  $("logMeta").textContent = (S.n_raw || 0).toLocaleString() + " jsonl rows";
+}
+
+async function tick() {
+  try {
+    const res = await fetch("/api/state", { cache: "no-store" });
+    if (!res.ok) throw new Error("http " + res.status);
+    const S = await res.json();
+    window.__lastState = S;
+    drawAll(S);
+  } catch (err) {
+    setPill("stall", "reconnect");
+  }
+}
+tick();
+setInterval(() => { if (!document.hidden) tick(); }, INTERVAL);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
+  </script>
+</body>
+</html>

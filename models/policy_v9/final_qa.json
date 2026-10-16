@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "verified_at": "2026-10-12T11:06:26.758500+00:00",
+  "report": "reports/policy_v9.html",
+  "report_sha256": "ef70731d70654f27770f4289341f5a8cc46a6efc389e0ffb2832b5ebc698e2ab",
+  "checks": [
+    "six frozen final-score rows match recorded evidence",
+    "three equal-battle confidence interval rows",
+    "five ablation decisions",
+    "shared-donor scope and missed joint gate visible",
+    "curve toggles remove and restore a series",
+    "curve replay starts and finishes",
+    "pointer tooltip displays completed epoch metrics",
+    "pilot video metadata ready and caption identifies pilot",
+    "export exact tensor equality and CPU causal inference",
+    "no new final-holdout scoring"
+  ],
+  "screenshot": "/home/cochon/.t3/userdata/browser-artifacts/browser-screenshot-127-0-0-1-mv55a9da-0e58fa03.png",
+  "tests": {
+    "previous_full_suite_passed": 183,
+    "legacy_adapter_and_holdout_targeted_passed": 3,
+    "native_report_resume_test_passed": 1
+  }
+}

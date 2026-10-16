@@ -25,6 +25,7 @@ from .policy_dataset import (
     DEFAULT_MIN_CONTEXT,
     DEFAULT_REACTION_SECONDS,
     GLOBAL_DIM,
+    GLOBAL_INDEX,
     THREAT_DIM,
     _encode_causal_stream,
     build_vocab,
@@ -32,10 +33,10 @@ from .policy_dataset import (
     encode_policy_sample,
     load_card_costs,
     recent_opponent_threat,
-    split_battles,
     summarize_split,
 )
 from .policy_infer import load_policy
+from .policy_manifest import resolve_battle_splits
 from .policy_train import _load_realism_scorer, _score_realism, rollout_policy_battles
 from .winner_dataset import BattleExample
 
@@ -96,19 +97,19 @@ def extract_clock_features(
     global_feat = globals_all[event_index].detach().cpu().numpy().astype(np.float32)
     current = battle.events[event_index]
     acting_side = current["side"]
-    # Prefix = events before current; now = current timestamp (causal for next-actor).
+    seconds = float(current["seconds"])
     threat, _ = recent_opponent_threat(
         battle,
         event_index,
         acting_side=acting_side,
         costs=costs,
         max_age=reaction_seconds,
+        observation_seconds=seconds,
     )
-
-    seconds = float(current["seconds"])
-    # Globals indices 18/19 are team/opp elixir (see _encode_causal_stream).
-    elixir_team = float(global_feat[18]) if global_feat.shape[0] > 18 else 0.5
-    elixir_opp = float(global_feat[19]) if global_feat.shape[0] > 19 else 0.5
+    elixir_team_i = GLOBAL_INDEX["team_elixir"]
+    elixir_opp_i = GLOBAL_INDEX["opp_elixir"]
+    elixir_team = float(global_feat[elixir_team_i]) if global_feat.shape[0] > elixir_team_i else 0.5
+    elixir_opp = float(global_feat[elixir_opp_i]) if global_feat.shape[0] > elixir_opp_i else 0.5
     extras = np.asarray(
         [
             1.0 if acting_side == "team" else 0.0,
@@ -507,6 +508,7 @@ def run_action_clock_experiment(
     n_rollouts: int = 96,
     device_name: str | None = None,
     skip_rollouts: bool = False,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     from sklearn.ensemble import HistGradientBoostingClassifier, HistGradientBoostingRegressor
 
@@ -520,7 +522,14 @@ def run_action_clock_experiment(
 
     print("Loading battles ...", flush=True)
     battles = collect_battles(input_dir, min_card_plays=min_card_plays)
-    train_battles, val_battles, test_battles = split_battles(battles, seed=seed)
+    train_battles, val_battles, test_battles, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        output_dir=model_dir,
+        split_manifest=split_manifest,
+        create=True,
+        min_card_plays=min_card_plays,
+    )
     vocab = build_vocab(train_battles)
     costs = load_card_costs(card_costs_path)
 

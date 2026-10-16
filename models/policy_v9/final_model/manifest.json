@@ -1,0 +1,53 @@
+{
+  "source": "models/policy_v9/control_seed42/best.pt",
+  "source_sha256": "73eacd4733eb3d3ad053d46ff3fd0f047082ad25cd1d233e00d474b3df5065cf",
+  "deployment_sha256": "cbff36722ebe83e474228153c31f3b73b9cdf04f9291f3dd7e89e6d9ba937ee2",
+  "seed": 42,
+  "promoted": false,
+  "recipe": {
+    "width": 160,
+    "base_epochs": 12,
+    "continuation_epochs": 2,
+    "options": {},
+    "seed42_source": "models/policy_v9/control_seed42",
+    "selection_metric": "validation joint discrete NLL",
+    "chosen_before_holdout": true,
+    "seed_reproduction": "shared_donor_continuations"
+  },
+  "final_gate": {
+    "card_gain": 0.02,
+    "joint_gain": 0.02,
+    "seeds_required": 3,
+    "all_seeds_required": true,
+    "independent_full_training_required": true,
+    "seed_reproduction": "shared_donor_continuations",
+    "accuracy_thresholds_met": false,
+    "pass_gate": false,
+    "by_seed": {
+      "v9_seed42": {
+        "card_delta": 0.030212700366973877,
+        "joint_delta": 0.015498094260692596,
+        "joint_nll_delta": -0.28697681427001953
+      },
+      "v9_seed43": {
+        "card_delta": 0.029066085815429688,
+        "joint_delta": 0.015517212450504303,
+        "joint_nll_delta": -0.28847646713256836
+      },
+      "v9_seed44": {
+        "card_delta": 0.030441999435424805,
+        "joint_delta": 0.016224272549152374,
+        "joint_nll_delta": -0.28712892532348633
+      }
+    }
+  },
+  "inference_module": "cr_replay_pipeline.v9_infer",
+  "limitations": [
+    "Offline deployment proposals; no real-game win claim.",
+    "Current troop health, deaths and targeting are not observed.",
+    "Ability action selection is unsupported.",
+    "Offline policy accuracy is not a measured real-game win rate.",
+    "This holdout was used only after final checkpoints were frozen.",
+    "The three continuation seeds share one pretrained donor. They do not establish variability across independent full-training runs; the original promotion gate remains incomplete."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "observation": "causal-observation-1",
+  "preprocess": 4,
+  "source": {
+    "source": "/home/cochon/Documents/mini-project/clash-royale-ai/data/raw",
+    "file_count": 64275,
+    "digest": "346201a2d03b5ae08ff83c40ae5ccc776ecceed5ec3c844ed2f817eea5c33281"
+  },
+  "metadata": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "costs": "393e31c77a4801fb253c65e599373d58a5bbb7d8bdd493cdf2d93fabdbe027b4",
+  "manifest": "b60ab8528b324a4c823a6498aff8576fb71085e30d74f1d21448d8c3ab2af644",
+  "final_holdout": "ba9ba13ba14eebf45fc56218724483bd8855731e26a0f2a205ca9c386af46564",
+  "samples_per_battle": 40,
+  "d_model": 128,
+  "batch_size": 128,
+  "objective": "joint-card-cell-nll+0.25-timing;clock=0.1;uniform-no-augmentation-v1",
+  "source_code": "21ce8bd37adacde0e4ed04e84d580ecdfcd38fac21a7e0e5879dd8f2eddc932d",
+  "metadata_records": 0
+}

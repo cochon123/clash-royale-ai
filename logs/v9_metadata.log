@@ -1,0 +1,8 @@
+{
+  "leaderboard_players": 1000,
+  "battlelog_failures": [],
+  "unique_battles": 27020,
+  "total_metadata_battles": 27020,
+  "existing_metadata_preserved": true,
+  "output": "data/metadata/battles.jsonl"
+}

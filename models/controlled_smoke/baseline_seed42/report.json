@@ -1,0 +1,108 @@
+{
+  "variant": "baseline",
+  "seed": 42,
+  "created_at": "2026-09-07T04:37:17.138929+00:00",
+  "contract": {
+    "observation": "causal-observation-1",
+    "purpose": "integration smoke only",
+    "train_ids": [
+      "002YL2LG0GJY",
+      "00GY9VGURG0L",
+      "000YYVVRQRJG",
+      "00GY9VQ2P8CU",
+      "009YL2Y2CYUP",
+      "002YL8Y288QR",
+      "002YL8PV8YGP",
+      "00CYP2GJUJPV",
+      "008YL0VQPQ88",
+      "000YL0L99VGU",
+      "002YL2JCYJ99",
+      "00GYP020VGJU",
+      "008YL228RYQ8",
+      "00GYP0YR98UU",
+      "000YL08V989C",
+      "00CYP0V82CUU",
+      "00CYP2JJUQU9",
+      "000YYVQUVQQU",
+      "00CYP2U00J8U",
+      "00GYP0UJRGGV",
+      "00GYP0UUCU9L",
+      "00GYP0QVP9U0",
+      "00GY9V9VVV8J",
+      "008YL2P9P9VU",
+      "009YL2CLVJG0",
+      "002YL8YJGL90",
+      "008YL0C28QG9",
+      "00GYP0YLRJJR",
+      "00GYP0PGLR08",
+      "002YL2QP9RGC",
+      "00GYP0RPUJRC",
+      "002YL8PLQRGV"
+    ],
+    "validation_ids": [
+      "00GYP0L9CPQV",
+      "008YL0JVP9JC",
+      "008YL0LQU8U9",
+      "000YL0L2L890",
+      "00GYP0PUG82C",
+      "000YL0LC0Q88",
+      "002YL2UUCGJV",
+      "00GYP0CUUULL"
+    ]
+  },
+  "parameters": 62834,
+  "device": "cuda",
+  "train_battles": 32,
+  "validation_battles": 8,
+  "unique_actions": 256,
+  "clock_intervals": 1874,
+  "empirical_clock_rates": [
+    0.15795908123031585,
+    0.14549075805785627
+  ],
+  "empirical_clock_validation": {
+    "clock_nll": 2.816225290298462,
+    "clock_median_mae": 1.9737398624420166
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 7.952189743518829,
+      "card": 0.375,
+      "cell": 0.0,
+      "joint": 0.0,
+      "joint_nll": 7.752157688140869,
+      "timing_mae": 3.2070677280426025
+    }
+  ],
+  "config": {
+    "output": "models/controlled_smoke",
+    "seed": 42,
+    "device": "cuda",
+    "d_model": 32,
+    "samples_per_battle": 8,
+    "batch_size": 32,
+    "epochs": 1,
+    "run_seconds": 60,
+    "patience": 2
+  },
+  "model_config": {
+    "variant": "baseline",
+    "d_model": 32,
+    "vocab_size": 116
+  },
+  "status": "completed",
+  "weights_epoch": 1,
+  "elapsed_seconds": 2.0228322279872373,
+  "selected_validation": {
+    "epoch": 1,
+    "train_loss": 7.952189743518829,
+    "card": 0.375,
+    "cell": 0.0,
+    "joint": 0.0,
+    "joint_nll": 7.752157688140869,
+    "timing_mae": 3.2070677280426025
+  },
+  "last_completed_epoch": 1,
+  "samples_presented": 256
+}

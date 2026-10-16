@@ -1,0 +1,21 @@
+{
+  "variants": [
+    "baseline",
+    "clock",
+    "memory",
+    "shuffled",
+    "frozen_time"
+  ],
+  "initial_screen": [
+    "baseline",
+    "clock",
+    "memory"
+  ],
+  "suite_seconds": 10800,
+  "run_seconds": 3600,
+  "epochs": 12,
+  "test_access": "none; validation-only screening",
+  "promotion": "manual evidence review, paired battle CIs, then two more seeds",
+  "memory_gate": "+1 pp card or joint, card regression <=0.5 pp; aligned must beat shuffled and frozen time",
+  "board_oracle": "separate annotated-game experiment; never inferred from deployment history"
+}

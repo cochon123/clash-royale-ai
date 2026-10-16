@@ -1,0 +1,246 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/src/cr_replay_pipeline/v9_advantage.py", line 113, in <module>
+    if __name__=="__main__":main()
+                            ~~~~^^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/src/cr_replay_pipeline/v9_advantage.py", line 112, in main
+    a=p.parse_args();prepare(a.cache,a.output,a.workers,a.beta)
+                     ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/src/cr_replay_pipeline/v9_advantage.py", line 62, in prepare
+    ds=ShardDataset(cache/"train",reaction_weight=1.)
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/src/cr_replay_pipeline/v9_cache.py", line 195, in __init__
+    arrays = {k: np.load(folder / f"{k}.npy", mmap_mode="r") for k in FIELDS}
+                 ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/.venv/lib/python3.14/site-packages/numpy/lib/_npyio_impl.py", line 480, in load
+    return format.open_memmap(file, mode=mmap_mode,
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+                              max_header_size=max_header_size)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/.venv/lib/python3.14/site-packages/numpy/lib/_format_impl.py", line 994, in open_memmap
+    marray = numpy.memmap(filename, dtype=dtype, shape=shape, order=order,
+        mode=mode, offset=offset)
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/.venv/lib/python3.14/site-packages/numpy/_core/memmap.py", line 290, in __new__
+    mm = mmap.mmap(fid.fileno(), bytes, access=acc, offset=start)
+OSError: [Errno 24] Too many open files
+prefix value fold=1/3 work=74408 ETA=2s
+prefix value fold=2/3 work=74410 ETA=1s
+prefix value fold=3/3 work=74410 ETA=0s
+advantage work=1/218 ETA=3101s
+advantage work=2/218 ETA=1543s
+advantage work=3/218 ETA=1030s
+advantage work=4/218 ETA=782s
+advantage work=5/218 ETA=838s
+advantage work=6/218 ETA=715s
+advantage work=7/218 ETA=610s
+advantage work=8/218 ETA=531s
+advantage work=9/218 ETA=593s
+advantage work=10/218 ETA=539s
+advantage work=11/218 ETA=489s
+advantage work=12/218 ETA=455s
+advantage work=13/218 ETA=493s
+advantage work=14/218 ETA=461s
+advantage work=15/218 ETA=429s
+advantage work=16/218 ETA=408s
+advantage work=17/218 ETA=440s
+advantage work=18/218 ETA=416s
+advantage work=19/218 ETA=392s
+advantage work=20/218 ETA=376s
+advantage work=21/218 ETA=407s
+advantage work=22/218 ETA=387s
+advantage work=23/218 ETA=368s
+advantage work=24/218 ETA=354s
+advantage work=25/218 ETA=398s
+advantage work=26/218 ETA=381s
+advantage work=27/218 ETA=365s
+advantage work=28/218 ETA=350s
+advantage work=29/218 ETA=354s
+advantage work=30/218 ETA=370s
+advantage work=31/218 ETA=357s
+advantage work=32/218 ETA=350s
+advantage work=33/218 ETA=338s
+advantage work=34/218 ETA=336s
+advantage work=35/218 ETA=345s
+advantage work=36/218 ETA=334s
+advantage work=37/218 ETA=325s
+advantage work=38/218 ETA=327s
+advantage work=39/218 ETA=332s
+advantage work=40/218 ETA=322s
+advantage work=41/218 ETA=315s
+advantage work=42/218 ETA=316s
+advantage work=43/218 ETA=334s
+advantage work=44/218 ETA=324s
+advantage work=45/218 ETA=315s
+advantage work=46/218 ETA=307s
+advantage work=47/218 ETA=319s
+advantage work=48/218 ETA=321s
+advantage work=49/218 ETA=312s
+advantage work=50/218 ETA=304s
+advantage work=51/218 ETA=309s
+advantage work=52/218 ETA=307s
+advantage work=53/218 ETA=300s
+advantage work=54/218 ETA=297s
+advantage work=55/218 ETA=300s
+advantage work=56/218 ETA=303s
+advantage work=57/218 ETA=295s
+advantage work=58/218 ETA=288s
+advantage work=59/218 ETA=290s
+advantage work=60/218 ETA=291s
+advantage work=61/218 ETA=286s
+advantage work=62/218 ETA=287s
+advantage work=63/218 ETA=281s
+advantage work=64/218 ETA=282s
+advantage work=65/218 ETA=278s
+advantage work=66/218 ETA=279s
+advantage work=67/218 ETA=275s
+advantage work=68/218 ETA=283s
+advantage work=69/218 ETA=277s
+advantage work=70/218 ETA=274s
+advantage work=71/218 ETA=269s
+advantage work=72/218 ETA=276s
+advantage work=73/218 ETA=277s
+advantage work=74/218 ETA=272s
+advantage work=75/218 ETA=267s
+advantage work=76/218 ETA=285s
+advantage work=77/218 ETA=280s
+advantage work=78/218 ETA=274s
+advantage work=79/218 ETA=269s
+advantage work=80/218 ETA=270s
+advantage work=81/218 ETA=265s
+advantage work=82/218 ETA=269s
+advantage work=83/218 ETA=263s
+advantage work=84/218 ETA=260s
+advantage work=85/218 ETA=256s
+advantage work=86/218 ETA=254s
+advantage work=87/218 ETA=254s
+advantage work=88/218 ETA=250s
+advantage work=89/218 ETA=248s
+advantage work=90/218 ETA=245s
+advantage work=91/218 ETA=244s
+advantage work=92/218 ETA=243s
+advantage work=93/218 ETA=239s
+advantage work=94/218 ETA=236s
+advantage work=95/218 ETA=235s
+advantage work=96/218 ETA=233s
+advantage work=97/218 ETA=229s
+advantage work=98/218 ETA=227s
+advantage work=99/218 ETA=225s
+advantage work=100/218 ETA=233s
+advantage work=101/218 ETA=229s
+advantage work=102/218 ETA=226s
+advantage work=103/218 ETA=224s
+advantage work=104/218 ETA=222s
+advantage work=105/218 ETA=218s
+advantage work=106/218 ETA=216s
+advantage work=107/218 ETA=214s
+advantage work=108/218 ETA=212s
+advantage work=109/218 ETA=209s
+advantage work=110/218 ETA=206s
+advantage work=111/218 ETA=204s
+advantage work=112/218 ETA=202s
+advantage work=113/218 ETA=199s
+advantage work=114/218 ETA=198s
+advantage work=115/218 ETA=197s
+advantage work=116/218 ETA=194s
+advantage work=117/218 ETA=192s
+advantage work=118/218 ETA=189s
+advantage work=119/218 ETA=188s
+advantage work=120/218 ETA=186s
+advantage work=121/218 ETA=184s
+advantage work=122/218 ETA=181s
+advantage work=123/218 ETA=180s
+advantage work=124/218 ETA=179s
+advantage work=125/218 ETA=176s
+advantage work=126/218 ETA=173s
+advantage work=127/218 ETA=171s
+advantage work=128/218 ETA=171s
+advantage work=129/218 ETA=168s
+advantage work=130/218 ETA=165s
+advantage work=131/218 ETA=162s
+advantage work=132/218 ETA=162s
+advantage work=133/218 ETA=159s
+advantage work=134/218 ETA=156s
+advantage work=135/218 ETA=154s
+advantage work=136/218 ETA=154s
+advantage work=137/218 ETA=151s
+advantage work=138/218 ETA=148s
+advantage work=139/218 ETA=145s
+advantage work=140/218 ETA=145s
+advantage work=141/218 ETA=142s
+advantage work=142/218 ETA=139s
+advantage work=143/218 ETA=137s
+advantage work=144/218 ETA=136s
+advantage work=145/218 ETA=134s
+advantage work=146/218 ETA=131s
+advantage work=147/218 ETA=129s
+advantage work=148/218 ETA=128s
+advantage work=149/218 ETA=126s
+advantage work=150/218 ETA=123s
+advantage work=151/218 ETA=121s
+advantage work=152/218 ETA=120s
+advantage work=153/218 ETA=118s
+advantage work=154/218 ETA=115s
+advantage work=155/218 ETA=113s
+advantage work=156/218 ETA=112s
+advantage work=157/218 ETA=110s
+advantage work=158/218 ETA=107s
+advantage work=159/218 ETA=105s
+advantage work=160/218 ETA=104s
+advantage work=161/218 ETA=102s
+advantage work=162/218 ETA=100s
+advantage work=163/218 ETA=97s
+advantage work=164/218 ETA=97s
+advantage work=165/218 ETA=94s
+advantage work=166/218 ETA=92s
+advantage work=167/218 ETA=90s
+advantage work=168/218 ETA=89s
+advantage work=169/218 ETA=87s
+advantage work=170/218 ETA=84s
+advantage work=171/218 ETA=82s
+advantage work=172/218 ETA=81s
+advantage work=173/218 ETA=79s
+advantage work=174/218 ETA=77s
+advantage work=175/218 ETA=75s
+advantage work=176/218 ETA=74s
+advantage work=177/218 ETA=72s
+advantage work=178/218 ETA=70s
+advantage work=179/218 ETA=68s
+advantage work=180/218 ETA=66s
+advantage work=181/218 ETA=64s
+advantage work=182/218 ETA=62s
+advantage work=183/218 ETA=60s
+advantage work=184/218 ETA=59s
+advantage work=185/218 ETA=57s
+advantage work=186/218 ETA=55s
+advantage work=187/218 ETA=53s
+advantage work=188/218 ETA=52s
+advantage work=189/218 ETA=50s
+advantage work=190/218 ETA=48s
+advantage work=191/218 ETA=46s
+advantage work=192/218 ETA=45s
+advantage work=193/218 ETA=43s
+advantage work=194/218 ETA=41s
+advantage work=195/218 ETA=39s
+advantage work=196/218 ETA=38s
+advantage work=197/218 ETA=36s
+advantage work=198/218 ETA=34s
+advantage work=199/218 ETA=32s
+advantage work=200/218 ETA=31s
+advantage work=201/218 ETA=29s
+advantage work=202/218 ETA=27s
+advantage work=203/218 ETA=25s
+advantage work=204/218 ETA=24s
+advantage work=205/218 ETA=22s
+advantage work=206/218 ETA=20s
+advantage work=207/218 ETA=19s
+advantage work=208/218 ETA=17s
+advantage work=209/218 ETA=15s
+advantage work=210/218 ETA=13s
+advantage work=211/218 ETA=12s
+advantage work=212/218 ETA=10s
+advantage work=213/218 ETA=8s
+advantage work=214/218 ETA=7s
+advantage work=215/218 ETA=5s
+advantage work=216/218 ETA=3s
+advantage work=217/218 ETA=2s
+advantage work=218/218 ETA=0s

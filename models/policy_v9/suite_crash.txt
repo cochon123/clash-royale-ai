@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/src/cr_replay_pipeline/v9_suite.py", line 166, in main
+    try:run(a)
+        ~~~^^^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/src/cr_replay_pipeline/v9_suite.py", line 117, in run
+    report=suite.run(name,epochs=args.ablation_epochs,width=width,warmstart=donor,**options)
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/src/cr_replay_pipeline/v9_suite.py", line 52, in run
+    self.command(argv,name)
+    ~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/cochon/Documents/mini-project/clash-royale-ai/src/cr_replay_pipeline/v9_suite.py", line 34, in command
+    subprocess.run([sys.executable,*argv],check=True,env={**os.environ,"PYTHONUNBUFFERED":"1"})
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python', '-m', 'cr_replay_pipeline.v9_train', '--cache', 'data/v9_cache', '--output', 'models/policy_v9/advantage_seed42', '--epochs', '2', '--d-model', '160', '--seed', '42', '--deadline', '2026-10-12T11:15:00+00:00', '--progress', 'models/policy_v9/progress.jsonl', '--warmstart', 'models/policy_v9/base_full_seed42', '--lr', '0.0001', '--advantage']' returned non-zero exit status 1.

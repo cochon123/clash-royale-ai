@@ -12,16 +12,18 @@ from typing import Any
 
 import numpy as np
 
+from .artifact_cache import cache_payload_matches, sha256_file, stable_int_seed
+from .metrics import binary_auc as _auc_binary
 from .policy_infer import load_policy
+from .policy_manifest import resolve_battle_splits
 from .policy_train import rollout_policy_battles
 from .realism_generate import TimingPrior, generate_easy_negative, generate_medium_negative
 from .realism_train import (
-    _auc_binary,
     _metrics,
     _score_histogram,
     extract_realism_features,
 )
-from .winner_dataset import BattleExample, collect_battles, load_card_costs, split_battles, summarize_split
+from .winner_dataset import BattleExample, collect_battles, load_card_costs, summarize_split
 
 DEFAULT_EVAL_POLICIES: list[tuple[str, str]] = [
     ("policy_bc_v2", "models/policy_bc"),
@@ -55,6 +57,54 @@ HARNESS_FEATURES: frozenset[str] = frozenset(
         "frac_triple",
     }
 )
+
+
+def _style_lessons(
+    forensics: list[dict[str, Any]],
+    harness_free: dict[str, Any],
+    ablation: list[dict[str, Any]],
+) -> list[str]:
+    top = ", ".join(row["feature"] for row in forensics[:5]) if forensics else "none measured"
+    harness_auc = float(harness_free.get("auc") or 0.5)
+    if harness_auc >= 0.9:
+        harness_clause = (
+            f"Removing all {len(HARNESS_FEATURES)} harness features still leaves "
+            f"AUC {harness_auc:.3f}, so sequence statistics beyond the rollout harness "
+            "still separate AI from human in this run."
+        )
+    elif harness_auc >= 0.65:
+        harness_clause = (
+            f"Removing all {len(HARNESS_FEATURES)} harness features leaves "
+            f"AUC {harness_auc:.3f}, a moderate remaining gap. Treat this as a proxy "
+            "tell, not evidence of playing strength."
+        )
+    else:
+        harness_clause = (
+            f"Removing all {len(HARNESS_FEATURES)} harness features leaves "
+            f"AUC {harness_auc:.3f}, so this run does not support a strong claim "
+            "that the style gap is real."
+        )
+    last_ablation = ablation[-1] if ablation else {}
+    leftover = float(last_ablation.get("auc") or 0.5)
+    if leftover >= 0.9:
+        ablation_clause = (
+            "Dropping the strongest measured tells still leaves high detection: "
+            "the remaining AI signature is distributed, not one isolated bug."
+        )
+    else:
+        ablation_clause = (
+            f"After dropping the strongest measured tells, leftover AUC is "
+            f"{leftover:.3f}; do not treat residual detection as a settled conclusion."
+        )
+    return [
+        "A discriminator is only as strong as its negatives: legal-random synthetics "
+        "and policy rollouts can produce opposite conclusions from the same features.",
+        f"Top measured tells: {top}.",
+        "Several candidate tells can come from the rollout harness (strict side "
+        "alternation, fixed continuation length) rather than the policy. " + harness_clause,
+        ablation_clause,
+        "Style scores are a proxy for 'looks human' under this judge, not win rate.",
+    ]
 
 
 def _policy_id_from_path(path: str | Path) -> str:
@@ -508,30 +558,64 @@ def _rollout_cache_path(output: Path, policy_id: str, split_name: str) -> Path:
     return output / "rollouts" / policy_id / f"{split_name}.pkl"
 
 
-def _load_rollout_cache(path: Path) -> list[BattleExample] | None:
+def _rollout_identity(
+    *,
+    policy_dir: str | Path,
+    policy_id: str,
+    split_name: str,
+    seed_battles: list[BattleExample],
+    seed: int,
+) -> dict[str, Any]:
+    ckpt = Path(policy_dir) / "best_model.pt"
+    return {
+        "schema": 2,
+        "policy_id": policy_id,
+        "split_name": split_name,
+        "checkpoint_sha256": sha256_file(ckpt) if ckpt.exists() else None,
+        "seed_battle_ids": [battle.battle_id for battle in seed_battles],
+        "seed": int(seed),
+        "warmup_events": WARMUP_EVENTS,
+        "max_new_events": MAX_NEW_EVENTS,
+        "temperature": ROLLOUT_TEMPERATURE,
+    }
+
+
+def _rollout_cache_expected(
+    *,
+    policy_id: str,
+    split_name: str,
+    policy_dir: str | Path | None = None,
+) -> dict[str, Any]:
+    expected: dict[str, Any] = {
+        "schema": 2,
+        "policy_id": policy_id,
+        "split_name": split_name,
+    }
+    if policy_dir is not None:
+        ckpt = Path(policy_dir) / "best_model.pt"
+        if ckpt.exists():
+            expected["checkpoint_sha256"] = sha256_file(ckpt)
+    return expected
+
+
+def _load_rollout_cache(path: Path, expected: dict[str, Any]) -> list[BattleExample] | None:
     if not path.exists():
         return None
     with path.open("rb") as handle:
         payload = pickle.load(handle)
+    if not isinstance(payload, dict) or not cache_payload_matches(payload, expected):
+        return None
     return [_battle_from_dict(row) for row in payload["battles"]]
 
 
 def _save_rollout_cache(
     path: Path,
     battles: list[BattleExample],
-    *,
-    policy_id: str,
-    split_name: str,
-    seed: int,
+    identity: dict[str, Any],
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
-        "policy_id": policy_id,
-        "split_name": split_name,
-        "seed": seed,
-        "warmup_events": WARMUP_EVENTS,
-        "max_new_events": MAX_NEW_EVENTS,
-        "temperature": ROLLOUT_TEMPERATURE,
+        **identity,
         "battles": [_battle_to_dict(battle) for battle in battles],
     }
     with path.open("wb") as handle:
@@ -551,8 +635,15 @@ def generate_policy_rollouts(
 ) -> list[BattleExample]:
     output = Path(output_dir)
     cache_path = _rollout_cache_path(output, policy_id, split_name)
+    identity = _rollout_identity(
+        policy_dir=policy_dir,
+        policy_id=policy_id,
+        split_name=split_name,
+        seed_battles=seed_battles,
+        seed=seed,
+    )
     if not force:
-        cached = _load_rollout_cache(cache_path)
+        cached = _load_rollout_cache(cache_path, identity)
         if cached is not None:
             print(f"Loaded cached rollouts: {cache_path} ({len(cached)} battles)", flush=True)
             return cached
@@ -580,7 +671,7 @@ def generate_policy_rollouts(
         max_context=max_context,
         threat_dim=threat_dim,
     )
-    _save_rollout_cache(cache_path, rollouts, policy_id=policy_id, split_name=split_name, seed=seed)
+    _save_rollout_cache(cache_path, rollouts, identity)
     print(f"Wrote {len(rollouts)} rollouts -> {cache_path}", flush=True)
     return rollouts
 
@@ -598,6 +689,7 @@ def train_style_discriminator(
     eval_battles: int = 512,
     device_name: str | None = None,
     force_rollouts: bool = False,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     started = time.time()
     created_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -612,7 +704,14 @@ def train_style_discriminator(
     if len(battles) < 100:
         raise RuntimeError(f"Need at least 100 usable battles; found {len(battles)}")
 
-    train_split, val_split, test_split = split_battles(battles, seed=seed)
+    train_split, val_split, test_split, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        output_dir=output,
+        split_manifest=split_manifest,
+        create=True,
+        min_card_plays=min_card_plays,
+    )
     rng = random.Random(seed + 3)
     train_pool = list(train_split)
     test_pool = list(test_split)
@@ -690,7 +789,7 @@ def train_style_discriminator(
             train_pool,
             rollout_cache[train_key],
             costs,
-            seed=seed + hash(policy_id) % 1000,
+            seed=seed + stable_int_seed(policy_id, modulo=1000),
             trees=trees,
         )
         artifact["train_policy_id"] = policy_id
@@ -853,15 +952,7 @@ def train_style_discriminator(
             for row in matched_eval
         ],
         "checkpoint": str(artifact_path),
-        "lessons": [
-            "The realism scorer said policy rollouts look real (0.85 vs 0.87); against actual policy negatives the same feature set separates them perfectly. A discriminator is only as strong as its negatives.",
-            f"Top tells: {', '.join(row['feature'] for row in forensics[:5])}. These are what a policy must fix to become statistically human.",
-            "Several top tells come from the rollout harness (strict side alternation, fixed 40-event continuation), not the policy. "
-            f"Removing all {len(HARNESS_FEATURES)} harness features still leaves AUC {harness_free['auc']:.3f}, so the style gap is real either way.",
-            "Detection is not a close call, so mean P(human) — not accuracy — is the ranking signal while every policy sits at AUC 1.0.",
-            "The judge needs roughly 8 generated actions before it is confident, so short bursts of policy play are much harder to spot than full continuations.",
-            "Dropping the 60 strongest tells still leaves near-perfect detection: the AI signature is distributed across the whole feature set, not one fixable bug.",
-        ],
+        "lessons": _style_lessons(forensics, harness_free, ablation),
         "notes": (
             "Binary style discriminator: P(sequence is human) from action-sequence statistics. "
             "Negatives are offline policy rollouts starting from real battle prefixes."

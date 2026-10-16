@@ -1,0 +1,111 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Controlled policy experiment</title><style>body{background:#121820;color:#e4f1eb;font:17px/1.6 system-ui;max-width:1000px;margin:40px auto;padding:20px}a{color:#8cdbb6}svg{width:100%}td,th{padding:10px;border-bottom:1px solid #456}table{display:block;overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere}polyline{stroke-dasharray:2000;stroke-dashoffset:2000;animation:draw 2s forwards}@keyframes draw{to{stroke-dashoffset:0}}@media(prefers-reduced-motion:reduce){polyline{animation:none;stroke-dashoffset:0}}</style><h1>Controlled policy experiment</h1><p>Validation screening only. Lower joint NLL is better. No live-win claim; no automatic corpus scaling.</p><svg viewBox="0 0 800 250" role="img" aria-label="Validation joint action negative log likelihood by completed epoch"><polyline fill="none" stroke="#8cdbb6" stroke-width="3" points="40.0,42.0 105.5,115.9 170.9,153.1 236.4,174.7 301.8,188.2 367.3,197.4 432.7,204.2 498.2,208.6 563.6,212.2 629.1,216.1 694.5,217.4 760.0,218.0"/></svg><table><thead><tr><th>Epoch</th><th>Train loss</th><th>Card</th><th>Joint</th><th>Joint NLL</th><th>Timing MAE</th></tr></thead><tbody><tr><td>1</td><td>6.260502565836594</td><td>0.4118974804878235</td><td>0.054220929741859436</td><td>5.585986614227295</td><td>1.8544269800186157</td></tr><tr><td>2</td><td>5.451560328749004</td><td>0.4397343397140503</td><td>0.06285995990037918</td><td>5.214721202850342</td><td>1.8354828357696533</td></tr><tr><td>3</td><td>5.163996673132386</td><td>0.45919162034988403</td><td>0.0715508759021759</td><td>5.02777624130249</td><td>1.8210344314575195</td></tr><tr><td>4</td><td>5.001946526898127</td><td>0.4701136350631714</td><td>0.07549421489238739</td><td>4.918734073638916</td><td>1.801780104637146</td></tr><tr><td>5</td><td>4.888745276169405</td><td>0.48196959495544434</td><td>0.07967104017734528</td><td>4.851266384124756</td><td>1.7886983156204224</td></tr><tr><td>6</td><td>4.7999221400639245</td><td>0.48835158348083496</td><td>0.08120168000459671</td><td>4.804635524749756</td><td>1.7820526361465454</td></tr><tr><td>7</td><td>4.725699563968162</td><td>0.49437037110328674</td><td>0.08493747562170029</td><td>4.770594120025635</td><td>1.7781174182891846</td></tr><tr><td>8</td><td>4.6615500897932405</td><td>0.4961085319519043</td><td>0.08693508803844452</td><td>4.748470306396484</td><td>1.7727917432785034</td></tr><tr><td>9</td><td>4.606719145668998</td><td>0.5008301734924316</td><td>0.08548228442668915</td><td>4.730525016784668</td><td>1.7775449752807617</td></tr><tr><td>10</td><td>4.555937449092138</td><td>0.5038914680480957</td><td>0.08877704292535782</td><td>4.71087646484375</td><td>1.7731873989105225</td></tr><tr><td>11</td><td>4.507510498157603</td><td>0.5033726096153259</td><td>0.08745395392179489</td><td>4.704224109649658</td><td>1.7744890451431274</td></tr><tr><td>12</td><td>4.462711248196997</td><td>0.5060187578201294</td><td>0.08890675753355026</td><td>4.701273441314697</td><td>1.7776868343353271</td></tr></tbody></table><h2>Provenance, compute and outcome</h2><pre>{
+  &quot;variant&quot;: &quot;baseline&quot;,
+  &quot;seed&quot;: 42,
+  &quot;created_at&quot;: &quot;2026-09-08T02:45:48.204620+00:00&quot;,
+  &quot;contract&quot;: {
+    &quot;observation&quot;: &quot;causal-observation-1&quot;,
+    &quot;preprocess&quot;: 4,
+    &quot;source&quot;: {
+      &quot;source&quot;: &quot;/home/cochon/Documents/mini-project/clash-royale-ai/data/raw&quot;,
+      &quot;file_count&quot;: 64275,
+      &quot;digest&quot;: &quot;346201a2d03b5ae08ff83c40ae5ccc776ecceed5ec3c844ed2f817eea5c33281&quot;
+    },
+    &quot;metadata&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;,
+    &quot;costs&quot;: &quot;393e31c77a4801fb253c65e599373d58a5bbb7d8bdd493cdf2d93fabdbe027b4&quot;,
+    &quot;manifest&quot;: &quot;b60ab8528b324a4c823a6498aff8576fb71085e30d74f1d21448d8c3ab2af644&quot;,
+    &quot;final_holdout&quot;: &quot;ba9ba13ba14eebf45fc56218724483bd8855731e26a0f2a205ca9c386af46564&quot;,
+    &quot;samples_per_battle&quot;: 40,
+    &quot;d_model&quot;: 160,
+    &quot;batch_size&quot;: 128,
+    &quot;reaction_repeats_train&quot;: 2,
+    &quot;reaction_weight_train&quot;: 3.0,
+    &quot;objective&quot;: &quot;v441-shaped-gru;joint-card-cell-nll+0.25-timing;clock=0.1;reaction-train-only;clock-unbiased&quot;,
+    &quot;source_code&quot;: &quot;5b3250f3bcb21a37fa5c5d70ef68d005e069d3e71c2bb5ae08bdde505aafae37&quot;,
+    &quot;metadata_records&quot;: 0
+  },
+  &quot;parameters&quot;: 761042,
+  &quot;device&quot;: &quot;cuda&quot;,
+  &quot;train_battles&quot;: 5000,
+  &quot;validation_battles&quot;: 1071,
+  &quot;unique_actions&quot;: 180683,
+  &quot;train_presentations&quot;: 224800,
+  &quot;validation_actions&quot;: 38546,
+  &quot;clock_intervals&quot;: 319553,
+  &quot;frequency_baseline&quot;: {
+    &quot;name&quot;: &quot;online_frequency&quot;,
+    &quot;slot_top1&quot;: 0.12071291443989,
+    &quot;slot_top3&quot;: 0.3787941680070565,
+    &quot;n&quot;: 38546
+  },
+  &quot;cycle_baseline&quot;: {
+    &quot;name&quot;: &quot;approx_cycle&quot;,
+    &quot;slot_top1&quot;: 0.21221397810408343,
+    &quot;slot_top3&quot;: 0.6126705754163856,
+    &quot;n&quot;: 38546
+  },
+  &quot;empirical_clock_rates&quot;: [
+    0.15605156881352542,
+    0.1559012315259635
+  ],
+  &quot;empirical_clock_validation&quot;: {
+    &quot;clock_nll&quot;: 2.854429244995117,
+    &quot;clock_median_mae&quot;: 2.0202579498291016
+  },
+  &quot;config&quot;: {
+    &quot;input&quot;: &quot;data/raw&quot;,
+    &quot;metadata&quot;: &quot;data/metadata/battles.jsonl&quot;,
+    &quot;costs&quot;: &quot;data/card_costs.json&quot;,
+    &quot;manifest&quot;: &quot;data/splits/policy_v8_pilot_5000_seed42.json&quot;,
+    &quot;final_holdout&quot;: &quot;data/splits/controlled_final_holdout.json&quot;,
+    &quot;output&quot;: &quot;models/controlled_screening_gated&quot;,
+    &quot;variant&quot;: &quot;screen&quot;,
+    &quot;epochs&quot;: 12,
+    &quot;patience&quot;: 3,
+    &quot;seed&quot;: 42,
+    &quot;batch_size&quot;: 128,
+    &quot;d_model&quot;: 160,
+    &quot;samples_per_battle&quot;: 40,
+    &quot;run_seconds&quot;: 0,
+    &quot;suite_seconds&quot;: 10800,
+    &quot;reaction_repeats&quot;: 2,
+    &quot;reaction_weight&quot;: 3.0,
+    &quot;device&quot;: null,
+    &quot;prepare&quot;: false,
+    &quot;_suite_started&quot;: 11167.652415611,
+    &quot;_suite_variant_count&quot;: 3,
+    &quot;_suite_variant_index&quot;: 0
+  },
+  &quot;model_config&quot;: {
+    &quot;variant&quot;: &quot;baseline&quot;,
+    &quot;d_model&quot;: 160,
+    &quot;vocab_size&quot;: 126
+  },
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;weights_epoch&quot;: 12,
+  &quot;elapsed_seconds&quot;: 4920.432303451,
+  &quot;selected_validation&quot;: {
+    &quot;epoch&quot;: 12,
+    &quot;train_loss&quot;: 4.462711248196997,
+    &quot;card&quot;: 0.5060187578201294,
+    &quot;cell&quot;: 0.11759974807500839,
+    &quot;joint&quot;: 0.08890675753355026,
+    &quot;joint_nll&quot;: 4.701273441314697,
+    &quot;timing_mae&quot;: 1.7776868343353271,
+    &quot;card_top3&quot;: 0.9277746081352234,
+    &quot;card_nll&quot;: 1.1235681772232056,
+    &quot;cell_teacher&quot;: 0.17381829023361206,
+    &quot;now_s&quot;: 135.64053344726562,
+    &quot;opening_card&quot;: 0.5974817276000977,
+    &quot;opening_joint&quot;: 0.11230706423521042,
+    &quot;opening_n&quot;: 4924,
+    &quot;mid_card&quot;: 0.49818307161331177,
+    &quot;mid_joint&quot;: 0.0884103924036026,
+    &quot;mid_n&quot;: 25868,
+    &quot;late_card&quot;: 0.47407788038253784,
+    &quot;late_joint&quot;: 0.07570286095142365,
+    &quot;late_n&quot;: 7754,
+    &quot;inference_ms_per_example&quot;: 0.031587757817419515
+  },
+  &quot;last_completed_epoch&quot;: 12,
+  &quot;samples_presented&quot;: 2697600
+}</pre></html>

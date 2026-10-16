@@ -439,17 +439,24 @@ class PolicyBC(nn.Module):
         zero_arena_memory: bool = False,
         return_debug: bool = False,
         think_steps: int | None = None,
+        fused_residual: torch.Tensor | None = None,
     ) -> dict[str, torch.Tensor]:
         embeds = self.card_embedding(card_ids)
         tokens = self.input_proj(torch.cat([embeds, continuous], dim=-1))
-        packed = nn.utils.rnn.pack_padded_sequence(
-            tokens,
-            lengths.cpu().clamp(min=1),
-            batch_first=True,
-            enforce_sorted=False,
-        )
-        encoded, _ = self.encoder(packed)
-        encoded, _ = nn.utils.rnn.pad_packed_sequence(encoded, batch_first=True)
+        if getattr(self, "padded_encoder", False):
+            # Unidirectional GRU: later padding cannot affect an earlier state.
+            # Gathering at the true length preserves causal inference and keeps
+            # the dense cuDNN path free of per-batch CPU synchronization.
+            encoded, _ = self.encoder(tokens)
+        else:
+            packed = nn.utils.rnn.pack_padded_sequence(
+                tokens,
+                lengths.cpu().clamp(min=1),
+                batch_first=True,
+                enforce_sorted=False,
+            )
+            encoded, _ = self.encoder(packed)
+            encoded, _ = nn.utils.rnn.pad_packed_sequence(encoded, batch_first=True)
         last = self._last_hidden(encoded, lengths)
 
         team_embeds = self.card_embedding(team_deck)
@@ -457,6 +464,8 @@ class PolicyBC(nn.Module):
         deck_feat = self.deck_encoder(team_embeds, opp_embeds, team_deck, opponent_deck)
         global_feat = self.global_encoder(globals_)
         fused = self.fuse(torch.cat([last, deck_feat, global_feat], dim=-1))
+        if fused_residual is not None:
+            fused = fused + fused_residual
         resolved_think_steps = 0
         if self.think is not None:
             if think_steps is None:
@@ -580,6 +589,7 @@ class PolicyBC(nn.Module):
         xy_weight: float = 0.35,
         timing_weight: float = 0.25,
         tile_weight: float = 0.0,
+        **_extra,
     ) -> dict[str, torch.Tensor]:
         slot_raw = F.cross_entropy(
             outputs["slot_logits"],
@@ -592,9 +602,14 @@ class PolicyBC(nn.Module):
             slot_loss = (slot_raw * weights).mean()
         else:
             slot_loss = slot_raw.mean()
+        placement_mask = (types == 0).float()
+        def placement_mean(raw):
+            while raw.ndim > 1:
+                raw = raw.mean(-1)
+            return (raw * placement_mask).sum() / placement_mask.sum().clamp_min(1)
         type_loss = F.cross_entropy(outputs["type_logits"], types, label_smoothing=0.02)
-        zone_loss = F.cross_entropy(outputs["zone_logits"], zones, label_smoothing=0.02)
-        xy_loss = F.smooth_l1_loss(outputs["xy"], xy)
+        zone_loss = placement_mean(F.cross_entropy(outputs["zone_logits"], zones, label_smoothing=0.02, reduction="none"))
+        xy_loss = placement_mean(F.smooth_l1_loss(outputs["xy"], xy, reduction="none"))
         tile_loss = outputs["xy"].new_zeros(())
         if outputs.get("tile_logits") is not None and tile_weight > 0:
             # Same 18×32 grid as the tile centers above.  Clamp edge values so
@@ -602,9 +617,9 @@ class PolicyBC(nn.Module):
             tile_x = (xy[:, 0] * TILE_COLS).floor().long().clamp(0, TILE_COLS - 1)
             tile_y = (xy[:, 1] * TILE_ROWS).floor().long().clamp(0, TILE_ROWS - 1)
             tile_targets = tile_y * TILE_COLS + tile_x
-            tile_loss = F.cross_entropy(
-                outputs["tile_logits"], tile_targets, label_smoothing=0.01
-            )
+            tile_loss = placement_mean(F.cross_entropy(
+                outputs["tile_logits"], tile_targets, label_smoothing=0.01, reduction="none"
+            ))
         timing_loss = F.smooth_l1_loss(outputs["timing"], timing)
         total = (
             slot_weight * slot_loss

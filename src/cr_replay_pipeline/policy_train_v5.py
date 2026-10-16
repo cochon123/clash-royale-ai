@@ -21,16 +21,15 @@ from .policy_dataset import (
     DEFAULT_REACTION_SECONDS,
     GLOBAL_DIM,
     THREAT_DIM,
-    baseline_cycle_slot,
-    baseline_frequency_slot,
+    baselines_for_dataset,
     build_vocab,
     collect_battles,
     create_policy_dataloaders,
     load_card_costs,
-    split_battles,
     summarize_split,
 )
 from .policy_infer import load_policy
+from .policy_manifest import resolve_battle_splits
 from .policy_model import PolicyBC
 from .policy_train import (
     _load_realism_scorer,
@@ -80,6 +79,8 @@ def train_policy_v5(
     polish_battles: int = 16,
     polish_events: int = 16,
     style_eval_battles: int = 64,
+    split_manifest: str | Path | None = None,
+    train_fraction: float = 0.7,
 ) -> dict[str, Any]:
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -120,7 +121,16 @@ def train_policy_v5(
     if len(battles) < 50:
         raise RuntimeError(f"Need at least 50 usable battles; found {len(battles)}")
 
-    train_battles, val_battles, test_battles = split_battles(battles, seed=seed)
+    train_battles, val_battles, test_battles, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        output_dir=output,
+        split_manifest=split_manifest,
+        warmstart_dir=warmstart_dir,
+        create=True,
+        min_card_plays=min_card_plays,
+        train_fraction=train_fraction,
+    )
     vocab = build_vocab(train_battles)
     costs = load_card_costs(card_costs_path)
     human_targets = human_style_targets(train_battles, costs)
@@ -155,7 +165,7 @@ def train_policy_v5(
         try:
             donor, donor_vocab, donor_cfg, _ = load_policy(warmstart, device_name=str(device))
             if (
-                donor_vocab.vocab_size == vocab.vocab_size
+                donor_vocab.compatible_with(vocab)
                 and int(donor_cfg.get("d_model", d_model)) == d_model
                 and int(donor_cfg.get("num_layers", num_layers)) == num_layers
                 and bool(donor_cfg.get("card_conditioned_placement", False))
@@ -447,8 +457,9 @@ def train_policy_v5(
         model.load_state_dict(best_state)
 
     test_metrics = evaluate_policy(model, test_loader, device, loss_kwargs=loss_kwargs)
-    freq_base = baseline_frequency_slot(test_battles)
-    cycle_base = baseline_cycle_slot(test_battles)
+    baselines = baselines_for_dataset(test_loader.dataset)
+    freq_base = baselines["frequency"]
+    cycle_base = baselines["cycle"]
 
     print("Final style evaluation on test battles ...", flush=True)
     style_final = eval_style_vs_humans(

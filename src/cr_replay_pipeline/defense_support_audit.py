@@ -14,12 +14,12 @@ import torch
 from .defense_slice_eval import FOCUS_THREATS, mine_reaction_windows
 from .policy_dataset import acting_cycle_features, deck_slot_for_card, encode_policy_sample
 from .policy_infer import load_policy
+from .policy_manifest import resolve_battle_splits
 from .winner_dataset import (
     DEFAULT_ELIXIR_COST,
     BattleExample,
     collect_battles,
     load_card_costs,
-    split_battles,
 )
 
 # Probe cells to audit (failing + passing controls).
@@ -213,10 +213,17 @@ def audit_defense_support(
     seed: int = 42,
     device_name: str | None = None,
     score_model: bool = True,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     costs = load_card_costs(card_costs_path)
     battles = collect_battles(input_dir)
-    train, _val, test = split_battles(battles, seed=seed)
+    train, _val, test, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        split_manifest=split_manifest,
+        model_dir=policy_dir,
+        create=False,
+    )
 
     print("Mining train + test reaction windows ...", flush=True)
     train_windows = mine_reaction_windows(

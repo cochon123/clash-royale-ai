@@ -15,6 +15,17 @@ from .frontier import Frontier
 from .server import serve
 
 
+def _add_split_manifest(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--split-manifest",
+        default=None,
+        help=(
+            "Frozen train/val/test battle-id JSON. Evaluation requires this "
+            "or split_manifest.json next to the checkpoint."
+        ),
+    )
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="cr-replays")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -40,10 +51,31 @@ def build_parser() -> argparse.ArgumentParser:
 
     policy_training_watch = commands.add_parser(
         "watch-policy-training",
-        help="Stream policy training progress with completed work and ETA",
+        help="Open a browser dashboard for a running train-policy JSONL file",
     )
-    policy_training_watch.add_argument("--progress", required=True)
+    policy_training_watch.add_argument(
+        "--progress",
+        default="models/policy_bc_v8/progress.jsonl",
+        help="Trainer JSONL (default: models/policy_bc_v8/progress.jsonl)",
+    )
     policy_training_watch.add_argument("--interval", type=float, default=2.0)
+    policy_training_watch.add_argument("--host", default="127.0.0.1")
+    policy_training_watch.add_argument("--port", type=int, default=8766)
+    policy_training_watch.add_argument(
+        "--log",
+        default=None,
+        help="Optional trainer log file (default: logs/policy_bc_v8.log if present)",
+    )
+    policy_training_watch.add_argument(
+        "--tui",
+        action="store_true",
+        help="Use the old terminal dashboard instead of the browser",
+    )
+    policy_training_watch.add_argument(
+        "--no-browser",
+        action="store_true",
+        help="Print the URL but do not open a browser tab",
+    )
 
     pause = commands.add_parser("pause", help="Pause new player claims")
     pause.add_argument("--db", default="data/collector.sqlite3")
@@ -63,6 +95,7 @@ def build_parser() -> argparse.ArgumentParser:
     discover.add_argument("--output", default="data/metadata/battles.jsonl")
     discover.add_argument("--limit", type=int, default=1000)
     discover.add_argument("--workers", type=int, default=12)
+    discover.add_argument("--token-file", help="Private file containing the official API key; never logged")
 
     normalize = commands.add_parser(
         "normalize-battlelogs",
@@ -94,6 +127,7 @@ def build_parser() -> argparse.ArgumentParser:
     train_winner.add_argument("--min-card-plays", type=int, default=12)
     train_winner.add_argument("--seed", type=int, default=42)
     train_winner.add_argument("--device", default=None, help="cuda, cpu, or omit for auto")
+    _add_split_manifest(train_winner)
 
     train_winner_hgb = commands.add_parser(
         "train-winner-hgb",
@@ -115,6 +149,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=100,
         help="Number of Extra Trees (the old --ensemble-size name remains an alias)",
     )
+    _add_split_manifest(train_winner_hgb)
 
     report_winner = commands.add_parser(
         "report-winner",
@@ -142,6 +177,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=1,
         help="How many synthetic battles to generate per real battle per tier",
     )
+    _add_split_manifest(train_realism)
 
     report_realism = commands.add_parser(
         "report-realism",
@@ -184,6 +220,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Regenerate cached policy rollouts",
     )
+    _add_split_manifest(train_style)
 
     report_style = commands.add_parser(
         "report-style",
@@ -202,6 +239,7 @@ def build_parser() -> argparse.ArgumentParser:
     train_policy.add_argument("--input", default="data/raw")
     train_policy.add_argument("--output", default="models/policy_bc")
     train_policy.add_argument("--card-costs", default="data/card_costs.json")
+    train_policy.add_argument("--metadata", help="Canonical battle metadata JSONL for ability attribution")
     train_policy.add_argument(
         "--realism-model-dir",
         default="models/realism_scorer",
@@ -235,7 +273,7 @@ def build_parser() -> argparse.ArgumentParser:
     train_policy.add_argument(
         "--version",
         default="2",
-        choices=["2", "3", "4", "4.1", "4.2", "4.3", "4.4", "4.4.1", "4.4.2", "5", "6", "6.1", "7"],
+        choices=["2", "3", "4", "4.1", "4.2", "4.3", "4.4", "4.4.1", "4.4.2", "5", "6", "6.1", "7", "8"],
         help=(
             "2=cycle features; 3=threat+reaction; "
             "4=v3 + jointly trained card-conditioned placement; "
@@ -248,7 +286,8 @@ def build_parser() -> argparse.ArgumentParser:
             "5=v4.1 + style feature matching + REINFORCE vs style judge; "
             "6=v4 trunk + card-conditioned placement heatmap + hidden opponent deck augmentation; "
             "6.1=v4.1 warm-start + frozen incumbent heads + tile-head-only isolation; "
-            "7=v6.1 + causal decaying arena-memory placement adapter"
+            "7=v6.1 + causal decaying arena-memory placement adapter; "
+            "8=Astra Stage A causal belief policy: time-aware memory + joint event clock"
         ),
     )
     train_policy.add_argument(
@@ -298,6 +337,12 @@ def build_parser() -> argparse.ArgumentParser:
     train_policy.add_argument("--split-manifest", default=None)
     train_policy.add_argument("--write-split-manifest", default=None)
     train_policy.add_argument(
+        "--train-fraction",
+        type=float,
+        default=0.7,
+        help="Train split fraction when creating a new split manifest (remainder is val/test)",
+    )
+    train_policy.add_argument(
         "--training-stage",
         choices=["arena-adapter", "placement-calibration"],
         default=None,
@@ -330,6 +375,25 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Train action heads only on the eventual winner's actions from decisive replays",
     )
+    train_policy.add_argument(
+        "--no-tui",
+        action="store_true",
+        help=(
+            "Trainer writes JSONL and prints one-line progress. Watch it in the "
+            "browser with watch-policy-training (default) or pass --tui there "
+            "for the old terminal dashboard. CR_TRAINING_TUI=1 restores a TUI "
+            "inside the trainer process."
+        ),
+    )
+    train_policy.add_argument(
+        "--resume",
+        action="store_true",
+        help=(
+            "Continue from output_dir/last.pt or best_model.pt and keep existing "
+            "progress logs. Cosine schedule is fast-forwarded; Adam moments "
+            "restore when the checkpoint has them."
+        ),
+    )
 
     manifest_policy = commands.add_parser(
         "make-policy-manifest",
@@ -343,6 +407,12 @@ def build_parser() -> argparse.ArgumentParser:
     manifest_policy.add_argument("--max-battles", type=int, default=33558)
     manifest_policy.add_argument("--pilot-train-battles", type=int, default=5000)
     manifest_policy.add_argument("--seed", type=int, default=42)
+    manifest_policy.add_argument(
+        "--train-fraction",
+        type=float,
+        default=0.7,
+        help="Train split fraction; remainder is split evenly into val/test",
+    )
 
     showcase = commands.add_parser(
         "showcase-policy",
@@ -361,6 +431,7 @@ def build_parser() -> argparse.ArgumentParser:
     showcase.add_argument("--top-cards", type=int, default=12)
     showcase.add_argument("--seed", type=int, default=42)
     showcase.add_argument("--device", default=None)
+    _add_split_manifest(showcase)
 
     report_showcase = commands.add_parser(
         "report-showcase",
@@ -435,6 +506,7 @@ def build_parser() -> argparse.ArgumentParser:
     matchup.add_argument("--min-n", type=int, default=60)
     matchup.add_argument("--seed", type=int, default=42)
     matchup.add_argument("--device", default=None)
+    _add_split_manifest(matchup)
 
     matchup_lineage = commands.add_parser(
         "eval-matchup-lineage",
@@ -460,6 +532,7 @@ def build_parser() -> argparse.ArgumentParser:
     matchup_lineage.add_argument("--min-n", type=int, default=80)
     matchup_lineage.add_argument("--seed", type=int, default=42)
     matchup_lineage.add_argument("--device", default=None)
+    _add_split_manifest(matchup_lineage)
 
     royale = commands.add_parser(
         "battle-royale",
@@ -489,6 +562,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     royale.add_argument("--seed", type=int, default=42)
     royale.add_argument("--device", default=None)
+    _add_split_manifest(royale)
 
     defense = commands.add_parser(
         "eval-defense",
@@ -518,6 +592,7 @@ def build_parser() -> argparse.ArgumentParser:
     defense_slice.add_argument("--max-response-seconds", type=float, default=5.0)
     defense_slice.add_argument("--seed", type=int, default=42)
     defense_slice.add_argument("--device", default=None)
+    _add_split_manifest(defense_slice)
 
     report_defense_slice = commands.add_parser(
         "report-defense-slice",
@@ -554,6 +629,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Coverage-only audit (skip policy scoring on test)",
     )
+    _add_split_manifest(support_audit)
 
     report_support = commands.add_parser(
         "report-defense-support",
@@ -590,6 +666,7 @@ def build_parser() -> argparse.ArgumentParser:
     placement.add_argument("--min-card-plays", type=int, default=12)
     placement.add_argument("--seed", type=int, default=42)
     placement.add_argument("--device", default=None)
+    _add_split_manifest(placement)
 
     phone_lab = commands.add_parser(
         "phone-lab",
@@ -710,7 +787,7 @@ def build_parser() -> argparse.ArgumentParser:
     audit_hands.add_argument(
         "--no-stale-cache",
         action="store_true",
-        help="Refuse stale winner_battles_cache.pkl (rebuild if file_count drifts)",
+        help="Ignored: battles are loaded via source-fingerprint cache, not a shared parent pickle",
     )
     audit_hands.add_argument(
         "--quality-workers",
@@ -718,6 +795,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=4,
         help="Process workers for heuristic-quality pass",
     )
+    _add_split_manifest(audit_hands)
     return parser
 
 
@@ -893,34 +971,6 @@ def _print_json(status: dict, *, compact: bool = False) -> None:
     )
 
 
-def _watch_policy_training(progress_path: str, interval: float = 2.0) -> None:
-    """Tail JSONL policy progress with completed work and ETA columns."""
-    target = Path(progress_path)
-    last_line = ""
-    print("PHASE EPOCH BATCH WORK% ELAPSED ETA TILE_LOSS LR VRAM_MB", flush=True)
-    while True:
-        if target.exists():
-            lines = target.read_text(encoding="utf-8").splitlines()
-            if lines:
-                line = lines[-1]
-                if line != last_line:
-                    last_line = line
-                    row = json.loads(line)
-                    print(
-                        f"{str(row.get('phase', '—'))[:14]:<14} "
-                        f"{row.get('epoch', '—')}/{row.get('epochs_total', '—'):<5} "
-                        f"{row.get('batch', '—')}/{row.get('batches_total', '—'):<6} "
-                        f"{row.get('progress_percent', 0):6.1f}% "
-                        f"{row.get('elapsed_seconds', 0):7.0f}s "
-                        f"{row.get('eta_seconds', 0):7.0f}s "
-                        f"{row.get('tile_loss', 0):9.4f} "
-                        f"{row.get('learning_rate', 0):.2e} "
-                        f"{row.get('gpu_memory_mb', 0):7.0f}",
-                        flush=True,
-                    )
-        time.sleep(max(float(interval), 0.25))
-
-
 def main() -> None:
     args = build_parser().parse_args()
     if args.command == "serve":
@@ -948,7 +998,21 @@ def main() -> None:
             print()
     elif args.command == "watch-policy-training":
         try:
-            _watch_policy_training(args.progress, args.interval)
+            if args.tui:
+                from .training_tui import watch_progress
+
+                watch_progress(args.progress, args.interval)
+            else:
+                from .training_live import serve_training_dashboard
+
+                serve_training_dashboard(
+                    args.progress,
+                    host=args.host,
+                    port=args.port,
+                    interval=args.interval,
+                    log_path=args.log,
+                    open_browser=not args.no_browser,
+                )
         except KeyboardInterrupt:
             print()
     elif args.command == "pause":
@@ -969,7 +1033,7 @@ def main() -> None:
     elif args.command == "discover":
         print(
             json.dumps(
-                discover_battles(args.output, args.limit, args.workers),
+                discover_battles(args.output, args.limit, args.workers, token_file=args.token_file),
                 indent=2,
                 ensure_ascii=False,
             )
@@ -1014,6 +1078,7 @@ def main() -> None:
                     min_card_plays=args.min_card_plays,
                     seed=args.seed,
                     device_name=args.device,
+                    split_manifest=args.split_manifest,
                 ),
                 indent=2,
                 ensure_ascii=False,
@@ -1031,6 +1096,7 @@ def main() -> None:
                     min_card_plays=args.min_card_plays,
                     seed=args.seed,
                     extra_trees=args.trees,
+                    split_manifest=args.split_manifest,
                 ),
                 indent=2,
                 ensure_ascii=False,
@@ -1054,6 +1120,7 @@ def main() -> None:
                     seed=args.seed,
                     trees=args.trees,
                     per_tier=args.per_tier,
+                    split_manifest=args.split_manifest,
                 ),
                 indent=2,
                 ensure_ascii=False,
@@ -1085,6 +1152,7 @@ def main() -> None:
                     eval_battles=args.eval_battles,
                     device_name=args.device,
                     force_rollouts=args.force_rollouts,
+                    split_manifest=args.split_manifest,
                 ),
                 indent=2,
                 ensure_ascii=False,
@@ -1109,6 +1177,7 @@ def main() -> None:
             args.output,
             seed=args.seed,
             min_card_plays=args.min_card_plays,
+            train_fraction=args.train_fraction,
         )
         result = {"output": args.output, "manifest": full}
         if args.pilot_output:
@@ -1118,6 +1187,7 @@ def main() -> None:
                 seed=args.seed,
                 pilot_train_battles=args.pilot_train_battles,
                 min_card_plays=args.min_card_plays,
+                train_fraction=args.train_fraction,
             )
             result["pilot_output"] = args.pilot_output
             result["pilot_manifest"] = pilot
@@ -1144,6 +1214,8 @@ def main() -> None:
             output = "models/policy_bc_v6_1"
         elif args.version == "7" and output == "models/policy_bc":
             output = "models/policy_bc_v7"
+        elif args.version == "8" and output == "models/policy_bc":
+            output = "models/policy_bc_v8"
         if args.version == "5":
             from .policy_train_v5 import train_policy_v5
 
@@ -1169,6 +1241,8 @@ def main() -> None:
                         reaction_weight=args.reaction_weight,
                         reaction_repeats=args.reaction_repeats,
                         style_match_weight=args.style_match_weight,
+                        split_manifest=args.split_manifest,
+                        train_fraction=args.train_fraction,
                     ),
                     indent=2,
                     ensure_ascii=False,
@@ -1185,6 +1259,18 @@ def main() -> None:
                 warmstart_dir = "models/policy_bc_v4.4.1"
             if args.version == "7" and warmstart_dir == "models/policy_bc_v4.1":
                 warmstart_dir = "models/policy_bc_v6_1"
+            if args.version == "8":
+                warmstart_dir = None
+
+            from .policy_spec import policy_spec_from_version
+
+            spec = policy_spec_from_version(args.version)
+            d_model = spec.default_d_model if (
+                args.version == "8" and args.d_model == 160
+            ) else args.d_model
+            num_layers = spec.default_num_layers if (
+                args.version == "8" and args.num_layers == 2
+            ) else args.num_layers
 
             print(
                 json.dumps(
@@ -1192,13 +1278,13 @@ def main() -> None:
                         input_dir=args.input,
                         output_dir=output,
                         card_costs_path=args.card_costs,
+                        metadata_path=args.metadata,
                         realism_model_dir=args.realism_model_dir,
                         epochs=args.epochs,
-                        batch_size=args.batch_size
-                        or (512 if args.version in {"4.2", "4.3", "4.4", "4.4.1", "4.4.2", "7"} else 256),
+                        batch_size=args.batch_size or spec.default_batch_size,
                         learning_rate=args.lr,
-                        d_model=args.d_model,
-                        num_layers=args.num_layers,
+                        d_model=d_model,
+                        num_layers=num_layers,
                         min_card_plays=args.min_card_plays,
                         max_samples_per_battle=args.max_samples_per_battle,
                         max_battles=args.max_battles,
@@ -1207,7 +1293,7 @@ def main() -> None:
                         version=args.version,
                         reaction_weight=args.reaction_weight,
                         mirror_training=args.mirror_training
-                        or args.version in {"4.2", "4.3", "4.4", "4.4.1", "4.4.2"},
+                        or args.version in {"4.2", "4.3", "4.4", "4.4.1", "4.4.2", "8"},
                         training_log_path=args.training_log_path,
                         reaction_repeats=args.reaction_repeats,
                         hide_opponent_deck=args.version == "6",
@@ -1222,6 +1308,7 @@ def main() -> None:
                         ),
                         split_manifest=args.split_manifest,
                         write_split_manifest=args.write_split_manifest,
+                        train_fraction=args.train_fraction,
                         training_stage=args.training_stage,
                         arena_control=args.arena_control,
                         arena_gate_bias=args.arena_gate_bias,
@@ -1229,6 +1316,8 @@ def main() -> None:
                         max_think_steps=args.max_think_steps,
                         eval_think_steps=args.eval_think_steps,
                         winner_only=args.winner_only or args.version == "4.4.2",
+                        no_tui=args.no_tui,
+                        resume=args.resume,
                     ),
                     indent=2,
                     ensure_ascii=False,
@@ -1249,6 +1338,7 @@ def main() -> None:
             top_cards=args.top_cards,
             seed=args.seed,
             device_name=args.device,
+            split_manifest=args.split_manifest,
         )
     elif args.command == "report-showcase":
         from .policy_showcase_report import render_policy_showcase_report
@@ -1266,7 +1356,9 @@ def main() -> None:
         name = args.output_name
         if name is None:
             md = str(args.model_dir)
-            if "v7" in md:
+            if "v8" in md:
+                name = "policy_bc_v8.html"
+            elif "v7" in md:
                 name = "policy_bc_v7.html"
             elif "v6_1" in md or "v6.1" in md:
                 name = "policy_bc_v6_1.html"
@@ -1293,7 +1385,14 @@ def main() -> None:
             else:
                 name = "policy_bc_v2.html"
         model_dir_s = str(args.model_dir)
-        if "v7" in model_dir_s or (name and "v7" in name):
+        if "v8" in model_dir_s or (name and "v8" in name):
+            from .policy_v8_report import render_policy_v8_report
+
+            path = render_policy_v8_report(
+                model_dir=args.model_dir,
+                output_path=Path(args.output_dir) / name,
+            )
+        elif "v7" in model_dir_s or (name and "v7" in name):
             from .policy_v7_report import render_policy_v7_report
 
             path = render_policy_v7_report(
@@ -1402,6 +1501,7 @@ def main() -> None:
                     min_n=args.min_n,
                     seed=args.seed,
                     device_name=args.device,
+                    split_manifest=args.split_manifest,
                 ),
                 indent=2,
                 ensure_ascii=False,
@@ -1438,6 +1538,7 @@ def main() -> None:
                     min_n=args.min_n,
                     seed=args.seed,
                     device_name=args.device,
+                    split_manifest=args.split_manifest,
                 ),
                 indent=2,
                 ensure_ascii=False,
@@ -1460,6 +1561,7 @@ def main() -> None:
                     min_confidence=args.min_confidence,
                     seed=args.seed,
                     device_name=args.device,
+                    split_manifest=args.split_manifest,
                 ),
                 indent=2,
                 ensure_ascii=False,
@@ -1497,6 +1599,7 @@ def main() -> None:
                     max_response_seconds=args.max_response_seconds,
                     seed=args.seed,
                     device_name=args.device,
+                    split_manifest=args.split_manifest,
                 ),
                 indent=2,
                 ensure_ascii=False,
@@ -1526,6 +1629,7 @@ def main() -> None:
                     seed=args.seed,
                     device_name=args.device,
                     score_model=not args.no_score_model,
+                    split_manifest=args.split_manifest,
                 ),
                 indent=2,
                 ensure_ascii=False,
@@ -1559,6 +1663,7 @@ def main() -> None:
                     min_card_plays=args.min_card_plays,
                     seed=args.seed,
                     device_name=args.device,
+                    split_manifest=args.split_manifest,
                 ),
                 indent=2,
                 ensure_ascii=False,
@@ -1582,6 +1687,7 @@ def main() -> None:
                     allow_stale_cache=not args.no_stale_cache,
                     cache_path=args.cache,
                     quality_workers=args.quality_workers,
+                    split_manifest=args.split_manifest,
                 ).get("verdict"),
                 indent=2,
                 ensure_ascii=False,

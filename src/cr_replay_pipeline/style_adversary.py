@@ -1,4 +1,10 @@
-"""Adversarial style helpers for policy_bc_v5.
+"""Offline style-matching helpers used by policy_bc_v5.
+
+V5 optimizes "looks human" under a frozen style discriminator: batch moment
+matching plus black-box REINFORCE with reward = P(human). That is an offline
+proxy. It is not evidence of playing strength, win rate, or live skill.
+Evaluate independently (held-out win proxies, human review, or live play)
+before treating a style-AUC movement as progress toward winning.
 
 The frozen style judge is a non-differentiable sklearn ensemble on rollout
 statistics. V5 therefore combines:
@@ -187,7 +193,7 @@ def style_detection_metrics(
     human_means: np.ndarray | None = None,
     neutralize_harness: bool = False,
 ) -> dict[str, float]:
-    from .realism_train import _auc_binary
+    from .metrics import binary_auc as _auc_binary
 
     n = min(len(humans), len(ai))
     if n == 0:

@@ -1,0 +1,34 @@
+{
+  "data": {
+    "cache_version": "v9-causal-shards-1",
+    "observation": "causal-observation-1",
+    "source": {
+      "source": "/home/cochon/Documents/mini-project/clash-royale-ai/data/raw",
+      "file_count": 64275,
+      "digest": "346201a2d03b5ae08ff83c40ae5ccc776ecceed5ec3c844ed2f817eea5c33281"
+    },
+    "metadata_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "costs_sha256": "393e31c77a4801fb253c65e599373d58a5bbb7d8bdd493cdf2d93fabdbe027b4",
+    "manifest_sha256": "524a6dfa3d1c8947d59d363b83f915907ee7131f96f3733b96c365cdef4fd24c",
+    "vocab_sha256": "f7a320ef93c1524a46af8881fd0409351440382f6c0f34df443991c24422ed6d",
+    "holdout_sha256": "ba9ba13ba14eebf45fc56218724483bd8855731e26a0f2a205ca9c386af46564",
+    "encoder_sha256": "8d1d6fb96a0654d1a9ac2bb8f0c26095f44638f3c987d70cd75b95752fa580f7",
+    "storage": "fp16 event features, fp32 globals/cycle/labels",
+    "all_card_actions": true,
+    "max_context": 64,
+    "reaction_repeats": 1,
+    "reference_ancestry_caveat": "Common holdout of final legacy manifests; older warm-start ancestors have incomplete lineage. Final untouched holdout is authoritative."
+  },
+  "training": "fe55ee5c05370240bc56a2fd9de817aa63532d0e3fe1166f73030d607abf246c",
+  "source": {
+    "v9_train.py": "9bba76194ceeddb52a37ad4f4c9ceab25b5f598ad2b4a0486b62fb6221241e38",
+    "v9_policy.py": "530a7087e2da419e5ff14ac7b2e49b1cfa4efc0bb527a35af1819e54ffcf31f1",
+    "v9_cache.py": "5a1267a864f3b8a030281de759c9207567c45022e9d0ce4a37c02b89d4e06d01",
+    "policy_model.py": "4ede80b19ad02fa05a0de973022e9ee4c6392fe4b9bdff2231bed3d286ad1ddc",
+    "controlled_policy.py": "a662228153d7a5edea7a047fbbdc3cfced956cce9aa50baa6e3f2e0b197da065",
+    "causal_observation.py": "e2fad5e46c4d0de8d6073cf4f9f6da43ea69030d41e2d3ba9f5bbcb9d7b59f12",
+    "policy_dataset.py": "4633dac583900b5c76bd0f9f738c7fb045a8ab62dc197909260ea1da6fbc8083",
+    "event_clock.py": "8082b3944a178e72bee1b8b762610daa2b470f1cdf5f123c6792fcb2f075673a",
+    "feature_schema.py": "ebaff36ff0db3e23416c587a37e6b8dae57101994a3b77cbc99a3824066c5c8f"
+  }
+}

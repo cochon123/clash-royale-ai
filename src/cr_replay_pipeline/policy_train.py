@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import contextlib
 import inspect
 import json
+import math
+import os
 import pickle
 import random
 import time
@@ -24,25 +27,105 @@ from .policy_dataset import (
     GLOBAL_DIM,
     THREAT_DIM,
     TILE_UNITS,
-    baseline_cycle_slot,
-    baseline_frequency_slot,
+    baselines_for_dataset,
     build_vocab,
     collect_battles,
     create_policy_dataloaders,
     encode_policy_sample,
     load_card_costs,
-    split_battles,
     summarize_split,
 )
 from .policy_model import NUM_TILES, TILE_COLS, TILE_ROWS, PolicyBC
-from .policy_manifest import (
-    battles_from_manifest,
-    build_manifest,
-    load_manifest,
-)
+from .policy_manifest import resolve_battle_splits
+from .policy_spec import loss_kwargs_for_spec, policy_spec_from_version
 from .realism_generate import TimingPrior, generate_easy_negative, generate_medium_negative
 from .realism_train import extract_realism_features
 from .winner_dataset import BattleExample, CardVocab
+
+
+def eager_module(module: nn.Module) -> nn.Module:
+    """Unwrap torch.compile's OptimizedModule to the original nn.Module."""
+    current = module
+    seen: set[int] = set()
+    while True:
+        orig = getattr(current, "_orig_mod", None)
+        if orig is None or id(orig) in seen:
+            return current
+        seen.add(id(current))
+        current = orig
+
+
+def cpu_state_dict(module: nn.Module) -> dict[str, Any]:
+    """Clone weights on CPU without tracing through a compiled wrapper."""
+    eager = eager_module(module)
+    stance = getattr(torch.compiler, "set_stance", None)
+    context: Any = contextlib.nullcontext()
+    if callable(stance):
+        try:
+            maybe = stance("force_eager")
+            if hasattr(maybe, "__enter__"):
+                context = maybe
+        except Exception:
+            context = contextlib.nullcontext()
+    with context, torch.no_grad():
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        return {
+            key: (
+                value.detach().cpu().contiguous().clone()
+                if torch.is_tensor(value)
+                else value
+            )
+            for key, value in eager.state_dict().items()
+        }
+
+
+def atomic_torch_save(payload: dict[str, Any], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    torch.save(payload, tmp)
+    os.replace(tmp, path)
+
+
+def resume_start_epoch(
+    checkpoint: dict[str, Any], history: list[dict[str, Any]]
+) -> int:
+    if checkpoint.get("epoch") is not None:
+        return int(checkpoint["epoch"]) + 1
+    if history:
+        return int(history[-1]["epoch"]) + 1
+    return 1
+
+
+def clip_history_to_checkpoint(
+    history: list[dict[str, Any]], checkpoint: dict[str, Any]
+) -> list[dict[str, Any]]:
+    epoch = checkpoint.get("epoch")
+    if epoch is None:
+        return list(history)
+    last = int(epoch)
+    return [row for row in history if int(row.get("epoch") or 0) <= last]
+
+
+def load_resume_checkpoint(
+    output_dir: str | Path,
+) -> tuple[dict[str, Any], list[dict[str, Any]], int]:
+    output = Path(output_dir)
+    last_path = output / "last.pt"
+    best_path = output / "best_model.pt"
+    ckpt_path = last_path if last_path.exists() else best_path
+    if not ckpt_path.exists():
+        raise FileNotFoundError(f"Cannot resume: missing {best_path}")
+    checkpoint = torch.load(ckpt_path, map_location="cpu", weights_only=False)
+    checkpoint["_resume_path"] = str(ckpt_path)
+    history: list[dict[str, Any]] = []
+    stages_path = output / "training_stages.json"
+    if stages_path.exists():
+        raw = json.loads(stages_path.read_text(encoding="utf-8"))
+        if isinstance(raw, list):
+            history = clip_history_to_checkpoint(raw, checkpoint)
+    start_epoch = resume_start_epoch(checkpoint, history)
+    return checkpoint, history, start_epoch
 
 
 class _MirroredEvent:
@@ -95,22 +178,70 @@ def _move_batch(batch, device: torch.device):
         lengths,
         weights,
     ) = batch
+    kwargs = {"non_blocking": device.type == "cuda"}
     return (
-        continuous.to(device),
-        card_ids.to(device),
-        team_deck.to(device),
-        opponent_deck.to(device),
-        globals_.to(device),
-        slot_feats.to(device),
-        hand_mask.to(device),
-        slots.to(device),
-        types.to(device),
-        zones.to(device),
-        xy.to(device),
-        timing.to(device),
-        lengths.to(device),
-        weights.to(device),
+        continuous.to(device, **kwargs),
+        card_ids.to(device, **kwargs),
+        team_deck.to(device, **kwargs),
+        opponent_deck.to(device, **kwargs),
+        globals_.to(device, **kwargs),
+        slot_feats.to(device, **kwargs),
+        hand_mask.to(device, **kwargs),
+        slots.to(device, **kwargs),
+        types.to(device, **kwargs),
+        zones.to(device, **kwargs),
+        xy.to(device, **kwargs),
+        timing.to(device, **kwargs),
+        lengths.to(device, **kwargs),
+        weights.to(device, **kwargs),
     )
+
+
+WAIT_HIT_SECONDS = 1.5
+
+
+def _amp_autocast(device: torch.device, enabled: bool, dtype: torch.dtype):
+    return torch.amp.autocast(device.type, dtype=dtype, enabled=enabled and device.type == "cuda")
+
+
+def _float_outputs(outputs: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: value.float() if torch.is_tensor(value) and value.is_floating_point() else value
+        for key, value in outputs.items()
+    }
+
+
+def batch_play_metrics(
+    outputs: dict[str, torch.Tensor],
+    slots: torch.Tensor,
+    xy: torch.Tensor,
+    timing: torch.Tensor,
+) -> dict[str, float | None]:
+    """Card top-1, exact tile, 3×3 tile neighborhood, and wait@1.5s hit rate."""
+    card = float((outputs["slot_logits"].argmax(dim=-1) == slots).float().mean().item())
+    pred_dt = torch.expm1(outputs["timing"].detach().float())
+    true_dt = torch.expm1(timing.float())
+    wait = float((pred_dt - true_dt).abs().lt(WAIT_HIT_SECONDS).float().mean().item())
+    wait_mae = float((pred_dt - true_dt).abs().mean().item())
+    tile_exact = None
+    tile_near = None
+    if outputs.get("tile_logits") is not None:
+        pred = outputs["tile_logits"].argmax(dim=-1)
+        true_x = (xy[:, 0] * TILE_COLS).floor().long().clamp(0, TILE_COLS - 1)
+        true_y = (xy[:, 1] * TILE_ROWS).floor().long().clamp(0, TILE_ROWS - 1)
+        true = true_y * TILE_COLS + true_x
+        pred_y = torch.div(pred, TILE_COLS, rounding_mode="floor")
+        pred_x = pred % TILE_COLS
+        cheb = torch.maximum((pred_y - true_y).abs(), (pred_x - true_x).abs())
+        tile_exact = float((pred == true).float().mean().item())
+        tile_near = float((cheb <= 1).float().mean().item())
+    return {
+        "card": card,
+        "tile_exact": tile_exact,
+        "tile_near": tile_near,
+        "wait": wait,
+        "wait_mae": wait_mae,
+    }
 
 
 @torch.no_grad()
@@ -121,6 +252,8 @@ def evaluate_policy(
     loss_kwargs: dict[str, float] | None = None,
     arena_control: str = "aligned",
     think_steps: int | None = None,
+    amp_enabled: bool | None = None,
+    amp_dtype: torch.dtype | None = None,
 ) -> dict[str, Any]:
     model.eval()
     total_loss = 0.0
@@ -135,7 +268,13 @@ def evaluate_policy(
     tile_class_correct = 0
     tile_top5_correct = 0
     tile_nll = 0.0
+    joint_card_tile = 0
     has_tile_logits = False
+    clock_nll_sum = 0.0
+    has_clock = False
+    tile_near_correct = 0
+    wait_hits = 0
+    wait_err = 0.0
     model_xy_rows: list[np.ndarray] = []
     argmax_xy_rows: list[np.ndarray] = []
     tile_entropy_sum = 0.0
@@ -143,6 +282,10 @@ def evaluate_policy(
     tile_top5_mass_sum = 0.0
     timing_err = 0.0
     loss_kwargs = loss_kwargs or {}
+    if amp_enabled is None:
+        amp_enabled = device.type == "cuda"
+    if amp_dtype is None:
+        amp_dtype = torch.float16
 
     for batch_index, batch in enumerate(loader):
         (
@@ -168,20 +311,21 @@ def evaluate_policy(
             permutation = torch.roll(
                 torch.arange(continuous.size(0), device=device), shifts=1
             )
-        out = model(
-            continuous,
-            card_ids,
-            team_deck,
-            opp_deck,
-            globals_,
-            lengths,
-            slot_feats,
-            hand_mask,
-            target_slots=None,
-            arena_permutation=permutation,
-            think_steps=think_steps,
-        )
-        losses = model.loss(out, slots, types, zones, xy, timing, **loss_kwargs)
+        with _amp_autocast(device, amp_enabled, amp_dtype):
+            out = model(
+                continuous,
+                card_ids,
+                team_deck,
+                opp_deck,
+                globals_,
+                lengths,
+                slot_feats,
+                hand_mask,
+                target_slots=None,
+                arena_permutation=permutation,
+                think_steps=think_steps,
+            )
+        losses = model.loss(_float_outputs(out), slots, types, zones, xy, timing, **loss_kwargs)
         total_loss += float(losses["loss"].item())
         n_batches += 1
 
@@ -202,8 +346,10 @@ def evaluate_policy(
         tile_hits += int((dist <= TILE_UNITS).sum())
         if out.get("tile_logits") is not None:
             has_tile_logits = True
-            tile_probs = torch.softmax(out["tile_logits"], dim=-1)
-            tile_entropy_sum += float((-(tile_probs * tile_probs.clamp_min(1e-12).log2()).sum(dim=-1)).sum().item())
+            tile_probs = torch.softmax(out["tile_logits"].float(), dim=-1)
+            tile_entropy_sum += float(
+                (-(tile_probs * tile_probs.clamp_min(1e-12).log2()).sum(dim=-1)).sum().item()
+            )
             top5_mass = tile_probs.topk(5, dim=-1).values
             tile_top1_mass_sum += float(top5_mass[:, 0].sum().item())
             tile_top5_mass_sum += float(top5_mass.sum().item())
@@ -220,6 +366,10 @@ def evaluate_policy(
             tile_class_correct += int(
                 (out["tile_logits"].argmax(dim=-1) == true_tiles).sum().item()
             )
+            pred_rows = torch.div(argmax_tiles, TILE_COLS, rounding_mode="floor")
+            pred_cols = argmax_tiles % TILE_COLS
+            cheb = torch.maximum((pred_rows - true_tile_y).abs(), (pred_cols - true_tile_x).abs())
+            tile_near_correct += int((cheb <= 1).sum().item())
             tile_top5_correct += int(
                 (out["tile_logits"].topk(5, dim=-1).indices == true_tiles.unsqueeze(-1))
                 .any(dim=-1)
@@ -228,31 +378,50 @@ def evaluate_policy(
             )
             tile_nll += float(
                 torch.nn.functional.cross_entropy(
-                    out["tile_logits"], true_tiles, reduction="sum"
+                    out["tile_logits"].float(), true_tiles, reduction="sum"
                 ).item()
             )
+            joint_card_tile += int(((preds == slots) & (argmax_tiles == true_tiles)).sum().item())
         model_xy_rows.append(pred_xy)
 
-        pred_dt = np.expm1(out["timing"].cpu().numpy())
-        true_dt = np.expm1(timing.cpu().numpy())
-        timing_err += float(np.abs(pred_dt - true_dt).sum())
+        pred_dt = np.expm1(out["timing"].float().cpu().numpy())
+        true_dt = np.expm1(timing.float().cpu().numpy())
+        abs_wait = np.abs(pred_dt - true_dt)
+        timing_err += float(abs_wait.sum())
+        wait_err += float(abs_wait.sum())
+        wait_hits += int((abs_wait < WAIT_HIT_SECONDS).sum())
+        if out.get("clock_rates") is not None:
+            from .event_clock import competing_risk_nll
+
+            delay = torch.expm1(timing.float())
+            clock_nll_sum += float(
+                competing_risk_nll(out["clock_rates"].float(), delay).sum().item()
+            )
+            has_clock = True
 
     return {
         "loss": total_loss / max(n_batches, 1),
+        "card": slot_correct / max(total, 1),
         "slot_top1": slot_correct / max(total, 1),
         "slot_top3": slot_top3 / max(total, 1),
         "type_acc": type_correct / max(total, 1),
         "zone_acc": zone_correct / max(total, 1),
         "xy_mae": xy_err / max(total, 1),
         "tile_acc": tile_hits / max(total, 1),
+        "tile_exact": (tile_class_correct / max(total, 1)) if has_tile_logits else None,
+        "tile_near": (tile_near_correct / max(total, 1)) if has_tile_logits else None,
         "tile_class_acc": (tile_class_correct / max(total, 1)) if has_tile_logits else None,
         "tile_top5_acc": (tile_top5_correct / max(total, 1)) if has_tile_logits else None,
         "tile_nll": (tile_nll / max(total, 1)) if has_tile_logits else None,
+        "joint_card_tile": (joint_card_tile / max(total, 1)) if has_tile_logits else None,
+        "clock_nll": (clock_nll_sum / max(total, 1)) if has_clock else None,
         "tile_entropy_bits": (tile_entropy_sum / max(total, 1)) if has_tile_logits else None,
         "tile_effective_count": (2.0 ** (tile_entropy_sum / max(total, 1))) if has_tile_logits else None,
         "tile_top1_mass": (tile_top1_mass_sum / max(total, 1)) if has_tile_logits else None,
         "tile_top5_mass": (tile_top5_mass_sum / max(total, 1)) if has_tile_logits else None,
         "timing_mae": timing_err / max(total, 1),
+        "wait": wait_hits / max(total, 1),
+        "wait_mae": wait_err / max(total, 1),
         "n": total,
         "model_x_std": float(np.concatenate(model_xy_rows)[:, 0].std())
         if model_xy_rows
@@ -411,9 +580,47 @@ def rollout_policy_battles(
 
 
 def train_policy_model(*args: Any, **kwargs: Any) -> dict[str, Any]:
-    """Train a policy, retrying v7 CUDA OOMs with deterministic accumulation."""
+    """Train a policy, retrying CUDA OOMs with deterministic accumulation."""
+    try:
+        return _train_policy_model_with_oom(*args, **kwargs)
+    finally:
+        from .training_tui import TrainingDashboard
+
+        active = getattr(TrainingDashboard, "_active", None)
+        if active is not None:
+            active.close()
+
+
+def _train_policy_model_with_oom(*args: Any, **kwargs: Any) -> dict[str, Any]:
     version = str(kwargs.get("version", args[16] if len(args) > 16 else "2"))
     requested_batch = int(kwargs.get("batch_size", args[5] if len(args) > 5 else 256))
+    if version.startswith("8"):
+        attempts = [(requested_batch, 1)]
+        if requested_batch >= 96:
+            attempts.extend([(96, 1), (64, 2)])
+        last_error: RuntimeError | None = None
+        normalized = dict(
+            inspect.signature(_train_policy_model_impl).bind_partial(*args, **kwargs).arguments
+        )
+        for batch_size, accumulation in attempts:
+            try:
+                call_kwargs = dict(normalized)
+                call_kwargs["batch_size"] = batch_size
+                call_kwargs["gradient_accumulation_steps"] = accumulation
+                if batch_size != requested_batch:
+                    print(
+                        f"CUDA OOM fallback: batch_size={batch_size}, "
+                        f"gradient_accumulation_steps={accumulation}",
+                        flush=True,
+                    )
+                return _train_policy_model_impl(**call_kwargs)
+            except RuntimeError as exc:
+                if "out of memory" not in str(exc).lower() or batch_size == attempts[-1][0]:
+                    raise
+                last_error = exc
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+        raise last_error or RuntimeError("v8 training failed after CUDA OOM fallbacks")
     if not version.startswith("7") or requested_batch < 512:
         return _train_policy_model_impl(*args, **kwargs)
     attempts = [(requested_batch, 1)]
@@ -446,6 +653,7 @@ def _train_policy_model_impl(
     input_dir: str | Path = "data/raw",
     output_dir: str | Path = "models/policy_bc",
     card_costs_path: str | Path = "data/card_costs.json",
+    metadata_path: str | Path | None = None,
     realism_model_dir: str | Path = "models/realism_scorer",
     epochs: int = 25,
     batch_size: int = 256,
@@ -476,11 +684,13 @@ def _train_policy_model_impl(
     arena_gate_bias: float = -2.2,
     progress_path: str | Path | None = None,
     mirror_training: bool = False,
-    train_fraction: float = 0.9,
+    train_fraction: float = 0.7,
     training_log_path: str | Path | None = None,
     max_think_steps: int | None = None,
     eval_think_steps: int | None = None,
     winner_only: bool = False,
+    no_tui: bool = False,
+    resume: bool = False,
 ) -> dict[str, Any]:
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -492,97 +702,114 @@ def _train_policy_model_impl(
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     version = str(version)
+    spec = policy_spec_from_version(version)
     gradient_accumulation_steps = max(int(gradient_accumulation_steps), 1)
-    use_v7 = version.startswith("7")
-    use_v6 = version.startswith("6") or use_v7
-    use_v61 = version.startswith("6.1")
-    use_v4 = version.startswith("4") or use_v6
-    use_v3 = version.startswith("3") or use_v4
-    use_v43 = version.startswith("4.3")
-    use_v44 = version.startswith("4.4")
-    use_v442 = version.startswith("4.4.2")
-    use_v441 = version.startswith("4.4.1") or use_v442
-    winner_only = bool(winner_only or use_v442)
-    card_conditioned_placement = use_v4
-    # v4.4 / v6+: classify an 18×32 tile heatmap instead of regressing one XY mean.
-    placement_mode = "heatmap" if (use_v6 or use_v44) else "xy"
-    placement_card_mode = "selected" if use_v441 else "soft"
-    rollout_placement_decode = (
-        "sample" if use_v441 else ("argmax" if placement_mode == "heatmap" else "expected")
-    )
-    rollout_placement_temperature = 0.6 if use_v441 else 1.0
-    rollout_placement_top_k = 5 if use_v441 else None
+    winner_only = bool(winner_only or spec.winner_only_default)
+    card_conditioned_placement = spec.card_conditioned_placement
+    placement_mode = spec.placement_mode
+    placement_card_mode = spec.placement_card_mode
+    rollout_placement_decode = spec.rollout_placement_decode
+    rollout_placement_temperature = spec.rollout_placement_temperature
+    rollout_placement_top_k = spec.rollout_placement_top_k
     rollout_slot_decode = "sample"
     rollout_slot_temperature = 0.8
     rollout_scheduling = "race"
-    threat_dim = THREAT_DIM if use_v3 else 0
-    global_dim = GLOBAL_DIM + threat_dim
+    threat_dim = spec.threat_dim
+    global_dim = spec.global_dim
     if max_think_steps is None:
-        if use_v43:
-            max_think_steps = 8
-        elif use_v44:
-            max_think_steps = 3
-        else:
-            max_think_steps = 0
+        max_think_steps = spec.default_max_think_steps
     max_think_steps = max(int(max_think_steps), 0)
     if eval_think_steps is None:
         eval_think_steps = max_think_steps
     eval_think_steps = max(0, min(int(eval_think_steps), max_think_steps))
-    if use_v7:
-        model_name, model_version = "policy-bc-v7", "7.0.0"
-    elif use_v6:
-        model_name = "policy-bc-v6.1" if use_v61 else "policy-bc-v6"
-        model_version = "6.1.0" if use_v61 else "6.0.0"
-    elif use_v4:
-        # "4" / "4.0" → 4.0.0; "4.1"/"4.2"/"4.3"/"4.4" keep their minor versions.
-        if use_v442:
-            model_name, model_version = "policy-bc-v4.4.2", "4.4.2"
-        elif use_v441:
-            model_name, model_version = "policy-bc-v4.4.1", "4.4.1"
-        else:
-            parts = version.split(".")
-            minor = parts[1] if len(parts) > 1 else "0"
-            model_name, model_version = f"policy-bc-v4.{minor}", f"4.{minor}.0"
-    elif use_v3:
-        model_name, model_version = "policy-bc-v3", "3.0.0"
-    else:
-        model_name, model_version = "policy-bc-v2", "2.0.0"
-    if use_v3:
-        # Defaults for v3/v4 reaction objectives; callers can still override.
-        rw = reaction_weight
-        rr = reaction_repeats
-    else:
-        rw = 1.0
-        rr = 1
-    # v4: upweight placement — experiments showed XY/zone are the main offline gap.
-    loss_kwargs = (
-        {
-            "slot_weight": 0.0,
-            "type_weight": 0.0,
-            "zone_weight": 0.0,
-            "xy_weight": 0.0,
-            "timing_weight": 0.0,
-            "tile_weight": 1.0,
-        }
-        if (use_v61 and freeze_backbone) or use_v7
-        else {"zone_weight": 0.9, "xy_weight": 0.0, "tile_weight": 0.35, "slot_weight": 2.2}
-        if use_v6
-        else {
-            "zone_weight": 1.1,
-            "xy_weight": 0.0,
-            "tile_weight": 0.55,
-            "slot_weight": 1.4,
-        }
-        if use_v44
-        else {"zone_weight": 1.1, "xy_weight": 0.55, "slot_weight": 1.4}
-        if use_v4
-        else {}
-    )
+    model_name, model_version = spec.model_name, spec.model_version
+    rw = reaction_weight if spec.threat_dim > 0 else 1.0
+    rr = reaction_repeats if spec.threat_dim > 0 else 1
+    freeze_backbone = bool(freeze_backbone or spec.freeze_backbone_default)
+    loss_kwargs = loss_kwargs_for_spec(spec, freeze_backbone=freeze_backbone)
+    use_v8 = spec.family == "v8"
+    if use_v8:
+        raise ValueError("The original v8 objective is retired. Use python -m cr_replay_pipeline.controlled_experiment; archived v8 inference remains supported.")
+    use_v7 = spec.family == "v7"
+    use_v6 = spec.family.startswith("v6") or use_v7
+    use_v61 = spec.family == "v6.1"
+    use_v4 = spec.card_conditioned_placement
+    use_v3 = spec.threat_dim > 0
+    use_v441 = spec.lazy_mirror
+    if use_v8 and d_model == 160:
+        d_model = spec.default_d_model
+    if use_v8 and num_layers == 2:
+        num_layers = spec.default_num_layers
+    if use_v8:
+        dropout = min(dropout, 0.1)
+        torch.set_float32_matmul_precision("high")
 
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
     started = time.time()
     created_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    resume = bool(resume)
+    resume_artifact: dict[str, Any] | None = None
+    history: list[dict[str, Any]] = []
+    start_epoch = 1
+    best_val = float("inf")
+    best_state = None
+    best_epoch = 0
+    bad_epochs = 0
+    if resume:
+        resume_artifact, history, start_epoch = load_resume_checkpoint(output)
+        if start_epoch > epochs:
+            raise RuntimeError(
+                f"Cannot resume: checkpoint is already at epoch {start_epoch - 1} "
+                f"of {epochs}"
+            )
+        if resume_artifact.get("created_at"):
+            created_at = str(resume_artifact["created_at"])
+        best_source = resume_artifact
+        best_path = output / "best_model.pt"
+        if best_path.exists():
+            best_source = torch.load(best_path, map_location="cpu", weights_only=False)
+        best_val = float(best_source.get("best_val_loss") or best_val)
+        if math.isfinite(best_val) and best_source.get("model_state"):
+            best_state = {
+                key: value.detach().cpu().clone() if torch.is_tensor(value) else value
+                for key, value in best_source["model_state"].items()
+            }
+        if history:
+            best_epoch = 0
+            rolling_best = float("inf")
+            for row in history:
+                value = row.get("val_loss")
+                if value is None or not math.isfinite(float(value)):
+                    continue
+                if float(value) < rolling_best - 1e-4:
+                    rolling_best = float(value)
+                    best_epoch = int(row["epoch"])
+            if best_epoch:
+                bad_epochs = max(int(history[-1]["epoch"]) - best_epoch, 0)
+    from .training_tui import TrainingDashboard, _want_trainer_tui
+
+    progress_target = Path(progress_path) if progress_path else output / "progress.jsonl"
+    log_target = Path("logs/policy_bc_v8.log") if use_v8 else (
+        Path("logs/policy_bc_v7.log") if use_v7 else output / "console.log"
+    )
+    dashboard = TrainingDashboard(
+        title=f"{model_name} · {model_version}",
+        progress_path=progress_target,
+        log_path=log_target,
+        epochs=epochs,
+        batches_total=1,
+        samples_total=1,
+        batch_size=batch_size,
+        device=str(device),
+        parameters=0,
+        use_tui=_want_trainer_tui(not no_tui),
+        start_live=False,
+        persist=True,
+        reset=not resume,
+    )
+    dashboard.update(phase="loading")
+    dashboard.log(f"loading battles from {input_dir}")
 
     if use_v7:
         training_stage = training_stage or "arena-adapter"
@@ -593,51 +820,50 @@ def _train_policy_model_impl(
         freeze_backbone = True
         if warmstart_dir is None:
             warmstart_dir = "models/policy_bc_v6_1"
-    print(f"Loading battles from {input_dir} ...", flush=True)
     battles = collect_battles(
         input_dir,
         min_card_plays=min_card_plays,
         require_decisive_result=winner_only,
+        metadata_path=metadata_path,
+        unresolved_abilities="preserve_event",
     )
-    manifest: dict[str, Any] | None = None
-    if write_split_manifest:
-        if split_manifest:
-            raise ValueError("Use either split_manifest or write_split_manifest, not both")
-        selected = battles[: int(max_battles)] if max_battles is not None else battles
-        manifest = build_manifest(
-            selected,
-            write_split_manifest,
-            seed=seed,
-            train_fraction=train_fraction,
-        )
-        split_manifest = write_split_manifest
-    if split_manifest:
-        manifest = load_manifest(split_manifest)
-        train_battles, val_battles, test_battles = battles_from_manifest(battles, manifest)
-    else:
-        if max_battles is not None:
-            battles = battles[: int(max_battles)]
-        if train_fraction == 0.9:
-            rng = random.Random(seed)
-            ordered = list(battles)
-            rng.shuffle(ordered)
-            n_train = int(len(ordered) * 0.9)
-            n_val = int((len(ordered) - n_train) / 2)
-            train_battles, val_battles, test_battles = (
-                ordered[:n_train], ordered[n_train:n_train + n_val], ordered[n_train + n_val:]
+    if use_v8 and split_manifest is None:
+        cohort_path = Path("reports/astra_v8_evidence/cohort.json")
+        if cohort_path.exists():
+            holdout = {
+                row["battle_id"]
+                for row in json.loads(cohort_path.read_text(encoding="utf-8"))
+            }
+            before = len(battles)
+            battles = [battle for battle in battles if battle.battle_id not in holdout]
+            dashboard.log(
+                f"held out {before - len(battles):,} Astra probe battles from the v8 split"
             )
-        else:
-            train_battles, val_battles, test_battles = split_battles(battles, seed=seed)
+        if max_battles is None:
+            max_battles = 7143
+        if write_split_manifest is None:
+            write_split_manifest = "data/splits/policy_v8_pilot_5000_seed42.json"
+    train_battles, val_battles, test_battles, manifest, split_manifest_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        train_fraction=train_fraction,
+        split_manifest=split_manifest,
+        write_split_manifest=write_split_manifest,
+        output_dir=output,
+        warmstart_dir=warmstart_dir,
+        max_battles=max_battles,
+        min_card_plays=min_card_plays,
+        create=True,
+    )
+    split_manifest = split_manifest_path
     lazy_mirror_training = bool(mirror_training and use_v441)
     if mirror_training and not lazy_mirror_training:
         mirrored = [_MirroredBattle(battle) for battle in train_battles]
         train_battles = train_battles + mirrored
-        print(f"Mirroring enabled: {len(mirrored):,} augmented training battles", flush=True)
+        dashboard.log(f"mirroring enabled: {len(mirrored):,} augmented training battles")
     elif lazy_mirror_training:
-        print(
-            f"Memory-safe lazy mirroring enabled: {len(train_battles):,} source battles; "
-            "encoded streams are shared",
-            flush=True,
+        dashboard.log(
+            f"lazy mirroring: {len(train_battles):,} source battles; encoded streams are shared"
         )
     manifest_hash = (manifest or {}).get("ordered_id_sha256")
     if len(battles) < 50:
@@ -648,7 +874,18 @@ def _train_policy_model_impl(
             raise RuntimeError(f"Need at least 50 usable battles; found {resolved_count}")
     battles = train_battles + val_battles + test_battles
     warmstart_artifact = None
-    if warmstart_dir:
+    if resume_artifact is not None:
+        vocab = CardVocab.from_dict(resume_artifact["vocab"])
+        donor_vocab = vocab
+        current_vocab = build_vocab(train_battles)
+        if not donor_vocab.compatible_with(current_vocab):
+            extra = sorted(set(current_vocab.name_to_id) - set(donor_vocab.name_to_id))
+            missing = sorted(set(donor_vocab.name_to_id) - set(current_vocab.name_to_id))
+            dashboard.log(
+                "resume vocabulary mapping preserved from the checkpoint "
+                f"(extra={len(extra)}, missing_in_current={len(missing)})"
+            )
+    elif warmstart_dir:
         warmstart_path = Path(warmstart_dir) / "best_model.pt"
         if not warmstart_path.exists():
             raise FileNotFoundError(f"Warm-start checkpoint not found: {warmstart_path}")
@@ -659,6 +896,15 @@ def _train_policy_model_impl(
         # omit cards present in v4.1, which would otherwise change embedding
         # dimensions or silently remap card identities.
         vocab = CardVocab.from_dict(warmstart_artifact["vocab"])
+        donor_vocab = vocab
+        current_vocab = build_vocab(train_battles)
+        if not donor_vocab.compatible_with(current_vocab):
+            extra = sorted(set(current_vocab.name_to_id) - set(donor_vocab.name_to_id))
+            missing = sorted(set(donor_vocab.name_to_id) - set(current_vocab.name_to_id))
+            dashboard.log(
+                "warm-start vocabulary mapping preserved from the donor checkpoint "
+                f"(extra={len(extra)}, missing_in_current={len(missing)})"
+            )
     else:
         vocab = build_vocab(train_battles)
     costs = load_card_costs(card_costs_path)
@@ -679,52 +925,67 @@ def _train_policy_model_impl(
         hide_opponent_deck=hide_opponent_deck,
         hide_opponent_prob=hide_opponent_prob,
         mirror_augmentation=lazy_mirror_training,
-        stream_cache_size=256 if use_v441 else None,
+        stream_cache_size=spec.stream_cache_size,
         winner_only=winner_only,
+        num_workers=2 if use_v8 else 0,
+        pad_to=max_context if use_v8 else None,
+        pin_memory=device.type == "cuda",
     )
-    print(
-        f"Training {model_name} (threat_dim={threat_dim}, "
-        f"card_conditioned_placement={card_conditioned_placement}, "
-        f"placement_mode={placement_mode}, "
-        f"placement_card_mode={placement_card_mode}, "
-        f"winner_only={winner_only}, "
-        f"reaction_weight={rw}, reaction_repeats={rr}, "
-        f"max_think_steps={max_think_steps}, eval_think_steps={eval_think_steps})",
-        flush=True,
+    dashboard.log(
+        f"training {model_name} threat_dim={threat_dim} placement={placement_mode}/"
+        f"{placement_card_mode} winner_only={winner_only}"
     )
-    print(
-        f"Samples train/val/test: {len(train_loader.dataset)}/"
-        f"{len(val_loader.dataset)}/{len(test_loader.dataset)} on {device}",
-        flush=True,
+    dashboard.log(
+        f"samples train/val/test {len(train_loader.dataset)}/"
+        f"{len(val_loader.dataset)}/{len(test_loader.dataset)} on {device}"
     )
 
-    model = PolicyBC(
-        vocab_size=vocab.vocab_size,
-        global_dim=global_dim,
-        d_model=d_model,
-        num_layers=num_layers,
-        dropout=dropout,
-        card_conditioned_placement=card_conditioned_placement,
-        placement_mode=placement_mode,
-        placement_card_mode=placement_card_mode,
-        arena_memory_channels=16 if use_v7 else 0,
-        arena_hidden_channels=32,
-        arena_memory_version="decay-v1" if use_v7 else "none",
-        arena_gate_bias=arena_gate_bias,
-        max_think_steps=max_think_steps,
-    ).to(device)
+    from .belief_policy import build_policy_model
+
+    model_config = {
+        "d_model": d_model,
+        "num_layers": num_layers,
+        "dropout": dropout,
+        "global_dim": global_dim,
+        "threat_dim": threat_dim,
+        "card_conditioned_placement": card_conditioned_placement,
+        "placement_mode": placement_mode,
+        "placement_card_mode": placement_card_mode,
+        "arena_memory_channels": 16 if use_v7 else 0,
+        "arena_hidden_channels": 32,
+        "arena_memory_version": "decay-v1" if use_v7 else "none",
+        "arena_gate_bias": arena_gate_bias,
+        "max_think_steps": max_think_steps,
+        "memory_tokens": spec.memory_tokens,
+        "memory_heads": spec.memory_heads,
+        "interaction_blocks": spec.interaction_blocks,
+        "event_clock": spec.event_clock,
+    }
+    model = build_policy_model(vocab.vocab_size, model_config).to(device)
     warmstart_info: dict[str, Any] = {}
-    if warmstart_artifact is not None:
+    if resume_artifact is not None:
+        loaded = model.load_state_dict(resume_artifact["model_state"], strict=True)
+        warmstart_info = {
+            "dir": str(output),
+            "resume": True,
+            "from_epoch": start_epoch - 1,
+            "missing_keys": list(loaded.missing_keys),
+            "unexpected_keys": list(loaded.unexpected_keys),
+        }
+        dashboard.log(
+            f"resuming weights from {resume_artifact.get('_resume_path', output / 'best_model.pt')} "
+            f"(completed epoch {start_epoch - 1}, next {start_epoch}/{epochs})"
+        )
+    elif warmstart_artifact is not None:
         loaded = model.load_state_dict(warmstart_artifact["model_state"], strict=False)
         warmstart_info = {
             "dir": str(warmstart_dir),
             "missing_keys": list(loaded.missing_keys),
             "unexpected_keys": list(loaded.unexpected_keys),
         }
-        print(
-            f"Warm-started from {warmstart_dir} (missing={len(loaded.missing_keys)}, "
-            f"unexpected={len(loaded.unexpected_keys)})",
-            flush=True,
+        dashboard.log(
+            f"warm-started from {warmstart_dir} (missing={len(loaded.missing_keys)}, "
+            f"unexpected={len(loaded.unexpected_keys)})"
         )
     if freeze_backbone:
         for parameter in model.parameters():
@@ -739,36 +1000,64 @@ def _train_policy_model_impl(
             if training_stage == "placement-calibration":
                 for parameter in model.tile_head[3].parameters():
                     parameter.requires_grad = True
-            print(
-                "Frozen-trunk v7 mode: training arena adapter"
-                + (" + final tile projection" if training_stage == "placement-calibration" else ""),
-                flush=True,
+            dashboard.log(
+                "frozen-trunk v7 mode: training arena adapter"
+                + (" + final tile projection" if training_stage == "placement-calibration" else "")
             )
         else:
             if not hasattr(model, "tile_head"):
                 raise RuntimeError("freeze_backbone requires a heatmap placement head")
             for parameter in model.tile_head.parameters():
                 parameter.requires_grad = True
-            print("Frozen-trunk mode: training tile_head only", flush=True)
-    trainable_parameters = [p for p in model.parameters() if p.requires_grad]
+            dashboard.log("frozen-trunk mode: training tile_head only")
+    raw_model = model
+    trainable_parameters = [p for p in raw_model.parameters() if p.requires_grad]
     optimizer = AdamW(trainable_parameters, lr=learning_rate, weight_decay=1e-4)
     scheduler = CosineAnnealingLR(optimizer, T_max=max(epochs, 1))
+    restored_optimizer = False
+    if resume_artifact is not None:
+        if resume_artifact.get("optimizer_state"):
+            optimizer.load_state_dict(resume_artifact["optimizer_state"])
+            restored_optimizer = True
+        if resume_artifact.get("scheduler_state"):
+            scheduler.load_state_dict(resume_artifact["scheduler_state"])
+        else:
+            for _ in range(max(start_epoch - 1, 0)):
+                scheduler.step()
+        dashboard.log(
+            f"cosine LR at {float(optimizer.param_groups[0]['lr']):.6g}; "
+            + (
+                "Adam moments restored from checkpoint"
+                if restored_optimizer
+                else "Adam moments reset (checkpoint had weights only)"
+            )
+        )
+    use_amp = False
+    amp_dtype: torch.dtype = torch.float32
+    if spec.mixed_precision and device.type == "cuda" and torch.cuda.is_bf16_supported():
+        use_amp = True
+        amp_dtype = torch.bfloat16
+    scaler = torch.amp.GradScaler("cuda", enabled=False)
+    compiled = False
+    if use_v8 and device.type == "cuda":
+        torch.backends.cudnn.benchmark = True
+        try:
+            model = torch.compile(raw_model, mode="reduce-overhead", dynamic=False)
+            compiled = True
+        except Exception as exc:
+            dashboard.log(f"torch.compile unavailable ({exc}); running eager")
+            model = raw_model
 
-    history: list[dict[str, Any]] = []
-    best_val = float("inf")
-    best_state = None
-    bad_epochs = 0
-    progress_target = Path(progress_path) if progress_path else output / "progress.jsonl"
-    progress_target.parent.mkdir(parents=True, exist_ok=True)
     table_log_target = Path(training_log_path) if training_log_path else output / "training.log"
     table_log_target.parent.mkdir(parents=True, exist_ok=True)
     table_columns = (
         "time", "phase", "epoch", "batch", "work", "done", "ETA", "loss",
         "card@1", "zone", "tile", "timing",
     )
-    with table_log_target.open("w", encoding="utf-8") as table_handle:
-        table_handle.write(" | ".join(table_columns) + "\n")
-        table_handle.write("-+-".join("-" * len(column) for column in table_columns) + "\n")
+    if not (resume and table_log_target.exists()):
+        with table_log_target.open("w", encoding="utf-8") as table_handle:
+            table_handle.write(" | ".join(table_columns) + "\n")
+            table_handle.write("-+-".join("-" * len(column) for column in table_columns) + "\n")
 
     def append_table_row(
         phase: str,
@@ -805,20 +1094,116 @@ def _train_policy_model_impl(
         with table_log_target.open("a", encoding="utf-8") as table_handle:
             table_handle.write(" | ".join(row_values) + "\n")
 
-    progress_target.write_text("", encoding="utf-8")
-    log_target = Path("logs/policy_bc_v7.log") if use_v7 else None
-    if log_target is not None:
-        log_target.parent.mkdir(parents=True, exist_ok=True)
-        with log_target.open("a", encoding="utf-8") as log_handle:
-            log_handle.write(
-                f"run model={model_name} stage={training_stage} control={arena_control} "
-                f"batch={batch_size} accumulation={gradient_accumulation_steps}\n"
-            )
+    log_target.parent.mkdir(parents=True, exist_ok=True)
+    with log_target.open("a", encoding="utf-8") as log_handle:
+        log_handle.write(
+            f"run model={model_name} stage={training_stage} control={arena_control} "
+            f"batch={batch_size} accumulation={gradient_accumulation_steps}\n"
+        )
+    dashboard.batches_total = max(len(train_loader), 1)
+    dashboard.samples_total = max(epochs * len(train_loader.dataset), 1)
+    dashboard.parameters = sum(p.numel() for p in model.parameters())
+    dashboard.start_live()
+    dashboard.log(
+        f"train {len(train_loader.dataset):,}  val {len(val_loader.dataset):,}  "
+        f"test {len(test_loader.dataset):,}  amp={'bf16' if use_amp else 'off'}  "
+        f"compile={'on' if compiled else 'off'}  "
+        f"workers={2 if use_v8 else 0}  params={dashboard.parameters:,}"
+    )
     control_generator = torch.Generator(device=device)
     control_generator.manual_seed(seed + 43)
     run_started = time.time()
+    progress_every = 25
+    completed_batches = (start_epoch - 1) * max(len(train_loader), 1)
 
-    for epoch in range(1, epochs + 1):
+    def checkpoint_config() -> dict[str, Any]:
+        return {
+            "batch_size": batch_size,
+            "gradient_accumulation_steps": gradient_accumulation_steps,
+            "d_model": d_model,
+            "num_layers": num_layers,
+            "dropout": dropout,
+            "max_context": max_context,
+            "max_samples_per_battle": max_samples_per_battle,
+            "min_context": DEFAULT_MIN_CONTEXT,
+            "global_dim": global_dim,
+            "threat_dim": threat_dim,
+            "reaction_seconds": reaction_seconds,
+            "card_conditioned_placement": card_conditioned_placement,
+            "placement_mode": placement_mode,
+            "placement_card_mode": placement_card_mode,
+            "rollout_placement_decode": rollout_placement_decode,
+            "rollout_placement_temperature": rollout_placement_temperature,
+            "rollout_placement_top_k": rollout_placement_top_k,
+            "rollout_slot_decode": rollout_slot_decode,
+            "rollout_slot_temperature": rollout_slot_temperature,
+            "rollout_scheduling": rollout_scheduling,
+            "version": model_version,
+            "warmstart": warmstart_info,
+            "freeze_backbone": freeze_backbone,
+            "training_stage": training_stage,
+            "arena_control": arena_control,
+            "arena_memory_channels": 16 if use_v7 else 0,
+            "arena_hidden_channels": 32,
+            "arena_memory_version": "decay-v1" if use_v7 else "none",
+            "arena_gate_bias": arena_gate_bias,
+            "split_manifest": str(split_manifest) if split_manifest else None,
+            "manifest_hash": manifest_hash,
+            "train_fraction": train_fraction,
+            "policy_spec": spec.to_dict(),
+            "progress_path": str(progress_target),
+            "log_path": str(log_target) if log_target else None,
+            "trainable_parameters": sum(p.numel() for p in trainable_parameters),
+            "max_think_steps": max_think_steps,
+            "eval_think_steps": eval_think_steps,
+            "winner_only": winner_only,
+            "memory_tokens": spec.memory_tokens,
+            "memory_heads": spec.memory_heads,
+            "interaction_blocks": spec.interaction_blocks,
+            "event_clock": spec.event_clock,
+            "mixed_precision": use_amp,
+            "amp_dtype": "bf16" if amp_dtype == torch.bfloat16 else "fp32",
+            "compiled": compiled,
+        }
+
+    from .artifact_cache import source_fingerprint, sha256_file, DATASET_PREPROCESS_VERSION
+    resume_contract = {
+        "source": source_fingerprint(input_dir), "preprocess": DATASET_PREPROCESS_VERSION,
+        "observation": "causal-observation-1", "manifest": manifest_hash,
+        "metadata": sha256_file(metadata_path) if metadata_path else None,
+        "costs": sha256_file(card_costs_path), "loss": loss_kwargs,
+        "model": model_config, "batch_size": batch_size, "seed": seed,
+        "mirror": mirror_training, "winner_only": winner_only,
+        "reaction_repeats": rr, "reaction_weight": rw, "max_samples": max_samples_per_battle,
+        "hide_opponent": [hide_opponent_deck, hide_opponent_prob],
+    }
+    if resume_artifact is not None and resume_artifact.get("resume_contract") != resume_contract:
+        raise ValueError("Resume contract changed or missing; create a new run lineage")
+
+    def save_checkpoint(
+        path: Path,
+        state: dict[str, Any],
+        epoch: int,
+        val_loss: float,
+        *,
+        include_optim: bool,
+    ) -> None:
+        payload: dict[str, Any] = {
+            "model_state": state,
+            "vocab": vocab.to_dict(),
+            "config": checkpoint_config(),
+            "created_at": created_at,
+            "epoch": epoch,
+            "weights_epoch": epoch,
+            "resume_contract": resume_contract,
+            "best_val_loss": val_loss,
+        }
+        if include_optim:
+            payload["optimizer_state"] = optimizer.state_dict()
+            payload["scheduler_state"] = scheduler.state_dict()
+        atomic_torch_save(payload, path)
+
+    for epoch in range(start_epoch, epochs + 1):
         # Frozen-trunk mode keeps dropout and batch-independent feature
         # extraction deterministic; only the new tile head is in train mode.
         if freeze_backbone:
@@ -852,24 +1237,25 @@ def _train_policy_model_impl(
                 weights,
             ) = _move_batch(batch, device)
             permutation = None
-            if use_v7 and arena_control == "shuffled" and continuous.size(0) > 1:
+            if (use_v7 or use_v8) and arena_control == "shuffled" and continuous.size(0) > 1:
                 permutation = torch.randperm(
                     continuous.size(0), device=device, generator=control_generator
                 )
-            out = model(
-                continuous,
-                card_ids,
-                team_deck,
-                opp_deck,
-                globals_,
-                lengths,
-                slot_feats,
-                hand_mask,
-                target_slots=slots,
-                arena_permutation=permutation,
-            )
+            with _amp_autocast(device, use_amp, amp_dtype):
+                out = model(
+                    continuous,
+                    card_ids,
+                    team_deck,
+                    opp_deck,
+                    globals_,
+                    lengths,
+                    slot_feats,
+                    hand_mask,
+                    target_slots=slots,
+                    arena_permutation=permutation,
+                )
             losses = model.loss(
-                out,
+                _float_outputs(out),
                 slots,
                 types,
                 zones,
@@ -878,70 +1264,79 @@ def _train_policy_model_impl(
                 sample_weights=weights,
                 **loss_kwargs,
             )
-            (losses["loss"] / gradient_accumulation_steps).backward()
+            loss = losses["loss"]
+            if not torch.isfinite(loss).all():
+                optimizer.zero_grad(set_to_none=True)
+                dashboard.log(
+                    f"skipped non-finite batch  epoch {epoch} batch {batch_index}"
+                )
+                continue
+            scaler.scale(loss / gradient_accumulation_steps).backward()
             should_step = (
                 batch_index % gradient_accumulation_steps == 0
                 or batch_index == len(train_loader)
             )
             if should_step:
-                nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-                optimizer.step()
+                scaler.unscale_(optimizer)
+                grad_norm = nn.utils.clip_grad_norm_(trainable_parameters, 1.0)
+                if not math.isfinite(float(grad_norm)):
+                    optimizer.zero_grad(set_to_none=True)
+                    dashboard.log(
+                        f"skipped non-finite grad  epoch {epoch} batch {batch_index}"
+                    )
+                else:
+                    scaler.step(optimizer)
+                scaler.update()
                 optimizer.zero_grad(set_to_none=True)
             running += float(losses["loss"].item())
             n_batches += 1
-            if batch_index == 1 or batch_index % 25 == 0 or batch_index == len(train_loader):
+            if (
+                batch_index == 1
+                or batch_index % progress_every == 0
+                or batch_index == len(train_loader)
+            ):
+                with torch.no_grad():
+                    play = batch_play_metrics(out, slots, xy, timing)
                 elapsed = time.time() - run_started
                 work = (epoch - 1) * len(train_loader) + batch_index
                 total_work = max(epochs * len(train_loader), 1)
-                rate = work / max(elapsed, 1e-6)
+                work_this_run = max(work - completed_batches, 1)
+                rate = work_this_run / max(elapsed, 1e-6)
                 eta = max(total_work - work, 0) / max(rate, 1e-6)
-                progress_row = {
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "phase": training_stage or ("v6.1" if use_v61 else version),
-                    "epoch": epoch,
-                    "epochs_total": epochs,
-                    "batch": batch_index,
-                    "batches_total": len(train_loader),
-                    "samples_done": min(work * batch_size, epochs * len(train_loader.dataset)),
-                    "samples_total": epochs * len(train_loader.dataset),
-                    "progress_percent": 100.0 * work / total_work,
-                    "elapsed_seconds": elapsed,
-                    "eta_seconds": eta,
-                    "loss": float(losses["loss"].item()),
-                    "tile_loss": float(losses["tile_loss"].item()),
-                    "learning_rate": float(optimizer.param_groups[0]["lr"]),
-                    "gpu_memory_mb": (
-                        torch.cuda.max_memory_allocated(device) / (1024.0 * 1024.0)
-                        if device.type == "cuda"
-                        else 0.0
-                    ),
-                }
-                with progress_target.open("a", encoding="utf-8") as progress_handle:
-                    progress_handle.write(json.dumps(progress_row) + "\n")
-                print(
-                    f"progress phase={progress_row['phase']} epoch={epoch}/{epochs} "
-                    f"batch={batch_index}/{len(train_loader)} "
-                    f"work={progress_row['progress_percent']:.1f}% "
-                    f"elapsed={elapsed:.0f}s ETA={eta:.0f}s "
-                    f"tile_loss={progress_row['tile_loss']:.4f}",
-                    flush=True,
+                phase_name = training_stage or ("v8" if use_v8 else ("v6.1" if use_v61 else version))
+                dashboard.update(
+                    phase=phase_name,
+                    epoch=epoch,
+                    epochs_total=epochs,
+                    batch=batch_index,
+                    batches_total=len(train_loader),
+                    samples_done=min(work * batch_size, epochs * len(train_loader.dataset)),
+                    samples_total=epochs * len(train_loader.dataset),
+                    progress_percent=100.0 * work / total_work,
+                    elapsed_seconds=elapsed,
+                    eta_seconds=eta,
+                    loss=float(losses["loss"].item()),
+                    acc=play["card"],
+                    card=play["card"],
+                    tile_exact=play["tile_exact"],
+                    tile_near=play["tile_near"],
+                    wait=play["wait"],
+                    wait_mae=play["wait_mae"],
+                    tile_loss=float(losses["tile_loss"].item()),
+                    clock=float(losses["clock_loss"].item()) if "clock_loss" in losses else None,
+                    lr=float(optimizer.param_groups[0]["lr"]),
+                    batch_size=batch_size,
+                    parameters=sum(p.numel() for p in model.parameters()),
+                    device=str(device),
+                    model_name=model_name,
                 )
-                if log_target is not None:
-                    with log_target.open("a", encoding="utf-8") as log_handle:
-                        log_handle.write(
-                            f"progress phase={progress_row['phase']} epoch={epoch}/{epochs} "
-                            f"batch={batch_index}/{len(train_loader)} "
-                            f"work={progress_row['progress_percent']:.1f}% "
-                            f"elapsed={elapsed:.0f}s ETA={eta:.0f}s "
-                            f"tile_loss={progress_row['tile_loss']:.4f} "
-                            f"lr={progress_row['learning_rate']:.3e} "
-                            f"vram_mb={progress_row['gpu_memory_mb']:.0f}\n"
-                        )
                 append_table_row(
-                    str(progress_row["phase"]), f"{epoch}/{epochs}",
-                    f"{batch_index}/{len(train_loader)}", progress_row["progress_percent"],
-                    f"{progress_row['samples_done']:,}/{progress_row['samples_total']:,}",
-                    progress_row["eta_seconds"], loss_value=progress_row["loss"],
+                    str(phase_name), f"{epoch}/{epochs}",
+                    f"{batch_index}/{len(train_loader)}", 100.0 * work / total_work,
+                    f"{min(work * batch_size, epochs * len(train_loader.dataset)):,}/"
+                    f"{epochs * len(train_loader.dataset):,}",
+                    eta, loss_value=float(losses["loss"].item()),
+                    card_value=play["card"],
                 )
         scheduler.step()
 
@@ -951,8 +1346,10 @@ def _train_policy_model_impl(
             val_loader,
             device,
             loss_kwargs=loss_kwargs,
-            arena_control=arena_control if use_v7 else "aligned",
+            arena_control=arena_control if (use_v7 or use_v8) else "aligned",
             think_steps=eval_think_steps if max_think_steps else None,
+            amp_enabled=use_amp,
+            amp_dtype=amp_dtype,
         )
         row = {
             "epoch": epoch,
@@ -964,103 +1361,102 @@ def _train_policy_model_impl(
         history.append(row)
         tile_class = val_metrics.get("tile_class_acc")
         tile_top5 = val_metrics.get("tile_top5_acc")
-        tile_extra = (
-            f"  val_tile_cls={tile_class:.3f}  val_tile@5={tile_top5:.3f}"
-            if tile_class is not None and tile_top5 is not None
-            else ""
-        )
-        print(
-            f"epoch {epoch:02d}  train_loss={train_loss:.4f}  "
-            f"val_slot@1={val_metrics['slot_top1']:.3f}  "
-            f"val_zone={val_metrics['zone_acc']:.3f}  "
-            f"val_tile={val_metrics['tile_acc']:.3f}"
-            f"{tile_extra}  "
-            f"val_loss={val_metrics['loss']:.4f}",
-            flush=True,
-        )
+        tile_exact = val_metrics.get("tile_exact")
+        tile_near = val_metrics.get("tile_near")
+        tile_extra = ""
+        if tile_exact is not None and tile_near is not None:
+            tile_extra = f"  val_tile_exact={tile_exact:.3f}  val_tile_near={tile_near:.3f}"
+        elif tile_class is not None and tile_top5 is not None:
+            tile_extra = f"  val_tile_cls={tile_class:.3f}  val_tile@5={tile_top5:.3f}"
+        val_loss = float(val_metrics["loss"])
+        val_loss_text = f"{val_loss:.4f}" if math.isfinite(val_loss) else "nonfinite"
         epoch_work = 100.0 * epoch / max(epochs, 1)
         elapsed = time.time() - run_started
-        total_estimate = elapsed * epochs / max(epoch, 1)
+        done_this_run = max(epoch - start_epoch + 1, 1)
+        remaining_epochs = max(epochs - epoch, 0)
+        eta_seconds = elapsed * remaining_epochs / done_this_run
+        dashboard.log(
+            f"epoch {epoch:02d}  train_loss={train_loss:.4f}  "
+            f"val_slot@1={val_metrics['slot_top1']:.3f}  "
+            f"val_zone={val_metrics['zone_acc']:.3f}"
+            f"{tile_extra}  "
+            f"val_loss={val_loss_text}"
+        )
+        with (output / "training_stages.json").open("w", encoding="utf-8") as handle:
+            json.dump(history, handle, indent=2)
+        dashboard.update(
+            phase="validation",
+            epoch=epoch,
+            loss=train_loss,
+            acc=val_metrics["slot_top1"],
+            card=val_metrics.get("card", val_metrics["slot_top1"]),
+            val_acc=val_metrics["slot_top1"],
+            tile_exact=val_metrics.get("tile_exact"),
+            tile_near=val_metrics.get("tile_near"),
+            wait=val_metrics.get("wait"),
+            wait_mae=val_metrics.get("wait_mae") or val_metrics["timing_mae"],
+            tile=val_metrics.get("tile_class_acc") or val_metrics["tile_acc"],
+            zone=val_metrics["zone_acc"],
+            timing=val_metrics["timing_mae"],
+            clock=val_metrics.get("clock_nll"),
+            progress_percent=epoch_work,
+            eta_seconds=eta_seconds,
+        )
         append_table_row(
             "validation", f"{epoch}/{epochs}", "epoch-end", epoch_work,
             f"{min(epoch * len(train_loader.dataset), epochs * len(train_loader.dataset)):,}/"
             f"{epochs * len(train_loader.dataset):,}",
-            max(total_estimate - elapsed, 0.0), loss_value=train_loss,
+            eta_seconds, loss_value=train_loss,
             card_value=val_metrics["slot_top1"], zone_value=val_metrics["zone_acc"],
-            tile_value=val_metrics["tile_acc"], timing_value=val_metrics["timing_mae"],
+            tile_value=val_metrics.get("tile_exact") or val_metrics["tile_acc"], timing_value=val_metrics["timing_mae"],
         )
-        if val_metrics["loss"] < best_val - 1e-4:
-            best_val = val_metrics["loss"]
-            best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
-            bad_epochs = 0
-            # Persist best weights each improvement so a crash does not wipe the run.
-            torch.save(
-                {
-                    "model_state": best_state,
-                    "vocab": vocab.to_dict(),
-                    "config": {
-                        "batch_size": batch_size,
-                        "gradient_accumulation_steps": gradient_accumulation_steps,
-                        "d_model": d_model,
-                        "num_layers": num_layers,
-                        "dropout": dropout,
-                        "max_context": max_context,
-                        "max_samples_per_battle": max_samples_per_battle,
-                        "min_context": DEFAULT_MIN_CONTEXT,
-                        "global_dim": global_dim,
-                        "threat_dim": threat_dim,
-                        "reaction_seconds": reaction_seconds,
-                        "card_conditioned_placement": card_conditioned_placement,
-                        "placement_mode": placement_mode,
-                        "placement_card_mode": placement_card_mode,
-                        "rollout_placement_decode": rollout_placement_decode,
-                        "rollout_placement_temperature": rollout_placement_temperature,
-                        "rollout_placement_top_k": rollout_placement_top_k,
-                        "rollout_slot_decode": rollout_slot_decode,
-                        "rollout_slot_temperature": rollout_slot_temperature,
-                        "rollout_scheduling": rollout_scheduling,
-                        "version": model_version,
-                        "warmstart": warmstart_info,
-                        "freeze_backbone": freeze_backbone,
-                        "training_stage": training_stage,
-                        "arena_control": arena_control,
-                        "arena_memory_channels": 16 if use_v7 else 0,
-                        "arena_hidden_channels": 32,
-                        "arena_memory_version": "decay-v1" if use_v7 else "none",
-                        "arena_gate_bias": arena_gate_bias,
-                        "split_manifest": str(split_manifest) if split_manifest else None,
-                        "manifest_hash": manifest_hash,
-                        "progress_path": str(progress_target),
-                        "log_path": str(log_target) if log_target else None,
-                        "trainable_parameters": sum(p.numel() for p in trainable_parameters),
-                        "max_think_steps": max_think_steps,
-                        "eval_think_steps": eval_think_steps,
-                        "winner_only": winner_only,
-                    },
-                    "created_at": created_at,
-                    "epoch": epoch,
-                    "best_val_loss": best_val,
-                },
-                output / "best_model.pt",
+        dashboard.log(f"writing checkpoint for epoch {epoch:02d}")
+        if math.isfinite(val_loss):
+            epoch_state = cpu_state_dict(raw_model)
+            save_checkpoint(
+                output / "last.pt",
+                epoch_state,
+                epoch,
+                val_loss,
+                include_optim=True,
             )
-            with (output / "training_stages.json").open("w", encoding="utf-8") as handle:
-                json.dump(history, handle, indent=2)
+            if val_loss < best_val - 1e-4:
+                best_val = val_loss
+                best_epoch = epoch
+                best_state = epoch_state
+                bad_epochs = 0
+                save_checkpoint(
+                    output / "best_model.pt",
+                    best_state,
+                    epoch,
+                    best_val,
+                    include_optim=True,
+                )
+                dashboard.log(f"saved best checkpoint  val_loss={best_val:.4f}")
+            else:
+                bad_epochs += 1
+                dashboard.log(f"saved last checkpoint  epoch={epoch:02d}")
+                if bad_epochs >= patience:
+                    dashboard.log(f"Early stop at epoch {epoch}")
+                    break
         else:
-            bad_epochs += 1
-            if bad_epochs >= patience:
-                print(f"Early stop at epoch {epoch}", flush=True)
-                break
+            dashboard.log("val objective non-finite; not counting toward early stop")
 
     if best_state is not None:
-        model.load_state_dict(best_state)
+        raw_model.load_state_dict(best_state)
+    selected_val_metrics = evaluate_policy(model, val_loader, device, loss_kwargs=loss_kwargs,
+        think_steps=eval_think_steps, amp_enabled=use_amp, amp_dtype=amp_dtype)
 
+    dashboard.log("evaluating held-out test split")
     test_metrics = evaluate_policy(
         model,
         test_loader,
         device,
         loss_kwargs=loss_kwargs,
-        arena_control=arena_control if use_v7 else "aligned",
+        arena_control=arena_control if (use_v7 or use_v8) else "aligned",
         think_steps=eval_think_steps if max_think_steps else None,
+        amp_enabled=use_amp,
+        amp_dtype=amp_dtype,
     )
     test_metrics_think_off: dict[str, Any] | None = None
     if max_think_steps > 0 and eval_think_steps != 0:
@@ -1069,19 +1465,22 @@ def _train_policy_model_impl(
             test_loader,
             device,
             loss_kwargs=loss_kwargs,
-            arena_control=arena_control if use_v7 else "aligned",
+            arena_control=arena_control if (use_v7 or use_v8) else "aligned",
             think_steps=0,
+            amp_enabled=use_amp,
+            amp_dtype=amp_dtype,
         )
-    freq_base = baseline_frequency_slot(test_battles)
-    cycle_base = baseline_cycle_slot(test_battles)
+    baselines = baselines_for_dataset(test_loader.dataset)
+    freq_base = baselines["frequency"]
+    cycle_base = baselines["cycle"]
 
     realism_path = Path(realism_model_dir) / "realism_ensemble.pkl"
     # v7 is an offline placement isolation experiment; avoid loading the
     # optional sklearn realism artifact and keep its environment-independent.
-    realism_artifact = None if use_v7 else _load_realism_scorer(realism_path)
+    realism_artifact = None if spec.skip_realism else _load_realism_scorer(realism_path)
     rollout_stats: dict[str, Any] = {"available": False}
     if realism_artifact is not None:
-        print("Rolling out policy continuations for realism scoring ...", flush=True)
+        dashboard.log("rolling out policy continuations for realism scoring")
         rollouts = rollout_policy_battles(
             model,
             vocab,
@@ -1146,52 +1545,14 @@ def _train_policy_model_impl(
         }
 
     ckpt_path = output / "best_model.pt"
-    torch.save(
-        {
-            "model_state": model.state_dict(),
-            "vocab": vocab.to_dict(),
-            "config": {
-                "batch_size": batch_size,
-                "gradient_accumulation_steps": gradient_accumulation_steps,
-                "d_model": d_model,
-                "num_layers": num_layers,
-                "dropout": dropout,
-                "max_context": max_context,
-                "max_samples_per_battle": max_samples_per_battle,
-                "min_context": DEFAULT_MIN_CONTEXT,
-                "global_dim": global_dim,
-                "threat_dim": threat_dim,
-                "reaction_seconds": reaction_seconds,
-                "card_conditioned_placement": card_conditioned_placement,
-                "placement_mode": placement_mode,
-                "placement_card_mode": placement_card_mode,
-                "rollout_placement_decode": rollout_placement_decode,
-                "rollout_placement_temperature": rollout_placement_temperature,
-                "rollout_placement_top_k": rollout_placement_top_k,
-                "rollout_slot_decode": rollout_slot_decode,
-                "rollout_slot_temperature": rollout_slot_temperature,
-                "rollout_scheduling": rollout_scheduling,
-                "version": model_version,
-                "warmstart": warmstart_info,
-                "freeze_backbone": freeze_backbone,
-                "training_stage": training_stage,
-                "arena_control": arena_control,
-                "arena_memory_channels": 16 if use_v7 else 0,
-                "arena_hidden_channels": 32,
-                "arena_memory_version": "decay-v1" if use_v7 else "none",
-                "arena_gate_bias": arena_gate_bias,
-                "split_manifest": str(split_manifest) if split_manifest else None,
-                "manifest_hash": manifest_hash,
-                "progress_path": str(progress_target),
-                "log_path": str(log_target) if log_target else None,
-                "trainable_parameters": sum(p.numel() for p in trainable_parameters),
-                "max_think_steps": max_think_steps,
-                "eval_think_steps": eval_think_steps,
-                "winner_only": winner_only,
-            },
-            "created_at": created_at,
-        },
+    final_epoch = int(history[-1]["epoch"]) if history else max(start_epoch - 1, 0)
+    final_state = best_state if best_state is not None else cpu_state_dict(raw_model)
+    save_checkpoint(
         ckpt_path,
+        final_state,
+        best_epoch or final_epoch,
+        best_val if math.isfinite(best_val) else float("inf"),
+        include_optim=False,
     )
     with (output / "vocab.json").open("w", encoding="utf-8") as handle:
         json.dump(vocab.to_dict(), handle, indent=2)
@@ -1202,6 +1563,13 @@ def _train_policy_model_impl(
         "Tile cross-entropy models multimodal legal placements; expected XY is retained for compatibility while rollouts can sample tiles.",
         "Training can hide unrevealed opponent cards so the deck encoder is less dependent on an offline oracle deck.",
         "This is an offline action-prior experiment; it does not restore missing arena state or establish live-play readiness.",
+    ]
+    v8_lessons = [
+        "v8 Stage A replaces the GRU trunk with a 24-token time-aware belief memory and a joint own/opponent event clock.",
+        "Memory tokens attend to friendly vs enemy events, mix through two interaction blocks, and evolve with elapsed query time.",
+        "Action heads keep the selected-card 18×32 heatmap plus a within-tile offset. Waiting is part of the likelihood, not a missing action.",
+        "This run is replay-only Stage A. Board observations (Stage B) are required before claiming a large playing-strength gain.",
+        "Judge on joint card+tile, clock NLL / timing MAE, and shuffled-memory controls — not a live win rate.",
     ]
     v7_lessons = [
         "v7 adds a causal 16-channel arena-memory proxy over the frozen v6.1 heatmap prior.",
@@ -1228,7 +1596,9 @@ def _train_policy_model_impl(
         "Discrete placement zones are a better first target than raw XY on replay-only data.",
         "Rollout realism can look strong even when exact card top-1 is modest — judge both.",
     ]
-    if use_v7:
+    if use_v8:
+        lessons = v8_lessons
+    elif use_v7:
         lessons = v7_lessons
     elif use_v6:
         lessons = v6_lessons
@@ -1348,6 +1718,20 @@ def _train_policy_model_impl(
             "max_think_steps": max_think_steps,
             "eval_think_steps": eval_think_steps,
             "winner_only": winner_only,
+            "memory_tokens": spec.memory_tokens,
+            "memory_heads": spec.memory_heads,
+            "interaction_blocks": spec.interaction_blocks,
+            "event_clock": spec.event_clock,
+            "mixed_precision": use_amp,
+            "amp_dtype": "bf16" if amp_dtype == torch.bfloat16 else "fp32",
+            "compiled": compiled,
+            "resume": resume,
+            "resumed_from_epoch": start_epoch - 1 if resume else 0,
+            "peak_vram_mb": (
+                float(torch.cuda.max_memory_allocated()) / (1024.0 ** 2)
+                if device.type == "cuda"
+                else 0.0
+            ),
         },
         "data": {
             "battles_total": len(battles),
@@ -1367,7 +1751,7 @@ def _train_policy_model_impl(
             "cycle": cycle_base,
             "chance_slot_top1": 0.125,
         },
-        "val": {
+        "last_epoch_val": {
             k: history[-1][f"val_{k}"]
             for k in (
                 "loss",
@@ -1380,14 +1764,20 @@ def _train_policy_model_impl(
                 "tile_class_acc",
                 "tile_top5_acc",
                 "tile_nll",
+                "joint_card_tile",
+                "clock_nll",
                 "timing_mae",
                 "model_x_std",
                 "model_y_std",
             )
+            if f"val_{k}" in history[-1]
         }
         if history
         else {},
         "test": test_metrics,
+        "val": selected_val_metrics,
+        "weights_epoch": best_epoch or final_epoch,
+        "last_completed_epoch": final_epoch,
         "test_think_off": test_metrics_think_off,
         "rollouts": {k: v for k, v in rollout_stats.items() if k != "hist"},
         "rollout_hist": rollout_stats.get("hist"),
@@ -1399,7 +1789,7 @@ def _train_policy_model_impl(
             freq_base,
             cycle_base,
             rollout_stats,
-            offline_only=use_v6,
+            offline_only=use_v6 or use_v8,
         ),
     }
 
@@ -1408,6 +1798,18 @@ def _train_policy_model_impl(
         json.dump(report, handle, indent=2)
     with (output / "training_stages.json").open("w", encoding="utf-8") as handle:
         json.dump(history, handle, indent=2)
+
+    dashboard.log(f"wrote {report_path}")
+    dashboard.close()
+    if use_v8:
+        from .policy_v8_report import render_policy_v8_report
+
+        html_path = Path("reports") / "policy_bc_v8.html"
+        try:
+            render_policy_v8_report(output, html_path)
+            print(f"Wrote {html_path}", flush=True)
+        except Exception as exc:
+            print(f"v8 HTML report deferred: {exc}", flush=True)
 
     print(
         json.dumps(

@@ -32,5 +32,29 @@ models/policy_bc*/*.pt
 models/card_detector*.pt
 models/card_detector_runs/
 data/card_detector/
+data/v9_cache/
+data/.cr_replay_cache/*.pkl
+models/policy_v9/**/*.pt
+models/policy_v9/**/*.npz
+models/policy_v9/**/*.zip
+models/policy_v9/*.pkl
+models/policy_v9/*.mp4
+models/policy_v9/final_cohort/
 models/style_discriminator/*.pkl
 models/style_discriminator/rollouts/
+
+# Binary artifacts are backed up in the consolidated Hugging Face snapshot.
+models/**/*.pt
+models/**/*.pkl
+models/**/*.joblib
+models/**/*.npz
+models/**/*.npy
+models/**/*.zip
+models/**/*.mp4
+models/**/*.lock
+data/**/*.pkl
+.artifact-publish/
+
+# Frame corpora and evaluation arrays are in the Hugging Face snapshots.
+data/tower_hp_runs/
+reports/**/*.npz

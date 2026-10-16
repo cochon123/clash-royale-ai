@@ -26,7 +26,8 @@ from .policy_train import _score_realism
 from .realism_generate import TimingPrior
 from .realism_train import extract_realism_features
 from .rollout_autopsy_report import render_rollout_autopsy_report
-from .winner_dataset import BattleExample, collect_battles, load_card_costs, split_battles
+from .policy_manifest import resolve_battle_splits
+from .winner_dataset import BattleExample, collect_battles, load_card_costs
 
 AblationMode = Literal[
     "baseline",
@@ -524,6 +525,7 @@ def run_rollout_autopsy(
     temperature: float = 0.8,
     device_name: str | None = None,
     min_card_plays: int = 12,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     started = time.time()
     created_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -537,7 +539,14 @@ def run_rollout_autopsy(
 
     print(f"Loading battles from {input_dir} ...", flush=True)
     battles = collect_battles(input_dir, min_card_plays=min_card_plays)
-    train_battles, _val_battles, test_battles = split_battles(battles, seed=seed)
+    train_battles, _val_battles, test_battles, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        split_manifest=split_manifest,
+        model_dir=policy_dir,
+        create=False,
+        min_card_plays=min_card_plays,
+    )
     timing_prior = TimingPrior.from_battles(train_battles)
     xy_prior = _build_xy_prior(test_battles)
 

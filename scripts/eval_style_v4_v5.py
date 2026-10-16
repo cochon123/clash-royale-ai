@@ -12,7 +12,8 @@ from cr_replay_pipeline.style_train import (
     _eval_detection,
     generate_policy_rollouts,
 )
-from cr_replay_pipeline.winner_dataset import collect_battles, load_card_costs, split_battles
+from cr_replay_pipeline.policy_manifest import resolve_battle_splits
+from cr_replay_pipeline.winner_dataset import collect_battles, load_card_costs
 
 
 STYLE_DIR = Path("models/style_discriminator")
@@ -39,7 +40,12 @@ def main() -> None:
 
     print(f"Loading battles (min_card_plays={min_card_plays}) ...", flush=True)
     battles = collect_battles("data/raw", min_card_plays=min_card_plays)
-    _, _, test_split = split_battles(battles, seed=seed)
+    _, _, test_split, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        model_dir=STYLE_DIR,
+        create=False,
+    )
     rng = random.Random(seed + 3)
     test_pool = list(test_split)
     rng.shuffle(test_pool)

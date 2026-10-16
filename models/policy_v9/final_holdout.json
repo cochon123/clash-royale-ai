@@ -1,0 +1,693 @@
+{
+  "cohort_battles": 1000,
+  "actions": 52329,
+  "selection": {
+    "created_at": "2026-10-12T10:42:20.442316+00:00",
+    "recipe": {
+      "width": 160,
+      "base_epochs": 12,
+      "continuation_epochs": 2,
+      "options": {},
+      "seed42_source": "models/policy_v9/control_seed42",
+      "selection_metric": "validation joint discrete NLL",
+      "chosen_before_holdout": true,
+      "seed_reproduction": "shared_donor_continuations"
+    },
+    "entries": [
+      {
+        "name": "v4_4_1",
+        "path": "models/policy_bc_v4.4.1",
+        "legacy": true,
+        "role": "reference",
+        "checkpoint_sha256": "79cd8ffa8cd4728a305cdade3a84abe313172bd438a40f4d6d30711ff8b70763"
+      },
+      {
+        "name": "v4_4_2",
+        "path": "models/policy_bc_v4.4.2",
+        "legacy": true,
+        "role": "reference",
+        "checkpoint_sha256": "e0b7a48db490dffe7a2b26423c40e332bae4822e00b3cfa32a3ebe15a7b2247b"
+      },
+      {
+        "name": "v9_base_seed42",
+        "path": "models/policy_v9/base_full_seed42",
+        "role": "control",
+        "checkpoint_sha256": "6e6e42e302d764f16190d023ab2b864beba4d218b0487ee629bcc658cff55358"
+      },
+      {
+        "name": "v9_seed42",
+        "path": "models/policy_v9/control_seed42",
+        "role": "candidate",
+        "seed": 42,
+        "checkpoint_sha256": "73eacd4733eb3d3ad053d46ff3fd0f047082ad25cd1d233e00d474b3df5065cf"
+      },
+      {
+        "name": "v9_seed43",
+        "path": "models/policy_v9/candidate_seed43",
+        "role": "candidate",
+        "seed": 43,
+        "checkpoint_sha256": "b01ec08eea4abc7647bce1f78288f16efd8d4467a36e89572cc0db4194680a75"
+      },
+      {
+        "name": "v9_seed44",
+        "path": "models/policy_v9/candidate_seed44",
+        "role": "candidate",
+        "seed": 44,
+        "checkpoint_sha256": "7df61c83ad591507bf6649cc7b024585b81da166cde07dc20a4221af732caca8"
+      }
+    ]
+  },
+  "scores": {
+    "v4_4_1": {
+      "entry": {
+        "name": "v4_4_1",
+        "path": "models/policy_bc_v4.4.1",
+        "legacy": true,
+        "role": "reference",
+        "checkpoint_sha256": "79cd8ffa8cd4728a305cdade3a84abe313172bd438a40f4d6d30711ff8b70763"
+      },
+      "metrics": {
+        "card": 0.5320568084716797,
+        "cell": 0.13992241024971008,
+        "joint": 0.11211756616830826,
+        "joint_nll": 4.412424087524414,
+        "timing_mae": 1.7485313415527344,
+        "card_top3": 0.9326950907707214,
+        "card_nll": 1.120797038078308,
+        "cell_teacher": 0.20953963696956635,
+        "now_s": 146.9253692626953,
+        "cell_teacher_top5": 0.5073859691619873,
+        "cell_teacher_near1": 0.2742074131965637,
+        "tile_nll": 3.291651964187622,
+        "opening_n": 5664,
+        "opening_card": 0.6338276863098145,
+        "opening_joint": 0.14883475005626678,
+        "opening_joint_nll": 4.167109966278076,
+        "opening_cell_teacher_top5": 0.5324859023094177,
+        "opening_cell_teacher_near1": 0.2913135588169098,
+        "opening_timing_mae": 2.7706918716430664,
+        "mid_n": 32112,
+        "mid_card": 0.5237294435501099,
+        "mid_joint": 0.1111111119389534,
+        "mid_joint_nll": 4.4271368980407715,
+        "mid_cell_teacher_top5": 0.5083146691322327,
+        "mid_cell_teacher_near1": 0.27628299593925476,
+        "mid_timing_mae": 1.8462517261505127,
+        "late_n": 14553,
+        "late_card": 0.5108225345611572,
+        "late_joint": 0.10004810243844986,
+        "late_joint_nll": 4.475436687469482,
+        "late_cell_teacher_top5": 0.4955679178237915,
+        "late_cell_teacher_near1": 0.26296982169151306,
+        "late_timing_mae": 1.135100245475769,
+        "defense_n": 13736,
+        "defense_card": 0.485730916261673,
+        "defense_joint": 0.08015433698892593,
+        "defense_joint_nll": 4.935458183288574,
+        "defense_cell_teacher_top5": 0.43768200278282166,
+        "defense_cell_teacher_near1": 0.21993301808834076,
+        "defense_timing_mae": 1.9463367462158203
+      },
+      "scored_as": "v4_4_1"
+    },
+    "v4_4_2": {
+      "entry": {
+        "name": "v4_4_2",
+        "path": "models/policy_bc_v4.4.2",
+        "legacy": true,
+        "role": "reference",
+        "checkpoint_sha256": "e0b7a48db490dffe7a2b26423c40e332bae4822e00b3cfa32a3ebe15a7b2247b"
+      },
+      "metrics": {
+        "card": 0.5304706692695618,
+        "cell": 0.14139387011528015,
+        "joint": 0.11297750473022461,
+        "joint_nll": 4.424919605255127,
+        "timing_mae": 1.7518113851547241,
+        "card_top3": 0.9325804114341736,
+        "card_nll": 1.133582592010498,
+        "cell_teacher": 0.21070533990859985,
+        "now_s": 146.9253692626953,
+        "cell_teacher_top5": 0.509411633014679,
+        "cell_teacher_near1": 0.2749336063861847,
+        "tile_nll": 3.2913477420806885,
+        "opening_n": 5664,
+        "opening_card": 0.6332980394363403,
+        "opening_joint": 0.15095339715480804,
+        "opening_joint_nll": 4.181029796600342,
+        "opening_cell_teacher_top5": 0.534604549407959,
+        "opening_cell_teacher_near1": 0.29396185278892517,
+        "opening_timing_mae": 2.7766950130462646,
+        "mid_n": 32112,
+        "mid_card": 0.5216118693351746,
+        "mid_joint": 0.1113291010260582,
+        "mid_joint_nll": 4.438320159912109,
+        "mid_cell_teacher_top5": 0.511055052280426,
+        "mid_cell_teacher_near1": 0.2755667567253113,
+        "mid_timing_mae": 1.848644495010376,
+        "late_n": 14553,
+        "late_card": 0.5099979639053345,
+        "late_joint": 0.10183466970920563,
+        "late_joint_nll": 4.490278720855713,
+        "late_cell_teacher_top5": 0.4959802031517029,
+        "late_cell_teacher_near1": 0.2661306858062744,
+        "late_timing_mae": 1.139246940612793,
+        "defense_n": 13736,
+        "defense_card": 0.4823092520236969,
+        "defense_joint": 0.08059114962816238,
+        "defense_joint_nll": 4.994153022766113,
+        "defense_cell_teacher_top5": 0.4381188154220581,
+        "defense_cell_teacher_near1": 0.22160746157169342,
+        "defense_timing_mae": 1.9539779424667358
+      },
+      "scored_as": "v4_4_2"
+    },
+    "v9_base_seed42": {
+      "entry": {
+        "name": "v9_base_seed42",
+        "path": "models/policy_v9/base_full_seed42",
+        "role": "control",
+        "checkpoint_sha256": "6e6e42e302d764f16190d023ab2b864beba4d218b0487ee629bcc658cff55358"
+      },
+      "metrics": {
+        "card": 0.5579888820648193,
+        "cell": 0.1556498259305954,
+        "joint": 0.12763477861881256,
+        "joint_nll": 4.151370525360107,
+        "timing_mae": 1.5351545810699463,
+        "card_top3": 0.9456515312194824,
+        "card_nll": 1.0165951251983643,
+        "cell_teacher": 0.2264900952577591,
+        "now_s": 146.9253692626953,
+        "cell_teacher_top5": 0.5405033826828003,
+        "cell_teacher_near1": 0.2925146520137787,
+        "tile_nll": 3.134777307510376,
+        "opening_n": 5664,
+        "opening_card": 0.6698446273803711,
+        "opening_joint": 0.1703742891550064,
+        "opening_joint_nll": 3.8097786903381348,
+        "opening_cell_teacher_top5": 0.5771539807319641,
+        "opening_cell_teacher_near1": 0.31762006878852844,
+        "opening_timing_mae": 2.490615129470825,
+        "mid_n": 32112,
+        "mid_card": 0.5505107045173645,
+        "mid_joint": 0.1277092695236206,
+        "mid_joint_nll": 4.163230895996094,
+        "mid_cell_teacher_top5": 0.5431614518165588,
+        "mid_cell_teacher_near1": 0.2954035997390747,
+        "mid_timing_mae": 1.6154192686080933,
+        "late_n": 14553,
+        "late_card": 0.5309557914733887,
+        "late_joint": 0.11083625257015228,
+        "late_joint_nll": 4.2581787109375,
+        "late_cell_teacher_top5": 0.5203738212585449,
+        "late_cell_teacher_near1": 0.2763691246509552,
+        "late_timing_mae": 0.9861505627632141,
+        "defense_n": 13736,
+        "defense_card": 0.5667588710784912,
+        "defense_joint": 0.1236167699098587,
+        "defense_joint_nll": 4.159298896789551,
+        "defense_cell_teacher_top5": 0.529630184173584,
+        "defense_cell_teacher_near1": 0.27125799655914307,
+        "defense_timing_mae": 1.1785138845443726
+      },
+      "scored_as": "v9_base_seed42"
+    },
+    "v9_seed42": {
+      "entry": {
+        "name": "v9_seed42",
+        "path": "models/policy_v9/control_seed42",
+        "role": "candidate",
+        "seed": 42,
+        "checkpoint_sha256": "73eacd4733eb3d3ad053d46ff3fd0f047082ad25cd1d233e00d474b3df5065cf"
+      },
+      "metrics": {
+        "card": 0.5622695088386536,
+        "cell": 0.1558218151330948,
+        "joint": 0.12761566042900085,
+        "joint_nll": 4.1254472732543945,
+        "timing_mae": 1.5289056301116943,
+        "card_top3": 0.9471994638442993,
+        "card_nll": 1.0104591846466064,
+        "cell_teacher": 0.22884060442447662,
+        "now_s": 146.9253692626953,
+        "cell_teacher_top5": 0.5452234745025635,
+        "cell_teacher_near1": 0.2954002618789673,
+        "tile_nll": 3.114987850189209,
+        "opening_n": 5664,
+        "opening_card": 0.6701977252960205,
+        "opening_joint": 0.16878530383110046,
+        "opening_joint_nll": 3.784848928451538,
+        "opening_cell_teacher_top5": 0.5828036665916443,
+        "opening_cell_teacher_near1": 0.32115113735198975,
+        "opening_timing_mae": 2.471426248550415,
+        "mid_n": 32112,
+        "mid_card": 0.5557423830032349,
+        "mid_joint": 0.1285812109708786,
+        "mid_joint_nll": 4.136812210083008,
+        "mid_cell_teacher_top5": 0.5474900603294373,
+        "mid_cell_teacher_near1": 0.2982997000217438,
+        "mid_timing_mae": 1.609857439994812,
+        "late_n": 14553,
+        "late_card": 0.5346664190292358,
+        "late_joint": 0.1094619631767273,
+        "late_joint_nll": 4.232931613922119,
+        "late_cell_teacher_top5": 0.5255960822105408,
+        "late_cell_teacher_near1": 0.2789802849292755,
+        "late_timing_mae": 0.9834444522857666,
+        "defense_n": 13736,
+        "defense_card": 0.5742574334144592,
+        "defense_joint": 0.1268928349018097,
+        "defense_joint_nll": 4.131121635437012,
+        "defense_cell_teacher_top5": 0.5339982509613037,
+        "defense_cell_teacher_near1": 0.27730053663253784,
+        "defense_timing_mae": 1.1730685234069824
+      },
+      "scored_as": "v9_seed42"
+    },
+    "v9_seed43": {
+      "entry": {
+        "name": "v9_seed43",
+        "path": "models/policy_v9/candidate_seed43",
+        "role": "candidate",
+        "seed": 43,
+        "checkpoint_sha256": "b01ec08eea4abc7647bce1f78288f16efd8d4467a36e89572cc0db4194680a75"
+      },
+      "metrics": {
+        "card": 0.5611228942871094,
+        "cell": 0.15549695491790771,
+        "joint": 0.12763477861881256,
+        "joint_nll": 4.123947620391846,
+        "timing_mae": 1.5321859121322632,
+        "card_top3": 0.9471612572669983,
+        "card_nll": 1.010676622390747,
+        "cell_teacher": 0.22889792919158936,
+        "now_s": 146.9253692626953,
+        "cell_teacher_top5": 0.5454145669937134,
+        "cell_teacher_near1": 0.29610732197761536,
+        "tile_nll": 3.113248825073242,
+        "opening_n": 5664,
+        "opening_card": 0.6717867255210876,
+        "opening_joint": 0.1696680784225464,
+        "opening_joint_nll": 3.7817068099975586,
+        "opening_cell_teacher_top5": 0.5815678238868713,
+        "opening_cell_teacher_near1": 0.32062146067619324,
+        "opening_timing_mae": 2.479384422302246,
+        "mid_n": 32112,
+        "mid_card": 0.553936243057251,
+        "mid_joint": 0.12752242386341095,
+        "mid_joint_nll": 4.137317657470703,
+        "mid_cell_teacher_top5": 0.5481751561164856,
+        "mid_cell_teacher_near1": 0.2979571521282196,
+        "mid_timing_mae": 1.6142526865005493,
+        "late_n": 14553,
+        "late_card": 0.5339105129241943,
+        "late_joint": 0.11152339726686478,
+        "late_joint_nll": 4.227587699890137,
+        "late_cell_teacher_top5": 0.5252525210380554,
+        "late_cell_teacher_near1": 0.2824847102165222,
+        "late_timing_mae": 0.9824663400650024,
+        "defense_n": 13736,
+        "defense_card": 0.5694525241851807,
+        "defense_joint": 0.12492720037698746,
+        "defense_joint_nll": 4.131213665008545,
+        "defense_cell_teacher_top5": 0.5340710282325745,
+        "defense_cell_teacher_near1": 0.27504366636276245,
+        "defense_timing_mae": 1.17381751537323
+      },
+      "scored_as": "v9_seed43"
+    },
+    "v9_seed44": {
+      "entry": {
+        "name": "v9_seed44",
+        "path": "models/policy_v9/candidate_seed44",
+        "role": "candidate",
+        "seed": 44,
+        "checkpoint_sha256": "7df61c83ad591507bf6649cc7b024585b81da166cde07dc20a4221af732caca8"
+      },
+      "metrics": {
+        "card": 0.5624988079071045,
+        "cell": 0.15610846877098083,
+        "joint": 0.12834183871746063,
+        "joint_nll": 4.125295162200928,
+        "timing_mae": 1.5313758850097656,
+        "card_top3": 0.9471229910850525,
+        "card_nll": 1.0107336044311523,
+        "cell_teacher": 0.22832463681697845,
+        "now_s": 146.9253692626953,
+        "cell_teacher_top5": 0.5452234745025635,
+        "cell_teacher_near1": 0.2954002618789673,
+        "tile_nll": 3.1145408153533936,
+        "opening_n": 5664,
+        "opening_card": 0.6716101765632629,
+        "opening_joint": 0.17072740197181702,
+        "opening_joint_nll": 3.785989999771118,
+        "opening_cell_teacher_top5": 0.5847457647323608,
+        "opening_cell_teacher_near1": 0.3200918138027191,
+        "opening_timing_mae": 2.4817774295806885,
+        "mid_n": 32112,
+        "mid_card": 0.555088460445404,
+        "mid_joint": 0.1285812109708786,
+        "mid_joint_nll": 4.1372389793396,
+        "mid_cell_teacher_top5": 0.5463378429412842,
+        "mid_cell_teacher_near1": 0.2981128692626953,
+        "mid_timing_mae": 1.6125363111495972,
+        "late_n": 14553,
+        "late_card": 0.5363842248916626,
+        "late_joint": 0.11131725460290909,
+        "late_joint_nll": 4.23097562789917,
+        "late_cell_teacher_top5": 0.5273826718330383,
+        "late_cell_teacher_near1": 0.27980485558509827,
+        "late_timing_mae": 0.982386589050293,
+        "defense_n": 13736,
+        "defense_card": 0.5697437524795532,
+        "defense_joint": 0.12390797585248947,
+        "defense_joint_nll": 4.132758617401123,
+        "defense_cell_teacher_top5": 0.5370559096336365,
+        "defense_cell_teacher_near1": 0.2756260931491852,
+        "defense_timing_mae": 1.1749643087387085
+      },
+      "scored_as": "v9_seed44"
+    }
+  },
+  "predeclared_gate": {
+    "card_gain": 0.02,
+    "joint_gain": 0.02,
+    "seeds_required": 3,
+    "all_seeds_required": true,
+    "independent_full_training_required": true,
+    "seed_reproduction": "shared_donor_continuations",
+    "accuracy_thresholds_met": false,
+    "pass_gate": false,
+    "by_seed": {
+      "v9_seed42": {
+        "card_delta": 0.030212700366973877,
+        "joint_delta": 0.015498094260692596,
+        "joint_nll_delta": -0.28697681427001953
+      },
+      "v9_seed43": {
+        "card_delta": 0.029066085815429688,
+        "joint_delta": 0.015517212450504303,
+        "joint_nll_delta": -0.28847646713256836
+      },
+      "v9_seed44": {
+        "card_delta": 0.030441999435424805,
+        "joint_delta": 0.016224272549152374,
+        "joint_nll_delta": -0.28712892532348633
+      }
+    }
+  },
+  "paired_comparisons": {
+    "v9_seed42": {
+      "battles": 1000,
+      "actions": 52329,
+      "unit": "whole battle; equal battle-weighted interval",
+      "metrics": {
+        "card": {
+          "action_weighted_delta": 0.03021269291639328,
+          "battle_weighted_delta": 0.03046301193535328,
+          "ci95_battle": [
+            0.026551342057064175,
+            0.03411951586604118
+          ]
+        },
+        "cell": {
+          "action_weighted_delta": 0.015899404883384705,
+          "battle_weighted_delta": 0.016104089096188545,
+          "ci95_battle": [
+            0.013172891270369292,
+            0.01905991150997579
+          ]
+        },
+        "joint": {
+          "action_weighted_delta": 0.01549809891730547,
+          "battle_weighted_delta": 0.015441341325640678,
+          "ci95_battle": [
+            0.012650692695751786,
+            0.01819263701327145
+          ]
+        },
+        "joint_nll": {
+          "action_weighted_delta": -0.2869769036769867,
+          "battle_weighted_delta": -0.28904613852500916,
+          "ci95_battle": [
+            -0.30191591531038287,
+            -0.27678293362259865
+          ]
+        },
+        "timing_mae": {
+          "action_weighted_delta": -0.21963301301002502,
+          "battle_weighted_delta": -0.24475689232349396,
+          "ci95_battle": [
+            -0.25827191695570945,
+            -0.23187501765787602
+          ]
+        },
+        "card_top3": {
+          "action_weighted_delta": 0.014504386112093925,
+          "battle_weighted_delta": 0.013854647055268288,
+          "ci95_battle": [
+            0.01176354291383177,
+            0.01582295685075223
+          ]
+        },
+        "card_nll": {
+          "action_weighted_delta": -0.11033016443252563,
+          "battle_weighted_delta": -0.10960811376571655,
+          "ci95_battle": [
+            -0.11611708104610444,
+            -0.10358766727149486
+          ]
+        },
+        "cell_teacher": {
+          "action_weighted_delta": 0.01930096186697483,
+          "battle_weighted_delta": 0.018710650503635406,
+          "ci95_battle": [
+            0.015894674276933075,
+            0.021698609786108134
+          ]
+        },
+        "cell_teacher_top5": {
+          "action_weighted_delta": 0.03783752769231796,
+          "battle_weighted_delta": 0.03902366757392883,
+          "ci95_battle": [
+            0.03543080594390631,
+            0.04264256143942475
+          ]
+        },
+        "cell_teacher_near1": {
+          "action_weighted_delta": 0.02119283750653267,
+          "battle_weighted_delta": 0.02018154039978981,
+          "ci95_battle": [
+            0.017028417950496078,
+            0.023386187758296727
+          ]
+        },
+        "tile_nll": {
+          "action_weighted_delta": -0.17664675414562225,
+          "battle_weighted_delta": -0.1794380396604538,
+          "ci95_battle": [
+            -0.18858440779149532,
+            -0.1700120534747839
+          ]
+        }
+      }
+    },
+    "v9_seed43": {
+      "battles": 1000,
+      "actions": 52329,
+      "unit": "whole battle; equal battle-weighted interval",
+      "metrics": {
+        "card": {
+          "action_weighted_delta": 0.02906610071659088,
+          "battle_weighted_delta": 0.029315253719687462,
+          "ci95_battle": [
+            0.025478287460282446,
+            0.033059755526483055
+          ]
+        },
+        "cell": {
+          "action_weighted_delta": 0.01557453814893961,
+          "battle_weighted_delta": 0.015539219602942467,
+          "ci95_battle": [
+            0.0126809973269701,
+            0.01849767747335136
+          ]
+        },
+        "joint": {
+          "action_weighted_delta": 0.015517208725214005,
+          "battle_weighted_delta": 0.015337400138378143,
+          "ci95_battle": [
+            0.012641017278656363,
+            0.017892454983666532
+          ]
+        },
+        "joint_nll": {
+          "action_weighted_delta": -0.28849297761917114,
+          "battle_weighted_delta": -0.29149574041366577,
+          "ci95_battle": [
+            -0.3042148888111115,
+            -0.27890567407011985
+          ]
+        },
+        "timing_mae": {
+          "action_weighted_delta": -0.21634648740291595,
+          "battle_weighted_delta": -0.2386486828327179,
+          "ci95_battle": [
+            -0.25197656974196436,
+            -0.2256404381245375
+          ]
+        },
+        "card_top3": {
+          "action_weighted_delta": 0.01446616556495428,
+          "battle_weighted_delta": 0.01401177141815424,
+          "ci95_battle": [
+            0.011998019181191921,
+            0.016081198165193197
+          ]
+        },
+        "card_nll": {
+          "action_weighted_delta": -0.11011509597301483,
+          "battle_weighted_delta": -0.10982860624790192,
+          "ci95_battle": [
+            -0.11631989143788815,
+            -0.10383067838847639
+          ]
+        },
+        "cell_teacher": {
+          "action_weighted_delta": 0.01935829035937786,
+          "battle_weighted_delta": 0.018449150025844574,
+          "ci95_battle": [
+            0.015629355679266155,
+            0.021193884639069436
+          ]
+        },
+        "cell_teacher_top5": {
+          "action_weighted_delta": 0.03802862763404846,
+          "battle_weighted_delta": 0.038594212383031845,
+          "ci95_battle": [
+            0.0350719790905714,
+            0.04217727016657591
+          ]
+        },
+        "cell_teacher_near1": {
+          "action_weighted_delta": 0.021899903193116188,
+          "battle_weighted_delta": 0.02070138044655323,
+          "ci95_battle": [
+            0.017784237628802657,
+            0.023719415348023177
+          ]
+        },
+        "tile_nll": {
+          "action_weighted_delta": -0.17837785184383392,
+          "battle_weighted_delta": -0.18166711926460266,
+          "ci95_battle": [
+            -0.19058034829795362,
+            -0.17224008291959764
+          ]
+        }
+      }
+    },
+    "v9_seed44": {
+      "battles": 1000,
+      "actions": 52329,
+      "unit": "whole battle; equal battle-weighted interval",
+      "metrics": {
+        "card": {
+          "action_weighted_delta": 0.0304420106112957,
+          "battle_weighted_delta": 0.03015362285077572,
+          "ci95_battle": [
+            0.026321211084723472,
+            0.03385344501584768
+          ]
+        },
+        "cell": {
+          "action_weighted_delta": 0.016186052933335304,
+          "battle_weighted_delta": 0.015799306333065033,
+          "ci95_battle": [
+            0.012919391901232303,
+            0.018744222540408372
+          ]
+        },
+        "joint": {
+          "action_weighted_delta": 0.016224272549152374,
+          "battle_weighted_delta": 0.015547353774309158,
+          "ci95_battle": [
+            0.012793692736886441,
+            0.018188436422497033
+          ]
+        },
+        "joint_nll": {
+          "action_weighted_delta": -0.2871358096599579,
+          "battle_weighted_delta": -0.2903268039226532,
+          "ci95_battle": [
+            -0.30318880155682565,
+            -0.2777945213019848
+          ]
+        },
+        "timing_mae": {
+          "action_weighted_delta": -0.21716293692588806,
+          "battle_weighted_delta": -0.23958255350589752,
+          "ci95_battle": [
+            -0.2533091641962528,
+            -0.22622917592525482
+          ]
+        },
+        "card_top3": {
+          "action_weighted_delta": 0.01442794594913721,
+          "battle_weighted_delta": 0.014120753854513168,
+          "ci95_battle": [
+            0.012058263900689781,
+            0.0161505488678813
+          ]
+        },
+        "card_nll": {
+          "action_weighted_delta": -0.11005640774965286,
+          "battle_weighted_delta": -0.10945839434862137,
+          "ci95_battle": [
+            -0.11613415013998747,
+            -0.10350513942539692
+          ]
+        },
+        "cell_teacher": {
+          "action_weighted_delta": 0.01878499425947666,
+          "battle_weighted_delta": 0.018077977001667023,
+          "ci95_battle": [
+            0.015231271716766059,
+            0.020940024917945266
+          ]
+        },
+        "cell_teacher_top5": {
+          "action_weighted_delta": 0.03783752769231796,
+          "battle_weighted_delta": 0.038653336465358734,
+          "ci95_battle": [
+            0.034987795259803535,
+            0.04216088047251105
+          ]
+        },
+        "cell_teacher_near1": {
+          "action_weighted_delta": 0.02119283750653267,
+          "battle_weighted_delta": 0.02009153552353382,
+          "ci95_battle": [
+            0.017035243520513176,
+            0.023212290043011303
+          ]
+        },
+        "tile_nll": {
+          "action_weighted_delta": -0.17707939445972443,
+          "battle_weighted_delta": -0.18086840212345123,
+          "ci95_battle": [
+            -0.18994066901504994,
+            -0.171438717097044
+          ]
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Offline policy accuracy is not a measured real-game win rate.",
+    "This holdout was used only after final checkpoints were frozen.",
+    "The three continuation seeds share one pretrained donor. They do not establish variability across independent full-training runs; the original promotion gate remains incomplete."
+  ],
+  "legacy_input_adapter": "legacy-unused-pad-zero-1"
+}

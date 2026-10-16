@@ -1,0 +1,2862 @@
+Loaded 7143 battles from cache (/home/cochon/Documents/mini-project/clash-royale-ai/data/.cr_replay_cache/raw_policy_p12_f23ca63931e4acf7.pkl)
+baseline     epoch= 1 work=128/2168196 ETA=3599s loss=8.1253
+baseline     epoch= 1 work=1408/2168196 ETA=3597s loss=7.7803
+baseline     epoch= 1 work=2688/2168196 ETA=3595s loss=7.7433
+baseline     epoch= 1 work=3968/2168196 ETA=3593s loss=7.7391
+baseline     epoch= 1 work=5248/2168196 ETA=3591s loss=7.5729
+baseline     epoch= 1 work=6528/2168196 ETA=3589s loss=7.5056
+baseline     epoch= 1 work=7808/2168196 ETA=3587s loss=7.4682
+baseline     epoch= 1 work=9088/2168196 ETA=3585s loss=7.3002
+baseline     epoch= 1 work=10368/2168196 ETA=3584s loss=7.0506
+baseline     epoch= 1 work=11648/2168196 ETA=3582s loss=7.1110
+baseline     epoch= 1 work=12928/2168196 ETA=3580s loss=7.1208
+baseline     epoch= 1 work=14208/2168196 ETA=3578s loss=6.9123
+baseline     epoch= 1 work=15488/2168196 ETA=3576s loss=6.6119
+baseline     epoch= 1 work=16768/2168196 ETA=3574s loss=6.9886
+baseline     epoch= 1 work=18048/2168196 ETA=3572s loss=7.0491
+baseline     epoch= 1 work=19328/2168196 ETA=3570s loss=6.7991
+baseline     epoch= 1 work=20608/2168196 ETA=3568s loss=6.8059
+baseline     epoch= 1 work=21888/2168196 ETA=3566s loss=6.7398
+baseline     epoch= 1 work=23168/2168196 ETA=3564s loss=6.8848
+baseline     epoch= 1 work=24448/2168196 ETA=3562s loss=6.8390
+baseline     epoch= 1 work=25728/2168196 ETA=3560s loss=6.6802
+baseline     epoch= 1 work=27008/2168196 ETA=3558s loss=6.9248
+baseline     epoch= 1 work=28288/2168196 ETA=3556s loss=6.8103
+baseline     epoch= 1 work=29568/2168196 ETA=3554s loss=6.8008
+baseline     epoch= 1 work=30848/2168196 ETA=3552s loss=6.7826
+baseline     epoch= 1 work=32128/2168196 ETA=3550s loss=6.7083
+baseline     epoch= 1 work=33408/2168196 ETA=3548s loss=6.6851
+baseline     epoch= 1 work=34688/2168196 ETA=3546s loss=6.4607
+baseline     epoch= 1 work=35968/2168196 ETA=3544s loss=6.7247
+baseline     epoch= 1 work=37248/2168196 ETA=3542s loss=6.7035
+baseline     epoch= 1 work=38528/2168196 ETA=3540s loss=6.7848
+baseline     epoch= 1 work=39808/2168196 ETA=3538s loss=6.6410
+baseline     epoch= 1 work=41088/2168196 ETA=3536s loss=6.6462
+baseline     epoch= 1 work=42368/2168196 ETA=3534s loss=6.6281
+baseline     epoch= 1 work=43648/2168196 ETA=3532s loss=6.5082
+baseline     epoch= 1 work=44928/2168196 ETA=3530s loss=6.4627
+baseline     epoch= 1 work=46208/2168196 ETA=3528s loss=6.3995
+baseline     epoch= 1 work=47488/2168196 ETA=3526s loss=6.3758
+baseline     epoch= 1 work=48768/2168196 ETA=3524s loss=6.5199
+baseline     epoch= 1 work=50048/2168196 ETA=3522s loss=6.3885
+baseline     epoch= 1 work=51328/2168196 ETA=3520s loss=6.4926
+baseline     epoch= 1 work=52608/2168196 ETA=3518s loss=6.6287
+baseline     epoch= 1 work=53888/2168196 ETA=3516s loss=6.2642
+baseline     epoch= 1 work=55168/2168196 ETA=3514s loss=6.4089
+baseline     epoch= 1 work=56448/2168196 ETA=3512s loss=6.3934
+baseline     epoch= 1 work=57728/2168196 ETA=3510s loss=6.1845
+baseline     epoch= 1 work=59008/2168196 ETA=3508s loss=5.9045
+baseline     epoch= 1 work=60288/2168196 ETA=3506s loss=6.2985
+baseline     epoch= 1 work=61568/2168196 ETA=3504s loss=6.4194
+baseline     epoch= 1 work=62848/2168196 ETA=3502s loss=6.2689
+baseline     epoch= 1 work=64128/2168196 ETA=3500s loss=6.3257
+baseline     epoch= 1 work=65408/2168196 ETA=3498s loss=6.4424
+baseline     epoch= 1 work=66688/2168196 ETA=3496s loss=6.2307
+baseline     epoch= 1 work=67968/2168196 ETA=3494s loss=6.2864
+baseline     epoch= 1 work=69248/2168196 ETA=3492s loss=6.0351
+baseline     epoch= 1 work=70528/2168196 ETA=3490s loss=6.1552
+baseline     epoch= 1 work=71808/2168196 ETA=3488s loss=6.3524
+baseline     epoch= 1 work=73088/2168196 ETA=3486s loss=6.1122
+baseline     epoch= 1 work=74368/2168196 ETA=3484s loss=6.2847
+baseline     epoch= 1 work=75648/2168196 ETA=3482s loss=6.4242
+baseline     epoch= 1 work=76928/2168196 ETA=3480s loss=6.2184
+baseline     epoch= 1 work=78208/2168196 ETA=3478s loss=6.1246
+baseline     epoch= 1 work=79488/2168196 ETA=3476s loss=6.1415
+baseline     epoch= 1 work=80768/2168196 ETA=3474s loss=6.4248
+baseline     epoch= 1 work=82048/2168196 ETA=3472s loss=6.1183
+baseline     epoch= 1 work=83328/2168196 ETA=3470s loss=6.2397
+baseline     epoch= 1 work=84608/2168196 ETA=3468s loss=6.3708
+baseline     epoch= 1 work=85888/2168196 ETA=3466s loss=5.9135
+baseline     epoch= 1 work=87168/2168196 ETA=3464s loss=6.1278
+baseline     epoch= 1 work=88448/2168196 ETA=3462s loss=6.3388
+baseline     epoch= 1 work=89728/2168196 ETA=3460s loss=6.1658
+baseline     epoch= 1 work=91008/2168196 ETA=3458s loss=6.1376
+baseline     epoch= 1 work=92288/2168196 ETA=3456s loss=5.9764
+baseline     epoch= 1 work=93568/2168196 ETA=3454s loss=6.0526
+baseline     epoch= 1 work=94848/2168196 ETA=3452s loss=6.0471
+baseline     epoch= 1 work=96128/2168196 ETA=3450s loss=6.1454
+baseline     epoch= 1 work=97408/2168196 ETA=3448s loss=6.0271
+baseline     epoch= 1 work=98688/2168196 ETA=3446s loss=5.9683
+baseline     epoch= 1 work=99968/2168196 ETA=3444s loss=6.0645
+baseline     epoch= 1 work=101248/2168196 ETA=3442s loss=6.0786
+baseline     epoch= 1 work=102528/2168196 ETA=3440s loss=5.9773
+baseline     epoch= 1 work=103808/2168196 ETA=3438s loss=5.8111
+baseline     epoch= 1 work=105088/2168196 ETA=3436s loss=6.1452
+baseline     epoch= 1 work=106368/2168196 ETA=3434s loss=5.8543
+baseline     epoch= 1 work=107648/2168196 ETA=3432s loss=6.2501
+baseline     epoch= 1 work=108928/2168196 ETA=3430s loss=6.1306
+baseline     epoch= 1 work=110208/2168196 ETA=3428s loss=5.8560
+baseline     epoch= 1 work=111488/2168196 ETA=3426s loss=6.1178
+baseline     epoch= 1 work=112768/2168196 ETA=3424s loss=6.0593
+baseline     epoch= 1 work=114048/2168196 ETA=3422s loss=5.9940
+baseline     epoch= 1 work=115328/2168196 ETA=3420s loss=6.1671
+baseline     epoch= 1 work=116608/2168196 ETA=3418s loss=6.1944
+baseline     epoch= 1 work=117888/2168196 ETA=3416s loss=6.1971
+baseline     epoch= 1 work=119168/2168196 ETA=3414s loss=6.2438
+baseline     epoch= 1 work=120448/2168196 ETA=3412s loss=5.8594
+baseline     epoch= 1 work=121728/2168196 ETA=3410s loss=6.2661
+baseline     epoch= 1 work=123008/2168196 ETA=3408s loss=5.9337
+baseline     epoch= 1 work=124288/2168196 ETA=3406s loss=6.0582
+baseline     epoch= 1 work=125568/2168196 ETA=3404s loss=5.6027
+baseline     epoch= 1 work=126848/2168196 ETA=3402s loss=5.9657
+baseline     epoch= 1 work=128128/2168196 ETA=3400s loss=6.0466
+baseline     epoch= 1 work=129408/2168196 ETA=3398s loss=6.3249
+baseline     epoch= 1 work=130688/2168196 ETA=3396s loss=5.9708
+baseline     epoch= 1 work=131968/2168196 ETA=3394s loss=5.9257
+baseline     epoch= 1 work=133248/2168196 ETA=3392s loss=5.8328
+baseline     epoch= 1 work=134528/2168196 ETA=3390s loss=5.8517
+baseline     epoch= 1 work=135808/2168196 ETA=3388s loss=5.9651
+baseline     epoch= 1 work=137088/2168196 ETA=3386s loss=5.8313
+baseline     epoch= 1 work=138368/2168196 ETA=3384s loss=6.1058
+baseline     epoch= 1 work=139648/2168196 ETA=3382s loss=5.8951
+baseline     epoch= 1 work=140928/2168196 ETA=3380s loss=6.0242
+baseline     epoch= 1 work=142208/2168196 ETA=3378s loss=5.9576
+baseline     epoch= 1 work=143488/2168196 ETA=3376s loss=5.8464
+baseline     epoch= 1 work=144768/2168196 ETA=3374s loss=5.7205
+baseline     epoch= 1 work=146048/2168196 ETA=3372s loss=6.0380
+baseline     epoch= 1 work=147328/2168196 ETA=3370s loss=5.9161
+baseline     epoch= 1 work=148608/2168196 ETA=3368s loss=6.0920
+baseline     epoch= 1 work=149888/2168196 ETA=3366s loss=5.6816
+baseline     epoch= 1 work=151168/2168196 ETA=3364s loss=5.9234
+baseline     epoch= 1 work=152448/2168196 ETA=3362s loss=5.9192
+baseline     epoch= 1 work=153728/2168196 ETA=3360s loss=5.9594
+baseline     epoch= 1 work=155008/2168196 ETA=3358s loss=6.0793
+baseline     epoch= 1 work=156288/2168196 ETA=3356s loss=5.6166
+baseline     epoch= 1 work=157568/2168196 ETA=3354s loss=5.8145
+baseline     epoch= 1 work=158848/2168196 ETA=3352s loss=5.8382
+baseline     epoch= 1 work=160128/2168196 ETA=3350s loss=5.8406
+baseline     epoch= 1 work=161408/2168196 ETA=3348s loss=5.8984
+baseline     epoch= 1 work=162688/2168196 ETA=3346s loss=6.1202
+baseline     epoch= 1 work=163968/2168196 ETA=3344s loss=5.9939
+baseline     epoch= 1 work=165248/2168196 ETA=3342s loss=5.6702
+baseline     epoch= 1 work=166528/2168196 ETA=3340s loss=5.9008
+baseline     epoch= 1 work=167808/2168196 ETA=3338s loss=5.5320
+baseline     epoch= 1 work=169088/2168196 ETA=3336s loss=5.8836
+baseline     epoch= 1 work=170368/2168196 ETA=3334s loss=5.7383
+baseline     epoch= 1 work=171648/2168196 ETA=3332s loss=5.8558
+baseline     epoch= 1 work=172928/2168196 ETA=3330s loss=5.7818
+baseline     epoch= 1 work=174208/2168196 ETA=3328s loss=5.6593
+baseline     epoch= 1 work=175488/2168196 ETA=3325s loss=5.8310
+baseline     epoch= 1 work=176768/2168196 ETA=3323s loss=6.1252
+baseline     epoch= 1 work=178048/2168196 ETA=3321s loss=5.6807
+baseline     epoch= 1 work=179328/2168196 ETA=3319s loss=5.7751
+baseline     epoch= 1 work=180608/2168196 ETA=3317s loss=5.5429
+baseline     epoch= 2 work=180811/2168196 ETA=3267s loss=5.6476
+baseline     epoch= 2 work=182091/2168196 ETA=3265s loss=5.7486
+baseline     epoch= 2 work=183371/2168196 ETA=3263s loss=5.6086
+baseline     epoch= 2 work=184651/2168196 ETA=3261s loss=5.8100
+baseline     epoch= 2 work=185931/2168196 ETA=3259s loss=5.7438
+baseline     epoch= 2 work=187211/2168196 ETA=3257s loss=5.7679
+baseline     epoch= 2 work=188491/2168196 ETA=3255s loss=5.6800
+baseline     epoch= 2 work=189771/2168196 ETA=3253s loss=5.5863
+baseline     epoch= 2 work=191051/2168196 ETA=3251s loss=5.5588
+baseline     epoch= 2 work=192331/2168196 ETA=3249s loss=5.6575
+baseline     epoch= 2 work=193611/2168196 ETA=3247s loss=5.5754
+baseline     epoch= 2 work=194891/2168196 ETA=3245s loss=6.0034
+baseline     epoch= 2 work=196171/2168196 ETA=3243s loss=5.9459
+baseline     epoch= 2 work=197451/2168196 ETA=3241s loss=5.7574
+baseline     epoch= 2 work=198731/2168196 ETA=3239s loss=5.5396
+baseline     epoch= 2 work=200011/2168196 ETA=3237s loss=5.7540
+baseline     epoch= 2 work=201291/2168196 ETA=3235s loss=5.4248
+baseline     epoch= 2 work=202571/2168196 ETA=3233s loss=5.6691
+baseline     epoch= 2 work=203851/2168196 ETA=3231s loss=5.5852
+baseline     epoch= 2 work=205131/2168196 ETA=3229s loss=5.7408
+baseline     epoch= 2 work=206411/2168196 ETA=3227s loss=5.6566
+baseline     epoch= 2 work=207691/2168196 ETA=3225s loss=5.6085
+baseline     epoch= 2 work=208971/2168196 ETA=3223s loss=5.6522
+baseline     epoch= 2 work=210251/2168196 ETA=3222s loss=5.6383
+baseline     epoch= 2 work=211531/2168196 ETA=3220s loss=5.9326
+baseline     epoch= 2 work=212811/2168196 ETA=3218s loss=5.4715
+baseline     epoch= 2 work=214091/2168196 ETA=3216s loss=5.4446
+baseline     epoch= 2 work=215371/2168196 ETA=3214s loss=5.6199
+baseline     epoch= 2 work=216651/2168196 ETA=3212s loss=5.3762
+baseline     epoch= 2 work=217931/2168196 ETA=3210s loss=5.6222
+baseline     epoch= 2 work=219211/2168196 ETA=3208s loss=5.8244
+baseline     epoch= 2 work=220491/2168196 ETA=3206s loss=5.3143
+baseline     epoch= 2 work=221771/2168196 ETA=3204s loss=5.2477
+baseline     epoch= 2 work=223051/2168196 ETA=3202s loss=5.5453
+baseline     epoch= 2 work=224331/2168196 ETA=3200s loss=5.6678
+baseline     epoch= 2 work=225611/2168196 ETA=3198s loss=5.6887
+baseline     epoch= 2 work=226891/2168196 ETA=3196s loss=5.5639
+baseline     epoch= 2 work=228171/2168196 ETA=3194s loss=5.5530
+baseline     epoch= 2 work=229451/2168196 ETA=3192s loss=5.5350
+baseline     epoch= 2 work=230731/2168196 ETA=3190s loss=5.3523
+baseline     epoch= 2 work=232011/2168196 ETA=3188s loss=5.6429
+baseline     epoch= 2 work=233291/2168196 ETA=3186s loss=5.3476
+baseline     epoch= 2 work=234571/2168196 ETA=3184s loss=5.7096
+baseline     epoch= 2 work=235851/2168196 ETA=3182s loss=5.3857
+baseline     epoch= 2 work=237131/2168196 ETA=3180s loss=5.5520
+baseline     epoch= 2 work=238411/2168196 ETA=3178s loss=5.4035
+baseline     epoch= 2 work=239691/2168196 ETA=3176s loss=5.4610
+baseline     epoch= 2 work=240971/2168196 ETA=3174s loss=5.3457
+baseline     epoch= 2 work=242251/2168196 ETA=3172s loss=5.4724
+baseline     epoch= 2 work=243531/2168196 ETA=3170s loss=5.3935
+baseline     epoch= 2 work=244811/2168196 ETA=3168s loss=5.3489
+baseline     epoch= 2 work=246091/2168196 ETA=3166s loss=5.7526
+baseline     epoch= 2 work=247371/2168196 ETA=3164s loss=5.5920
+baseline     epoch= 2 work=248651/2168196 ETA=3162s loss=5.4693
+baseline     epoch= 2 work=249931/2168196 ETA=3160s loss=5.5221
+baseline     epoch= 2 work=251211/2168196 ETA=3158s loss=5.6630
+baseline     epoch= 2 work=252491/2168196 ETA=3156s loss=5.5605
+baseline     epoch= 2 work=253771/2168196 ETA=3154s loss=5.3192
+baseline     epoch= 2 work=255051/2168196 ETA=3152s loss=5.2892
+baseline     epoch= 2 work=256331/2168196 ETA=3150s loss=5.2774
+baseline     epoch= 2 work=257611/2168196 ETA=3148s loss=5.1545
+baseline     epoch= 2 work=258891/2168196 ETA=3146s loss=5.4366
+baseline     epoch= 2 work=260171/2168196 ETA=3144s loss=5.4708
+baseline     epoch= 2 work=261451/2168196 ETA=3142s loss=5.7008
+baseline     epoch= 2 work=262731/2168196 ETA=3140s loss=5.4414
+baseline     epoch= 2 work=264011/2168196 ETA=3138s loss=5.6057
+baseline     epoch= 2 work=265291/2168196 ETA=3136s loss=5.3951
+baseline     epoch= 2 work=266571/2168196 ETA=3135s loss=5.4433
+baseline     epoch= 2 work=267851/2168196 ETA=3133s loss=5.5001
+baseline     epoch= 2 work=269131/2168196 ETA=3130s loss=5.4375
+baseline     epoch= 2 work=270411/2168196 ETA=3128s loss=5.6412
+baseline     epoch= 2 work=271691/2168196 ETA=3126s loss=5.1008
+baseline     epoch= 2 work=272971/2168196 ETA=3124s loss=5.5965
+baseline     epoch= 2 work=274251/2168196 ETA=3122s loss=5.4206
+baseline     epoch= 2 work=275531/2168196 ETA=3120s loss=5.6316
+baseline     epoch= 2 work=276811/2168196 ETA=3118s loss=5.3583
+baseline     epoch= 2 work=278091/2168196 ETA=3116s loss=5.4062
+baseline     epoch= 2 work=279371/2168196 ETA=3114s loss=5.6535
+baseline     epoch= 2 work=280651/2168196 ETA=3112s loss=5.4892
+baseline     epoch= 2 work=281931/2168196 ETA=3110s loss=5.9570
+baseline     epoch= 2 work=283211/2168196 ETA=3108s loss=5.8175
+baseline     epoch= 2 work=284491/2168196 ETA=3106s loss=5.4609
+baseline     epoch= 2 work=285771/2168196 ETA=3104s loss=5.2955
+baseline     epoch= 2 work=287051/2168196 ETA=3102s loss=5.3893
+baseline     epoch= 2 work=288331/2168196 ETA=3100s loss=5.4995
+baseline     epoch= 2 work=289611/2168196 ETA=3098s loss=5.4903
+baseline     epoch= 2 work=290891/2168196 ETA=3096s loss=5.3566
+baseline     epoch= 2 work=292171/2168196 ETA=3094s loss=5.6887
+baseline     epoch= 2 work=293451/2168196 ETA=3092s loss=5.6321
+baseline     epoch= 2 work=294731/2168196 ETA=3090s loss=5.3177
+baseline     epoch= 2 work=296011/2168196 ETA=3088s loss=5.5230
+baseline     epoch= 2 work=297291/2168196 ETA=3086s loss=5.4016
+baseline     epoch= 2 work=298571/2168196 ETA=3084s loss=5.3345
+baseline     epoch= 2 work=299851/2168196 ETA=3082s loss=5.2049
+baseline     epoch= 2 work=301131/2168196 ETA=3080s loss=5.5823
+baseline     epoch= 2 work=302411/2168196 ETA=3078s loss=5.4354
+baseline     epoch= 2 work=303691/2168196 ETA=3076s loss=5.4099
+baseline     epoch= 2 work=304971/2168196 ETA=3074s loss=5.5251
+baseline     epoch= 2 work=306251/2168196 ETA=3072s loss=5.2565
+baseline     epoch= 2 work=307531/2168196 ETA=3070s loss=5.5538
+baseline     epoch= 2 work=308811/2168196 ETA=3068s loss=5.4569
+baseline     epoch= 2 work=310091/2168196 ETA=3066s loss=5.1705
+baseline     epoch= 2 work=311371/2168196 ETA=3064s loss=5.1828
+baseline     epoch= 2 work=312651/2168196 ETA=3062s loss=5.1499
+baseline     epoch= 2 work=313931/2168196 ETA=3060s loss=5.4149
+baseline     epoch= 2 work=315211/2168196 ETA=3058s loss=5.4685
+baseline     epoch= 2 work=316491/2168196 ETA=3056s loss=5.3767
+baseline     epoch= 2 work=317771/2168196 ETA=3054s loss=5.4387
+baseline     epoch= 2 work=319051/2168196 ETA=3052s loss=5.3977
+baseline     epoch= 2 work=320331/2168196 ETA=3050s loss=5.6162
+baseline     epoch= 2 work=321611/2168196 ETA=3048s loss=5.3166
+baseline     epoch= 2 work=322891/2168196 ETA=3046s loss=5.2061
+baseline     epoch= 2 work=324171/2168196 ETA=3044s loss=5.1062
+baseline     epoch= 2 work=325451/2168196 ETA=3042s loss=5.4901
+baseline     epoch= 2 work=326731/2168196 ETA=3040s loss=5.4525
+baseline     epoch= 2 work=328011/2168196 ETA=3038s loss=5.1023
+baseline     epoch= 2 work=329291/2168196 ETA=3035s loss=5.4496
+baseline     epoch= 2 work=330571/2168196 ETA=3033s loss=5.4231
+baseline     epoch= 2 work=331851/2168196 ETA=3031s loss=5.2103
+baseline     epoch= 2 work=333131/2168196 ETA=3029s loss=5.2098
+baseline     epoch= 2 work=334411/2168196 ETA=3027s loss=5.3687
+baseline     epoch= 2 work=335691/2168196 ETA=3025s loss=5.4174
+baseline     epoch= 2 work=336971/2168196 ETA=3023s loss=5.4595
+baseline     epoch= 2 work=338251/2168196 ETA=3021s loss=5.3106
+baseline     epoch= 2 work=339531/2168196 ETA=3019s loss=5.3240
+baseline     epoch= 2 work=340811/2168196 ETA=3017s loss=5.3276
+baseline     epoch= 2 work=342091/2168196 ETA=3015s loss=5.2607
+baseline     epoch= 2 work=343371/2168196 ETA=3013s loss=5.4908
+baseline     epoch= 2 work=344651/2168196 ETA=3011s loss=5.6552
+baseline     epoch= 2 work=345931/2168196 ETA=3009s loss=5.2179
+baseline     epoch= 2 work=347211/2168196 ETA=3007s loss=5.2799
+baseline     epoch= 2 work=348491/2168196 ETA=3005s loss=5.4106
+baseline     epoch= 2 work=349771/2168196 ETA=3003s loss=5.2743
+baseline     epoch= 2 work=351051/2168196 ETA=3001s loss=5.3003
+baseline     epoch= 2 work=352331/2168196 ETA=2999s loss=5.6977
+baseline     epoch= 2 work=353611/2168196 ETA=2997s loss=5.3391
+baseline     epoch= 2 work=354891/2168196 ETA=2995s loss=5.2751
+baseline     epoch= 2 work=356171/2168196 ETA=2993s loss=5.3704
+baseline     epoch= 2 work=357451/2168196 ETA=2990s loss=5.0547
+baseline     epoch= 2 work=358731/2168196 ETA=2988s loss=5.1882
+baseline     epoch= 2 work=360011/2168196 ETA=2986s loss=5.0645
+baseline     epoch= 2 work=361291/2168196 ETA=2984s loss=5.2751
+baseline     epoch= 3 work=361494/2168196 ETA=2935s loss=5.0047
+baseline     epoch= 3 work=362774/2168196 ETA=2933s loss=5.3128
+baseline     epoch= 3 work=364054/2168196 ETA=2931s loss=5.3593
+baseline     epoch= 3 work=365334/2168196 ETA=2929s loss=5.4478
+baseline     epoch= 3 work=366614/2168196 ETA=2927s loss=5.5878
+baseline     epoch= 3 work=367894/2168196 ETA=2925s loss=5.1467
+baseline     epoch= 3 work=369174/2168196 ETA=2923s loss=5.4829
+baseline     epoch= 3 work=370454/2168196 ETA=2921s loss=5.1408
+baseline     epoch= 3 work=371734/2168196 ETA=2919s loss=5.7265
+baseline     epoch= 3 work=373014/2168196 ETA=2917s loss=5.3258
+baseline     epoch= 3 work=374294/2168196 ETA=2915s loss=5.2899
+baseline     epoch= 3 work=375574/2168196 ETA=2913s loss=5.4314
+baseline     epoch= 3 work=376854/2168196 ETA=2911s loss=5.4390
+baseline     epoch= 3 work=378134/2168196 ETA=2909s loss=5.0675
+baseline     epoch= 3 work=379414/2168196 ETA=2907s loss=5.3553
+baseline     epoch= 3 work=380694/2168196 ETA=2905s loss=5.2674
+baseline     epoch= 3 work=381974/2168196 ETA=2903s loss=5.4075
+baseline     epoch= 3 work=383254/2168196 ETA=2902s loss=4.9799
+baseline     epoch= 3 work=384534/2168196 ETA=2900s loss=4.9253
+baseline     epoch= 3 work=385814/2168196 ETA=2898s loss=5.3442
+baseline     epoch= 3 work=387094/2168196 ETA=2896s loss=4.9980
+baseline     epoch= 3 work=388374/2168196 ETA=2894s loss=5.0797
+baseline     epoch= 3 work=389654/2168196 ETA=2892s loss=5.2320
+baseline     epoch= 3 work=390934/2168196 ETA=2890s loss=5.0574
+baseline     epoch= 3 work=392214/2168196 ETA=2888s loss=5.4979
+baseline     epoch= 3 work=393494/2168196 ETA=2886s loss=5.5585
+baseline     epoch= 3 work=394774/2168196 ETA=2884s loss=5.4116
+baseline     epoch= 3 work=396054/2168196 ETA=2882s loss=5.1496
+baseline     epoch= 3 work=397334/2168196 ETA=2880s loss=5.3099
+baseline     epoch= 3 work=398614/2168196 ETA=2878s loss=5.2219
+baseline     epoch= 3 work=399894/2168196 ETA=2876s loss=5.4515
+baseline     epoch= 3 work=401174/2168196 ETA=2874s loss=5.3901
+baseline     epoch= 3 work=402454/2168196 ETA=2872s loss=5.2270
+baseline     epoch= 3 work=403734/2168196 ETA=2870s loss=5.2022
+baseline     epoch= 3 work=405014/2168196 ETA=2869s loss=5.2942
+baseline     epoch= 3 work=406294/2168196 ETA=2867s loss=5.4669
+baseline     epoch= 3 work=407574/2168196 ETA=2865s loss=5.1342
+baseline     epoch= 3 work=408854/2168196 ETA=2863s loss=4.9277
+baseline     epoch= 3 work=410134/2168196 ETA=2861s loss=5.0073
+baseline     epoch= 3 work=411414/2168196 ETA=2859s loss=5.3633
+baseline     epoch= 3 work=412694/2168196 ETA=2857s loss=5.1525
+baseline     epoch= 3 work=413974/2168196 ETA=2855s loss=5.1023
+baseline     epoch= 3 work=415254/2168196 ETA=2853s loss=5.2533
+baseline     epoch= 3 work=416534/2168196 ETA=2851s loss=5.1677
+baseline     epoch= 3 work=417814/2168196 ETA=2849s loss=5.3856
+baseline     epoch= 3 work=419094/2168196 ETA=2847s loss=5.0822
+baseline     epoch= 3 work=420374/2168196 ETA=2845s loss=5.4479
+baseline     epoch= 3 work=421654/2168196 ETA=2843s loss=5.1954
+baseline     epoch= 3 work=422934/2168196 ETA=2842s loss=5.1854
+baseline     epoch= 3 work=424214/2168196 ETA=2840s loss=5.2209
+baseline     epoch= 3 work=425494/2168196 ETA=2838s loss=5.3099
+baseline     epoch= 3 work=426774/2168196 ETA=2836s loss=4.8689
+baseline     epoch= 3 work=428054/2168196 ETA=2834s loss=5.3618
+baseline     epoch= 3 work=429334/2168196 ETA=2832s loss=5.3935
+baseline     epoch= 3 work=430614/2168196 ETA=2830s loss=5.1022
+baseline     epoch= 3 work=431894/2168196 ETA=2828s loss=5.2095
+baseline     epoch= 3 work=433174/2168196 ETA=2826s loss=5.0332
+baseline     epoch= 3 work=434454/2168196 ETA=2824s loss=5.3959
+baseline     epoch= 3 work=435734/2168196 ETA=2822s loss=4.9696
+baseline     epoch= 3 work=437014/2168196 ETA=2820s loss=5.3375
+baseline     epoch= 3 work=438294/2168196 ETA=2819s loss=5.1987
+baseline     epoch= 3 work=439574/2168196 ETA=2817s loss=5.2612
+baseline     epoch= 3 work=440854/2168196 ETA=2815s loss=5.2478
+baseline     epoch= 3 work=442134/2168196 ETA=2813s loss=5.3110
+baseline     epoch= 3 work=443414/2168196 ETA=2811s loss=5.3688
+baseline     epoch= 3 work=444694/2168196 ETA=2809s loss=5.3320
+baseline     epoch= 3 work=445974/2168196 ETA=2807s loss=5.3158
+baseline     epoch= 3 work=447254/2168196 ETA=2805s loss=5.2248
+baseline     epoch= 3 work=448534/2168196 ETA=2803s loss=4.9783
+baseline     epoch= 3 work=449814/2168196 ETA=2801s loss=5.0818
+baseline     epoch= 3 work=451094/2168196 ETA=2799s loss=4.8909
+baseline     epoch= 3 work=452374/2168196 ETA=2797s loss=5.2814
+baseline     epoch= 3 work=453654/2168196 ETA=2795s loss=5.3380
+baseline     epoch= 3 work=454934/2168196 ETA=2793s loss=4.9559
+baseline     epoch= 3 work=456214/2168196 ETA=2791s loss=5.5361
+baseline     epoch= 3 work=457494/2168196 ETA=2790s loss=5.3579
+baseline     epoch= 3 work=458774/2168196 ETA=2788s loss=5.1450
+baseline     epoch= 3 work=460054/2168196 ETA=2786s loss=5.1685
+baseline     epoch= 3 work=461334/2168196 ETA=2784s loss=5.1838
+baseline     epoch= 3 work=462614/2168196 ETA=2782s loss=5.2269
+baseline     epoch= 3 work=463894/2168196 ETA=2780s loss=5.1961
+baseline     epoch= 3 work=465174/2168196 ETA=2778s loss=5.2904
+baseline     epoch= 3 work=466454/2168196 ETA=2776s loss=5.2965
+baseline     epoch= 3 work=467734/2168196 ETA=2774s loss=5.1190
+baseline     epoch= 3 work=469014/2168196 ETA=2772s loss=5.4773
+baseline     epoch= 3 work=470294/2168196 ETA=2770s loss=4.9761
+baseline     epoch= 3 work=471574/2168196 ETA=2768s loss=4.9015
+baseline     epoch= 3 work=472854/2168196 ETA=2766s loss=5.4320
+baseline     epoch= 3 work=474134/2168196 ETA=2765s loss=5.0573
+baseline     epoch= 3 work=475414/2168196 ETA=2763s loss=5.4484
+baseline     epoch= 3 work=476694/2168196 ETA=2761s loss=5.1781
+baseline     epoch= 3 work=477974/2168196 ETA=2759s loss=5.4233
+baseline     epoch= 3 work=479254/2168196 ETA=2757s loss=5.2749
+baseline     epoch= 3 work=480534/2168196 ETA=2755s loss=5.3214
+baseline     epoch= 3 work=481814/2168196 ETA=2753s loss=5.0088
+baseline     epoch= 3 work=483094/2168196 ETA=2751s loss=4.9060
+baseline     epoch= 3 work=484374/2168196 ETA=2749s loss=5.1855
+baseline     epoch= 3 work=485654/2168196 ETA=2747s loss=5.1810
+baseline     epoch= 3 work=486934/2168196 ETA=2745s loss=5.4013
+baseline     epoch= 3 work=488214/2168196 ETA=2743s loss=5.1551
+baseline     epoch= 3 work=489494/2168196 ETA=2741s loss=5.2108
+baseline     epoch= 3 work=490774/2168196 ETA=2739s loss=5.4633
+baseline     epoch= 3 work=492054/2168196 ETA=2737s loss=5.1539
+baseline     epoch= 3 work=493334/2168196 ETA=2735s loss=5.2026
+baseline     epoch= 3 work=494614/2168196 ETA=2733s loss=5.1170
+baseline     epoch= 3 work=495894/2168196 ETA=2732s loss=5.0265
+baseline     epoch= 3 work=497174/2168196 ETA=2730s loss=5.2183
+baseline     epoch= 3 work=498454/2168196 ETA=2728s loss=5.1380
+baseline     epoch= 3 work=499734/2168196 ETA=2726s loss=5.2166
+baseline     epoch= 3 work=501014/2168196 ETA=2724s loss=5.0213
+baseline     epoch= 3 work=502294/2168196 ETA=2722s loss=4.7952
+baseline     epoch= 3 work=503574/2168196 ETA=2720s loss=5.2395
+baseline     epoch= 3 work=504854/2168196 ETA=2718s loss=5.2923
+baseline     epoch= 3 work=506134/2168196 ETA=2716s loss=5.2160
+baseline     epoch= 3 work=507414/2168196 ETA=2714s loss=5.2105
+baseline     epoch= 3 work=508694/2168196 ETA=2712s loss=5.1996
+baseline     epoch= 3 work=509974/2168196 ETA=2710s loss=5.0334
+baseline     epoch= 3 work=511254/2168196 ETA=2708s loss=5.0400
+baseline     epoch= 3 work=512534/2168196 ETA=2706s loss=5.2337
+baseline     epoch= 3 work=513814/2168196 ETA=2705s loss=5.1986
+baseline     epoch= 3 work=515094/2168196 ETA=2703s loss=5.3521
+baseline     epoch= 3 work=516374/2168196 ETA=2701s loss=5.2130
+baseline     epoch= 3 work=517654/2168196 ETA=2699s loss=5.2605
+baseline     epoch= 3 work=518934/2168196 ETA=2697s loss=5.1658
+baseline     epoch= 3 work=520214/2168196 ETA=2695s loss=5.1582
+baseline     epoch= 3 work=521494/2168196 ETA=2693s loss=4.9444
+baseline     epoch= 3 work=522774/2168196 ETA=2691s loss=4.9173
+baseline     epoch= 3 work=524054/2168196 ETA=2689s loss=4.8896
+baseline     epoch= 3 work=525334/2168196 ETA=2687s loss=5.1251
+baseline     epoch= 3 work=526614/2168196 ETA=2685s loss=5.2660
+baseline     epoch= 3 work=527894/2168196 ETA=2683s loss=5.1214
+baseline     epoch= 3 work=529174/2168196 ETA=2681s loss=5.3125
+baseline     epoch= 3 work=530454/2168196 ETA=2679s loss=5.0506
+baseline     epoch= 3 work=531734/2168196 ETA=2677s loss=5.0397
+baseline     epoch= 3 work=533014/2168196 ETA=2675s loss=5.1719
+baseline     epoch= 3 work=534294/2168196 ETA=2673s loss=5.1310
+baseline     epoch= 3 work=535574/2168196 ETA=2672s loss=5.3216
+baseline     epoch= 3 work=536854/2168196 ETA=2670s loss=5.0081
+baseline     epoch= 3 work=538134/2168196 ETA=2668s loss=5.1489
+baseline     epoch= 3 work=539414/2168196 ETA=2666s loss=5.4759
+baseline     epoch= 3 work=540694/2168196 ETA=2664s loss=5.0723
+baseline     epoch= 3 work=541974/2168196 ETA=2662s loss=5.1945
+baseline     epoch= 4 work=542177/2168196 ETA=2614s loss=4.9245
+baseline     epoch= 4 work=543457/2168196 ETA=2612s loss=5.1768
+baseline     epoch= 4 work=544737/2168196 ETA=2610s loss=4.9026
+baseline     epoch= 4 work=546017/2168196 ETA=2608s loss=5.0911
+baseline     epoch= 4 work=547297/2168196 ETA=2606s loss=4.8735
+baseline     epoch= 4 work=548577/2168196 ETA=2604s loss=5.1222
+baseline     epoch= 4 work=549857/2168196 ETA=2602s loss=4.9915
+baseline     epoch= 4 work=551137/2168196 ETA=2600s loss=5.1595
+baseline     epoch= 4 work=552417/2168196 ETA=2598s loss=5.1795
+baseline     epoch= 4 work=553697/2168196 ETA=2596s loss=5.1348
+baseline     epoch= 4 work=554977/2168196 ETA=2594s loss=5.2520
+baseline     epoch= 4 work=556257/2168196 ETA=2592s loss=5.0374
+baseline     epoch= 4 work=557537/2168196 ETA=2590s loss=5.3694
+baseline     epoch= 4 work=558817/2168196 ETA=2589s loss=4.8413
+baseline     epoch= 4 work=560097/2168196 ETA=2587s loss=5.2118
+baseline     epoch= 4 work=561377/2168196 ETA=2585s loss=5.0084
+baseline     epoch= 4 work=562657/2168196 ETA=2583s loss=5.2252
+baseline     epoch= 4 work=563937/2168196 ETA=2581s loss=4.8058
+baseline     epoch= 4 work=565217/2168196 ETA=2579s loss=5.1536
+baseline     epoch= 4 work=566497/2168196 ETA=2577s loss=5.1275
+baseline     epoch= 4 work=567777/2168196 ETA=2575s loss=5.4110
+baseline     epoch= 4 work=569057/2168196 ETA=2573s loss=5.1844
+baseline     epoch= 4 work=570337/2168196 ETA=2571s loss=5.1859
+baseline     epoch= 4 work=571617/2168196 ETA=2569s loss=4.7750
+baseline     epoch= 4 work=572897/2168196 ETA=2567s loss=5.3933
+baseline     epoch= 4 work=574177/2168196 ETA=2565s loss=5.1158
+baseline     epoch= 4 work=575457/2168196 ETA=2563s loss=5.0190
+baseline     epoch= 4 work=576737/2168196 ETA=2561s loss=5.0981
+baseline     epoch= 4 work=578017/2168196 ETA=2560s loss=5.0437
+baseline     epoch= 4 work=579297/2168196 ETA=2558s loss=5.1747
+baseline     epoch= 4 work=580577/2168196 ETA=2556s loss=5.2019
+baseline     epoch= 4 work=581857/2168196 ETA=2554s loss=4.7708
+baseline     epoch= 4 work=583137/2168196 ETA=2552s loss=5.0938
+baseline     epoch= 4 work=584417/2168196 ETA=2550s loss=5.0534
+baseline     epoch= 4 work=585697/2168196 ETA=2548s loss=4.8447
+baseline     epoch= 4 work=586977/2168196 ETA=2546s loss=4.9907
+baseline     epoch= 4 work=588257/2168196 ETA=2544s loss=4.8347
+baseline     epoch= 4 work=589537/2168196 ETA=2542s loss=5.1269
+baseline     epoch= 4 work=590817/2168196 ETA=2540s loss=5.2226
+baseline     epoch= 4 work=592097/2168196 ETA=2538s loss=5.1041
+baseline     epoch= 4 work=593377/2168196 ETA=2536s loss=5.1900
+baseline     epoch= 4 work=594657/2168196 ETA=2534s loss=5.0207
+baseline     epoch= 4 work=595937/2168196 ETA=2532s loss=4.9529
+baseline     epoch= 4 work=597217/2168196 ETA=2530s loss=5.0306
+baseline     epoch= 4 work=598497/2168196 ETA=2528s loss=4.9058
+baseline     epoch= 4 work=599777/2168196 ETA=2527s loss=4.9732
+baseline     epoch= 4 work=601057/2168196 ETA=2525s loss=5.0068
+baseline     epoch= 4 work=602337/2168196 ETA=2523s loss=5.0237
+baseline     epoch= 4 work=603617/2168196 ETA=2521s loss=4.9537
+baseline     epoch= 4 work=604897/2168196 ETA=2519s loss=5.2615
+baseline     epoch= 4 work=606177/2168196 ETA=2517s loss=4.9307
+baseline     epoch= 4 work=607457/2168196 ETA=2515s loss=5.2804
+baseline     epoch= 4 work=608737/2168196 ETA=2513s loss=5.0561
+baseline     epoch= 4 work=610017/2168196 ETA=2511s loss=5.1084
+baseline     epoch= 4 work=611297/2168196 ETA=2509s loss=4.9385
+baseline     epoch= 4 work=612577/2168196 ETA=2507s loss=5.2145
+baseline     epoch= 4 work=613857/2168196 ETA=2505s loss=5.2185
+baseline     epoch= 4 work=615137/2168196 ETA=2503s loss=5.1468
+baseline     epoch= 4 work=616417/2168196 ETA=2501s loss=4.9420
+baseline     epoch= 4 work=617697/2168196 ETA=2500s loss=5.2276
+baseline     epoch= 4 work=618977/2168196 ETA=2498s loss=4.9552
+baseline     epoch= 4 work=620257/2168196 ETA=2496s loss=4.9584
+baseline     epoch= 4 work=621537/2168196 ETA=2494s loss=5.0156
+baseline     epoch= 4 work=622817/2168196 ETA=2492s loss=5.1237
+baseline     epoch= 4 work=624097/2168196 ETA=2490s loss=4.9027
+baseline     epoch= 4 work=625377/2168196 ETA=2488s loss=5.1347
+baseline     epoch= 4 work=626657/2168196 ETA=2486s loss=5.3849
+baseline     epoch= 4 work=627937/2168196 ETA=2484s loss=5.1897
+baseline     epoch= 4 work=629217/2168196 ETA=2482s loss=5.2477
+baseline     epoch= 4 work=630497/2168196 ETA=2480s loss=5.2282
+baseline     epoch= 4 work=631777/2168196 ETA=2478s loss=5.2757
+baseline     epoch= 4 work=633057/2168196 ETA=2476s loss=5.1410
+baseline     epoch= 4 work=634337/2168196 ETA=2474s loss=4.8655
+baseline     epoch= 4 work=635617/2168196 ETA=2473s loss=5.1880
+baseline     epoch= 4 work=636897/2168196 ETA=2471s loss=4.9015
+baseline     epoch= 4 work=638177/2168196 ETA=2469s loss=5.1367
+baseline     epoch= 4 work=639457/2168196 ETA=2467s loss=5.0818
+baseline     epoch= 4 work=640737/2168196 ETA=2465s loss=5.0842
+baseline     epoch= 4 work=642017/2168196 ETA=2463s loss=4.8912
+baseline     epoch= 4 work=643297/2168196 ETA=2461s loss=5.1333
+baseline     epoch= 4 work=644577/2168196 ETA=2459s loss=5.1421
+baseline     epoch= 4 work=645857/2168196 ETA=2457s loss=5.1087
+baseline     epoch= 4 work=647137/2168196 ETA=2455s loss=5.1377
+baseline     epoch= 4 work=648417/2168196 ETA=2453s loss=5.2599
+baseline     epoch= 4 work=649697/2168196 ETA=2451s loss=4.9022
+baseline     epoch= 4 work=650977/2168196 ETA=2449s loss=5.1008
+baseline     epoch= 4 work=652257/2168196 ETA=2447s loss=5.1067
+baseline     epoch= 4 work=653537/2168196 ETA=2446s loss=5.0978
+baseline     epoch= 4 work=654817/2168196 ETA=2444s loss=5.1076
+baseline     epoch= 4 work=656097/2168196 ETA=2442s loss=5.3090
+baseline     epoch= 4 work=657377/2168196 ETA=2440s loss=4.8270
+baseline     epoch= 4 work=658657/2168196 ETA=2438s loss=5.1285
+baseline     epoch= 4 work=659937/2168196 ETA=2436s loss=5.1366
+baseline     epoch= 4 work=661217/2168196 ETA=2434s loss=4.8932
+baseline     epoch= 4 work=662497/2168196 ETA=2432s loss=4.9905
+baseline     epoch= 4 work=663777/2168196 ETA=2430s loss=5.2065
+baseline     epoch= 4 work=665057/2168196 ETA=2428s loss=5.3120
+baseline     epoch= 4 work=666337/2168196 ETA=2426s loss=4.7855
+baseline     epoch= 4 work=667617/2168196 ETA=2424s loss=5.1076
+baseline     epoch= 4 work=668897/2168196 ETA=2422s loss=5.1529
+baseline     epoch= 4 work=670177/2168196 ETA=2420s loss=4.8806
+baseline     epoch= 4 work=671457/2168196 ETA=2418s loss=5.1401
+baseline     epoch= 4 work=672737/2168196 ETA=2417s loss=5.2121
+baseline     epoch= 4 work=674017/2168196 ETA=2415s loss=4.7533
+baseline     epoch= 4 work=675297/2168196 ETA=2413s loss=4.8108
+baseline     epoch= 4 work=676577/2168196 ETA=2411s loss=4.8107
+baseline     epoch= 4 work=677857/2168196 ETA=2409s loss=4.9143
+baseline     epoch= 4 work=679137/2168196 ETA=2407s loss=5.2568
+baseline     epoch= 4 work=680417/2168196 ETA=2405s loss=5.1526
+baseline     epoch= 4 work=681697/2168196 ETA=2403s loss=5.3202
+baseline     epoch= 4 work=682977/2168196 ETA=2401s loss=4.9896
+baseline     epoch= 4 work=684257/2168196 ETA=2399s loss=4.8673
+baseline     epoch= 4 work=685537/2168196 ETA=2397s loss=4.9765
+baseline     epoch= 4 work=686817/2168196 ETA=2395s loss=5.0910
+baseline     epoch= 4 work=688097/2168196 ETA=2393s loss=4.9611
+baseline     epoch= 4 work=689377/2168196 ETA=2392s loss=5.2404
+baseline     epoch= 4 work=690657/2168196 ETA=2390s loss=5.0359
+baseline     epoch= 4 work=691937/2168196 ETA=2388s loss=5.0865
+baseline     epoch= 4 work=693217/2168196 ETA=2386s loss=5.1533
+baseline     epoch= 4 work=694497/2168196 ETA=2384s loss=4.8573
+baseline     epoch= 4 work=695777/2168196 ETA=2382s loss=5.0634
+baseline     epoch= 4 work=697057/2168196 ETA=2380s loss=4.9993
+baseline     epoch= 4 work=698337/2168196 ETA=2378s loss=5.2743
+baseline     epoch= 4 work=699617/2168196 ETA=2376s loss=5.1696
+baseline     epoch= 4 work=700897/2168196 ETA=2374s loss=4.9747
+baseline     epoch= 4 work=702177/2168196 ETA=2372s loss=5.1836
+baseline     epoch= 4 work=703457/2168196 ETA=2370s loss=4.8673
+baseline     epoch= 4 work=704737/2168196 ETA=2369s loss=4.9459
+baseline     epoch= 4 work=706017/2168196 ETA=2367s loss=5.0051
+baseline     epoch= 4 work=707297/2168196 ETA=2365s loss=4.9409
+baseline     epoch= 4 work=708577/2168196 ETA=2363s loss=4.9898
+baseline     epoch= 4 work=709857/2168196 ETA=2361s loss=4.8333
+baseline     epoch= 4 work=711137/2168196 ETA=2359s loss=5.1167
+baseline     epoch= 4 work=712417/2168196 ETA=2357s loss=4.7960
+baseline     epoch= 4 work=713697/2168196 ETA=2355s loss=5.1368
+baseline     epoch= 4 work=714977/2168196 ETA=2353s loss=5.2547
+baseline     epoch= 4 work=716257/2168196 ETA=2351s loss=5.1888
+baseline     epoch= 4 work=717537/2168196 ETA=2349s loss=5.0359
+baseline     epoch= 4 work=718817/2168196 ETA=2347s loss=4.9292
+baseline     epoch= 4 work=720097/2168196 ETA=2345s loss=4.7771
+baseline     epoch= 4 work=721377/2168196 ETA=2343s loss=4.7741
+baseline     epoch= 4 work=722657/2168196 ETA=2341s loss=5.1864
+baseline     epoch= 5 work=722860/2168196 ETA=2293s loss=5.0146
+baseline     epoch= 5 work=724140/2168196 ETA=2292s loss=5.0023
+baseline     epoch= 5 work=725420/2168196 ETA=2290s loss=5.0189
+baseline     epoch= 5 work=726700/2168196 ETA=2288s loss=4.9189
+baseline     epoch= 5 work=727980/2168196 ETA=2286s loss=4.8687
+baseline     epoch= 5 work=729260/2168196 ETA=2284s loss=5.0050
+baseline     epoch= 5 work=730540/2168196 ETA=2282s loss=5.0098
+baseline     epoch= 5 work=731820/2168196 ETA=2280s loss=4.8766
+baseline     epoch= 5 work=733100/2168196 ETA=2278s loss=5.0494
+baseline     epoch= 5 work=734380/2168196 ETA=2276s loss=4.7483
+baseline     epoch= 5 work=735660/2168196 ETA=2274s loss=5.3252
+baseline     epoch= 5 work=736940/2168196 ETA=2272s loss=4.7116
+baseline     epoch= 5 work=738220/2168196 ETA=2270s loss=4.9607
+baseline     epoch= 5 work=739500/2168196 ETA=2268s loss=5.1969
+baseline     epoch= 5 work=740780/2168196 ETA=2267s loss=5.0250
+baseline     epoch= 5 work=742060/2168196 ETA=2265s loss=5.0131
+baseline     epoch= 5 work=743340/2168196 ETA=2263s loss=4.9617
+baseline     epoch= 5 work=744620/2168196 ETA=2261s loss=4.9065
+baseline     epoch= 5 work=745900/2168196 ETA=2259s loss=5.1391
+baseline     epoch= 5 work=747180/2168196 ETA=2257s loss=5.0112
+baseline     epoch= 5 work=748460/2168196 ETA=2255s loss=5.1244
+baseline     epoch= 5 work=749740/2168196 ETA=2253s loss=5.1881
+baseline     epoch= 5 work=751020/2168196 ETA=2251s loss=4.8007
+baseline     epoch= 5 work=752300/2168196 ETA=2249s loss=4.9247
+baseline     epoch= 5 work=753580/2168196 ETA=2247s loss=4.8273
+baseline     epoch= 5 work=754860/2168196 ETA=2245s loss=4.9646
+baseline     epoch= 5 work=756140/2168196 ETA=2243s loss=4.9558
+baseline     epoch= 5 work=757420/2168196 ETA=2241s loss=4.9427
+baseline     epoch= 5 work=758700/2168196 ETA=2239s loss=4.8428
+baseline     epoch= 5 work=759980/2168196 ETA=2237s loss=5.0642
+baseline     epoch= 5 work=761260/2168196 ETA=2235s loss=5.0301
+baseline     epoch= 5 work=762540/2168196 ETA=2233s loss=5.2863
+baseline     epoch= 5 work=763820/2168196 ETA=2232s loss=4.9126
+baseline     epoch= 5 work=765100/2168196 ETA=2230s loss=4.8551
+baseline     epoch= 5 work=766380/2168196 ETA=2228s loss=4.8580
+baseline     epoch= 5 work=767660/2168196 ETA=2226s loss=5.2835
+baseline     epoch= 5 work=768940/2168196 ETA=2224s loss=4.9262
+baseline     epoch= 5 work=770220/2168196 ETA=2222s loss=5.1788
+baseline     epoch= 5 work=771500/2168196 ETA=2220s loss=5.0042
+baseline     epoch= 5 work=772780/2168196 ETA=2218s loss=4.8590
+baseline     epoch= 5 work=774060/2168196 ETA=2216s loss=4.4854
+baseline     epoch= 5 work=775340/2168196 ETA=2214s loss=4.9164
+baseline     epoch= 5 work=776620/2168196 ETA=2212s loss=4.9953
+baseline     epoch= 5 work=777900/2168196 ETA=2210s loss=4.9704
+baseline     epoch= 5 work=779180/2168196 ETA=2208s loss=4.8576
+baseline     epoch= 5 work=780460/2168196 ETA=2206s loss=4.7835
+baseline     epoch= 5 work=781740/2168196 ETA=2204s loss=5.1031
+baseline     epoch= 5 work=783020/2168196 ETA=2202s loss=4.6472
+baseline     epoch= 5 work=784300/2168196 ETA=2200s loss=5.0077
+baseline     epoch= 5 work=785580/2168196 ETA=2199s loss=4.6490
+baseline     epoch= 5 work=786860/2168196 ETA=2197s loss=4.9207
+baseline     epoch= 5 work=788140/2168196 ETA=2195s loss=4.6992
+baseline     epoch= 5 work=789420/2168196 ETA=2193s loss=4.8923
+baseline     epoch= 5 work=790700/2168196 ETA=2191s loss=4.8600
+baseline     epoch= 5 work=791980/2168196 ETA=2189s loss=4.9852
+baseline     epoch= 5 work=793260/2168196 ETA=2187s loss=5.0660
+baseline     epoch= 5 work=794540/2168196 ETA=2185s loss=4.8630
+baseline     epoch= 5 work=795820/2168196 ETA=2183s loss=4.8846
+baseline     epoch= 5 work=797100/2168196 ETA=2181s loss=4.7568
+baseline     epoch= 5 work=798380/2168196 ETA=2179s loss=4.7493
+baseline     epoch= 5 work=799660/2168196 ETA=2177s loss=4.6439
+baseline     epoch= 5 work=800940/2168196 ETA=2176s loss=4.6692
+baseline     epoch= 5 work=802220/2168196 ETA=2174s loss=4.9347
+baseline     epoch= 5 work=803500/2168196 ETA=2172s loss=5.1207
+baseline     epoch= 5 work=804780/2168196 ETA=2170s loss=4.8901
+baseline     epoch= 5 work=806060/2168196 ETA=2168s loss=4.7522
+baseline     epoch= 5 work=807340/2168196 ETA=2166s loss=4.8690
+baseline     epoch= 5 work=808620/2168196 ETA=2164s loss=5.1367
+baseline     epoch= 5 work=809900/2168196 ETA=2162s loss=5.0242
+baseline     epoch= 5 work=811180/2168196 ETA=2160s loss=4.9665
+baseline     epoch= 5 work=812460/2168196 ETA=2158s loss=4.5437
+baseline     epoch= 5 work=813740/2168196 ETA=2157s loss=4.8493
+baseline     epoch= 5 work=815020/2168196 ETA=2155s loss=5.2394
+baseline     epoch= 5 work=816300/2168196 ETA=2153s loss=4.9860
+baseline     epoch= 5 work=817580/2168196 ETA=2151s loss=4.7550
+baseline     epoch= 5 work=818860/2168196 ETA=2149s loss=5.0664
+baseline     epoch= 5 work=820140/2168196 ETA=2147s loss=5.0967
+baseline     epoch= 5 work=821420/2168196 ETA=2145s loss=4.8032
+baseline     epoch= 5 work=822700/2168196 ETA=2143s loss=5.0695
+baseline     epoch= 5 work=823980/2168196 ETA=2141s loss=5.3635
+baseline     epoch= 5 work=825260/2168196 ETA=2139s loss=4.8186
+baseline     epoch= 5 work=826540/2168196 ETA=2137s loss=5.1131
+baseline     epoch= 5 work=827820/2168196 ETA=2135s loss=4.9282
+baseline     epoch= 5 work=829100/2168196 ETA=2134s loss=5.0620
+baseline     epoch= 5 work=830380/2168196 ETA=2132s loss=5.0084
+baseline     epoch= 5 work=831660/2168196 ETA=2130s loss=4.9357
+baseline     epoch= 5 work=832940/2168196 ETA=2128s loss=4.6144
+baseline     epoch= 5 work=834220/2168196 ETA=2126s loss=4.8763
+baseline     epoch= 5 work=835500/2168196 ETA=2124s loss=5.0842
+baseline     epoch= 5 work=836780/2168196 ETA=2122s loss=4.9728
+baseline     epoch= 5 work=838060/2168196 ETA=2120s loss=4.9477
+baseline     epoch= 5 work=839340/2168196 ETA=2118s loss=4.7837
+baseline     epoch= 5 work=840620/2168196 ETA=2116s loss=4.9965
+baseline     epoch= 5 work=841900/2168196 ETA=2114s loss=4.8512
+baseline     epoch= 5 work=843180/2168196 ETA=2113s loss=4.8304
+baseline     epoch= 5 work=844460/2168196 ETA=2111s loss=5.0789
+baseline     epoch= 5 work=845740/2168196 ETA=2109s loss=4.8931
+baseline     epoch= 5 work=847020/2168196 ETA=2107s loss=4.8169
+baseline     epoch= 5 work=848300/2168196 ETA=2105s loss=5.0219
+baseline     epoch= 5 work=849580/2168196 ETA=2103s loss=4.8982
+baseline     epoch= 5 work=850860/2168196 ETA=2101s loss=4.9531
+baseline     epoch= 5 work=852140/2168196 ETA=2099s loss=5.0561
+baseline     epoch= 5 work=853420/2168196 ETA=2097s loss=4.8893
+baseline     epoch= 5 work=854700/2168196 ETA=2095s loss=4.7583
+baseline     epoch= 5 work=855980/2168196 ETA=2093s loss=4.9163
+baseline     epoch= 5 work=857260/2168196 ETA=2091s loss=5.0714
+baseline     epoch= 5 work=858540/2168196 ETA=2089s loss=4.7023
+baseline     epoch= 5 work=859820/2168196 ETA=2087s loss=4.9657
+baseline     epoch= 5 work=861100/2168196 ETA=2085s loss=4.9593
+baseline     epoch= 5 work=862380/2168196 ETA=2084s loss=5.0577
+baseline     epoch= 5 work=863660/2168196 ETA=2082s loss=4.8395
+baseline     epoch= 5 work=864940/2168196 ETA=2080s loss=4.8552
+baseline     epoch= 5 work=866220/2168196 ETA=2078s loss=4.8626
+baseline     epoch= 5 work=867500/2168196 ETA=2076s loss=4.9950
+baseline     epoch= 5 work=868780/2168196 ETA=2074s loss=4.9616
+baseline     epoch= 5 work=870060/2168196 ETA=2072s loss=4.9373
+baseline     epoch= 5 work=871340/2168196 ETA=2070s loss=4.9065
+baseline     epoch= 5 work=872620/2168196 ETA=2068s loss=5.1123
+baseline     epoch= 5 work=873900/2168196 ETA=2066s loss=4.7753
+baseline     epoch= 5 work=875180/2168196 ETA=2064s loss=4.8845
+baseline     epoch= 5 work=876460/2168196 ETA=2062s loss=4.9546
+baseline     epoch= 5 work=877740/2168196 ETA=2060s loss=4.7636
+baseline     epoch= 5 work=879020/2168196 ETA=2058s loss=4.9884
+baseline     epoch= 5 work=880300/2168196 ETA=2056s loss=4.9232
+baseline     epoch= 5 work=881580/2168196 ETA=2055s loss=4.8953
+baseline     epoch= 5 work=882860/2168196 ETA=2053s loss=4.9357
+baseline     epoch= 5 work=884140/2168196 ETA=2051s loss=4.6912
+baseline     epoch= 5 work=885420/2168196 ETA=2049s loss=5.1108
+baseline     epoch= 5 work=886700/2168196 ETA=2047s loss=4.8526
+baseline     epoch= 5 work=887980/2168196 ETA=2045s loss=4.8323
+baseline     epoch= 5 work=889260/2168196 ETA=2043s loss=5.0727
+baseline     epoch= 5 work=890540/2168196 ETA=2041s loss=4.8786
+baseline     epoch= 5 work=891820/2168196 ETA=2039s loss=4.8246
+baseline     epoch= 5 work=893100/2168196 ETA=2037s loss=4.8955
+baseline     epoch= 5 work=894380/2168196 ETA=2035s loss=5.2142
+baseline     epoch= 5 work=895660/2168196 ETA=2033s loss=4.9050
+baseline     epoch= 5 work=896940/2168196 ETA=2031s loss=5.1781
+baseline     epoch= 5 work=898220/2168196 ETA=2029s loss=5.2152
+baseline     epoch= 5 work=899500/2168196 ETA=2027s loss=4.8666
+baseline     epoch= 5 work=900780/2168196 ETA=2025s loss=4.8517
+baseline     epoch= 5 work=902060/2168196 ETA=2024s loss=5.0433
+baseline     epoch= 5 work=903340/2168196 ETA=2022s loss=4.8781
+baseline     epoch= 6 work=903543/2168196 ETA=1973s loss=5.1357
+baseline     epoch= 6 work=904823/2168196 ETA=1971s loss=4.8889
+baseline     epoch= 6 work=906103/2168196 ETA=1969s loss=4.9070
+baseline     epoch= 6 work=907383/2168196 ETA=1968s loss=4.7939
+baseline     epoch= 6 work=908663/2168196 ETA=1966s loss=4.7051
+baseline     epoch= 6 work=909943/2168196 ETA=1964s loss=4.9712
+baseline     epoch= 6 work=911223/2168196 ETA=1962s loss=5.0063
+baseline     epoch= 6 work=912503/2168196 ETA=1960s loss=4.7941
+baseline     epoch= 6 work=913783/2168196 ETA=1958s loss=5.0587
+baseline     epoch= 6 work=915063/2168196 ETA=1956s loss=4.9451
+baseline     epoch= 6 work=916343/2168196 ETA=1954s loss=4.8416
+baseline     epoch= 6 work=917623/2168196 ETA=1952s loss=4.9881
+baseline     epoch= 6 work=918903/2168196 ETA=1950s loss=4.7504
+baseline     epoch= 6 work=920183/2168196 ETA=1948s loss=4.6535
+baseline     epoch= 6 work=921463/2168196 ETA=1946s loss=5.1104
+baseline     epoch= 6 work=922743/2168196 ETA=1944s loss=5.0350
+baseline     epoch= 6 work=924023/2168196 ETA=1942s loss=4.7429
+baseline     epoch= 6 work=925303/2168196 ETA=1940s loss=4.7915
+baseline     epoch= 6 work=926583/2168196 ETA=1939s loss=4.7381
+baseline     epoch= 6 work=927863/2168196 ETA=1937s loss=4.7658
+baseline     epoch= 6 work=929143/2168196 ETA=1935s loss=5.2431
+baseline     epoch= 6 work=930423/2168196 ETA=1933s loss=5.0247
+baseline     epoch= 6 work=931703/2168196 ETA=1931s loss=4.9768
+baseline     epoch= 6 work=932983/2168196 ETA=1929s loss=4.8568
+baseline     epoch= 6 work=934263/2168196 ETA=1927s loss=5.0814
+baseline     epoch= 6 work=935543/2168196 ETA=1925s loss=5.0161
+baseline     epoch= 6 work=936823/2168196 ETA=1923s loss=4.7616
+baseline     epoch= 6 work=938103/2168196 ETA=1921s loss=4.5113
+baseline     epoch= 6 work=939383/2168196 ETA=1920s loss=5.0129
+baseline     epoch= 6 work=940663/2168196 ETA=1918s loss=4.7162
+baseline     epoch= 6 work=941943/2168196 ETA=1916s loss=4.9968
+baseline     epoch= 6 work=943223/2168196 ETA=1914s loss=5.1203
+baseline     epoch= 6 work=944503/2168196 ETA=1912s loss=4.9816
+baseline     epoch= 6 work=945783/2168196 ETA=1910s loss=4.4508
+baseline     epoch= 6 work=947063/2168196 ETA=1908s loss=4.6008
+baseline     epoch= 6 work=948343/2168196 ETA=1906s loss=4.4751
+baseline     epoch= 6 work=949623/2168196 ETA=1904s loss=4.9156
+baseline     epoch= 6 work=950903/2168196 ETA=1902s loss=4.7278
+baseline     epoch= 6 work=952183/2168196 ETA=1900s loss=4.9545
+baseline     epoch= 6 work=953463/2168196 ETA=1898s loss=4.8942
+baseline     epoch= 6 work=954743/2168196 ETA=1896s loss=4.9173
+baseline     epoch= 6 work=956023/2168196 ETA=1894s loss=4.7436
+baseline     epoch= 6 work=957303/2168196 ETA=1892s loss=4.8696
+baseline     epoch= 6 work=958583/2168196 ETA=1891s loss=5.1836
+baseline     epoch= 6 work=959863/2168196 ETA=1889s loss=4.5728
+baseline     epoch= 6 work=961143/2168196 ETA=1887s loss=4.7842
+baseline     epoch= 6 work=962423/2168196 ETA=1885s loss=4.8657
+baseline     epoch= 6 work=963703/2168196 ETA=1883s loss=4.8162
+baseline     epoch= 6 work=964983/2168196 ETA=1881s loss=4.6586
+baseline     epoch= 6 work=966263/2168196 ETA=1879s loss=4.7672
+baseline     epoch= 6 work=967543/2168196 ETA=1877s loss=4.8775
+baseline     epoch= 6 work=968823/2168196 ETA=1875s loss=4.9953
+baseline     epoch= 6 work=970103/2168196 ETA=1873s loss=4.6926
+baseline     epoch= 6 work=971383/2168196 ETA=1871s loss=5.0031
+baseline     epoch= 6 work=972663/2168196 ETA=1870s loss=4.9243
+baseline     epoch= 6 work=973943/2168196 ETA=1868s loss=4.9150
+baseline     epoch= 6 work=975223/2168196 ETA=1866s loss=4.7110
+baseline     epoch= 6 work=976503/2168196 ETA=1864s loss=4.8755
+baseline     epoch= 6 work=977783/2168196 ETA=1862s loss=4.7210
+baseline     epoch= 6 work=979063/2168196 ETA=1860s loss=5.1606
+baseline     epoch= 6 work=980343/2168196 ETA=1858s loss=4.9190
+baseline     epoch= 6 work=981623/2168196 ETA=1856s loss=5.0371
+baseline     epoch= 6 work=982903/2168196 ETA=1854s loss=5.1387
+baseline     epoch= 6 work=984183/2168196 ETA=1852s loss=4.8970
+baseline     epoch= 6 work=985463/2168196 ETA=1850s loss=5.0572
+baseline     epoch= 6 work=986743/2168196 ETA=1848s loss=5.1036
+baseline     epoch= 6 work=988023/2168196 ETA=1846s loss=4.8607
+baseline     epoch= 6 work=989303/2168196 ETA=1844s loss=4.7553
+baseline     epoch= 6 work=990583/2168196 ETA=1843s loss=4.6349
+baseline     epoch= 6 work=991863/2168196 ETA=1841s loss=4.9576
+baseline     epoch= 6 work=993143/2168196 ETA=1839s loss=4.9576
+baseline     epoch= 6 work=994423/2168196 ETA=1837s loss=4.6485
+baseline     epoch= 6 work=995703/2168196 ETA=1835s loss=4.7857
+baseline     epoch= 6 work=996983/2168196 ETA=1833s loss=4.6738
+baseline     epoch= 6 work=998263/2168196 ETA=1831s loss=5.0503
+baseline     epoch= 6 work=999543/2168196 ETA=1829s loss=4.8664
+baseline     epoch= 6 work=1000823/2168196 ETA=1827s loss=4.8093
+baseline     epoch= 6 work=1002103/2168196 ETA=1825s loss=4.8717
+baseline     epoch= 6 work=1003383/2168196 ETA=1823s loss=4.6406
+baseline     epoch= 6 work=1004663/2168196 ETA=1821s loss=4.9677
+baseline     epoch= 6 work=1005943/2168196 ETA=1819s loss=4.9473
+baseline     epoch= 6 work=1007223/2168196 ETA=1817s loss=4.7052
+baseline     epoch= 6 work=1008503/2168196 ETA=1816s loss=4.8171
+baseline     epoch= 6 work=1009783/2168196 ETA=1814s loss=4.5716
+baseline     epoch= 6 work=1011063/2168196 ETA=1812s loss=4.9119
+baseline     epoch= 6 work=1012343/2168196 ETA=1810s loss=4.7353
+baseline     epoch= 6 work=1013623/2168196 ETA=1808s loss=4.7605
+baseline     epoch= 6 work=1014903/2168196 ETA=1806s loss=4.7857
+baseline     epoch= 6 work=1016183/2168196 ETA=1804s loss=4.7617
+baseline     epoch= 6 work=1017463/2168196 ETA=1802s loss=5.0067
+baseline     epoch= 6 work=1018743/2168196 ETA=1800s loss=5.0205
+baseline     epoch= 6 work=1020023/2168196 ETA=1798s loss=5.0962
+baseline     epoch= 6 work=1021303/2168196 ETA=1796s loss=4.8476
+baseline     epoch= 6 work=1022583/2168196 ETA=1795s loss=4.7064
+baseline     epoch= 6 work=1023863/2168196 ETA=1793s loss=4.6157
+baseline     epoch= 6 work=1025143/2168196 ETA=1791s loss=5.0246
+baseline     epoch= 6 work=1026423/2168196 ETA=1789s loss=4.7023
+baseline     epoch= 6 work=1027703/2168196 ETA=1787s loss=4.8350
+baseline     epoch= 6 work=1028983/2168196 ETA=1785s loss=4.9520
+baseline     epoch= 6 work=1030263/2168196 ETA=1783s loss=4.9299
+baseline     epoch= 6 work=1031543/2168196 ETA=1781s loss=4.7054
+baseline     epoch= 6 work=1032823/2168196 ETA=1779s loss=4.7921
+baseline     epoch= 6 work=1034103/2168196 ETA=1777s loss=4.9341
+baseline     epoch= 6 work=1035383/2168196 ETA=1775s loss=4.8539
+baseline     epoch= 6 work=1036663/2168196 ETA=1773s loss=4.6692
+baseline     epoch= 6 work=1037943/2168196 ETA=1772s loss=4.8781
+baseline     epoch= 6 work=1039223/2168196 ETA=1770s loss=4.8054
+baseline     epoch= 6 work=1040503/2168196 ETA=1768s loss=4.8863
+baseline     epoch= 6 work=1041783/2168196 ETA=1766s loss=4.8901
+baseline     epoch= 6 work=1043063/2168196 ETA=1764s loss=4.6949
+baseline     epoch= 6 work=1044343/2168196 ETA=1762s loss=4.8164
+baseline     epoch= 6 work=1045623/2168196 ETA=1760s loss=4.7754
+baseline     epoch= 6 work=1046903/2168196 ETA=1758s loss=4.6915
+baseline     epoch= 6 work=1048183/2168196 ETA=1756s loss=5.0580
+baseline     epoch= 6 work=1049463/2168196 ETA=1754s loss=5.1659
+baseline     epoch= 6 work=1050743/2168196 ETA=1752s loss=4.7781
+baseline     epoch= 6 work=1052023/2168196 ETA=1750s loss=4.8397
+baseline     epoch= 6 work=1053303/2168196 ETA=1748s loss=4.7592
+baseline     epoch= 6 work=1054583/2168196 ETA=1746s loss=4.5356
+baseline     epoch= 6 work=1055863/2168196 ETA=1744s loss=5.0471
+baseline     epoch= 6 work=1057143/2168196 ETA=1743s loss=5.0277
+baseline     epoch= 6 work=1058423/2168196 ETA=1741s loss=4.7944
+baseline     epoch= 6 work=1059703/2168196 ETA=1739s loss=4.8127
+baseline     epoch= 6 work=1060983/2168196 ETA=1737s loss=4.8608
+baseline     epoch= 6 work=1062263/2168196 ETA=1735s loss=4.8087
+baseline     epoch= 6 work=1063543/2168196 ETA=1733s loss=4.7575
+baseline     epoch= 6 work=1064823/2168196 ETA=1731s loss=4.9020
+baseline     epoch= 6 work=1066103/2168196 ETA=1729s loss=4.9115
+baseline     epoch= 6 work=1067383/2168196 ETA=1727s loss=4.9566
+baseline     epoch= 6 work=1068663/2168196 ETA=1725s loss=4.9986
+baseline     epoch= 6 work=1069943/2168196 ETA=1723s loss=4.8107
+baseline     epoch= 6 work=1071223/2168196 ETA=1721s loss=4.8765
+baseline     epoch= 6 work=1072503/2168196 ETA=1719s loss=5.3215
+baseline     epoch= 6 work=1073783/2168196 ETA=1717s loss=5.0980
+baseline     epoch= 6 work=1075063/2168196 ETA=1715s loss=4.8605
+baseline     epoch= 6 work=1076343/2168196 ETA=1713s loss=4.8940
+baseline     epoch= 6 work=1077623/2168196 ETA=1712s loss=4.7807
+baseline     epoch= 6 work=1078903/2168196 ETA=1710s loss=4.9692
+baseline     epoch= 6 work=1080183/2168196 ETA=1708s loss=4.8035
+baseline     epoch= 6 work=1081463/2168196 ETA=1706s loss=4.6663
+baseline     epoch= 6 work=1082743/2168196 ETA=1704s loss=5.1746
+baseline     epoch= 6 work=1084023/2168196 ETA=1702s loss=5.0440
+baseline     epoch= 7 work=1084226/2168196 ETA=1654s loss=4.6960
+baseline     epoch= 7 work=1085506/2168196 ETA=1652s loss=4.8131
+baseline     epoch= 7 work=1086786/2168196 ETA=1650s loss=4.5757
+baseline     epoch= 7 work=1088066/2168196 ETA=1648s loss=4.9520
+baseline     epoch= 7 work=1089346/2168196 ETA=1646s loss=4.8665
+baseline     epoch= 7 work=1090626/2168196 ETA=1644s loss=4.8240
+baseline     epoch= 7 work=1091906/2168196 ETA=1642s loss=4.7506
+baseline     epoch= 7 work=1093186/2168196 ETA=1640s loss=4.9234
+baseline     epoch= 7 work=1094466/2168196 ETA=1638s loss=4.7562
+baseline     epoch= 7 work=1095746/2168196 ETA=1636s loss=4.6912
+baseline     epoch= 7 work=1097026/2168196 ETA=1634s loss=4.8356
+baseline     epoch= 7 work=1098306/2168196 ETA=1632s loss=4.9374
+baseline     epoch= 7 work=1099586/2168196 ETA=1630s loss=4.7175
+baseline     epoch= 7 work=1100866/2168196 ETA=1629s loss=4.8764
+baseline     epoch= 7 work=1102146/2168196 ETA=1627s loss=4.9726
+baseline     epoch= 7 work=1103426/2168196 ETA=1625s loss=4.6570
+baseline     epoch= 7 work=1104706/2168196 ETA=1623s loss=4.7336
+baseline     epoch= 7 work=1105986/2168196 ETA=1621s loss=4.6396
+baseline     epoch= 7 work=1107266/2168196 ETA=1619s loss=4.7242
+baseline     epoch= 7 work=1108546/2168196 ETA=1617s loss=4.8870
+baseline     epoch= 7 work=1109826/2168196 ETA=1615s loss=5.0188
+baseline     epoch= 7 work=1111106/2168196 ETA=1613s loss=5.0518
+baseline     epoch= 7 work=1112386/2168196 ETA=1611s loss=4.6962
+baseline     epoch= 7 work=1113666/2168196 ETA=1609s loss=4.5937
+baseline     epoch= 7 work=1114946/2168196 ETA=1607s loss=4.9796
+baseline     epoch= 7 work=1116226/2168196 ETA=1605s loss=4.8906
+baseline     epoch= 7 work=1117506/2168196 ETA=1603s loss=4.9589
+baseline     epoch= 7 work=1118786/2168196 ETA=1601s loss=4.8865
+baseline     epoch= 7 work=1120066/2168196 ETA=1600s loss=4.7373
+baseline     epoch= 7 work=1121346/2168196 ETA=1598s loss=5.2134
+baseline     epoch= 7 work=1122626/2168196 ETA=1596s loss=4.7760
+baseline     epoch= 7 work=1123906/2168196 ETA=1594s loss=4.7877
+baseline     epoch= 7 work=1125186/2168196 ETA=1592s loss=4.8247
+baseline     epoch= 7 work=1126466/2168196 ETA=1590s loss=5.0599
+baseline     epoch= 7 work=1127746/2168196 ETA=1588s loss=4.9795
+baseline     epoch= 7 work=1129026/2168196 ETA=1586s loss=4.8437
+baseline     epoch= 7 work=1130306/2168196 ETA=1584s loss=4.7639
+baseline     epoch= 7 work=1131586/2168196 ETA=1582s loss=4.7944
+baseline     epoch= 7 work=1132866/2168196 ETA=1580s loss=4.6973
+baseline     epoch= 7 work=1134146/2168196 ETA=1578s loss=4.3823
+baseline     epoch= 7 work=1135426/2168196 ETA=1576s loss=4.8216
+baseline     epoch= 7 work=1136706/2168196 ETA=1574s loss=4.5093
+baseline     epoch= 7 work=1137986/2168196 ETA=1572s loss=4.8041
+baseline     epoch= 7 work=1139266/2168196 ETA=1570s loss=4.6917
+baseline     epoch= 7 work=1140546/2168196 ETA=1568s loss=4.7341
+baseline     epoch= 7 work=1141826/2168196 ETA=1566s loss=4.8409
+baseline     epoch= 7 work=1143106/2168196 ETA=1564s loss=4.9907
+baseline     epoch= 7 work=1144386/2168196 ETA=1562s loss=4.6115
+baseline     epoch= 7 work=1145666/2168196 ETA=1561s loss=4.8670
+baseline     epoch= 7 work=1146946/2168196 ETA=1559s loss=4.7380
+baseline     epoch= 7 work=1148226/2168196 ETA=1557s loss=4.6623
+baseline     epoch= 7 work=1149506/2168196 ETA=1555s loss=4.8541
+baseline     epoch= 7 work=1150786/2168196 ETA=1553s loss=4.8677
+baseline     epoch= 7 work=1152066/2168196 ETA=1551s loss=4.9904
+baseline     epoch= 7 work=1153346/2168196 ETA=1549s loss=4.7570
+baseline     epoch= 7 work=1154626/2168196 ETA=1547s loss=4.7894
+baseline     epoch= 7 work=1155906/2168196 ETA=1545s loss=4.7243
+baseline     epoch= 7 work=1157186/2168196 ETA=1543s loss=5.0623
+baseline     epoch= 7 work=1158466/2168196 ETA=1541s loss=4.8404
+baseline     epoch= 7 work=1159746/2168196 ETA=1539s loss=4.9485
+baseline     epoch= 7 work=1161026/2168196 ETA=1537s loss=4.7944
+baseline     epoch= 7 work=1162306/2168196 ETA=1535s loss=4.9086
+baseline     epoch= 7 work=1163586/2168196 ETA=1533s loss=4.8706
+baseline     epoch= 7 work=1164866/2168196 ETA=1532s loss=4.5747
+baseline     epoch= 7 work=1166146/2168196 ETA=1530s loss=4.9637
+baseline     epoch= 7 work=1167426/2168196 ETA=1528s loss=4.7672
+baseline     epoch= 7 work=1168706/2168196 ETA=1526s loss=4.6855
+baseline     epoch= 7 work=1169986/2168196 ETA=1524s loss=4.9305
+baseline     epoch= 7 work=1171266/2168196 ETA=1522s loss=4.9245
+baseline     epoch= 7 work=1172546/2168196 ETA=1520s loss=4.8822
+baseline     epoch= 7 work=1173826/2168196 ETA=1518s loss=4.6808
+baseline     epoch= 7 work=1175106/2168196 ETA=1516s loss=4.8684
+baseline     epoch= 7 work=1176386/2168196 ETA=1514s loss=4.7284
+baseline     epoch= 7 work=1177666/2168196 ETA=1512s loss=4.9330
+baseline     epoch= 7 work=1178946/2168196 ETA=1510s loss=4.9067
+baseline     epoch= 7 work=1180226/2168196 ETA=1508s loss=4.8866
+baseline     epoch= 7 work=1181506/2168196 ETA=1506s loss=4.5908
+baseline     epoch= 7 work=1182786/2168196 ETA=1505s loss=4.7281
+baseline     epoch= 7 work=1184066/2168196 ETA=1503s loss=4.8411
+baseline     epoch= 7 work=1185346/2168196 ETA=1501s loss=4.7608
+baseline     epoch= 7 work=1186626/2168196 ETA=1499s loss=4.9218
+baseline     epoch= 7 work=1187906/2168196 ETA=1497s loss=4.5473
+baseline     epoch= 7 work=1189186/2168196 ETA=1495s loss=4.8026
+baseline     epoch= 7 work=1190466/2168196 ETA=1493s loss=4.7583
+baseline     epoch= 7 work=1191746/2168196 ETA=1491s loss=4.4523
+baseline     epoch= 7 work=1193026/2168196 ETA=1489s loss=4.8431
+baseline     epoch= 7 work=1194306/2168196 ETA=1487s loss=4.6796
+baseline     epoch= 7 work=1195586/2168196 ETA=1485s loss=4.7266
+baseline     epoch= 7 work=1196866/2168196 ETA=1484s loss=4.7049
+baseline     epoch= 7 work=1198146/2168196 ETA=1482s loss=4.8947
+baseline     epoch= 7 work=1199426/2168196 ETA=1480s loss=4.6188
+baseline     epoch= 7 work=1200706/2168196 ETA=1478s loss=4.8775
+baseline     epoch= 7 work=1201986/2168196 ETA=1476s loss=4.9066
+baseline     epoch= 7 work=1203266/2168196 ETA=1474s loss=4.4547
+baseline     epoch= 7 work=1204546/2168196 ETA=1472s loss=4.9612
+baseline     epoch= 7 work=1205826/2168196 ETA=1470s loss=4.7362
+baseline     epoch= 7 work=1207106/2168196 ETA=1468s loss=4.7970
+baseline     epoch= 7 work=1208386/2168196 ETA=1466s loss=4.7493
+baseline     epoch= 7 work=1209666/2168196 ETA=1464s loss=4.5961
+baseline     epoch= 7 work=1210946/2168196 ETA=1462s loss=4.9163
+baseline     epoch= 7 work=1212226/2168196 ETA=1460s loss=4.7252
+baseline     epoch= 7 work=1213506/2168196 ETA=1459s loss=4.8107
+baseline     epoch= 7 work=1214786/2168196 ETA=1457s loss=4.8132
+baseline     epoch= 7 work=1216066/2168196 ETA=1455s loss=4.9394
+baseline     epoch= 7 work=1217346/2168196 ETA=1453s loss=4.9485
+baseline     epoch= 7 work=1218626/2168196 ETA=1451s loss=5.0041
+baseline     epoch= 7 work=1219906/2168196 ETA=1449s loss=4.8133
+baseline     epoch= 7 work=1221186/2168196 ETA=1447s loss=4.8602
+baseline     epoch= 7 work=1222466/2168196 ETA=1445s loss=4.7943
+baseline     epoch= 7 work=1223746/2168196 ETA=1443s loss=5.0737
+baseline     epoch= 7 work=1225026/2168196 ETA=1441s loss=4.7042
+baseline     epoch= 7 work=1226306/2168196 ETA=1439s loss=4.9522
+baseline     epoch= 7 work=1227586/2168196 ETA=1437s loss=4.9186
+baseline     epoch= 7 work=1228866/2168196 ETA=1435s loss=4.7320
+baseline     epoch= 7 work=1230146/2168196 ETA=1433s loss=4.8522
+baseline     epoch= 7 work=1231426/2168196 ETA=1431s loss=4.8550
+baseline     epoch= 7 work=1232706/2168196 ETA=1430s loss=4.8415
+baseline     epoch= 7 work=1233986/2168196 ETA=1428s loss=4.6555
+baseline     epoch= 7 work=1235266/2168196 ETA=1426s loss=5.0292
+baseline     epoch= 7 work=1236546/2168196 ETA=1424s loss=4.7417
+baseline     epoch= 7 work=1237826/2168196 ETA=1422s loss=4.8454
+baseline     epoch= 7 work=1239106/2168196 ETA=1420s loss=5.0182
+baseline     epoch= 7 work=1240386/2168196 ETA=1418s loss=4.8301
+baseline     epoch= 7 work=1241666/2168196 ETA=1416s loss=4.8458
+baseline     epoch= 7 work=1242946/2168196 ETA=1414s loss=4.9926
+baseline     epoch= 7 work=1244226/2168196 ETA=1412s loss=4.6776
+baseline     epoch= 7 work=1245506/2168196 ETA=1410s loss=4.7827
+baseline     epoch= 7 work=1246786/2168196 ETA=1408s loss=4.9953
+baseline     epoch= 7 work=1248066/2168196 ETA=1406s loss=4.8318
+baseline     epoch= 7 work=1249346/2168196 ETA=1404s loss=4.9654
+baseline     epoch= 7 work=1250626/2168196 ETA=1402s loss=4.7401
+baseline     epoch= 7 work=1251906/2168196 ETA=1401s loss=4.8987
+baseline     epoch= 7 work=1253186/2168196 ETA=1399s loss=4.8150
+baseline     epoch= 7 work=1254466/2168196 ETA=1397s loss=4.9060
+baseline     epoch= 7 work=1255746/2168196 ETA=1395s loss=4.6086
+baseline     epoch= 7 work=1257026/2168196 ETA=1393s loss=4.9209
+baseline     epoch= 7 work=1258306/2168196 ETA=1391s loss=5.0797
+baseline     epoch= 7 work=1259586/2168196 ETA=1389s loss=4.8628
+baseline     epoch= 7 work=1260866/2168196 ETA=1387s loss=5.0692
+baseline     epoch= 7 work=1262146/2168196 ETA=1385s loss=4.8929
+baseline     epoch= 7 work=1263426/2168196 ETA=1383s loss=4.8692
+baseline     epoch= 7 work=1264706/2168196 ETA=1381s loss=4.4322
+baseline     epoch= 8 work=1264909/2168196 ETA=1333s loss=4.6412
+baseline     epoch= 8 work=1266189/2168196 ETA=1331s loss=4.8226
+baseline     epoch= 8 work=1267469/2168196 ETA=1329s loss=4.6369
+baseline     epoch= 8 work=1268749/2168196 ETA=1327s loss=4.9529
+baseline     epoch= 8 work=1270029/2168196 ETA=1325s loss=4.8265
+baseline     epoch= 8 work=1271309/2168196 ETA=1323s loss=4.7917
+baseline     epoch= 8 work=1272589/2168196 ETA=1321s loss=4.4271
+baseline     epoch= 8 work=1273869/2168196 ETA=1319s loss=4.6530
+baseline     epoch= 8 work=1275149/2168196 ETA=1318s loss=4.6970
+baseline     epoch= 8 work=1276429/2168196 ETA=1316s loss=4.8322
+baseline     epoch= 8 work=1277709/2168196 ETA=1314s loss=4.7894
+baseline     epoch= 8 work=1278989/2168196 ETA=1312s loss=4.7259
+baseline     epoch= 8 work=1280269/2168196 ETA=1310s loss=4.7191
+baseline     epoch= 8 work=1281549/2168196 ETA=1308s loss=4.8361
+baseline     epoch= 8 work=1282829/2168196 ETA=1306s loss=4.7945
+baseline     epoch= 8 work=1284109/2168196 ETA=1304s loss=4.7307
+baseline     epoch= 8 work=1285389/2168196 ETA=1302s loss=5.0323
+baseline     epoch= 8 work=1286669/2168196 ETA=1300s loss=4.5500
+baseline     epoch= 8 work=1287949/2168196 ETA=1298s loss=4.6910
+baseline     epoch= 8 work=1289229/2168196 ETA=1296s loss=4.6666
+baseline     epoch= 8 work=1290509/2168196 ETA=1294s loss=4.5825
+baseline     epoch= 8 work=1291789/2168196 ETA=1292s loss=4.6844
+baseline     epoch= 8 work=1293069/2168196 ETA=1290s loss=4.7900
+baseline     epoch= 8 work=1294349/2168196 ETA=1288s loss=4.7285
+baseline     epoch= 8 work=1295629/2168196 ETA=1287s loss=4.5235
+baseline     epoch= 8 work=1296909/2168196 ETA=1285s loss=4.6546
+baseline     epoch= 8 work=1298189/2168196 ETA=1283s loss=4.9190
+baseline     epoch= 8 work=1299469/2168196 ETA=1281s loss=4.6960
+baseline     epoch= 8 work=1300749/2168196 ETA=1279s loss=4.7948
+baseline     epoch= 8 work=1302029/2168196 ETA=1277s loss=4.7226
+baseline     epoch= 8 work=1303309/2168196 ETA=1275s loss=4.6970
+baseline     epoch= 8 work=1304589/2168196 ETA=1273s loss=4.6437
+baseline     epoch= 8 work=1305869/2168196 ETA=1271s loss=4.5098
+baseline     epoch= 8 work=1307149/2168196 ETA=1269s loss=4.7415
+baseline     epoch= 8 work=1308429/2168196 ETA=1267s loss=4.9334
+baseline     epoch= 8 work=1309709/2168196 ETA=1265s loss=4.8507
+baseline     epoch= 8 work=1310989/2168196 ETA=1263s loss=4.7455
+baseline     epoch= 8 work=1312269/2168196 ETA=1261s loss=4.9286
+baseline     epoch= 8 work=1313549/2168196 ETA=1259s loss=4.8268
+baseline     epoch= 8 work=1314829/2168196 ETA=1258s loss=4.4956
+baseline     epoch= 8 work=1316109/2168196 ETA=1256s loss=4.7263
+baseline     epoch= 8 work=1317389/2168196 ETA=1254s loss=4.5561
+baseline     epoch= 8 work=1318669/2168196 ETA=1252s loss=4.7063
+baseline     epoch= 8 work=1319949/2168196 ETA=1250s loss=4.9012
+baseline     epoch= 8 work=1321229/2168196 ETA=1248s loss=5.1518
+baseline     epoch= 8 work=1322509/2168196 ETA=1246s loss=4.9531
+baseline     epoch= 8 work=1323789/2168196 ETA=1244s loss=4.7747
+baseline     epoch= 8 work=1325069/2168196 ETA=1242s loss=4.8201
+baseline     epoch= 8 work=1326349/2168196 ETA=1240s loss=4.8505
+baseline     epoch= 8 work=1327629/2168196 ETA=1238s loss=4.6889
+baseline     epoch= 8 work=1328909/2168196 ETA=1236s loss=4.8764
+baseline     epoch= 8 work=1330189/2168196 ETA=1234s loss=4.5324
+baseline     epoch= 8 work=1331469/2168196 ETA=1232s loss=4.7911
+baseline     epoch= 8 work=1332749/2168196 ETA=1230s loss=4.5658
+baseline     epoch= 8 work=1334029/2168196 ETA=1228s loss=4.5829
+baseline     epoch= 8 work=1335309/2168196 ETA=1227s loss=4.7425
+baseline     epoch= 8 work=1336589/2168196 ETA=1225s loss=4.6534
+baseline     epoch= 8 work=1337869/2168196 ETA=1223s loss=4.9190
+baseline     epoch= 8 work=1339149/2168196 ETA=1221s loss=4.8737
+baseline     epoch= 8 work=1340429/2168196 ETA=1219s loss=4.7603
+baseline     epoch= 8 work=1341709/2168196 ETA=1217s loss=4.6269
+baseline     epoch= 8 work=1342989/2168196 ETA=1215s loss=4.7349
+baseline     epoch= 8 work=1344269/2168196 ETA=1213s loss=4.8407
+baseline     epoch= 8 work=1345549/2168196 ETA=1211s loss=4.7099
+baseline     epoch= 8 work=1346829/2168196 ETA=1209s loss=4.7903
+baseline     epoch= 8 work=1348109/2168196 ETA=1207s loss=4.5200
+baseline     epoch= 8 work=1349389/2168196 ETA=1205s loss=4.8731
+baseline     epoch= 8 work=1350669/2168196 ETA=1203s loss=4.7015
+baseline     epoch= 8 work=1351949/2168196 ETA=1201s loss=4.9126
+baseline     epoch= 8 work=1353229/2168196 ETA=1199s loss=4.6690
+baseline     epoch= 8 work=1354509/2168196 ETA=1197s loss=4.9176
+baseline     epoch= 8 work=1355789/2168196 ETA=1195s loss=4.7740
+baseline     epoch= 8 work=1357069/2168196 ETA=1193s loss=4.8111
+baseline     epoch= 8 work=1358349/2168196 ETA=1192s loss=4.6289
+baseline     epoch= 8 work=1359629/2168196 ETA=1190s loss=4.7500
+baseline     epoch= 8 work=1360909/2168196 ETA=1188s loss=4.7775
+baseline     epoch= 8 work=1362189/2168196 ETA=1186s loss=5.0344
+baseline     epoch= 8 work=1363469/2168196 ETA=1184s loss=4.8772
+baseline     epoch= 8 work=1364749/2168196 ETA=1182s loss=4.9707
+baseline     epoch= 8 work=1366029/2168196 ETA=1180s loss=4.5891
+baseline     epoch= 8 work=1367309/2168196 ETA=1178s loss=4.9328
+baseline     epoch= 8 work=1368589/2168196 ETA=1176s loss=4.6204
+baseline     epoch= 8 work=1369869/2168196 ETA=1174s loss=4.6841
+baseline     epoch= 8 work=1371149/2168196 ETA=1172s loss=4.7661
+baseline     epoch= 8 work=1372429/2168196 ETA=1170s loss=5.0361
+baseline     epoch= 8 work=1373709/2168196 ETA=1168s loss=4.6763
+baseline     epoch= 8 work=1374989/2168196 ETA=1166s loss=4.4568
+baseline     epoch= 8 work=1376269/2168196 ETA=1165s loss=4.7020
+baseline     epoch= 8 work=1377549/2168196 ETA=1163s loss=4.5399
+baseline     epoch= 8 work=1378829/2168196 ETA=1161s loss=4.7690
+baseline     epoch= 8 work=1380109/2168196 ETA=1159s loss=4.4870
+baseline     epoch= 8 work=1381389/2168196 ETA=1157s loss=4.6399
+baseline     epoch= 8 work=1382669/2168196 ETA=1155s loss=4.9077
+baseline     epoch= 8 work=1383949/2168196 ETA=1153s loss=4.8268
+baseline     epoch= 8 work=1385229/2168196 ETA=1151s loss=4.9158
+baseline     epoch= 8 work=1386509/2168196 ETA=1149s loss=4.7327
+baseline     epoch= 8 work=1387789/2168196 ETA=1147s loss=4.7426
+baseline     epoch= 8 work=1389069/2168196 ETA=1145s loss=4.7361
+baseline     epoch= 8 work=1390349/2168196 ETA=1143s loss=4.8275
+baseline     epoch= 8 work=1391629/2168196 ETA=1141s loss=4.8819
+baseline     epoch= 8 work=1392909/2168196 ETA=1139s loss=4.5856
+baseline     epoch= 8 work=1394189/2168196 ETA=1137s loss=4.7871
+baseline     epoch= 8 work=1395469/2168196 ETA=1135s loss=4.7009
+baseline     epoch= 8 work=1396749/2168196 ETA=1133s loss=4.5232
+baseline     epoch= 8 work=1398029/2168196 ETA=1131s loss=4.5468
+baseline     epoch= 8 work=1399309/2168196 ETA=1130s loss=4.5286
+baseline     epoch= 8 work=1400589/2168196 ETA=1128s loss=4.6403
+baseline     epoch= 8 work=1401869/2168196 ETA=1126s loss=4.6134
+baseline     epoch= 8 work=1403149/2168196 ETA=1124s loss=4.8191
+baseline     epoch= 8 work=1404429/2168196 ETA=1122s loss=4.6522
+baseline     epoch= 8 work=1405709/2168196 ETA=1120s loss=4.7808
+baseline     epoch= 8 work=1406989/2168196 ETA=1118s loss=4.7353
+baseline     epoch= 8 work=1408269/2168196 ETA=1116s loss=4.8183
+baseline     epoch= 8 work=1409549/2168196 ETA=1114s loss=4.7176
+baseline     epoch= 8 work=1410829/2168196 ETA=1112s loss=4.6397
+baseline     epoch= 8 work=1412109/2168196 ETA=1110s loss=4.8845
+baseline     epoch= 8 work=1413389/2168196 ETA=1108s loss=4.3967
+baseline     epoch= 8 work=1414669/2168196 ETA=1106s loss=4.8523
+baseline     epoch= 8 work=1415949/2168196 ETA=1104s loss=4.8415
+baseline     epoch= 8 work=1417229/2168196 ETA=1102s loss=5.1006
+baseline     epoch= 8 work=1418509/2168196 ETA=1101s loss=4.6096
+baseline     epoch= 8 work=1419789/2168196 ETA=1099s loss=4.5299
+baseline     epoch= 8 work=1421069/2168196 ETA=1097s loss=4.3348
+baseline     epoch= 8 work=1422349/2168196 ETA=1095s loss=4.7095
+baseline     epoch= 8 work=1423629/2168196 ETA=1093s loss=4.8352
+baseline     epoch= 8 work=1424909/2168196 ETA=1091s loss=4.6833
+baseline     epoch= 8 work=1426189/2168196 ETA=1089s loss=4.5277
+baseline     epoch= 8 work=1427469/2168196 ETA=1087s loss=4.7775
+baseline     epoch= 8 work=1428749/2168196 ETA=1085s loss=4.5690
+baseline     epoch= 8 work=1430029/2168196 ETA=1083s loss=4.5830
+baseline     epoch= 8 work=1431309/2168196 ETA=1081s loss=4.7564
+baseline     epoch= 8 work=1432589/2168196 ETA=1079s loss=4.9127
+baseline     epoch= 8 work=1433869/2168196 ETA=1077s loss=4.8130
+baseline     epoch= 8 work=1435149/2168196 ETA=1075s loss=5.0701
+baseline     epoch= 8 work=1436429/2168196 ETA=1073s loss=4.5364
+baseline     epoch= 8 work=1437709/2168196 ETA=1071s loss=4.6168
+baseline     epoch= 8 work=1438989/2168196 ETA=1069s loss=4.9033
+baseline     epoch= 8 work=1440269/2168196 ETA=1068s loss=4.5402
+baseline     epoch= 8 work=1441549/2168196 ETA=1066s loss=4.6411
+baseline     epoch= 8 work=1442829/2168196 ETA=1064s loss=4.8215
+baseline     epoch= 8 work=1444109/2168196 ETA=1062s loss=4.5054
+baseline     epoch= 8 work=1445389/2168196 ETA=1060s loss=4.6445
+baseline     epoch= 9 work=1445592/2168196 ETA=1012s loss=4.7448
+baseline     epoch= 9 work=1446872/2168196 ETA=1010s loss=4.5472
+baseline     epoch= 9 work=1448152/2168196 ETA=1008s loss=5.0003
+baseline     epoch= 9 work=1449432/2168196 ETA=1006s loss=4.5143
+baseline     epoch= 9 work=1450712/2168196 ETA=1004s loss=5.0107
+baseline     epoch= 9 work=1451992/2168196 ETA=1002s loss=4.7178
+baseline     epoch= 9 work=1453272/2168196 ETA=1000s loss=4.8553
+baseline     epoch= 9 work=1454552/2168196 ETA=998s loss=4.7407
+baseline     epoch= 9 work=1455832/2168196 ETA=996s loss=4.8123
+baseline     epoch= 9 work=1457112/2168196 ETA=994s loss=4.8912
+baseline     epoch= 9 work=1458392/2168196 ETA=992s loss=4.3476
+baseline     epoch= 9 work=1459672/2168196 ETA=990s loss=4.7484
+baseline     epoch= 9 work=1460952/2168196 ETA=988s loss=4.7408
+baseline     epoch= 9 work=1462232/2168196 ETA=986s loss=4.7976
+baseline     epoch= 9 work=1463512/2168196 ETA=984s loss=4.8208
+baseline     epoch= 9 work=1464792/2168196 ETA=983s loss=4.6966
+baseline     epoch= 9 work=1466072/2168196 ETA=981s loss=4.5856
+baseline     epoch= 9 work=1467352/2168196 ETA=979s loss=4.6070
+baseline     epoch= 9 work=1468632/2168196 ETA=977s loss=4.7764
+baseline     epoch= 9 work=1469912/2168196 ETA=975s loss=4.8660
+baseline     epoch= 9 work=1471192/2168196 ETA=973s loss=4.7791
+baseline     epoch= 9 work=1472472/2168196 ETA=971s loss=4.9376
+baseline     epoch= 9 work=1473752/2168196 ETA=969s loss=4.8346
+baseline     epoch= 9 work=1475032/2168196 ETA=967s loss=5.0054
+baseline     epoch= 9 work=1476312/2168196 ETA=965s loss=4.8452
+baseline     epoch= 9 work=1477592/2168196 ETA=963s loss=4.7774
+baseline     epoch= 9 work=1478872/2168196 ETA=961s loss=4.8019
+baseline     epoch= 9 work=1480152/2168196 ETA=959s loss=5.0229
+baseline     epoch= 9 work=1481432/2168196 ETA=957s loss=4.5113
+baseline     epoch= 9 work=1482712/2168196 ETA=955s loss=4.6937
+baseline     epoch= 9 work=1483992/2168196 ETA=953s loss=4.6431
+baseline     epoch= 9 work=1485272/2168196 ETA=952s loss=4.5765
+baseline     epoch= 9 work=1486552/2168196 ETA=950s loss=4.8074
+baseline     epoch= 9 work=1487832/2168196 ETA=948s loss=4.8391
+baseline     epoch= 9 work=1489112/2168196 ETA=946s loss=4.7283
+baseline     epoch= 9 work=1490392/2168196 ETA=944s loss=4.7050
+baseline     epoch= 9 work=1491672/2168196 ETA=942s loss=4.4723
+baseline     epoch= 9 work=1492952/2168196 ETA=940s loss=4.8129
+baseline     epoch= 9 work=1494232/2168196 ETA=938s loss=4.7729
+baseline     epoch= 9 work=1495512/2168196 ETA=936s loss=4.8674
+baseline     epoch= 9 work=1496792/2168196 ETA=934s loss=4.5964
+baseline     epoch= 9 work=1498072/2168196 ETA=932s loss=4.7190
+baseline     epoch= 9 work=1499352/2168196 ETA=930s loss=4.8636
+baseline     epoch= 9 work=1500632/2168196 ETA=929s loss=4.7253
+baseline     epoch= 9 work=1501912/2168196 ETA=927s loss=4.6397
+baseline     epoch= 9 work=1503192/2168196 ETA=925s loss=4.8453
+baseline     epoch= 9 work=1504472/2168196 ETA=923s loss=4.5455
+baseline     epoch= 9 work=1505752/2168196 ETA=921s loss=4.6298
+baseline     epoch= 9 work=1507032/2168196 ETA=919s loss=4.7271
+baseline     epoch= 9 work=1508312/2168196 ETA=917s loss=5.0853
+baseline     epoch= 9 work=1509592/2168196 ETA=915s loss=4.5933
+baseline     epoch= 9 work=1510872/2168196 ETA=913s loss=4.5956
+baseline     epoch= 9 work=1512152/2168196 ETA=911s loss=4.7162
+baseline     epoch= 9 work=1513432/2168196 ETA=909s loss=4.6632
+baseline     epoch= 9 work=1514712/2168196 ETA=907s loss=4.4017
+baseline     epoch= 9 work=1515992/2168196 ETA=906s loss=4.7874
+baseline     epoch= 9 work=1517272/2168196 ETA=904s loss=4.8046
+baseline     epoch= 9 work=1518552/2168196 ETA=902s loss=4.6243
+baseline     epoch= 9 work=1519832/2168196 ETA=900s loss=4.6449
+baseline     epoch= 9 work=1521112/2168196 ETA=898s loss=4.8440
+baseline     epoch= 9 work=1522392/2168196 ETA=896s loss=4.4744
+baseline     epoch= 9 work=1523672/2168196 ETA=894s loss=4.8893
+baseline     epoch= 9 work=1524952/2168196 ETA=892s loss=4.6156
+baseline     epoch= 9 work=1526232/2168196 ETA=890s loss=4.7733
+baseline     epoch= 9 work=1527512/2168196 ETA=888s loss=4.4849
+baseline     epoch= 9 work=1528792/2168196 ETA=886s loss=5.0042
+baseline     epoch= 9 work=1530072/2168196 ETA=884s loss=4.8683
+baseline     epoch= 9 work=1531352/2168196 ETA=883s loss=4.7974
+baseline     epoch= 9 work=1532632/2168196 ETA=881s loss=4.9548
+baseline     epoch= 9 work=1533912/2168196 ETA=879s loss=4.3634
+baseline     epoch= 9 work=1535192/2168196 ETA=877s loss=4.7969
+baseline     epoch= 9 work=1536472/2168196 ETA=875s loss=4.7332
+baseline     epoch= 9 work=1537752/2168196 ETA=873s loss=4.4521
+baseline     epoch= 9 work=1539032/2168196 ETA=871s loss=4.8316
+baseline     epoch= 9 work=1540312/2168196 ETA=869s loss=4.8447
+baseline     epoch= 9 work=1541592/2168196 ETA=867s loss=4.8656
+baseline     epoch= 9 work=1542872/2168196 ETA=865s loss=4.7768
+baseline     epoch= 9 work=1544152/2168196 ETA=863s loss=4.8643
+baseline     epoch= 9 work=1545432/2168196 ETA=861s loss=4.6389
+baseline     epoch= 9 work=1546712/2168196 ETA=859s loss=4.7868
+baseline     epoch= 9 work=1547992/2168196 ETA=857s loss=4.7797
+baseline     epoch= 9 work=1549272/2168196 ETA=855s loss=4.6167
+baseline     epoch= 9 work=1550552/2168196 ETA=853s loss=4.6207
+baseline     epoch= 9 work=1551832/2168196 ETA=851s loss=4.6905
+baseline     epoch= 9 work=1553112/2168196 ETA=850s loss=4.4655
+baseline     epoch= 9 work=1554392/2168196 ETA=848s loss=4.7526
+baseline     epoch= 9 work=1555672/2168196 ETA=846s loss=4.4944
+baseline     epoch= 9 work=1556952/2168196 ETA=844s loss=4.7822
+baseline     epoch= 9 work=1558232/2168196 ETA=842s loss=4.7944
+baseline     epoch= 9 work=1559512/2168196 ETA=840s loss=4.5153
+baseline     epoch= 9 work=1560792/2168196 ETA=838s loss=4.8756
+baseline     epoch= 9 work=1562072/2168196 ETA=836s loss=4.9365
+baseline     epoch= 9 work=1563352/2168196 ETA=834s loss=4.4705
+baseline     epoch= 9 work=1564632/2168196 ETA=832s loss=4.7714
+baseline     epoch= 9 work=1565912/2168196 ETA=830s loss=4.6522
+baseline     epoch= 9 work=1567192/2168196 ETA=828s loss=4.5829
+baseline     epoch= 9 work=1568472/2168196 ETA=826s loss=4.8123
+baseline     epoch= 9 work=1569752/2168196 ETA=824s loss=4.6363
+baseline     epoch= 9 work=1571032/2168196 ETA=822s loss=4.8992
+baseline     epoch= 9 work=1572312/2168196 ETA=821s loss=4.6254
+baseline     epoch= 9 work=1573592/2168196 ETA=819s loss=4.7975
+baseline     epoch= 9 work=1574872/2168196 ETA=817s loss=4.6989
+baseline     epoch= 9 work=1576152/2168196 ETA=815s loss=4.9191
+baseline     epoch= 9 work=1577432/2168196 ETA=813s loss=4.5633
+baseline     epoch= 9 work=1578712/2168196 ETA=811s loss=4.6826
+baseline     epoch= 9 work=1579992/2168196 ETA=809s loss=4.4927
+baseline     epoch= 9 work=1581272/2168196 ETA=807s loss=4.6454
+baseline     epoch= 9 work=1582552/2168196 ETA=805s loss=4.7416
+baseline     epoch= 9 work=1583832/2168196 ETA=803s loss=4.4645
+baseline     epoch= 9 work=1585112/2168196 ETA=801s loss=4.7667
+baseline     epoch= 9 work=1586392/2168196 ETA=799s loss=4.5104
+baseline     epoch= 9 work=1587672/2168196 ETA=797s loss=4.5255
+baseline     epoch= 9 work=1588952/2168196 ETA=795s loss=4.4556
+baseline     epoch= 9 work=1590232/2168196 ETA=793s loss=4.4299
+baseline     epoch= 9 work=1591512/2168196 ETA=791s loss=4.4721
+baseline     epoch= 9 work=1592792/2168196 ETA=789s loss=4.5081
+baseline     epoch= 9 work=1594072/2168196 ETA=788s loss=4.5665
+baseline     epoch= 9 work=1595352/2168196 ETA=786s loss=4.7683
+baseline     epoch= 9 work=1596632/2168196 ETA=784s loss=4.8051
+baseline     epoch= 9 work=1597912/2168196 ETA=782s loss=5.0847
+baseline     epoch= 9 work=1599192/2168196 ETA=780s loss=4.6700
+baseline     epoch= 9 work=1600472/2168196 ETA=778s loss=4.7700
+baseline     epoch= 9 work=1601752/2168196 ETA=776s loss=4.7338
+baseline     epoch= 9 work=1603032/2168196 ETA=774s loss=4.6555
+baseline     epoch= 9 work=1604312/2168196 ETA=772s loss=4.9361
+baseline     epoch= 9 work=1605592/2168196 ETA=770s loss=4.5595
+baseline     epoch= 9 work=1606872/2168196 ETA=768s loss=5.1533
+baseline     epoch= 9 work=1608152/2168196 ETA=766s loss=4.6380
+baseline     epoch= 9 work=1609432/2168196 ETA=764s loss=4.7466
+baseline     epoch= 9 work=1610712/2168196 ETA=762s loss=4.8207
+baseline     epoch= 9 work=1611992/2168196 ETA=760s loss=4.6510
+baseline     epoch= 9 work=1613272/2168196 ETA=758s loss=4.6225
+baseline     epoch= 9 work=1614552/2168196 ETA=756s loss=4.7142
+baseline     epoch= 9 work=1615832/2168196 ETA=754s loss=4.7427
+baseline     epoch= 9 work=1617112/2168196 ETA=753s loss=4.7204
+baseline     epoch= 9 work=1618392/2168196 ETA=751s loss=4.6122
+baseline     epoch= 9 work=1619672/2168196 ETA=749s loss=4.9784
+baseline     epoch= 9 work=1620952/2168196 ETA=747s loss=4.5755
+baseline     epoch= 9 work=1622232/2168196 ETA=745s loss=4.7970
+baseline     epoch= 9 work=1623512/2168196 ETA=743s loss=4.6771
+baseline     epoch= 9 work=1624792/2168196 ETA=741s loss=4.9718
+baseline     epoch= 9 work=1626072/2168196 ETA=739s loss=4.8619
+baseline     epoch=10 work=1626275/2168196 ETA=691s loss=4.5606
+baseline     epoch=10 work=1627555/2168196 ETA=689s loss=4.7530
+baseline     epoch=10 work=1628835/2168196 ETA=687s loss=4.9090
+baseline     epoch=10 work=1630115/2168196 ETA=685s loss=4.5537
+baseline     epoch=10 work=1631395/2168196 ETA=683s loss=4.8130
+baseline     epoch=10 work=1632675/2168196 ETA=681s loss=4.6388
+baseline     epoch=10 work=1633955/2168196 ETA=679s loss=4.2537
+baseline     epoch=10 work=1635235/2168196 ETA=677s loss=4.8459
+baseline     epoch=10 work=1636515/2168196 ETA=675s loss=4.8380
+baseline     epoch=10 work=1637795/2168196 ETA=674s loss=4.8950
+baseline     epoch=10 work=1639075/2168196 ETA=672s loss=4.4331
+baseline     epoch=10 work=1640355/2168196 ETA=670s loss=4.5194
+baseline     epoch=10 work=1641635/2168196 ETA=668s loss=4.9421
+baseline     epoch=10 work=1642915/2168196 ETA=666s loss=4.6211
+baseline     epoch=10 work=1644195/2168196 ETA=664s loss=4.8479
+baseline     epoch=10 work=1645475/2168196 ETA=662s loss=4.3288
+baseline     epoch=10 work=1646755/2168196 ETA=660s loss=4.4826
+baseline     epoch=10 work=1648035/2168196 ETA=658s loss=5.1055
+baseline     epoch=10 work=1649315/2168196 ETA=656s loss=4.5699
+baseline     epoch=10 work=1650595/2168196 ETA=654s loss=4.6169
+baseline     epoch=10 work=1651875/2168196 ETA=652s loss=4.7919
+baseline     epoch=10 work=1653155/2168196 ETA=650s loss=4.7495
+baseline     epoch=10 work=1654435/2168196 ETA=648s loss=4.5739
+baseline     epoch=10 work=1655715/2168196 ETA=646s loss=4.4416
+baseline     epoch=10 work=1656995/2168196 ETA=644s loss=4.8933
+baseline     epoch=10 work=1658275/2168196 ETA=643s loss=4.7649
+baseline     epoch=10 work=1659555/2168196 ETA=641s loss=4.8004
+baseline     epoch=10 work=1660835/2168196 ETA=639s loss=4.7297
+baseline     epoch=10 work=1662115/2168196 ETA=637s loss=4.6601
+baseline     epoch=10 work=1663395/2168196 ETA=635s loss=4.9330
+baseline     epoch=10 work=1664675/2168196 ETA=633s loss=4.7892
+baseline     epoch=10 work=1665955/2168196 ETA=631s loss=4.8150
+baseline     epoch=10 work=1667235/2168196 ETA=629s loss=4.5511
+baseline     epoch=10 work=1668515/2168196 ETA=627s loss=4.7131
+baseline     epoch=10 work=1669795/2168196 ETA=625s loss=4.4926
+baseline     epoch=10 work=1671075/2168196 ETA=623s loss=4.6480
+baseline     epoch=10 work=1672355/2168196 ETA=621s loss=4.6999
+baseline     epoch=10 work=1673635/2168196 ETA=619s loss=4.5506
+baseline     epoch=10 work=1674915/2168196 ETA=617s loss=4.4813
+baseline     epoch=10 work=1676195/2168196 ETA=615s loss=4.5311
+baseline     epoch=10 work=1677475/2168196 ETA=613s loss=4.4951
+baseline     epoch=10 work=1678755/2168196 ETA=611s loss=4.3972
+baseline     epoch=10 work=1680035/2168196 ETA=610s loss=4.6420
+baseline     epoch=10 work=1681315/2168196 ETA=608s loss=4.7424
+baseline     epoch=10 work=1682595/2168196 ETA=606s loss=4.5886
+baseline     epoch=10 work=1683875/2168196 ETA=604s loss=4.8650
+baseline     epoch=10 work=1685155/2168196 ETA=602s loss=4.5377
+baseline     epoch=10 work=1686435/2168196 ETA=600s loss=5.0519
+baseline     epoch=10 work=1687715/2168196 ETA=598s loss=4.6877
+baseline     epoch=10 work=1688995/2168196 ETA=596s loss=4.5701
+baseline     epoch=10 work=1690275/2168196 ETA=594s loss=4.5665
+baseline     epoch=10 work=1691555/2168196 ETA=592s loss=4.9658
+baseline     epoch=10 work=1692835/2168196 ETA=590s loss=4.4538
+baseline     epoch=10 work=1694115/2168196 ETA=588s loss=4.8260
+baseline     epoch=10 work=1695395/2168196 ETA=586s loss=4.6028
+baseline     epoch=10 work=1696675/2168196 ETA=584s loss=4.7887
+baseline     epoch=10 work=1697955/2168196 ETA=583s loss=4.7084
+baseline     epoch=10 work=1699235/2168196 ETA=581s loss=4.8062
+baseline     epoch=10 work=1700515/2168196 ETA=579s loss=4.5772
+baseline     epoch=10 work=1701795/2168196 ETA=577s loss=4.6419
+baseline     epoch=10 work=1703075/2168196 ETA=575s loss=4.6605
+baseline     epoch=10 work=1704355/2168196 ETA=573s loss=4.8095
+baseline     epoch=10 work=1705635/2168196 ETA=571s loss=4.3383
+baseline     epoch=10 work=1706915/2168196 ETA=569s loss=4.6507
+baseline     epoch=10 work=1708195/2168196 ETA=567s loss=4.4559
+baseline     epoch=10 work=1709475/2168196 ETA=565s loss=4.6920
+baseline     epoch=10 work=1710755/2168196 ETA=563s loss=4.7604
+baseline     epoch=10 work=1712035/2168196 ETA=561s loss=4.4624
+baseline     epoch=10 work=1713315/2168196 ETA=559s loss=4.5431
+baseline     epoch=10 work=1714595/2168196 ETA=557s loss=4.6021
+baseline     epoch=10 work=1715875/2168196 ETA=555s loss=4.5927
+baseline     epoch=10 work=1717155/2168196 ETA=553s loss=4.7362
+baseline     epoch=10 work=1718435/2168196 ETA=551s loss=4.7543
+baseline     epoch=10 work=1719715/2168196 ETA=549s loss=4.9161
+baseline     epoch=10 work=1720995/2168196 ETA=547s loss=4.6783
+baseline     epoch=10 work=1722275/2168196 ETA=546s loss=4.5956
+baseline     epoch=10 work=1723555/2168196 ETA=544s loss=4.4915
+baseline     epoch=10 work=1724835/2168196 ETA=542s loss=4.5757
+baseline     epoch=10 work=1726115/2168196 ETA=540s loss=4.5265
+baseline     epoch=10 work=1727395/2168196 ETA=538s loss=4.5654
+baseline     epoch=10 work=1728675/2168196 ETA=536s loss=4.9684
+baseline     epoch=10 work=1729955/2168196 ETA=534s loss=4.4446
+baseline     epoch=10 work=1731235/2168196 ETA=532s loss=4.7083
+baseline     epoch=10 work=1732515/2168196 ETA=530s loss=4.3953
+baseline     epoch=10 work=1733795/2168196 ETA=528s loss=4.6106
+baseline     epoch=10 work=1735075/2168196 ETA=526s loss=4.8591
+baseline     epoch=10 work=1736355/2168196 ETA=524s loss=4.6091
+baseline     epoch=10 work=1737635/2168196 ETA=522s loss=4.9453
+baseline     epoch=10 work=1738915/2168196 ETA=520s loss=4.6382
+baseline     epoch=10 work=1740195/2168196 ETA=518s loss=4.5080
+baseline     epoch=10 work=1741475/2168196 ETA=516s loss=4.8317
+baseline     epoch=10 work=1742755/2168196 ETA=514s loss=4.5373
+baseline     epoch=10 work=1744035/2168196 ETA=513s loss=4.5331
+baseline     epoch=10 work=1745315/2168196 ETA=511s loss=4.6208
+baseline     epoch=10 work=1746595/2168196 ETA=509s loss=4.5834
+baseline     epoch=10 work=1747875/2168196 ETA=507s loss=4.8583
+baseline     epoch=10 work=1749155/2168196 ETA=505s loss=4.5221
+baseline     epoch=10 work=1750435/2168196 ETA=503s loss=4.3971
+baseline     epoch=10 work=1751715/2168196 ETA=501s loss=4.5626
+baseline     epoch=10 work=1752995/2168196 ETA=499s loss=4.5582
+baseline     epoch=10 work=1754275/2168196 ETA=497s loss=4.5580
+baseline     epoch=10 work=1755555/2168196 ETA=495s loss=4.7190
+baseline     epoch=10 work=1756835/2168196 ETA=493s loss=4.5901
+baseline     epoch=10 work=1758115/2168196 ETA=491s loss=4.5698
+baseline     epoch=10 work=1759395/2168196 ETA=489s loss=4.6269
+baseline     epoch=10 work=1760675/2168196 ETA=487s loss=4.8787
+baseline     epoch=10 work=1761955/2168196 ETA=485s loss=4.6657
+baseline     epoch=10 work=1763235/2168196 ETA=483s loss=4.5737
+baseline     epoch=10 work=1764515/2168196 ETA=482s loss=5.0190
+baseline     epoch=10 work=1765795/2168196 ETA=480s loss=4.7896
+baseline     epoch=10 work=1767075/2168196 ETA=478s loss=4.5254
+baseline     epoch=10 work=1768355/2168196 ETA=476s loss=4.9964
+baseline     epoch=10 work=1769635/2168196 ETA=474s loss=5.0640
+baseline     epoch=10 work=1770915/2168196 ETA=472s loss=4.5934
+baseline     epoch=10 work=1772195/2168196 ETA=470s loss=4.7400
+baseline     epoch=10 work=1773475/2168196 ETA=468s loss=4.7415
+baseline     epoch=10 work=1774755/2168196 ETA=466s loss=4.4687
+baseline     epoch=10 work=1776035/2168196 ETA=464s loss=4.6804
+baseline     epoch=10 work=1777315/2168196 ETA=462s loss=4.7032
+baseline     epoch=10 work=1778595/2168196 ETA=460s loss=4.5920
+baseline     epoch=10 work=1779875/2168196 ETA=458s loss=4.5761
+baseline     epoch=10 work=1781155/2168196 ETA=456s loss=4.7988
+baseline     epoch=10 work=1782435/2168196 ETA=454s loss=4.6924
+baseline     epoch=10 work=1783715/2168196 ETA=452s loss=4.7200
+baseline     epoch=10 work=1784995/2168196 ETA=450s loss=4.8676
+baseline     epoch=10 work=1786275/2168196 ETA=448s loss=4.5087
+baseline     epoch=10 work=1787555/2168196 ETA=447s loss=4.7119
+baseline     epoch=10 work=1788835/2168196 ETA=445s loss=4.5141
+baseline     epoch=10 work=1790115/2168196 ETA=443s loss=4.5276
+baseline     epoch=10 work=1791395/2168196 ETA=441s loss=4.6078
+baseline     epoch=10 work=1792675/2168196 ETA=439s loss=4.6906
+baseline     epoch=10 work=1793955/2168196 ETA=437s loss=4.6387
+baseline     epoch=10 work=1795235/2168196 ETA=435s loss=4.7679
+baseline     epoch=10 work=1796515/2168196 ETA=433s loss=4.6534
+baseline     epoch=10 work=1797795/2168196 ETA=431s loss=4.7829
+baseline     epoch=10 work=1799075/2168196 ETA=429s loss=4.9263
+baseline     epoch=10 work=1800355/2168196 ETA=427s loss=4.7828
+baseline     epoch=10 work=1801635/2168196 ETA=425s loss=4.5520
+baseline     epoch=10 work=1802915/2168196 ETA=423s loss=4.5967
+baseline     epoch=10 work=1804195/2168196 ETA=421s loss=4.8034
+baseline     epoch=10 work=1805475/2168196 ETA=419s loss=4.8924
+baseline     epoch=10 work=1806755/2168196 ETA=417s loss=4.2742
+baseline     epoch=11 work=1806958/2168196 ETA=370s loss=4.6406
+baseline     epoch=11 work=1808238/2168196 ETA=368s loss=4.6519
+baseline     epoch=11 work=1809518/2168196 ETA=366s loss=4.4440
+baseline     epoch=11 work=1810798/2168196 ETA=364s loss=4.4287
+baseline     epoch=11 work=1812078/2168196 ETA=362s loss=4.5458
+baseline     epoch=11 work=1813358/2168196 ETA=360s loss=4.4058
+baseline     epoch=11 work=1814638/2168196 ETA=358s loss=4.5076
+baseline     epoch=11 work=1815918/2168196 ETA=356s loss=4.7110
+baseline     epoch=11 work=1817198/2168196 ETA=354s loss=4.6370
+baseline     epoch=11 work=1818478/2168196 ETA=352s loss=4.5262
+baseline     epoch=11 work=1819758/2168196 ETA=350s loss=4.8449
+baseline     epoch=11 work=1821038/2168196 ETA=348s loss=4.4085
+baseline     epoch=11 work=1822318/2168196 ETA=346s loss=4.3962
+baseline     epoch=11 work=1823598/2168196 ETA=344s loss=4.5946
+baseline     epoch=11 work=1824878/2168196 ETA=342s loss=4.6880
+baseline     epoch=11 work=1826158/2168196 ETA=340s loss=4.6695
+baseline     epoch=11 work=1827438/2168196 ETA=338s loss=4.6234
+baseline     epoch=11 work=1828718/2168196 ETA=337s loss=4.6271
+baseline     epoch=11 work=1829998/2168196 ETA=335s loss=4.6011
+baseline     epoch=11 work=1831278/2168196 ETA=333s loss=4.4579
+baseline     epoch=11 work=1832558/2168196 ETA=331s loss=4.7272
+baseline     epoch=11 work=1833838/2168196 ETA=329s loss=4.5532
+baseline     epoch=11 work=1835118/2168196 ETA=327s loss=4.4097
+baseline     epoch=11 work=1836398/2168196 ETA=325s loss=4.8648
+baseline     epoch=11 work=1837678/2168196 ETA=323s loss=4.7178
+baseline     epoch=11 work=1838958/2168196 ETA=321s loss=4.6356
+baseline     epoch=11 work=1840238/2168196 ETA=319s loss=4.3279
+baseline     epoch=11 work=1841518/2168196 ETA=317s loss=4.5064
+baseline     epoch=11 work=1842798/2168196 ETA=315s loss=4.7851
+baseline     epoch=11 work=1844078/2168196 ETA=313s loss=4.7391
+baseline     epoch=11 work=1845358/2168196 ETA=311s loss=4.5636
+baseline     epoch=11 work=1846638/2168196 ETA=309s loss=4.5722
+baseline     epoch=11 work=1847918/2168196 ETA=307s loss=4.8343
+baseline     epoch=11 work=1849198/2168196 ETA=305s loss=4.7017
+baseline     epoch=11 work=1850478/2168196 ETA=303s loss=4.6094
+baseline     epoch=11 work=1851758/2168196 ETA=301s loss=4.6425
+baseline     epoch=11 work=1853038/2168196 ETA=300s loss=4.3791
+baseline     epoch=11 work=1854318/2168196 ETA=298s loss=4.4720
+baseline     epoch=11 work=1855598/2168196 ETA=296s loss=4.7906
+baseline     epoch=11 work=1856878/2168196 ETA=294s loss=4.6845
+baseline     epoch=11 work=1858158/2168196 ETA=292s loss=4.5467
+baseline     epoch=11 work=1859438/2168196 ETA=290s loss=4.4888
+baseline     epoch=11 work=1860718/2168196 ETA=288s loss=4.3099
+baseline     epoch=11 work=1861998/2168196 ETA=286s loss=4.4514
+baseline     epoch=11 work=1863278/2168196 ETA=284s loss=4.4065
+baseline     epoch=11 work=1864558/2168196 ETA=282s loss=4.6218
+baseline     epoch=11 work=1865838/2168196 ETA=280s loss=4.8091
+baseline     epoch=11 work=1867118/2168196 ETA=278s loss=4.6533
+baseline     epoch=11 work=1868398/2168196 ETA=276s loss=4.4319
+baseline     epoch=11 work=1869678/2168196 ETA=274s loss=4.9589
+baseline     epoch=11 work=1870958/2168196 ETA=272s loss=4.7938
+baseline     epoch=11 work=1872238/2168196 ETA=270s loss=4.5403
+baseline     epoch=11 work=1873518/2168196 ETA=269s loss=4.6570
+baseline     epoch=11 work=1874798/2168196 ETA=267s loss=4.4789
+baseline     epoch=11 work=1876078/2168196 ETA=265s loss=4.5339
+baseline     epoch=11 work=1877358/2168196 ETA=263s loss=4.7830
+baseline     epoch=11 work=1878638/2168196 ETA=261s loss=4.4519
+baseline     epoch=11 work=1879918/2168196 ETA=259s loss=4.4375
+baseline     epoch=11 work=1881198/2168196 ETA=257s loss=4.3831
+baseline     epoch=11 work=1882478/2168196 ETA=255s loss=4.6693
+baseline     epoch=11 work=1883758/2168196 ETA=253s loss=4.8911
+baseline     epoch=11 work=1885038/2168196 ETA=251s loss=4.7326
+baseline     epoch=11 work=1886318/2168196 ETA=249s loss=4.4113
+baseline     epoch=11 work=1887598/2168196 ETA=247s loss=4.7574
+baseline     epoch=11 work=1888878/2168196 ETA=245s loss=4.8183
+baseline     epoch=11 work=1890158/2168196 ETA=243s loss=4.4681
+baseline     epoch=11 work=1891438/2168196 ETA=241s loss=4.7591
+baseline     epoch=11 work=1892718/2168196 ETA=239s loss=4.2759
+baseline     epoch=11 work=1893998/2168196 ETA=237s loss=4.5961
+baseline     epoch=11 work=1895278/2168196 ETA=235s loss=4.3518
+baseline     epoch=11 work=1896558/2168196 ETA=233s loss=4.9969
+baseline     epoch=11 work=1897838/2168196 ETA=231s loss=4.7024
+baseline     epoch=11 work=1899118/2168196 ETA=230s loss=4.4529
+baseline     epoch=11 work=1900398/2168196 ETA=228s loss=4.6967
+baseline     epoch=11 work=1901678/2168196 ETA=226s loss=4.4290
+baseline     epoch=11 work=1902958/2168196 ETA=224s loss=4.5487
+baseline     epoch=11 work=1904238/2168196 ETA=222s loss=4.3435
+baseline     epoch=11 work=1905518/2168196 ETA=220s loss=4.9726
+baseline     epoch=11 work=1906798/2168196 ETA=218s loss=4.4928
+baseline     epoch=11 work=1908078/2168196 ETA=216s loss=4.5784
+baseline     epoch=11 work=1909358/2168196 ETA=214s loss=4.4840
+baseline     epoch=11 work=1910638/2168196 ETA=212s loss=4.5491
+baseline     epoch=11 work=1911918/2168196 ETA=210s loss=4.8881
+baseline     epoch=11 work=1913198/2168196 ETA=208s loss=4.7998
+baseline     epoch=11 work=1914478/2168196 ETA=206s loss=4.5800
+baseline     epoch=11 work=1915758/2168196 ETA=204s loss=4.5549
+baseline     epoch=11 work=1917038/2168196 ETA=202s loss=4.7620
+baseline     epoch=11 work=1918318/2168196 ETA=200s loss=4.4555
+baseline     epoch=11 work=1919598/2168196 ETA=198s loss=4.4050
+baseline     epoch=11 work=1920878/2168196 ETA=196s loss=4.2150
+baseline     epoch=11 work=1922158/2168196 ETA=194s loss=4.8200
+baseline     epoch=11 work=1923438/2168196 ETA=192s loss=4.4737
+baseline     epoch=11 work=1924718/2168196 ETA=191s loss=4.8962
+baseline     epoch=11 work=1925998/2168196 ETA=189s loss=4.4127
+baseline     epoch=11 work=1927278/2168196 ETA=187s loss=4.4627
+baseline     epoch=11 work=1928558/2168196 ETA=185s loss=4.7173
+baseline     epoch=11 work=1929838/2168196 ETA=183s loss=4.7487
+baseline     epoch=11 work=1931118/2168196 ETA=181s loss=4.5177
+baseline     epoch=11 work=1932398/2168196 ETA=179s loss=4.3904
+baseline     epoch=11 work=1933678/2168196 ETA=177s loss=4.5904
+baseline     epoch=11 work=1934958/2168196 ETA=175s loss=4.8553
+baseline     epoch=11 work=1936238/2168196 ETA=173s loss=4.5996
+baseline     epoch=11 work=1937518/2168196 ETA=171s loss=4.7433
+baseline     epoch=11 work=1938798/2168196 ETA=169s loss=4.9905
+baseline     epoch=11 work=1940078/2168196 ETA=167s loss=4.2557
+baseline     epoch=11 work=1941358/2168196 ETA=165s loss=4.6712
+baseline     epoch=11 work=1942638/2168196 ETA=163s loss=4.8099
+baseline     epoch=11 work=1943918/2168196 ETA=161s loss=4.7762
+baseline     epoch=11 work=1945198/2168196 ETA=160s loss=4.7562
+baseline     epoch=11 work=1946478/2168196 ETA=158s loss=4.4490
+baseline     epoch=11 work=1947758/2168196 ETA=156s loss=4.7164
+baseline     epoch=11 work=1949038/2168196 ETA=154s loss=4.6633
+baseline     epoch=11 work=1950318/2168196 ETA=152s loss=4.6275
+baseline     epoch=11 work=1951598/2168196 ETA=150s loss=5.0439
+baseline     epoch=11 work=1952878/2168196 ETA=148s loss=4.8246
+baseline     epoch=11 work=1954158/2168196 ETA=146s loss=4.5992
+baseline     epoch=11 work=1955438/2168196 ETA=144s loss=4.4975
+baseline     epoch=11 work=1956718/2168196 ETA=142s loss=4.6728
+baseline     epoch=11 work=1957998/2168196 ETA=140s loss=4.6135
+baseline     epoch=11 work=1959278/2168196 ETA=138s loss=4.6697
+baseline     epoch=11 work=1960558/2168196 ETA=136s loss=4.4964
+baseline     epoch=11 work=1961838/2168196 ETA=134s loss=4.9820
+baseline     epoch=11 work=1963118/2168196 ETA=132s loss=4.5300
+baseline     epoch=11 work=1964398/2168196 ETA=130s loss=4.4786
+baseline     epoch=11 work=1965678/2168196 ETA=128s loss=4.7713
+baseline     epoch=11 work=1966958/2168196 ETA=127s loss=4.6534
+baseline     epoch=11 work=1968238/2168196 ETA=125s loss=4.5224
+baseline     epoch=11 work=1969518/2168196 ETA=123s loss=4.6089
+baseline     epoch=11 work=1970798/2168196 ETA=121s loss=4.6284
+baseline     epoch=11 work=1972078/2168196 ETA=119s loss=4.6489
+baseline     epoch=11 work=1973358/2168196 ETA=117s loss=4.5843
+baseline     epoch=11 work=1974638/2168196 ETA=115s loss=4.7171
+baseline     epoch=11 work=1975918/2168196 ETA=113s loss=4.7863
+baseline     epoch=11 work=1977198/2168196 ETA=111s loss=5.0368
+baseline     epoch=11 work=1978478/2168196 ETA=109s loss=4.2202
+baseline     epoch=11 work=1979758/2168196 ETA=107s loss=4.5431
+baseline     epoch=11 work=1981038/2168196 ETA=105s loss=4.7699
+baseline     epoch=11 work=1982318/2168196 ETA=103s loss=4.6099
+baseline     epoch=11 work=1983598/2168196 ETA=101s loss=4.6664
+baseline     epoch=11 work=1984878/2168196 ETA=99s loss=4.6347
+baseline     epoch=11 work=1986158/2168196 ETA=97s loss=4.6886
+baseline     epoch=11 work=1987438/2168196 ETA=95s loss=4.7076
+baseline     epoch=12 work=1987641/2168196 ETA=47s loss=4.5725
+baseline     epoch=12 work=1988921/2168196 ETA=45s loss=4.6410
+baseline     epoch=12 work=1990201/2168196 ETA=43s loss=4.4700
+baseline     epoch=12 work=1991481/2168196 ETA=41s loss=4.2995
+baseline     epoch=12 work=1992761/2168196 ETA=40s loss=4.6083
+baseline     epoch=12 work=1994041/2168196 ETA=38s loss=4.7880
+baseline     epoch=12 work=1995321/2168196 ETA=36s loss=4.5150
+baseline     epoch=12 work=1996601/2168196 ETA=34s loss=4.3814
+baseline     epoch=12 work=1997881/2168196 ETA=32s loss=4.8675
+baseline     epoch=12 work=1999161/2168196 ETA=30s loss=4.7346
+baseline     epoch=12 work=2000441/2168196 ETA=28s loss=4.2094
+baseline     epoch=12 work=2001721/2168196 ETA=26s loss=4.5675
+baseline     epoch=12 work=2003001/2168196 ETA=24s loss=4.5575
+baseline     epoch=12 work=2004281/2168196 ETA=22s loss=4.7508
+baseline     epoch=12 work=2005561/2168196 ETA=20s loss=4.6321
+baseline     epoch=12 work=2006841/2168196 ETA=18s loss=4.5454
+baseline     epoch=12 work=2008121/2168196 ETA=16s loss=4.6777
+baseline     epoch=12 work=2009401/2168196 ETA=14s loss=4.7613
+baseline     epoch=12 work=2010681/2168196 ETA=12s loss=4.5760
+baseline     epoch=12 work=2011961/2168196 ETA=10s loss=4.5493
+baseline     epoch=12 work=2013241/2168196 ETA=9s loss=4.7087
+baseline     epoch=12 work=2014521/2168196 ETA=7s loss=4.5595
+baseline     epoch=12 work=2015801/2168196 ETA=5s loss=4.3950
+baseline     epoch=12 work=2017081/2168196 ETA=3s loss=4.5236
+baseline     epoch=12 work=2018361/2168196 ETA=1s loss=4.5396
+clock        epoch= 1 work=128/2168196 ETA=3600s loss=8.6732
+clock        epoch= 1 work=1408/2168196 ETA=3596s loss=8.1256
+clock        epoch= 1 work=2688/2168196 ETA=3592s loss=8.0464
+clock        epoch= 1 work=3968/2168196 ETA=3588s loss=8.0514
+clock        epoch= 1 work=5248/2168196 ETA=3584s loss=7.8621
+clock        epoch= 1 work=6528/2168196 ETA=3580s loss=7.8044
+clock        epoch= 1 work=7808/2168196 ETA=3576s loss=7.7995
+clock        epoch= 1 work=9088/2168196 ETA=3573s loss=7.5857
+clock        epoch= 1 work=10368/2168196 ETA=3569s loss=7.3140
+clock        epoch= 1 work=11648/2168196 ETA=3565s loss=7.4085
+clock        epoch= 1 work=12928/2168196 ETA=3561s loss=7.4239
+clock        epoch= 1 work=14208/2168196 ETA=3557s loss=7.1924
+clock        epoch= 1 work=15488/2168196 ETA=3553s loss=6.9734
+clock        epoch= 1 work=16768/2168196 ETA=3549s loss=7.2688
+clock        epoch= 1 work=18048/2168196 ETA=3545s loss=7.2651
+clock        epoch= 1 work=19328/2168196 ETA=3541s loss=7.0947
+clock        epoch= 1 work=20608/2168196 ETA=3537s loss=7.0767
+clock        epoch= 1 work=21888/2168196 ETA=3533s loss=7.0391
+clock        epoch= 1 work=23168/2168196 ETA=3529s loss=7.1773
+clock        epoch= 1 work=24448/2168196 ETA=3525s loss=7.1137
+clock        epoch= 1 work=25728/2168196 ETA=3521s loss=6.9555
+clock        epoch= 1 work=27008/2168196 ETA=3517s loss=7.1303
+clock        epoch= 1 work=28288/2168196 ETA=3513s loss=7.0682
+clock        epoch= 1 work=29568/2168196 ETA=3509s loss=7.0464
+clock        epoch= 1 work=30848/2168196 ETA=3505s loss=6.9969
+clock        epoch= 1 work=32128/2168196 ETA=3501s loss=6.8739
+clock        epoch= 1 work=33408/2168196 ETA=3497s loss=6.9032
+clock        epoch= 1 work=34688/2168196 ETA=3493s loss=6.6812
+clock        epoch= 1 work=35968/2168196 ETA=3489s loss=6.9691
+clock        epoch= 1 work=37248/2168196 ETA=3485s loss=6.9761
+clock        epoch= 1 work=38528/2168196 ETA=3481s loss=7.0163
+clock        epoch= 1 work=39808/2168196 ETA=3477s loss=6.8308
+clock        epoch= 1 work=41088/2168196 ETA=3473s loss=6.8626
+clock        epoch= 1 work=42368/2168196 ETA=3469s loss=6.9004
+clock        epoch= 1 work=43648/2168196 ETA=3465s loss=6.7202
+clock        epoch= 1 work=44928/2168196 ETA=3461s loss=6.8032
+clock        epoch= 1 work=46208/2168196 ETA=3457s loss=6.6344
+clock        epoch= 1 work=47488/2168196 ETA=3453s loss=6.6851
+clock        epoch= 1 work=48768/2168196 ETA=3450s loss=6.6930
+clock        epoch= 1 work=50048/2168196 ETA=3446s loss=6.6803
+clock        epoch= 1 work=51328/2168196 ETA=3442s loss=6.6770
+clock        epoch= 1 work=52608/2168196 ETA=3438s loss=6.9203
+clock        epoch= 1 work=53888/2168196 ETA=3434s loss=6.5397
+clock        epoch= 1 work=55168/2168196 ETA=3430s loss=6.6739
+clock        epoch= 1 work=56448/2168196 ETA=3426s loss=6.6307
+clock        epoch= 1 work=57728/2168196 ETA=3422s loss=6.4592
+clock        epoch= 1 work=59008/2168196 ETA=3418s loss=6.1881
+clock        epoch= 1 work=60288/2168196 ETA=3414s loss=6.5474
+clock        epoch= 1 work=61568/2168196 ETA=3410s loss=6.6435
+clock        epoch= 1 work=62848/2168196 ETA=3406s loss=6.5216
+clock        epoch= 1 work=64128/2168196 ETA=3402s loss=6.5567
+clock        epoch= 1 work=65408/2168196 ETA=3399s loss=6.6893
+clock        epoch= 1 work=66688/2168196 ETA=3395s loss=6.4168
+clock        epoch= 1 work=67968/2168196 ETA=3391s loss=6.5817
+clock        epoch= 1 work=69248/2168196 ETA=3387s loss=6.2508
+clock        epoch= 1 work=70528/2168196 ETA=3383s loss=6.4574
+clock        epoch= 1 work=71808/2168196 ETA=3379s loss=6.6293
+clock        epoch= 1 work=73088/2168196 ETA=3375s loss=6.4297
+clock        epoch= 1 work=74368/2168196 ETA=3371s loss=6.5167
+clock        epoch= 1 work=75648/2168196 ETA=3367s loss=6.6497
+clock        epoch= 1 work=76928/2168196 ETA=3363s loss=6.4593
+clock        epoch= 1 work=78208/2168196 ETA=3359s loss=6.3692
+clock        epoch= 1 work=79488/2168196 ETA=3355s loss=6.3953
+clock        epoch= 1 work=80768/2168196 ETA=3351s loss=6.6841
+clock        epoch= 1 work=82048/2168196 ETA=3347s loss=6.3875
+clock        epoch= 1 work=83328/2168196 ETA=3343s loss=6.5260
+clock        epoch= 1 work=84608/2168196 ETA=3339s loss=6.5748
+clock        epoch= 1 work=85888/2168196 ETA=3335s loss=6.2314
+clock        epoch= 1 work=87168/2168196 ETA=3331s loss=6.4029
+clock        epoch= 1 work=88448/2168196 ETA=3327s loss=6.5409
+clock        epoch= 1 work=89728/2168196 ETA=3323s loss=6.4151
+clock        epoch= 1 work=91008/2168196 ETA=3319s loss=6.4045
+clock        epoch= 1 work=92288/2168196 ETA=3315s loss=6.2395
+clock        epoch= 1 work=93568/2168196 ETA=3311s loss=6.2675
+clock        epoch= 1 work=94848/2168196 ETA=3307s loss=6.2752
+clock        epoch= 1 work=96128/2168196 ETA=3303s loss=6.4035
+clock        epoch= 1 work=97408/2168196 ETA=3299s loss=6.2924
+clock        epoch= 1 work=98688/2168196 ETA=3295s loss=6.1971
+clock        epoch= 1 work=99968/2168196 ETA=3291s loss=6.3322
+clock        epoch= 1 work=101248/2168196 ETA=3287s loss=6.4174
+clock        epoch= 1 work=102528/2168196 ETA=3283s loss=6.2384
+clock        epoch= 1 work=103808/2168196 ETA=3279s loss=6.1013
+clock        epoch= 1 work=105088/2168196 ETA=3275s loss=6.3952
+clock        epoch= 1 work=106368/2168196 ETA=3272s loss=6.1288
+clock        epoch= 1 work=107648/2168196 ETA=3268s loss=6.5062
+clock        epoch= 1 work=108928/2168196 ETA=3264s loss=6.4133
+clock        epoch= 1 work=110208/2168196 ETA=3260s loss=6.1365
+clock        epoch= 1 work=111488/2168196 ETA=3256s loss=6.3774
+clock        epoch= 1 work=112768/2168196 ETA=3252s loss=6.3557
+clock        epoch= 1 work=114048/2168196 ETA=3248s loss=6.2892
+clock        epoch= 1 work=115328/2168196 ETA=3244s loss=6.4287
+clock        epoch= 1 work=116608/2168196 ETA=3240s loss=6.4337
+clock        epoch= 1 work=117888/2168196 ETA=3236s loss=6.3896
+clock        epoch= 1 work=119168/2168196 ETA=3233s loss=6.4586
+clock        epoch= 1 work=120448/2168196 ETA=3229s loss=6.1670
+clock        epoch= 1 work=121728/2168196 ETA=3225s loss=6.4684
+clock        epoch= 1 work=123008/2168196 ETA=3221s loss=6.0998
+clock        epoch= 1 work=124288/2168196 ETA=3217s loss=6.2516
+clock        epoch= 1 work=125568/2168196 ETA=3213s loss=5.8508
+clock        epoch= 1 work=126848/2168196 ETA=3209s loss=6.1732
+clock        epoch= 1 work=128128/2168196 ETA=3205s loss=6.2946
+clock        epoch= 1 work=129408/2168196 ETA=3201s loss=6.5104
+clock        epoch= 1 work=130688/2168196 ETA=3197s loss=6.2754
+clock        epoch= 1 work=131968/2168196 ETA=3193s loss=6.1945
+clock        epoch= 1 work=133248/2168196 ETA=3189s loss=6.0767
+clock        epoch= 1 work=134528/2168196 ETA=3185s loss=6.1920
+clock        epoch= 1 work=135808/2168196 ETA=3181s loss=6.2693
+clock        epoch= 1 work=137088/2168196 ETA=3177s loss=6.0146
+clock        epoch= 1 work=138368/2168196 ETA=3173s loss=6.3602
+clock        epoch= 1 work=139648/2168196 ETA=3169s loss=6.1375
+clock        epoch= 1 work=140928/2168196 ETA=3165s loss=6.3358
+clock        epoch= 1 work=142208/2168196 ETA=3161s loss=6.1933
+clock        epoch= 1 work=143488/2168196 ETA=3158s loss=6.1123
+clock        epoch= 1 work=144768/2168196 ETA=3154s loss=5.9192
+clock        epoch= 1 work=146048/2168196 ETA=3150s loss=6.3156
+clock        epoch= 1 work=147328/2168196 ETA=3146s loss=6.1057
+clock        epoch= 1 work=148608/2168196 ETA=3142s loss=6.2630
+clock        epoch= 1 work=149888/2168196 ETA=3138s loss=5.9595
+clock        epoch= 1 work=151168/2168196 ETA=3134s loss=6.1638
+clock        epoch= 1 work=152448/2168196 ETA=3130s loss=6.2216
+clock        epoch= 1 work=153728/2168196 ETA=3126s loss=6.2807
+clock        epoch= 1 work=155008/2168196 ETA=3122s loss=6.2964
+clock        epoch= 1 work=156288/2168196 ETA=3118s loss=5.8482
+clock        epoch= 1 work=157568/2168196 ETA=3114s loss=6.0326
+clock        epoch= 1 work=158848/2168196 ETA=3110s loss=6.1583
+clock        epoch= 1 work=160128/2168196 ETA=3106s loss=6.1325
+clock        epoch= 1 work=161408/2168196 ETA=3102s loss=6.1657
+clock        epoch= 1 work=162688/2168196 ETA=3098s loss=6.2967
+clock        epoch= 1 work=163968/2168196 ETA=3094s loss=6.2385
+clock        epoch= 1 work=165248/2168196 ETA=3090s loss=5.9319
+clock        epoch= 1 work=166528/2168196 ETA=3086s loss=6.1558
+clock        epoch= 1 work=167808/2168196 ETA=3082s loss=5.7572
+clock        epoch= 1 work=169088/2168196 ETA=3078s loss=6.1196
+clock        epoch= 1 work=170368/2168196 ETA=3074s loss=5.9727
+clock        epoch= 1 work=171648/2168196 ETA=3070s loss=6.0867
+clock        epoch= 1 work=172928/2168196 ETA=3067s loss=6.0466
+clock        epoch= 1 work=174208/2168196 ETA=3063s loss=5.8222
+clock        epoch= 1 work=175488/2168196 ETA=3059s loss=6.0208
+clock        epoch= 1 work=176768/2168196 ETA=3055s loss=6.3527
+clock        epoch= 1 work=178048/2168196 ETA=3050s loss=5.9116
+clock        epoch= 1 work=179328/2168196 ETA=3047s loss=6.0672
+clock        epoch= 1 work=180608/2168196 ETA=3043s loss=5.7977
+clock        epoch= 2 work=180811/2168196 ETA=2910s loss=5.8975
+clock        epoch= 2 work=182091/2168196 ETA=2906s loss=6.0292
+clock        epoch= 2 work=183371/2168196 ETA=2902s loss=5.8439
+clock        epoch= 2 work=184651/2168196 ETA=2898s loss=6.1006
+clock        epoch= 2 work=185931/2168196 ETA=2894s loss=6.1212
+clock        epoch= 2 work=187211/2168196 ETA=2890s loss=5.9421
+clock        epoch= 2 work=188491/2168196 ETA=2886s loss=5.9443
+clock        epoch= 2 work=189771/2168196 ETA=2882s loss=5.8438
+clock        epoch= 2 work=191051/2168196 ETA=2878s loss=5.8319
+clock        epoch= 2 work=192331/2168196 ETA=2874s loss=5.9420
+clock        epoch= 2 work=193611/2168196 ETA=2870s loss=5.8943
+clock        epoch= 2 work=194891/2168196 ETA=2866s loss=6.1319
+clock        epoch= 2 work=196171/2168196 ETA=2862s loss=6.2183
+clock        epoch= 2 work=197451/2168196 ETA=2859s loss=6.0518
+clock        epoch= 2 work=198731/2168196 ETA=2855s loss=5.8104
+clock        epoch= 2 work=200011/2168196 ETA=2851s loss=5.9832
+clock        epoch= 2 work=201291/2168196 ETA=2847s loss=5.6089
+clock        epoch= 2 work=202571/2168196 ETA=2843s loss=5.9476
+clock        epoch= 2 work=203851/2168196 ETA=2839s loss=5.8847
+clock        epoch= 2 work=205131/2168196 ETA=2835s loss=6.0147
+clock        epoch= 2 work=206411/2168196 ETA=2831s loss=5.9304
+clock        epoch= 2 work=207691/2168196 ETA=2827s loss=5.8706
+clock        epoch= 2 work=208971/2168196 ETA=2824s loss=5.8924
+clock        epoch= 2 work=210251/2168196 ETA=2820s loss=5.9651
+clock        epoch= 2 work=211531/2168196 ETA=2816s loss=6.2502
+clock        epoch= 2 work=212811/2168196 ETA=2812s loss=5.7430
+clock        epoch= 2 work=214091/2168196 ETA=2808s loss=5.7705
+clock        epoch= 2 work=215371/2168196 ETA=2804s loss=5.8837
+clock        epoch= 2 work=216651/2168196 ETA=2800s loss=5.6143
+clock        epoch= 2 work=217931/2168196 ETA=2796s loss=5.7339
+clock        epoch= 2 work=219211/2168196 ETA=2793s loss=6.0545
+clock        epoch= 2 work=220491/2168196 ETA=2789s loss=5.5585
+clock        epoch= 2 work=221771/2168196 ETA=2785s loss=5.4667
+clock        epoch= 2 work=223051/2168196 ETA=2781s loss=5.8014
+clock        epoch= 2 work=224331/2168196 ETA=2777s loss=5.9588
+clock        epoch= 2 work=225611/2168196 ETA=2773s loss=5.8973
+clock        epoch= 2 work=226891/2168196 ETA=2769s loss=5.8232
+clock        epoch= 2 work=228171/2168196 ETA=2765s loss=5.8308
+clock        epoch= 2 work=229451/2168196 ETA=2761s loss=5.8248
+clock        epoch= 2 work=230731/2168196 ETA=2757s loss=5.6498
+clock        epoch= 2 work=232011/2168196 ETA=2753s loss=5.9351
+clock        epoch= 2 work=233291/2168196 ETA=2750s loss=5.6206
+clock        epoch= 2 work=234571/2168196 ETA=2746s loss=5.9786
+clock        epoch= 2 work=235851/2168196 ETA=2742s loss=5.5938
+clock        epoch= 2 work=237131/2168196 ETA=2738s loss=5.8617
+clock        epoch= 2 work=238411/2168196 ETA=2734s loss=5.7302
+clock        epoch= 2 work=239691/2168196 ETA=2730s loss=5.7847
+clock        epoch= 2 work=240971/2168196 ETA=2726s loss=5.6220
+clock        epoch= 2 work=242251/2168196 ETA=2722s loss=5.7015
+clock        epoch= 2 work=243531/2168196 ETA=2719s loss=5.5940
+clock        epoch= 2 work=244811/2168196 ETA=2715s loss=5.6287
+clock        epoch= 2 work=246091/2168196 ETA=2711s loss=6.0760
+clock        epoch= 2 work=247371/2168196 ETA=2707s loss=5.8496
+clock        epoch= 2 work=248651/2168196 ETA=2703s loss=5.7611
+clock        epoch= 2 work=249931/2168196 ETA=2699s loss=5.7062
+clock        epoch= 2 work=251211/2168196 ETA=2695s loss=6.0081
+clock        epoch= 2 work=252491/2168196 ETA=2691s loss=5.8517
+clock        epoch= 2 work=253771/2168196 ETA=2687s loss=5.6023
+clock        epoch= 2 work=255051/2168196 ETA=2683s loss=5.5126
+clock        epoch= 2 work=256331/2168196 ETA=2679s loss=5.5267
+clock        epoch= 2 work=257611/2168196 ETA=2675s loss=5.4585
+clock        epoch= 2 work=258891/2168196 ETA=2671s loss=5.7122
+clock        epoch= 2 work=260171/2168196 ETA=2668s loss=5.7872
+clock        epoch= 2 work=261451/2168196 ETA=2664s loss=6.0115
+clock        epoch= 2 work=262731/2168196 ETA=2660s loss=5.6400
+clock        epoch= 2 work=264011/2168196 ETA=2656s loss=5.8981
+clock        epoch= 2 work=265291/2168196 ETA=2652s loss=5.7134
+clock        epoch= 2 work=266571/2168196 ETA=2648s loss=5.6687
+clock        epoch= 2 work=267851/2168196 ETA=2644s loss=5.7762
+clock        epoch= 2 work=269131/2168196 ETA=2640s loss=5.6029
+clock        epoch= 2 work=270411/2168196 ETA=2636s loss=6.0494
+clock        epoch= 2 work=271691/2168196 ETA=2633s loss=5.3854
+clock        epoch= 2 work=272971/2168196 ETA=2629s loss=5.8415
+clock        epoch= 2 work=274251/2168196 ETA=2625s loss=5.6373
+clock        epoch= 2 work=275531/2168196 ETA=2621s loss=5.8379
+clock        epoch= 2 work=276811/2168196 ETA=2617s loss=5.6150
+clock        epoch= 2 work=278091/2168196 ETA=2613s loss=5.7286
+clock        epoch= 2 work=279371/2168196 ETA=2609s loss=5.8024
+clock        epoch= 2 work=280651/2168196 ETA=2605s loss=5.8156
+clock        epoch= 2 work=281931/2168196 ETA=2601s loss=6.1214
+clock        epoch= 2 work=283211/2168196 ETA=2597s loss=5.9831
+clock        epoch= 2 work=284491/2168196 ETA=2593s loss=5.7404
+clock        epoch= 2 work=285771/2168196 ETA=2589s loss=5.5522
+clock        epoch= 2 work=287051/2168196 ETA=2586s loss=5.7237
+clock        epoch= 2 work=288331/2168196 ETA=2582s loss=5.7514
+clock        epoch= 2 work=289611/2168196 ETA=2578s loss=5.7656
+clock        epoch= 2 work=290891/2168196 ETA=2574s loss=5.6515
+clock        epoch= 2 work=292171/2168196 ETA=2570s loss=5.8865
+clock        epoch= 2 work=293451/2168196 ETA=2566s loss=5.8590
+clock        epoch= 2 work=294731/2168196 ETA=2562s loss=5.6703
+clock        epoch= 2 work=296011/2168196 ETA=2558s loss=5.7223
+clock        epoch= 2 work=297291/2168196 ETA=2554s loss=5.6335
+clock        epoch= 2 work=298571/2168196 ETA=2550s loss=5.6278
+clock        epoch= 2 work=299851/2168196 ETA=2546s loss=5.5052
+clock        epoch= 2 work=301131/2168196 ETA=2542s loss=5.8309
+clock        epoch= 2 work=302411/2168196 ETA=2539s loss=5.7006
+clock        epoch= 2 work=303691/2168196 ETA=2535s loss=5.6906
+clock        epoch= 2 work=304971/2168196 ETA=2531s loss=5.7833
+clock        epoch= 2 work=306251/2168196 ETA=2527s loss=5.4840
+clock        epoch= 2 work=307531/2168196 ETA=2523s loss=5.7330
+clock        epoch= 2 work=308811/2168196 ETA=2519s loss=5.7479
+clock        epoch= 2 work=310091/2168196 ETA=2515s loss=5.4421
+clock        epoch= 2 work=311371/2168196 ETA=2511s loss=5.4014
+clock        epoch= 2 work=312651/2168196 ETA=2507s loss=5.3770
+clock        epoch= 2 work=313931/2168196 ETA=2503s loss=5.7085
+clock        epoch= 2 work=315211/2168196 ETA=2499s loss=5.6760
+clock        epoch= 2 work=316491/2168196 ETA=2495s loss=5.6293
+clock        epoch= 2 work=317771/2168196 ETA=2491s loss=5.6531
+clock        epoch= 2 work=319051/2168196 ETA=2488s loss=5.6711
+clock        epoch= 2 work=320331/2168196 ETA=2484s loss=5.9531
+clock        epoch= 2 work=321611/2168196 ETA=2480s loss=5.5478
+clock        epoch= 2 work=322891/2168196 ETA=2476s loss=5.5726
+clock        epoch= 2 work=324171/2168196 ETA=2472s loss=5.3709
+clock        epoch= 2 work=325451/2168196 ETA=2468s loss=5.8504
+clock        epoch= 2 work=326731/2168196 ETA=2464s loss=5.7363
+clock        epoch= 2 work=328011/2168196 ETA=2460s loss=5.3153
+clock        epoch= 2 work=329291/2168196 ETA=2456s loss=5.7515
+clock        epoch= 2 work=330571/2168196 ETA=2452s loss=5.7260
+clock        epoch= 2 work=331851/2168196 ETA=2448s loss=5.4968
+clock        epoch= 2 work=333131/2168196 ETA=2445s loss=5.4780
+clock        epoch= 2 work=334411/2168196 ETA=2441s loss=5.5766
+clock        epoch= 2 work=335691/2168196 ETA=2437s loss=5.7355
+clock        epoch= 2 work=336971/2168196 ETA=2433s loss=5.7251
+clock        epoch= 2 work=338251/2168196 ETA=2429s loss=5.6097
+clock        epoch= 2 work=339531/2168196 ETA=2425s loss=5.5252
+clock        epoch= 2 work=340811/2168196 ETA=2421s loss=5.7610
+clock        epoch= 2 work=342091/2168196 ETA=2417s loss=5.5916
+clock        epoch= 2 work=343371/2168196 ETA=2413s loss=5.7532
+clock        epoch= 2 work=344651/2168196 ETA=2409s loss=5.8854
+clock        epoch= 2 work=345931/2168196 ETA=2405s loss=5.4457
+clock        epoch= 2 work=347211/2168196 ETA=2402s loss=5.5531
+clock        epoch= 2 work=348491/2168196 ETA=2398s loss=5.5803
+clock        epoch= 2 work=349771/2168196 ETA=2394s loss=5.4740
+clock        epoch= 2 work=351051/2168196 ETA=2390s loss=5.5400
+clock        epoch= 2 work=352331/2168196 ETA=2386s loss=5.9069
+clock        epoch= 2 work=353611/2168196 ETA=2382s loss=5.6350
+clock        epoch= 2 work=354891/2168196 ETA=2378s loss=5.5897
+clock        epoch= 2 work=356171/2168196 ETA=2374s loss=5.5993
+clock        epoch= 2 work=357451/2168196 ETA=2370s loss=5.4502
+clock        epoch= 2 work=358731/2168196 ETA=2366s loss=5.3666
+clock        epoch= 2 work=360011/2168196 ETA=2363s loss=5.1977
+clock        epoch= 2 work=361291/2168196 ETA=2359s loss=5.5760
+clock        epoch= 3 work=361494/2168196 ETA=2226s loss=5.2525
+clock        epoch= 3 work=362774/2168196 ETA=2222s loss=5.6027
+clock        epoch= 3 work=364054/2168196 ETA=2218s loss=5.6063
+clock        epoch= 3 work=365334/2168196 ETA=2214s loss=5.7579
+clock        epoch= 3 work=366614/2168196 ETA=2210s loss=5.8607
+clock        epoch= 3 work=367894/2168196 ETA=2206s loss=5.3641
+clock        epoch= 3 work=369174/2168196 ETA=2202s loss=5.6929
+clock        epoch= 3 work=370454/2168196 ETA=2198s loss=5.3438
+clock        epoch= 3 work=371734/2168196 ETA=2194s loss=5.9613
+clock        epoch= 3 work=373014/2168196 ETA=2190s loss=5.6101
+clock        epoch= 3 work=374294/2168196 ETA=2186s loss=5.6038
+clock        epoch= 3 work=375574/2168196 ETA=2182s loss=5.6869
+clock        epoch= 3 work=376854/2168196 ETA=2178s loss=5.6760
+clock        epoch= 3 work=378134/2168196 ETA=2174s loss=5.2930
+clock        epoch= 3 work=379414/2168196 ETA=2170s loss=5.6809
+clock        epoch= 3 work=380694/2168196 ETA=2167s loss=5.6153
+clock        epoch= 3 work=381974/2168196 ETA=2163s loss=5.7245
+clock        epoch= 3 work=383254/2168196 ETA=2159s loss=5.2052
+clock        epoch= 3 work=384534/2168196 ETA=2155s loss=5.2964
+clock        epoch= 3 work=385814/2168196 ETA=2151s loss=5.6346
+clock        epoch= 3 work=387094/2168196 ETA=2147s loss=5.2716
+clock        epoch= 3 work=388374/2168196 ETA=2143s loss=5.3059
+clock        epoch= 3 work=389654/2168196 ETA=2139s loss=5.4575
+clock        epoch= 3 work=390934/2168196 ETA=2135s loss=5.3600
+clock        epoch= 3 work=392214/2168196 ETA=2131s loss=5.7742
+clock        epoch= 3 work=393494/2168196 ETA=2127s loss=5.8761
+clock        epoch= 3 work=394774/2168196 ETA=2123s loss=5.6698
+clock        epoch= 3 work=396054/2168196 ETA=2120s loss=5.4033
+clock        epoch= 3 work=397334/2168196 ETA=2116s loss=5.5476
+clock        epoch= 3 work=398614/2168196 ETA=2112s loss=5.4338
+clock        epoch= 3 work=399894/2168196 ETA=2108s loss=5.7181
+clock        epoch= 3 work=401174/2168196 ETA=2104s loss=5.6004
+clock        epoch= 3 work=402454/2168196 ETA=2100s loss=5.5459
+clock        epoch= 3 work=403734/2168196 ETA=2096s loss=5.4063
+clock        epoch= 3 work=405014/2168196 ETA=2092s loss=5.5698
+clock        epoch= 3 work=406294/2168196 ETA=2088s loss=5.7542
+clock        epoch= 3 work=407574/2168196 ETA=2084s loss=5.3721
+clock        epoch= 3 work=408854/2168196 ETA=2080s loss=5.1442
+clock        epoch= 3 work=410134/2168196 ETA=2076s loss=5.3271
+clock        epoch= 3 work=411414/2168196 ETA=2072s loss=5.4788
+clock        epoch= 3 work=412694/2168196 ETA=2068s loss=5.4739
+clock        epoch= 3 work=413974/2168196 ETA=2064s loss=5.4275
+clock        epoch= 3 work=415254/2168196 ETA=2060s loss=5.5398
+clock        epoch= 3 work=416534/2168196 ETA=2056s loss=5.4755
+clock        epoch= 3 work=417814/2168196 ETA=2052s loss=5.6109
+clock        epoch= 3 work=419094/2168196 ETA=2049s loss=5.3908
+clock        epoch= 3 work=420374/2168196 ETA=2045s loss=5.7449
+clock        epoch= 3 work=421654/2168196 ETA=2041s loss=5.4442
+clock        epoch= 3 work=422934/2168196 ETA=2037s loss=5.3834
+clock        epoch= 3 work=424214/2168196 ETA=2033s loss=5.3870
+clock        epoch= 3 work=425494/2168196 ETA=2029s loss=5.5620
+clock        epoch= 3 work=426774/2168196 ETA=2025s loss=5.1370
+clock        epoch= 3 work=428054/2168196 ETA=2021s loss=5.6827
+clock        epoch= 3 work=429334/2168196 ETA=2017s loss=5.5865
+clock        epoch= 3 work=430614/2168196 ETA=2013s loss=5.4363
+clock        epoch= 3 work=431894/2168196 ETA=2009s loss=5.4541
+clock        epoch= 3 work=433174/2168196 ETA=2005s loss=5.3457
+clock        epoch= 3 work=434454/2168196 ETA=2001s loss=5.7030
+clock        epoch= 3 work=435734/2168196 ETA=1997s loss=5.2979
+clock        epoch= 3 work=437014/2168196 ETA=1993s loss=5.5541
+clock        epoch= 3 work=438294/2168196 ETA=1989s loss=5.4800
+clock        epoch= 3 work=439574/2168196 ETA=1986s loss=5.5659
+clock        epoch= 3 work=440854/2168196 ETA=1982s loss=5.5850
+clock        epoch= 3 work=442134/2168196 ETA=1978s loss=5.5086
+clock        epoch= 3 work=443414/2168196 ETA=1974s loss=5.6807
+clock        epoch= 3 work=444694/2168196 ETA=1970s loss=5.6505
+clock        epoch= 3 work=445974/2168196 ETA=1966s loss=5.5340
+clock        epoch= 3 work=447254/2168196 ETA=1962s loss=5.4652
+clock        epoch= 3 work=448534/2168196 ETA=1958s loss=5.2998
+clock        epoch= 3 work=449814/2168196 ETA=1954s loss=5.3050
+clock        epoch= 3 work=451094/2168196 ETA=1950s loss=5.0774
+clock        epoch= 3 work=452374/2168196 ETA=1946s loss=5.6414
+clock        epoch= 3 work=453654/2168196 ETA=1942s loss=5.5922
+clock        epoch= 3 work=454934/2168196 ETA=1938s loss=5.2478
+clock        epoch= 3 work=456214/2168196 ETA=1934s loss=5.8027
+clock        epoch= 3 work=457494/2168196 ETA=1930s loss=5.5326
+clock        epoch= 3 work=458774/2168196 ETA=1926s loss=5.4289
+clock        epoch= 3 work=460054/2168196 ETA=1923s loss=5.3669
+clock        epoch= 3 work=461334/2168196 ETA=1919s loss=5.4833
+clock        epoch= 3 work=462614/2168196 ETA=1915s loss=5.4960
+clock        epoch= 3 work=463894/2168196 ETA=1911s loss=5.4839
+clock        epoch= 3 work=465174/2168196 ETA=1907s loss=5.5232
+clock        epoch= 3 work=466454/2168196 ETA=1903s loss=5.4516
+clock        epoch= 3 work=467734/2168196 ETA=1899s loss=5.3510
+clock        epoch= 3 work=469014/2168196 ETA=1895s loss=5.6617
+clock        epoch= 3 work=470294/2168196 ETA=1891s loss=5.1653
+clock        epoch= 3 work=471574/2168196 ETA=1887s loss=5.1882
+clock        epoch= 3 work=472854/2168196 ETA=1883s loss=5.6907
+clock        epoch= 3 work=474134/2168196 ETA=1879s loss=5.2639
+clock        epoch= 3 work=475414/2168196 ETA=1875s loss=5.7213
+clock        epoch= 3 work=476694/2168196 ETA=1871s loss=5.4789
+clock        epoch= 3 work=477974/2168196 ETA=1867s loss=5.6834
+clock        epoch= 3 work=479254/2168196 ETA=1863s loss=5.5888
+clock        epoch= 3 work=480534/2168196 ETA=1859s loss=5.5812
+clock        epoch= 3 work=481814/2168196 ETA=1855s loss=5.3292
+clock        epoch= 3 work=483094/2168196 ETA=1852s loss=5.1138
+clock        epoch= 3 work=484374/2168196 ETA=1848s loss=5.4429
+clock        epoch= 3 work=485654/2168196 ETA=1844s loss=5.4360
+clock        epoch= 3 work=486934/2168196 ETA=1840s loss=5.7515
+clock        epoch= 3 work=488214/2168196 ETA=1836s loss=5.4952
+clock        epoch= 3 work=489494/2168196 ETA=1832s loss=5.4822
+clock        epoch= 3 work=490774/2168196 ETA=1828s loss=5.6195
+clock        epoch= 3 work=492054/2168196 ETA=1824s loss=5.4279
+clock        epoch= 3 work=493334/2168196 ETA=1820s loss=5.4356
+clock        epoch= 3 work=494614/2168196 ETA=1816s loss=5.2980
+clock        epoch= 3 work=495894/2168196 ETA=1812s loss=5.3102
+clock        epoch= 3 work=497174/2168196 ETA=1808s loss=5.3420
+clock        epoch= 3 work=498454/2168196 ETA=1804s loss=5.3481
+clock        epoch= 3 work=499734/2168196 ETA=1800s loss=5.3730
+clock        epoch= 3 work=501014/2168196 ETA=1796s loss=5.1639
+clock        epoch= 3 work=502294/2168196 ETA=1792s loss=5.1038
+clock        epoch= 3 work=503574/2168196 ETA=1788s loss=5.5118
+clock        epoch= 3 work=504854/2168196 ETA=1785s loss=5.4527
+clock        epoch= 3 work=506134/2168196 ETA=1781s loss=5.4386
+clock        epoch= 3 work=507414/2168196 ETA=1777s loss=5.4674
+clock        epoch= 3 work=508694/2168196 ETA=1773s loss=5.4111
+clock        epoch= 3 work=509974/2168196 ETA=1769s loss=5.3289
+clock        epoch= 3 work=511254/2168196 ETA=1765s loss=5.2777
+clock        epoch= 3 work=512534/2168196 ETA=1761s loss=5.4629
+clock        epoch= 3 work=513814/2168196 ETA=1757s loss=5.4352
+clock        epoch= 3 work=515094/2168196 ETA=1753s loss=5.5195
+clock        epoch= 3 work=516374/2168196 ETA=1749s loss=5.4849
+clock        epoch= 3 work=517654/2168196 ETA=1745s loss=5.5252
+clock        epoch= 3 work=518934/2168196 ETA=1741s loss=5.4537
+clock        epoch= 3 work=520214/2168196 ETA=1737s loss=5.3785
+clock        epoch= 3 work=521494/2168196 ETA=1733s loss=5.1679
+clock        epoch= 3 work=522774/2168196 ETA=1729s loss=5.1866
+clock        epoch= 3 work=524054/2168196 ETA=1725s loss=5.2878
+clock        epoch= 3 work=525334/2168196 ETA=1721s loss=5.3588
+clock        epoch= 3 work=526614/2168196 ETA=1717s loss=5.4276
+clock        epoch= 3 work=527894/2168196 ETA=1714s loss=5.3225
+clock        epoch= 3 work=529174/2168196 ETA=1710s loss=5.5854
+clock        epoch= 3 work=530454/2168196 ETA=1706s loss=5.3198
+clock        epoch= 3 work=531734/2168196 ETA=1702s loss=5.1994
+clock        epoch= 3 work=533014/2168196 ETA=1698s loss=5.4682
+clock        epoch= 3 work=534294/2168196 ETA=1694s loss=5.3811
+clock        epoch= 3 work=535574/2168196 ETA=1690s loss=5.5380
+clock        epoch= 3 work=536854/2168196 ETA=1686s loss=5.3155
+clock        epoch= 3 work=538134/2168196 ETA=1682s loss=5.4845
+clock        epoch= 3 work=539414/2168196 ETA=1678s loss=5.6769
+clock        epoch= 3 work=540694/2168196 ETA=1674s loss=5.4156
+clock        epoch= 3 work=541974/2168196 ETA=1670s loss=5.4486
+clock        epoch= 4 work=542177/2168196 ETA=1536s loss=5.2579
+clock        epoch= 4 work=543457/2168196 ETA=1532s loss=5.3637
+clock        epoch= 4 work=544737/2168196 ETA=1528s loss=5.2407
+clock        epoch= 4 work=546017/2168196 ETA=1524s loss=5.4479
+clock        epoch= 4 work=547297/2168196 ETA=1520s loss=5.2022
+clock        epoch= 4 work=548577/2168196 ETA=1516s loss=5.4325
+clock        epoch= 4 work=549857/2168196 ETA=1512s loss=5.2966
+clock        epoch= 4 work=551137/2168196 ETA=1508s loss=5.3914
+clock        epoch= 4 work=552417/2168196 ETA=1505s loss=5.4632
+clock        epoch= 4 work=553697/2168196 ETA=1501s loss=5.3874
+clock        epoch= 4 work=554977/2168196 ETA=1497s loss=5.4971
+clock        epoch= 4 work=556257/2168196 ETA=1493s loss=5.2953
+clock        epoch= 4 work=557537/2168196 ETA=1489s loss=5.4883
+clock        epoch= 4 work=558817/2168196 ETA=1485s loss=5.0764
+clock        epoch= 4 work=560097/2168196 ETA=1481s loss=5.4783
+clock        epoch= 4 work=561377/2168196 ETA=1477s loss=5.3217
+clock        epoch= 4 work=562657/2168196 ETA=1473s loss=5.4921
+clock        epoch= 4 work=563937/2168196 ETA=1469s loss=5.0460
+clock        epoch= 4 work=565217/2168196 ETA=1465s loss=5.3330
+clock        epoch= 4 work=566497/2168196 ETA=1461s loss=5.4029
+clock        epoch= 4 work=567777/2168196 ETA=1457s loss=5.6191
+clock        epoch= 4 work=569057/2168196 ETA=1453s loss=5.4248
+clock        epoch= 4 work=570337/2168196 ETA=1449s loss=5.3885
+clock        epoch= 4 work=571617/2168196 ETA=1445s loss=4.9444
+clock        epoch= 4 work=572897/2168196 ETA=1442s loss=5.6458
+clock        epoch= 4 work=574177/2168196 ETA=1438s loss=5.4577
+clock        epoch= 4 work=575457/2168196 ETA=1434s loss=5.3052
+clock        epoch= 4 work=576737/2168196 ETA=1430s loss=5.3318
+clock        epoch= 4 work=578017/2168196 ETA=1426s loss=5.2909
+clock        epoch= 4 work=579297/2168196 ETA=1422s loss=5.4967
+clock        epoch= 4 work=580577/2168196 ETA=1418s loss=5.4964
+clock        epoch= 4 work=581857/2168196 ETA=1414s loss=4.9554
+clock        epoch= 4 work=583137/2168196 ETA=1410s loss=5.3657
+clock        epoch= 4 work=584417/2168196 ETA=1406s loss=5.3068
+clock        epoch= 4 work=585697/2168196 ETA=1402s loss=5.1759
+clock        epoch= 4 work=586977/2168196 ETA=1398s loss=5.3557
+clock        epoch= 4 work=588257/2168196 ETA=1394s loss=5.1053
+clock        epoch= 4 work=589537/2168196 ETA=1390s loss=5.3094
+clock        epoch= 4 work=590817/2168196 ETA=1386s loss=5.4110
+clock        epoch= 4 work=592097/2168196 ETA=1382s loss=5.3943
+clock        epoch= 4 work=593377/2168196 ETA=1378s loss=5.4835
+clock        epoch= 4 work=594657/2168196 ETA=1375s loss=5.2805
+clock        epoch= 4 work=595937/2168196 ETA=1371s loss=5.2157
+clock        epoch= 4 work=597217/2168196 ETA=1367s loss=5.2393
+clock        epoch= 4 work=598497/2168196 ETA=1363s loss=5.1670
+clock        epoch= 4 work=599777/2168196 ETA=1359s loss=5.2930
+clock        epoch= 4 work=601057/2168196 ETA=1355s loss=5.2718
+clock        epoch= 4 work=602337/2168196 ETA=1351s loss=5.3778
+clock        epoch= 4 work=603617/2168196 ETA=1347s loss=5.2654
+clock        epoch= 4 work=604897/2168196 ETA=1343s loss=5.5140
+clock        epoch= 4 work=606177/2168196 ETA=1339s loss=5.1627
+clock        epoch= 4 work=607457/2168196 ETA=1335s loss=5.6191
+clock        epoch= 4 work=608737/2168196 ETA=1331s loss=5.3436
+clock        epoch= 4 work=610017/2168196 ETA=1327s loss=5.4390
+clock        epoch= 4 work=611297/2168196 ETA=1323s loss=5.1640
+clock        epoch= 4 work=612577/2168196 ETA=1319s loss=5.4562
+clock        epoch= 4 work=613857/2168196 ETA=1315s loss=5.5353
+clock        epoch= 4 work=615137/2168196 ETA=1311s loss=5.2973
+clock        epoch= 4 work=616417/2168196 ETA=1308s loss=5.2110
+clock        epoch= 4 work=617697/2168196 ETA=1304s loss=5.4648
+clock        epoch= 4 work=618977/2168196 ETA=1300s loss=5.2683
+clock        epoch= 4 work=620257/2168196 ETA=1296s loss=5.2236
+clock        epoch= 4 work=621537/2168196 ETA=1292s loss=5.3307
+clock        epoch= 4 work=622817/2168196 ETA=1288s loss=5.3354
+clock        epoch= 4 work=624097/2168196 ETA=1284s loss=5.2197
+clock        epoch= 4 work=625377/2168196 ETA=1280s loss=5.4178
+clock        epoch= 4 work=626657/2168196 ETA=1276s loss=5.6498
+clock        epoch= 4 work=627937/2168196 ETA=1272s loss=5.4381
+clock        epoch= 4 work=629217/2168196 ETA=1268s loss=5.5708
+clock        epoch= 4 work=630497/2168196 ETA=1264s loss=5.5395
+clock        epoch= 4 work=631777/2168196 ETA=1261s loss=5.5365
+clock        epoch= 4 work=633057/2168196 ETA=1257s loss=5.3464
+clock        epoch= 4 work=634337/2168196 ETA=1253s loss=5.2305
+clock        epoch= 4 work=635617/2168196 ETA=1249s loss=5.4179
+clock        epoch= 4 work=636897/2168196 ETA=1245s loss=5.1469
+clock        epoch= 4 work=638177/2168196 ETA=1241s loss=5.3370
+clock        epoch= 4 work=639457/2168196 ETA=1237s loss=5.3544
+clock        epoch= 4 work=640737/2168196 ETA=1233s loss=5.3570
+clock        epoch= 4 work=642017/2168196 ETA=1229s loss=5.2268
+clock        epoch= 4 work=643297/2168196 ETA=1225s loss=5.2132
+clock        epoch= 4 work=644577/2168196 ETA=1221s loss=5.3837
+clock        epoch= 4 work=645857/2168196 ETA=1217s loss=5.3939
+clock        epoch= 4 work=647137/2168196 ETA=1213s loss=5.4433
+clock        epoch= 4 work=648417/2168196 ETA=1209s loss=5.4891
+clock        epoch= 4 work=649697/2168196 ETA=1206s loss=5.1501
+clock        epoch= 4 work=650977/2168196 ETA=1202s loss=5.3901
+clock        epoch= 4 work=652257/2168196 ETA=1198s loss=5.4066
+clock        epoch= 4 work=653537/2168196 ETA=1194s loss=5.3430
+clock        epoch= 4 work=654817/2168196 ETA=1190s loss=5.3366
+clock        epoch= 4 work=656097/2168196 ETA=1186s loss=5.6193
+clock        epoch= 4 work=657377/2168196 ETA=1182s loss=5.0250
+clock        epoch= 4 work=658657/2168196 ETA=1178s loss=5.3348
+clock        epoch= 4 work=659937/2168196 ETA=1174s loss=5.3894
+clock        epoch= 4 work=661217/2168196 ETA=1170s loss=5.2721
+clock        epoch= 4 work=662497/2168196 ETA=1166s loss=5.2968
+clock        epoch= 4 work=663777/2168196 ETA=1162s loss=5.3622
+clock        epoch= 4 work=665057/2168196 ETA=1158s loss=5.5446
+clock        epoch= 4 work=666337/2168196 ETA=1154s loss=4.9826
+clock        epoch= 4 work=667617/2168196 ETA=1150s loss=5.3387
+clock        epoch= 4 work=668897/2168196 ETA=1146s loss=5.4221
+clock        epoch= 4 work=670177/2168196 ETA=1143s loss=5.1434
+clock        epoch= 4 work=671457/2168196 ETA=1139s loss=5.4559
+clock        epoch= 4 work=672737/2168196 ETA=1135s loss=5.3976
+clock        epoch= 4 work=674017/2168196 ETA=1131s loss=5.0468
+clock        epoch= 4 work=675297/2168196 ETA=1127s loss=4.9995
+clock        epoch= 4 work=676577/2168196 ETA=1123s loss=5.1718
+clock        epoch= 4 work=677857/2168196 ETA=1119s loss=5.1852
+clock        epoch= 4 work=679137/2168196 ETA=1115s loss=5.5157
+clock        epoch= 4 work=680417/2168196 ETA=1111s loss=5.3787
+clock        epoch= 4 work=681697/2168196 ETA=1107s loss=5.6449
+clock        epoch= 4 work=682977/2168196 ETA=1103s loss=5.3081
+clock        epoch= 4 work=684257/2168196 ETA=1099s loss=5.1041
+clock        epoch= 4 work=685537/2168196 ETA=1095s loss=5.1334
+clock        epoch= 4 work=686817/2168196 ETA=1091s loss=5.3300
+clock        epoch= 4 work=688097/2168196 ETA=1087s loss=5.1449
+clock        epoch= 4 work=689377/2168196 ETA=1083s loss=5.4446
+clock        epoch= 4 work=690657/2168196 ETA=1080s loss=5.3430
+clock        epoch= 4 work=691937/2168196 ETA=1076s loss=5.2407
+clock        epoch= 4 work=693217/2168196 ETA=1072s loss=5.4720
+clock        epoch= 4 work=694497/2168196 ETA=1068s loss=5.1310
+clock        epoch= 4 work=695777/2168196 ETA=1064s loss=5.2846
+clock        epoch= 4 work=697057/2168196 ETA=1060s loss=5.2347
+clock        epoch= 4 work=698337/2168196 ETA=1056s loss=5.4880
+clock        epoch= 4 work=699617/2168196 ETA=1052s loss=5.3636
+clock        epoch= 4 work=700897/2168196 ETA=1048s loss=5.3072
+clock        epoch= 4 work=702177/2168196 ETA=1044s loss=5.4430
+clock        epoch= 4 work=703457/2168196 ETA=1041s loss=5.0081
+clock        epoch= 4 work=704737/2168196 ETA=1037s loss=5.2723
+clock        epoch= 4 work=706017/2168196 ETA=1033s loss=5.1710
+clock        epoch= 4 work=707297/2168196 ETA=1029s loss=5.2662
+clock        epoch= 4 work=708577/2168196 ETA=1025s loss=5.2144
+clock        epoch= 4 work=709857/2168196 ETA=1021s loss=5.0768
+clock        epoch= 4 work=711137/2168196 ETA=1017s loss=5.3875
+clock        epoch= 4 work=712417/2168196 ETA=1013s loss=4.9782
+clock        epoch= 4 work=713697/2168196 ETA=1009s loss=5.4937
+clock        epoch= 4 work=714977/2168196 ETA=1005s loss=5.5345
+clock        epoch= 4 work=716257/2168196 ETA=1002s loss=5.5047
+clock        epoch= 4 work=717537/2168196 ETA=998s loss=5.3378
+clock        epoch= 4 work=718817/2168196 ETA=994s loss=5.2076
+clock        epoch= 4 work=720097/2168196 ETA=990s loss=5.0742
+clock        epoch= 4 work=721377/2168196 ETA=986s loss=5.0287
+clock        epoch= 4 work=722657/2168196 ETA=982s loss=5.4352
+clock        epoch= 5 work=722860/2168196 ETA=848s loss=5.3202
+clock        epoch= 5 work=724140/2168196 ETA=844s loss=5.3396
+clock        epoch= 5 work=725420/2168196 ETA=840s loss=5.3149
+clock        epoch= 5 work=726700/2168196 ETA=836s loss=5.2094
+clock        epoch= 5 work=727980/2168196 ETA=832s loss=5.1912
+clock        epoch= 5 work=729260/2168196 ETA=828s loss=5.3168
+clock        epoch= 5 work=730540/2168196 ETA=824s loss=5.2541
+clock        epoch= 5 work=731820/2168196 ETA=820s loss=5.1078
+clock        epoch= 5 work=733100/2168196 ETA=816s loss=5.2686
+clock        epoch= 5 work=734380/2168196 ETA=812s loss=4.9349
+clock        epoch= 5 work=735660/2168196 ETA=808s loss=5.5759
+clock        epoch= 5 work=736940/2168196 ETA=805s loss=5.0296
+clock        epoch= 5 work=738220/2168196 ETA=801s loss=5.1754
+clock        epoch= 5 work=739500/2168196 ETA=797s loss=5.4027
+clock        epoch= 5 work=740780/2168196 ETA=793s loss=5.2906
+clock        epoch= 5 work=742060/2168196 ETA=789s loss=5.2767
+clock        epoch= 5 work=743340/2168196 ETA=785s loss=5.2539
+clock        epoch= 5 work=744620/2168196 ETA=781s loss=5.2046
+clock        epoch= 5 work=745900/2168196 ETA=777s loss=5.3366
+clock        epoch= 5 work=747180/2168196 ETA=773s loss=5.2466
+clock        epoch= 5 work=748460/2168196 ETA=769s loss=5.3961
+clock        epoch= 5 work=749740/2168196 ETA=765s loss=5.4098
+clock        epoch= 5 work=751020/2168196 ETA=761s loss=5.0721
+clock        epoch= 5 work=752300/2168196 ETA=757s loss=5.1577
+clock        epoch= 5 work=753580/2168196 ETA=753s loss=5.0633
+clock        epoch= 5 work=754860/2168196 ETA=750s loss=5.2690
+clock        epoch= 5 work=756140/2168196 ETA=746s loss=5.2443
+clock        epoch= 5 work=757420/2168196 ETA=742s loss=5.2207
+clock        epoch= 5 work=758700/2168196 ETA=738s loss=5.1830
+clock        epoch= 5 work=759980/2168196 ETA=734s loss=5.3251
+clock        epoch= 5 work=761260/2168196 ETA=730s loss=5.3617
+clock        epoch= 5 work=762540/2168196 ETA=726s loss=5.5658
+clock        epoch= 5 work=763820/2168196 ETA=722s loss=5.1111
+clock        epoch= 5 work=765100/2168196 ETA=718s loss=5.0477
+clock        epoch= 5 work=766380/2168196 ETA=714s loss=5.1435
+clock        epoch= 5 work=767660/2168196 ETA=711s loss=5.5168
+clock        epoch= 5 work=768940/2168196 ETA=707s loss=5.2221
+clock        epoch= 5 work=770220/2168196 ETA=703s loss=5.4370
+clock        epoch= 5 work=771500/2168196 ETA=699s loss=5.2809
+clock        epoch= 5 work=772780/2168196 ETA=695s loss=5.1023
+clock        epoch= 5 work=774060/2168196 ETA=691s loss=4.8020
+clock        epoch= 5 work=775340/2168196 ETA=687s loss=5.1396
+clock        epoch= 5 work=776620/2168196 ETA=683s loss=5.3060
+clock        epoch= 5 work=777900/2168196 ETA=679s loss=5.1936
+clock        epoch= 5 work=779180/2168196 ETA=675s loss=5.0927
+clock        epoch= 5 work=780460/2168196 ETA=671s loss=4.9882
+clock        epoch= 5 work=781740/2168196 ETA=667s loss=5.3749
+clock        epoch= 5 work=783020/2168196 ETA=663s loss=4.9366
+clock        epoch= 5 work=784300/2168196 ETA=659s loss=5.3054
+clock        epoch= 5 work=785580/2168196 ETA=655s loss=5.0622
+clock        epoch= 5 work=786860/2168196 ETA=652s loss=5.1696
+clock        epoch= 5 work=788140/2168196 ETA=648s loss=4.9385
+clock        epoch= 5 work=789420/2168196 ETA=644s loss=5.1710
+clock        epoch= 5 work=790700/2168196 ETA=640s loss=5.0911
+clock        epoch= 5 work=791980/2168196 ETA=636s loss=5.2338
+clock        epoch= 5 work=793260/2168196 ETA=632s loss=5.2232
+clock        epoch= 5 work=794540/2168196 ETA=628s loss=5.1659
+clock        epoch= 5 work=795820/2168196 ETA=624s loss=5.1755
+clock        epoch= 5 work=797100/2168196 ETA=620s loss=4.9187
+clock        epoch= 5 work=798380/2168196 ETA=616s loss=5.0778
+clock        epoch= 5 work=799660/2168196 ETA=612s loss=4.9371
+clock        epoch= 5 work=800940/2168196 ETA=609s loss=4.9276
+clock        epoch= 5 work=802220/2168196 ETA=605s loss=5.1974
+clock        epoch= 5 work=803500/2168196 ETA=601s loss=5.3796
+clock        epoch= 5 work=804780/2168196 ETA=597s loss=5.1046
+clock        epoch= 5 work=806060/2168196 ETA=593s loss=4.9727
+clock        epoch= 5 work=807340/2168196 ETA=589s loss=5.1324
+clock        epoch= 5 work=808620/2168196 ETA=585s loss=5.3865
+clock        epoch= 5 work=809900/2168196 ETA=581s loss=5.2896
+clock        epoch= 5 work=811180/2168196 ETA=577s loss=5.2578
+clock        epoch= 5 work=812460/2168196 ETA=573s loss=4.7984
+clock        epoch= 5 work=813740/2168196 ETA=570s loss=5.1406
+clock        epoch= 5 work=815020/2168196 ETA=566s loss=5.5529
+clock        epoch= 5 work=816300/2168196 ETA=562s loss=5.2066
+clock        epoch= 5 work=817580/2168196 ETA=558s loss=5.0018
+clock        epoch= 5 work=818860/2168196 ETA=554s loss=5.2048
+clock        epoch= 5 work=820140/2168196 ETA=550s loss=5.4517
+clock        epoch= 5 work=821420/2168196 ETA=546s loss=5.0524
+clock        epoch= 5 work=822700/2168196 ETA=542s loss=5.2503
+clock        epoch= 5 work=823980/2168196 ETA=538s loss=5.6565
+clock        epoch= 5 work=825260/2168196 ETA=534s loss=5.0560
+clock        epoch= 5 work=826540/2168196 ETA=530s loss=5.3880
+clock        epoch= 5 work=827820/2168196 ETA=526s loss=5.0375
+clock        epoch= 5 work=829100/2168196 ETA=522s loss=5.3911
+clock        epoch= 5 work=830380/2168196 ETA=518s loss=5.2479
+clock        epoch= 5 work=831660/2168196 ETA=515s loss=5.2255
+clock        epoch= 5 work=832940/2168196 ETA=511s loss=4.9429
+clock        epoch= 5 work=834220/2168196 ETA=507s loss=5.0801
+clock        epoch= 5 work=835500/2168196 ETA=503s loss=5.3333
+clock        epoch= 5 work=836780/2168196 ETA=499s loss=5.2346
+clock        epoch= 5 work=838060/2168196 ETA=495s loss=5.2507
+clock        epoch= 5 work=839340/2168196 ETA=491s loss=5.1539
+clock        epoch= 5 work=840620/2168196 ETA=487s loss=5.3068
+clock        epoch= 5 work=841900/2168196 ETA=483s loss=5.1102
+clock        epoch= 5 work=843180/2168196 ETA=479s loss=5.1941
+clock        epoch= 5 work=844460/2168196 ETA=475s loss=5.2089
+clock        epoch= 5 work=845740/2168196 ETA=471s loss=5.1208
+clock        epoch= 5 work=847020/2168196 ETA=467s loss=5.0060
+clock        epoch= 5 work=848300/2168196 ETA=463s loss=5.3373
+clock        epoch= 5 work=849580/2168196 ETA=459s loss=5.1253
+clock        epoch= 5 work=850860/2168196 ETA=455s loss=5.2792
+clock        epoch= 5 work=852140/2168196 ETA=451s loss=5.3361
+clock        epoch= 5 work=853420/2168196 ETA=448s loss=5.1477
+clock        epoch= 5 work=854700/2168196 ETA=444s loss=5.0465
+clock        epoch= 5 work=855980/2168196 ETA=439s loss=5.2069
+clock        epoch= 5 work=857260/2168196 ETA=435s loss=5.2503
+clock        epoch= 5 work=858540/2168196 ETA=431s loss=4.9028
+clock        epoch= 5 work=859820/2168196 ETA=428s loss=5.0968
+clock        epoch= 5 work=861100/2168196 ETA=424s loss=5.2148
+clock        epoch= 5 work=862380/2168196 ETA=420s loss=5.3922
+clock        epoch= 5 work=863660/2168196 ETA=416s loss=5.1414
+clock        epoch= 5 work=864940/2168196 ETA=412s loss=5.0695
+clock        epoch= 5 work=866220/2168196 ETA=408s loss=5.1409
+clock        epoch= 5 work=867500/2168196 ETA=404s loss=5.2517
+clock        epoch= 5 work=868780/2168196 ETA=400s loss=5.1664
+clock        epoch= 5 work=870060/2168196 ETA=396s loss=5.1953
+clock        epoch= 5 work=871340/2168196 ETA=392s loss=5.1116
+clock        epoch= 5 work=872620/2168196 ETA=388s loss=5.3247
+clock        epoch= 5 work=873900/2168196 ETA=384s loss=5.0684
+clock        epoch= 5 work=875180/2168196 ETA=380s loss=5.1269
+clock        epoch= 5 work=876460/2168196 ETA=376s loss=5.2123
+clock        epoch= 5 work=877740/2168196 ETA=373s loss=5.0304
+clock        epoch= 5 work=879020/2168196 ETA=369s loss=5.1848
+clock        epoch= 5 work=880300/2168196 ETA=365s loss=5.2569
+clock        epoch= 5 work=881580/2168196 ETA=361s loss=5.1565
+clock        epoch= 5 work=882860/2168196 ETA=357s loss=5.1955
+clock        epoch= 5 work=884140/2168196 ETA=353s loss=4.8915
+clock        epoch= 5 work=885420/2168196 ETA=349s loss=5.2628
+clock        epoch= 5 work=886700/2168196 ETA=345s loss=5.0884
+clock        epoch= 5 work=887980/2168196 ETA=341s loss=5.0709
+clock        epoch= 5 work=889260/2168196 ETA=337s loss=5.3183
+clock        epoch= 5 work=890540/2168196 ETA=333s loss=5.0423
+clock        epoch= 5 work=891820/2168196 ETA=329s loss=5.0880
+clock        epoch= 5 work=893100/2168196 ETA=325s loss=5.1610
+clock        epoch= 5 work=894380/2168196 ETA=321s loss=5.3978
+clock        epoch= 5 work=895660/2168196 ETA=317s loss=5.1203
+clock        epoch= 5 work=896940/2168196 ETA=313s loss=5.3713
+clock        epoch= 5 work=898220/2168196 ETA=309s loss=5.4520
+clock        epoch= 5 work=899500/2168196 ETA=305s loss=5.1268
+clock        epoch= 5 work=900780/2168196 ETA=301s loss=5.1699
+clock        epoch= 5 work=902060/2168196 ETA=297s loss=5.3025
+clock        epoch= 5 work=903340/2168196 ETA=293s loss=5.1061
+clock        epoch= 6 work=903543/2168196 ETA=160s loss=5.3813
+clock        epoch= 6 work=904823/2168196 ETA=156s loss=5.1683
+clock        epoch= 6 work=906103/2168196 ETA=152s loss=5.1929
+clock        epoch= 6 work=907383/2168196 ETA=148s loss=5.1083
+clock        epoch= 6 work=908663/2168196 ETA=144s loss=4.9947
+clock        epoch= 6 work=909943/2168196 ETA=140s loss=5.3044
+clock        epoch= 6 work=911223/2168196 ETA=136s loss=5.2618
+clock        epoch= 6 work=912503/2168196 ETA=132s loss=5.0205
+clock        epoch= 6 work=913783/2168196 ETA=128s loss=5.2618
+clock        epoch= 6 work=915063/2168196 ETA=125s loss=5.2302
+clock        epoch= 6 work=916343/2168196 ETA=121s loss=5.1202
+clock        epoch= 6 work=917623/2168196 ETA=117s loss=5.2362
+clock        epoch= 6 work=918903/2168196 ETA=113s loss=5.0299
+clock        epoch= 6 work=920183/2168196 ETA=109s loss=4.9750
+clock        epoch= 6 work=921463/2168196 ETA=105s loss=5.4353
+clock        epoch= 6 work=922743/2168196 ETA=101s loss=5.3799
+clock        epoch= 6 work=924023/2168196 ETA=97s loss=5.0013
+clock        epoch= 6 work=925303/2168196 ETA=93s loss=5.0604
+clock        epoch= 6 work=926583/2168196 ETA=89s loss=4.9716
+clock        epoch= 6 work=927863/2168196 ETA=85s loss=5.0859
+clock        epoch= 6 work=929143/2168196 ETA=81s loss=5.4400
+clock        epoch= 6 work=930423/2168196 ETA=77s loss=5.2044
+clock        epoch= 6 work=931703/2168196 ETA=73s loss=5.2195
+clock        epoch= 6 work=932983/2168196 ETA=69s loss=5.1661
+clock        epoch= 6 work=934263/2168196 ETA=65s loss=5.3332
+clock        epoch= 6 work=935543/2168196 ETA=61s loss=5.2721
+clock        epoch= 6 work=936823/2168196 ETA=57s loss=5.1622
+clock        epoch= 6 work=938103/2168196 ETA=53s loss=4.6857
+clock        epoch= 6 work=939383/2168196 ETA=49s loss=5.2825
+clock        epoch= 6 work=940663/2168196 ETA=45s loss=5.0189
+clock        epoch= 6 work=941943/2168196 ETA=41s loss=5.2022
+clock        epoch= 6 work=943223/2168196 ETA=37s loss=5.1734
+clock        epoch= 6 work=944503/2168196 ETA=33s loss=5.1628
+clock        epoch= 6 work=945783/2168196 ETA=29s loss=4.7055
+clock        epoch= 6 work=947063/2168196 ETA=25s loss=4.8413
+clock        epoch= 6 work=948343/2168196 ETA=21s loss=4.8153
+clock        epoch= 6 work=949623/2168196 ETA=17s loss=5.1048
+clock        epoch= 6 work=950903/2168196 ETA=13s loss=4.9726
+clock        epoch= 6 work=952183/2168196 ETA=10s loss=5.1022
+clock        epoch= 6 work=953463/2168196 ETA=6s loss=5.0840
+clock        epoch= 6 work=954743/2168196 ETA=2s loss=5.1259
+memory       epoch= 1 work=128/2168196 ETA=3595s loss=8.6744
+memory       epoch= 1 work=1408/2168196 ETA=3590s loss=8.1246
+memory       epoch= 1 work=2688/2168196 ETA=3586s loss=8.0460
+memory       epoch= 1 work=3968/2168196 ETA=3581s loss=8.0509
+memory       epoch= 1 work=5248/2168196 ETA=3576s loss=7.8611
+memory       epoch= 1 work=6528/2168196 ETA=3572s loss=7.8011
+memory       epoch= 1 work=7808/2168196 ETA=3567s loss=7.7917
+memory       epoch= 1 work=9088/2168196 ETA=3562s loss=7.5723
+memory       epoch= 1 work=10368/2168196 ETA=3557s loss=7.2934
+memory       epoch= 1 work=11648/2168196 ETA=3552s loss=7.3920
+memory       epoch= 1 work=12928/2168196 ETA=3548s loss=7.4108
+memory       epoch= 1 work=14208/2168196 ETA=3543s loss=7.1873
+memory       epoch= 1 work=15488/2168196 ETA=3538s loss=6.9600
+memory       epoch= 1 work=16768/2168196 ETA=3533s loss=7.2626
+memory       epoch= 1 work=18048/2168196 ETA=3528s loss=7.2589
+memory       epoch= 1 work=19328/2168196 ETA=3524s loss=7.0891
+memory       epoch= 1 work=20608/2168196 ETA=3519s loss=7.0725
+memory       epoch= 1 work=21888/2168196 ETA=3514s loss=7.0287
+memory       epoch= 1 work=23168/2168196 ETA=3509s loss=7.1688
+memory       epoch= 1 work=24448/2168196 ETA=3504s loss=7.1089
+memory       epoch= 1 work=25728/2168196 ETA=3500s loss=6.9491
+memory       epoch= 1 work=27008/2168196 ETA=3495s loss=7.1152
+memory       epoch= 1 work=28288/2168196 ETA=3490s loss=7.0468
+memory       epoch= 1 work=29568/2168196 ETA=3485s loss=7.0364
+memory       epoch= 1 work=30848/2168196 ETA=3480s loss=6.9832
+memory       epoch= 1 work=32128/2168196 ETA=3476s loss=6.8518
+memory       epoch= 1 work=33408/2168196 ETA=3471s loss=6.8857
+memory       epoch= 1 work=34688/2168196 ETA=3466s loss=6.6574
+memory       epoch= 1 work=35968/2168196 ETA=3461s loss=6.9622
+memory       epoch= 1 work=37248/2168196 ETA=3456s loss=6.9511
+memory       epoch= 1 work=38528/2168196 ETA=3452s loss=6.9863
+memory       epoch= 1 work=39808/2168196 ETA=3447s loss=6.8097
+memory       epoch= 1 work=41088/2168196 ETA=3442s loss=6.8450
+memory       epoch= 1 work=42368/2168196 ETA=3437s loss=6.8969
+memory       epoch= 1 work=43648/2168196 ETA=3432s loss=6.6870
+memory       epoch= 1 work=44928/2168196 ETA=3428s loss=6.7705
+memory       epoch= 1 work=46208/2168196 ETA=3423s loss=6.6105
+memory       epoch= 1 work=47488/2168196 ETA=3418s loss=6.6755
+memory       epoch= 1 work=48768/2168196 ETA=3413s loss=6.6731
+memory       epoch= 1 work=50048/2168196 ETA=3409s loss=6.6743
+memory       epoch= 1 work=51328/2168196 ETA=3404s loss=6.6749
+memory       epoch= 1 work=52608/2168196 ETA=3399s loss=6.9100
+memory       epoch= 1 work=53888/2168196 ETA=3394s loss=6.5455
+memory       epoch= 1 work=55168/2168196 ETA=3390s loss=6.6607
+memory       epoch= 1 work=56448/2168196 ETA=3385s loss=6.6392
+memory       epoch= 1 work=57728/2168196 ETA=3380s loss=6.4510
+memory       epoch= 1 work=59008/2168196 ETA=3375s loss=6.1707
+memory       epoch= 1 work=60288/2168196 ETA=3371s loss=6.5379
+memory       epoch= 1 work=61568/2168196 ETA=3366s loss=6.6326
+memory       epoch= 1 work=62848/2168196 ETA=3361s loss=6.5153
+memory       epoch= 1 work=64128/2168196 ETA=3356s loss=6.5578
+memory       epoch= 1 work=65408/2168196 ETA=3351s loss=6.6792
+memory       epoch= 1 work=66688/2168196 ETA=3347s loss=6.4248
+memory       epoch= 1 work=67968/2168196 ETA=3342s loss=6.5672
+memory       epoch= 1 work=69248/2168196 ETA=3337s loss=6.2422
+memory       epoch= 1 work=70528/2168196 ETA=3332s loss=6.4415
+memory       epoch= 1 work=71808/2168196 ETA=3327s loss=6.6313
+memory       epoch= 1 work=73088/2168196 ETA=3322s loss=6.4218
+memory       epoch= 1 work=74368/2168196 ETA=3318s loss=6.5081
+memory       epoch= 1 work=75648/2168196 ETA=3313s loss=6.6265
+memory       epoch= 1 work=76928/2168196 ETA=3308s loss=6.4656
+memory       epoch= 1 work=78208/2168196 ETA=3303s loss=6.3761
+memory       epoch= 1 work=79488/2168196 ETA=3299s loss=6.4005
+memory       epoch= 1 work=80768/2168196 ETA=3294s loss=6.6869
+memory       epoch= 1 work=82048/2168196 ETA=3289s loss=6.3756
+memory       epoch= 1 work=83328/2168196 ETA=3284s loss=6.5168
+memory       epoch= 1 work=84608/2168196 ETA=3280s loss=6.5736
+memory       epoch= 1 work=85888/2168196 ETA=3275s loss=6.2369
+memory       epoch= 1 work=87168/2168196 ETA=3270s loss=6.4065
+memory       epoch= 1 work=88448/2168196 ETA=3265s loss=6.5349
+memory       epoch= 1 work=89728/2168196 ETA=3260s loss=6.4116
+memory       epoch= 1 work=91008/2168196 ETA=3256s loss=6.4024
+memory       epoch= 1 work=92288/2168196 ETA=3251s loss=6.2233
+memory       epoch= 1 work=93568/2168196 ETA=3246s loss=6.2468
+memory       epoch= 1 work=94848/2168196 ETA=3241s loss=6.2705
+memory       epoch= 1 work=96128/2168196 ETA=3236s loss=6.4069
+memory       epoch= 1 work=97408/2168196 ETA=3232s loss=6.2811
+memory       epoch= 1 work=98688/2168196 ETA=3227s loss=6.1872
+memory       epoch= 1 work=99968/2168196 ETA=3222s loss=6.3267
+memory       epoch= 1 work=101248/2168196 ETA=3217s loss=6.4020
+memory       epoch= 1 work=102528/2168196 ETA=3213s loss=6.2008
+memory       epoch= 1 work=103808/2168196 ETA=3208s loss=6.0909
+memory       epoch= 1 work=105088/2168196 ETA=3203s loss=6.3899
+memory       epoch= 1 work=106368/2168196 ETA=3198s loss=6.1195
+memory       epoch= 1 work=107648/2168196 ETA=3193s loss=6.4852
+memory       epoch= 1 work=108928/2168196 ETA=3189s loss=6.3973
+memory       epoch= 1 work=110208/2168196 ETA=3184s loss=6.1160
+memory       epoch= 1 work=111488/2168196 ETA=3179s loss=6.3628
+memory       epoch= 1 work=112768/2168196 ETA=3174s loss=6.3424
+memory       epoch= 1 work=114048/2168196 ETA=3169s loss=6.2854
+memory       epoch= 1 work=115328/2168196 ETA=3164s loss=6.4391
+memory       epoch= 1 work=116608/2168196 ETA=3160s loss=6.4202
+memory       epoch= 1 work=117888/2168196 ETA=3155s loss=6.3706
+memory       epoch= 1 work=119168/2168196 ETA=3150s loss=6.4661
+memory       epoch= 1 work=120448/2168196 ETA=3145s loss=6.1842
+memory       epoch= 1 work=121728/2168196 ETA=3140s loss=6.4505
+memory       epoch= 1 work=123008/2168196 ETA=3136s loss=6.0983
+memory       epoch= 1 work=124288/2168196 ETA=3131s loss=6.2386
+memory       epoch= 1 work=125568/2168196 ETA=3126s loss=5.8339
+memory       epoch= 1 work=126848/2168196 ETA=3121s loss=6.1414
+memory       epoch= 1 work=128128/2168196 ETA=3116s loss=6.2943
+memory       epoch= 1 work=129408/2168196 ETA=3112s loss=6.4990
+memory       epoch= 1 work=130688/2168196 ETA=3107s loss=6.2679
+memory       epoch= 1 work=131968/2168196 ETA=3102s loss=6.1896
+memory       epoch= 1 work=133248/2168196 ETA=3097s loss=6.0754
+memory       epoch= 1 work=134528/2168196 ETA=3093s loss=6.1584
+memory       epoch= 1 work=135808/2168196 ETA=3088s loss=6.2634
+memory       epoch= 1 work=137088/2168196 ETA=3083s loss=6.0042
+memory       epoch= 1 work=138368/2168196 ETA=3078s loss=6.3476
+memory       epoch= 1 work=139648/2168196 ETA=3073s loss=6.1241
+memory       epoch= 1 work=140928/2168196 ETA=3069s loss=6.3363
+memory       epoch= 1 work=142208/2168196 ETA=3064s loss=6.1660
+memory       epoch= 1 work=143488/2168196 ETA=3059s loss=6.0995
+memory       epoch= 1 work=144768/2168196 ETA=3054s loss=5.9066
+memory       epoch= 1 work=146048/2168196 ETA=3049s loss=6.3106
+memory       epoch= 1 work=147328/2168196 ETA=3044s loss=6.0883
+memory       epoch= 1 work=148608/2168196 ETA=3039s loss=6.2623
+memory       epoch= 1 work=149888/2168196 ETA=3035s loss=5.9461
+memory       epoch= 1 work=151168/2168196 ETA=3030s loss=6.1341
+memory       epoch= 1 work=152448/2168196 ETA=3025s loss=6.2004
+memory       epoch= 1 work=153728/2168196 ETA=3020s loss=6.2854
+memory       epoch= 1 work=155008/2168196 ETA=3016s loss=6.2907
+memory       epoch= 1 work=156288/2168196 ETA=3011s loss=5.8407
+memory       epoch= 1 work=157568/2168196 ETA=3006s loss=6.0241
+memory       epoch= 1 work=158848/2168196 ETA=3001s loss=6.1354
+memory       epoch= 1 work=160128/2168196 ETA=2996s loss=6.1398
+memory       epoch= 1 work=161408/2168196 ETA=2991s loss=6.1820
+memory       epoch= 1 work=162688/2168196 ETA=2987s loss=6.2875
+memory       epoch= 1 work=163968/2168196 ETA=2982s loss=6.2065
+memory       epoch= 1 work=165248/2168196 ETA=2977s loss=5.9288
+memory       epoch= 1 work=166528/2168196 ETA=2972s loss=6.1435
+memory       epoch= 1 work=167808/2168196 ETA=2968s loss=5.7449
+memory       epoch= 1 work=169088/2168196 ETA=2963s loss=6.1147
+memory       epoch= 1 work=170368/2168196 ETA=2958s loss=5.9330
+memory       epoch= 1 work=171648/2168196 ETA=2953s loss=6.0724
+memory       epoch= 1 work=172928/2168196 ETA=2949s loss=6.0313
+memory       epoch= 1 work=174208/2168196 ETA=2944s loss=5.8029
+memory       epoch= 1 work=175488/2168196 ETA=2939s loss=5.9862
+memory       epoch= 1 work=176768/2168196 ETA=2934s loss=6.3398
+memory       epoch= 1 work=178048/2168196 ETA=2929s loss=5.8976
+memory       epoch= 1 work=179328/2168196 ETA=2925s loss=6.0503
+memory       epoch= 1 work=180608/2168196 ETA=2920s loss=5.7830
+memory       epoch= 2 work=180811/2168196 ETA=2773s loss=5.9122
+memory       epoch= 2 work=182091/2168196 ETA=2768s loss=6.0172
+memory       epoch= 2 work=183371/2168196 ETA=2763s loss=5.8413
+memory       epoch= 2 work=184651/2168196 ETA=2758s loss=6.0967
+memory       epoch= 2 work=185931/2168196 ETA=2754s loss=6.1234
+memory       epoch= 2 work=187211/2168196 ETA=2749s loss=5.9421
+memory       epoch= 2 work=188491/2168196 ETA=2744s loss=5.9388
+memory       epoch= 2 work=189771/2168196 ETA=2739s loss=5.8353
+memory       epoch= 2 work=191051/2168196 ETA=2734s loss=5.8189
+memory       epoch= 2 work=192331/2168196 ETA=2729s loss=5.9420
+memory       epoch= 2 work=193611/2168196 ETA=2725s loss=5.9022
+memory       epoch= 2 work=194891/2168196 ETA=2720s loss=6.1356
+memory       epoch= 2 work=196171/2168196 ETA=2715s loss=6.2072
+memory       epoch= 2 work=197451/2168196 ETA=2710s loss=6.0361
+memory       epoch= 2 work=198731/2168196 ETA=2706s loss=5.7964
+memory       epoch= 2 work=200011/2168196 ETA=2701s loss=5.9704
+memory       epoch= 2 work=201291/2168196 ETA=2696s loss=5.6046
+memory       epoch= 2 work=202571/2168196 ETA=2691s loss=5.9554
+memory       epoch= 2 work=203851/2168196 ETA=2686s loss=5.8735
+memory       epoch= 2 work=205131/2168196 ETA=2682s loss=6.0255
+memory       epoch= 2 work=206411/2168196 ETA=2677s loss=5.9290
+memory       epoch= 2 work=207691/2168196 ETA=2672s loss=5.8701
+memory       epoch= 2 work=208971/2168196 ETA=2667s loss=5.8883
+memory       epoch= 2 work=210251/2168196 ETA=2663s loss=5.9458
+memory       epoch= 2 work=211531/2168196 ETA=2658s loss=6.2232
+memory       epoch= 2 work=212811/2168196 ETA=2653s loss=5.7344
+memory       epoch= 2 work=214091/2168196 ETA=2648s loss=5.7488
+memory       epoch= 2 work=215371/2168196 ETA=2644s loss=5.8875
+memory       epoch= 2 work=216651/2168196 ETA=2639s loss=5.6070
+memory       epoch= 2 work=217931/2168196 ETA=2634s loss=5.7503
+memory       epoch= 2 work=219211/2168196 ETA=2629s loss=6.0324
+memory       epoch= 2 work=220491/2168196 ETA=2625s loss=5.5431
+memory       epoch= 2 work=221771/2168196 ETA=2620s loss=5.4745
+memory       epoch= 2 work=223051/2168196 ETA=2615s loss=5.8058
+memory       epoch= 2 work=224331/2168196 ETA=2610s loss=5.9537
+memory       epoch= 2 work=225611/2168196 ETA=2605s loss=5.8859
+memory       epoch= 2 work=226891/2168196 ETA=2601s loss=5.8252
+memory       epoch= 2 work=228171/2168196 ETA=2596s loss=5.8390
+memory       epoch= 2 work=229451/2168196 ETA=2591s loss=5.8334
+memory       epoch= 2 work=230731/2168196 ETA=2586s loss=5.6499
+memory       epoch= 2 work=232011/2168196 ETA=2581s loss=5.9229
+memory       epoch= 2 work=233291/2168196 ETA=2577s loss=5.6186
+memory       epoch= 2 work=234571/2168196 ETA=2572s loss=5.9851
+memory       epoch= 2 work=235851/2168196 ETA=2567s loss=5.5707
+memory       epoch= 2 work=237131/2168196 ETA=2562s loss=5.8582
+memory       epoch= 2 work=238411/2168196 ETA=2557s loss=5.7232
+memory       epoch= 2 work=239691/2168196 ETA=2553s loss=5.7813
+memory       epoch= 2 work=240971/2168196 ETA=2548s loss=5.6295
+memory       epoch= 2 work=242251/2168196 ETA=2543s loss=5.7059
+memory       epoch= 2 work=243531/2168196 ETA=2538s loss=5.6039
+memory       epoch= 2 work=244811/2168196 ETA=2534s loss=5.6161
+memory       epoch= 2 work=246091/2168196 ETA=2529s loss=6.0740
+memory       epoch= 2 work=247371/2168196 ETA=2524s loss=5.8570
+memory       epoch= 2 work=248651/2168196 ETA=2519s loss=5.7675
+memory       epoch= 2 work=249931/2168196 ETA=2515s loss=5.6883
+memory       epoch= 2 work=251211/2168196 ETA=2510s loss=5.9997
+memory       epoch= 2 work=252491/2168196 ETA=2505s loss=5.8300
+memory       epoch= 2 work=253771/2168196 ETA=2500s loss=5.6129
+memory       epoch= 2 work=255051/2168196 ETA=2495s loss=5.4973
+memory       epoch= 2 work=256331/2168196 ETA=2490s loss=5.5113
+memory       epoch= 2 work=257611/2168196 ETA=2486s loss=5.4557
+memory       epoch= 2 work=258891/2168196 ETA=2481s loss=5.7087
+memory       epoch= 2 work=260171/2168196 ETA=2476s loss=5.7495
+memory       epoch= 2 work=261451/2168196 ETA=2471s loss=6.0029
+memory       epoch= 2 work=262731/2168196 ETA=2466s loss=5.6501
+memory       epoch= 2 work=264011/2168196 ETA=2462s loss=5.9080
+memory       epoch= 2 work=265291/2168196 ETA=2457s loss=5.7067
+memory       epoch= 2 work=266571/2168196 ETA=2452s loss=5.6804
+memory       epoch= 2 work=267851/2168196 ETA=2447s loss=5.7587
+memory       epoch= 2 work=269131/2168196 ETA=2443s loss=5.5960
+memory       epoch= 2 work=270411/2168196 ETA=2438s loss=6.0448
+memory       epoch= 2 work=271691/2168196 ETA=2433s loss=5.3878
+memory       epoch= 2 work=272971/2168196 ETA=2428s loss=5.8502
+memory       epoch= 2 work=274251/2168196 ETA=2423s loss=5.6201
+memory       epoch= 2 work=275531/2168196 ETA=2419s loss=5.8375
+memory       epoch= 2 work=276811/2168196 ETA=2414s loss=5.6123
+memory       epoch= 2 work=278091/2168196 ETA=2409s loss=5.7356
+memory       epoch= 2 work=279371/2168196 ETA=2404s loss=5.8030
+memory       epoch= 2 work=280651/2168196 ETA=2399s loss=5.8090
+memory       epoch= 2 work=281931/2168196 ETA=2394s loss=6.1406
+memory       epoch= 2 work=283211/2168196 ETA=2390s loss=6.0051
+memory       epoch= 2 work=284491/2168196 ETA=2385s loss=5.7479
+memory       epoch= 2 work=285771/2168196 ETA=2380s loss=5.5195
+memory       epoch= 2 work=287051/2168196 ETA=2375s loss=5.7139
+memory       epoch= 2 work=288331/2168196 ETA=2370s loss=5.7432
+memory       epoch= 2 work=289611/2168196 ETA=2366s loss=5.7462
+memory       epoch= 2 work=290891/2168196 ETA=2361s loss=5.6670
+memory       epoch= 2 work=292171/2168196 ETA=2356s loss=5.8606
+memory       epoch= 2 work=293451/2168196 ETA=2351s loss=5.8585
+memory       epoch= 2 work=294731/2168196 ETA=2347s loss=5.6543
+memory       epoch= 2 work=296011/2168196 ETA=2342s loss=5.7412
+memory       epoch= 2 work=297291/2168196 ETA=2337s loss=5.6131
+memory       epoch= 2 work=298571/2168196 ETA=2332s loss=5.6119
+memory       epoch= 2 work=299851/2168196 ETA=2328s loss=5.5210
+memory       epoch= 2 work=301131/2168196 ETA=2323s loss=5.8340
+memory       epoch= 2 work=302411/2168196 ETA=2318s loss=5.6954
+memory       epoch= 2 work=303691/2168196 ETA=2313s loss=5.6917
+memory       epoch= 2 work=304971/2168196 ETA=2308s loss=5.7913
+memory       epoch= 2 work=306251/2168196 ETA=2304s loss=5.4877
+memory       epoch= 2 work=307531/2168196 ETA=2299s loss=5.7166
+memory       epoch= 2 work=308811/2168196 ETA=2294s loss=5.7564
+memory       epoch= 2 work=310091/2168196 ETA=2289s loss=5.4274
+memory       epoch= 2 work=311371/2168196 ETA=2284s loss=5.3817
+memory       epoch= 2 work=312651/2168196 ETA=2280s loss=5.3743
+memory       epoch= 2 work=313931/2168196 ETA=2275s loss=5.6922
+memory       epoch= 2 work=315211/2168196 ETA=2270s loss=5.7018
+memory       epoch= 2 work=316491/2168196 ETA=2265s loss=5.6092
+memory       epoch= 2 work=317771/2168196 ETA=2260s loss=5.6572
+memory       epoch= 2 work=319051/2168196 ETA=2256s loss=5.6765
+memory       epoch= 2 work=320331/2168196 ETA=2251s loss=5.9709
+memory       epoch= 2 work=321611/2168196 ETA=2246s loss=5.5511
+memory       epoch= 2 work=322891/2168196 ETA=2241s loss=5.5564
+memory       epoch= 2 work=324171/2168196 ETA=2236s loss=5.3756
+memory       epoch= 2 work=325451/2168196 ETA=2232s loss=5.8664
+memory       epoch= 2 work=326731/2168196 ETA=2227s loss=5.7395
+memory       epoch= 2 work=328011/2168196 ETA=2222s loss=5.3170
+memory       epoch= 2 work=329291/2168196 ETA=2217s loss=5.7359
+memory       epoch= 2 work=330571/2168196 ETA=2212s loss=5.7108
+memory       epoch= 2 work=331851/2168196 ETA=2208s loss=5.5013
+memory       epoch= 2 work=333131/2168196 ETA=2203s loss=5.4830
+memory       epoch= 2 work=334411/2168196 ETA=2198s loss=5.5895
+memory       epoch= 2 work=335691/2168196 ETA=2193s loss=5.7345
+memory       epoch= 2 work=336971/2168196 ETA=2188s loss=5.7455
+memory       epoch= 2 work=338251/2168196 ETA=2184s loss=5.5982
+memory       epoch= 2 work=339531/2168196 ETA=2179s loss=5.5355
+memory       epoch= 2 work=340811/2168196 ETA=2174s loss=5.7687
+memory       epoch= 2 work=342091/2168196 ETA=2169s loss=5.5856
+memory       epoch= 2 work=343371/2168196 ETA=2164s loss=5.7346
+memory       epoch= 2 work=344651/2168196 ETA=2160s loss=5.8911
+memory       epoch= 2 work=345931/2168196 ETA=2155s loss=5.4480
+memory       epoch= 2 work=347211/2168196 ETA=2150s loss=5.5700
+memory       epoch= 2 work=348491/2168196 ETA=2145s loss=5.5975
+memory       epoch= 2 work=349771/2168196 ETA=2140s loss=5.4604
+memory       epoch= 2 work=351051/2168196 ETA=2135s loss=5.5324
+memory       epoch= 2 work=352331/2168196 ETA=2131s loss=5.9091
+memory       epoch= 2 work=353611/2168196 ETA=2126s loss=5.6239
+memory       epoch= 2 work=354891/2168196 ETA=2121s loss=5.5938
+memory       epoch= 2 work=356171/2168196 ETA=2116s loss=5.5578
+memory       epoch= 2 work=357451/2168196 ETA=2111s loss=5.4675
+memory       epoch= 2 work=358731/2168196 ETA=2107s loss=5.3700
+memory       epoch= 2 work=360011/2168196 ETA=2102s loss=5.1749
+memory       epoch= 2 work=361291/2168196 ETA=2097s loss=5.6044
+memory       epoch= 3 work=361494/2168196 ETA=1950s loss=5.2466
+memory       epoch= 3 work=362774/2168196 ETA=1945s loss=5.6059
+memory       epoch= 3 work=364054/2168196 ETA=1940s loss=5.6217
+memory       epoch= 3 work=365334/2168196 ETA=1935s loss=5.7757
+memory       epoch= 3 work=366614/2168196 ETA=1930s loss=5.8358
+memory       epoch= 3 work=367894/2168196 ETA=1926s loss=5.3915
+memory       epoch= 3 work=369174/2168196 ETA=1921s loss=5.6745
+memory       epoch= 3 work=370454/2168196 ETA=1916s loss=5.3169
+memory       epoch= 3 work=371734/2168196 ETA=1911s loss=5.9527
+memory       epoch= 3 work=373014/2168196 ETA=1907s loss=5.6079
+memory       epoch= 3 work=374294/2168196 ETA=1902s loss=5.6151
+memory       epoch= 3 work=375574/2168196 ETA=1897s loss=5.7256
+memory       epoch= 3 work=376854/2168196 ETA=1892s loss=5.6806
+memory       epoch= 3 work=378134/2168196 ETA=1887s loss=5.3022
+memory       epoch= 3 work=379414/2168196 ETA=1883s loss=5.6982
+memory       epoch= 3 work=380694/2168196 ETA=1878s loss=5.6155
+memory       epoch= 3 work=381974/2168196 ETA=1873s loss=5.7044
+memory       epoch= 3 work=383254/2168196 ETA=1868s loss=5.2017
+memory       epoch= 3 work=384534/2168196 ETA=1864s loss=5.2887
+memory       epoch= 3 work=385814/2168196 ETA=1859s loss=5.6368
+memory       epoch= 3 work=387094/2168196 ETA=1854s loss=5.2558
+memory       epoch= 3 work=388374/2168196 ETA=1849s loss=5.2862
+memory       epoch= 3 work=389654/2168196 ETA=1845s loss=5.4606
+memory       epoch= 3 work=390934/2168196 ETA=1840s loss=5.3743
+memory       epoch= 3 work=392214/2168196 ETA=1835s loss=5.8000
+memory       epoch= 3 work=393494/2168196 ETA=1830s loss=5.8549
+memory       epoch= 3 work=394774/2168196 ETA=1825s loss=5.6451
+memory       epoch= 3 work=396054/2168196 ETA=1821s loss=5.4029
+memory       epoch= 3 work=397334/2168196 ETA=1816s loss=5.5060
+memory       epoch= 3 work=398614/2168196 ETA=1811s loss=5.4163
+memory       epoch= 3 work=399894/2168196 ETA=1806s loss=5.7121
+memory       epoch= 3 work=401174/2168196 ETA=1801s loss=5.5873
+memory       epoch= 3 work=402454/2168196 ETA=1797s loss=5.5556
+memory       epoch= 3 work=403734/2168196 ETA=1792s loss=5.4238
+memory       epoch= 3 work=405014/2168196 ETA=1787s loss=5.5480
+memory       epoch= 3 work=406294/2168196 ETA=1782s loss=5.7764
+memory       epoch= 3 work=407574/2168196 ETA=1777s loss=5.3509
+memory       epoch= 3 work=408854/2168196 ETA=1773s loss=5.1543
+memory       epoch= 3 work=410134/2168196 ETA=1768s loss=5.2876
+memory       epoch= 3 work=411414/2168196 ETA=1763s loss=5.5002
+memory       epoch= 3 work=412694/2168196 ETA=1758s loss=5.4979
+memory       epoch= 3 work=413974/2168196 ETA=1753s loss=5.4180
+memory       epoch= 3 work=415254/2168196 ETA=1749s loss=5.5435
+memory       epoch= 3 work=416534/2168196 ETA=1744s loss=5.4872
+memory       epoch= 3 work=417814/2168196 ETA=1739s loss=5.6168
+memory       epoch= 3 work=419094/2168196 ETA=1734s loss=5.4105
+memory       epoch= 3 work=420374/2168196 ETA=1730s loss=5.7418
+memory       epoch= 3 work=421654/2168196 ETA=1725s loss=5.4716
+memory       epoch= 3 work=422934/2168196 ETA=1720s loss=5.3858
+memory       epoch= 3 work=424214/2168196 ETA=1715s loss=5.3770
+memory       epoch= 3 work=425494/2168196 ETA=1710s loss=5.5700
+memory       epoch= 3 work=426774/2168196 ETA=1705s loss=5.1265
+memory       epoch= 3 work=428054/2168196 ETA=1701s loss=5.6611
+memory       epoch= 3 work=429334/2168196 ETA=1696s loss=5.5569
+memory       epoch= 3 work=430614/2168196 ETA=1691s loss=5.4160
+memory       epoch= 3 work=431894/2168196 ETA=1686s loss=5.4365
+memory       epoch= 3 work=433174/2168196 ETA=1681s loss=5.3415
+memory       epoch= 3 work=434454/2168196 ETA=1677s loss=5.6943
+memory       epoch= 3 work=435734/2168196 ETA=1672s loss=5.3114
+memory       epoch= 3 work=437014/2168196 ETA=1667s loss=5.5609
+memory       epoch= 3 work=438294/2168196 ETA=1662s loss=5.4894
+memory       epoch= 3 work=439574/2168196 ETA=1658s loss=5.5587
+memory       epoch= 3 work=440854/2168196 ETA=1653s loss=5.5805
+memory       epoch= 3 work=442134/2168196 ETA=1648s loss=5.5367
+memory       epoch= 3 work=443414/2168196 ETA=1643s loss=5.6928
+memory       epoch= 3 work=444694/2168196 ETA=1638s loss=5.6647
+memory       epoch= 3 work=445974/2168196 ETA=1633s loss=5.5444
+memory       epoch= 3 work=447254/2168196 ETA=1629s loss=5.4836
+memory       epoch= 3 work=448534/2168196 ETA=1624s loss=5.2719
+memory       epoch= 3 work=449814/2168196 ETA=1619s loss=5.3200
+memory       epoch= 3 work=451094/2168196 ETA=1614s loss=5.0899
+memory       epoch= 3 work=452374/2168196 ETA=1610s loss=5.6708
+memory       epoch= 3 work=453654/2168196 ETA=1605s loss=5.5811
+memory       epoch= 3 work=454934/2168196 ETA=1600s loss=5.2636
+memory       epoch= 3 work=456214/2168196 ETA=1595s loss=5.8078
+memory       epoch= 3 work=457494/2168196 ETA=1591s loss=5.5438
+memory       epoch= 3 work=458774/2168196 ETA=1586s loss=5.4479
+memory       epoch= 3 work=460054/2168196 ETA=1581s loss=5.4054
+memory       epoch= 3 work=461334/2168196 ETA=1576s loss=5.4735
+memory       epoch= 3 work=462614/2168196 ETA=1571s loss=5.4598
+memory       epoch= 3 work=463894/2168196 ETA=1567s loss=5.4795
+memory       epoch= 3 work=465174/2168196 ETA=1562s loss=5.5035
+memory       epoch= 3 work=466454/2168196 ETA=1557s loss=5.4538
+memory       epoch= 3 work=467734/2168196 ETA=1552s loss=5.3359
+memory       epoch= 3 work=469014/2168196 ETA=1548s loss=5.6835
+memory       epoch= 3 work=470294/2168196 ETA=1543s loss=5.1659
+memory       epoch= 3 work=471574/2168196 ETA=1538s loss=5.1873
+memory       epoch= 3 work=472854/2168196 ETA=1533s loss=5.7105
+memory       epoch= 3 work=474134/2168196 ETA=1528s loss=5.2815
+memory       epoch= 3 work=475414/2168196 ETA=1524s loss=5.7459
+memory       epoch= 3 work=476694/2168196 ETA=1519s loss=5.4975
+memory       epoch= 3 work=477974/2168196 ETA=1514s loss=5.6880
+memory       epoch= 3 work=479254/2168196 ETA=1509s loss=5.6075
+memory       epoch= 3 work=480534/2168196 ETA=1504s loss=5.5751
+memory       epoch= 3 work=481814/2168196 ETA=1499s loss=5.3184
+memory       epoch= 3 work=483094/2168196 ETA=1495s loss=5.1344
+memory       epoch= 3 work=484374/2168196 ETA=1490s loss=5.4446
+memory       epoch= 3 work=485654/2168196 ETA=1485s loss=5.4465
+memory       epoch= 3 work=486934/2168196 ETA=1480s loss=5.7550
+memory       epoch= 3 work=488214/2168196 ETA=1475s loss=5.4906
+memory       epoch= 3 work=489494/2168196 ETA=1471s loss=5.4704
+memory       epoch= 3 work=490774/2168196 ETA=1466s loss=5.6385
+memory       epoch= 3 work=492054/2168196 ETA=1461s loss=5.4504
+memory       epoch= 3 work=493334/2168196 ETA=1456s loss=5.4657
+memory       epoch= 3 work=494614/2168196 ETA=1451s loss=5.3097
+memory       epoch= 3 work=495894/2168196 ETA=1446s loss=5.2981
+memory       epoch= 3 work=497174/2168196 ETA=1442s loss=5.3462
+memory       epoch= 3 work=498454/2168196 ETA=1437s loss=5.3680
+memory       epoch= 3 work=499734/2168196 ETA=1432s loss=5.3647
+memory       epoch= 3 work=501014/2168196 ETA=1427s loss=5.1516
+memory       epoch= 3 work=502294/2168196 ETA=1422s loss=5.1085
+memory       epoch= 3 work=503574/2168196 ETA=1418s loss=5.4980
+memory       epoch= 3 work=504854/2168196 ETA=1413s loss=5.4613
+memory       epoch= 3 work=506134/2168196 ETA=1408s loss=5.4409
+memory       epoch= 3 work=507414/2168196 ETA=1403s loss=5.4914
+memory       epoch= 3 work=508694/2168196 ETA=1398s loss=5.4463
+memory       epoch= 3 work=509974/2168196 ETA=1394s loss=5.3423
+memory       epoch= 3 work=511254/2168196 ETA=1389s loss=5.2774
+memory       epoch= 3 work=512534/2168196 ETA=1384s loss=5.4802
+memory       epoch= 3 work=513814/2168196 ETA=1380s loss=5.4094
+memory       epoch= 3 work=515094/2168196 ETA=1375s loss=5.5234
+memory       epoch= 3 work=516374/2168196 ETA=1370s loss=5.5061
+memory       epoch= 3 work=517654/2168196 ETA=1365s loss=5.5254
+memory       epoch= 3 work=518934/2168196 ETA=1360s loss=5.4137
+memory       epoch= 3 work=520214/2168196 ETA=1355s loss=5.3802
+memory       epoch= 3 work=521494/2168196 ETA=1351s loss=5.1741
+memory       epoch= 3 work=522774/2168196 ETA=1346s loss=5.2055
+memory       epoch= 3 work=524054/2168196 ETA=1341s loss=5.2830
+memory       epoch= 3 work=525334/2168196 ETA=1336s loss=5.3586
+memory       epoch= 3 work=526614/2168196 ETA=1332s loss=5.4359
+memory       epoch= 3 work=527894/2168196 ETA=1327s loss=5.3203
+memory       epoch= 3 work=529174/2168196 ETA=1322s loss=5.5787
+memory       epoch= 3 work=530454/2168196 ETA=1317s loss=5.3181
+memory       epoch= 3 work=531734/2168196 ETA=1312s loss=5.2004
+memory       epoch= 3 work=533014/2168196 ETA=1308s loss=5.4356
+memory       epoch= 3 work=534294/2168196 ETA=1303s loss=5.3762
+memory       epoch= 3 work=535574/2168196 ETA=1298s loss=5.5255
+memory       epoch= 3 work=536854/2168196 ETA=1293s loss=5.3113
+memory       epoch= 3 work=538134/2168196 ETA=1288s loss=5.4503
+memory       epoch= 3 work=539414/2168196 ETA=1283s loss=5.6745
+memory       epoch= 3 work=540694/2168196 ETA=1279s loss=5.4011
+memory       epoch= 3 work=541974/2168196 ETA=1274s loss=5.4327
+memory       epoch= 4 work=542177/2168196 ETA=1127s loss=5.2525
+memory       epoch= 4 work=543457/2168196 ETA=1122s loss=5.3723
+memory       epoch= 4 work=544737/2168196 ETA=1117s loss=5.2348
+memory       epoch= 4 work=546017/2168196 ETA=1113s loss=5.4376
+memory       epoch= 4 work=547297/2168196 ETA=1108s loss=5.1835
+memory       epoch= 4 work=548577/2168196 ETA=1103s loss=5.4347
+memory       epoch= 4 work=549857/2168196 ETA=1098s loss=5.3105
+memory       epoch= 4 work=551137/2168196 ETA=1094s loss=5.3645
+memory       epoch= 4 work=552417/2168196 ETA=1089s loss=5.4599
+memory       epoch= 4 work=553697/2168196 ETA=1084s loss=5.4169
+memory       epoch= 4 work=554977/2168196 ETA=1079s loss=5.5160
+memory       epoch= 4 work=556257/2168196 ETA=1074s loss=5.2850
+memory       epoch= 4 work=557537/2168196 ETA=1070s loss=5.4884
+memory       epoch= 4 work=558817/2168196 ETA=1065s loss=5.0766
+memory       epoch= 4 work=560097/2168196 ETA=1060s loss=5.4636
+memory       epoch= 4 work=561377/2168196 ETA=1055s loss=5.3200
+memory       epoch= 4 work=562657/2168196 ETA=1050s loss=5.4990
+memory       epoch= 4 work=563937/2168196 ETA=1046s loss=5.0637
+memory       epoch= 4 work=565217/2168196 ETA=1041s loss=5.3293
+memory       epoch= 4 work=566497/2168196 ETA=1036s loss=5.3937
+memory       epoch= 4 work=567777/2168196 ETA=1031s loss=5.6274
+memory       epoch= 4 work=569057/2168196 ETA=1027s loss=5.3978
+memory       epoch= 4 work=570337/2168196 ETA=1022s loss=5.4111
+memory       epoch= 4 work=571617/2168196 ETA=1017s loss=4.9538
+memory       epoch= 4 work=572897/2168196 ETA=1012s loss=5.6371
+memory       epoch= 4 work=574177/2168196 ETA=1007s loss=5.4872
+memory       epoch= 4 work=575457/2168196 ETA=1002s loss=5.3169
+memory       epoch= 4 work=576737/2168196 ETA=998s loss=5.3432
+memory       epoch= 4 work=578017/2168196 ETA=993s loss=5.2847
+memory       epoch= 4 work=579297/2168196 ETA=988s loss=5.5004
+memory       epoch= 4 work=580577/2168196 ETA=983s loss=5.5123
+memory       epoch= 4 work=581857/2168196 ETA=978s loss=4.9176
+memory       epoch= 4 work=583137/2168196 ETA=974s loss=5.3761
+memory       epoch= 4 work=584417/2168196 ETA=969s loss=5.3117
+memory       epoch= 4 work=585697/2168196 ETA=964s loss=5.1858
+memory       epoch= 4 work=586977/2168196 ETA=959s loss=5.3223
+memory       epoch= 4 work=588257/2168196 ETA=955s loss=5.1254
+memory       epoch= 4 work=589537/2168196 ETA=950s loss=5.2993
+memory       epoch= 4 work=590817/2168196 ETA=945s loss=5.3979
+memory       epoch= 4 work=592097/2168196 ETA=940s loss=5.4147
+memory       epoch= 4 work=593377/2168196 ETA=935s loss=5.5087
+memory       epoch= 4 work=594657/2168196 ETA=931s loss=5.2735
+memory       epoch= 4 work=595937/2168196 ETA=926s loss=5.2259
+memory       epoch= 4 work=597217/2168196 ETA=921s loss=5.2698
+memory       epoch= 4 work=598497/2168196 ETA=916s loss=5.1621
+memory       epoch= 4 work=599777/2168196 ETA=911s loss=5.2936
+memory       epoch= 4 work=601057/2168196 ETA=906s loss=5.2265
+memory       epoch= 4 work=602337/2168196 ETA=902s loss=5.3953
+memory       epoch= 4 work=603617/2168196 ETA=897s loss=5.2758
+memory       epoch= 4 work=604897/2168196 ETA=892s loss=5.5128
+memory       epoch= 4 work=606177/2168196 ETA=887s loss=5.1454
+memory       epoch= 4 work=607457/2168196 ETA=883s loss=5.6035
+memory       epoch= 4 work=608737/2168196 ETA=878s loss=5.3354
+memory       epoch= 4 work=610017/2168196 ETA=873s loss=5.4276
+memory       epoch= 4 work=611297/2168196 ETA=868s loss=5.1606
+memory       epoch= 4 work=612577/2168196 ETA=863s loss=5.4634
+memory       epoch= 4 work=613857/2168196 ETA=858s loss=5.5059
+memory       epoch= 4 work=615137/2168196 ETA=854s loss=5.3004
+memory       epoch= 4 work=616417/2168196 ETA=849s loss=5.2079
+memory       epoch= 4 work=617697/2168196 ETA=844s loss=5.4630
+memory       epoch= 4 work=618977/2168196 ETA=839s loss=5.2220
+memory       epoch= 4 work=620257/2168196 ETA=834s loss=5.1917
+memory       epoch= 4 work=621537/2168196 ETA=829s loss=5.3168
+memory       epoch= 4 work=622817/2168196 ETA=825s loss=5.3625
+memory       epoch= 4 work=624097/2168196 ETA=820s loss=5.2219
+memory       epoch= 4 work=625377/2168196 ETA=815s loss=5.3960
+memory       epoch= 4 work=626657/2168196 ETA=810s loss=5.6305
+memory       epoch= 4 work=627937/2168196 ETA=806s loss=5.4288
+memory       epoch= 4 work=629217/2168196 ETA=801s loss=5.5783
+memory       epoch= 4 work=630497/2168196 ETA=796s loss=5.5665
+memory       epoch= 4 work=631777/2168196 ETA=791s loss=5.5551
+memory       epoch= 4 work=633057/2168196 ETA=787s loss=5.3415
+memory       epoch= 4 work=634337/2168196 ETA=782s loss=5.2413
+memory       epoch= 4 work=635617/2168196 ETA=777s loss=5.4303
+memory       epoch= 4 work=636897/2168196 ETA=772s loss=5.1597
+memory       epoch= 4 work=638177/2168196 ETA=767s loss=5.3480
+memory       epoch= 4 work=639457/2168196 ETA=763s loss=5.3734
+memory       epoch= 4 work=640737/2168196 ETA=758s loss=5.3726
+memory       epoch= 4 work=642017/2168196 ETA=753s loss=5.2279
+memory       epoch= 4 work=643297/2168196 ETA=748s loss=5.2115
+memory       epoch= 4 work=644577/2168196 ETA=744s loss=5.3788
+memory       epoch= 4 work=645857/2168196 ETA=739s loss=5.3980
+memory       epoch= 4 work=647137/2168196 ETA=734s loss=5.4303
+memory       epoch= 4 work=648417/2168196 ETA=729s loss=5.4633
+memory       epoch= 4 work=649697/2168196 ETA=725s loss=5.1508
+memory       epoch= 4 work=650977/2168196 ETA=720s loss=5.3879
+memory       epoch= 4 work=652257/2168196 ETA=715s loss=5.3949
+memory       epoch= 4 work=653537/2168196 ETA=710s loss=5.3642
+memory       epoch= 4 work=654817/2168196 ETA=705s loss=5.3150
+memory       epoch= 4 work=656097/2168196 ETA=700s loss=5.6040
+memory       epoch= 4 work=657377/2168196 ETA=695s loss=5.0224
+memory       epoch= 4 work=658657/2168196 ETA=690s loss=5.3582
+memory       epoch= 4 work=659937/2168196 ETA=685s loss=5.3837
+memory       epoch= 4 work=661217/2168196 ETA=680s loss=5.2820
+memory       epoch= 4 work=662497/2168196 ETA=675s loss=5.3350
+memory       epoch= 4 work=663777/2168196 ETA=670s loss=5.3538
+memory       epoch= 4 work=665057/2168196 ETA=665s loss=5.5345

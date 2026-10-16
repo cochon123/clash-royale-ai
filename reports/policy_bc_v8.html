@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PolicyBC v8 — causal belief policy</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+
+    :root {
+      color-scheme: dark;
+      --bg: #071018;
+      --panel: #0d171f;
+      --line: #1e3140;
+      --line-soft: #15222c;
+      --text: #edf4f8;
+      --muted: #8aa3b3;
+      --accent: #38bdf8;
+      --sky: #38bdf8;
+      --star: #e8f58b;
+      --green: #70e1b1;
+      --gold: #ffca63;
+      --blue: #70a1ff;
+      --red: #ff7e78;
+      --ink: #061018;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font: 15px/1.55 "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 12% -8%, #16384a 0, transparent 34%),
+        radial-gradient(circle at 90% 0, #1d3f32 0, transparent 28%),
+        var(--bg);
+    }
+    body:before { content: none !important; }
+    main {
+      width: min(1220px, calc(100% - 36px));
+      margin: auto;
+      padding: 48px 0 90px;
+    }
+    a { color: var(--sky); }
+    h1 {
+      font-size: clamp(2.2rem, 5.4vw, 3.7rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      margin: 16px 0 18px;
+      font-weight: 700;
+      max-width: 980px;
+    }
+    h1 em { color: var(--sky); font-style: normal; }
+    h2 {
+      font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+      letter-spacing: -0.03em;
+      margin: 0 0 10px;
+      color: var(--text);
+      font-weight: 650;
+    }
+    h3 { font-size: 17px; margin: 0 0 8px; color: var(--text); }
+    p, li { color: var(--muted); margin: 0 0 10px; }
+    .eyebrow {
+      font: 700 11px/1.2 "IBM Plex Mono", ui-monospace, monospace;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--sky);
+    }
+    .lede { font-size: clamp(16px, 2vw, 20px); max-width: 860px; color: #bdd0db; }
+    .hero, .report-header { padding: 8px 0 40px; }
+    .hero-sub { font-size: 1.05rem; max-width: 72ch; color: #bdd0db; }
+    .stamp, .meta, .foot {
+      margin-top: 18px;
+      color: #607888;
+      font: 12px "IBM Plex Mono", ui-monospace, monospace;
+    }
+    .foot { padding-top: 26px; display: block; }
+    .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .badge {
+      font: 700 11px/1.2 "IBM Plex Mono", ui-monospace, monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .badge + .badge::before { content: "·"; margin-right: 8px; color: #355065; }
+
+    .section, .report-section { border-top: 1px solid var(--line); padding: 44px 0; }
+    .section:first-of-type, .report-section:first-of-type { border-top: none; padding-top: 0; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+    .section-head p { max-width: 560px; }
+
+    .kpis, .kpi-row, .match-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .kpi, .card, .hero-score, .stat {
+      border: 1px solid var(--line);
+      background: linear-gradient(160deg, rgba(17,28,37,.94), rgba(8,14,20,.94));
+      border-radius: 18px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi:after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--tone, var(--sky));
+      filter: blur(55px);
+      opacity: 0.14;
+      right: -30px;
+      top: -35px;
+    }
+    .kpi span, .kpi-label, .hero-score-label, .stat .k {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .kpi b, .kpi-value, .hero-score-value, .stat .v {
+      display: block;
+      font-size: clamp(1.4rem, 3vw, 2.1rem);
+      letter-spacing: -0.04em;
+      margin: 6px 0 2px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+    }
+    .kpi small, .stat .s { color: #6f8796; font-size: 0.78rem; }
+    .hero-scores { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+    .hero-scores .hero-score { min-width: 140px; }
+    .up, .hero-score-value.up { color: var(--green); }
+    .down, .hero-score-value.down { color: var(--red); }
+    .flat, .neutral, .hero-score-value.neutral { color: var(--muted); }
+
+    .grid2, .compare-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+    .block-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 32px; }
+    .block-wide { grid-column: 1 / -1; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; }
+    th {
+      color: var(--muted);
+      font: 700 11px "IBM Plex Mono", ui-monospace, monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .metric-table th, .metric-table td { text-align: right; }
+    .metric-table th:first-child, .metric-table td:first-child { text-align: left; }
+    .metric-table tbody tr:hover, tbody tr:hover { background: #12202a; }
+    .winner { color: var(--sky); font-weight: 750; }
+    .metric-note { font-size: 11px; color: #617888; display: block; }
+    .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 16px; }
+
+    button, .toggle, .chip, .replay-chip, .match-chip, .anim-btn, .play-btn {
+      border: 1px solid var(--line);
+      background: #0a151c;
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font: 600 12px "IBM Plex Mono", ui-monospace, monospace;
+      cursor: pointer;
+    }
+    button:hover, .toggle:hover, .chip:hover, .replay-chip:hover,
+    .match-chip:hover, .anim-btn:hover, .play-btn:hover {
+      border-color: #416a80;
+      color: var(--text);
+    }
+    button.active, .chip.active, .replay-chip.active, .match-chip.active, .play-btn {
+      background: var(--sky);
+      color: var(--ink);
+      border-color: var(--sky);
+    }
+    .play-btn { border-radius: 999px; padding: 9px 20px; font-weight: 700; }
+    .play-btn.ghost { background: #0a151c; color: var(--text); }
+    .chip, .replay-chip, .match-chip, .pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 6px 13px;
+    }
+    .chip .chip-n { opacity: 0.65; font-size: 0.72rem; margin-left: 5px; }
+    .chart-tools, .toolbar, .chip-row, .replay-chips, .match-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+      align-items: center;
+    }
+    .toolbar .hint { color: var(--muted); font-size: 0.85rem; }
+
+    .bars, .bar-set { display: grid; gap: 14px; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 88px;
+      gap: 12px;
+      align-items: center;
+    }
+    .bar-track {
+      height: 13px;
+      border-radius: 99px;
+      background: #08131a;
+      overflow: hidden;
+      border: 1px solid #1c2d38;
+    }
+    .bar-fill {
+      height: 100%;
+      width: 0;
+      border-radius: 99px;
+      background: var(--tone, var(--sky));
+      transition: width 1s cubic-bezier(.2,.8,.2,1);
+    }
+    .bar-value { font: 700 12px "IBM Plex Mono", ui-monospace, monospace; text-align: right; }
+
+    .expr {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border: 1px dashed #355065;
+      border-radius: 12px;
+      background: #0a151c;
+      font: 13px/1.55 "IBM Plex Mono", ui-monospace, monospace;
+      color: #c5d7e2;
+    }
+    .expr b { color: var(--sky); }
+    .callout {
+      border-left: 3px solid var(--gold);
+      padding: 15px 18px;
+      background: #19180f;
+      border-radius: 0 12px 12px 0;
+      margin-top: 18px;
+      color: #d7cfaf;
+    }
+    .callout a { color: var(--gold); font-weight: 700; }
+
+    ul.lessons { margin: 0; padding-left: 18px; display: block; }
+    .lessons:not(ul) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+    .lesson .n { font: 800 12px "IBM Plex Mono", ui-monospace, monospace; color: var(--sky); }
+    .lesson h3 { margin: 14px 0 7px; }
+    .lesson p { font-size: 13px; }
+
+    .diagram {
+      margin: 0;
+      padding: 0 0 0 16px;
+      border-left: 2px solid var(--line);
+      font: 13px/1.65 "IBM Plex Mono", ui-monospace, monospace;
+      color: var(--muted);
+      white-space: pre-wrap;
+    }
+    .media { width: 100%; display: block; border-radius: 8px; }
+    .caption { font-size: 13px; color: #607888; margin-top: 10px; }
+
+    .chart-grid { display: flex; flex-direction: column; gap: 48px; }
+    .chart-block, .chart-wrap { position: relative; width: 100%; }
+    svg.chart {
+      width: 100%;
+      height: auto;
+      min-height: 420px;
+      aspect-ratio: 1000 / 540;
+      display: block;
+      overflow: visible;
+    }
+    svg.chart-interactive .chart-lines polyline {
+      transition: stroke-width 0.15s ease, opacity 0.15s ease;
+    }
+    svg.chart-interactive .chart-lines polyline:hover { stroke-width: 5.5; }
+    .chart-overlay { cursor: crosshair; }
+    .chart-crosshair { pointer-events: none; }
+    .chart-dot {
+      pointer-events: none;
+      filter: drop-shadow(0 0 6px currentColor);
+    }
+    path.curve, polyline.curve {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: curveIn 1.15s cubic-bezier(.22, 1, .36, 1) forwards;
+    }
+    @keyframes curveIn {
+      to { stroke-dashoffset: 0; }
+    }
+    .point {
+      cursor: crosshair;
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: transform 0.16s cubic-bezier(.2, .8, .2, 1), filter 0.16s ease;
+    }
+    .point:hover, .point.is-hot {
+      transform: scale(1.9);
+      filter: drop-shadow(0 0 7px color-mix(in srgb, var(--sky) 80%, transparent));
+    }
+    .hist-bar {
+      transform-box: fill-box;
+      transform-origin: bottom center;
+      transition: opacity 0.15s ease, filter 0.15s ease;
+      cursor: crosshair;
+    }
+    .hist-bar:hover { filter: brightness(1.28); }
+    .chart-tooltip {
+      position: absolute;
+      top: 12px;
+      left: 0;
+      min-width: 180px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(7, 16, 24, 0.94);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.12s ease, transform 0.12s ease;
+      z-index: 2;
+      font-size: 14px;
+      color: #c5d7e2;
+    }
+    .chart-tooltip.visible { opacity: 1; transform: translateY(0); }
+    .chart-tooltip-title {
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #607888;
+      margin-bottom: 10px;
+    }
+    .chart-tooltip-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .chart-tooltip-row:last-child { margin-bottom: 0; }
+    .chart-tooltip-row strong { margin-left: auto; color: var(--text); font-weight: 600; }
+    .chart-tooltip-swatch { width: 10px; height: 10px; border-radius: 999px; flex-shrink: 0; }
+    .legend, .legend-interactive, .legend-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      font-size: 14px;
+      color: #607888;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .legend-item:hover { border-color: #416a80; color: var(--text); }
+    .legend-item.is-on { color: var(--text); }
+    .legend-item.is-off { opacity: 0.4; }
+    .legend-item.is-off .legend-label { text-decoration: line-through; }
+    .legend-preview { width: 16px; border-top: 2px solid var(--legend-color, var(--muted)); flex-shrink: 0; }
+    .legend-item.legend-dashed .legend-preview { border-top-style: dashed; }
+    .legend-row .swatch {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: -2px;
+    }
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--tone, var(--sky));
+      flex-shrink: 0;
+    }
+
+    #curve { width: 100%; height: 360px; display: block; }
+    .gridline { stroke: var(--line); stroke-width: 1; }
+    .axis-label { fill: #668090; font: 11px "IBM Plex Mono", ui-monospace, monospace; }
+    .tooltip {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9;
+      background: #edf4f8;
+      color: #071018;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font: 12px "IBM Plex Mono", ui-monospace, monospace;
+      box-shadow: 0 8px 28px #0008;
+      opacity: 0;
+      transform: translate(-50%, -120%);
+    }
+    .tip {
+      position: absolute;
+      pointer-events: none;
+      padding: 7px 10px;
+      border-radius: 9px;
+      background: #0b1220ee;
+      border: 1px solid var(--line);
+      font: 12px "IBM Plex Mono", ui-monospace, monospace;
+      z-index: 5;
+    }
+
+    .anim-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 14px; }
+    .anim-btn-icon {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .anim-icon { width: 15px; height: 15px; fill: currentColor; display: block; }
+    .anim-icon[hidden] { display: none; }
+    .anim-scrubber { flex: 1 1 220px; min-width: 180px; accent-color: var(--sky); cursor: pointer; }
+    .anim-readout, .replay-log {
+      flex: 1 1 100%;
+      font: 12px "IBM Plex Mono", ui-monospace, monospace;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .anim-readout strong { color: var(--text); font-weight: 600; }
+    svg.chart-dual .chart-refline { stroke-dasharray: 6 5; opacity: 0.75; }
+
+    .arena { width: 100%; max-width: 320px; height: auto; display: block; margin: 0 auto; border-radius: 12px; }
+    .mini-arena { width: 100%; height: auto; border-radius: 8px; }
+    .zone-cell { cursor: crosshair; }
+    .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+    .flow-step {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 12px;
+      background: #0a151c;
+    }
+    .decoder { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+    .step { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: #0a151c; }
+    .step b { display: block; color: var(--sky); font: 700 11px "IBM Plex Mono", ui-monospace, monospace; letter-spacing: 0.08em; margin-bottom: 8px; }
+
+    .verdict:has(.mark) {
+      margin-top: 32px;
+      border: 1px solid #2f6f8a;
+      background: linear-gradient(135deg, rgba(56,189,248,.14), rgba(112,225,177,.05));
+      border-radius: 22px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .verdict .mark {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: var(--sky);
+      color: var(--ink);
+      font-size: 22px;
+      font-weight: 900;
+    }
+    .verdict:has(.mark) strong { display: block; font-size: 20px; margin-bottom: 5px; color: var(--text); }
+    .verdict:has(.verdict-tag) {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      margin: 18px 0 4px;
+      font-size: 0.95rem;
+      border: 1px solid;
+    }
+    .verdict-tag { font-weight: 800; letter-spacing: 0.08em; font-size: 0.78rem; padding: 4px 10px; border-radius: 999px; }
+    .verdict-pass { background: rgba(112,225,177,0.1); border-color: rgba(112,225,177,0.35); }
+    .verdict-pass .verdict-tag { background: var(--green); color: var(--ink); }
+    .verdict-fail { background: rgba(255,126,120,0.1); border-color: rgba(255,126,120,0.35); }
+    .verdict-fail .verdict-tag { background: var(--red); color: var(--ink); }
+    .verdict-partial { background: rgba(255,202,99,0.1); border-color: rgba(255,202,99,0.35); }
+    .verdict-partial .verdict-tag { background: var(--gold); color: var(--ink); }
+
+    @media (max-width: 900px) {
+      .kpis, .kpi-row, .match-kpis, .grid2, .grid3, .block-grid,
+      .lessons:not(ul), .decoder, .compare-grid { grid-template-columns: 1fr; }
+      .section-head { flex-direction: column; align-items: start; }
+      .verdict:has(.mark) { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 72px 1fr 72px; }
+    }
+
+.blueprint {display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.mod {border:1px dashed #355065;border-radius:14px;padding:14px;min-height:110px}
+.mod b {display:block;color:var(--sky);font:700 11px/1.3 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.formula {font:13px/1.7 "IBM Plex Mono",ui-monospace,monospace;background:#08141c;border:1px solid var(--line);border-radius:12px;padding:16px;color:#9ee7c8;overflow:auto}
+.gate {display:grid;grid-template-columns:170px 1fr 90px;gap:10px;align-items:center;margin:12px 0}
+.track {height:22px;background:#15222c;border-radius:6px;position:relative;overflow:hidden}
+.fill {height:100%;background:var(--sky);border-radius:6px}
+.band {position:absolute;top:0;bottom:0;background:#70e1b133}
+.chart-tools {display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chart-tools button,.card button {background:#12202a;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+.chart-tools button.on {color:var(--ink);background:var(--sky);border-color:transparent}
+.grid2 {display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tooltip {position:fixed;z-index:9;background:#0b1620;border:1px solid #355065;padding:8px 10px;border-radius:8px;font-size:12px;pointer-events:none;display:none}
+.tooltip.on {display:block}
+@media(max-width:800px){.blueprint,.kpis,.grid2,.gate{grid-template-columns:1fr}}
+</style></head><body><main>
+<header class="hero">
+  <div class="eyebrow">Clash Royale AI · Astra Stage A</div>
+  <h1>A memory that can wait.<br><em>Then play.</em></h1>
+  <p class="lede">v8 replaces the GRU trunk with 24 latent memory tokens, a joint own/opponent event clock, and the compact selected-card heatmap prior. This is replay-only Stage A — board observations remain Stage B.</p>
+  <div class="stamp">2026-09-06T23:18:23Z · cuda · 2.40m params · 40m 09s</div>
+</header>
+
+<section class="section">
+  <div class="section-head"><div><div class="eyebrow">01 · scoreboard</div><h2>Held-out imitation, not win rate</h2></div><p>Causal observation time. Actor identity is still supplied by the target. Joint card+tile is the behavioral gate from the architecture report.</p></div>
+  <div class="kpis">
+    <div class="kpi" style="--tone:var(--sky)"><span>Card top-1</span><b>48.07%</b><small>target 57–61%</small></div>
+    <div class="kpi" style="--tone:var(--green)"><span>Tile top-1</span><b>11.32%</b><small>target 20–24%</small></div>
+    <div class="kpi" style="--tone:var(--gold)"><span>Card + tile</span><b>8.42%</b><small>target 17–21%</small></div>
+    <div class="kpi" style="--tone:var(--blue)"><span>Timing MAE</span><b>1.79s</b><small>target 1.35–1.55s</small></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div><div class="eyebrow">02 · architecture</div><h2>Belief first, then the action prior</h2></div><p>Memory tokens are latent. None of them is advertised as a tracked living troop.</p></div>
+  <div class="blueprint">
+    <div class="mod"><b>events</b>64-step causal encoder with relative time and XY. Padding is masked.</div>
+    <div class="mod"><b>memory</b>24 × 128 tokens. Friendly/enemy cross-attention, then two interaction blocks.</div>
+    <div class="mod"><b>clock</b>Own and opponent rates. Survival of the quiet interval is a trained term.</div>
+    <div class="mod"><b>action</b>Type → selected card → 18×32 heatmap + within-tile offset.</div>
+  </div>
+  <div class="formula" style="margin-top:16px">p(next @ t, side s, action a | H) = survival(t|H) × rate(s,t|H) × p(a | belief(t), s)<br>survival(t) = exp(−∫ Σ rate(s,u) du) · piecewise-constant on 250 ms</div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div><div class="eyebrow">03 · compute &amp; data</div><h2>Small enough to falsify</h2></div><p>Pilot split holds out the Astra probe cohort. Mixed precision on the local GPU.</p></div>
+  <div class="kpis">
+    <div class="kpi" style="--tone:var(--sky)"><span>Parameters</span><b>2.40m</b><small>d=128 · mem=24</small></div>
+    <div class="kpi" style="--tone:var(--green)"><span>Train samples</span><b>317.0k</b><small>5,000 battles</small></div>
+    <div class="kpi" style="--tone:var(--gold)"><span>Batch</span><b>128</b><small>accum 1 · amp true</small></div>
+    <div class="kpi" style="--tone:var(--blue)"><span>Peak VRAM</span><b>767 MB</b><small>cuda</small></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div><div class="eyebrow">04 · investment gates</div><h2>Did Stage A earn more compute?</h2></div><p>Ranges are Astra's engineering targets against the causal v4.4.2 diagnostic, not confidence intervals.</p></div>
+  <div id="gates"></div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div><div class="eyebrow">05 · curves</div><h2>Loss down, agreement up</h2></div><p>Toggle series. Hover a point. Replay draws the run.</p></div>
+  <div class="card">
+    <div class="chart-tools" id="metricButtons"></div>
+    <button id="play" type="button">replay curves</button>
+    <svg id="curve" viewBox="0 0 1040 360" role="img" aria-label="Training curves"></svg>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div><div class="eyebrow">06 · lessons</div><h2>What this run is allowed to claim</h2></div></div>
+  <div class="grid2" id="lessons"></div>
+</section>
+
+<footer class="foot">Native HTML + SVG + JS · no matplotlib · Stage A replay-only · not a live Clash Royale readiness claim.</footer>
+</main>
+<div class="tooltip" id="tip"></div>
+<script id="report-data" type="application/json">{"history":[{"epoch":1,"train_loss":7.709558222627852,"val_loss":7.789503118726942,"val_card":0.3788046324855962,"val_slot_top1":0.3788046324855962,"val_slot_top3":0.8526450561601583,"val_type_acc":0.9974975266251528,"val_zone_acc":0.2777163475528138,"val_xy_mae":6315.5737374876335,"val_tile_acc":0.020368969330151893,"val_tile_exact":0.07373566897514985,"val_tile_near":0.12803352150381192,"val_tile_class_acc":0.07373566897514985,"val_tile_top5_acc":0.21876273060583135,"val_tile_nll":4.762207123603726,"val_joint_card_tile":0.039981376942326716,"val_clock_nll":2.076151672622582,"val_tile_entropy_bits":6.60077759989661,"val_tile_effective_count":97.05815965254847,"val_tile_top1_mass":0.09944654813934203,"val_tile_top5_mass":0.25925955727721567,"val_timing_mae":1.8565662599155222,"val_wait":0.5949484956061223,"val_wait_mae":1.8565662599155222,"val_model_x_std":0.11410622298717499,"val_model_y_std":0.1520150899887085,"val_argmax_x_std":0.25242605805397034,"val_argmax_y_std":0.22244276106357574,"val_n":17183,"lr":0.00019876883405951377},{"epoch":2,"train_loss":6.816115802654009,"val_loss":7.719653680589464,"val_card":0.4225688180178083,"val_slot_top1":0.4225688180178083,"val_slot_top3":0.8830821160449281,"val_type_acc":0.9974975266251528,"val_zone_acc":0.3153698422859803,"val_xy_mae":6199.913333672816,"val_tile_acc":0.02665425129488448,"val_tile_exact":0.0839201536402258,"val_tile_near":0.14584182040388757,"val_tile_class_acc":0.0839201536402258,"val_tile_top5_acc":0.24786125822033406,"val_tile_nll":4.760743027563694,"val_joint_card_tile":0.05761508467671536,"val_clock_nll":2.0666202631081623,"val_tile_entropy_bits":5.90296634819929,"val_tile_effective_count":59.83701690245462,"val_tile_top1_mass":0.1363041641367666,"val_tile_top5_mass":0.3456718840213605,"val_timing_mae":1.8383246491023757,"val_wait":0.623697840889251,"val_wait_mae":1.8383246491023757,"val_model_x_std":0.1444200873374939,"val_model_y_std":0.17768600583076477,"val_argmax_x_std":0.25691044330596924,"val_argmax_y_std":0.24710695445537567,"val_n":17183,"lr":0.00019510565162951537},{"epoch":3,"train_loss":6.523920288478649,"val_loss":7.637053129408095,"val_card":0.4402025257521969,"val_slot_top1":0.4402025257521969,"val_slot_top3":0.8945469359250422,"val_type_acc":0.9974975266251528,"val_zone_acc":0.3289297561543386,"val_xy_mae":6048.392175405925,"val_tile_acc":0.02450096025141128,"val_tile_exact":0.09555956468602689,"val_tile_near":0.15945993132747482,"val_tile_class_acc":0.09555956468602689,"val_tile_top5_acc":0.2658441482860967,"val_tile_nll":4.7546760307329325,"val_joint_card_tile":0.06762497817610429,"val_clock_nll":2.059312118790462,"val_tile_entropy_bits":5.7548206584428465,"val_tile_effective_count":53.997498100989795,"val_tile_top1_mass":0.14086908018437086,"val_tile_top5_mass":0.3635540147297514,"val_timing_mae":1.8111711653149019,"val_wait":0.6176453471454344,"val_wait_mae":1.8111711653149019,"val_model_x_std":0.14686614274978638,"val_model_y_std":0.1700117439031601,"val_argmax_x_std":0.2737402319908142,"val_argmax_y_std":0.21852213144302368,"val_n":17183,"lr":0.0001891006524188368},{"epoch":4,"train_loss":6.36535784444551,"val_loss":7.57171018741749,"val_card":0.45539195716696734,"val_slot_top1":0.45539195716696734,"val_slot_top3":0.9007740208345457,"val_type_acc":0.9974975266251528,"val_zone_acc":0.3409765465867427,"val_xy_mae":5969.399094490193,"val_tile_acc":0.029971483442937787,"val_tile_exact":0.10137927020892742,"val_tile_near":0.16743292789384856,"val_tile_class_acc":0.10137927020892742,"val_tile_top5_acc":0.28080079147995113,"val_tile_nll":4.744867297855597,"val_joint_card_tile":0.07431763952743992,"val_clock_nll":2.0531835380091987,"val_tile_entropy_bits":5.522228249624959,"val_tile_effective_count":45.957494726888804,"val_tile_top1_mass":0.1630552013032908,"val_tile_top5_mass":0.4006798244192819,"val_timing_mae":1.7879025889367086,"val_wait":0.612465809230053,"val_wait_mae":1.7879025889367086,"val_model_x_std":0.14691200852394104,"val_model_y_std":0.17828425765037537,"val_argmax_x_std":0.26517757773399353,"val_argmax_y_std":0.23440372943878174,"val_n":17183,"lr":0.00018090169943749476},{"epoch":5,"train_loss":6.2521376892785945,"val_loss":7.578039896929705,"val_card":0.4644706977826922,"val_slot_top1":0.4644706977826922,"val_slot_top3":0.9064191351917593,"val_type_acc":0.9974975266251528,"val_zone_acc":0.3496479078158645,"val_xy_mae":5927.623613273294,"val_tile_acc":0.030902636326601875,"val_tile_exact":0.10574404935110283,"val_tile_near":0.17569690973636734,"val_tile_class_acc":0.10574404935110283,"val_tile_top5_acc":0.2882500145492638,"val_tile_nll":4.75553794496309,"val_joint_card_tile":0.07874061572484432,"val_clock_nll":2.049488032772302,"val_tile_entropy_bits":5.38962582682159,"val_tile_effective_count":41.92171481969317,"val_tile_top1_mass":0.1687393684655832,"val_tile_top5_mass":0.41864761737050243,"val_timing_mae":1.7749895538612468,"val_wait":0.623290461502648,"val_wait_mae":1.7749895538612468,"val_model_x_std":0.14914114773273468,"val_model_y_std":0.1842573881149292,"val_argmax_x_std":0.2631838321685791,"val_argmax_y_std":0.24003508687019348,"val_n":17183,"lr":0.00017071067811865476},{"epoch":6,"train_loss":6.160767903287516,"val_loss":7.522705244134974,"val_card":0.4690100680905546,"val_slot_top1":0.4690100680905546,"val_slot_top3":0.9098527614502706,"val_type_acc":0.9974975266251528,"val_zone_acc":0.354478263399872,"val_xy_mae":5921.419316148228,"val_tile_acc":0.03509282430309026,"val_tile_exact":0.10609323168247686,"val_tile_near":0.17680265378571844,"val_tile_class_acc":0.10609323168247686,"val_tile_top5_acc":0.29278938485712624,"val_tile_nll":4.744147247827727,"val_joint_card_tile":0.0805447244369435,"val_clock_nll":2.0454226788379453,"val_tile_entropy_bits":5.358407010412158,"val_tile_effective_count":41.02430564067158,"val_tile_top1_mass":0.1706890896979945,"val_tile_top5_mass":0.42204201927022994,"val_timing_mae":1.7595573267226017,"val_wait":0.6224757027294419,"val_wait_mae":1.7595573267226017,"val_model_x_std":0.15476591885089874,"val_model_y_std":0.1929100900888443,"val_argmax_x_std":0.2670130133628845,"val_argmax_y_std":0.2449653297662735,"val_n":17183,"lr":0.00015877852522924732},{"epoch":7,"train_loss":6.07651057010415,"val_loss":7.463800024103235,"val_card":0.4766338823255543,"val_slot_top1":0.4766338823255543,"val_slot_top3":0.9110167025548507,"val_type_acc":0.9974975266251528,"val_zone_acc":0.3689693301518943,"val_xy_mae":5798.36630226823,"val_tile_acc":0.0344526566955712,"val_tile_exact":0.10667520223476692,"val_tile_near":0.18017808298900076,"val_tile_class_acc":0.10667520223476692,"val_tile_top5_acc":0.2967467846126986,"val_tile_nll":4.698038924054662,"val_joint_card_tile":0.07990455682942443,"val_clock_nll":2.0432679716300153,"val_tile_entropy_bits":5.316765955327963,"val_tile_effective_count":39.85713085482888,"val_tile_top1_mass":0.17076263506545847,"val_tile_top5_mass":0.4252405609524251,"val_timing_mae":1.749844172180847,"val_wait":0.6209625792934877,"val_wait_mae":1.749844172180847,"val_model_x_std":0.17070996761322021,"val_model_y_std":0.18639935553073883,"val_argmax_x_std":0.2787676751613617,"val_argmax_y_std":0.23276832699775696,"val_n":17183,"lr":0.00014539904997395468},{"epoch":8,"train_loss":5.994506751427402,"val_loss":7.490710050088388,"val_card":0.47791421754059243,"val_slot_top1":0.47791421754059243,"val_slot_top3":0.9112494907757668,"val_type_acc":0.9974975266251528,"val_zone_acc":0.3646627480649479,"val_xy_mae":5855.912729878368,"val_tile_acc":0.03701332712564744,"val_tile_exact":0.10551126113018681,"val_tile_near":0.1784903683873596,"val_tile_class_acc":0.10551126113018681,"val_tile_top5_acc":0.2964557993365536,"val_tile_nll":4.738842258032672,"val_joint_card_tile":0.07949717744282139,"val_clock_nll":2.041574726461053,"val_tile_entropy_bits":5.340941990309167,"val_tile_effective_count":40.530666378533006,"val_tile_top1_mass":0.16529827143450398,"val_tile_top5_mass":0.4187869729259229,"val_timing_mae":1.7444861220625263,"val_wait":0.6356282372111971,"val_wait_mae":1.7444861220625263,"val_model_x_std":0.17336197197437286,"val_model_y_std":0.19452565908432007,"val_argmax_x_std":0.2724155783653259,"val_argmax_y_std":0.24267004430294037,"val_n":17183,"lr":0.00013090169943749476},{"epoch":9,"train_loss":5.924659011341845,"val_loss":7.494342736844663,"val_card":0.4781470057615085,"val_slot_top1":0.4781470057615085,"val_slot_top3":0.9153814816970262,"val_type_acc":0.9974975266251528,"val_zone_acc":0.36652505383227607,"val_xy_mae":5788.405566184601,"val_tile_acc":0.03899202700343363,"val_tile_exact":0.11057440493511028,"val_tile_near":0.1816330093697259,"val_tile_class_acc":0.11057440493511028,"val_tile_top5_acc":0.3042542047372403,"val_tile_nll":4.739444520652055,"val_joint_card_tile":0.08444392713728685,"val_clock_nll":2.040274179988431,"val_tile_entropy_bits":5.1807613571496445,"val_tile_effective_count":36.271420889390086,"val_tile_top1_mass":0.18017246864286435,"val_tile_top5_mass":0.4471962586941087,"val_timing_mae":1.7398344311983074,"val_wait":0.6281790141418844,"val_wait_mae":1.7398344311983074,"val_model_x_std":0.1703784167766571,"val_model_y_std":0.18492479622364044,"val_argmax_x_std":0.27932775020599365,"val_argmax_y_std":0.22824132442474365,"val_n":17183,"lr":0.00011564344650402312},{"epoch":10,"train_loss":5.852103350188495,"val_loss":7.51262046319467,"val_card":0.4816970261304778,"val_slot_top1":0.4816970261304778,"val_slot_top3":0.91456672292382,"val_type_acc":0.9974975266251528,"val_zone_acc":0.36693243321887914,"val_xy_mae":5748.749646271023,"val_tile_acc":0.041552697433509866,"val_tile_exact":0.11360065180701856,"val_tile_near":0.18762730605831346,"val_tile_class_acc":0.11360065180701856,"val_tile_top5_acc":0.30600011639411046,"val_tile_nll":4.758476757721567,"val_joint_card_tile":0.08595705057324099,"val_clock_nll":2.041833000314088,"val_tile_entropy_bits":5.111666504609559,"val_tile_effective_count":34.57521948563197,"val_tile_top1_mass":0.1863843283136822,"val_tile_top5_mass":0.4552141211331602,"val_timing_mae":1.7401405373989394,"val_wait":0.6331839608915789,"val_wait_mae":1.7401405373989394,"val_model_x_std":0.1657710075378418,"val_model_y_std":0.18805190920829773,"val_argmax_x_std":0.2661117911338806,"val_argmax_y_std":0.23236273229122162,"val_n":17183,"lr":0.00010000000000000002},{"epoch":11,"train_loss":5.778505551896848,"val_loss":7.547066462481463,"val_card":0.48670197288017225,"val_slot_top1":0.48670197288017225,"val_slot_top3":0.9145085258685911,"val_type_acc":0.9974975266251528,"val_zone_acc":0.3710062270849095,"val_xy_mae":5756.194072629925,"val_tile_acc":0.0408543327707618,"val_tile_exact":0.11261130186812547,"val_tile_near":0.18617237967758832,"val_tile_class_acc":0.11261130186812547,"val_tile_top5_acc":0.30471978117907234,"val_tile_nll":4.773129403532186,"val_joint_card_tile":0.08723738578827911,"val_clock_nll":2.0398262182436744,"val_tile_entropy_bits":5.05585575331314,"val_tile_effective_count":33.26321596382449,"val_tile_top1_mass":0.1886591679321584,"val_tile_top5_mass":0.463148746891196,"val_timing_mae":1.7345969135697574,"val_wait":0.6312052610137927,"val_wait_mae":1.7345969135697574,"val_model_x_std":0.16968046128749847,"val_model_y_std":0.19160518050193787,"val_argmax_x_std":0.2687971293926239,"val_argmax_y_std":0.2362382709980011,"val_n":17183,"lr":8.435655349597696e-05},{"epoch":12,"train_loss":5.707843049957621,"val_loss":7.569605219805682,"val_card":0.4792527498108596,"val_slot_top1":0.4792527498108596,"val_slot_top3":0.9157306640284002,"val_type_acc":0.9974975266251528,"val_zone_acc":0.36821276843391726,"val_xy_mae":5830.51012628761,"val_tile_acc":0.042192865041028926,"val_tile_exact":0.10766455217366001,"val_tile_near":0.18198219170109992,"val_tile_class_acc":0.10766455217366001,"val_tile_top5_acc":0.30210091369376707,"val_tile_nll":4.7907109518361395,"val_joint_card_tile":0.08217424198335564,"val_clock_nll":2.040666478855302,"val_tile_entropy_bits":5.095078474594371,"val_tile_effective_count":34.17995220645764,"val_tile_top1_mass":0.1862295085876124,"val_tile_top5_mass":0.45649779257102513,"val_timing_mae":1.7379381554663573,"val_wait":0.633882325554327,"val_wait_mae":1.7379381554663573,"val_model_x_std":0.1773921549320221,"val_model_y_std":0.1982104331254959,"val_argmax_x_std":0.2723042368888855,"val_argmax_y_std":0.24203939735889435,"val_n":17183,"lr":6.909830056250529e-05},{"epoch":13,"train_loss":5.673729854194108,"val_loss":7.569087484147814,"val_card":0.48158063202001977,"val_slot_top1":0.48158063202001977,"val_slot_top3":0.91514869347611,"val_type_acc":0.9974975266251528,"val_zone_acc":0.3728103357970087,"val_xy_mae":5757.726947600826,"val_tile_acc":0.043473200256067046,"val_tile_exact":0.11086539021125531,"val_tile_near":0.18640516789850434,"val_tile_class_acc":0.11086539021125531,"val_tile_top5_acc":0.3060583134493395,"val_tile_nll":4.791666248114847,"val_joint_card_tile":0.08421113891637083,"val_clock_nll":2.039357976864056,"val_tile_entropy_bits":5.021600335758362,"val_tile_effective_count":32.48271541994529,"val_tile_top1_mass":0.19057605361339067,"val_tile_top5_mass":0.465807398740747,"val_timing_mae":1.7311065421631413,"val_wait":0.6251527672699762,"val_wait_mae":1.7311065421631413,"val_model_x_std":0.17833231389522552,"val_model_y_std":0.19181375205516815,"val_argmax_x_std":0.2719579041004181,"val_argmax_y_std":0.23485273122787476,"val_n":17183,"lr":5.460095002604534e-05},{"epoch":14,"train_loss":5.6166014605873675,"val_loss":7.591008776205557,"val_card":0.4786125822033405,"val_slot_top1":0.4786125822033405,"val_slot_top3":0.914333934702904,"val_type_acc":0.9974975266251528,"val_zone_acc":0.37123901530582554,"val_xy_mae":5773.67563962201,"val_tile_acc":0.04452074725018914,"val_tile_exact":0.10981784321713321,"val_tile_near":0.18547401501484026,"val_tile_class_acc":0.10981784321713321,"val_tile_top5_acc":0.3042542047372403,"val_tile_nll":4.804509529931189,"val_joint_card_tile":0.08351277425362277,"val_clock_nll":2.0399926616351456,"val_tile_entropy_bits":5.039542512927532,"val_tile_effective_count":32.889211437061476,"val_tile_top1_mass":0.18864775411617712,"val_tile_top5_mass":0.4622239525393211,"val_timing_mae":1.735219610782897,"val_wait":0.6310306698481057,"val_wait_mae":1.735219610782897,"val_model_x_std":0.17939497530460358,"val_model_y_std":0.19184891879558563,"val_argmax_x_std":0.2751007080078125,"val_argmax_y_std":0.23410147428512573,"val_n":17183,"lr":4.122147477075271e-05}],"test":{"loss":7.460481611887614,"card":0.48066202090592336,"slot_top1":0.48066202090592336,"slot_top3":0.9108594657375145,"type_acc":0.997444831591173,"zone_acc":0.3673635307781649,"xy_mae":5831.247172619048,"tile_acc":0.03577235772357724,"tile_exact":0.1132404181184669,"tile_near":0.18089430894308944,"tile_class_acc":0.1132404181184669,"tile_top5_acc":0.2988966318234611,"tile_nll":4.6971563057893935,"joint_card_tile":0.08420441347270616,"clock_nll":2.0497828165690106,"tile_entropy_bits":5.316863232124143,"tile_effective_count":39.85981839765734,"tile_top1_mass":0.172030483028753,"tile_top5_mass":0.42629460546336245,"timing_mae":1.79046785352399,"wait":0.6120789779326364,"wait_mae":1.79046785352399,"n":17220,"model_x_std":0.16811823844909668,"model_y_std":0.18705467879772186,"argmax_x_std":0.2775297164916992,"argmax_y_std":0.23287495970726013},"val":{"loss":7.591008776205557,"slot_top1":0.4786125822033405,"slot_top3":0.914333934702904,"type_acc":0.9974975266251528,"zone_acc":0.37123901530582554,"xy_mae":5773.67563962201,"tile_acc":0.04452074725018914,"tile_class_acc":0.10981784321713321,"tile_top5_acc":0.3042542047372403,"tile_nll":4.804509529931189,"joint_card_tile":0.08351277425362277,"clock_nll":2.0399926616351456,"timing_mae":1.735219610782897,"model_x_std":0.17939497530460358,"model_y_std":0.19184891879558563},"compute":{"device":"cuda","framework":"pytorch","parameters":2396720,"d_model":128,"num_layers":4,"epochs_requested":20,"epochs_ran":14,"batch_size":128,"gradient_accumulation_steps":1,"learning_rate":0.0002,"dropout":0.1,"max_context":64,"max_samples_per_battle":40,"global_dim":62,"threat_dim":14,"card_conditioned_placement":true,"placement_mode":"heatmap","placement_card_mode":"selected","rollout_placement_decode":"sample","rollout_placement_temperature":0.6,"rollout_placement_top_k":5,"rollout_slot_decode":"sample","rollout_slot_temperature":0.8,"rollout_scheduling":"race","reaction_weight":3.0,"reaction_repeats":2,"reaction_seconds":5.0,"max_battles":null,"hide_opponent_deck":false,"hide_opponent_prob":0.0,"loss_kwargs":{"slot_weight":1.4,"type_weight":0.25,"zone_weight":1.1,"xy_weight":0.0,"tile_weight":0.55,"timing_weight":0.25,"clock_weight":0.35,"activity_weight":0.15,"offset_weight":0.12},"warmstart":{"dir":"models/policy_bc_v8","resume":true,"from_epoch":6,"missing_keys":[],"unexpected_keys":[]},"training_log_path":"models/policy_bc_v8/training.log","freeze_backbone":false,"training_stage":null,"arena_control":"aligned","arena_memory_channels":0,"arena_hidden_channels":32,"arena_memory_version":"none","arena_gate_bias":-2.2,"split_manifest":"models/policy_bc_v8/split_manifest.json","manifest_hash":"e25198aa6031d9ce01f01d66e67ad24fb12aa7bbee30cc0af4ab9cd61b500405","progress_path":"models/policy_bc_v8/progress.jsonl","log_path":"logs/policy_bc_v8.log","trainable_parameters":2396720,"mirror_training":true,"lazy_mirror_training":true,"max_think_steps":0,"eval_think_steps":0,"winner_only":false,"memory_tokens":24,"memory_heads":4,"interaction_blocks":2,"event_clock":true,"mixed_precision":true,"amp_dtype":"bf16","compiled":true,"resume":true,"resumed_from_epoch":6,"peak_vram_mb":766.7919921875},"data":{"battles_total":7143,"min_card_plays":12,"train_samples":317036,"val_samples":17183,"test_samples":17220,"vocab_size":125,"splits":[{"split":"train","battles":5000,"team_win_rate":0.5048,"mean_events":61.015},{"split":"val","battles":1071,"team_win_rate":0.5378151260504201,"mean_events":60.737628384687206},{"split":"test","battles":1072,"team_win_rate":0.5065298507462687,"mean_events":60.6455223880597}]},"lessons":["v8 Stage A replaces the GRU trunk with a 24-token time-aware belief memory and a joint own/opponent event clock.","Memory tokens attend to friendly vs enemy events, mix through two interaction blocks, and evolve with elapsed query time.","Action heads keep the selected-card 18\u00d732 heatmap plus a within-tile offset. Waiting is part of the likelihood, not a missing action.","This run is replay-only Stage A. Board observations (Stage B) are required before claiming a large playing-strength gain.","Judge on joint card+tile, clock NLL / timing MAE, and shuffled-memory controls \u2014 not a live win rate."],"gates":{"card":{"now":0.48066202090592336,"low":0.57,"high":0.61,"base":0.529},"tile":{"now":0.1132404181184669,"low":0.2,"high":0.24,"base":0.147},"joint":{"now":0.08420441347270616,"low":0.17,"high":0.21,"base":0.119},"timing":{"now":1.79046785352399,"low":1.35,"high":1.55,"base":1.79}}}</script>
+<script>
+const D=JSON.parse(document.getElementById('report-data').textContent);
+const $=s=>document.querySelector(s);
+const pct=n=>n==null||n===undefined?'—':(100*n).toFixed(2)+'%';
+const num=n=>n==null||n===undefined?'—':Number(n).toFixed(3);
+const tip=$('#tip');
+function showTip(e,html){tip.innerHTML=html;tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px';tip.classList.add('on')}
+window.addEventListener('pointermove',()=>tip.classList.remove('on'));
+
+const metrics={
+  train_loss:['Train loss','loss'],
+  val_loss:['Val loss','loss'],
+  val_slot_top1:['Card top-1','pct'],
+  val_tile_class_acc:['Tile top-1','pct'],
+  val_joint_card_tile:['Card+tile','pct'],
+  val_timing_mae:['Timing MAE','sec'],
+  val_clock_nll:['Clock NLL','loss']
+};
+let active=new Set(['train_loss','val_loss']);
+const hist=D.history||[];
+const buttons=$('#metricButtons');
+Object.entries(metrics).forEach(([key,meta])=>{
+  const b=document.createElement('button');
+  b.textContent=meta[0];
+  b.className=active.has(key)?'on':'';
+  b.onclick=()=>{if(active.has(key))active.delete(key);else active.add(key);b.className=active.has(key)?'on':'';draw(1)};
+  buttons.appendChild(b);
+});
+
+function axis(v,kind){
+  if(kind==='pct')return (100*v).toFixed(0)+'%';
+  if(kind==='sec')return v.toFixed(2)+'s';
+  return v.toFixed(2);
+}
+function draw(reveal=1){
+  const svg=$('#curve');
+  const W=1040,H=360,p={l:70,r:24,t:24,b:44};
+  const keys=[...active].filter(k=>hist.some(r=>Number.isFinite(r[k])));
+  if(!keys.length||!hist.length){svg.innerHTML='<text x="40" y="40" fill="#8aa3b3">No history yet</text>';return}
+  const rows=hist.slice(0,Math.max(1,Math.ceil(hist.length*reveal)));
+  const vals=keys.flatMap(k=>rows.map(r=>r[k]).filter(Number.isFinite));
+  let lo=Math.min(...vals),hi=Math.max(...vals),pad=(hi-lo||1)*.12;lo-=pad;hi+=pad;
+  const x=i=>p.l+i/Math.max(rows.length-1,1)*(W-p.l-p.r);
+  const y=v=>p.t+(hi-v)/(hi-lo)*(H-p.t-p.b);
+  const colors={train_loss:'#638bc4',val_loss:'#86ead2',val_slot_top1:'#70e1b1',val_tile_class_acc:'#ffca63',val_joint_card_tile:'#f29665',val_timing_mae:'#70a1ff',val_clock_nll:'#e8f58b'};
+  let out='';
+  for(let i=0;i<5;i++){const yy=p.t+i*(H-p.t-p.b)/4,v=hi-i*(hi-lo)/4;out+=`<line x1="${p.l}" y1="${yy}" x2="${W-p.r}" y2="${yy}" stroke="#1e3140"/><text x="${p.l-10}" y="${yy+4}" text-anchor="end" fill="#8aa3b3" font-size="12" font-family="IBM Plex Mono,monospace">${axis(v,metrics[keys[0]][1])}</text>`}
+  keys.forEach(k=>{
+    const pts=rows.map((r,i)=>Number.isFinite(r[k])?`${x(i)},${y(r[k])}`:null).filter(Boolean);
+    out+=`<polyline fill="none" stroke="${colors[k]||'#38bdf8'}" stroke-width="2.4" points="${pts.join(' ')}"/>`;
+    rows.forEach((r,i)=>{if(!Number.isFinite(r[k]))return;out+=`<circle cx="${x(i)}" cy="${y(r[k])}" r="4" fill="${colors[k]||'#38bdf8'}" data-k="${k}" data-i="${i}"/>`});
+  });
+  rows.forEach((r,i)=>{if(i===0||i===rows.length-1||i%Math.ceil(rows.length/8)===0)out+=`<text x="${x(i)}" y="${H-16}" text-anchor="middle" fill="#8aa3b3" font-size="12">${r.epoch}</text>`});
+  svg.innerHTML=out;
+  svg.querySelectorAll('circle').forEach(c=>c.addEventListener('pointerenter',e=>{
+    const r=rows[Number(c.dataset.i)],k=c.dataset.k,kind=metrics[k][1];
+    showTip(e, `<b>${metrics[k][0]}</b><br>epoch ${r.epoch} · ${kind==='pct'?pct(r[k]):num(r[k])}`);
+    e.stopPropagation();
+  }));
+}
+draw(1);
+let timer=null;
+$('#play').onclick=()=>{
+  if(timer){clearInterval(timer);timer=null;$('#play').textContent='replay curves';return}
+  let f=0;$('#play').textContent='pause';
+  timer=setInterval(()=>{f=(f+1)%Math.max(hist.length,1)+1;draw(Math.min(1,f/Math.max(hist.length,1)));},180);
+};
+
+const labels={card:'Next-card top-1',tile:'Placement-bin top-1',joint:'Card + tile',timing:'Timing MAE (lower better)'};
+Object.entries(D.gates).forEach(([key,g])=>{
+  const now=g.now, low=g.low, high=g.high;
+  const max=key==='timing'?2.2:Math.max(high, now||0, g.base||0)*1.15;
+  const row=document.createElement('div');
+  row.className='gate';
+  const nowPct=now==null?0:100*(now/max);
+  row.innerHTML=`<div>${labels[key]}</div><div class="track"><div class="band" style="left:${100*(low/max)}%;width:${100*((high-low)/max)}%"></div><div class="fill" style="width:${nowPct}%"></div></div><div class="mono">${key==='timing'?num(now)+'s':pct(now)}</div>`;
+  $('#gates').appendChild(row);
+});
+(D.lessons||[]).forEach((text,i)=>{
+  const card=document.createElement('div');
+  card.className='card';
+  card.innerHTML=`<div class="eyebrow">${String(i+1).padStart(2,'0')} / note</div><p>${text}</p>`;
+  $('#lessons').appendChild(card);
+});
+</script>
+</body></html>

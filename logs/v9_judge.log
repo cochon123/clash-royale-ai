@@ -1,0 +1,3 @@
+sequence judge features work=train battles=15000 elapsed=4s
+sequence judge features work=validation battles=262 elapsed=4s
+sequence judge features work=test battles=262 elapsed=4s

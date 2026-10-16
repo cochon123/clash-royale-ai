@@ -1,0 +1,56 @@
+{
+  "created_at": "2026-10-12T10:42:20.442316+00:00",
+  "recipe": {
+    "width": 160,
+    "base_epochs": 12,
+    "continuation_epochs": 2,
+    "options": {},
+    "seed42_source": "models/policy_v9/control_seed42",
+    "selection_metric": "validation joint discrete NLL",
+    "chosen_before_holdout": true,
+    "seed_reproduction": "shared_donor_continuations"
+  },
+  "entries": [
+    {
+      "name": "v4_4_1",
+      "path": "models/policy_bc_v4.4.1",
+      "legacy": true,
+      "role": "reference",
+      "checkpoint_sha256": "79cd8ffa8cd4728a305cdade3a84abe313172bd438a40f4d6d30711ff8b70763"
+    },
+    {
+      "name": "v4_4_2",
+      "path": "models/policy_bc_v4.4.2",
+      "legacy": true,
+      "role": "reference",
+      "checkpoint_sha256": "e0b7a48db490dffe7a2b26423c40e332bae4822e00b3cfa32a3ebe15a7b2247b"
+    },
+    {
+      "name": "v9_base_seed42",
+      "path": "models/policy_v9/base_full_seed42",
+      "role": "control",
+      "checkpoint_sha256": "6e6e42e302d764f16190d023ab2b864beba4d218b0487ee629bcc658cff55358"
+    },
+    {
+      "name": "v9_seed42",
+      "path": "models/policy_v9/control_seed42",
+      "role": "candidate",
+      "seed": 42,
+      "checkpoint_sha256": "73eacd4733eb3d3ad053d46ff3fd0f047082ad25cd1d233e00d474b3df5065cf"
+    },
+    {
+      "name": "v9_seed43",
+      "path": "models/policy_v9/candidate_seed43",
+      "role": "candidate",
+      "seed": 43,
+      "checkpoint_sha256": "b01ec08eea4abc7647bce1f78288f16efd8d4467a36e89572cc0db4194680a75"
+    },
+    {
+      "name": "v9_seed44",
+      "path": "models/policy_v9/candidate_seed44",
+      "role": "candidate",
+      "seed": 44,
+      "checkpoint_sha256": "7df61c83ad591507bf6649cc7b024585b81da166cde07dc20a4221af732caca8"
+    }
+  ]
+}

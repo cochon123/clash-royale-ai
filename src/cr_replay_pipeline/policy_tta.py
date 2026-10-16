@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import json
 import math
-import os
-import random
 import time
 from pathlib import Path
 from typing import Any
@@ -23,6 +21,7 @@ from .policy_dataset import (
     load_card_costs,
 )
 from .policy_infer import load_policy
+from .policy_manifest import resolve_battle_splits
 from .policy_model import TILE_COLS, TILE_ROWS
 from .policy_train import _MirroredBattle, _move_batch
 
@@ -331,31 +330,21 @@ def run_v42_mirror_tta_evaluation(
     card_costs_path: str | Path = "data/card_costs.json",
     output_path: str | Path = "reports/policy_bc_v4_2_mirror_tta.json",
     device_name: str | None = None,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
-    """Reproduce v4.2's test split and evaluate horizontal-mirror TTA."""
+    """Evaluate horizontal-mirror TTA on the checkpoint's frozen test split."""
     model_dir = Path(model_dir)
     report = json.loads((model_dir / "report.json").read_text(encoding="utf-8"))
     model, vocab, cfg, device = load_policy(model_dir, device_name=device_name)
-    expected_source_battles = int(
-        report["data"]["splits"][0]["battles"] // 2
-        + report["data"]["splits"][1]["battles"]
-        + report["data"]["splits"][2]["battles"]
-    )
-
-    # Collection may continue after training. Trust the cache deliberately: it
-    # is the historical 37,011-battle snapshot used by this checkpoint.
-    os.environ["CR_REPLAY_TRUST_CACHE"] = "1"
     battles = collect_battles(input_dir, min_card_plays=int(report["data"]["min_card_plays"]))
-    if len(battles) != expected_source_battles:
-        raise RuntimeError(
-            f"Historical cache has {len(battles):,} battles; expected "
-            f"{expected_source_battles:,} for this checkpoint"
-        )
-    ordered = list(battles)
-    random.Random(42).shuffle(ordered)
-    n_train = int(len(ordered) * 0.9)
-    n_val = int((len(ordered) - n_train) / 2)
-    test_battles = ordered[n_train + n_val :]
+    _train, _val, test_battles, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=42,
+        split_manifest=split_manifest,
+        model_dir=model_dir,
+        create=False,
+        min_card_plays=int(report["data"]["min_card_plays"]),
+    )
     mirrored_battles = [_MirroredBattle(battle) for battle in test_battles]
     costs = load_card_costs(card_costs_path)
     dataset_kwargs = {

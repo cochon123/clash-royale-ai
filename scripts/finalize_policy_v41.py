@@ -14,15 +14,15 @@ from cr_replay_pipeline.policy_dataset import (
     DEFAULT_MAX_CONTEXT,
     DEFAULT_MIN_CONTEXT,
     DEFAULT_REACTION_SECONDS,
-    baseline_cycle_slot,
-    baseline_frequency_slot,
+    PolicyActionDataset,
+    baselines_for_dataset,
     build_vocab,
     collect_battles,
     create_policy_dataloaders,
     load_card_costs,
-    split_battles,
     summarize_split,
 )
+from cr_replay_pipeline.policy_manifest import resolve_battle_splits
 from cr_replay_pipeline.policy_model import PolicyBC
 from cr_replay_pipeline.policy_train import (
     _load_realism_scorer,
@@ -51,7 +51,13 @@ def main() -> None:
 
     print("Loading battles ...", flush=True)
     battles = collect_battles(ROOT / "data" / "raw", min_card_plays=12)
-    train_battles, val_battles, test_battles = split_battles(battles, seed=42)
+    train_battles, val_battles, test_battles, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=42,
+        model_dir=OUTPUT,
+        create=False,
+        min_card_plays=12,
+    )
     # Rebuild vocab from train for sample counts / splits consistency, but keep
     # checkpoint vocab for the model (training used train-built vocab).
     train_vocab = build_vocab(train_battles)
@@ -92,8 +98,20 @@ def main() -> None:
     print("Evaluating val/test ...", flush=True)
     val_metrics = evaluate_policy(model, val_loader, device, loss_kwargs=loss_kwargs)
     test_metrics = evaluate_policy(model, test_loader, device, loss_kwargs=loss_kwargs)
-    freq_base = baseline_frequency_slot(test_battles)
-    cycle_base = baseline_cycle_slot(test_battles)
+    test_ds = PolicyActionDataset(
+        test_battles,
+        vocab,
+        costs,
+        max_context=max_context,
+        max_samples_per_battle=40,
+        reaction_weight=3.0,
+        reaction_repeats=2,
+        reaction_seconds=float(config.get("reaction_seconds", DEFAULT_REACTION_SECONDS)),
+        threat_dim=threat_dim,
+    )
+    baselines = baselines_for_dataset(test_ds)
+    freq_base = baselines["frequency"]
+    cycle_base = baselines["cycle"]
 
     realism_path = ROOT / "models" / "realism_scorer" / "realism_ensemble.pkl"
     realism_artifact = _load_realism_scorer(realism_path)

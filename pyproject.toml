@@ -12,11 +12,12 @@ dependencies = [
     "matplotlib>=3.8",
     "scikit-learn>=1.4",
     "Pillow>=10.0",
-    "ultralytics>=8.0",
+    "rich>=13.7",
 ]
 
 [project.optional-dependencies]
 detector-training = ["roboflow>=1.1"]
+phone-ocr = ["rapidocr>=2.0"]
 
 [project.scripts]
 cr-replays = "cr_replay_pipeline.cli:main"
@@ -25,7 +26,7 @@ cr-replays = "cr_replay_pipeline.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-"cr_replay_pipeline" = ["assets/*.png"]
+"cr_replay_pipeline" = ["assets/*.png", "assets/*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

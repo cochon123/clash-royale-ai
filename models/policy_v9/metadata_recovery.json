@@ -1,0 +1,13 @@
+{
+  "metadata_records": 27020,
+  "player_tags": 11519,
+  "new_players_queued": 9053,
+  "raw_files": 64275,
+  "raw_capture_mtime_min": "2026-07-26T23:39:25.235927+00:00",
+  "raw_capture_mtime_max": "2026-08-11T21:42:38.495041+00:00",
+  "metadata_time_min": "2026-08-06T11:56:18+00:00",
+  "metadata_time_max": "2026-10-12T04:38:03+00:00",
+  "all_metadata_newer_than_existing_captures": false,
+  "collector_blocker": "RoyaleAPI replay endpoint requires browser login",
+  "frozen_training_cache_unchanged": true
+}

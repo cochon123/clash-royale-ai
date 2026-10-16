@@ -1,0 +1,10 @@
+{
+  "width": 160,
+  "base_epochs": 12,
+  "continuation_epochs": 2,
+  "options": {},
+  "seed42_source": "models/policy_v9/control_seed42",
+  "selection_metric": "validation joint discrete NLL",
+  "chosen_before_holdout": true,
+  "seed_reproduction": "shared_donor_continuations"
+}

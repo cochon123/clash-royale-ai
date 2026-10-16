@@ -1,0 +1,100 @@
+{
+  "quality_pass": true,
+  "deadline_feasible": false,
+  "forecast_seconds": 22583.656338249966,
+  "comparison": {
+    "battles": 524,
+    "actions": 28818,
+    "unit": "whole battle; equal battle-weighted interval",
+    "metrics": {
+      "card": {
+        "action_weighted_delta": 0.011555277742445469,
+        "battle_weighted_delta": 0.011391468346118927,
+        "ci95_battle": [
+          0.00689418816473335,
+          0.01571722407825291
+        ]
+      },
+      "cell": {
+        "action_weighted_delta": 0.007981122471392155,
+        "battle_weighted_delta": 0.008383532054722309,
+        "ci95_battle": [
+          0.004992429330013692,
+          0.012070827977731822
+        ]
+      },
+      "joint": {
+        "action_weighted_delta": 0.007044208701699972,
+        "battle_weighted_delta": 0.006769178435206413,
+        "ci95_battle": [
+          0.0035663890826981514,
+          0.010156966699287291
+        ]
+      },
+      "joint_nll": {
+        "action_weighted_delta": -0.10370391607284546,
+        "battle_weighted_delta": -0.10900305211544037,
+        "ci95_battle": [
+          -0.11576779782772065,
+          -0.10231471080332995
+        ]
+      },
+      "timing_mae": {
+        "action_weighted_delta": -0.022822465747594833,
+        "battle_weighted_delta": -0.029438236728310585,
+        "ci95_battle": [
+          -0.03561679786071181,
+          -0.023248501354828477
+        ]
+      },
+      "card_top3": {
+        "action_weighted_delta": 0.0026025401894003153,
+        "battle_weighted_delta": 0.0013877430465072393,
+        "ci95_battle": [
+          -0.000657320067693945,
+          0.0033500064571853716
+        ]
+      },
+      "card_nll": {
+        "action_weighted_delta": -0.01928410679101944,
+        "battle_weighted_delta": -0.019511863589286804,
+        "ci95_battle": [
+          -0.022071851696819068,
+          -0.017051914287731052
+        ]
+      },
+      "cell_teacher": {
+        "action_weighted_delta": 0.010132555849850178,
+        "battle_weighted_delta": 0.009936216287314892,
+        "ci95_battle": [
+          0.006252247688826174,
+          0.013656684500165283
+        ]
+      },
+      "cell_teacher_top5": {
+        "action_weighted_delta": 0.022173641249537468,
+        "battle_weighted_delta": 0.021476738154888153,
+        "ci95_battle": [
+          0.017476349696516992,
+          0.025523649482056498
+        ]
+      },
+      "cell_teacher_near1": {
+        "action_weighted_delta": 0.014886529184877872,
+        "battle_weighted_delta": 0.013671157881617546,
+        "ci95_battle": [
+          0.01019801904913038,
+          0.017334657162427897
+        ]
+      },
+      "tile_nll": {
+        "action_weighted_delta": -0.08441980928182602,
+        "battle_weighted_delta": -0.08949119597673416,
+        "ci95_battle": [
+          -0.09586968719959259,
+          -0.08307991921901703
+        ]
+      }
+    }
+  }
+}

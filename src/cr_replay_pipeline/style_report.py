@@ -307,8 +307,9 @@ def _build_spot_the_ai(
     try:
         import pickle
 
-        from .style_train import _load_rollout_cache, _rollout_cache_path
-        from .winner_dataset import collect_battles, load_card_costs, split_battles
+        from .policy_manifest import resolve_battle_splits
+        from .style_train import _load_rollout_cache, _rollout_cache_expected, _rollout_cache_path
+        from .winner_dataset import collect_battles, load_card_costs
     except Exception:
         return []
 
@@ -320,13 +321,29 @@ def _build_spot_the_ai(
 
     costs = load_card_costs(card_costs_path)
     battles = collect_battles(input_dir)
-    _tr, _va, test = split_battles(battles, seed=42)
+    try:
+        _tr, _va, test, _manifest, _split_path = resolve_battle_splits(
+            battles,
+            seed=42,
+            model_dir=model_dir,
+            create=False,
+        )
+    except ValueError:
+        return []
     rng = random.Random(seed)
     pool = [b for b in test if len(b.events) >= MAX_SEQUENCE_EVENTS]
     pool_by_id = {b.battle_id: b for b in pool}
 
     train_policy = report.get("data", {}).get("train_policy_id", "policy_bc_v2")
-    ai_rollouts = _load_rollout_cache(_rollout_cache_path(model_dir, train_policy, "test"))
+    train_path = report.get("data", {}).get("train_policy_path")
+    ai_rollouts = _load_rollout_cache(
+        _rollout_cache_path(model_dir, train_policy, "test"),
+        _rollout_cache_expected(
+            policy_id=train_policy,
+            split_name="test",
+            policy_dir=train_path,
+        ),
+    )
     if not ai_rollouts:
         return []
 

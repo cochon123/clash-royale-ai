@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "scope": "stable 15k pilot checkpoint and one synthetic training opening; no holdout",
+  "proposal": {
+    "status": "proposal",
+    "card": "berserker",
+    "slot": 0,
+    "event_type": "card_play",
+    "x": 0.796875,
+    "y": 0.4722222222222222,
+    "coordinate_frame": "agent-relative normalized, same causal encoder frame",
+    "observation_seconds": 46.55,
+    "requery_after_seconds": 0.25,
+    "ability_actions_supported": false,
+    "delay_seconds": 2.9427084922790527,
+    "own_next_probability": 0.8329070806503296,
+    "wait_for_opponent": false,
+    "scheduler": "joint_clock"
+  },
+  "generated_events": 18,
+  "judge_probability": 0.6356253893620292,
+  "judge_confidence": 0.625
+}

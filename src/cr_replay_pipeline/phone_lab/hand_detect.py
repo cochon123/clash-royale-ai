@@ -14,7 +14,7 @@ from PIL import Image
 DEFAULT_YOLO = Path(
     os.environ.get(
         "CR_CARD_DETECTOR_MODEL",
-        "/home/cochon/Documents/ClashRoyaleAI/models/yolo/card_detector.pt",
+        str(Path(__file__).resolve().parents[3] / "models/card_detector_clash_cards_v3.pt"),
     )
 )
 # Match the dual-phone v8 detector; do not force a tiny imgsz (hurts accuracy).
@@ -164,6 +164,14 @@ class HandDetector:
                         )
                     for i, result in zip(valid_idx, results):
                         inferred[i] = self._best_from_result(result)
+                    names = [inferred[i][0] for i in valid_idx if inferred.get(i, (None,))[0]]
+                    if len(names) >= 3 and len(set(names)) == 1:
+                        # A four-card hand cannot contain three copies of one
+                        # identity. Degenerate checkpoints/crops previously
+                        # produced "snowball" everywhere; preserve uncertainty
+                        # rather than sending those identities to the policy.
+                        for i in valid_idx:
+                            inferred[i] = (None, 0.0, "ambiguous repeated identity across hand slots")
                 except Exception as exc:  # noqa: BLE001
                     for i in valid_idx:
                         inferred[i] = (None, 0.0, f"{type(exc).__name__}: {exc}")

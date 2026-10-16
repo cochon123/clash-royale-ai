@@ -1,0 +1,19 @@
+# policy-bc-v8 · 8.0.0  device=cuda  params=0
+17:18:23  loading battles from data/raw
+17:18:26  lazy mirroring: 5,000 source battles; encoded streams are shared
+17:18:28  training policy-bc-v8 threat_dim=14 placement=heatmap/selected winner_only=False
+17:18:28  samples train/val/test 317036/17183/17220 on cuda
+run model=policy-bc-v8 stage=None control=aligned batch=128 accumulation=1
+17:18:29  train 317,036  val 17,183  test 17,220  amp=bf16  compile=on  workers=2  params=2,396,720
+17:33:37  epoch 01  train_loss=7.7096  val_slot@1=0.379  val_zone=0.278  val_tile_exact=0.074  val_tile_near=0.128  val_loss=7.7895
+17:33:37  saved best checkpoint  val_loss=7.7895
+17:38:09  epoch 02  train_loss=6.8161  val_slot@1=0.423  val_zone=0.315  val_tile_exact=0.084  val_tile_near=0.146  val_loss=7.7197
+17:38:09  saved best checkpoint  val_loss=7.7197
+17:42:41  epoch 03  train_loss=6.5239  val_slot@1=0.440  val_zone=0.329  val_tile_exact=0.096  val_tile_near=0.159  val_loss=7.6371
+17:42:41  saved best checkpoint  val_loss=7.6371
+17:47:13  epoch 04  train_loss=6.3654  val_slot@1=0.455  val_zone=0.341  val_tile_exact=0.101  val_tile_near=0.167  val_loss=7.5717
+17:47:13  saved best checkpoint  val_loss=7.5717
+17:51:45  epoch 05  train_loss=6.2521  val_slot@1=0.464  val_zone=0.350  val_tile_exact=0.106  val_tile_near=0.176  val_loss=7.5780
+17:56:16  epoch 06  train_loss=6.1608  val_slot@1=0.469  val_zone=0.354  val_tile_exact=0.106  val_tile_near=0.177  val_loss=7.5227
+17:56:16  saved best checkpoint  val_loss=7.5227
+18:00:48  epoch 07  train_loss=6.0800  val_slot@1=0.474  val_zone=0.360  val_tile_exact=0.105  val_tile_near=0.175  val_loss=7.5138

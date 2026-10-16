@@ -10,8 +10,9 @@ from typing import Any
 import numpy as np
 import torch
 
+from .belief_policy import build_policy_model
 from .policy_dataset import GLOBAL_DIM, encode_policy_sample
-from .policy_model import PolicyBC, xy_to_zone
+from .policy_model import TILE_COLS, TILE_ROWS, PolicyBC, xy_to_zone
 from .winner_dataset import BattleExample, CardVocab, load_card_costs
 
 
@@ -50,20 +51,13 @@ def load_policy(
     )
     threat_dim = int(cfg.get("threat_dim", 0))
     global_dim = int(cfg.get("global_dim", GLOBAL_DIM + threat_dim))
-    model = PolicyBC(
-        vocab_size=vocab.vocab_size,
-        global_dim=global_dim,
-        d_model=int(cfg.get("d_model", 160)),
-        num_layers=int(cfg.get("num_layers", 2)),
-        dropout=float(cfg.get("dropout", 0.2)),
-        card_conditioned_placement=bool(cfg.get("card_conditioned_placement", False)),
-        placement_mode=str(cfg.get("placement_mode", "xy")),
-        placement_card_mode=str(cfg.get("placement_card_mode", "soft")),
-        arena_memory_channels=int(cfg.get("arena_memory_channels", 0)),
-        arena_hidden_channels=int(cfg.get("arena_hidden_channels", 32)),
-        arena_memory_version=str(cfg.get("arena_memory_version", "none")),
-        arena_gate_bias=float(cfg.get("arena_gate_bias", -2.2)),
-        max_think_steps=int(cfg.get("max_think_steps", 0)),
+    model = build_policy_model(
+        vocab.vocab_size,
+        {
+            **cfg,
+            "global_dim": global_dim,
+            "threat_dim": threat_dim,
+        },
     )
     model.load_state_dict(ckpt["model_state"])
     model.to(device)
@@ -136,6 +130,7 @@ def predict_next_action(
         max_context=max_context,
         threat_dim=threat_dim,
         min_context=min_context,
+        observation_seconds=observed_now,
     )
     if sample is None:
         raise RuntimeError("Could not encode policy prefix")
@@ -190,6 +185,7 @@ def predict_next_action(
             max_context=max_context,
             threat_dim=threat_dim,
             min_context=min_context,
+            observation_seconds=observed_now,
         )
         if mirrored_sample is None:
             raise RuntimeError("Could not encode mirrored policy prefix")
@@ -294,8 +290,15 @@ def predict_next_action(
                     selected_tile = int(torch.multinomial(tile_probs, 1).item())
                 else:
                     selected_tile = int(rng.choices(range(int(tile_probs.numel())), weights=tile_probs.cpu().tolist(), k=1)[0])
-        rows, cols = divmod(selected_tile, 32)
-        xy = np.asarray([(cols + 0.5) / 32.0, (rows + 0.5) / 18.0], dtype=np.float32)
+        rows, cols = divmod(selected_tile, TILE_COLS)
+        xy = np.asarray(
+            [(cols + 0.5) / TILE_COLS, (rows + 0.5) / TILE_ROWS],
+            dtype=np.float32,
+        )
+        offset = out.get("offset")
+        if offset is not None:
+            half = np.asarray([0.5 / TILE_COLS, 0.5 / TILE_ROWS], dtype=np.float32)
+            xy = np.clip(xy + offset[0].detach().float().cpu().numpy() * half, 0.0, 1.0)
     x_norm, y_norm = float(xy[0]), float(xy[1])
     if acting_side == "opponent":
         y_norm = 1.0 - y_norm
@@ -372,14 +375,17 @@ def demo_predict_from_raw(
                 }
             )
         elif event.event_type == "ability_activation":
+            card = event.ability_card or event.card
+            if not card:
+                continue
             events.append(
                 {
                     "seconds": float(event.seconds),
                     "side": event.side,
                     "event_type": "ability_activation",
-                    "card": event.ability_card or event.card or "_ability",
-                    "x": 9000,
-                    "y": 16000,
+                    "card": card,
+                    "x": int(event.x) if event.x is not None else 9000,
+                    "y": int(event.y) if event.y is not None else 16000,
                 }
             )
     events = events[: max(8, prefix_events)]

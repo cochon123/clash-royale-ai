@@ -13,13 +13,13 @@ import torch
 
 from .policy_dataset import DEFAULT_MIN_CONTEXT, deck_slot_for_card, encode_policy_sample
 from .policy_infer import load_policy
+from .policy_manifest import resolve_battle_splits
 from .winner_dataset import (
     DEFAULT_ELIXIR_COST,
     WIN_CONDITIONISH,
     BattleExample,
     collect_battles,
     load_card_costs,
-    split_battles,
 )
 
 FOCUS_THREATS = ("hog-rider", "balloon", "graveyard", "golem")
@@ -94,10 +94,17 @@ def evaluate_defense_slice(
     seed: int = 42,
     device_name: str | None = None,
     max_windows: int | None = None,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     costs = load_card_costs(card_costs_path)
     battles = collect_battles(input_dir)
-    _train, _val, test = split_battles(battles, seed=seed)
+    _train, _val, test, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        split_manifest=split_manifest,
+        model_dir=policy_dir,
+        create=False,
+    )
     print(f"Mining reaction windows from {len(test)} test battles ...", flush=True)
     windows = mine_reaction_windows(test, max_response_seconds=max_response_seconds)
     for window in windows:

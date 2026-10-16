@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import pickle
 import time
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -29,11 +28,11 @@ from .policy_dataset import (
     encode_policy_sample,
 )
 from .policy_infer import load_policy
+from .policy_manifest import resolve_battle_splits
 from .winner_dataset import (
     BattleExample,
     collect_battles,
     load_card_costs,
-    split_battles,
 )
 
 TRUE_IN_HAND_THRESHOLD = 0.99
@@ -47,31 +46,12 @@ def _load_battles(
     min_card_plays: int = 12,
     allow_stale_cache: bool = True,
 ) -> list[BattleExample]:
-    """Load battles; optionally accept a stale pickle while collection grows."""
-    source = Path(input_dir)
-    cache_file = (
-        Path(cache_path)
-        if cache_path is not None
-        else source.parent / "winner_battles_cache.pkl"
-    )
-    if allow_stale_cache and cache_file.exists():
-        try:
-            with cache_file.open("rb") as handle:
-                cached = pickle.load(handle)
-            if (
-                isinstance(cached, dict)
-                and isinstance(cached.get("battles"), list)
-                and cached.get("min_card_plays", min_card_plays) == min_card_plays
-            ):
-                battles = cached["battles"]
-                print(
-                    f"Loaded {len(battles)} battles from cache "
-                    f"({cache_file}, stale_ok={allow_stale_cache})",
-                    flush=True,
-                )
-                return battles
-        except Exception as exc:
-            print(f"Cache load failed ({exc}); rebuilding ...", flush=True)
+    """Load battles through the fingerprinting collector.
+
+    ``allow_stale_cache`` is kept for CLI compatibility. Shared parent-dir
+    pickles are no longer accepted; identity is the source digest.
+    """
+    del allow_stale_cache
     return collect_battles(
         input_dir, min_card_plays=min_card_plays, cache_path=cache_path
     )
@@ -797,13 +777,20 @@ def run_hand_audit(
     allow_stale_cache: bool = True,
     cache_path: str | Path | None = None,
     quality_workers: int = 4,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     t_all = time.time()
     costs = load_card_costs(card_costs_path)
     battles = _load_battles(
         input_dir, cache_path=cache_path, allow_stale_cache=allow_stale_cache
     )
-    train, val, test = split_battles(battles, seed=seed)
+    train, val, test, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        split_manifest=split_manifest,
+        model_dir=policy_dir,
+        create=False,
+    )
 
     # Snapshot model metadata
     model_dir = Path(policy_dir)

@@ -13,6 +13,8 @@ from torch.optim import AdamW
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader
 
+from .metrics import binary_auc as _auc_binary
+from .policy_manifest import resolve_battle_splits
 from .winner_dataset import (
     CONTINUOUS_DIM,
     GLOBAL_DIM,
@@ -22,25 +24,9 @@ from .winner_dataset import (
     collect_battles,
     create_dataloaders,
     load_card_costs,
-    split_battles,
     summarize_split,
 )
 from .winner_model import WinnerPredictor
-
-
-def _auc_binary(labels: np.ndarray, probs: np.ndarray) -> float:
-    labels = labels.astype(np.int64)
-    if labels.min() == labels.max():
-        return 0.5
-    order = np.argsort(probs)
-    ranks = np.empty_like(order, dtype=np.float64)
-    ranks[order] = np.arange(1, len(probs) + 1)
-    pos = labels == 1
-    n_pos = int(pos.sum())
-    n_neg = int((~pos).sum())
-    if n_pos == 0 or n_neg == 0:
-        return 0.5
-    return float((ranks[pos].sum() - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg))
 
 
 def _move_batch(batch, device: torch.device):
@@ -110,6 +96,7 @@ def train_winner_model(
     device_name: str | None = None,
     patience: int = 12,
     dropout: float = 0.3,
+    split_manifest: str | Path | None = None,
 ) -> dict[str, Any]:
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -129,7 +116,14 @@ def train_winner_model(
             f"Need at least 50 usable battles with clear winners; found {len(battles)}"
         )
 
-    train_battles, val_battles, test_battles = split_battles(battles, seed=seed)
+    train_battles, val_battles, test_battles, _manifest, _split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        output_dir=output,
+        split_manifest=split_manifest,
+        create=True,
+        min_card_plays=min_card_plays,
+    )
     vocab = build_vocab(train_battles)
     costs = load_card_costs(card_costs_path)
     # Late prefixes keep the strongest outcome signal without mid-game noise.

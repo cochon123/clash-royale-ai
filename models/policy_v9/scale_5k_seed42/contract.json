@@ -1,0 +1,28 @@
+{
+  "data": {
+    "cache_version": "v9-causal-shards-1",
+    "observation": "causal-observation-1",
+    "source": {
+      "source": "/home/cochon/Documents/mini-project/clash-royale-ai/data/raw",
+      "file_count": 64275,
+      "digest": "346201a2d03b5ae08ff83c40ae5ccc776ecceed5ec3c844ed2f817eea5c33281"
+    },
+    "metadata_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "costs_sha256": "393e31c77a4801fb253c65e599373d58a5bbb7d8bdd493cdf2d93fabdbe027b4",
+    "manifest_sha256": "524a6dfa3d1c8947d59d363b83f915907ee7131f96f3733b96c365cdef4fd24c",
+    "vocab_sha256": "f7a320ef93c1524a46af8881fd0409351440382f6c0f34df443991c24422ed6d",
+    "holdout_sha256": "ba9ba13ba14eebf45fc56218724483bd8855731e26a0f2a205ca9c386af46564",
+    "encoder_sha256": "8d1d6fb96a0654d1a9ac2bb8f0c26095f44638f3c987d70cd75b95752fa580f7",
+    "storage": "fp16 event features, fp32 globals/cycle/labels",
+    "all_card_actions": true,
+    "max_context": 64,
+    "reaction_repeats": 1,
+    "reference_ancestry_caveat": "Common holdout of final legacy manifests; older warm-start ancestors have incomplete lineage. Final untouched holdout is authoritative."
+  },
+  "training": "74096c4036c973ac70b1b829f536cfc96ed4423f2dabcb208bac27925045eca7",
+  "source": {
+    "v9_train.py": "6daa58c40949fb3d22a7a369ddec5c605a9e1f40503a0dfc12971e8b72977250",
+    "v9_policy.py": "530a7087e2da419e5ff14ac7b2e49b1cfa4efc0bb527a35af1819e54ffcf31f1",
+    "policy_model.py": "4ede80b19ad02fa05a0de973022e9ee4c6392fe4b9bdff2231bed3d286ad1ddc"
+  }
+}

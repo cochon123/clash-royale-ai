@@ -1,0 +1,19 @@
+# policy-bc-v8 · 8.0.0  device=cuda  params=0
+15:54:49  loading battles from data/raw
+15:54:53  held out 512 Astra probe battles from the v8 split
+15:54:53  lazy mirroring: 5,000 source battles; encoded streams are shared
+15:54:54  training policy-bc-v8 threat_dim=14 placement=heatmap/selected winner_only=False
+15:54:54  samples train/val/test 317036/17183/17220 on cuda
+run model=policy-bc-v8 stage=None control=aligned batch=128 accumulation=1
+15:54:55  train 317,036  val 17,183  test 17,220  amp=on  params=2,396,720
+16:05:54  epoch 01  train_loss=7.6989  val_slot@1=0.377  val_zone=0.283  val_tile_exact=0.076  val_tile_near=0.132  val_loss=7.7636
+16:05:54  saved best checkpoint  val_loss=7.7636
+16:16:41  epoch 02  train_loss=6.8006  val_slot@1=0.420  val_zone=0.315  val_tile_exact=0.087  val_tile_near=0.148  val_loss=7.7234
+16:16:41  saved best checkpoint  val_loss=7.7234
+16:27:19  epoch 03  train_loss=6.5101  val_slot@1=0.440  val_zone=0.333  val_tile_exact=0.096  val_tile_near=0.159  val_loss=7.6323
+16:27:19  saved best checkpoint  val_loss=7.6323
+16:38:19  epoch 04  train_loss=6.3591  val_slot@1=0.454  val_zone=0.340  val_tile_exact=0.101  val_tile_near=0.167  val_loss=7.5861
+16:38:19  saved best checkpoint  val_loss=7.5861
+16:50:04  epoch 05  train_loss=7.6202  val_slot@1=0.379  val_zone=0.144  val_tile_exact=0.025  val_tile_near=0.078  val_loss=8.6731
+17:02:23  epoch 06  train_loss=nan  val_slot@1=0.378  val_zone=0.147  val_tile_exact=0.027  val_tile_near=0.075  val_loss=nonfinite
+17:02:23  val objective non-finite; not counting toward early stop

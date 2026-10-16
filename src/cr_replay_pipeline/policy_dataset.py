@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import random
 from collections import OrderedDict
+from functools import partial
 from typing import Any
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, Dataset, Sampler
 
@@ -19,10 +21,16 @@ try:
 except RuntimeError:
     pass
 
+from .feature_schema import (
+    CONTINUOUS_INDEX,
+    GLOBAL_DIM,
+    GLOBAL_INDEX,
+    THREAT_DIM,
+    THREAT_INDEX,
+)
 from .winner_dataset import (
     CONTINUOUS_DIM,
     DEFAULT_ELIXIR_COST,
-    GLOBAL_DIM,
     SPELL_CARDS,
     WIN_CONDITIONISH,
     BattleExample,
@@ -43,6 +51,9 @@ __all__ = [
     "CONTINUOUS_DIM",
     "GLOBAL_DIM",
     "THREAT_DIM",
+    "THREAT_INDEX",
+    "GLOBAL_INDEX",
+    "CONTINUOUS_INDEX",
     "PolicyActionDataset",
     "build_vocab",
     "collect_battles",
@@ -54,6 +65,9 @@ __all__ = [
     "deck_slot_for_card",
     "encode_policy_sample",
     "recent_opponent_threat",
+    "apply_horizontal_mirror",
+    "prefix_observation_seconds",
+    "baselines_for_dataset",
 ]
 
 DEFAULT_MAX_CONTEXT = 64
@@ -63,10 +77,28 @@ SLOT_FEAT_DIM = 8
 
 # Focus threats for v3 conditioning (aligned with defense probes).
 THREAT_FOCUS = ("hog-rider", "balloon", "graveyard", "golem")
-# 4 threats × (active, age) + any_focus + focus_cost + any_wincon + wincon_age +
-# threat_x + threat_y = 14
-THREAT_DIM = 14
 DEFAULT_REACTION_SECONDS = 5.0
+if GLOBAL_DIM != 48:
+    raise RuntimeError("GLOBAL_DIM schema drift")
+if THREAT_DIM != 14:
+    raise RuntimeError("THREAT_DIM schema drift")
+
+
+def prefix_observation_seconds(
+    battle: BattleExample,
+    event_index: int,
+    observation_seconds: float | None = None,
+) -> float:
+    """Clock at which the policy observes ``events[:event_index]``.
+
+    The timestamp of the action being predicted is a label, not an input.
+    Live rollouts pass the current match clock as ``observation_seconds``.
+    """
+    if observation_seconds is not None:
+        return float(observation_seconds)
+    if event_index <= 0 or not battle.events:
+        return 0.0
+    return float(battle.events[min(event_index, len(battle.events)) - 1]["seconds"])
 
 
 def deck_slot_for_card(deck: tuple[str, ...], card: str) -> int | None:
@@ -84,19 +116,48 @@ def _normalize_xy(x: int, y: int, swap_sides: bool) -> tuple[float, float]:
     return nx, ny
 
 
+def apply_horizontal_mirror(
+    continuous: torch.Tensor,
+    global_feat: torch.Tensor,
+    xy: torch.Tensor,
+    threat_dim: int = 0,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Reflect left/right channels to match a fully remapped arena."""
+    continuous = continuous.clone()
+    global_feat = global_feat.clone()
+    xy = xy.clone()
+    continuous[:, CONTINUOUS_INDEX["x"]] = 1.0 - continuous[:, CONTINUOUS_INDEX["x"]]
+    for name in ("team_left", "opp_left"):
+        index = GLOBAL_INDEX[name]
+        global_feat[index] = 1.0 - global_feat[index]
+    xy[0] = 1.0 - xy[0]
+    if threat_dim > 0 and global_feat.numel() > GLOBAL_DIM + THREAT_INDEX["threat_x"]:
+        any_focus = GLOBAL_DIM + THREAT_INDEX["any_focus"]
+        any_wincon = GLOBAL_DIM + THREAT_INDEX["any_wincon"]
+        threat_x = GLOBAL_DIM + THREAT_INDEX["threat_x"]
+        active = False
+        if global_feat.numel() > any_wincon:
+            active = float(global_feat[any_focus]) > 0.0 or float(global_feat[any_wincon]) > 0.0
+        if active:
+            global_feat[threat_x] = 1.0 - global_feat[threat_x]
+    return continuous, global_feat, xy
+
+
 def recent_opponent_threat(
     battle: BattleExample,
     event_index: int,
     acting_side: str,
     costs: dict[str, int],
     max_age: float = DEFAULT_REACTION_SECONDS,
+    observation_seconds: float | None = None,
 ) -> tuple[torch.Tensor, bool]:
     """Threat conditioning features from the opponent's recent plays.
 
     Returns (threat_feat[THREAT_DIM], is_reaction) where is_reaction means a
-    focus/wincon threat was played by the opponent within ``max_age`` seconds.
+    focus/wincon threat was played by the opponent within ``max_age`` seconds
+    of the observation clock, never of the future action timestamp.
     """
-    now = float(battle.events[event_index]["seconds"]) if event_index < len(battle.events) else 0.0
+    now = prefix_observation_seconds(battle, event_index, observation_seconds)
     # Prefix-only: look at events before the prediction index.
     prefix = battle.events[:event_index]
     opponent = "opponent" if acting_side == "team" else "team"
@@ -172,6 +233,7 @@ def acting_cycle_features(
     event_index: int,
     costs: dict[str, int],
     swap_sides: bool,
+    observation_seconds: float | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Per-deck-slot cycle features + soft hand mask for the acting side.
 
@@ -185,7 +247,7 @@ def acting_cycle_features(
 
     last_play = [-1.0] * 8
     play_count = [0.0] * 8
-    now = float(battle.events[event_index - 1]["seconds"]) if event_index else 0.0
+    now = prefix_observation_seconds(battle, event_index, observation_seconds)
     for event in battle.events[:event_index]:
         if event["side"] != raw_side or event["event_type"] != "card_play":
             continue
@@ -194,7 +256,6 @@ def acting_cycle_features(
             continue
         last_play[slot] = float(event["seconds"])
         play_count[slot] += 1.0
-        now = float(event["seconds"])
 
     waits: list[tuple[float, int]] = []
     feats = torch.zeros(8, SLOT_FEAT_DIM, dtype=torch.float32)
@@ -241,6 +302,7 @@ def _encode_causal_stream(
     costs: dict[str, int],
     swap_sides: bool = False,
     min_events: int | None = None,
+    observation_seconds: float | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor] | None:
     """Encode a full battle once with causal (sliceable) features.
 
@@ -323,8 +385,9 @@ def _encode_causal_stream(
 
         card = event["card"]
         cost = _event_cost(card, event["event_type"], costs)
-        x = float(event["x"]) / 18000.0
-        y = float(event["y"]) / 32000.0
+        position_known = bool(event.get("position_known", True))
+        x = float(event["x"]) / 18000.0 if position_known else 0.5
+        y = float(event["y"]) / 32000.0 if position_known else 0.5
         if swap_sides:
             y = 1.0 - y
 
@@ -332,8 +395,8 @@ def _encode_causal_stream(
         is_spell = 1.0 if card in SPELL_CARDS else 0.0
         is_wincon = 1.0 if card in WIN_CONDITIONISH else 0.0
         is_deep = 0.0
-        is_bridge = 1.0 if 0.42 <= y <= 0.58 else 0.0
-        is_left = 1.0 if x < 0.5 else 0.0
+        is_bridge = 1.0 if position_known and 0.42 <= y <= 0.58 else 0.0
+        is_left = 1.0 if position_known and x < 0.5 else 0.0
         is_double = 1.0 if seconds >= 120 else 0.0
         is_triple = 1.0 if seconds >= 240 else 0.0
 
@@ -470,6 +533,16 @@ def _encode_causal_stream(
         team_mean_y = team_y_sum / max(team_plays, 1.0)
         opp_mean_y = opponent_y_sum / max(opponent_plays, 1.0)
         now = seconds
+        if observation_seconds is not None and event is events[-1]:
+            now = float(observation_seconds)
+            if now < seconds:
+                raise ValueError("Observation precedes the confirmed prefix")
+            # Integrate across multiplier boundaries rather than applying the
+            # ending multiplier to the whole quiet interval.
+            gain = sum(max(0.0, min(now, end) - max(seconds, start)) / period
+                       for start, end, period in ((0., 120., 2.8), (120., 240., 1.4), (240., float('inf'), .9)))
+            team_elixir = min(10., team_elixir + gain)
+            opponent_elixir = min(10., opponent_elixir + gain)
         team_15 = _window_sum(team_spend_times, team_spend_vals, now, 15.0)
         opp_15 = _window_sum(opp_spend_times, opp_spend_vals, now, 15.0)
         team_30 = _window_sum(team_spend_times, team_spend_vals, now, 30.0)
@@ -573,6 +646,7 @@ def encode_policy_sample(
     threat_dim: int = 0,
     reaction_seconds: float = DEFAULT_REACTION_SECONDS,
     min_context: int | None = None,
+    observation_seconds: float | None = None,
 ) -> tuple[torch.Tensor, ...] | None:
     """Encode prefix events[:event_index] predicting events[event_index]."""
     from .policy_model import xy_to_zone
@@ -592,16 +666,23 @@ def encode_policy_sample(
     continuous, card_ids, team_deck, opponent_deck, globals_all = stream
     continuous = continuous[:event_index]
     card_ids = card_ids[:event_index]
+    observed_now = prefix_observation_seconds(battle, event_index, observation_seconds)
     if event_index == 0:
         # Kickoff: no prior plays — pad a single empty token + starting globals.
         continuous = torch.zeros(1, CONTINUOUS_DIM, dtype=torch.float32)
         card_ids = torch.zeros(1, dtype=torch.long)
         global_feat = torch.zeros(GLOBAL_DIM, dtype=torch.float32)
-        # Indices 18/19 are team/opp elixir (see causal stream).
-        global_feat[18] = 0.5
-        global_feat[19] = 0.5
+        global_feat[GLOBAL_INDEX["team_elixir"]] = 0.5
+        global_feat[GLOBAL_INDEX["opp_elixir"]] = 0.5
     else:
         global_feat = globals_all[event_index - 1]
+        if observed_now != float(battle.events[event_index - 1]["seconds"]):
+            from dataclasses import replace
+            prefix_stream = _encode_causal_stream(
+                replace(battle, events=battle.events[:event_index]), vocab, costs,
+                swap_sides=swap, min_events=1, observation_seconds=observed_now,
+            )
+            global_feat = prefix_stream[-1][-1]
     if continuous.size(0) > max_context:
         continuous = continuous[-max_context:]
         card_ids = card_ids[-max_context:]
@@ -618,6 +699,7 @@ def encode_policy_sample(
             acting_side=target["side"],
             costs=costs,
             max_age=reaction_seconds,
+            observation_seconds=observed_now,
         )
         if threat_dim != THREAT_DIM:
             # Allow trunc/pad if config asks for a different size.
@@ -636,7 +718,9 @@ def encode_policy_sample(
         prev_seconds = float(battle.events[event_index - 1]["seconds"])
     delta = max(0.0, float(target["seconds"]) - prev_seconds)
     event_type = 1 if target["event_type"] == "ability_activation" else 0
-    slot_feats, hand_mask = acting_cycle_features(battle, event_index, costs, swap)
+    slot_feats, hand_mask = acting_cycle_features(
+        battle, event_index, costs, swap, observation_seconds=observed_now
+    )
     zone = xy_to_zone(nx, ny)
 
     return (
@@ -839,9 +923,7 @@ class PolicyActionDataset(Dataset):
         if continuous.size(0) > self.max_context:
             continuous = continuous[-self.max_context :]
             card_ids = card_ids[-self.max_context :]
-        if mirror:
-            continuous = continuous.clone()
-            continuous[:, 4] = 1.0 - continuous[:, 4]
+        observed_now = prefix_observation_seconds(battle, event_index)
 
         if self.hide_opponent_deck and self.hide_opponent_prob > 0:
             # At deployment the acting deck is known, while unrevealed
@@ -871,11 +953,9 @@ class PolicyActionDataset(Dataset):
                 acting_side=target["side"],
                 costs=self.costs,
                 max_age=self.reaction_seconds,
+                observation_seconds=observed_now,
             )
             if self.threat_dim > 0:
-                if mirror and is_react:
-                    threat_feat = threat_feat.clone()
-                    threat_feat[12] = 1.0 - threat_feat[12]
                 if threat_feat.numel() >= self.threat_dim:
                     threat_feat = threat_feat[: self.threat_dim]
                 else:
@@ -890,13 +970,17 @@ class PolicyActionDataset(Dataset):
         slot = deck_slot_for_card(acting_deck, target["card"])
         assert slot is not None
         nx, ny = _normalize_xy(int(target["x"]), int(target["y"]), swap_sides=swap)
+        xy = torch.tensor([nx, ny], dtype=torch.float32)
         if mirror:
-            nx = 1.0 - nx
+            continuous, global_feat, xy = apply_horizontal_mirror(
+                continuous, global_feat, xy, threat_dim=self.threat_dim
+            )
+            nx, ny = float(xy[0]), float(xy[1])
         prev_seconds = float(battle.events[event_index - 1]["seconds"])
         delta = max(0.0, float(target["seconds"]) - prev_seconds)
         event_type = 1 if target["event_type"] == "ability_activation" else 0
         slot_feats, hand_mask = acting_cycle_features(
-            battle, event_index, self.costs, swap
+            battle, event_index, self.costs, swap, observation_seconds=observed_now
         )
         zone = xy_to_zone(nx, ny)
 
@@ -918,7 +1002,7 @@ class PolicyActionDataset(Dataset):
         )
 
 
-def collate_policy_batch(batch):
+def collate_policy_batch(batch, pad_to: int | None = None):
     (
         sequences,
         card_ids,
@@ -935,9 +1019,21 @@ def collate_policy_batch(batch):
         lengths,
         weights,
     ) = zip(*batch)
+    sequences = pad_sequence(sequences, batch_first=True, padding_value=0.0)
+    card_ids = pad_sequence(card_ids, batch_first=True, padding_value=0)
+    length_tensor = torch.tensor(lengths, dtype=torch.long)
+    if pad_to is not None:
+        gap = int(pad_to) - sequences.size(1)
+        if gap > 0:
+            sequences = F.pad(sequences, (0, 0, 0, gap))
+            card_ids = F.pad(card_ids, (0, gap))
+        elif gap < 0:
+            sequences = sequences[:, :pad_to]
+            card_ids = card_ids[:, :pad_to]
+            length_tensor = length_tensor.clamp(max=int(pad_to))
     return (
-        pad_sequence(sequences, batch_first=True, padding_value=0.0),
-        pad_sequence(card_ids, batch_first=True, padding_value=0),
+        sequences,
+        card_ids,
         torch.stack(team_decks),
         torch.stack(opponent_decks),
         torch.stack(globals_),
@@ -948,7 +1044,7 @@ def collate_policy_batch(batch):
         torch.stack(zones),
         torch.stack(xy),
         torch.stack(timing),
-        torch.tensor(lengths, dtype=torch.long),
+        length_tensor,
         torch.stack(weights),
     )
 
@@ -1009,6 +1105,8 @@ def create_policy_dataloaders(
     mirror_augmentation: bool = False,
     stream_cache_size: int | None = None,
     winner_only: bool = False,
+    pad_to: int | None = None,
+    pin_memory: bool = False,
 ) -> tuple[DataLoader, DataLoader, DataLoader]:
     train_ds = PolicyActionDataset(
         train_battles,
@@ -1061,6 +1159,14 @@ def create_policy_dataloaders(
         stream_cache_size=stream_cache_size,
         winner_only=winner_only,
     )
+    collate = partial(collate_policy_batch, pad_to=pad_to)
+    loader_kwargs = dict(
+        collate_fn=collate,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        persistent_workers=num_workers > 0,
+        prefetch_factor=2 if num_workers > 0 else None,
+    )
     return (
         DataLoader(
             train_ds,
@@ -1071,56 +1177,125 @@ def create_policy_dataloaders(
                 if stream_cache_size is not None
                 else None
             ),
-            collate_fn=collate_policy_batch,
-            num_workers=num_workers,
-            persistent_workers=num_workers > 0,
-            prefetch_factor=2 if num_workers > 0 else None,
+            **loader_kwargs,
         ),
         DataLoader(
             val_ds,
             batch_size=batch_size,
             shuffle=False,
-            collate_fn=collate_policy_batch,
-            num_workers=num_workers,
-            persistent_workers=num_workers > 0,
-            prefetch_factor=2 if num_workers > 0 else None,
+            **loader_kwargs,
         ),
         DataLoader(
             test_ds,
             batch_size=batch_size,
             shuffle=False,
-            collate_fn=collate_policy_batch,
-            num_workers=num_workers,
-            persistent_workers=num_workers > 0,
-            prefetch_factor=2 if num_workers > 0 else None,
+            **loader_kwargs,
         ),
     )
 
 
-def baseline_frequency_slot(battles: list[BattleExample]) -> dict[str, Any]:
+def _baseline_targets(
+    battles: list[BattleExample],
+    examples: list[tuple[int, int]] | None,
+) -> list[tuple[BattleExample, int, dict[str, Any]]]:
+    if examples is not None:
+        rows = []
+        for battle_i, event_index in examples:
+            battle = battles[battle_i]
+            rows.append((battle, event_index, battle.events[event_index]))
+        return rows
+    rows = []
+    for battle in battles:
+        for event_index, event in enumerate(battle.events):
+            if event_index < DEFAULT_MIN_CONTEXT:
+                continue
+            if event["event_type"] != "card_play":
+                continue
+            rows.append((battle, event_index, event))
+    return rows
+
+
+def _frequency_prediction(battle: BattleExample, event_index: int, event: dict[str, Any]) -> tuple[str | None, list[str]]:
+    side = event["side"]
+    deck = battle.opponent_deck if side == "opponent" else battle.team_deck
+    counts = {card: 0 for card in deck}
+    for prior in battle.events[:event_index]:
+        if prior["side"] != side or prior["event_type"] != "card_play":
+            continue
+        if prior["card"] in counts:
+            counts[prior["card"]] += 1
+    if not counts:
+        return None, []
+    ranked = sorted(counts.keys(), key=lambda card: (-counts[card], deck.index(card)))
+    return ranked[0], ranked[:3]
+
+
+def _cycle_prediction(battle: BattleExample, event_index: int, event: dict[str, Any]) -> tuple[str | None, list[str]]:
+    side = event["side"]
+    deck = battle.opponent_deck if side == "opponent" else battle.team_deck
+    seen: list[str] = []
+    hand: list[str] = []
+    queue: list[str] = []
+    counts = {card: 0 for card in deck}
+    last_preds: list[str] = []
+    for prior in battle.events[:event_index]:
+        if prior["side"] != side or prior["event_type"] != "card_play":
+            continue
+        card = prior["card"]
+        if len(hand) < 4:
+            ranked = sorted(counts.keys(), key=lambda item: (-counts[item], deck.index(item)))
+            last_preds = ranked[:3]
+        else:
+            last_preds = list(hand[:3]) if len(hand) >= 3 else list(hand)
+        if card in counts:
+            counts[card] += 1
+        if card not in seen and len(seen) < 8:
+            seen.append(card)
+        if len(hand) < 4:
+            if card in deck and card not in hand and card not in queue:
+                remaining = [item for item in deck if item not in seen]
+                if len(seen) == 4 and not hand:
+                    hand = list(seen)
+                    queue = remaining[:4]
+            continue
+        if card in hand:
+            hand.remove(card)
+            if queue:
+                hand.append(queue.pop(0))
+            queue.append(card)
+        elif len(hand) + len(queue) < 8:
+            if not hand:
+                hand = list(seen[:4])
+                queue = [item for item in deck if item not in hand][:4]
+            if card in hand:
+                hand.remove(card)
+                if queue:
+                    hand.append(queue.pop(0))
+                queue.append(card)
+    if len(hand) < 4:
+        ranked = sorted(counts.keys(), key=lambda item: (-counts[item], deck.index(item)))
+        preds = ranked[:3]
+    else:
+        preds = list(hand[:3]) if len(hand) >= 3 else list(hand)
+    return (preds[0] if preds else None), preds
+
+
+def baseline_frequency_slot(
+    battles: list[BattleExample],
+    examples: list[tuple[int, int]] | None = None,
+) -> dict[str, Any]:
     correct = 0
     top3 = 0
     total = 0
-    for battle in battles:
-        for side, deck in (("team", battle.team_deck), ("opponent", battle.opponent_deck)):
-            counts = {card: 0 for card in deck}
-            side_events = [
-                event
-                for event in battle.events
-                if event["side"] == side and event["event_type"] == "card_play"
-            ]
-            for event in side_events:
-                if not counts:
-                    continue
-                ranked = sorted(counts.keys(), key=lambda c: (-counts[c], deck.index(c)))
-                pred = ranked[0]
-                total += 1
-                if pred == event["card"]:
-                    correct += 1
-                if event["card"] in ranked[:3]:
-                    top3 += 1
-                if event["card"] in counts:
-                    counts[event["card"]] += 1
+    for battle, event_index, event in _baseline_targets(battles, examples):
+        pred, ranked = _frequency_prediction(battle, event_index, event)
+        if not ranked:
+            continue
+        total += 1
+        if pred == event["card"]:
+            correct += 1
+        if event["card"] in ranked:
+            top3 += 1
     return {
         "name": "online_frequency",
         "slot_top1": correct / max(total, 1),
@@ -1129,60 +1304,33 @@ def baseline_frequency_slot(battles: list[BattleExample]) -> dict[str, Any]:
     }
 
 
-def baseline_cycle_slot(battles: list[BattleExample]) -> dict[str, Any]:
+def baseline_cycle_slot(
+    battles: list[BattleExample],
+    examples: list[tuple[int, int]] | None = None,
+) -> dict[str, Any]:
     correct = 0
     top3 = 0
     total = 0
-    for battle in battles:
-        for side, deck in (("team", battle.team_deck), ("opponent", battle.opponent_deck)):
-            seen: list[str] = []
-            hand: list[str] = []
-            queue: list[str] = []
-            counts = {card: 0 for card in deck}
-            for event in battle.events:
-                if event["side"] != side or event["event_type"] != "card_play":
-                    continue
-                card = event["card"]
-                if len(hand) < 4:
-                    ranked = sorted(
-                        counts.keys(), key=lambda c: (-counts[c], deck.index(c))
-                    )
-                    preds = ranked[:3]
-                else:
-                    preds = list(hand[:3]) if len(hand) >= 3 else list(hand)
-                total += 1
-                if preds and preds[0] == card:
-                    correct += 1
-                if card in preds:
-                    top3 += 1
-                if card in counts:
-                    counts[card] += 1
-                if card not in seen and len(seen) < 8:
-                    seen.append(card)
-                if len(hand) < 4:
-                    if card in deck and card not in hand and card not in queue:
-                        remaining = [c for c in deck if c not in seen]
-                        if len(seen) == 4 and not hand:
-                            hand = list(seen)
-                            queue = remaining[:4]
-                    continue
-                if card in hand:
-                    hand.remove(card)
-                    if queue:
-                        hand.append(queue.pop(0))
-                    queue.append(card)
-                elif len(hand) + len(queue) < 8:
-                    if not hand:
-                        hand = list(seen[:4])
-                        queue = [c for c in deck if c not in hand][:4]
-                    if card in hand:
-                        hand.remove(card)
-                        if queue:
-                            hand.append(queue.pop(0))
-                        queue.append(card)
+    for battle, event_index, event in _baseline_targets(battles, examples):
+        pred, preds = _cycle_prediction(battle, event_index, event)
+        if not preds:
+            continue
+        total += 1
+        if pred == event["card"]:
+            correct += 1
+        if event["card"] in preds:
+            top3 += 1
     return {
         "name": "approx_cycle",
         "slot_top1": correct / max(total, 1),
         "slot_top3": top3 / max(total, 1),
         "n": total,
+    }
+
+
+def baselines_for_dataset(dataset: "PolicyActionDataset") -> dict[str, dict[str, Any]]:
+    examples = list(dataset.index)
+    return {
+        "frequency": baseline_frequency_slot(dataset.battles, examples),
+        "cycle": baseline_cycle_slot(dataset.battles, examples),
     }

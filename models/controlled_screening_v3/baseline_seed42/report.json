@@ -1,0 +1,133 @@
+{
+  "variant": "baseline",
+  "seed": 42,
+  "created_at": "2026-09-07T04:58:13.610149+00:00",
+  "contract": {
+    "observation": "causal-observation-1",
+    "preprocess": 4,
+    "source": {
+      "source": "/home/cochon/Documents/mini-project/clash-royale-ai/data/raw",
+      "file_count": 64275,
+      "digest": "346201a2d03b5ae08ff83c40ae5ccc776ecceed5ec3c844ed2f817eea5c33281"
+    },
+    "metadata": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "costs": "393e31c77a4801fb253c65e599373d58a5bbb7d8bdd493cdf2d93fabdbe027b4",
+    "manifest": "b60ab8528b324a4c823a6498aff8576fb71085e30d74f1d21448d8c3ab2af644",
+    "final_holdout": "ba9ba13ba14eebf45fc56218724483bd8855731e26a0f2a205ca9c386af46564",
+    "samples_per_battle": 40,
+    "d_model": 128,
+    "batch_size": 128,
+    "objective": "joint-card-cell-nll+0.25-timing;clock=0.1;uniform-no-augmentation-v1",
+    "source_code": "21ce8bd37adacde0e4ed04e84d580ecdfcd38fac21a7e0e5879dd8f2eddc932d",
+    "metadata_records": 0
+  },
+  "parameters": 515954,
+  "device": "cuda",
+  "train_battles": 5000,
+  "validation_battles": 1071,
+  "unique_actions": 180683,
+  "clock_intervals": 319553,
+  "empirical_clock_rates": [
+    0.15605156881352542,
+    0.1559012315259635
+  ],
+  "empirical_clock_validation": {
+    "clock_nll": 2.854429244995117,
+    "clock_median_mae": 2.0202579498291016
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 6.275892304631198,
+      "card": 0.4091475009918213,
+      "cell": 0.09173455089330673,
+      "joint": 0.05191200226545334,
+      "joint_nll": 5.630099773406982,
+      "timing_mae": 1.8434345722198486
+    },
+    {
+      "epoch": 2,
+      "train_loss": 5.514618712511684,
+      "card": 0.440460741519928,
+      "cell": 0.09990660846233368,
+      "joint": 0.0635085329413414,
+      "joint_nll": 5.231199741363525,
+      "timing_mae": 1.8265297412872314
+    },
+    {
+      "epoch": 3,
+      "train_loss": 5.225027968795712,
+      "card": 0.4594769775867462,
+      "cell": 0.10512115061283112,
+      "joint": 0.07326311618089676,
+      "joint_nll": 5.035009860992432,
+      "timing_mae": 1.8074439764022827
+    },
+    {
+      "epoch": 4,
+      "train_loss": 5.058971901115547,
+      "card": 0.47063249349594116,
+      "cell": 0.10784517228603363,
+      "joint": 0.07629844546318054,
+      "joint_nll": 4.919426441192627,
+      "timing_mae": 1.7835001945495605
+    },
+    {
+      "epoch": 5,
+      "train_loss": 4.950599137176535,
+      "card": 0.4845379590988159,
+      "cell": 0.10753385722637177,
+      "joint": 0.07917812466621399,
+      "joint_nll": 4.8446149826049805,
+      "timing_mae": 1.771531105041504
+    },
+    {
+      "epoch": 6,
+      "train_loss": 4.869231254115658,
+      "card": 0.4921911358833313,
+      "cell": 0.11518704891204834,
+      "joint": 0.08563794195652008,
+      "joint_nll": 4.793026447296143,
+      "timing_mae": 1.764830470085144
+    }
+  ],
+  "config": {
+    "input": "data/raw",
+    "metadata": "data/metadata/battles.jsonl",
+    "costs": "data/card_costs.json",
+    "manifest": "data/splits/policy_v8_pilot_5000_seed42.json",
+    "final_holdout": "data/splits/controlled_final_holdout.json",
+    "output": "models/controlled_screening_v3",
+    "variant": "screen",
+    "epochs": 12,
+    "patience": 3,
+    "seed": 42,
+    "batch_size": 128,
+    "d_model": 128,
+    "samples_per_battle": 40,
+    "run_seconds": 3600,
+    "suite_seconds": 10800,
+    "device": null,
+    "prepare": false,
+    "_suite_started": 395696.061299093,
+    "_suite_variant_index": 0,
+    "_suite_variant_count": 3
+  },
+  "model_config": {
+    "variant": "baseline",
+    "d_model": 128,
+    "vocab_size": 126
+  },
+  "status": "failed",
+  "weights_epoch": 6,
+  "elapsed_seconds": 2092.173746370012,
+  "selected_validation": {
+    "epoch": 6,
+    "train_loss": 4.869231254115658,
+    "card": 0.4921911358833313,
+    "cell": 0.11518704891204834,
+    "joint": 0.08563794195652008,
+    "joint_nll": 4.793026447296143,
+    "timing_mae": 1.764830470085144
+  }
+}

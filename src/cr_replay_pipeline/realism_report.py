@@ -42,13 +42,22 @@ def _build_spot_the_fake(
             generate_medium_negative,
             TimingPrior,
         )
-        from .winner_dataset import collect_battles, load_card_costs, split_battles
+        from .winner_dataset import collect_battles, load_card_costs
+        from .policy_manifest import resolve_battle_splits
     except Exception:
         return []
 
     costs = load_card_costs(card_costs_path)
     battles = collect_battles(input_dir)
-    _tr, _va, test = split_battles(battles, seed=42)
+    try:
+        _tr, _va, test, _manifest, _split_path = resolve_battle_splits(
+            battles,
+            seed=42,
+            model_dir=model_dir,
+            create=False,
+        )
+    except ValueError:
+        return []
     rng = random.Random(seed)
     pool = [b for b in test if len(b.events) >= 20]
     rng.shuffle(pool)

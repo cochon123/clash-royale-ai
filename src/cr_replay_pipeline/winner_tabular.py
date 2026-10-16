@@ -11,13 +11,22 @@ from urllib.parse import parse_qs, urlparse
 import numpy as np
 from lxml import html as lxml_html
 
+from .artifact_cache import (
+    cache_payload_matches,
+    default_dataset_cache_path,
+    read_pickle,
+    source_fingerprint,
+    write_pickle,
+)
+from .feature_schema import OFFICIAL_ELIXIR_FEATURE_NAMES
+from .metrics import binary_auc as _auc_binary
+from .policy_manifest import resolve_battle_splits
 from .winner_dataset import (
     SPELL_CARDS,
     WIN_CONDITIONISH,
     BattleExample,
     collect_battles,
     load_card_costs,
-    split_battles,
     summarize_split,
 )
 
@@ -95,21 +104,26 @@ def build_official_elixir_cache(
     cache_path: str | Path | None = None,
 ) -> dict[str, Any]:
     source = Path(input_dir)
+    fingerprint = source_fingerprint(source)
     cache_file = (
         Path(cache_path)
         if cache_path is not None
-        else source.parent / "official_elixir_cache.pkl"
+        else default_dataset_cache_path(
+            source,
+            kind="official_elixir",
+            digest=fingerprint["digest"],
+            min_card_plays=0,
+        )
     )
-    file_count = sum(1 for _ in source.rglob("*.json"))
+    expected = {
+        "source": fingerprint["source"],
+        "digest": fingerprint["digest"],
+        "file_count": fingerprint["file_count"],
+    }
     if cache_file.exists():
         try:
-            with cache_file.open("rb") as handle:
-                cached = pickle.load(handle)
-            if (
-                isinstance(cached, dict)
-                and cached.get("file_count") == file_count
-                and isinstance(cached.get("stats"), dict)
-            ):
+            cached = read_pickle(cache_file)
+            if cache_payload_matches(cached, expected) and isinstance(cached.get("stats"), dict):
                 print(
                     f"Loaded official elixir stats for {len(cached['stats'])} files "
                     f"({cache_file})",
@@ -120,6 +134,7 @@ def build_official_elixir_cache(
             pass
 
     stats: dict[str, Any] = {}
+    file_count = fingerprint["file_count"]
     for index, path in enumerate(sorted(source.rglob("*.json")), start=1):
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
@@ -137,8 +152,7 @@ def build_official_elixir_cache(
             print(f"official elixir {index}/{file_count}", flush=True)
 
     try:
-        with cache_file.open("wb") as handle:
-            pickle.dump({"file_count": file_count, "stats": stats}, handle)
+        write_pickle(cache_file, {**expected, "stats": stats})
         print(f"Cached official elixir stats -> {cache_file}", flush=True)
     except OSError:
         pass
@@ -161,6 +175,7 @@ def extract_tabular_features(
     costs: dict[str, int],
     card_index: dict[str, int],
     official: dict[str, Any] | None = None,
+    include_official: bool = True,
 ) -> np.ndarray:
     prefix = battle.events
     now = float(prefix[-1]["seconds"]) if prefix else 0.0
@@ -346,26 +361,32 @@ def extract_tabular_features(
             return 0.0
         return float(((side_stats.get(side) or {}).get(key) or {}).get(field) or 0.0)
 
-    team_total = official_value("team", "total", "elixir")
-    opp_total = official_value("opponent", "total", "elixir")
-    team_leak = official_value("team", "leaked", "elixir")
-    opp_leak = official_value("opponent", "leaked", "elixir")
+    if include_official:
+        assert len(OFFICIAL_ELIXIR_FEATURE_NAMES) == 10
+        team_total = official_value("team", "total", "elixir")
+        opp_total = official_value("opponent", "total", "elixir")
+        team_leak = official_value("team", "leaked", "elixir")
+        opp_leak = official_value("opponent", "leaked", "elixir")
+        features.extend(
+            [
+                team_total,
+                opp_total,
+                team_total - opp_total,
+                team_leak,
+                opp_leak,
+                team_leak - opp_leak,
+                official_value("team", "troop", "elixir")
+                - official_value("opponent", "troop", "elixir"),
+                official_value("team", "spell", "elixir")
+                - official_value("opponent", "spell", "elixir"),
+                official_value("team", "building", "elixir")
+                - official_value("opponent", "building", "elixir"),
+                official_value("team", "total", "count")
+                - official_value("opponent", "total", "count"),
+            ]
+        )
     features.extend(
         [
-            team_total,
-            opp_total,
-            team_total - opp_total,
-            team_leak,
-            opp_leak,
-            team_leak - opp_leak,
-            official_value("team", "troop", "elixir")
-            - official_value("opponent", "troop", "elixir"),
-            official_value("team", "spell", "elixir")
-            - official_value("opponent", "spell", "elixir"),
-            official_value("team", "building", "elixir")
-            - official_value("opponent", "building", "elixir"),
-            official_value("team", "total", "count")
-            - official_value("opponent", "total", "count"),
             float(
                 sum(card in SPELL_CARDS for card in battle.team_deck)
                 - sum(card in SPELL_CARDS for card in battle.opponent_deck)
@@ -429,6 +450,7 @@ def _feature_matrix(
     card_index: dict[str, int],
     official: dict[str, Any],
     swap_sides: bool = False,
+    include_official: bool = True,
 ) -> np.ndarray:
     rows = []
     for battle in battles:
@@ -439,10 +461,19 @@ def _feature_matrix(
                     costs,
                     card_index,
                     _swapped_official_stats(battle.battle_id, official),
+                    include_official=include_official,
                 )
             )
         else:
-            rows.append(extract_tabular_features(battle, costs, card_index, official))
+            rows.append(
+                extract_tabular_features(
+                    battle,
+                    costs,
+                    card_index,
+                    official,
+                    include_official=include_official,
+                )
+            )
     return np.stack(rows)
 
 
@@ -454,28 +485,80 @@ def _symmetric_probabilities(
     return (direct + reversed_probability) / 2.0
 
 
-def _auc_binary(labels: np.ndarray, probs: np.ndarray) -> float:
-    labels = labels.astype(np.int64)
-    if labels.min() == labels.max():
-        return 0.5
-    order = np.argsort(probs)
-    ranks = np.empty_like(order, dtype=np.float64)
-    ranks[order] = np.arange(1, len(probs) + 1)
-    pos = labels == 1
-    n_pos = int(pos.sum())
-    n_neg = int((~pos).sum())
-    if n_pos == 0 or n_neg == 0:
-        return 0.5
-    return float((ranks[pos].sum() - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg))
+def load_winner_artifact(
+    path: str | Path,
+    *,
+    expected_feature_set: str | None = None,
+) -> dict[str, Any]:
+    target = Path(path)
+    with target.open("rb") as handle:
+        artifact = pickle.load(handle)
+    feature_set = str(artifact.get("feature_set") or "official")
+    if expected_feature_set is not None and feature_set != expected_feature_set:
+        raise ValueError(
+            f"Winner artifact {target} has feature_set={feature_set!r}, "
+            f"expected {expected_feature_set!r}"
+        )
+    return artifact
 
 
-def train_winner_tabular(
-    input_dir: str | Path = "data/raw",
-    output_dir: str | Path = "models/winner_predictor",
-    card_costs_path: str | Path = "data/card_costs.json",
-    min_card_plays: int = 12,
-    seed: int = 42,
-    extra_trees: int = 100,
+def score_winner_battles(
+    winner_artifact: dict[str, Any],
+    battles: list[BattleExample],
+    costs: dict[str, int],
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return (P(team wins), calibrated confidence P(prediction correct))."""
+    include_official = str(winner_artifact.get("feature_set") or "official") == "official"
+    if include_official:
+        raise ValueError(
+            "This winner judge was trained with official elixir/leak statistics "
+            "that synthetic sequences do not have. Load hgb_sequence_ensemble.pkl."
+        )
+    card_index = winner_artifact["card_index"]
+    hgb = winner_artifact["models"]["hist_gradient_boosting"]
+    trees = winner_artifact["models"]["extra_trees"]
+    w = float(winner_artifact["hgb_weight"])
+    cw = float(winner_artifact["confidence_hgb_weight"])
+    calibrator = winner_artifact["confidence_calibrator"]
+    official: dict[str, Any] = {}
+    feats = _feature_matrix(
+        battles, costs, card_index, official, include_official=False
+    )
+    swapped = _feature_matrix(
+        battles,
+        costs,
+        card_index,
+        official,
+        swap_sides=True,
+        include_official=False,
+    )
+    hgb_direct = hgb.predict_proba(feats)[:, 1]
+    tree_direct = trees.predict_proba(feats)[:, 1]
+    hgb_rev = hgb.predict_proba(swapped)[:, 1]
+    tree_rev = trees.predict_proba(swapped)[:, 1]
+    direct = w * hgb_direct + (1.0 - w) * tree_direct
+    reverse = 1.0 - (w * hgb_rev + (1.0 - w) * tree_rev)
+    p_team = (direct + reverse) / 2.0
+    conf_direct = cw * hgb_direct + (1.0 - cw) * tree_direct
+    conf_rev = cw * hgb_rev + (1.0 - cw) * tree_rev
+    p_conf = (conf_direct + (1.0 - conf_rev)) / 2.0
+    raw_score = np.abs(p_conf - 0.5)
+    confidence = np.asarray(calibrator.predict(raw_score), dtype=np.float64)
+    return p_team.astype(np.float64), confidence
+
+
+def _fit_tabular_judge(
+    *,
+    train_battles: list[BattleExample],
+    val_battles: list[BattleExample],
+    test_battles: list[BattleExample],
+    costs: dict[str, int],
+    card_index: dict[str, int],
+    official: dict[str, Any],
+    include_official: bool,
+    seed: int,
+    extra_trees: int,
+    record_stages: bool,
 ) -> dict[str, Any]:
     from sklearn.ensemble import ExtraTreesClassifier, HistGradientBoostingClassifier
     from sklearn.isotonic import IsotonicRegression
@@ -484,40 +567,45 @@ def train_winner_tabular(
     from .winner_visuals import (
         CORRECTNESS_THRESHOLDS,
         area_under_risk_coverage,
-        save_confidence_plot,
-        save_training_curve_video,
         selective_curve,
     )
 
-    started = time.time()
-    output = Path(output_dir)
-    output.mkdir(parents=True, exist_ok=True)
-
-    battles = collect_battles(input_dir, min_card_plays=min_card_plays)
-    if len(battles) < 50:
-        raise RuntimeError(
-            f"Need at least 50 usable battles with clear winners; found {len(battles)}"
-        )
-    official = build_official_elixir_cache(input_dir)
-    train_battles, val_battles, test_battles = split_battles(battles, seed=seed)
-    costs = load_card_costs(card_costs_path)
-    card_index = _build_card_index(train_battles)
-
-    x_train = _feature_matrix(train_battles, costs, card_index, official)
+    x_train = _feature_matrix(
+        train_battles, costs, card_index, official, include_official=include_official
+    )
     x_train_swapped = _feature_matrix(
-        train_battles, costs, card_index, official, swap_sides=True
+        train_battles,
+        costs,
+        card_index,
+        official,
+        swap_sides=True,
+        include_official=include_official,
     )
     y_train = np.asarray([battle.team_wins for battle in train_battles], dtype=np.int64)
     x_train_augmented = np.concatenate([x_train, x_train_swapped])
     y_train_augmented = np.concatenate([y_train, 1 - y_train])
-    x_val = _feature_matrix(val_battles, costs, card_index, official)
+    x_val = _feature_matrix(
+        val_battles, costs, card_index, official, include_official=include_official
+    )
     x_val_swapped = _feature_matrix(
-        val_battles, costs, card_index, official, swap_sides=True
+        val_battles,
+        costs,
+        card_index,
+        official,
+        swap_sides=True,
+        include_official=include_official,
     )
     y_val = np.asarray([battle.team_wins for battle in val_battles], dtype=np.int64)
-    x_test = _feature_matrix(test_battles, costs, card_index, official)
+    x_test = _feature_matrix(
+        test_battles, costs, card_index, official, include_official=include_official
+    )
     x_test_swapped = _feature_matrix(
-        test_battles, costs, card_index, official, swap_sides=True
+        test_battles,
+        costs,
+        card_index,
+        official,
+        swap_sides=True,
+        include_official=include_official,
     )
     y_test = np.asarray([battle.team_wins for battle in test_battles], dtype=np.int64)
 
@@ -529,7 +617,6 @@ def train_winner_tabular(
         "min_samples_leaf": 8,
         "random_state": seed,
     }
-    # Refit the old learner once to provide an exact, same-split comparison.
     baseline_model = HistGradientBoostingClassifier(**hgb_config)
     baseline_model.fit(x_train, y_train)
     baseline_val_prob = baseline_model.predict_proba(x_val)[:, 1]
@@ -552,34 +639,24 @@ def train_winner_tabular(
     tree_val_prob = _symmetric_probabilities(tree_model, x_val, x_val_swapped)
     tree_test_prob = _symmetric_probabilities(tree_model, x_test, x_test_swapped)
 
-    # Select the blend only on validation data, leaving the test set untouched.
     blend_candidates = np.linspace(0.0, 1.0, 21)
-    blend_losses = []
-    for weight in blend_candidates:
-        candidate = weight * hgb_val_prob + (1.0 - weight) * tree_val_prob
-        blend_losses.append(float(log_loss(y_val, candidate)))
+    blend_losses = [
+        float(log_loss(y_val, weight * hgb_val_prob + (1.0 - weight) * tree_val_prob))
+        for weight in blend_candidates
+    ]
     hgb_weight = float(blend_candidates[int(np.argmin(blend_losses))])
     val_prob = hgb_weight * hgb_val_prob + (1.0 - hgb_weight) * tree_val_prob
     test_prob = hgb_weight * hgb_test_prob + (1.0 - hgb_weight) * tree_test_prob
-    val_acc = float(((val_prob >= 0.5) == y_val).mean())
-    test_acc = float(((test_prob >= 0.5) == y_test).mean())
-    val_auc = _auc_binary(y_val, val_prob)
-    test_auc = _auc_binary(y_test, test_prob)
-
-    # Confidence has a different objective from winner probability. Select the
-    # HGB/tree mixture that best ranks correct predictions on validation AURC,
-    # then calibrate that score to P(prediction is correct).
     val_correct = ((val_prob >= 0.5) == y_val).astype(np.int64)
     test_correct = ((test_prob >= 0.5) == y_test).astype(np.int64)
-    confidence_aurcs = []
-    for weight in blend_candidates:
-        score = np.abs(
-            weight * hgb_val_prob + (1.0 - weight) * tree_val_prob - 0.5
+    confidence_aurcs = [
+        area_under_risk_coverage(
+            val_correct,
+            np.abs(weight * hgb_val_prob + (1.0 - weight) * tree_val_prob - 0.5),
         )
-        confidence_aurcs.append(area_under_risk_coverage(val_correct, score))
-    confidence_hgb_weight = float(
-        blend_candidates[int(np.argmin(confidence_aurcs))]
-    )
+        for weight in blend_candidates
+    ]
+    confidence_hgb_weight = float(blend_candidates[int(np.argmin(confidence_aurcs))])
     val_confidence_score = np.abs(
         confidence_hgb_weight * hgb_val_prob
         + (1.0 - confidence_hgb_weight) * tree_val_prob
@@ -596,80 +673,204 @@ def train_winner_tabular(
     confidence_calibrator.fit(val_confidence_score, val_correct)
     test_correct_probability = confidence_calibrator.predict(test_confidence_score)
 
-    baseline_val_correct = (
-        (baseline_val_prob >= 0.5) == y_val
-    ).astype(np.int64)
-    baseline_test_correct = (
-        (baseline_test_prob >= 0.5) == y_test
-    ).astype(np.int64)
+    baseline_val_correct = ((baseline_val_prob >= 0.5) == y_val).astype(np.int64)
+    baseline_test_correct = ((baseline_test_prob >= 0.5) == y_test).astype(np.int64)
     baseline_calibrator = IsotonicRegression(
         out_of_bounds="clip", y_min=0.5, y_max=1.0
     )
-    baseline_calibrator.fit(
-        np.abs(baseline_val_prob - 0.5), baseline_val_correct
-    )
+    baseline_calibrator.fit(np.abs(baseline_val_prob - 0.5), baseline_val_correct)
     baseline_test_correct_probability = baseline_calibrator.predict(
         np.abs(baseline_test_prob - 0.5)
     )
     baseline_curve = selective_curve(
-        baseline_test_correct,
-        baseline_test_correct_probability,
-        CORRECTNESS_THRESHOLDS,
+        baseline_test_correct, baseline_test_correct_probability, CORRECTNESS_THRESHOLDS
     )
     improved_curve = selective_curve(
         test_correct, test_correct_probability, CORRECTNESS_THRESHOLDS
     )
-    raw_margin_aurc = area_under_risk_coverage(
-        test_correct, np.abs(test_prob - 0.5)
-    )
+    raw_margin_aurc = area_under_risk_coverage(test_correct, np.abs(test_prob - 0.5))
     selected_confidence_aurc = area_under_risk_coverage(
         test_correct, test_confidence_score
     )
 
-    # Record the exact cumulative forest predictions for the training animation.
-    checkpoints = (
-        set(range(1, extra_trees + 1))
-        if extra_trees <= 150
-        else {1, 2, 5, 10, extra_trees, *range(20, extra_trees + 1, 10)}
+    training_stages: list[dict[str, Any]] = []
+    if record_stages:
+        checkpoints = (
+            set(range(1, extra_trees + 1))
+            if extra_trees <= 150
+            else {1, 2, 5, 10, extra_trees, *range(20, extra_trees + 1, 10)}
+        )
+        direct_sum = np.zeros(len(y_test), dtype=np.float64)
+        swapped_sum = np.zeros(len(y_test), dtype=np.float64)
+        for tree_count, estimator in enumerate(tree_model.estimators_, start=1):
+            direct_sum += estimator.predict_proba(x_test)[:, 1]
+            swapped_sum += estimator.predict_proba(x_test_swapped)[:, 1]
+            if tree_count not in checkpoints:
+                continue
+            tree_stage_prob = (direct_sum / tree_count + 1.0 - swapped_sum / tree_count) / 2.0
+            stage_prob = hgb_weight * hgb_test_prob + (1.0 - hgb_weight) * tree_stage_prob
+            stage_correct = ((stage_prob >= 0.5) == y_test).astype(np.int64)
+            stage_confidence_score = np.abs(
+                confidence_hgb_weight * hgb_test_prob
+                + (1.0 - confidence_hgb_weight) * tree_stage_prob
+                - 0.5
+            )
+            training_stages.append(
+                {
+                    "trees": tree_count,
+                    "accuracy": float(stage_correct.mean()),
+                    "auc": _auc_binary(y_test, stage_prob),
+                    "aurc": area_under_risk_coverage(stage_correct, stage_confidence_score),
+                    "confidence_curve": selective_curve(
+                        stage_correct,
+                        confidence_calibrator.predict(stage_confidence_score),
+                        CORRECTNESS_THRESHOLDS,
+                    ),
+                }
+            )
+
+    artifact = {
+        "models": {
+            "hist_gradient_boosting": hgb_model,
+            "extra_trees": tree_model,
+        },
+        "hgb_weight": hgb_weight,
+        "confidence_hgb_weight": confidence_hgb_weight,
+        "confidence_calibrator": confidence_calibrator,
+        "symmetric_inference": True,
+        "card_index": card_index,
+        "seed": seed,
+        "extra_trees": extra_trees,
+        "feature_version": 6,
+        "feature_set": "official" if include_official else "sequence",
+        "include_official": include_official,
+    }
+    return {
+        "artifact": artifact,
+        "feature_dim": int(x_train.shape[1]),
+        "x_test": x_test,
+        "y_test": y_test,
+        "test_prob": test_prob,
+        "training_stages": training_stages,
+        "baseline_curve": baseline_curve,
+        "improved_curve": improved_curve,
+        "metrics": {
+            "baseline": {
+                "val": {
+                    "acc": float(((baseline_val_prob >= 0.5) == y_val).mean()),
+                    "auc": _auc_binary(y_val, baseline_val_prob),
+                },
+                "test": {
+                    "acc": float(((baseline_test_prob >= 0.5) == y_test).mean()),
+                    "auc": _auc_binary(y_test, baseline_test_prob),
+                },
+            },
+            "blend": {
+                "hgb_weight": hgb_weight,
+                "extra_trees_weight": 1.0 - hgb_weight,
+                "selection": "minimum validation log-loss over weights 0.00..1.00",
+            },
+            "confidence": {
+                "score_hgb_weight": confidence_hgb_weight,
+                "score_extra_trees_weight": 1.0 - confidence_hgb_weight,
+                "selection": "minimum validation area under the risk-coverage curve",
+                "calibration": "validation-fit isotonic P(prediction is correct)",
+                "raw_margin_test_aurc": raw_margin_aurc,
+                "selected_score_test_aurc": selected_confidence_aurc,
+                "relative_aurc_reduction": (
+                    (raw_margin_aurc - selected_confidence_aurc) / raw_margin_aurc
+                    if raw_margin_aurc
+                    else 0.0
+                ),
+            },
+            "val": {
+                "acc": float(((val_prob >= 0.5) == y_val).mean()),
+                "auc": _auc_binary(y_val, val_prob),
+                "log_loss": float(log_loss(y_val, val_prob)),
+                "n": int(len(y_val)),
+            },
+            "test": {
+                "acc": float(((test_prob >= 0.5) == y_test).mean()),
+                "auc": _auc_binary(y_test, test_prob),
+                "log_loss": float(log_loss(y_test, test_prob)),
+                "n": int(len(y_test)),
+            },
+        },
+    }
+
+
+def train_winner_tabular(
+    input_dir: str | Path = "data/raw",
+    output_dir: str | Path = "models/winner_predictor",
+    card_costs_path: str | Path = "data/card_costs.json",
+    min_card_plays: int = 12,
+    seed: int = 42,
+    extra_trees: int = 100,
+    split_manifest: str | Path | None = None,
+    write_split_manifest: str | Path | None = None,
+) -> dict[str, Any]:
+    from .winner_visuals import save_confidence_plot, save_training_curve_video
+
+    started = time.time()
+    output = Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
+
+    battles = collect_battles(input_dir, min_card_plays=min_card_plays)
+    if len(battles) < 50:
+        raise RuntimeError(
+            f"Need at least 50 usable battles with clear winners; found {len(battles)}"
+        )
+    official = build_official_elixir_cache(input_dir)
+    train_battles, val_battles, test_battles, manifest, split_path = resolve_battle_splits(
+        battles,
+        seed=seed,
+        split_manifest=split_manifest,
+        write_split_manifest=write_split_manifest,
+        output_dir=output,
+        min_card_plays=min_card_plays,
+        create=True,
     )
-    direct_sum = np.zeros(len(y_test), dtype=np.float64)
-    swapped_sum = np.zeros(len(y_test), dtype=np.float64)
-    training_stages = []
-    for tree_count, estimator in enumerate(tree_model.estimators_, start=1):
-        direct_sum += estimator.predict_proba(x_test)[:, 1]
-        swapped_sum += estimator.predict_proba(x_test_swapped)[:, 1]
-        if tree_count not in checkpoints:
-            continue
-        tree_stage_prob = (
-            direct_sum / tree_count + 1.0 - swapped_sum / tree_count
-        ) / 2.0
-        stage_prob = (
-            hgb_weight * hgb_test_prob + (1.0 - hgb_weight) * tree_stage_prob
-        )
-        stage_correct = ((stage_prob >= 0.5) == y_test).astype(np.int64)
-        stage_confidence_score = np.abs(
-            confidence_hgb_weight * hgb_test_prob
-            + (1.0 - confidence_hgb_weight) * tree_stage_prob
-            - 0.5
-        )
-        stage_correct_probability = confidence_calibrator.predict(
-            stage_confidence_score
-        )
-        training_stages.append(
-            {
-                "trees": tree_count,
-                "accuracy": float(stage_correct.mean()),
-                "auc": _auc_binary(y_test, stage_prob),
-                "aurc": area_under_risk_coverage(
-                    stage_correct, stage_confidence_score
-                ),
-                "confidence_curve": selective_curve(
-                    stage_correct,
-                    stage_correct_probability,
-                    CORRECTNESS_THRESHOLDS,
-                ),
-            }
-        )
+    costs = load_card_costs(card_costs_path)
+    card_index = _build_card_index(train_battles)
+
+    official_fit = _fit_tabular_judge(
+        train_battles=train_battles,
+        val_battles=val_battles,
+        test_battles=test_battles,
+        costs=costs,
+        card_index=card_index,
+        official=official,
+        include_official=True,
+        seed=seed,
+        extra_trees=extra_trees,
+        record_stages=True,
+    )
+    sequence_fit = _fit_tabular_judge(
+        train_battles=train_battles,
+        val_battles=val_battles,
+        test_battles=test_battles,
+        costs=costs,
+        card_index=card_index,
+        official=official,
+        include_official=False,
+        seed=seed,
+        extra_trees=extra_trees,
+        record_stages=False,
+    )
+
+    artifact_path = output / "hgb_ensemble.pkl"
+    sequence_path = output / "hgb_sequence_ensemble.pkl"
+    with artifact_path.open("wb") as handle:
+        pickle.dump(official_fit["artifact"], handle)
+    with sequence_path.open("wb") as handle:
+        pickle.dump(sequence_fit["artifact"], handle)
+
+    y_test = official_fit["y_test"]
+    test_prob = official_fit["test_prob"]
+    training_stages = official_fit["training_stages"]
+    baseline_curve = official_fit["baseline_curve"]
+    improved_curve = official_fit["improved_curve"]
+    official_metrics = official_fit["metrics"]
 
     durations = np.asarray(
         [battle.events[-1]["seconds"] for battle in test_battles], dtype=np.float64
@@ -687,72 +888,18 @@ def train_winner_tabular(
             }
         )
 
-    artifact = {
-        "models": {
-            "hist_gradient_boosting": hgb_model,
-            "extra_trees": tree_model,
-        },
-        "hgb_weight": hgb_weight,
-        "confidence_hgb_weight": confidence_hgb_weight,
-        "confidence_calibrator": confidence_calibrator,
-        "symmetric_inference": True,
-        "card_index": card_index,
-        "seed": seed,
-        "extra_trees": extra_trees,
-        "feature_version": 5,
-    }
-    artifact_path = output / "hgb_ensemble.pkl"
-    with artifact_path.open("wb") as handle:
-        pickle.dump(artifact, handle)
-
     report = {
         "seconds": round(time.time() - started, 1),
         "battles_total": len(battles),
-        "feature_dim": int(x_train.shape[1]),
+        "feature_dim": official_fit["feature_dim"],
+        "split_manifest": str(split_path),
+        "manifest_hash": manifest.get("ordered_id_sha256"),
         "splits": [
             summarize_split("train", train_battles),
             summarize_split("val", val_battles),
             summarize_split("test", test_battles),
         ],
-        "baseline": {
-            "val": {
-                "acc": float(((baseline_val_prob >= 0.5) == y_val).mean()),
-                "auc": _auc_binary(y_val, baseline_val_prob),
-            },
-            "test": {
-                "acc": float(((baseline_test_prob >= 0.5) == y_test).mean()),
-                "auc": _auc_binary(y_test, baseline_test_prob),
-            },
-        },
-        "blend": {
-            "hgb_weight": hgb_weight,
-            "extra_trees_weight": 1.0 - hgb_weight,
-            "selection": "minimum validation log-loss over weights 0.00..1.00",
-        },
-        "confidence": {
-            "score_hgb_weight": confidence_hgb_weight,
-            "score_extra_trees_weight": 1.0 - confidence_hgb_weight,
-            "selection": "minimum validation area under the risk-coverage curve",
-            "calibration": "validation-fit isotonic P(prediction is correct)",
-            "raw_margin_test_aurc": raw_margin_aurc,
-            "selected_score_test_aurc": selected_confidence_aurc,
-            "relative_aurc_reduction": (
-                raw_margin_aurc - selected_confidence_aurc
-            )
-            / raw_margin_aurc,
-        },
-        "val": {
-            "acc": val_acc,
-            "auc": val_auc,
-            "log_loss": float(log_loss(y_val, val_prob)),
-            "n": int(len(y_val)),
-        },
-        "test": {
-            "acc": test_acc,
-            "auc": test_auc,
-            "log_loss": float(log_loss(y_test, test_prob)),
-            "n": int(len(y_test)),
-        },
+        **official_metrics,
         "test_by_duration": by_duration,
         "confidence_curve": improved_curve,
         "baseline_confidence_curve": baseline_curve,
@@ -766,11 +913,22 @@ def train_winner_tabular(
             for stage in training_stages
         ],
         "checkpoint": str(artifact_path),
+        "sequence_judge": {
+            "checkpoint": str(sequence_path),
+            "feature_dim": sequence_fit["feature_dim"],
+            "feature_set": "sequence",
+            **sequence_fit["metrics"],
+            "notes": (
+                "Trained without official elixir/leak tables so it can score "
+                "generated sequences. Rankings are a proxy for playing strength, "
+                "not a live win rate."
+            ),
+        },
         "notes": (
             "Full-game symmetric ensemble from placements and official elixir/leak "
             "tables. Training-time perspective augmentation and test-time averaging "
-            "remove arbitrary team/opponent orientation. The diverse Extra Trees "
-            "component replaces seven deterministic copies of the same HGB model."
+            "remove arbitrary team/opponent orientation. Synthetic evaluation must "
+            "use hgb_sequence_ensemble.pkl, not this official-stats judge."
         ),
     }
 

@@ -13,7 +13,6 @@ import gc
 import io
 import json
 import re
-import sys
 import threading
 import time
 import uuid
@@ -39,9 +38,6 @@ TOWER_KEYS = (
 # Friendly battles are tournament standard. Keep these as metadata/validation
 # bounds, not hard labels: balance updates can change the actual values.
 DEFAULT_MAX_HP = {"princess": 3052, "king": 4824}
-RAPIDOCR_SITE = Path(
-    "/home/cochon/.local/share/flameshot-ocr/venv/lib/python3.14/site-packages"
-)
 
 
 def _release_native_ocr_buffers() -> None:
@@ -94,7 +90,7 @@ class OcrToken:
 
 
 class RapidOcrReader:
-    """Lazy wrapper around the already-installed Flameshot RapidOCR runtime."""
+    """Lazy wrapper around RapidOCR (`pip install 'clash-royale-replay-pipeline[phone-ocr]'`)."""
 
     def __init__(self) -> None:
         self._engine: Any = None
@@ -109,8 +105,6 @@ class RapidOcrReader:
         if self._engine is not None:
             return self._engine
         try:
-            if RAPIDOCR_SITE.is_dir() and str(RAPIDOCR_SITE) not in sys.path:
-                sys.path.insert(0, str(RAPIDOCR_SITE))
             from rapidocr import RapidOCR  # type: ignore[import-not-found]
 
             self._engine = RapidOCR(
