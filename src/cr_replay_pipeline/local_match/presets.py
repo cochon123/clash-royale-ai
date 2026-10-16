@@ -16,6 +16,19 @@ PRESET_DECKS: dict[str, dict[str, object]] = {
             "the-log",
         ],
     },
+    "hog_cycle_2.9": {
+        "name": "2.9 Hog Cycle",
+        "cards": [
+            "hog-rider",
+            "tesla",
+            "fireball",
+            "knight",
+            "ice-spirit",
+            "musketeer",
+            "skeletons",
+            "the-log",
+        ],
+    },
     "logbait": {
         "name": "Classic Log Bait",
         "cards": [

@@ -60,6 +60,31 @@ def test_catalog_exposes_the_full_roster_not_a_starter_subset():
     assert "description" not in monk.public()
 
 
+def test_hog_2_9_is_the_23_elixir_cycle():
+    catalog = load_catalog()
+    cards = catalog.validate_deck(cards_for_preset("hog_cycle_2.9"))
+    keys = [card.key for card in cards]
+    assert keys == [
+        "hog-rider",
+        "tesla",
+        "fireball",
+        "knight",
+        "ice-spirit",
+        "musketeer",
+        "skeletons",
+        "the-log",
+    ]
+    assert "ice-golem" not in keys
+    assert "cannon" not in keys
+    assert keys != cards_for_preset("hog_cycle_2.6")
+    assert sum(card.elixir for card in cards) == 23
+    assert sum(card.elixir for card in cards) / 8 == pytest.approx(2.875)
+    bait = catalog.validate_deck(cards_for_preset("logbait"))
+    assert [card.key for card in bait] == cards_for_preset("logbait")
+    assert sum(card.elixir for card in bait) == 26
+    assert sum(card.elixir for card in bait) / 8 == pytest.approx(3.25)
+
+
 def test_famous_presets_are_eight_unique_engine_cards():
     catalog = load_catalog()
     assert len(preset_payload()) >= 8
@@ -279,6 +304,9 @@ def test_web_control_selects_ais_and_decks_then_launches(tmp_path: Path):
         assert status == 200
         assert len(catalog["cards"]) >= 100
         assert any(row["id"] == "hog_cycle_2.6" for row in catalog["presets"])
+        assert any(row["id"] == "hog_cycle_2.9" for row in catalog["presets"])
+        assert "hog_cycle_2.9" in page
+        assert 'id="speed"' in page
         status, agents = _json(base + "/api/agents")
         assert status == 200
         assert any(row["id"] == "random" and row["loadable"] for row in agents["agents"])
@@ -327,6 +355,10 @@ def test_web_control_selects_ais_and_decks_then_launches(tmp_path: Path):
         assert finished["menu_steps"] == 0
         assert finished["work"] >= 2
         assert {event["side"] for event in finished["events"]} == {"red", "blue"}
+        assert finished["red_agent"] == "random"
+        assert finished["blue_agent"] == "random"
+        assert finished["real_engine"] is False
+        assert "tower_hp" not in finished
         table = urlopen(base + "/api/match/table", timeout=5).read().decode("utf-8")
         assert "work" in table
         assert "eta_s" in table

@@ -111,6 +111,8 @@ class MatchControl:
                 "sim_left_s": max_seconds,
                 "red_deck": list(red),
                 "blue_deck": list(blue),
+                "red_agent": red_agent,
+                "blue_agent": blue_agent,
                 "last": "starting",
             }
 
@@ -130,6 +132,11 @@ class MatchControl:
                         blue_agent, seed=seed + 1, root=self.models_root, device=self.device
                     ),
                 }
+                def on_update(view: dict) -> None:
+                    view["red_agent"] = red_agent
+                    view["blue_agent"] = blue_agent
+                    self.update(view)
+
                 run_match(
                     client,
                     agents,
@@ -139,7 +146,7 @@ class MatchControl:
                     max_seconds=max_seconds,
                     speed=speed,
                     stop_event=self._stop,
-                    on_update=self.update,
+                    on_update=on_update,
                     echo=print,
                 )
             except (RemoteHostRefused, OSError, RuntimeError, ValueError, FileNotFoundError) as exc:

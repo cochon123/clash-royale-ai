@@ -195,13 +195,26 @@ watch -n 1 'curl -s http://127.0.0.1:8770/api/match/table'
 
 Columns: `work`, `sim_s`, `left_s`, `eta_s`, `phase`.
 
+`hog_cycle_2.9` is the Hog 2.9 cycle: Hog Rider 4, Tesla 4, Fireball 4,
+Knight 3, Musketeer 4, The Log 2, Ice Spirit 1, Skeletons 1. That is 23
+elixir, average 2.875, the list shown as 2.9. It is not `hog_cycle_2.6`
+(Ice Golem and Cannon). `logbait` is Goblin Barrel 3, Princess 3, Goblin
+Gang 3, Ice Spirit 1, Inferno Tower 5, Knight 3, Rocket 6, The Log 2: 26
+elixir, average 3.25.
+
 One match on stdout, no browser:
 
 ```bash
-cr-replays local-match --headless --max-seconds 30 \
+cr-replays local-match --headless --max-seconds 180 --speed 2 \
   --red random --blue random \
-  --red-deck hog_cycle_2.6 --blue-deck logbait
+  --red-deck hog_cycle_2.9 --blue-deck logbait
 ```
+
+In the browser, Red defaults to 2.9 Hog Cycle and Blue to Classic Log Bait.
+Both AIs default to random-legal. The Speed field is `0` (finish the clock
+immediately). Set Speed to `2` before Launch battle to watch the plays.
+The page shows each deck, the elixir average, and each card, time, and
+tile. It does not show tower HP.
 
 `--speed 1` sleeps in real time. The default `--speed 0` runs the clock as
 fast as the CPU, which is what you want on the harness. Use `--speed 1` only
