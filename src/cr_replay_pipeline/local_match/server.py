@@ -198,6 +198,11 @@ def make_handler(control: MatchControl, prepare_status: Path):
 
         def do_GET(self) -> None:
             path = urlparse(self.path).path
+            if path == "/favicon.ico":
+                self.send_response(204)
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
             if path in ("/", "/index.html"):
                 self._send(UI_PATH.read_text(encoding="utf-8"), content_type="text/html; charset=utf-8")
                 return

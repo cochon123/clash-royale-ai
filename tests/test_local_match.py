@@ -252,6 +252,8 @@ def test_web_control_selects_ais_and_decks_then_launches(tmp_path: Path):
     server, control = _start_ui(tmp_path)
     base = f"http://127.0.0.1:{server.server_address[1]}"
     try:
+        icon = urlopen(base + "/favicon.ico", timeout=5)
+        assert icon.status == 204
         page = urlopen(base + "/", timeout=5).read().decode("utf-8")
         assert 'id="launch"' in page
         assert 'id="red-agent"' in page
