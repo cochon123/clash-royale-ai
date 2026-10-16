@@ -504,6 +504,25 @@ In addition to `hgb_ensemble.pkl` and `hgb_report.json`, training writes:
 
 *Held-out test curves from [`models/winner_predictor/accuracy_vs_confidence.json`](models/winner_predictor/accuracy_vs_confidence.json), redrawn by [`scripts/plot_winner_confidence.py`](scripts/plot_winner_confidence.py). Accuracy is the left axis and coverage is the right axis. The previous model is dashed and the improved model is solid.*
 
+## Local match (REA client + our AIs)
+
+Spin up a loopback battle control, pick the red AI and the blue AI, then pick
+each deck card by card or from a famous preset. The match opens in battle.
+Random-legal is always available; a behavior-cloning checkpoint is selectable
+when its `best_model.pt` is on disk.
+
+```bash
+cr-replays local-match-prepare --apk var/clash-royale/base.apk
+cr-replays local-match
+# browser: http://127.0.0.1:8770
+watch -n 1 'curl -s http://127.0.0.1:8770/api/match/table'
+```
+
+The table columns are work done (`work`), simulated time, time left
+(`left_s`), and wall-clock ETA (`eta_s`). REA inspects an APK you supply; it
+does not ship Supercell's server, and this process never dials one. See
+[docs/local_match.md](docs/local_match.md).
+
 ## Hugging Face artifacts
 
 ```bash

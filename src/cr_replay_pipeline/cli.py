@@ -668,6 +668,63 @@ def build_parser() -> argparse.ArgumentParser:
     placement.add_argument("--device", default=None)
     _add_split_manifest(placement)
 
+    local_match = commands.add_parser(
+        "local-match",
+        help=(
+            "Serve the local red/blue match control. Pick both AIs and both "
+            "decks, then launch straight into a battle on the loopback protocol."
+        ),
+    )
+    local_match.add_argument("--host", default="127.0.0.1")
+    local_match.add_argument("--port", type=int, default=8770)
+    local_match.add_argument("--red", default="random", help="Red AI id (random is always available)")
+    local_match.add_argument("--blue", default="random", help="Blue AI id")
+    local_match.add_argument(
+        "--red-deck",
+        default="hog_cycle_2.6",
+        help="Preset id or eight comma-separated card keys",
+    )
+    local_match.add_argument(
+        "--blue-deck",
+        default="logbait",
+        help="Preset id or eight comma-separated card keys",
+    )
+    local_match.add_argument("--max-seconds", type=float, default=180)
+    local_match.add_argument(
+        "--speed",
+        type=float,
+        default=0,
+        help="0 runs the match clock as fast as the CPU; 1 is realtime",
+    )
+    local_match.add_argument("--seed", type=int, default=1)
+    local_match.add_argument("--device", default=None)
+    local_match.add_argument(
+        "--endpoint",
+        default=None,
+        help="Loopback cr-local-match/1 endpoint. Refuses any non-local host.",
+    )
+    local_match.add_argument(
+        "--launch",
+        action="store_true",
+        help="Start the configured match as soon as the server is up",
+    )
+    local_match.add_argument(
+        "--headless",
+        action="store_true",
+        help="Play one match on stdout and exit. Implies --launch.",
+    )
+    local_prepare = commands.add_parser(
+        "local-match-prepare",
+        help="Record a local APK for REA inspection without contacting Supercell",
+    )
+    local_prepare.add_argument("--apk", default=None)
+    local_prepare.add_argument(
+        "--from-device",
+        default=None,
+        help="adb serial of a phone you control that already has Clash Royale installed",
+    )
+    local_prepare.add_argument("--out-dir", default=None)
+
     phone_lab = commands.add_parser(
         "phone-lab",
         help=(
@@ -1694,6 +1751,79 @@ def main() -> None:
                 default=str,
             )
         )
+    elif args.command == "local-match-prepare":
+        from .local_match.prepare import main_prepare
+
+        report = main_prepare(args.apk, args.from_device, args.out_dir)
+        if report.get("apk") is None:
+            raise SystemExit(2)
+    elif args.command == "local-match":
+        from .local_match.catalog import load_catalog
+        from .local_match.presets import PRESET_DECKS, cards_for_preset
+        from .local_match.server import run_headless, serve_local_match
+
+        def _parse_deck(text: str) -> list[str]:
+            if text in PRESET_DECKS:
+                return cards_for_preset(text)
+            catalog = load_catalog()
+            parts = [part.strip() for part in text.split(",") if part.strip()]
+            return [catalog.resolve(part).key for part in parts]
+
+        red_deck = _parse_deck(args.red_deck)
+        blue_deck = _parse_deck(args.blue_deck)
+        if args.headless:
+            summary = run_headless(
+                red_agent=args.red,
+                blue_agent=args.blue,
+                red=red_deck,
+                blue=blue_deck,
+                seed=args.seed,
+                max_seconds=args.max_seconds,
+                speed=args.speed,
+                device=args.device,
+                endpoint=args.endpoint,
+            )
+            print(
+                json.dumps(
+                    {
+                        "work": summary["work"],
+                        "sim_s": summary["sim_s"],
+                        "sim_left_s": summary["sim_left_s"],
+                        "eta_wall_s": summary["eta_wall_s"],
+                        "phase": summary["phase"],
+                        "engine": summary["engine"],
+                        "real_engine": summary["real_engine"],
+                        "opened_in": summary["opened_in"],
+                        "menu_steps": summary["menu_steps"],
+                        "actions": len(summary["events"]),
+                        "result": summary["result"],
+                    },
+                    indent=2,
+                )
+            )
+        else:
+            launch = None
+            if args.launch:
+                launch = {
+                    "red_agent": args.red,
+                    "blue_agent": args.blue,
+                    "red": red_deck,
+                    "blue": blue_deck,
+                    "seed": args.seed,
+                    "max_seconds": args.max_seconds,
+                    "speed": args.speed,
+                    "endpoint": args.endpoint,
+                }
+            try:
+                serve_local_match(
+                    host=args.host,
+                    port=args.port,
+                    device=args.device,
+                    launch=launch,
+                )
+            except (RuntimeError, ValueError, OSError) as exc:
+                print(f"local-match error: {exc}", file=sys.stderr)
+                raise SystemExit(1) from exc
     elif args.command == "phone-lab":
         from .phone_lab import run_phone_lab
 

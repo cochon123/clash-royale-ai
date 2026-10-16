@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Local match</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #12140f;
+    --panel: #1c2118;
+    --line: #31382c;
+    --text: #e7ecdf;
+    --muted: #a3ad98;
+    --red: #e15b4c;
+    --blue: #6cb6ff;
+    --accent: #d6e26a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 15px/1.45 "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header, main { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  h1 { font-size: 1.4rem; margin: 0 0 8px; }
+  h2 { font-size: 1rem; margin: 0 0 10px; }
+  .banner {
+    background: #2a2718;
+    border: 1px solid #5c5430;
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: #f3e7b0;
+  }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .red h2 { color: var(--red); }
+  .blue h2 { color: var(--blue); }
+  label { display: block; margin: 8px 0 4px; color: var(--muted); font-size: 0.85rem; }
+  select, button {
+    font: inherit;
+    color: var(--text);
+    background: #10140e;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px;
+  }
+  select { width: 100%; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .actions { display: flex; gap: 10px; align-items: center; margin-top: 16px; }
+  button.primary { background: var(--accent); color: #1a1c10; border: 0; font-weight: 650; }
+  button:disabled { opacity: 0.5; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  pre {
+    white-space: pre-wrap;
+    background: #10140e;
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 240px;
+    overflow: auto;
+  }
+  .error { color: #ffb4a8; }
+  @media (max-width: 800px) { .grid, .cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Local match</h1>
+  <div class="banner" id="banner">Loading engine status…</div>
+</header>
+<main>
+  <div class="grid">
+    <section class="panel red" id="red-panel">
+      <h2>Red</h2>
+      <label for="red-agent">AI</label>
+      <select id="red-agent"></select>
+      <label for="red-preset">Deck preset</label>
+      <select id="red-preset"></select>
+      <div class="cards" id="red-cards"></div>
+    </section>
+    <section class="panel blue" id="blue-panel">
+      <h2>Blue</h2>
+      <label for="blue-agent">AI</label>
+      <select id="blue-agent"></select>
+      <label for="blue-preset">Deck preset</label>
+      <select id="blue-preset"></select>
+      <div class="cards" id="blue-cards"></div>
+    </section>
+  </div>
+  <div class="actions">
+    <button class="primary" id="launch" type="button">Launch battle</button>
+    <button id="stop" type="button">Stop</button>
+    <span id="error" class="error"></span>
+  </div>
+  <section class="panel" style="margin-top:16px">
+    <h2>Battle</h2>
+    <table>
+      <thead>
+        <tr><th>work</th><th>sim_s</th><th>left_s</th><th>eta_s</th><th>phase</th><th>engine</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="work">0</td>
+          <td id="sim">0</td>
+          <td id="left">—</td>
+          <td id="eta">—</td>
+          <td id="phase">idle</td>
+          <td id="engine">control-harness</td>
+        </tr>
+      </tbody>
+    </table>
+    <p id="hands"></p>
+    <pre id="log"></pre>
+  </section>
+</main>
+<script>
+const state = { cards: [], presets: [], agents: [] };
+
+function option(value, label, disabled) {
+  const node = document.createElement("option");
+  node.value = value;
+  node.textContent = label;
+  node.disabled = Boolean(disabled);
+  return node;
+}
+
+function fillAgents(select, preferred) {
+  select.replaceChildren();
+  for (const agent of state.agents) {
+    const label = agent.loadable ? agent.name : agent.name + " (unavailable)";
+    const node = option(agent.id, label, !agent.loadable);
+    node.title = agent.detail || "";
+    select.appendChild(node);
+  }
+  if ([...select.options].some((row) => row.value === preferred && !row.disabled)) {
+    select.value = preferred;
+  }
+}
+
+function cardSelect(side, index, selected) {
+  const select = document.createElement("select");
+  select.id = side + "-card-" + index;
+  select.dataset.side = side;
+  for (const card of state.cards) {
+    const node = option(card.key, card.name + " · " + card.elixir + " · " + card.id);
+    select.appendChild(node);
+  }
+  select.value = selected;
+  select.addEventListener("change", () => {
+    document.getElementById(side + "-preset").value = "";
+  });
+  return select;
+}
+
+function renderCards(side, keys) {
+  const host = document.getElementById(side + "-cards");
+  host.replaceChildren();
+  keys.forEach((key, index) => {
+    const wrap = document.createElement("div");
+    const label = document.createElement("label");
+    label.textContent = "Card " + (index + 1);
+    label.htmlFor = side + "-card-" + index;
+    wrap.appendChild(label);
+    wrap.appendChild(cardSelect(side, index, key));
+    host.appendChild(wrap);
+  });
+}
+
+function presetCards(id) {
+  const row = state.presets.find((preset) => preset.id === id);
+  return row ? row.cards.slice() : state.cards.slice(0, 8).map((card) => card.key);
+}
+
+function wirePreset(side, defaultId) {
+  const select = document.getElementById(side + "-preset");
+  select.replaceChildren(option("", "Custom"));
+  for (const preset of state.presets) {
+    select.appendChild(option(preset.id, preset.name));
+  }
+  select.value = defaultId;
+  select.addEventListener("change", () => {
+    if (select.value) renderCards(side, presetCards(select.value));
+  });
+  renderCards(side, presetCards(defaultId));
+}
+
+function chosenCards(side) {
+  const cards = [];
+  for (let index = 0; index < 8; index += 1) {
+    cards.push(document.getElementById(side + "-card-" + index).value);
+  }
+  return cards;
+}
+
+function showMatch(match) {
+  document.getElementById("work").textContent = match.work ?? 0;
+  document.getElementById("sim").textContent = match.sim_s ?? 0;
+  document.getElementById("left").textContent = match.sim_left_s ?? "—";
+  document.getElementById("eta").textContent = match.eta_wall_s ?? "—";
+  document.getElementById("phase").textContent = match.phase || "idle";
+  document.getElementById("engine").textContent = (match.real_engine ? "real " : "") + (match.engine || "control-harness");
+  document.getElementById("launch").disabled = Boolean(match.running);
+  const hands = [];
+  if (match.red && match.red.hand) hands.push("Red hand: " + match.red.hand.join(", ") + " · elixir " + match.red.elixir);
+  if (match.blue && match.blue.hand) hands.push("Blue hand: " + match.blue.hand.join(", ") + " · elixir " + match.blue.elixir);
+  document.getElementById("hands").textContent = hands.join("    ");
+  document.getElementById("log").textContent = (match.lines || []).join("\n");
+  document.getElementById("error").textContent = match.error || "";
+}
+
+async function launch() {
+  document.getElementById("error").textContent = "";
+  const body = {
+    red_agent: document.getElementById("red-agent").value,
+    blue_agent: document.getElementById("blue-agent").value,
+    red_cards: chosenCards("red"),
+    blue_cards: chosenCards("blue"),
+    max_seconds: 180,
+    speed: 0,
+    seed: 1
+  };
+  const response = await fetch("/api/match", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  const payload = await response.json();
+  if (!response.ok) {
+    document.getElementById("error").textContent = payload.error || "launch failed";
+    return;
+  }
+  showMatch(payload);
+}
+
+async function tick() {
+  const response = await fetch("/api/match");
+  if (response.ok) showMatch(await response.json());
+}
+
+async function boot() {
+  const [status, catalog, agents] = await Promise.all([
+    fetch("/api/status").then((response) => response.json()),
+    fetch("/api/catalog").then((response) => response.json()),
+    fetch("/api/agents").then((response) => response.json())
+  ]);
+  document.getElementById("banner").textContent = status.blocker;
+  state.cards = catalog.cards;
+  state.presets = catalog.presets;
+  state.agents = agents.agents;
+  fillAgents(document.getElementById("red-agent"), "random");
+  fillAgents(document.getElementById("blue-agent"), "random");
+  wirePreset("red", "hog_cycle_2.6");
+  wirePreset("blue", "logbait");
+  document.getElementById("launch").addEventListener("click", launch);
+  document.getElementById("stop").addEventListener("click", () => fetch("/api/match/stop", { method: "POST" }));
+  tick();
+  setInterval(tick, 500);
+}
+
+boot().catch((error) => {
+  document.getElementById("banner").textContent = String(error);
+});
+</script>
+</body>
+</html>
