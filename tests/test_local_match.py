@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import struct
 import threading
 import zipfile
 from http.server import ThreadingHTTPServer
@@ -20,7 +21,14 @@ from cr_replay_pipeline.local_match.engine import (
     add_elixir,
     row_bounds,
 )
-from cr_replay_pipeline.local_match.prepare import inspect_apk_zip, prepare
+from cr_replay_pipeline.local_match.prepare import (
+    APKPURE_XAPK_URL,
+    PACKAGE,
+    assert_download_host,
+    inspect_apk_zip,
+    prepare,
+    read_manifest_identity,
+)
 from cr_replay_pipeline.local_match.presets import cards_for_preset, preset_payload
 from cr_replay_pipeline.local_match.server import MatchControl, make_handler, run_headless
 from cr_replay_pipeline.local_match.wire import ProtocolClient, RemoteHostRefused, assert_loopback
@@ -220,8 +228,11 @@ def test_prepare_records_apk_identity_without_extracting_it(tmp_path: Path):
     assert inspected["native_libraries"] == ["libg.so"]
     assert inspected["has_android_manifest"] is True
     assert inspected["has_classes_dex"] is True
-    report = prepare(apk=apk, out_dir=tmp_path / "var")
+    assert inspected["accepted"] is False
+    assert inspected["package"] is None
+    report = prepare(apk=apk, out_dir=tmp_path / "var", run_rea=False)
     assert report["apk"]["sha256"] == inspected["sha256"]
+    assert report["apk"]["accepted"] is False
     assert any("Supercell" in line or "supercell" in line.lower() for line in report["blockers"])
     saved = json.loads((tmp_path / "var" / "prepare-status.json").read_text())
     assert saved["apk"]["bytes"] == apk.stat().st_size
@@ -318,3 +329,156 @@ def test_web_control_selects_ais_and_decks_then_launches(tmp_path: Path):
         control.stop()
         server.shutdown()
         server.server_close()
+
+
+def _utf16(text: str) -> bytes:
+    encoded = text.encode("utf-16-le")
+    return struct.pack("<H", len(text)) + encoded + b"\x00\x00"
+
+
+def _manifest_axml(package: str, version_name: str, version_code: int) -> bytes:
+    strings = ["manifest", "versionCode", "versionName", "package", version_name, package]
+    blob = b""
+    offsets = []
+    for item in strings:
+        offsets.append(len(blob))
+        blob += _utf16(item)
+    pool_size = 28 + 4 * len(strings) + len(blob)
+    pool = struct.pack(
+        "<HHIIIIII",
+        0x0001,
+        28,
+        pool_size,
+        len(strings),
+        0,
+        0,
+        28 + 4 * len(strings),
+        0,
+    )
+    pool += b"".join(struct.pack("<I", offset) for offset in offsets) + blob
+
+    def attribute(name_index: int, raw_index: int, value_type: int, data: int) -> bytes:
+        return struct.pack("<III", 0xFFFFFFFF, name_index, raw_index) + struct.pack(
+            "<HBBI", 8, 0, value_type, data
+        )
+
+    attrs = b"".join(
+        [
+            attribute(1, 0xFFFFFFFF, 0x10, version_code),
+            attribute(2, 4, 0x03, 4),
+            attribute(3, 5, 0x03, 5),
+        ]
+    )
+    ext = struct.pack("<IIHHHHHH", 0xFFFFFFFF, 0, 20, 20, 3, 0, 0, 0)
+    elem_size = 16 + len(ext) + len(attrs)
+    elem = struct.pack("<HHIII", 0x0102, 16, elem_size, 1, 0xFFFFFFFF) + ext + attrs
+    file_size = 8 + len(pool) + len(elem)
+    return struct.pack("<HHI", 0x0003, 8, file_size) + pool + elem
+
+
+def test_manifest_identity_roundtrip():
+    identity = read_manifest_identity(_manifest_axml(PACKAGE, "160402020", 160402020))
+    assert identity == {
+        "package": PACKAGE,
+        "version_name": "160402020",
+        "version_code": 160402020,
+    }
+
+
+def test_download_host_allowlist_refuses_supercell_before_any_socket():
+    assert assert_download_host(APKPURE_XAPK_URL) == "d.apkpure.net"
+    assert assert_download_host("https://d.cdnpure.com/b/APK/com.supercell.clashroyale") == "d.cdnpure.com"
+    assert assert_download_host("https://data.winudf.com/XAPK/example") == "data.winudf.com"
+    for blocked in (
+        "https://apkpure.com/clash-royale/com.supercell.clashroyale",
+        "https://game.clashroyale.com/battle",
+        "https://link.clashroyale.com/join",
+        "https://api.supercell.com/v1",
+        "http://127.0.0.1:8790/v1",
+    ):
+        with pytest.raises(ValueError, match="refusing download host"):
+            assert_download_host(blocked)
+
+
+def test_html_challenge_page_is_not_an_apk(tmp_path: Path):
+    page = tmp_path / "base.apk"
+    page.write_text("<!DOCTYPE html><html>Just a moment...</html>", encoding="utf-8")
+    with pytest.raises(ValueError, match="HTML"):
+        inspect_apk_zip(page)
+    report = prepare(apk=page, out_dir=tmp_path / "var", run_rea=False)
+    assert report["apk"] is None
+    assert any("HTML" in line for line in report["blockers"])
+
+
+def test_wrong_package_is_not_accepted(tmp_path: Path):
+    apk = tmp_path / "other.apk"
+    with zipfile.ZipFile(apk, "w") as archive:
+        archive.writestr("AndroidManifest.xml", _manifest_axml("com.example.other", "1", 1))
+        archive.writestr("classes.dex", b"dex")
+    report = prepare(apk=apk, out_dir=tmp_path / "var", run_rea=False)
+    assert report["apk"]["accepted"] is False
+    assert report["apk"]["package"] == "com.example.other"
+    assert report["rea"] is None
+    assert any("com.example.other" in line for line in report["blockers"])
+
+
+def test_xapk_prepare_keeps_only_the_base_split(tmp_path: Path):
+    base = tmp_path / "inner.apk"
+    with zipfile.ZipFile(base, "w") as archive:
+        archive.writestr(
+            "AndroidManifest.xml",
+            _manifest_axml(PACKAGE, "160402020", 160402020),
+        )
+        archive.writestr("classes.dex", b"dex-bytes")
+    xapk = tmp_path / "clash-royale.xapk"
+    with zipfile.ZipFile(xapk, "w") as archive:
+        archive.write(base, "com.supercell.clashroyale.apk")
+        archive.writestr("config.en.apk", b"locale-split")
+        archive.writestr("install_time_asset_pack.apk", b"assets-stay-packed")
+        archive.writestr(
+            "manifest.json",
+            json.dumps(
+                {
+                    "package_name": PACKAGE,
+                    "version_code": "160402020",
+                    "version_name": "160402020",
+                    "split_apks": [
+                        {"file": "com.supercell.clashroyale.apk", "id": "base"},
+                        {"file": "config.en.apk", "id": "config.en"},
+                        {"file": "install_time_asset_pack.apk", "id": "install_time_asset_pack"},
+                    ],
+                }
+            ),
+        )
+    out = tmp_path / "var"
+    report = prepare(apk=xapk, out_dir=out, run_rea=False)
+    assert report["apk"]["accepted"] is True
+    assert report["apk"]["package"] == PACKAGE
+    assert report["apk"]["version_name"] == "160402020"
+    assert report["apk"]["version_code"] == 160402020
+    assert report["xapk"]["base_member"] == "com.supercell.clashroyale.apk"
+    assert (out / "base.apk").is_file()
+    assert not (out / "config.en.apk").exists()
+    assert not (out / "install_time_asset_pack.apk").exists()
+    assert report["local_battle"]["real_engine"] is False
+    assert report["local_battle"]["executed_apk"] is False
+
+
+def test_xapk_with_the_wrong_package_is_not_extracted(tmp_path: Path):
+    xapk = tmp_path / "other.xapk"
+    with zipfile.ZipFile(xapk, "w") as archive:
+        archive.writestr("com.example.other.apk", b"PK\x03\x04not-used")
+        archive.writestr(
+            "manifest.json",
+            json.dumps(
+                {
+                    "package_name": "com.example.other",
+                    "split_apks": [{"file": "com.example.other.apk", "id": "base"}],
+                }
+            ),
+        )
+    out = tmp_path / "var"
+    report = prepare(apk=xapk, out_dir=out, run_rea=False)
+    assert report["apk"] is None
+    assert report["xapk"]["accepted_package"] is False
+    assert not (out / "base.apk").exists()

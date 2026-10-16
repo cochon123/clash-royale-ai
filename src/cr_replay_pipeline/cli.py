@@ -723,6 +723,14 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="adb serial of a phone you control that already has Clash Royale installed",
     )
+    local_prepare.add_argument(
+        "--from-apkpure",
+        action="store_true",
+        help=(
+            "Download the XAPK from the APKPure CDN allowlist "
+            "(d.apkpure.net, d.cdnpure.com, data.winudf.com). Refuses Supercell hosts."
+        ),
+    )
     local_prepare.add_argument("--out-dir", default=None)
 
     phone_lab = commands.add_parser(
@@ -1754,8 +1762,14 @@ def main() -> None:
     elif args.command == "local-match-prepare":
         from .local_match.prepare import main_prepare
 
-        report = main_prepare(args.apk, args.from_device, args.out_dir)
-        if report.get("apk") is None:
+        report = main_prepare(
+            args.apk,
+            args.from_device,
+            args.out_dir,
+            from_apkpure=args.from_apkpure,
+        )
+        apk_report = report.get("apk") or {}
+        if not apk_report.get("accepted"):
             raise SystemExit(2)
     elif args.command == "local-match":
         from .local_match.catalog import load_catalog
