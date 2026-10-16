@@ -56,3 +56,16 @@ When you launch a run, provide a command that lets me **stream the evolution of 
 
 - A column for an **estimation of the amount of time left**
 - A column for the **amount of work done so far**
+
+## Cursor Cloud specific instructions
+
+Dependencies are locked in `uv.lock`. Install with `uv sync --frozen --inexact`, then install `pytest` into that virtualenv. `pytest` is required to run `tests/` and is not a project dependency, so a plain `uv sync` removes it. The README `python -m venv` plus `pip install -e .` path is the fallback when `uv` is not available.
+
+Use `.venv/bin/python`, `.venv/bin/pytest`, and `.venv/bin/cr-replays`. Login shells also get `.venv/bin` on `PATH` from `/etc/profile.d/clash-royale-ai.sh`. Do not symlink the venv `python` binary outside `.venv`; Python only activates the environment when the executable path stays inside it. `cr-replays` and `pytest` are console scripts and are also linked at `/usr/local/bin`.
+
+Offline checks do not need `CR_TOKEN`, a GPU, or phones:
+
+- `pytest`
+- `cr-replays clean --input tests/fixtures --output /tmp/cr-clean --audit-only`
+
+`cr-replays serve` is the local ingest service at `http://127.0.0.1:8765/health`. Start it only while collecting replays. Phone lab (`cr-replays phone-lab`) needs `adb` and unlocked phones and is outside this environment.
