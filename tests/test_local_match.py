@@ -473,12 +473,18 @@ def test_replay_towers_does_not_invent_hit_points():
     actions = [
         {"card_id": 26000000, "tile_col": 10, "tile_row": 4, "seconds": 3.2, "side": "red"}
     ]
-    with pytest.raises(ReplayEngineUnavailable, match="No tower HP was read from libg.so"):
+    with pytest.raises(ReplayEngineUnavailable, match="No tower HP was read from libg.so") as caught:
         replay_towers(
             red_deck=["knight"] * 8,
             blue_deck=["archers"] * 8,
             actions=actions,
         )
+    message = str(caught.value)
+    assert "Ghidra 12.1.4" in message
+    assert "halt_baddata" in message
+    assert "0x1560bd4" in message
+    assert "socket" in message
+    assert "tower_hp" not in message
     with pytest.raises(ValueError, match="8 cards"):
         replay_towers(red_deck=["knight"], blue_deck=["archers"] * 8, actions=[])
 

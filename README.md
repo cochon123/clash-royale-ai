@@ -542,6 +542,9 @@ is the deck-and-action shape a replay player would have. It raises
 `ReplayEngineUnavailable`. No tower HP number was read from `libg.so`.
 `Java_com_supercell_titan_GameApp_createGameMain` is the native entry REA
 found, and it takes an Android `AssetManager` and `Activity`, not a replay.
+Ghidra 12.1.4 decompiled that symbol as `halt_baddata()` (1-byte body, no
+callees, no strings). Nearby Titan JNI exports and `libsupercell_clashroyale.so`
+`JNI_OnLoad` are the same kind of opaque startup code.
 See [docs/local_match.md](docs/local_match.md).
 
 ## Hugging Face artifacts

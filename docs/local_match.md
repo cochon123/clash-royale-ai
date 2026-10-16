@@ -140,13 +140,25 @@ What REA showed on version `160402020`:
   40000000, plus a full-file scan: no plaintext `replay`, `battle`, `tower`,
   or `crown` in either library. The install-time asset pack has `csv_logic`
   tables and no path whose name contains `replay`.
-- `rea function ... createGameMain` cannot run. Auto provider selection wants
-  Ghidra 12.1, Hopper, or IDA, and `GHIDRA_INSTALL_DIR` is unset.
+- `rea function --provider ghidra` ran with Ghidra 12.1.4
+  (`GHIDRA_INSTALL_DIR` set to the official `ghidra_12.1.4_PUBLIC` tree,
+  JDK 21). It exited 0 after default auto-analysis.
+  `Java_com_supercell_titan_GameApp_createGameMain` at image address
+  `0x1560bd4` decompiles to `halt_baddata()`: Ghidra's function body is 1
+  byte, with no callees and no strings. The rizin symbol size is still 1892
+  bytes at `0x1460bd4`; those bytes are not valid AArch64. Nearby libg
+  exports `JNI_OnLoad` (`0x156096c`), `nOnAppStart` (`0x1561b10`), and
+  `nOnTouchEvent` (`0x15616d4`) are the same kind of bad instruction.
+  `libsupercell_clashroyale.so` `JNI_OnLoad` at `0x78179c` decompiles to an
+  obfuscated constant-driven state machine with no callees and no strings.
+  Hopper and IDA were not installed.
 
-`createGameMain` is the native entry the process actually has. It is not a
-replay function. `libg.so` imports `socket`, `connect`, and `getaddrinfo`.
-Loading it under qemu-user or an emulator would still enter that client, so
-this tree does not load it and does not stub those calls.
+`createGameMain` is still the Titan JNI bootstrap. Ghidra did not recover a
+function that consumes a card/time/tile record or returns tower HP or crowns.
+`libg.so` imports `socket`, `connect`, and `getaddrinfo`. `DT_INIT` at
+`0x1ae3c20` is valid AArch64 and an obfuscated dispatcher; it was not
+executed. Loading the library under qemu-user would still enter that client,
+so this tree does not load it and does not stub those calls.
 
 `replay_towers` raises `ReplayEngineUnavailable` with that blocker.
 `real_engine` stays false. The built-in harness still only checks card, tile,

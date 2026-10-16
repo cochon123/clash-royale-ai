@@ -2,11 +2,13 @@
 
 The native game lives in the AArch64 library ``libg.so``. Its only
 battle-adjacent export is the Titan JNI bootstrap
-``Java_com_supercell_titan_GameApp_createGameMain``. That symbol does not
-accept two decks and an action list, and calling it needs an Android
-``JNIEnv``, ``AssetManager``, and ``Activity``. ``libg.so`` also imports
-``socket``, ``connect``, and ``getaddrinfo``. This module does not load the
-library, does not emulate it, and does not open a socket.
+``Java_com_supercell_titan_GameApp_createGameMain``. Ghidra 12.1.4
+decompiles that symbol as ``halt_baddata``: the bytes at the export are
+not a callable function. The JNI descriptor takes an Android
+``AssetManager`` and ``Activity``, not two decks and an action list.
+``libg.so`` also imports ``socket``, ``connect``, and ``getaddrinfo``.
+This module does not load the library, does not emulate it, and does not
+open a socket.
 """
 
 from __future__ import annotations
@@ -31,14 +33,25 @@ NATIVE_REPLAY_BLOCKER = (
     "A full-file string scan of both libraries has no plaintext replay, "
     "battle, tower, or crown. The install-time asset pack has csv_logic "
     "tables and no path containing replay. rea inspect-binary-layout rejects "
-    "this AArch64 ELF (x86-64 only). rea function cannot decompile "
-    "createGameMain without Ghidra 12.1, Hopper, or IDA. "
-    "GameApp.beforeLogicCallback updates PurchaseManager and "
-    "NativeHTTPClientManager; it is not a combat step. Calling createGameMain "
-    "would boot the online client. That call is not made. Smallest honest "
-    "next step: a process on http://127.0.0.1:8790 that speaks cr-local-match/1 "
-    "and resolves combat itself. Do not patch libg.so and do not stub its "
-    "sockets."
+    "this AArch64 ELF (x86-64 only). Ghidra 12.1.4 via rea function "
+    "--provider ghidra (exit 0, default auto-analysis finished) decompiled "
+    "createGameMain at image address 0x1560bd4 as halt_baddata: a 1-byte "
+    "body, no callees, and no strings. The rizin symbol is still 1892 bytes "
+    "at 0x1460bd4; those bytes are not valid AArch64. The same provider "
+    "result on libg JNI_OnLoad (0x156096c, 1 byte), nOnAppStart (0x1561b10, "
+    "4 bytes), and nOnTouchEvent (0x15616d4, 4 bytes) is halt_baddata or a "
+    "truncated bad instruction, with no callees and no strings. "
+    "libsupercell_clashroyale.so JNI_OnLoad at 0x78179c decompiles to an "
+    "obfuscated constant-driven state machine with no callees and no strings. "
+    "None of those functions takes decks and actions or returns tower HP. "
+    "DT_INIT at 0x1ae3c20 is valid startup code and an obfuscated dispatcher; "
+    "it was not executed. libg.so imports socket, connect, and getaddrinfo, "
+    "so loading it would boot the online client. That call is not made and "
+    "those imports are not stubbed. GameApp.beforeLogicCallback updates "
+    "PurchaseManager and NativeHTTPClientManager; it is not a combat step. "
+    "Smallest honest next step: a process on http://127.0.0.1:8790 that "
+    "speaks cr-local-match/1 and resolves combat itself. Do not patch "
+    "libg.so and do not stub its sockets."
 )
 
 
