@@ -511,16 +511,32 @@ each deck card by card or from a famous preset. The match opens in battle.
 Random-legal is always available; a behavior-cloning checkpoint is selectable
 when its `best_model.pt` is on disk.
 
+The APK source is the APKPure page
+`https://apkpure.com/clash-royale/com.supercell.clashroyale`. Curl to that
+HTML page got HTTP 403. The working obtain command is the CDN URL below, which
+is not a Supercell host. `local-match-prepare` follows redirects only to
+`d.apkpure.net`, `d.cdnpure.com`, and `data.winudf.com`.
+
 ```bash
-cr-replays local-match-prepare --apk var/clash-royale/base.apk
+mkdir -p var/clash-royale
+curl -fL --retry 3 --retry-delay 2 \
+  -A 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' \
+  -o var/clash-royale/clash-royale.xapk \
+  'https://d.apkpure.net/b/APK/com.supercell.clashroyale?version=latest'
+cr-replays local-match-prepare --apk var/clash-royale/clash-royale.xapk
+# equivalent allowlisted download:
+# cr-replays local-match-prepare --from-apkpure
 cr-replays local-match
 # browser: http://127.0.0.1:8770
 watch -n 1 'curl -s http://127.0.0.1:8770/api/match/table'
 ```
 
 The table columns are work done (`work`), simulated time, time left
-(`left_s`), and wall-clock ETA (`eta_s`). REA inspects an APK you supply; it
-does not ship Supercell's server, and this process never dials one. See
+(`left_s`), and wall-clock ETA (`eta_s`). The XAPK is a split; prepare keeps
+only `var/clash-royale/base.apk` and records package, version, size, and
+sha256. REA inspects that base APK. It does not ship Supercell's server, and
+this process never dials one. The built-in harness is not the combat engine.
+Version `160402020` still has no local battle interface. See
 [docs/local_match.md](docs/local_match.md).
 
 ## Hugging Face artifacts

@@ -24,26 +24,56 @@ The harness does not simulate troops, targeting, or crowns.
 
 ## 1. Obtain the APK
 
-REA's channel is a file you already have, or a pull from a device you control
-that installed Clash Royale from the Play Store.
+The page to open is
+[apkpure.com/clash-royale/com.supercell.clashroyale](https://apkpure.com/clash-royale/com.supercell.clashroyale).
+On 2026-10-16, `curl` to that HTML page returned HTTP 403 (Cloudflare
+"Just a moment..."). The transfer that returned the package is the APKPure CDN,
+not a Supercell host:
 
 ```bash
-# phone plugged in, USB debugging on
-adb devices
-rea pull-adb-package <serial> com.supercell.clashroyale \
-  --output-directory var/clash-royale
+mkdir -p var/clash-royale
+curl -fL --retry 3 --retry-delay 2 \
+  -A 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' \
+  -o var/clash-royale/clash-royale.xapk \
+  'https://d.apkpure.net/b/APK/com.supercell.clashroyale?version=latest'
+cr-replays local-match-prepare --apk var/clash-royale/clash-royale.xapk
 ```
 
-If `rea` is not installed yet, the same pull is:
+The same CDN fetch with a host allowlist (it refuses `supercell.com`,
+`clashroyale.com`, and every other host, including the HTML page) is:
+
+```bash
+cr-replays local-match-prepare --from-apkpure
+```
+
+Redirects are followed only to `d.apkpure.net`, `d.cdnpure.com`, and
+`data.winudf.com`. This process never dials Supercell. It does not execute
+the APK.
+
+That download is an XAPK (a zip), not a single APK. `manifest.json` names
+package `com.supercell.clashroyale`, version name `160402020`, version code
+`160402020`. The base split is `com.supercell.clashroyale.apk`. Locale, density,
+`config.arm64_v8a`, and `install_time_asset_pack` stay inside the XAPK.
+`local-match-prepare` copies only the base split to `var/clash-royale/base.apk`
+and checks the binary `AndroidManifest` package name. HTML challenge pages,
+tiny files, and any other package are rejected.
+
+Recorded on 2026-10-16 from that CDN object:
+
+| file | bytes | sha256 |
+| --- | ---: | --- |
+| `clash-royale.xapk` | 1028220365 | `3dc0085605d495ee40b443084f7767ecc547d329be30b5f11884b0d345643f13` |
+| `base.apk` | 49120331 | `0d0dfed74fdb755b71f5424e70af9234ed25471c029d09863b657fed9057b13e` |
+
+`prepare-status.json` repeats version name, version code, size, and sha256.
+Do not commit the XAPK, the base APK, or any extracted Supercell assets.
+`var/clash-royale/`, `*.apk`, and `*.xapk` are gitignored.
+
+A phone you control is still a valid source. It talks to local adb only:
 
 ```bash
 cr-replays local-match-prepare --from-device <serial>
 ```
-
-That requires `adb` on `PATH` (or `REA_ADB_PATH`). This environment has neither
-`adb` nor a connected device. A HEAD request to APKMirror's public Clash Royale
-page on 2026-10-16 returned HTTP 403 (Cloudflare challenge), so no APK was
-downloaded. Do not commit the APK. `var/clash-royale/` and `*.apk` are gitignored.
 
 ## 2. Inspect with REA
 
@@ -62,13 +92,24 @@ rea inspect-android-package var/clash-royale/base.apk --json
 cr-replays local-match-prepare --apk var/clash-royale/base.apk
 ```
 
-`local-match-prepare` writes `var/clash-royale/prepare-status.json` (hash,
-size, native library names). It does not extract DEX or assets into git.
+`local-match-prepare` writes `var/clash-royale/prepare-status.json` (package,
+version name, version code, sha256, size, XAPK layout, native library names).
+It does not extract DEX, the asset pack, or `.so` files into git. REA's stdout
+stays under `var/clash-royale/` as well.
+
+Node on `PATH` must be 22.19 or newer (`rea-agents` 6.5.0 refuses 22.14).
+`ps` must be procps. Set `REA_JADX_HEAP_MIB` if the machine is tight on RAM
+(2048 was used on a 16 GB cloud VM; the 32 GB box can go higher).
 
 On the 3060 / 13th-gen i5 / 32 GB machine, `/dev/kvm` is the right place to run
-an emulator later. This cloud VM also has `/dev/kvm`, but an official client
-still cannot enter a match without Supercell's servers. Do not point it at
-them. A local engine replaces the resolver by listening on loopback.
+an emulator later. This cloud VM also has `/dev/kvm`. Inspection of version
+`160402020` did not find a local combat interface: the base manifest is a split
+(`requiredSplitTypes` `base__abi,base__density`), DEX has no `127.0.0.1`, and
+`libsupercell_clashroyale.so` / `libg.so` in `config.arm64_v8a.apk` have no
+`127.0.0.1` either. `libg.so` contains `https://android.googlesource.com` and
+nothing that listens for a battle. The built-in harness is not that engine.
+Do not point the client at Supercell. A local engine replaces the resolver by
+listening on loopback.
 
 ## 3. Start the control server
 
