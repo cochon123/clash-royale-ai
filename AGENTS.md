@@ -61,7 +61,7 @@ When you launch a run, provide a command that lets me **stream the evolution of 
 
 Dependencies are locked in `uv.lock`. Install with `uv sync --frozen --inexact`, then install `pytest` into that virtualenv. `pytest` is required to run `tests/` and is not a project dependency, so a plain `uv sync` removes it. The README `python -m venv` plus `pip install -e .` path is the fallback when `uv` is not available.
 
-`cr-replays` and `pytest` resolve from `.venv/bin` (also linked on `PATH` as `/usr/local/bin/cr-replays` and `/usr/local/bin/pytest` after the cloud install).
+Use `.venv/bin/python`, `.venv/bin/pytest`, and `.venv/bin/cr-replays`. Login shells also get `.venv/bin` on `PATH` from `/etc/profile.d/clash-royale-ai.sh`. Do not symlink the venv `python` binary outside `.venv`; Python only activates the environment when the executable path stays inside it. `cr-replays` and `pytest` are console scripts and are also linked at `/usr/local/bin`.
 
 Offline checks do not need `CR_TOKEN`, a GPU, or phones:
 
