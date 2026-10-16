@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-16",
+  "git_revision": "79faa7c199cbe8feda4ff91730c0a96559b64a26",
+  "artifact_repo": "Cochon123/clash-royale-ai-artifacts",
+  "artifact_commit": "7d4c7bac4cffafd0540ba80ed848187d7dfaf6f3",
+  "dataset_repo": "Cochon123/clash-royale-replays",
+  "dataset_commit": "bee52be3d0d6463f6e4826da314ca2b6ec7ad007",
+  "archive": {
+    "name": "data-2026-10-16.tar.gz",
+    "bytes": 534361487,
+    "sha256": "a69ca3562456d59284567d5ae275e98032af35040f01e74194ad7226daa77393"
+  },
+  "data_files": 65907,
+  "artifact_files": 820,
+  "verification": {
+    "tests_passed": 184,
+    "test_warnings": 2,
+    "artifact_files_size_checked": 820,
+    "artifact_binary_sha256_checked": 390,
+    "downloaded_v9_export_matches": true,
+    "dataset_archive_sha256_matches_hub": true,
+    "downloaded_dataset_manifest_matches": true,
+    "files_checked": 65907,
+    "all_checksums_match": true
+  }
+}

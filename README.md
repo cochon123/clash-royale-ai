@@ -20,6 +20,10 @@ at the end of this README are historical releases. The dataset's older top-level
 `raw/` files are an earlier collection; use its dated `snapshots/` archive for
 the current corpus. Each new snapshot includes file checksums and counts.
 
+The 16 October 2026 backup contains 820 artifact files and 65,907 data files
+(including 64,275 raw replays). [Publication receipt](docs/artifact_snapshot_2026-10-16.json)
+records the exact Git and Hugging Face revisions, archive checksum and verification.
+
 ### Current result: v9 is experimental
 
 The 12 October 2026 export (`models/policy_v9/final_model/best.pt`) achieved
