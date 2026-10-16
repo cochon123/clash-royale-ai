@@ -111,15 +111,52 @@ scan of `config.arm64_v8a.apk` covered `libsupercell_clashroyale.so` and
 `libg.so`; neither contains `127.0.0.1`. `libg.so` contains
 `https://android.googlesource.com` and nothing that listens for a battle.
 
-That is the blocker. There is no concrete local combat interface to wire into
-`cr-local-match/1`. `real_engine` stays false. The built-in harness is not the
-combat engine. Do not patch the client to dial Supercell. The smallest next
-step is a process you control on `http://127.0.0.1:8790` that speaks
-`cr-local-match/1`, sets `real_engine` true, and actually resolves combat.
+## 2a. Native replay player
 
-On the 3060 / 13th-gen i5 / 32 GB machine, `/dev/kvm` is the right place to run
-an emulator later. This cloud VM also has `/dev/kvm`. An emulator would still
-not create the missing battle resolver.
+A Clash Royale replay is the client re-running a card/time/tile record. The
+AIs already emit that record. The function with that shape is
+`replay_towers(red_deck, blue_deck, actions)` in
+`cr_replay_pipeline.local_match.native_replay`. It does not return tower HP.
+No number in this repo was read from `libg.so`.
+
+What REA showed on version `160402020`:
+
+- `rea search-android-classes` over all 15874 classes: `Replay` matches only
+  `io.sentry.android.replay.ReplayIntegration`. `Battle`, `Tower`, `Crown`,
+  `Logic`, and `Elixir` match nothing.
+- `rea inspect-android-class com.supercell.titan.GameApp` and
+  `rea inspect-android-method ... beforeLogicCallback`: the per-frame hook
+  updates purchases, `NativeHTTPClientManager`, and the keyboard. It does not
+  step combat.
+- `rea inspect-binary-layout` on `libg.so` refuses the file. That command's
+  layout profile is x86-64 ELF only. This host is x86_64 and both libraries
+  are AArch64.
+- `rea execute-rizin-command libg.so iE` (rizin 0.9.1) lists 86 dynamic
+  symbols, all Titan JNI. `Java_com_supercell_titan_GameApp_createGameMain`
+  is 1892 bytes at `0x1460bd4`. Its JNI descriptor is
+  `(AssetManager, String, String, String, long, int, int, int, float, float, int, String, Activity) -> String`.
+  `libsupercell_clashroyale.so` exports only `JNI_OnLoad`.
+- `rea execute-rizin-command` with `search.str.max_region_size` raised to
+  40000000, plus a full-file scan: no plaintext `replay`, `battle`, `tower`,
+  or `crown` in either library. The install-time asset pack has `csv_logic`
+  tables and no path whose name contains `replay`.
+- `rea function ... createGameMain` cannot run. Auto provider selection wants
+  Ghidra 12.1, Hopper, or IDA, and `GHIDRA_INSTALL_DIR` is unset.
+
+`createGameMain` is the native entry the process actually has. It is not a
+replay function. `libg.so` imports `socket`, `connect`, and `getaddrinfo`.
+Loading it under qemu-user or an emulator would still enter that client, so
+this tree does not load it and does not stub those calls.
+
+`replay_towers` raises `ReplayEngineUnavailable` with that blocker.
+`real_engine` stays false. The built-in harness still only checks card, tile,
+and timing. Do not patch `libg.so`. The smallest honest next step is a
+process on `http://127.0.0.1:8790` that speaks `cr-local-match/1` and
+resolves combat itself.
+
+On the 3060 / 13th-gen i5 / 32 GB machine, `/dev/kvm` can host an emulator
+later. An emulator still would not turn `createGameMain` into a deck-and-action
+replay.
 
 ## 3. Start the control server
 

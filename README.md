@@ -537,9 +537,12 @@ only `var/clash-royale/base.apk` and records package, version, size, and
 sha256. `rea inspect-android-package --format json` on that base APK (JADX
 0.7.1) reports `com.supercell.clashroyale` version `160402020` and does not
 execute it. REA does not ship Supercell's server, and this process never dials
-one. The built-in harness is not the combat engine. Version `160402020` still
-has no local battle interface. See
-[docs/local_match.md](docs/local_match.md).
+one. The built-in harness is not the combat engine. `replay_towers(red_deck, blue_deck, actions)`
+is the deck-and-action shape a replay player would have. It raises
+`ReplayEngineUnavailable`. No tower HP number was read from `libg.so`.
+`Java_com_supercell_titan_GameApp_createGameMain` is the native entry REA
+found, and it takes an Android `AssetManager` and `Activity`, not a replay.
+See [docs/local_match.md](docs/local_match.md).
 
 ## Hugging Face artifacts
 
