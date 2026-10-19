@@ -26,3 +26,7 @@ path = "src/bin/native_rl.rs"
 [[bin]]
 name = "deck-setup-probe"
 path = "src/bin/deck_setup_probe.rs"
+
+[[bin]]
+name = "native-watch"
+path = "src/bin/native_watch.rs"

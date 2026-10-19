@@ -127,3 +127,12 @@ deployments, so the Banana adapter advances 100 action-free world ticks before
 sampling. The specialized training loop calls only world steps after submitting
 external actions; it does not call the original autonomous bot harness loop.
 See [Banana run instructions](../rl/README.md#banana-deck-specialists).
+
+`native-watch` is a separate executable with the same deck/reset/action inputs
+and read-only entity snapshots in `frame`. Reset, observe and step return the
+policy observation alongside the frame. `NativeSession::presentation_snapshot`
+reads verified entity positions, health classes and elixir layouts directly;
+host-side position history supplies movement flags. It does not call guest
+functions or infer combat. The watched-match driver advances only world ticks
+with external model actions. Building this executable leaves the running
+`deck-setup-probe` training binary intact.

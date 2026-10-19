@@ -3,8 +3,33 @@
 This viewer runs the recovered `Normal` scenario through the static Rust
 recompilation and reads presentation snapshots without calling native getters.
 It draws original SC5 arena, character, tower and spectator HUD assets.
-The current controllers are the original scenario bots. It is not connected
-to the Banana policies yet, and has no human card controls.
+The default controllers are the original scenario bots. External-frame follow
+mode also displays a separate match controlled by frozen v4.4.2 actors. It has
+no human card controls; trained Banana checkpoint selection is not wired yet.
+
+Watch frozen v4.4.2 against itself using the custom Mortar deck at 1×:
+
+```sh
+cargo build --release --offline --manifest-path native-engine/Cargo.toml --bin native-watch
+cargo build --offline --manifest-path native-spectator/Cargo.toml
+/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_watch
+```
+
+The driver runs on CPU independently of training, verifies both native decks,
+waits until the spectator window exists, then advances 20 native ticks per
+second. Both sides sample frozen actor weights; there is no optimizer or
+checkpoint write. Space pauses, R restarts, +/- changes speed, and Escape closes
+the separate engine and viewer. The final frame remains visible until restart
+or close. Use `--deck hog` for a mirrored Hog 2.6 match.
+
+`rl.banana_watch --headless --max-play-ticks 40 --run-dir runs/watch-check`
+performs a bounded frame/action capture without a window or real-time pacing.
+It does not claim a completed match.
+
+The native viewer can follow any compatible atomic snapshot file using
+`--follow FILE --control-file COMMAND.json --ready-file READY --title NAME`.
+This mode never creates another engine session. Metadata reports controller
+names, status, errors and speed in the title.
 
 From the project root, open the desktop viewer:
 

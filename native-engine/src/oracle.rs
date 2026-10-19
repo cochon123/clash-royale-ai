@@ -348,6 +348,21 @@ fn read_mem(api: &UnicornApi, uc: *mut c_void, address: u64, n: usize) -> Result
         Err(format!("mem_read {address:#x}+{n:#x}: {}", api.err(rc)))
     }
 }
+fn read_mem_u64(api: &UnicornApi, uc: *mut c_void, address: u64) -> Result<u64, String> {
+    Ok(u64::from_le_bytes(
+        read_mem(api, uc, address, 8)?.try_into().unwrap(),
+    ))
+}
+fn read_mem_u32(api: &UnicornApi, uc: *mut c_void, address: u64) -> Result<u32, String> {
+    Ok(u32::from_le_bytes(
+        read_mem(api, uc, address, 4)?.try_into().unwrap(),
+    ))
+}
+fn read_mem_i32(api: &UnicornApi, uc: *mut c_void, address: u64) -> Result<i32, String> {
+    Ok(i32::from_le_bytes(
+        read_mem(api, uc, address, 4)?.try_into().unwrap(),
+    ))
+}
 fn read_u64(api: &UnicornApi, uc: *mut c_void, id: i32) -> Result<u64, String> {
     let mut v = 0u64;
     let rc = unsafe { (api.reg_read)(uc, id, (&mut v as *mut u64).cast()) };
@@ -1477,6 +1492,9 @@ pub struct NativeSession {
     descriptor_scratch: u64,
     initial_checkpoint_sha256: String,
     block_profile: Option<BlockProfile>,
+    presentation_start_tick: u32,
+    presentation_names: BTreeMap<u64, String>,
+    presentation_positions: BTreeMap<u64, (i32, i32)>,
 }
 
 impl NativeSession {
@@ -1734,23 +1752,29 @@ impl NativeSession {
                 context,
                 normal_test_row,
                 descriptor_scratch,
-            )) => Ok(Self {
-                api,
-                uc,
-                ids,
-                abi,
-                state,
-                world,
-                battle,
-                harness,
-                entities,
-                commands,
-                context,
-                normal_test_row,
-                descriptor_scratch,
-                initial_checkpoint_sha256: checkpoint_hash,
-                block_profile: None,
-            }),
+            )) => {
+                let presentation_start_tick = read_mem_u32(&api, uc, world + 0x60)?;
+                Ok(Self {
+                    api,
+                    uc,
+                    ids,
+                    abi,
+                    state,
+                    world,
+                    battle,
+                    harness,
+                    entities,
+                    commands,
+                    context,
+                    normal_test_row,
+                    descriptor_scratch,
+                    initial_checkpoint_sha256: checkpoint_hash,
+                    block_profile: None,
+                    presentation_start_tick,
+                    presentation_names: BTreeMap::new(),
+                    presentation_positions: BTreeMap::new(),
+                })
+            }
             Err(error) => {
                 unsafe {
                     (api.close)(uc);
@@ -1975,6 +1999,9 @@ impl NativeSession {
         self.battle = new_battle;
         self.entities = new_entities;
         self.commands = new_commands;
+        self.presentation_start_tick = read_mem_u32(&self.api, self.uc, self.world + 0x60)?;
+        self.presentation_names.clear();
+        self.presentation_positions.clear();
 
         let mut actual_decks = Vec::new();
         for side in 0..2u64 {
@@ -2038,6 +2065,117 @@ impl NativeSession {
         Ok(
             json!({"scenario":"Normal","seed":seed,"deck_source_rows":cards,"actual_native_decks":actual_decks,"observation":observation,"construction":"Original 11d7968 input and 11d58e0 fresh-harness constructors after setting the loaded Normal row's AlwaysSpells vector; no engine-code patches."}),
         )
+    }
+
+    /// Return an authoritative read-only presentation snapshot matching
+    /// native-spectator's BattleFrame JSON layout. Only guest memory is read;
+    /// movement is derived from this session's preceding snapshot.
+    pub fn presentation_snapshot(&mut self) -> Result<Value, String> {
+        let world = self.world;
+        let battle = self.battle;
+        let manager = read_mem_u64(&self.api, self.uc, world + 0x40)?;
+        let count = read_mem_i32(&self.api, self.uc, manager + 0x14)?;
+        if !(0..=8192).contains(&count) {
+            return Err(format!("invalid native entity count {count}"));
+        }
+        let array = read_mem_u64(&self.api, self.uc, manager + 8)?;
+        let mut entities = Vec::with_capacity(count as usize);
+        let mut positions = BTreeMap::new();
+        for index in 0..count as u64 {
+            let address = read_mem_u64(&self.api, self.uc, array + index * 8)?;
+            let row = read_mem_u64(&self.api, self.uc, address + 0x48)?;
+            if !self.presentation_names.contains_key(&row) {
+                let name = self.native_string(row + 0x28)?;
+                self.presentation_names.insert(row, name);
+            }
+            let side = read_mem_i32(&self.api, self.uc, address + 0x78)?;
+            let x = read_mem_i32(&self.api, self.uc, address + 0x7c)?;
+            let y = read_mem_i32(&self.api, self.uc, address + 0x80)?;
+            let z = read_mem_i32(&self.api, self.uc, address + 0x74)?.saturating_add(read_mem_i32(
+                &self.api,
+                self.uc,
+                address + 0x8c,
+            )?);
+            let component_count = read_mem_i32(&self.api, self.uc, address + 0x24)?;
+            if !(0..=32).contains(&component_count) {
+                return Err("unrecognized native component layout".into());
+            }
+            let mut hp = -1;
+            let mut max_hp = 0;
+            if component_count > 2 {
+                let table = read_mem_u64(&self.api, self.uc, address + 0x18)?;
+                let health = read_mem_u64(&self.api, self.uc, table + 16)?;
+                if health != 0 && read_mem_u64(&self.api, self.uc, health)? == 0x1193b660 {
+                    hp = read_mem_i32(&self.api, self.uc, health + 0x10)?;
+                    max_hp = read_mem_i32(&self.api, self.uc, health + 0x14)?;
+                }
+            }
+            let moving = self
+                .presentation_positions
+                .get(&address)
+                .is_some_and(|previous| *previous != (x, y));
+            positions.insert(address, (x, y));
+            entities.push(json!({
+                "address":address,
+                "row":self.presentation_names[&row],
+                "side":side,
+                "x":x,
+                "y":y,
+                "z":z,
+                "hp":hp,
+                "max_hp":max_hp,
+                "moving":moving,
+                "attacking":false,
+            }));
+        }
+        self.presentation_positions = positions;
+
+        let mut elixir = [0.0f64; 2];
+        for side in 0..2u64 {
+            let side_obj = read_mem_u64(&self.api, self.uc, battle + 0xe0 + side * 8)?;
+            let raw = read_mem_i32(&self.api, self.uc, side_obj + 0x2f8)?;
+            let reservations = read_mem_u64(&self.api, self.uc, side_obj + 0x248)?;
+            let mut reserved = 0i32;
+            if reservations != 0 {
+                let n = read_mem_i32(&self.api, self.uc, reservations + 0x1c)?;
+                if !(0..=4096).contains(&n) {
+                    return Err("native mana reservations out of range".into());
+                }
+                let data = read_mem_u64(&self.api, self.uc, reservations + 0x10)?;
+                for index in 0..n as u64 {
+                    let item = read_mem_u64(&self.api, self.uc, data + index * 8)?;
+                    reserved =
+                        reserved.wrapping_add(read_mem_i32(&self.api, self.uc, item + 0x10)?);
+                }
+            }
+            let context_link = read_mem_u64(&self.api, self.uc, side_obj + 0x48)?;
+            let context = read_mem_u64(&self.api, self.uc, context_link + 0x10)?;
+            let globals_link = read_mem_u64(&self.api, self.uc, context + 0x78)?;
+            let globals = read_mem_u64(&self.api, self.uc, globals_link + 0x18)?;
+            let cap = read_mem_i32(&self.api, self.uc, globals + 0x1a8)?;
+            elixir[side as usize] =
+                (raw as f64 / 10000.0 - reserved as f64).clamp(0.0, cap.max(0) as f64);
+        }
+        let tick = read_mem_u32(&self.api, self.uc, world + 0x60)?;
+        let terminated = read_mem(&self.api, self.uc, battle + 0x1e0, 1)?[0] != 0;
+        let winner_side = if terminated {
+            Some(read_mem_i32(&self.api, self.uc, battle + 0x1b8)?)
+        } else {
+            None
+        };
+        let arena_size = [
+            read_mem_i32(&self.api, self.uc, battle + 0x188)?.saturating_mul(500),
+            read_mem_i32(&self.api, self.uc, battle + 0x18c)?.saturating_mul(500),
+        ];
+        Ok(json!({
+            "tick":tick,
+            "elapsed_ms":tick.saturating_sub(self.presentation_start_tick) as u64 * 50,
+            "terminated":terminated,
+            "winner_side":winner_side,
+            "arena_size":arena_size,
+            "elixir":elixir,
+            "entities":entities,
+        }))
     }
 
     fn ticks(&self) -> Result<[u32; 2], String> {

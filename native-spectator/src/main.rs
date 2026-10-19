@@ -21,6 +21,10 @@ struct Args {
     width: u32,
     height: u32,
     window_frames: Option<u32>,
+    follow: Option<PathBuf>,
+    control_file: Option<PathBuf>,
+    ready_file: Option<PathBuf>,
+    title: String,
 }
 fn args() -> Result<Args> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..");
@@ -35,6 +39,10 @@ fn args() -> Result<Args> {
         width: 540,
         height: 900,
         window_frames: None,
+        follow: None,
+        control_file: None,
+        ready_file: None,
+        title: "Recovered Clash spectator".into(),
     };
     let mut it = std::env::args().skip(1);
     while let Some(k) = it.next() {
@@ -63,8 +71,12 @@ fn args() -> Result<Args> {
                         .map_err(|_| "frame count")?,
                 )
             }
+            "--follow" => a.follow = Some(it.next().ok_or("frame path")?.into()),
+            "--control-file" => a.control_file = Some(it.next().ok_or("control file path")?.into()),
+            "--ready-file" => a.ready_file = Some(it.next().ok_or("ready file path")?.into()),
+            "--title" => a.title = it.next().ok_or("window title")?,
             "--help" | "-h" => {
-                println!("Original-engine spectator (built-in Normal scenario bots).\nUsage: clash-native-spectator [--ticks N | --run-to-end] [--render PNG] [--record JSONL] [--audit-out NEWDIR] [--assets DIR] [--checkpoint DIR]\nWithout --ticks/--run-to-end: desktop viewer. Space pause, Right one tick, R restart, +/- speed, S screenshot, Esc close.\nNo human controls or Banana policy connection in this viewer.");
+                println!("Original-engine spectator (built-in Normal scenario bots).\nUsage: clash-native-spectator [--ticks N | --run-to-end] [--render PNG] [--record JSONL] [--audit-out NEWDIR] [--assets DIR] [--checkpoint DIR]\nFollow external snapshots: clash-native-spectator --follow FRAME.json [--control-file COMMAND.json] [--ready-file READY.json] [--title LABEL]\nEngine mode: Space pause, Right one tick, R restart, +/- speed, S screenshot, Esc close. Follow mode: Space pause and R reset write commands when --control-file is set; S screenshot, Esc close. No human controls or Banana policy connection in this viewer.");
                 std::process::exit(0);
             }
             _ => return Err(format!("unknown argument {k}")),
@@ -72,6 +84,14 @@ fn args() -> Result<Args> {
     }
     if a.width < 240 || a.height < 320 || a.width > 2160 || a.height > 3840 {
         return Err("image dimensions out of bounds".into());
+    }
+    if a.follow.is_some()
+        && (a.ticks.is_some() || a.until || a.record.is_some() || a.audit.is_some())
+    {
+        return Err("--follow cannot be combined with engine execution/recording options".into());
+    }
+    if a.ready_file.is_some() && a.follow.is_none() {
+        return Err("--ready-file currently requires --follow".into());
     }
     Ok(a)
 }
@@ -281,11 +301,204 @@ fn desktop(a: Args) -> Result<()> {
     let _ = worker.join();
     Ok(())
 }
+
+fn atomic_json_file(path: &std::path::Path, value: &serde_json::Value) -> Result<()> {
+    if let Some(parent) = path.parent().filter(|p| !p.as_os_str().is_empty()) {
+        std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    let tmp = path.with_extension(format!("tmp-{}", std::process::id()));
+    let mut file = File::create(&tmp).map_err(|e| e.to_string())?;
+    serde_json::to_writer(&mut file, value).map_err(|e| e.to_string())?;
+    file.write_all(b"\n").map_err(|e| e.to_string())?;
+    file.sync_all().map_err(|e| e.to_string())?;
+    std::fs::rename(&tmp, path).map_err(|e| e.to_string())
+}
+
+fn send_follow_control(path: &std::path::Path, op: &str, speed: Option<f64>) -> Result<()> {
+    let serial = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_err(|e| e.to_string())?
+        .as_nanos() as u64;
+    let mut command = serde_json::json!({"serial":serial,"op":op});
+    if let Some(speed) = speed {
+        command["speed"] = serde_json::json!(speed);
+    }
+    atomic_json_file(path, &command)
+}
+
+fn follow(a: Args, frame_path: PathBuf) -> Result<()> {
+    let mut painter = Painter::load(&a.assets, a.width, a.height)?;
+    let mut window = Window::new(
+        &a.title,
+        a.width as usize,
+        a.height as usize,
+        WindowOptions::default(),
+    )
+    .map_err(|e| e.to_string())?;
+    window.set_target_fps(30);
+    if let Some(path) = &a.ready_file {
+        atomic_json_file(
+            path,
+            &serde_json::json!({"ready":true,"pid":std::process::id(),"title":a.title}),
+        )?;
+    }
+    let mut buffer = vec![0u32; (a.width * a.height) as usize];
+    let mut current: Option<BattleFrame> = None;
+    let mut last_tick = None;
+    let mut last_poll = Instant::now() - Duration::from_millis(50);
+    let mut last_error: Option<String> = None;
+    let mut last_logged_error: Option<String> = None;
+    let mut window_frames = 0u32;
+    let mut playback_speed = 1.0f64;
+    let mut runtime_status = "waiting".to_owned();
+    let mut controller_names = String::new();
+    while window.is_open() && !window.is_key_down(Key::Escape) {
+        if window.is_key_pressed(Key::Space, KeyRepeat::No) {
+            if let Some(path) = &a.control_file {
+                send_follow_control(path, "pause", None)?;
+            } else {
+                eprintln!("follow: Space ignored; no --control-file was configured");
+            }
+        }
+        if window.is_key_pressed(Key::R, KeyRepeat::No) {
+            if let Some(path) = &a.control_file {
+                send_follow_control(path, "reset", None)?;
+            } else {
+                eprintln!("follow: R ignored; no --control-file was configured");
+            }
+        }
+        if window.is_key_pressed(Key::Equal, KeyRepeat::No) {
+            playback_speed = (playback_speed * 2.).min(16.);
+            if let Some(path) = &a.control_file {
+                send_follow_control(path, "speed", Some(playback_speed))?;
+            }
+        }
+        if window.is_key_pressed(Key::Minus, KeyRepeat::No) {
+            playback_speed = (playback_speed / 2.).max(0.125);
+            if let Some(path) = &a.control_file {
+                send_follow_control(path, "speed", Some(playback_speed))?;
+            }
+        }
+        if window.is_key_pressed(Key::S, KeyRepeat::No) {
+            if let Some(frame) = &current {
+                let path = PathBuf::from("runs/native-spectator.png");
+                std::fs::create_dir_all("runs").map_err(|e| e.to_string())?;
+                painter
+                    .render(frame)?
+                    .save(&path)
+                    .map_err(|e| e.to_string())?;
+                eprintln!("Saved {}", path.display());
+            }
+        }
+        if last_poll.elapsed() >= Duration::from_millis(50) {
+            last_poll = Instant::now();
+            match std::fs::read(&frame_path)
+                .map_err(|e| e.to_string())
+                .and_then(|bytes| {
+                    let value: serde_json::Value =
+                        serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
+                    let frame: BattleFrame =
+                        serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
+                    Ok((frame, value))
+                }) {
+                Ok((frame, metadata)) => {
+                    runtime_status = metadata["runtime_status"]
+                        .as_str()
+                        .unwrap_or("running")
+                        .to_owned();
+                    if let Some(names) = metadata["controller_names"].as_array() {
+                        controller_names = names
+                            .iter()
+                            .filter_map(serde_json::Value::as_str)
+                            .collect::<Vec<_>>()
+                            .join(" vs ");
+                    }
+                    if let Some(speed) = metadata["playback_speed"].as_f64() {
+                        playback_speed = speed;
+                    }
+                    last_error = metadata["runtime_error"]
+                        .as_str()
+                        .filter(|s| !s.is_empty())
+                        .map(str::to_owned);
+                    let runtime_status = metadata["runtime_status"].as_str().unwrap_or("running");
+                    if runtime_status == "failed" && last_error.is_none() {
+                        last_error = Some("bridge reported failed without details".into());
+                    }
+                    if last_tick != Some(frame.tick) {
+                        match painter.render(&frame) {
+                            Ok(rgba) => {
+                                for (dest, px) in buffer.iter_mut().zip(rgba.pixels()) {
+                                    *dest = ((px[0] as u32) << 16)
+                                        | ((px[1] as u32) << 8)
+                                        | px[2] as u32;
+                                }
+                                last_tick = Some(frame.tick);
+                                current = Some(frame);
+                            }
+                            Err(e) => last_error = Some(format!("render: {e}")),
+                        }
+                    } else {
+                        // Retain fresh terminal/HUD fields even if a producer
+                        // republishes a frame at the same simulation tick.
+                        current = Some(frame);
+                    }
+                }
+                Err(error) => last_error = Some(format!("frame: {error}")),
+            }
+        }
+        if let Some(error) = &last_error {
+            window.set_title(&format!("{} · ERROR: {}", a.title, error));
+            if last_logged_error.as_deref() != Some(error) {
+                eprintln!("follow viewer: {error}");
+                last_logged_error = Some(error.clone());
+            }
+        } else if let Some(frame) = &current {
+            last_logged_error = None;
+            let status = if frame.terminated {
+                format!("ended · winner {:?}", frame.winner_side)
+            } else {
+                "live".into()
+            };
+            window.set_title(&format!(
+                "{} · {} · {} · tick {} · {:.1}s · {:.2}×",
+                a.title,
+                if controller_names.is_empty() {
+                    runtime_status.clone()
+                } else {
+                    format!("{} · {}", runtime_status, controller_names)
+                },
+                status,
+                frame.tick,
+                frame.elapsed_ms as f64 / 1000.,
+                playback_speed,
+            ));
+        } else {
+            window.set_title(&format!(
+                "{} · waiting for {}",
+                a.title,
+                frame_path.display()
+            ));
+        }
+        window
+            .update_with_buffer(&buffer, a.width as usize, a.height as usize)
+            .map_err(|e| e.to_string())?;
+        window_frames += 1;
+        if a.window_frames.is_some_and(|limit| window_frames >= limit) {
+            break;
+        }
+    }
+    if let Some(path) = &a.control_file {
+        send_follow_control(path, "close", None)?;
+    }
+    Ok(())
+}
 fn main() {
     if let Err(e) = (|| {
         let a = args()?;
         if a.ticks.is_some() || a.until {
             headless(a)
+        } else if let Some(frame) = a.follow.clone() {
+            follow(a, frame)
         } else {
             desktop(a)
         }

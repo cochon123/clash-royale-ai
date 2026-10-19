@@ -74,6 +74,25 @@ candidate support. Initial/periodic/final checkpoints are saved atomically.
 
 The original minimal Gym environment described below remains available.
 
+## Watch a separate frozen 4.4.2 match
+
+```sh
+/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_watch
+```
+
+This opens the original-asset desktop spectator for a mirrored custom Mortar
+deck match at 1× (20 native ticks/second). It uses a separate original-engine
+`native-watch` process and CPU inference. Both sides use the frozen original
+4.4.2 actor; no learning or training-run file writes occur. Space pauses, R
+restarts, +/- changes speed, and Esc closes. Initial startup is skipped before
+the displayed model clock begins. See [spectator setup](../native-spectator/README.md).
+
+The driver records provenance, actual native actions, snapshots and state in
+`runs/v442-custom-watch/`. A 40-tick diagnostic capture verified native deck
+selection, both controllers and accepted card submission before launch. The
+separate displayed match is paced in real time, while headless diagnostics
+run without pacing. This uses the same partial-observation adapter as training.
+
 From the project root, using the existing local reverse-engineering environment:
 
 ```sh
