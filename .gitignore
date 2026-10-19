@@ -2,9 +2,9 @@
 /native-ui-viewer/target/
 /native-engine/target/
 /rust-engine/target/
-/analysis/
+/analysis
 /tools/rea/
-/tools/reverse-env/
+/tools/reverse-env
 /tools/android-env/
 /tools/android-frida-server*
 /tools/ui-env/
