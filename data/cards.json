@@ -1,0 +1,5526 @@
+[
+  {
+    "art": {
+      "path": "cards/knight.png",
+      "sha256": "e48b2809ea3eef5757e0520bbcba697148c1175784ebf9075e350b8e4ac3d571",
+      "source": "assets/image/chr/knight.png"
+    },
+    "attack_interval_ms": 1200,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 79,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 690,
+    "id": "knight",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Knight",
+    "radius": 500,
+    "range": 1200,
+    "raw_record": "Knight",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Knight",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 3,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Knight"
+      },
+      {
+        "decoded_sha256": "82c000ea05ec5d7e4d344f6153d08a0aca7dc99804666f3c7dce7bb4bf1a44cb",
+        "member": "assets/csv_logic/characters/knight.toml",
+        "packaged_sha256": "8f7f4907a71d873c2a311983c4b1c3368a540e349c8f30c11fcb5d419c407b8d",
+        "record": "Knight"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/archers.png",
+      "sha256": "7f3f0831927e50fc10046db66f4caeeb698608db303e21b9383b9a8b7bb9f555",
+      "source": "assets/image/chr/archers.png"
+    },
+    "attack_interval_ms": 900,
+    "can_deploy_enemy_side": false,
+    "count": 2,
+    "damage": 44,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 119,
+    "id": "archers",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Archers",
+    "radius": 500,
+    "range": 5000,
+    "raw_record": "Archer",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "Archer",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 4,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Archer"
+      },
+      {
+        "decoded_sha256": "c5adc8791e19bc7bc0963e66718b7b16aaf39c4b886e5c6bdea0b60e55d2e280",
+        "member": "assets/csv_logic/characters/archer.toml",
+        "packaged_sha256": "8d3e56d01064130733480083d69c657376f73f0ff05687af6091342b7395c664",
+        "record": "Archer"
+      },
+      {
+        "decoded_sha256": "c5adc8791e19bc7bc0963e66718b7b16aaf39c4b886e5c6bdea0b60e55d2e280",
+        "member": "assets/csv_logic/characters/archer.toml",
+        "packaged_sha256": "8d3e56d01064130733480083d69c657376f73f0ff05687af6091342b7395c664",
+        "record": "ArcherArrow"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/goblins.png",
+      "sha256": "fad8289449c0979c054eefe83582c6d3297faed1bf6a259a06b7a15fc72e2131",
+      "source": "assets/image/chr/goblins.png"
+    },
+    "attack_interval_ms": 1100,
+    "can_deploy_enemy_side": false,
+    "count": 4,
+    "damage": 49,
+    "deploy_ms": 1000,
+    "elixir": 2,
+    "flying": false,
+    "hp": 79,
+    "id": "goblins",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Goblins",
+    "radius": 500,
+    "range": 500,
+    "raw_record": "Goblin_Stab",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Goblins",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 5,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Goblins"
+      },
+      {
+        "decoded_sha256": "89eee584aeefa0f42fbdeef1cd8bc57626f01cebc6e7e6ed43ae1bf60f233b9f",
+        "member": "assets/csv_logic/characters/goblin_stab.toml",
+        "packaged_sha256": "fd07c7d0dfd4f8711a50b4781b9c5175fed82f677073d7b2f355615524dba448",
+        "record": "Goblin_Stab"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/giant.png",
+      "sha256": "46ea658b64f7fb70cf64d0a4e425d646865c480474635f1cba23096b567268fc",
+      "source": "assets/image/chr/giant.png"
+    },
+    "attack_interval_ms": 1500,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 99,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 1550,
+    "id": "giant",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Giant",
+    "radius": 750,
+    "range": 1200,
+    "raw_record": "Giant",
+    "raw_speed": 45,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "Giant",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 6,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Giant"
+      },
+      {
+        "decoded_sha256": "a7dd4a076b449734636090a9359b9f4beb90da8e14000d5a4b7eac0f59bc51a3",
+        "member": "assets/csv_logic/characters/giant.toml",
+        "packaged_sha256": "7dcc11d50a716ef355af43efbb0fd09d00e14144f0eb9aa3240893ebc36ae638",
+        "record": "Giant"
+      }
+    ],
+    "speed": 562,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/minions.png",
+      "sha256": "766a6f3e32d625f7548fbeefa4b4cba8e1a3022653e1f3e35b62ca65800e587a",
+      "source": "assets/image/chr/minions.png"
+    },
+    "attack_interval_ms": 1200,
+    "can_deploy_enemy_side": false,
+    "count": 3,
+    "damage": 42,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": true,
+    "hp": 90,
+    "id": "minions",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Minions",
+    "radius": 500,
+    "range": 2500,
+    "raw_record": "Minion",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "Minions",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 8,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Minions"
+      },
+      {
+        "decoded_sha256": "cd06d50a6db82555227c1165d4101eff7a3214b830fc395b753b670a6b35bdb0",
+        "member": "assets/csv_logic/characters/minion.toml",
+        "packaged_sha256": "4e13d53bad15a392cd1aaafe58cab1b6c76c5fddaaefe560315e006dddaa4c57",
+        "record": "Minion"
+      },
+      {
+        "decoded_sha256": "cd06d50a6db82555227c1165d4101eff7a3214b830fc395b753b670a6b35bdb0",
+        "member": "assets/csv_logic/characters/minion.toml",
+        "packaged_sha256": "4e13d53bad15a392cd1aaafe58cab1b6c76c5fddaaefe560315e006dddaa4c57",
+        "record": "MinionSpit"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/skeletons.png",
+      "sha256": "dc861dfcbf34b1ef08472cc7f141aa899af326a3acf2108fabfe221e2ae8251b",
+      "source": "assets/image/chr/skeletons_dl.png"
+    },
+    "attack_interval_ms": 1100,
+    "can_deploy_enemy_side": false,
+    "count": 3,
+    "damage": 32,
+    "deploy_ms": 1000,
+    "elixir": 1,
+    "flying": false,
+    "hp": 32,
+    "id": "skeletons",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Skeletons",
+    "radius": 500,
+    "range": 500,
+    "raw_record": "Skeleton",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Skeletons",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 13,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Skeletons"
+      },
+      {
+        "decoded_sha256": "68a1a501c7c9f61582556c7fea868ac1b9b672efb0cd14fae64588e2b89c3cb9",
+        "member": "assets/csv_logic/characters/skeleton.toml",
+        "packaged_sha256": "a0c191721c14f248c63d51643813101d6cc9f4ca08cc4e9b36b459e5b3f16c92",
+        "record": "Skeleton"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/musketeer.png",
+      "sha256": "ffb148ff3c5ab80abadee9d6763f12bed8793994a168fe3dde0de69cdef1a3f2",
+      "source": "assets/image/chr/musketeer_dl.png"
+    },
+    "attack_interval_ms": 1000,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 85,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 282,
+    "id": "musketeer",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Musketeer",
+    "radius": 500,
+    "range": 6000,
+    "raw_record": "Musketeer",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "Musketeer",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 17,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Musketeer"
+      },
+      {
+        "decoded_sha256": "3e5b76e9165f3c96145c664abcc830f8a736f6ccc87583fe9ba51a07ed66ae8d",
+        "member": "assets/csv_logic/characters/musketeer.toml",
+        "packaged_sha256": "600e1d84cf3953bef0c54a403b0ab67aa538d43f6874a91534cc364d9040d466",
+        "record": "Musketeer"
+      },
+      {
+        "decoded_sha256": "3e5b76e9165f3c96145c664abcc830f8a736f6ccc87583fe9ba51a07ed66ae8d",
+        "member": "assets/csv_logic/characters/musketeer.toml",
+        "packaged_sha256": "600e1d84cf3953bef0c54a403b0ab67aa538d43f6874a91534cc364d9040d466",
+        "record": "MusketeerProjectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/mini_pekka.png",
+      "sha256": "e82363df840830723c7871b668847a4acf75de64cb4e1be4ae563729301f905e",
+      "source": "assets/image/chr/mini_pekka.png"
+    },
+    "attack_interval_ms": 1600,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 295,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 543,
+    "id": "mini_pekka",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Mini P.E.K.K.A",
+    "radius": 450,
+    "range": 800,
+    "raw_record": "MiniPekka",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "MiniPekka",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 22,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "MiniPekka"
+      },
+      {
+        "decoded_sha256": "6bcee3c06b4d3f7881243b93a6bad0f12c12c2c65f06ad28834c8e58c1775ec2",
+        "member": "assets/csv_logic/characters/minipekka.toml",
+        "packaged_sha256": "446aa7fe292f3a3bd54dd1c72ce40d405dc408ab31a30c358aa841e6962465e9",
+        "record": "MiniPekka"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/spear_goblins.png",
+      "sha256": "5a4ee8507ba63b780b59da4f23bdc12af2a478979eb064a8aeb95f074e65fa96",
+      "source": "assets/image/chr/spear_goblins.png"
+    },
+    "attack_interval_ms": 1600,
+    "can_deploy_enemy_side": false,
+    "count": 3,
+    "damage": 32,
+    "deploy_ms": 1000,
+    "elixir": 2,
+    "flying": false,
+    "hp": 52,
+    "id": "spear_goblins",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Spear Goblins",
+    "radius": 500,
+    "range": 5000,
+    "raw_record": "SpearGoblin",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "SpearGoblins",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 23,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "SpearGoblins"
+      },
+      {
+        "decoded_sha256": "b445fbe10070dc41ff54c20ef149ffdb6a88e3f29b1619c5c084ceb0e74c657d",
+        "member": "assets/csv_logic/characters/speargoblin.toml",
+        "packaged_sha256": "1f8677fc4c0722b0e899995643b1f0daad77752a07ea4858f962e1deb41b154a",
+        "record": "SpearGoblin"
+      },
+      {
+        "decoded_sha256": "b445fbe10070dc41ff54c20ef149ffdb6a88e3f29b1619c5c084ceb0e74c657d",
+        "member": "assets/csv_logic/characters/speargoblin.toml",
+        "packaged_sha256": "1f8677fc4c0722b0e899995643b1f0daad77752a07ea4858f962e1deb41b154a",
+        "record": "SpearGoblinProjectile"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/valkyrie.png",
+      "sha256": "1c991e39051f742e7a7e15bd1b2a046a2c867717dd3af8206bffe52f0f8a5dd9",
+      "source": "assets/image/chr/valkyrie_dl.png"
+    },
+    "attack_interval_ms": 1500,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 104,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 745,
+    "id": "valkyrie",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Valkyrie",
+    "radius": 500,
+    "range": 1200,
+    "raw_record": "Valkyrie",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Valkyrie",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 14,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Valkyrie"
+      },
+      {
+        "decoded_sha256": "51c7cea686b595c699802d3041ca4d0f60a2d6d02f451ae6198161165978a9b4",
+        "member": "assets/csv_logic/characters/valkyrie.toml",
+        "packaged_sha256": "bc4e8d26e3295acd11ef9c446c8ad5ba5c422de02596311e45f764160ff0111e",
+        "record": "Valkyrie"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 2000,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/cannon.png",
+      "sha256": "cece0853a4d017bd8213ee3d159d19e7420a079389d54f0b92e78f2cd5d49b5c",
+      "source": "assets/image/chr/cannon_dl.png"
+    },
+    "attack_interval_ms": 1000,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 79,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 322,
+    "id": "cannon",
+    "kamikaze": false,
+    "kind": "building",
+    "lifetime_ms": 30000,
+    "limitations": [],
+    "name": "Cannon",
+    "radius": 600,
+    "range": 5500,
+    "raw_record": "Cannon",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Cannon",
+    "sources": [
+      {
+        "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+        "line": 3,
+        "member": "assets/csv_logic/spells_buildings.csv",
+        "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+        "record": "Cannon"
+      },
+      {
+        "decoded_sha256": "eda2a0b2f27cc74bb034d5ece627e450f93497d708c78310284fe5461ec834b4",
+        "member": "assets/csv_logic/characters/cannon.toml",
+        "packaged_sha256": "4a182bf3838875d3c7bb43f6e52f1cd5c10f10776c70c1823816f67c395b577a",
+        "record": "Cannon"
+      },
+      {
+        "decoded_sha256": "eda2a0b2f27cc74bb034d5ece627e450f93497d708c78310284fe5461ec834b4",
+        "member": "assets/csv_logic/characters/cannon.toml",
+        "packaged_sha256": "4a182bf3838875d3c7bb43f6e52f1cd5c10f10776c70c1823816f67c395b577a",
+        "record": "TowerCannonball"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/fireball.png",
+      "sha256": "1380eaa22ef85695fe8b06dafb3f4930211a234c020030b4fff77d02e1189485",
+      "source": "assets/image/chr/fireball.png"
+    },
+    "attack_interval_ms": 0,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage_percent_raw": -77,
+    "damage": 269,
+    "deploy_ms": 0,
+    "elixir": 4,
+    "flying": false,
+    "hp": 0,
+    "id": "fireball",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Attack knockback omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Fireball",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "FireballSpell",
+    "raw_speed": 600,
+    "reconstruction_defaults": {
+      "attack_interval_ms": "0 when field absent; not a recovered engine default",
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Fireball",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 3,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Fireball"
+      },
+      {
+        "decoded_sha256": "371cb745af1cd60b171c3c7b58de7fe7d1174475b9dc4788de512b7846a64d8d",
+        "member": "assets/csv_logic/characters/fireballspell.toml",
+        "packaged_sha256": "4046b4cfebacad75c4de83eba433a056e8cb6229db93386d6292ce40fc8f3c03",
+        "record": "FireballSpell"
+      }
+    ],
+    "speed": 7500,
+    "splash_radius": 2500,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/pekka.png",
+      "sha256": "87cd9d27ab2cd81ca151f741a2782234f5c4f2d1edffe91227a5f1b46440be59",
+      "source": "assets/image/chr/pekka_dl.png"
+    },
+    "attack_interval_ms": 1800,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 329,
+    "deploy_ms": 1000,
+    "elixir": 7,
+    "flying": false,
+    "hp": 1469,
+    "id": "pekka",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Pekka",
+    "radius": 750,
+    "range": 1200,
+    "raw_record": "Pekka",
+    "raw_speed": 45,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Pekka",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 7,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Pekka"
+      },
+      {
+        "decoded_sha256": "803a681b97a3d471792840441fbacd883df05a455825cea41643a00d560f8836",
+        "member": "assets/csv_logic/characters/pekka.toml",
+        "packaged_sha256": "f3f578dc5b4784640d6e0925c45980fb15a5e26a757218b584d518f64a0852f2",
+        "record": "Pekka"
+      }
+    ],
+    "speed": 562,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/balloon.png",
+      "sha256": "c36e93ad2bad82130d6a635ec05c36d354af2a5936ab169629f2bdb639bade02",
+      "source": "assets/image/chr/balloon_dl.png"
+    },
+    "attack_interval_ms": 2000,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 250,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": true,
+    "hp": 655,
+    "id": "balloon",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Death-spawn units omitted."
+    ],
+    "name": "Balloon",
+    "radius": 500,
+    "range": 100,
+    "raw_record": "Balloon",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "Balloon",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 9,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Balloon"
+      },
+      {
+        "decoded_sha256": "e6dbda591e90202938b738647f8b6265177e102747a5dc04a8e1f18ad78b9b1e",
+        "member": "assets/csv_logic/characters/balloon.toml",
+        "packaged_sha256": "38cf841081d625d40fb01caea61b87f07dfe34aefd3a8c72f41ee8e599a12d88",
+        "record": "Balloon"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/witch.png",
+      "sha256": "88a0c8d7311a71c793457cb1fe531c89fb2ebceec0fe2d2fa4f7df8fd90d9b6c",
+      "source": "assets/image/chr/witch_dl.png"
+    },
+    "attack_interval_ms": 1100,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 53,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 328,
+    "id": "witch",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Periodic summoned units omitted."
+    ],
+    "name": "Witch",
+    "radius": 500,
+    "range": 5500,
+    "raw_record": "Witch",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Witch",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 10,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Witch"
+      },
+      {
+        "decoded_sha256": "898aa195ed31ba46fde812f00ec61b0d2e854ed88d2d5aa4d0ac991c1a2e00b2",
+        "member": "assets/csv_logic/characters/witch.toml",
+        "packaged_sha256": "2081767a9ca7f18bcfc2c8e6248ee7a7d85db1b6369db26433229dbb4cffeb04",
+        "record": "Witch"
+      },
+      {
+        "decoded_sha256": "898aa195ed31ba46fde812f00ec61b0d2e854ed88d2d5aa4d0ac991c1a2e00b2",
+        "member": "assets/csv_logic/characters/witch.toml",
+        "packaged_sha256": "2081767a9ca7f18bcfc2c8e6248ee7a7d85db1b6369db26433229dbb4cffeb04",
+        "record": "WitchProjectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 1500,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/barbarians.png",
+      "sha256": "c9db44472b6d4cb6663ea7204f6f99eab831230801c305ab58bf53f4d8a50e88",
+      "source": "assets/image/chr/barbarians_dl.png"
+    },
+    "attack_interval_ms": 1400,
+    "can_deploy_enemy_side": false,
+    "count": 5,
+    "damage": 75,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 280,
+    "id": "barbarians",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Barbarians",
+    "radius": 500,
+    "range": 700,
+    "raw_record": "Barbarian",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Barbarians",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 11,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Barbarians"
+      },
+      {
+        "decoded_sha256": "166c6edd96b7ebb2d5c6b41ec98ff2ed2b048942f47e542ed2f16da56fdc79e2",
+        "member": "assets/csv_logic/characters/barbarian.toml",
+        "packaged_sha256": "02406fd14467a8eebcb8ef79267e7f8c3600a4d18f4c1b7a4b107ef0bb118d26",
+        "record": "Barbarian"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/golem.png",
+      "sha256": "d728a87a529486b425f90949ad392e9094d06ebf3f0c1421b6215c4c7dc77f6d",
+      "source": "assets/image/chr/golem_dl.png"
+    },
+    "attack_interval_ms": 2500,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 122,
+    "deploy_ms": 3000,
+    "elixir": 8,
+    "flying": false,
+    "hp": 2000,
+    "id": "golem",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Death-spawn units omitted.",
+      "Death area effects omitted."
+    ],
+    "name": "Golem",
+    "radius": 750,
+    "range": 750,
+    "raw_record": "Golem",
+    "raw_speed": 45,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "Golem",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 12,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Golem"
+      },
+      {
+        "decoded_sha256": "f7138a9e06391e3090ee8186d76e3ff1b09b37ec2c0c2d9e752b17476b99895b",
+        "member": "assets/csv_logic/characters/golem.toml",
+        "packaged_sha256": "08c66a01fb887fd4e44b4f4e698e0166c917ab3731cb6897e7a859e787fda1c1",
+        "record": "Golem"
+      }
+    ],
+    "speed": 562,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/skeleton_army.png",
+      "sha256": "a926a76bac0e03d02fd2539c5204a04b509a969cf0100c02f70319dbc8592af9",
+      "source": "assets/image/chr/skeleton_army_dl.png"
+    },
+    "attack_interval_ms": 1100,
+    "can_deploy_enemy_side": false,
+    "count": 15,
+    "damage": 32,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 32,
+    "id": "skeleton_army",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Skeleton Army",
+    "radius": 500,
+    "range": 500,
+    "raw_record": "Skeleton",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "SkeletonArmy",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 15,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "SkeletonArmy"
+      },
+      {
+        "decoded_sha256": "68a1a501c7c9f61582556c7fea868ac1b9b672efb0cd14fae64588e2b89c3cb9",
+        "member": "assets/csv_logic/characters/skeleton.toml",
+        "packaged_sha256": "a0c191721c14f248c63d51643813101d6cc9f4ca08cc4e9b36b459e5b3f16c92",
+        "record": "Skeleton"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/bomber.png",
+      "sha256": "0154a49985e1e3dbc490cc487d145e355e2848a4e49ff6249c46e146567a1f52",
+      "source": "assets/image/chr/bomber_dl.png"
+    },
+    "attack_interval_ms": 1800,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 83,
+    "deploy_ms": 1000,
+    "elixir": 2,
+    "flying": false,
+    "hp": 119,
+    "id": "bomber",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Bomber",
+    "radius": 500,
+    "range": 4500,
+    "raw_record": "Bomber",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Bomber",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 16,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Bomber"
+      },
+      {
+        "decoded_sha256": "a277c437e0a82ff12a9bc7bad22e96ce2106c4fe698ac796758974c5ba0da10c",
+        "member": "assets/csv_logic/characters/bomber.toml",
+        "packaged_sha256": "d958d0052640fd843bf0570b99cea2b6c2092d304b3f95623d96e276f77c5df1",
+        "record": "Bomber"
+      },
+      {
+        "decoded_sha256": "a277c437e0a82ff12a9bc7bad22e96ce2106c4fe698ac796758974c5ba0da10c",
+        "member": "assets/csv_logic/characters/bomber.toml",
+        "packaged_sha256": "d958d0052640fd843bf0570b99cea2b6c2092d304b3f95623d96e276f77c5df1",
+        "record": "BombSkeletonProjectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 1500,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/baby_dragon.png",
+      "sha256": "2c2b595d0116ad27456c3350c31710aad9d4204e792bf6444c152ae4549da7b3",
+      "source": "assets/image/chr/baby_dragon_dl.png"
+    },
+    "attack_interval_ms": 1500,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 66,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": true,
+    "hp": 450,
+    "id": "baby_dragon",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Baby Dragon",
+    "radius": 500,
+    "range": 3500,
+    "raw_record": "BabyDragon",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "BabyDragon",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 18,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "BabyDragon"
+      },
+      {
+        "decoded_sha256": "91399498bc9857f3d7bbc77f73e00caedd6b1ea44175985a0822806ee2e0b6cf",
+        "member": "assets/csv_logic/characters/babydragon.toml",
+        "packaged_sha256": "fd756719a9e2553f3cb704a19e5ef1877cbbfd632bd246e57cd58f03243561e5",
+        "record": "BabyDragon"
+      },
+      {
+        "decoded_sha256": "91399498bc9857f3d7bbc77f73e00caedd6b1ea44175985a0822806ee2e0b6cf",
+        "member": "assets/csv_logic/characters/babydragon.toml",
+        "packaged_sha256": "fd756719a9e2553f3cb704a19e5ef1877cbbfd632bd246e57cd58f03243561e5",
+        "record": "BabyDragonProjectile"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 1500,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/prince.png",
+      "sha256": "03dddd476429a7a94d96253a4fc0f955c9b5b74479191cc811a2e2dcac89acdf",
+      "source": "assets/image/chr/prince_dl.png"
+    },
+    "attack_interval_ms": 1400,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 153,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 750,
+    "id": "prince",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Jump/pathfinding behavior simplified.",
+      "Charge behavior omitted."
+    ],
+    "name": "Prince",
+    "radius": 600,
+    "range": 1600,
+    "raw_record": "Prince",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Prince",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 19,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Prince"
+      },
+      {
+        "decoded_sha256": "379fe802d7097b6b7f46cae233feaba3268111008f01522cb26a8f6b2c9bab07",
+        "member": "assets/csv_logic/characters/prince.toml",
+        "packaged_sha256": "11a8132c4477cf3d3d0c0eb300b264e73837008ba21396be8cd39927741f6811",
+        "record": "Prince"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/wizard.png",
+      "sha256": "36a1542e30355bdc83434991795ebe98e25970780401d701041e642a969c0edb",
+      "source": "assets/image/chr/wizard_dl.png"
+    },
+    "attack_interval_ms": 1400,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 119,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 295,
+    "id": "wizard",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Wizard",
+    "radius": 500,
+    "range": 5500,
+    "raw_record": "Wizard",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Wizard",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 21,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Wizard"
+      },
+      {
+        "decoded_sha256": "8998b2c4ad8997588d8d76377ebdefc9db3d7d71e764472997f4b32fc6202353",
+        "member": "assets/csv_logic/characters/wizard.toml",
+        "packaged_sha256": "4156d2f02896e951974ed00b84493e25c017d7dd4ace4cb2faf0a21d26ef4e9f",
+        "record": "Wizard"
+      },
+      {
+        "decoded_sha256": "8998b2c4ad8997588d8d76377ebdefc9db3d7d71e764472997f4b32fc6202353",
+        "member": "assets/csv_logic/characters/wizard.toml",
+        "packaged_sha256": "4156d2f02896e951974ed00b84493e25c017d7dd4ace4cb2faf0a21d26ef4e9f",
+        "record": "chr_wizardProjectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 1500,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/giant_skeleton.png",
+      "sha256": "633882223fcbf62cb9e092bc44411915434e42d7bcc6fdea9075ac4f36a15169",
+      "source": "assets/image/chr/giant_skeleton_dl.png"
+    },
+    "attack_interval_ms": 1300,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 108,
+    "deploy_ms": 1000,
+    "elixir": 6,
+    "flying": false,
+    "hp": 1313,
+    "id": "giant_skeleton",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Death-spawn units omitted."
+    ],
+    "name": "Giant Skeleton",
+    "radius": 750,
+    "range": 800,
+    "raw_record": "GiantSkeleton",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "GiantSkeleton",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 24,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "GiantSkeleton"
+      },
+      {
+        "decoded_sha256": "404063b2a94c0f23062b50cac4ea6926490b653764962f1c64cf41de9239f2c8",
+        "member": "assets/csv_logic/characters/giantskeleton.toml",
+        "packaged_sha256": "54f1e69b13f3112c9f4228a41a2a91201a70edb367921abbf67f498c8998aebf",
+        "record": "GiantSkeleton"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/hog_rider.png",
+      "sha256": "f7f5c82b9c77319977d4c81991f063d538bc0b892457e24ac8e4e835f226ca08",
+      "source": "assets/image/chr/hog_rider_dl.png"
+    },
+    "attack_interval_ms": 1600,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 124,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 663,
+    "id": "hog_rider",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Scripted starting actions omitted.",
+      "Jump/pathfinding behavior simplified."
+    ],
+    "name": "Hog Rider",
+    "radius": 600,
+    "range": 800,
+    "raw_record": "HogRider",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "HogRider",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 25,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "HogRider"
+      },
+      {
+        "decoded_sha256": "a9a5452f44846d0ebbfddb4755b5abc3620b2f9a3e09502dd0e8d15d566f9e07",
+        "member": "assets/csv_logic/characters/hogrider.toml",
+        "packaged_sha256": "a66ea2f324904beceae04f7a7e670d8c660d5fdc520e8c77b892611f1f92104a",
+        "record": "HogRider"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/minion_horde.png",
+      "sha256": "7864c8c3f81231ee4f5cc2726e44983b4160a2702a1c566a1e3e2e9a4846f189",
+      "source": "assets/image/chr/minions_horde_dl.png"
+    },
+    "attack_interval_ms": 1200,
+    "can_deploy_enemy_side": false,
+    "count": 6,
+    "damage": 42,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": true,
+    "hp": 90,
+    "id": "minion_horde",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Minion Horde",
+    "radius": 500,
+    "range": 2500,
+    "raw_record": "Minion",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "MinionHorde",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 26,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "MinionHorde"
+      },
+      {
+        "decoded_sha256": "cd06d50a6db82555227c1165d4101eff7a3214b830fc395b753b670a6b35bdb0",
+        "member": "assets/csv_logic/characters/minion.toml",
+        "packaged_sha256": "4e13d53bad15a392cd1aaafe58cab1b6c76c5fddaaefe560315e006dddaa4c57",
+        "record": "Minion"
+      },
+      {
+        "decoded_sha256": "cd06d50a6db82555227c1165d4101eff7a3214b830fc395b753b670a6b35bdb0",
+        "member": "assets/csv_logic/characters/minion.toml",
+        "packaged_sha256": "4e13d53bad15a392cd1aaafe58cab1b6c76c5fddaaefe560315e006dddaa4c57",
+        "record": "MinionSpit"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/ice_wizard.png",
+      "sha256": "7ddac50daac0ebbfc4fe27395ce7803f5a07b4fc0f55c2e3f19133b91ffa0fc4",
+      "source": "assets/image/chr/ice_wizard_dl.png"
+    },
+    "attack_interval_ms": 1700,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 35,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 269,
+    "id": "ice_wizard",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted.",
+      "Custom summon list approximated using first listed unit type."
+    ],
+    "name": "Ice Wizard",
+    "radius": 500,
+    "range": 5500,
+    "raw_record": "IceWizard",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "IceWizard",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 27,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "IceWizard"
+      },
+      {
+        "decoded_sha256": "bfbd136cb8442ead2b7026a3de28282add6b4b7c7d699ea556f2f18588f82a00",
+        "member": "assets/csv_logic/characters/ice_wizard.toml",
+        "packaged_sha256": "379a93e6348fbd6be8134d06f07eedb9e17873da07f362793ffab6443f560678",
+        "record": "IceWizard"
+      },
+      {
+        "decoded_sha256": "bfbd136cb8442ead2b7026a3de28282add6b4b7c7d699ea556f2f18588f82a00",
+        "member": "assets/csv_logic/characters/ice_wizard.toml",
+        "packaged_sha256": "379a93e6348fbd6be8134d06f07eedb9e17873da07f362793ffab6443f560678",
+        "record": "ice_wizardProjectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 1500,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/royal_giant.png",
+      "sha256": "623eb78f127dece7e6033c0bdd4d5ee6cdfa4d3a48a650d02afa43e1d3ef2aa7",
+      "source": "assets/image/chr/royal_giant_dl.png"
+    },
+    "attack_interval_ms": 1800,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 120,
+    "deploy_ms": 1000,
+    "elixir": 6,
+    "flying": false,
+    "hp": 1236,
+    "id": "royal_giant",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Royal Giant",
+    "radius": 750,
+    "range": 5000,
+    "raw_record": "RoyalGiant",
+    "raw_speed": 45,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "RoyalGiant",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 28,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "RoyalGiant"
+      },
+      {
+        "decoded_sha256": "6bab9bed4eaca8232be4d0be1ee91b947fc1501fa6589e679da9e9133d9c38ca",
+        "member": "assets/csv_logic/characters/royalgiant.toml",
+        "packaged_sha256": "eb35d7168bb697bcdf3d8d58ec037784827fc9f737b9dc29d249f430d5653edf",
+        "record": "RoyalGiant"
+      },
+      {
+        "decoded_sha256": "6bab9bed4eaca8232be4d0be1ee91b947fc1501fa6589e679da9e9133d9c38ca",
+        "member": "assets/csv_logic/characters/royalgiant.toml",
+        "packaged_sha256": "eb35d7168bb697bcdf3d8d58ec037784827fc9f737b9dc29d249f430d5653edf",
+        "record": "RoyalGiantProjectile"
+      }
+    ],
+    "speed": 562,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/guards.png",
+      "sha256": "5c16b158748d0dc5fd9d7ff80f208099ec09206bb221f1afee229ab5280bd279",
+      "source": "assets/image/chr/guards_dl.png"
+    },
+    "attack_interval_ms": 1000,
+    "can_deploy_enemy_side": false,
+    "count": 3,
+    "damage": 46,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 32,
+    "id": "guards",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Shield layer omitted."
+    ],
+    "name": "Guards",
+    "radius": 500,
+    "range": 1600,
+    "raw_record": "SkeletonWarrior",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "SkeletonWarriors",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 29,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "SkeletonWarriors"
+      },
+      {
+        "decoded_sha256": "82d5f8d744960f41d225b9d775860b2ee4de1cf1ed092394813d11c3c051e516",
+        "member": "assets/csv_logic/characters/skeleton_warrior.toml",
+        "packaged_sha256": "626d0f46d99a0e5251dd71b40ce6c4cb4bb5bce947aa56325d3f6987dcbdcca2",
+        "record": "SkeletonWarrior"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/princess.png",
+      "sha256": "1c7c60da04814c62bc91c3dc7fa269ae85e94c2dfd2d7118e1cc2700754eff4c",
+      "source": "assets/image/chr/princess_dl.png"
+    },
+    "attack_interval_ms": 3000,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 66,
+    "deploy_ms": 1200,
+    "elixir": 3,
+    "flying": false,
+    "hp": 102,
+    "id": "princess",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Multiple projectile pattern simplified to a single damage hit.",
+      "Projectile patterns simplified to primary damaging projectile."
+    ],
+    "name": "Princess",
+    "radius": 500,
+    "range": 9000,
+    "raw_record": "Princess",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Princess",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 30,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Princess"
+      },
+      {
+        "decoded_sha256": "37df3d156c36d62373c08caab0c8555b2f2bb9cfcf18aeed2191aeae81854f4b",
+        "member": "assets/csv_logic/characters/princess.toml",
+        "packaged_sha256": "5552915378863b7e9fa7d8fc40d745eb541e5d16b4a44be6ea1977fecc3bce6d",
+        "record": "Princess"
+      },
+      {
+        "decoded_sha256": "37df3d156c36d62373c08caab0c8555b2f2bb9cfcf18aeed2191aeae81854f4b",
+        "member": "assets/csv_logic/characters/princess.toml",
+        "packaged_sha256": "5552915378863b7e9fa7d8fc40d745eb541e5d16b4a44be6ea1977fecc3bce6d",
+        "record": "PrincessProjectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 2000,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/dark_prince.png",
+      "sha256": "261911ee15608c11b3dd59b27357773b35f0fc9c78bc4d5cafd7fb1ee8b08ba4",
+      "source": "assets/image/chr/dark_prince_dl.png"
+    },
+    "attack_interval_ms": 1400,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 104,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 469,
+    "id": "dark_prince",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Jump/pathfinding behavior simplified.",
+      "Shield layer omitted.",
+      "Charge behavior omitted."
+    ],
+    "name": "Dark Prince",
+    "radius": 600,
+    "range": 1200,
+    "raw_record": "DarkPrince",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "DarkPrince",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 31,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "DarkPrince"
+      },
+      {
+        "decoded_sha256": "4ccdfeadb36cd9ad81b6cfe90ffcc087931c2481ff7cfb00a6d4a4b1d587d688",
+        "member": "assets/csv_logic/characters/dark_prince.toml",
+        "packaged_sha256": "dd615fe1512df2b6ba2b1fa7520ecba82b98edc2dd7b7fae6904208d635a4c23",
+        "record": "DarkPrince"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 1100,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/three_musketeers.png",
+      "sha256": "680e381e51b0cc57e6adbf2e78258256dd74f497fcd4cd6019c65b2c3cb4a99f",
+      "source": "assets/image/chr/three_musketeers.png"
+    },
+    "attack_interval_ms": 1300,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 80,
+    "deploy_ms": 1000,
+    "elixir": 9,
+    "flying": false,
+    "hp": 354,
+    "id": "three_musketeers",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Custom summon list approximated using first listed unit type."
+    ],
+    "name": "Three Musketeers",
+    "radius": 500,
+    "range": 6000,
+    "raw_record": "ThreeMusketeer_Rework_Character_1",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "ThreeMusketeers",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 32,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "ThreeMusketeers"
+      },
+      {
+        "decoded_sha256": "2bfb6931e5ed5803d528bea828f68e652483fb0027c65cd6698f54dc8d11c3c1",
+        "member": "assets/csv_logic/characters/three_musketeer_rework.toml",
+        "packaged_sha256": "67d22c4742c1ccb890b846215eab0df6386a4bf3cfd9a541d9b3d394d2148031",
+        "record": "ThreeMusketeer_Rework_Character_1"
+      },
+      {
+        "decoded_sha256": "2bfb6931e5ed5803d528bea828f68e652483fb0027c65cd6698f54dc8d11c3c1",
+        "member": "assets/csv_logic/characters/three_musketeer_rework.toml",
+        "packaged_sha256": "67d22c4742c1ccb890b846215eab0df6386a4bf3cfd9a541d9b3d394d2148031",
+        "record": "ThreeMusketeer_Rework"
+      },
+      {
+        "decoded_sha256": "2bfb6931e5ed5803d528bea828f68e652483fb0027c65cd6698f54dc8d11c3c1",
+        "member": "assets/csv_logic/characters/three_musketeer_rework.toml",
+        "packaged_sha256": "67d22c4742c1ccb890b846215eab0df6386a4bf3cfd9a541d9b3d394d2148031",
+        "record": "ThreeMusketeer_Rework_Projectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/lava_hound.png",
+      "sha256": "4d2b4bdce67499e87f59efb25a5e7601b7ba0672eff888e294f151b9c84bb2f6",
+      "source": "assets/image/chr/lava_hound_dl.png"
+    },
+    "attack_interval_ms": 1500,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 28,
+    "deploy_ms": 1000,
+    "elixir": 7,
+    "flying": true,
+    "hp": 1399,
+    "id": "lava_hound",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Death-spawn units omitted."
+    ],
+    "name": "Lava Hound",
+    "radius": 750,
+    "range": 3500,
+    "raw_record": "LavaHound",
+    "raw_speed": 45,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "LavaHound",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 33,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "LavaHound"
+      },
+      {
+        "decoded_sha256": "ceab534a99c39c0e399f7ef89a7be53d7fbffa58188e2603a60d989889d4c2aa",
+        "member": "assets/csv_logic/characters/lavahound.toml",
+        "packaged_sha256": "18016dd0f60a6824878ad5e3acd4dc0245b4ed094bf547c7ab8de9b1e5949746",
+        "record": "LavaHound"
+      },
+      {
+        "decoded_sha256": "ceab534a99c39c0e399f7ef89a7be53d7fbffa58188e2603a60d989889d4c2aa",
+        "member": "assets/csv_logic/characters/lavahound.toml",
+        "packaged_sha256": "18016dd0f60a6824878ad5e3acd4dc0245b4ed094bf547c7ab8de9b1e5949746",
+        "record": "LavaHoundProjectile"
+      }
+    ],
+    "speed": 562,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/ice_spirit.png",
+      "sha256": "2300953d32dcdb22f48644ad063e046ef45c19eb14754419bbc04e70c0deaa9c",
+      "source": "assets/image/chr/ice_spirit_dl.png"
+    },
+    "attack_interval_ms": 300,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 43,
+    "deploy_ms": 1000,
+    "elixir": 1,
+    "flying": false,
+    "hp": 84,
+    "id": "ice_spirit",
+    "kamikaze": true,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted."
+    ],
+    "name": "Ice Spirit",
+    "radius": 400,
+    "range": 2500,
+    "raw_record": "IceSpirits",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "IceSpirits",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 34,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "IceSpirits"
+      },
+      {
+        "decoded_sha256": "9987a0f223ea8670eb94d2143d45f30b92cb37114a446810e0fdb18f341cc4c6",
+        "member": "assets/csv_logic/characters/icespirits.toml",
+        "packaged_sha256": "8943584be26c4cd68c3c450c02cabee25fe56f0050f7259bf98af28c945bbfed",
+        "record": "IceSpirits"
+      },
+      {
+        "decoded_sha256": "9987a0f223ea8670eb94d2143d45f30b92cb37114a446810e0fdb18f341cc4c6",
+        "member": "assets/csv_logic/characters/icespirits.toml",
+        "packaged_sha256": "8943584be26c4cd68c3c450c02cabee25fe56f0050f7259bf98af28c945bbfed",
+        "record": "IceSpiritsProjectile"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 1500,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/fire_spirit.png",
+      "sha256": "d5906f8303dca82dd2e100b519a5d5d992cde112756dc0a9969b1bfa99977e9a",
+      "source": "assets/image/chr/fire_spirit.png"
+    },
+    "attack_interval_ms": 300,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 84,
+    "deploy_ms": 1000,
+    "elixir": 1,
+    "flying": false,
+    "hp": 84,
+    "id": "fire_spirit",
+    "kamikaze": true,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Fire Spirit",
+    "radius": 400,
+    "range": 2500,
+    "raw_record": "FireSpirits",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "FireSpirits",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 35,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "FireSpirits"
+      },
+      {
+        "decoded_sha256": "dc867035f84ebc0eb93a43f08a463d61f9e536da173828c621fec67db3c76897",
+        "member": "assets/csv_logic/characters/firespirits.toml",
+        "packaged_sha256": "87c43630f46efbb5d9fb28834fd503c33f49a8f11a0b968c5a6549b463f2f09e",
+        "record": "FireSpirits"
+      },
+      {
+        "decoded_sha256": "dc867035f84ebc0eb93a43f08a463d61f9e536da173828c621fec67db3c76897",
+        "member": "assets/csv_logic/characters/firespirits.toml",
+        "packaged_sha256": "87c43630f46efbb5d9fb28834fd503c33f49a8f11a0b968c5a6549b463f2f09e",
+        "record": "FireSpiritsProjectile"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 2300,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/miner.png",
+      "sha256": "6f4e36b10889a6399fc25a5a3e116397bce04c573ad770d3aa0933c44015980f",
+      "source": "assets/image/chr/miner_dl.png"
+    },
+    "attack_interval_ms": 1300,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage_percent_raw": -80,
+    "damage": 76,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 473,
+    "id": "miner",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Miner",
+    "radius": 500,
+    "range": 1200,
+    "raw_record": "Miner",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Miner",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 36,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Miner"
+      },
+      {
+        "decoded_sha256": "0cff0a8909789dcf4a763d6eb1cae46232c4033d36ded3b36873b230a54c0aaf",
+        "member": "assets/csv_logic/characters/miner.toml",
+        "packaged_sha256": "2494933368695c855343b3acf7e8baa6dcd666de3a0625d90262cdde9382e04b",
+        "record": "Miner"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/sparky.png",
+      "sha256": "43d14bbbc282adb5d2f35dfaa3f578aa88e8e6a36a30eb1ed360abc64b90911b",
+      "source": "assets/image/chr/sparky_dl.png"
+    },
+    "attack_interval_ms": 4000,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 520,
+    "deploy_ms": 1000,
+    "elixir": 6,
+    "flying": false,
+    "hp": 567,
+    "id": "sparky",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Sparky",
+    "radius": 1000,
+    "range": 5000,
+    "raw_record": "ZapMachine",
+    "raw_speed": 45,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "ZapMachine",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 37,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "ZapMachine"
+      },
+      {
+        "decoded_sha256": "b118204834ed4c3bc017773e3c4e5ac47f8dc8a4dbc26fb7b9dd33d83415f549",
+        "member": "assets/csv_logic/characters/zapmachine.toml",
+        "packaged_sha256": "6f375eaae5f6f791ef938702a6137f6262cd768b2466a76334b0f0d55abc42eb",
+        "record": "ZapMachine"
+      },
+      {
+        "decoded_sha256": "b118204834ed4c3bc017773e3c4e5ac47f8dc8a4dbc26fb7b9dd33d83415f549",
+        "member": "assets/csv_logic/characters/zapmachine.toml",
+        "packaged_sha256": "6f375eaae5f6f791ef938702a6137f6262cd768b2466a76334b0f0d55abc42eb",
+        "record": "ZapMachineProjectile"
+      }
+    ],
+    "speed": 562,
+    "splash_radius": 1800,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/bowler.png",
+      "sha256": "06ed0bba4f92793bf070f0a6be90e427320d5b7dd362e248763de583e46e0e00",
+      "source": "assets/image/chr/bowler_dl.png"
+    },
+    "attack_interval_ms": 2500,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 113,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 813,
+    "id": "bowler",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Attack knockback omitted."
+    ],
+    "name": "Bowler",
+    "radius": 750,
+    "range": 4000,
+    "raw_record": "Bowler",
+    "raw_speed": 45,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Bowler",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 38,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Bowler"
+      },
+      {
+        "decoded_sha256": "64ac1ac4605a6324c61f089b3abb97ce64bed9c2a5f58154f16ab2b8e074c4bb",
+        "member": "assets/csv_logic/characters/bowler.toml",
+        "packaged_sha256": "7fc6053bc3beab8a92716e7cab661c56894a77ddda4fcb42db562bc0dc1f5739",
+        "record": "Bowler"
+      },
+      {
+        "decoded_sha256": "64ac1ac4605a6324c61f089b3abb97ce64bed9c2a5f58154f16ab2b8e074c4bb",
+        "member": "assets/csv_logic/characters/bowler.toml",
+        "packaged_sha256": "7fc6053bc3beab8a92716e7cab661c56894a77ddda4fcb42db562bc0dc1f5739",
+        "record": "BowlerProjectile"
+      }
+    ],
+    "speed": 562,
+    "splash_radius": 1800,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/lumberjack.png",
+      "sha256": "779e44721735e826b2ebd5f34cbf27d22957b8493822f66d68dba400c9969145",
+      "source": "assets/image/chr/lumberjack_dl.png"
+    },
+    "attack_interval_ms": 800,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 100,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 501,
+    "id": "lumberjack",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Death area effects omitted."
+    ],
+    "name": "Lumberjack",
+    "radius": 500,
+    "range": 700,
+    "raw_record": "RageBarbarian",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "RageBarbarian",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 39,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "RageBarbarian"
+      },
+      {
+        "decoded_sha256": "8ee45c0807c12cce725dc1ad7a60d9f0d62f67652fe287a2cbe223c5e01f962b",
+        "member": "assets/csv_logic/characters/rage_barbarian.toml",
+        "packaged_sha256": "a561beb211117a05a2a71e436a81817cf043a138e078876ccddce6393ac2ffb5",
+        "record": "RageBarbarian"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/battle_ram.png",
+      "sha256": "fb69465f874c2e8213ad9b9470dd0cb4e210e5b4f860a9cfd0aeb5a25eb430c5",
+      "source": "assets/image/chr/battle_ram_dl.png"
+    },
+    "attack_interval_ms": 400,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 112,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 378,
+    "id": "battle_ram",
+    "kamikaze": true,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Death-spawn units omitted.",
+      "Charge behavior omitted."
+    ],
+    "name": "Battle Ram",
+    "radius": 750,
+    "range": 500,
+    "raw_record": "BattleRam",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "BattleRam",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 40,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "BattleRam"
+      },
+      {
+        "decoded_sha256": "193af56ad3ab638f1a9fd44b2c8dc9a8eef0ba75dc1897942c6d788779cf8fc1",
+        "member": "assets/csv_logic/characters/battleram.toml",
+        "packaged_sha256": "e2ab5a681ed28933f2cbcd0a7cccfd714432638504441063dcd59124b739e489",
+        "record": "BattleRam"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/inferno_dragon.png",
+      "sha256": "87faeaf8612a9d78cd52fcf7de151e4907b93b1059d1ca896bc59af8f9ab712d",
+      "source": "assets/image/chr/inferno_dragon_dl.png"
+    },
+    "attack_interval_ms": 400,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 14,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": true,
+    "hp": 506,
+    "id": "inferno_dragon",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Damage ramp omitted; uses stored initial damage."
+    ],
+    "name": "Inferno Dragon",
+    "radius": 500,
+    "range": 3500,
+    "raw_record": "InfernoDragon",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "InfernoDragon",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 41,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "InfernoDragon"
+      },
+      {
+        "decoded_sha256": "c38291d2e00ac0fe5da402b3a3e33c9626e04e67b78c23dd76bfc8cc69ebcfbc",
+        "member": "assets/csv_logic/characters/infernodragon.toml",
+        "packaged_sha256": "45f58b64a40502f78efc9edb8958845771db7bd317d4f9c0d084a5ea55181206",
+        "record": "InfernoDragon"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/ice_golem.png",
+      "sha256": "f9032cbdaf5867dded00259b7019d9f6919f629b3bd3e50bede41e49231a318d",
+      "source": "assets/image/chr/ice_golem_dl.png"
+    },
+    "attack_interval_ms": 2500,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 33,
+    "deploy_ms": 1000,
+    "elixir": 2,
+    "flying": false,
+    "hp": 480,
+    "id": "ice_golem",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Scripted death actions omitted.",
+      "Death area effects omitted."
+    ],
+    "name": "Ice Golem",
+    "radius": 700,
+    "range": 750,
+    "raw_record": "IceGolemite",
+    "raw_speed": 45,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "IceGolemite",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 42,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "IceGolemite"
+      },
+      {
+        "decoded_sha256": "f0bdbfb29093dfe9beeee4fcc999cf12cbba5dc09525ebf8f9172a64bb7b6fcb",
+        "member": "assets/csv_logic/characters/icegolemite.toml",
+        "packaged_sha256": "a5765cb7daca851d457170dbf9ecee711ecef744bf044d4e8a67721af23e15d1",
+        "record": "IceGolemite"
+      }
+    ],
+    "speed": 562,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/mega_minion.png",
+      "sha256": "a1ee47d4699cedb07b019c207aa0846d1c6619b82debb0f76a7a34041161b59f",
+      "source": "assets/image/chr/mega_minion_dl.png"
+    },
+    "attack_interval_ms": 1500,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 122,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": true,
+    "hp": 327,
+    "id": "mega_minion",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Mega Minion",
+    "radius": 600,
+    "range": 1600,
+    "raw_record": "MegaMinion",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "MegaMinion",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 43,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "MegaMinion"
+      },
+      {
+        "decoded_sha256": "0480342abffe7ca6658d9469766e0d545069aaa1f34b81a314aeefb9793cb209",
+        "member": "assets/csv_logic/characters/megaminion.toml",
+        "packaged_sha256": "2a714c17515f770067f3558e5ea6443ec8e1307caf0c486eb56ee6d84370b2a1",
+        "record": "MegaMinion"
+      },
+      {
+        "decoded_sha256": "0480342abffe7ca6658d9469766e0d545069aaa1f34b81a314aeefb9793cb209",
+        "member": "assets/csv_logic/characters/megaminion.toml",
+        "packaged_sha256": "2a714c17515f770067f3558e5ea6443ec8e1307caf0c486eb56ee6d84370b2a1",
+        "record": "MegaMinionSpit"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/dart_goblin.png",
+      "sha256": "59d527a57ab1e1fb213758d3557a94f4d614b3cde8aa6a8bc1250b43c6f4e924",
+      "source": "assets/image/chr/dart_goblin_dl.png"
+    },
+    "attack_interval_ms": 800,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 59,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 102,
+    "id": "dart_goblin",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Dart Goblin",
+    "radius": 500,
+    "range": 6500,
+    "raw_record": "BlowdartGoblin",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "BlowdartGoblin",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 44,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "BlowdartGoblin"
+      },
+      {
+        "decoded_sha256": "c09e9b8b63e5fb1056278696068ff12060aa3a01091bf5dee44d042f9d24ec48",
+        "member": "assets/csv_logic/characters/blowdartgoblin.toml",
+        "packaged_sha256": "b21e2f32213ae8fd8774e0bb2b96b31c42c43858e7b380360fd5e818131abc12",
+        "record": "BlowdartGoblin"
+      },
+      {
+        "decoded_sha256": "c09e9b8b63e5fb1056278696068ff12060aa3a01091bf5dee44d042f9d24ec48",
+        "member": "assets/csv_logic/characters/blowdartgoblin.toml",
+        "packaged_sha256": "b21e2f32213ae8fd8774e0bb2b96b31c42c43858e7b380360fd5e818131abc12",
+        "record": "BlowdartGoblinProjectile"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_gang.png",
+      "sha256": "6a7e5302606d8e198ddea950ccc109afb6e1d8ff810efa43c6180d9646a9ff59",
+      "source": "assets/image/chr/goblins_gang_dl.png"
+    },
+    "attack_interval_ms": 1100,
+    "can_deploy_enemy_side": false,
+    "count": 6,
+    "damage": 49,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 79,
+    "id": "goblin_gang",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Mixed summon group approximated with the primary unit type and total stored count."
+    ],
+    "name": "Goblin Gang",
+    "radius": 500,
+    "range": 500,
+    "raw_record": "Goblin_Stab",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "GoblinGang",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 45,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "GoblinGang"
+      },
+      {
+        "decoded_sha256": "89eee584aeefa0f42fbdeef1cd8bc57626f01cebc6e7e6ed43ae1bf60f233b9f",
+        "member": "assets/csv_logic/characters/goblin_stab.toml",
+        "packaged_sha256": "fd07c7d0dfd4f8711a50b4781b9c5175fed82f677073d7b2f355615524dba448",
+        "record": "Goblin_Stab"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/electro_wizard.png",
+      "sha256": "523eb3d8e6857dc030ef06607604a23daea81f1a1fdad234f15be4cb37907139",
+      "source": "assets/image/chr/electro_wizard_dl.png"
+    },
+    "attack_interval_ms": 1800,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 46,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 279,
+    "id": "electro_wizard",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "On-hit buff omitted.",
+      "Custom summon list approximated using first listed unit type."
+    ],
+    "name": "Electro Wizard",
+    "radius": 500,
+    "range": 5000,
+    "raw_record": "ElectroWizard",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "ElectroWizard",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 46,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "ElectroWizard"
+      },
+      {
+        "decoded_sha256": "38e88fb10c7d42a69da551d063d531a239413a27fa01c82368f50d7786c2ab8b",
+        "member": "assets/csv_logic/characters/electro_wizard.toml",
+        "packaged_sha256": "8ca6475d8ac264b448730548f74c70cb460371764ff76970da53d7fdb07fb30d",
+        "record": "ElectroWizard"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/elite_barbarians.png",
+      "sha256": "6e8aac36c909dce99ba2c977649c31c8fca7acd1958755cadd7c42fd42b8bd9b",
+      "source": "assets/image/chr/elite_barbarians_dl.png"
+    },
+    "attack_interval_ms": 1400,
+    "can_deploy_enemy_side": false,
+    "count": 2,
+    "damage": 150,
+    "deploy_ms": 1000,
+    "elixir": 6,
+    "flying": false,
+    "hp": 524,
+    "id": "elite_barbarians",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Elite Barbarians",
+    "radius": 500,
+    "range": 1200,
+    "raw_record": "AngryBarbarian",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "AngryBarbarians",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 47,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "AngryBarbarians"
+      },
+      {
+        "decoded_sha256": "9277aeb43204a1c9370b709d598ac3d3b83abcebe92fff20a3682b5a32f0e150",
+        "member": "assets/csv_logic/characters/angrybarbarian.toml",
+        "packaged_sha256": "9af4bb14810d4016471e9af16e58acdc451a747686284e23c1ff2923b4f9434e",
+        "record": "AngryBarbarian"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/hunter.png",
+      "sha256": "03bfc6758cdbb0c26a57176be0661dd693f7ebf6db5096f651dffc6066184df0",
+      "source": "assets/image/chr/hunter_dl.png"
+    },
+    "attack_interval_ms": 2200,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 33,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 346,
+    "id": "hunter",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Multiple projectile pattern simplified to a single damage hit.",
+      "Projectile patterns simplified to primary damaging projectile."
+    ],
+    "name": "Hunter",
+    "radius": 600,
+    "range": 4000,
+    "raw_record": "Hunter",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Hunter",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 48,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Hunter"
+      },
+      {
+        "decoded_sha256": "4e030d87d0b331f7dbe755356546f35d193923e0b06c5039501605f6751b904e",
+        "member": "assets/csv_logic/characters/hunter.toml",
+        "packaged_sha256": "ffcf5a649803eab336841ef2983d7c6a7dac9b537b5a5a6d2ae80c286618e48c",
+        "record": "Hunter"
+      },
+      {
+        "decoded_sha256": "4e030d87d0b331f7dbe755356546f35d193923e0b06c5039501605f6751b904e",
+        "member": "assets/csv_logic/characters/hunter.toml",
+        "packaged_sha256": "ffcf5a649803eab336841ef2983d7c6a7dac9b537b5a5a6d2ae80c286618e48c",
+        "record": "HunterProjectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 70,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/executioner.png",
+      "sha256": "fdacc092d24b5c49315a377099e7aef79ae1a9a04388f3fef780f23b44bfe8ae",
+      "source": "assets/image/chr/executioner_dl.png"
+    },
+    "attack_interval_ms": 900,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 70,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 500,
+    "id": "executioner",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Executioner",
+    "radius": 600,
+    "range": 4500,
+    "raw_record": "AxeMan",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "AxeMan",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 49,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "AxeMan"
+      },
+      {
+        "decoded_sha256": "1fb24c96f043b8a23824b79c72d54b6ecd0349ad44ffe3f43d5ee6936081dc01",
+        "member": "assets/csv_logic/characters/axeman.toml",
+        "packaged_sha256": "a2b550dbc761fa77c7998665e6a939a4f7233de4aaad16c9584f0ccba0a9f54b",
+        "record": "AxeMan"
+      },
+      {
+        "decoded_sha256": "1fb24c96f043b8a23824b79c72d54b6ecd0349ad44ffe3f43d5ee6936081dc01",
+        "member": "assets/csv_logic/characters/axeman.toml",
+        "packaged_sha256": "a2b550dbc761fa77c7998665e6a939a4f7233de4aaad16c9584f0ccba0a9f54b",
+        "record": "AxeManProjectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 1000,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/bandit.png",
+      "sha256": "2f1158c0934abba291ff3efbd6fee7083049924a976ca80c5fae54169ef43141",
+      "source": "assets/image/chr/bandit_dl.png"
+    },
+    "attack_interval_ms": 1000,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 76,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 354,
+    "id": "bandit",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Dash behavior omitted."
+    ],
+    "name": "Bandit",
+    "radius": 600,
+    "range": 750,
+    "raw_record": "Assassin",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Assassin",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 50,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Assassin"
+      },
+      {
+        "decoded_sha256": "9fd6aa5faa20f51583539a9d3559b09d3c153057b0132efcaca4e96472ae4d69",
+        "member": "assets/csv_logic/characters/assassin.toml",
+        "packaged_sha256": "d6fdd37d622f598cd2290c58fd1fedda4d7934f4524eb56a0d337d1dbc381094",
+        "record": "Assassin"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/royal_recruits.png",
+      "sha256": "a11116859a3aa3440361c3d80e3e861eb2cf4222278c810e107a0cd79ef08464",
+      "source": "assets/image/chr/royal_recruits_dl.png"
+    },
+    "attack_interval_ms": 1300,
+    "can_deploy_enemy_side": false,
+    "count": 6,
+    "damage": 52,
+    "deploy_ms": 1000,
+    "elixir": 7,
+    "flying": false,
+    "hp": 214,
+    "id": "royal_recruits",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Shield layer omitted."
+    ],
+    "name": "Royal Recruits",
+    "radius": 500,
+    "range": 1600,
+    "raw_record": "Recruit",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "RoyalRecruits",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 51,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "RoyalRecruits"
+      },
+      {
+        "decoded_sha256": "c78ef913591144bf3f33f094c01cc087091b9f1f4e46dc6ad7c0645ed8d3619a",
+        "member": "assets/csv_logic/characters/recruit.toml",
+        "packaged_sha256": "04b3157cc491a387497c80159f9c30533d057615c97e71bf3243cbf84dee4867",
+        "record": "Recruit"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/night_witch.png",
+      "sha256": "0d677662cdbd2f5f5a9e2f3caa08cdb6f28586583a7b410fdd2f3f6355f151ae",
+      "source": "assets/image/chr/night_witch_dl.png"
+    },
+    "attack_interval_ms": 1300,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 123,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 354,
+    "id": "night_witch",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Death-spawn units omitted.",
+      "Periodic summoned units omitted."
+    ],
+    "name": "Night Witch",
+    "radius": 500,
+    "range": 1600,
+    "raw_record": "DarkWitch",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "DarkWitch",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 52,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "DarkWitch"
+      },
+      {
+        "decoded_sha256": "7285812fad15b8d6586012a865abd52d3f54f40cf1fe6c8a11fc2f236aff028e",
+        "member": "assets/csv_logic/characters/darkwitch.toml",
+        "packaged_sha256": "d210705ba48ae74a372cb87a20bfcf9cb1123d3fede02c311a24f44011f7c805",
+        "record": "DarkWitch"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/bats.png",
+      "sha256": "5825df7a75b7c8d3f69da48f9608266ef97119f4b8fa7497f02bdf6b9d09e8f9",
+      "source": "assets/image/chr/bats_dl.png"
+    },
+    "attack_interval_ms": 1200,
+    "can_deploy_enemy_side": false,
+    "count": 5,
+    "damage": 32,
+    "deploy_ms": 1000,
+    "elixir": 2,
+    "flying": true,
+    "hp": 32,
+    "id": "bats",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Bats",
+    "radius": 500,
+    "range": 1200,
+    "raw_record": "Bat",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "Bats",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 53,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Bats"
+      },
+      {
+        "decoded_sha256": "6c47428b92b090ad9d88c4916154436d0fa9713093a4f45eb75041aeea4c69f2",
+        "member": "assets/csv_logic/characters/bat.toml",
+        "packaged_sha256": "c012e941dddaadfc743cbcd7bc0b6c3c0376ca6aa664276547c7f290b78672fa",
+        "record": "Bat"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/royal_ghost.png",
+      "sha256": "39ce43e93bbd904dec0d35fabbdf188726bc01b90ba2fb890f1a98d55a5b8cc7",
+      "source": "assets/image/chr/royal_ghost_dl.png"
+    },
+    "attack_interval_ms": 1800,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 103,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 450,
+    "id": "royal_ghost",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Royal Ghost",
+    "radius": 600,
+    "range": 1200,
+    "raw_record": "Ghost",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Ghost",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 54,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Ghost"
+      },
+      {
+        "decoded_sha256": "a9b53a153d9c76f806a724ae87ec78d636bf83050b35eb6130820439ac2bb9f3",
+        "member": "assets/csv_logic/characters/ghost.toml",
+        "packaged_sha256": "878beb1d328b0b724ab7b62c0cd714f1e26d40358ad4f75ddedb87b27be47a29",
+        "record": "Ghost"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 1000,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/ram_rider.png",
+      "sha256": "6869206af86fa81d9922785b600148908c424e39c0c913ecf897b94c34dcd23f",
+      "source": "assets/image/chr/ram_rider_dl.png"
+    },
+    "attack_interval_ms": 1700,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 106,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 690,
+    "id": "ram_rider",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Periodic summoned units omitted.",
+      "Scripted starting actions omitted.",
+      "Jump/pathfinding behavior simplified.",
+      "Charge behavior omitted."
+    ],
+    "name": "Ram Rider",
+    "radius": 600,
+    "range": 800,
+    "raw_record": "Ram",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "RamRider",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 55,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "RamRider"
+      },
+      {
+        "decoded_sha256": "7764d384e30e857f549101c3232388b15f8d32afe85d087b7072ead2a849db61",
+        "member": "assets/csv_logic/characters/ram_rider.toml",
+        "packaged_sha256": "267e177d72d8ac01ead609be6473393532dd99689d8ad4de545a7dd365286702",
+        "record": "Ram"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/zappies.png",
+      "sha256": "d1c584caedec3f9d5bc1d360dce43367a85ae19275e6490d79b72979c0be4297",
+      "source": "assets/image/chr/zappies_dl.png"
+    },
+    "attack_interval_ms": 2300,
+    "can_deploy_enemy_side": false,
+    "count": 3,
+    "damage": 46,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 207,
+    "id": "zappies",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "On-hit buff omitted."
+    ],
+    "name": "Zappies",
+    "radius": 600,
+    "range": 4500,
+    "raw_record": "MiniZapMachine",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "MiniSparkys",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 56,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "MiniSparkys"
+      },
+      {
+        "decoded_sha256": "f214865e0b88fff48dee2a53bf2a85de197f8617aa9020813528e7950ea984ce",
+        "member": "assets/csv_logic/characters/minizapmachine.toml",
+        "packaged_sha256": "8a1203bc89ba065ded50e6738cd8b7f354184128a934b76b988c9c729df84d61",
+        "record": "MiniZapMachine"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/rascals.png",
+      "sha256": "2dd27e26576244f512ed3f71fbd374e3f0abf72635c1c45b3ba5df738754b45d",
+      "source": "assets/image/chr/rascals_dl.png"
+    },
+    "attack_interval_ms": 1500,
+    "can_deploy_enemy_side": false,
+    "count": 3,
+    "damage": 85,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 716,
+    "id": "rascals",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Mixed summon group approximated with the primary unit type and total stored count."
+    ],
+    "name": "Rascals",
+    "radius": 750,
+    "range": 800,
+    "raw_record": "RascalBoy",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Rascals",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 57,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Rascals"
+      },
+      {
+        "decoded_sha256": "19455cfc4c30c69a5347a4a30999202abe4a542feb7fa870ff4d4c6cf93dc289",
+        "member": "assets/csv_logic/characters/rascals.toml",
+        "packaged_sha256": "b75af6736c77033c57d8551338b17a2167875f82089f8690c41b01ef295f1e7e",
+        "record": "RascalBoy"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/mega_knight.png",
+      "sha256": "5fe34bf80edfde179164ac569de11f5a11528102fc6ec368624afa627480a2b8",
+      "source": "assets/image/chr/mega_knight_dl.png"
+    },
+    "attack_interval_ms": 1700,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 105,
+    "deploy_ms": 1000,
+    "elixir": 7,
+    "flying": false,
+    "hp": 1560,
+    "id": "mega_knight",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Dash behavior omitted."
+    ],
+    "name": "Mega Knight",
+    "radius": 750,
+    "range": 1200,
+    "raw_record": "MegaKnight",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "MegaKnight",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 59,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "MegaKnight"
+      },
+      {
+        "decoded_sha256": "c876782e2569243e306a67977fb07ca8317292c8dca909c94b335ae2b3c6bc25",
+        "member": "assets/csv_logic/characters/megaknight.toml",
+        "packaged_sha256": "3423c04461301a47c13dfcc7acf0c1251419659e587afc13546ba08dd2fd0f75",
+        "record": "MegaKnight"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 1300,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/flying_machine.png",
+      "sha256": "91bbc8cd3964f74ea382c33864fd66f54e1fe375279606be3ba39cc7fe4d01be",
+      "source": "assets/image/chr/flying_machine_dl.png"
+    },
+    "attack_interval_ms": 1100,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 67,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": true,
+    "hp": 240,
+    "id": "flying_machine",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Flying Machine",
+    "radius": 500,
+    "range": 6000,
+    "raw_record": "DartBarrell",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "DartBarrell",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 61,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "DartBarrell"
+      },
+      {
+        "decoded_sha256": "eb175ae300bb2f61890c7f7f87db223c815093be77d4801b534e6d964997c561",
+        "member": "assets/csv_logic/characters/dartbarrell.toml",
+        "packaged_sha256": "62bdbc0dca68632f385399d5da714d8b5a82a81a3aa2aecd90009fb7dc72ba58",
+        "record": "DartBarrell"
+      },
+      {
+        "decoded_sha256": "eb175ae300bb2f61890c7f7f87db223c815093be77d4801b534e6d964997c561",
+        "member": "assets/csv_logic/characters/dartbarrell.toml",
+        "packaged_sha256": "62bdbc0dca68632f385399d5da714d8b5a82a81a3aa2aecd90009fb7dc72ba58",
+        "record": "DartBarrellProjectile"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/wall_breakers.png",
+      "sha256": "358762289571504a0129ffb1abbed7cb6c89be757e480ae0653a9c7d38c78599",
+      "source": "assets/image/chr/wall_breakers_dl.png"
+    },
+    "attack_interval_ms": 1200,
+    "can_deploy_enemy_side": false,
+    "count": 2,
+    "damage": 118,
+    "deploy_ms": 1000,
+    "elixir": 2,
+    "flying": false,
+    "hp": 129,
+    "id": "wall_breakers",
+    "kamikaze": true,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Wall Breakers",
+    "radius": 400,
+    "range": 500,
+    "raw_record": "Wallbreaker",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Wallbreakers",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 62,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Wallbreakers"
+      },
+      {
+        "decoded_sha256": "d3ff1bfd9615b33baaf6e016a71c2c8f37d626b1310401f3fc52c972623d2b68",
+        "member": "assets/csv_logic/characters/wallbreaker.toml",
+        "packaged_sha256": "fc668e827398e8458fb29ee47b124c905d482d6552ec315da83f8fbd3c26923a",
+        "record": "Wallbreaker"
+      },
+      {
+        "decoded_sha256": "d3ff1bfd9615b33baaf6e016a71c2c8f37d626b1310401f3fc52c972623d2b68",
+        "member": "assets/csv_logic/characters/wallbreaker.toml",
+        "packaged_sha256": "fc668e827398e8458fb29ee47b124c905d482d6552ec315da83f8fbd3c26923a",
+        "record": "WallbreakerProjectile"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 1500,
+    "support_status": "supported",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/royal_hogs.png",
+      "sha256": "34cd830c0d4ceccf36332d6b1ced2eaab68d3729d8b3fbe131476544e38fbd1a",
+      "source": "assets/image/chr/royal_hogs_dl.png"
+    },
+    "attack_interval_ms": 1200,
+    "can_deploy_enemy_side": false,
+    "count": 4,
+    "damage": 29,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 327,
+    "id": "royal_hogs",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Scripted starting actions omitted.",
+      "Jump/pathfinding behavior simplified."
+    ],
+    "name": "Royal Hogs",
+    "radius": 600,
+    "range": 750,
+    "raw_record": "RoyalHog",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "RoyalHogs",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 63,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "RoyalHogs"
+      },
+      {
+        "decoded_sha256": "96edf53dce8b0dac82bebfc822c687136a88ef5d33e4467c12dae65184f392bb",
+        "member": "assets/csv_logic/characters/royalhog.toml",
+        "packaged_sha256": "12a7aaaa3fb583836795accec9f6ac0cc110b134c775161f0341b3fc382e12de",
+        "record": "RoyalHog"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_giant.png",
+      "sha256": "94204f68db20856cb34e86ed5666fe9f3b085d9fea8eaf9eef8252d3deae0be6",
+      "source": "assets/image/chr/goblin_giant_dl.png"
+    },
+    "attack_interval_ms": 1500,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 69,
+    "deploy_ms": 1000,
+    "elixir": 6,
+    "flying": false,
+    "hp": 1215,
+    "id": "goblin_giant",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Periodic summoned units omitted."
+    ],
+    "name": "Goblin Giant",
+    "radius": 750,
+    "range": 1200,
+    "raw_record": "GoblinGiant",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "GoblinGiant",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 64,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "GoblinGiant"
+      },
+      {
+        "decoded_sha256": "5cc2d2ddb6c46d1a95a755a7b0d587533356a1ff70de965be9e62c66f1d92f1d",
+        "member": "assets/csv_logic/characters/goblingiant.toml",
+        "packaged_sha256": "c31ec0bbbdb5594eb6e06c4182ba2eb1bf6eac99972d027b951f5e7f33b8b3b7",
+        "record": "GoblinGiant"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/fisherman.png",
+      "sha256": "155d5b4216051c1f26d24fb9f45356586c53c5404230298d291d3ddb33dae807",
+      "source": "assets/image/chr/fisherman_dl.png"
+    },
+    "attack_interval_ms": 1300,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 76,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 340,
+    "id": "fisherman",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Fisherman",
+    "radius": 500,
+    "range": 1200,
+    "raw_record": "Fisherman",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Fisherman",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 65,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Fisherman"
+      },
+      {
+        "decoded_sha256": "b44c48ffe7054445290fee6c94a686e8ada73c2f526cdf64ae54f33b97225bea",
+        "member": "assets/csv_logic/characters/fisherman.toml",
+        "packaged_sha256": "fe89a6495579c94ce17fd5bdc15afaf4b74ff5631bb8546df7adf01aa1b75514",
+        "record": "Fisherman"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/magic_archer.png",
+      "sha256": "e2e97bde1595d4c5669f8c5a40645536dca3d2f375c76b89a1ac535b5ccb6108",
+      "source": "assets/image/chr/magic_archer_dl.png"
+    },
+    "attack_interval_ms": 1100,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 53,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 207,
+    "id": "magic_archer",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Magic Archer",
+    "radius": 600,
+    "range": 7000,
+    "raw_record": "EliteArcher",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "EliteArcher",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 66,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "EliteArcher"
+      },
+      {
+        "decoded_sha256": "21928cf709d6813b1515a87bc057cefd7646d3acd6190ea3b0d9ce88127a35b7",
+        "member": "assets/csv_logic/characters/elitearcher.toml",
+        "packaged_sha256": "15d76e6614c77aa93ea1432fa09769f768a593335e634dfa1dfb808eb9c0dd82",
+        "record": "EliteArcher"
+      },
+      {
+        "decoded_sha256": "21928cf709d6813b1515a87bc057cefd7646d3acd6190ea3b0d9ce88127a35b7",
+        "member": "assets/csv_logic/characters/elitearcher.toml",
+        "packaged_sha256": "15d76e6614c77aa93ea1432fa09769f768a593335e634dfa1dfb808eb9c0dd82",
+        "record": "EliteArcherArrow"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 250,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/electro_dragon.png",
+      "sha256": "5dc126f441202f6f4cbc8adf235a1eeb64b24a4df9966cbdd61a502a24e2a1f7",
+      "source": "assets/image/chr/electro_dragon_dl.png"
+    },
+    "attack_interval_ms": 2100,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 75,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": true,
+    "hp": 410,
+    "id": "electro_dragon",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted."
+    ],
+    "name": "Electro Dragon",
+    "radius": 600,
+    "range": 3500,
+    "raw_record": "ElectroDragon",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "ElectroDragon",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 67,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "ElectroDragon"
+      },
+      {
+        "decoded_sha256": "772b1f12f74de3b1d81af24b358bfc1e6f431b8536bc22ec36d18a21b5ecb970",
+        "member": "assets/csv_logic/characters/electrodragon.toml",
+        "packaged_sha256": "3b3d62defc48b2614d8ef3147fadd0f59e2e196114399b320a90fedf629a95ab",
+        "record": "ElectroDragon"
+      },
+      {
+        "decoded_sha256": "772b1f12f74de3b1d81af24b358bfc1e6f431b8536bc22ec36d18a21b5ecb970",
+        "member": "assets/csv_logic/characters/electrodragon.toml",
+        "packaged_sha256": "3b3d62defc48b2614d8ef3147fadd0f59e2e196114399b320a90fedf629a95ab",
+        "record": "ElectroDragonProjectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/firecracker.png",
+      "sha256": "7c4f37cb4cb79fcc80458b54550885c96194f63ff40bb74a849227a7181fef6f",
+      "source": "assets/image/chr/firecracker_dl.png"
+    },
+    "attack_interval_ms": 3000,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 25,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 119,
+    "id": "firecracker",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Chained projectile flattened to one area hit; travel path and pushback omitted."
+    ],
+    "name": "Firecracker",
+    "radius": 500,
+    "range": 6000,
+    "raw_record": "Firecracker",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Firecracker",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 68,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Firecracker"
+      },
+      {
+        "decoded_sha256": "615f265bc9f2cde5567d22b67297cd23f3b0192f20d921f9266f7c5bf6e07373",
+        "member": "assets/csv_logic/characters/firecracker.toml",
+        "packaged_sha256": "a0a41ee0b94e2dc4a6e0c3495f2a5b09c294bc2785840b983e7b65e7e7e75cb1",
+        "record": "Firecracker"
+      },
+      {
+        "decoded_sha256": "615f265bc9f2cde5567d22b67297cd23f3b0192f20d921f9266f7c5bf6e07373",
+        "member": "assets/csv_logic/characters/firecracker.toml",
+        "packaged_sha256": "a0a41ee0b94e2dc4a6e0c3495f2a5b09c294bc2785840b983e7b65e7e7e75cb1",
+        "record": "FirecrackerProjectile"
+      },
+      {
+        "decoded_sha256": "615f265bc9f2cde5567d22b67297cd23f3b0192f20d921f9266f7c5bf6e07373",
+        "member": "assets/csv_logic/characters/firecracker.toml",
+        "packaged_sha256": "a0a41ee0b94e2dc4a6e0c3495f2a5b09c294bc2785840b983e7b65e7e7e75cb1",
+        "record": "FirecrackerExplosion"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 400,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/mighty_miner.png",
+      "sha256": "7428553bc4572185c958d4a2e7bd393ff5ec835465af82fcaeece7792504dc4b",
+      "source": "assets/image/chr_champions/champion_hires_mighty_miner_dl.png"
+    },
+    "attack_interval_ms": 400,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 17,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 879,
+    "id": "mighty_miner",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Damage ramp omitted; uses stored initial damage.",
+      "Active champion ability omitted."
+    ],
+    "name": "Mighty Miner",
+    "radius": 500,
+    "range": 1600,
+    "raw_record": "MightyMiner",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "MightyMiner",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 69,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "MightyMiner"
+      },
+      {
+        "decoded_sha256": "a1a3cad7c000e7b98a34df5ce607ce9f2a211071069446f13a8edeb09700b7a6",
+        "member": "assets/csv_logic/characters/mighty_miner.toml",
+        "packaged_sha256": "fd3117d752e122f05a3c31d95df29cb76c5a211e44fa620de55270ad1f71dfb5",
+        "record": "MightyMiner"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/elixir_golem.png",
+      "sha256": "80a5040f8cad6632e7a86feb049314ec6ac18aa4a2188752fa151d1e24ce0b22",
+      "source": "assets/image/chr/elixir_golem_dl.png"
+    },
+    "attack_interval_ms": 1100,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 99,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 613,
+    "id": "elixir_golem",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Death-spawn units omitted."
+    ],
+    "name": "Elixir Golem",
+    "radius": 600,
+    "range": 800,
+    "raw_record": "ElixirGolem1",
+    "raw_speed": 45,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "ElixirGolem",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 71,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "ElixirGolem"
+      },
+      {
+        "decoded_sha256": "0b4f73a567318feea6133e557713946f8c7541dbb138ebcd4f0dabb93a332ce8",
+        "member": "assets/csv_logic/characters/elixirgolem1.toml",
+        "packaged_sha256": "ec9f5a19de118382d42479fb569eb39c330fbfb2830cbde3def773b1346539a5",
+        "record": "ElixirGolem1"
+      }
+    ],
+    "speed": 562,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/battle_healer.png",
+      "sha256": "a6ad7d6e67a85037aff254cd654da0dfb79a053a3d7512b201debe93d26b73dd",
+      "source": "assets/image/chr/battle_healer_dl.png"
+    },
+    "attack_interval_ms": 2000,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 105,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 750,
+    "id": "battle_healer",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Scripted starting actions omitted.",
+      "On-hit area effect omitted."
+    ],
+    "name": "Battle Healer",
+    "radius": 500,
+    "range": 1600,
+    "raw_record": "BattleHealer",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "BattleHealer",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 72,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "BattleHealer"
+      },
+      {
+        "decoded_sha256": "6291eb235e7460bf75246647eaa793f398578d7019d8fe9b1c0ed4b5cf2dd798",
+        "member": "assets/csv_logic/characters/battlehealer.toml",
+        "packaged_sha256": "3bb34f9e0dc09c1fb56c3db39530417f403cb45bce7b1ec515bae3c4a728b28a",
+        "record": "BattleHealer"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/skeleton_king.png",
+      "sha256": "83f84819d107717bb73181abda1e514cf2425cdeb31e16ef68df6ae3745f7d84",
+      "source": "assets/image/chr_champions/champion_hires_skeleton_king_dl.png"
+    },
+    "attack_interval_ms": 1600,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 80,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 898,
+    "id": "skeleton_king",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Scripted starting actions omitted.",
+      "Active champion ability omitted."
+    ],
+    "name": "Skeleton King",
+    "radius": 1000,
+    "range": 1200,
+    "raw_record": "SkeletonKing",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "SkeletonKing",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 73,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "SkeletonKing"
+      },
+      {
+        "decoded_sha256": "c91e04afe7c08e51daecad3c888dccc3c5ce1b6afdd92abd8807106718e6e59e",
+        "member": "assets/csv_logic/characters/skeleton_king.toml",
+        "packaged_sha256": "ad23f6316bc250666237db8b4cf733f10cdf522eef266942e30e5d6b5b159242",
+        "record": "SkeletonKing"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 1300,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/archer_queen.png",
+      "sha256": "cbc78f6cb21fb82c2d1615bcfcdf2b85087940031a2af66e494c130d31e9db43",
+      "source": "assets/image/chr_champions/champion_hires_archer_queen_dl.png"
+    },
+    "attack_interval_ms": 1200,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 91,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 391,
+    "id": "archer_queen",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Active champion ability omitted."
+    ],
+    "name": "Archer Queen",
+    "radius": 500,
+    "range": 5000,
+    "raw_record": "ArcherQueen",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "ArcherQueen",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 76,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "ArcherQueen"
+      },
+      {
+        "decoded_sha256": "b459f8b90027a0743916c067343d17f23b28b18203608ba2b4214cd00f3afa65",
+        "member": "assets/csv_logic/characters/archer_queen.toml",
+        "packaged_sha256": "2c81efbaeda451b2c4c3da5c8dc98747d5eadf28f6f5e947a9344f6fea6c7b2c",
+        "record": "ArcherQueen"
+      },
+      {
+        "decoded_sha256": "b459f8b90027a0743916c067343d17f23b28b18203608ba2b4214cd00f3afa65",
+        "member": "assets/csv_logic/characters/archer_queen.toml",
+        "packaged_sha256": "2c81efbaeda451b2c4c3da5c8dc98747d5eadf28f6f5e947a9344f6fea6c7b2c",
+        "record": "ArcherQueenArrow"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/golden_knight.png",
+      "sha256": "279561128d01145059e3e8f539a4cbd1478d88f29687080113035a4960bedff4",
+      "source": "assets/image/chr_champions/champion_hires_golden_knight_dl.png"
+    },
+    "attack_interval_ms": 900,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 66,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 703,
+    "id": "golden_knight",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Active champion ability omitted.",
+      "Dash behavior omitted."
+    ],
+    "name": "Golden Knight",
+    "radius": 800,
+    "range": 1200,
+    "raw_record": "GoldenKnight",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "GoldenKnight",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 78,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "GoldenKnight"
+      },
+      {
+        "decoded_sha256": "3a5def9ce00057f3272c3c03ddb64faefc44ca1ea27e5aa353589bea8169edc7",
+        "member": "assets/csv_logic/characters/golden_knight.toml",
+        "packaged_sha256": "917c2cfee3bd46fcf1cebe6aafc44455eaadc880fdeaca3746a24564b78988c4",
+        "record": "GoldenKnight"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/monk.png",
+      "sha256": "e272a86ff8ba11884510a9855a1fbc49fba8ef76ebd52bf7f2337d126c11e535",
+      "source": "assets/image/chr_champions/champion_hires_monk_dl.png"
+    },
+    "attack_interval_ms": 800,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 55,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 865,
+    "id": "monk",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Damage ramp omitted; uses stored initial damage.",
+      "Active champion ability omitted."
+    ],
+    "name": "Monk",
+    "radius": 500,
+    "range": 1200,
+    "raw_record": "Monk",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Monk",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 81,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Monk"
+      },
+      {
+        "decoded_sha256": "89d0334d0eb98373e872516b3e12a821d3edafc090aa3919bad3041f69804f3c",
+        "member": "assets/csv_logic/characters/monk.toml",
+        "packaged_sha256": "bf6bf8f7857b460226397da4151d45e58e1a7e0dc480a2a04974f87358fdf5b7",
+        "record": "Monk"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/skeleton_dragons.png",
+      "sha256": "a5cdb3eb5ccf7174eb653483ce15c9e6beb76a21bac0c3c460ffde21aec4b6a1",
+      "source": "assets/image/chr/skeleton_dragon_dl.png"
+    },
+    "attack_interval_ms": 2000,
+    "can_deploy_enemy_side": false,
+    "count": 2,
+    "damage": 59,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": true,
+    "hp": 219,
+    "id": "skeleton_dragons",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Skeleton Dragons",
+    "radius": 900,
+    "range": 3500,
+    "raw_record": "SkeletonDragon",
+    "raw_speed": 90,
+    "reconstruction_defaults": {
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "SkeletonDragons",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 84,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "SkeletonDragons"
+      },
+      {
+        "decoded_sha256": "f6ab1ba086439aea8c3b1ae31d021e769ac9d2489fdf0c8d4cb4d916f9977d56",
+        "member": "assets/csv_logic/characters/skeletondragon.toml",
+        "packaged_sha256": "e139795408c79fd95e8a3a2050937ff9fa0e6ab31a76b46678e454dffae89072",
+        "record": "SkeletonDragon"
+      },
+      {
+        "decoded_sha256": "f6ab1ba086439aea8c3b1ae31d021e769ac9d2489fdf0c8d4cb4d916f9977d56",
+        "member": "assets/csv_logic/characters/skeletondragon.toml",
+        "packaged_sha256": "e139795408c79fd95e8a3a2050937ff9fa0e6ab31a76b46678e454dffae89072",
+        "record": "SkeletonDragonProjectile"
+      }
+    ],
+    "speed": 1125,
+    "splash_radius": 1500,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/mother_witch.png",
+      "sha256": "f65bb75e88dba0f77e6ed5bdc0e5a4dee651eca278ed3ad234dd0e7656e5b6c3",
+      "source": "assets/image/chr/mother_witch_dl.png"
+    },
+    "attack_interval_ms": 1000,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 52,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 207,
+    "id": "mother_witch",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "On-hit buff omitted.",
+      "Projectile/on-hit buff and stun effects omitted."
+    ],
+    "name": "Mother Witch",
+    "radius": 500,
+    "range": 5500,
+    "raw_record": "WitchMother",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "WitchMother",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 87,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "WitchMother"
+      },
+      {
+        "decoded_sha256": "e7ec8f1990792923b2a296df0939529d941b1d7bfe57d96a1cf07fbce5d16923",
+        "member": "assets/csv_logic/characters/witchmother.toml",
+        "packaged_sha256": "6953657d8e18ab4f435ea03cbda7a3fb20719181b5ee9cefabeae327d0910347",
+        "record": "WitchMother"
+      },
+      {
+        "decoded_sha256": "e7ec8f1990792923b2a296df0939529d941b1d7bfe57d96a1cf07fbce5d16923",
+        "member": "assets/csv_logic/characters/witchmother.toml",
+        "packaged_sha256": "6953657d8e18ab4f435ea03cbda7a3fb20719181b5ee9cefabeae327d0910347",
+        "record": "VoodooProjectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/electro_spirit.png",
+      "sha256": "546f8528b81ff67c5fd5c795f2e285cbfa9921edd20d0a986d6e9d839637b86b",
+      "source": "assets/image/chr/electro_spirit_dl.png"
+    },
+    "attack_interval_ms": 300,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 39,
+    "deploy_ms": 1000,
+    "elixir": 1,
+    "flying": false,
+    "hp": 84,
+    "id": "electro_spirit",
+    "kamikaze": true,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted."
+    ],
+    "name": "Electro Spirit",
+    "radius": 400,
+    "range": 2500,
+    "raw_record": "ElectroSpirit",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "ElectroSpirit",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 88,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "ElectroSpirit"
+      },
+      {
+        "decoded_sha256": "d4058cc3128cee82f9131f5a33dd228db3d6c116220f6a83406158386b607c4d",
+        "member": "assets/csv_logic/characters/electrospirit.toml",
+        "packaged_sha256": "ab481fba84f59e2732b5e8f52dbf686a386ec9213ca9b60833c9a5ddd00a4fed",
+        "record": "ElectroSpirit"
+      },
+      {
+        "decoded_sha256": "d4058cc3128cee82f9131f5a33dd228db3d6c116220f6a83406158386b607c4d",
+        "member": "assets/csv_logic/characters/electrospirit.toml",
+        "packaged_sha256": "ab481fba84f59e2732b5e8f52dbf686a386ec9213ca9b60833c9a5ddd00a4fed",
+        "record": "ElectroSpiritProjectile"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/electro_giant.png",
+      "sha256": "af832811d91f3e3559e26b07e6d57e9dfde8c2d967281ff4f4389925284c7139",
+      "source": "assets/image/chr/electro_giant_dl.png"
+    },
+    "attack_interval_ms": 1800,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 72,
+    "deploy_ms": 1000,
+    "elixir": 7,
+    "flying": false,
+    "hp": 1544,
+    "id": "electro_giant",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Electro Giant",
+    "radius": 750,
+    "range": 1200,
+    "raw_record": "ElectroGiant",
+    "raw_speed": 45,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "ElectroGiant",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 89,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "ElectroGiant"
+      },
+      {
+        "decoded_sha256": "9eb5ef817bdfacf534437608c1d2bb1d19384ecfae7a83f913203c3d8d71a15f",
+        "member": "assets/csv_logic/characters/electrogiant.toml",
+        "packaged_sha256": "cf099af6cc75c513e8c1f080f1726829aaa5ba5e70cca0d14cb5aa06dd58e67d",
+        "record": "ElectroGiant"
+      }
+    ],
+    "speed": 562,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "buildings"
+  },
+  {
+    "art": {
+      "path": "cards/phoenix.png",
+      "sha256": "a3285b99eb1bf1dbb3ff34fc50ce0a40d047fa860a37008c9d109c574a11989b",
+      "source": "assets/image/chr/phoenix_dl.png"
+    },
+    "attack_interval_ms": 1000,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 85,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": true,
+    "hp": 411,
+    "id": "phoenix",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Phoenix",
+    "radius": 500,
+    "range": 1600,
+    "raw_record": "Phoenix",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "Phoenix",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 91,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "Phoenix"
+      },
+      {
+        "decoded_sha256": "c76ec2a7f933daface7cea71365235c07b23eeec36d911e3e6d5f886fa302846",
+        "member": "assets/csv_logic/characters/phoenix.toml",
+        "packaged_sha256": "2d2823b26cbe70f8e12bdbc96a4beb0c377ce765a1f437d2d2568da25c97b1b9",
+        "record": "Phoenix"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/little_prince.png",
+      "sha256": "8994a21582b3962f996170cddab470643192335ec99c695b4f4b0b4bf0717594",
+      "source": "assets/image/chr_champions/champion_hires_little_prince_dl.png"
+    },
+    "attack_interval_ms": 1200,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 41,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 273,
+    "id": "little_prince",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Scripted starting actions omitted.",
+      "Scripted attack actions omitted.",
+      "Active champion ability omitted."
+    ],
+    "name": "Little Prince",
+    "radius": 500,
+    "range": 5500,
+    "raw_record": "LittlePrince",
+    "raw_speed": 60,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "LittlePrince",
+    "sources": [
+      {
+        "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+        "line": 97,
+        "member": "assets/csv_logic/spells_characters.csv",
+        "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+        "record": "LittlePrince"
+      },
+      {
+        "decoded_sha256": "4ca2f833d3fc1152e361b433b83c428b60330b3de8ebc3e8e53319a2a5898e8f",
+        "member": "assets/csv_logic/characters/little_prince.toml",
+        "packaged_sha256": "1eebb68ad83b62fd4779b760abda74adbf460c2ae86af85e9caf5ca2bebc17d5",
+        "record": "LittlePrince"
+      },
+      {
+        "decoded_sha256": "4ca2f833d3fc1152e361b433b83c428b60330b3de8ebc3e8e53319a2a5898e8f",
+        "member": "assets/csv_logic/characters/little_prince.toml",
+        "packaged_sha256": "1eebb68ad83b62fd4779b760abda74adbf460c2ae86af85e9caf5ca2bebc17d5",
+        "record": "LittlePrinceProjectile"
+      }
+    ],
+    "speed": 750,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/mortar.png",
+      "sha256": "77d4ff3913ae0e564c58d868573f35850d7cabcdb7d32e8075d7d7c999006fb3",
+      "source": "assets/image/chr/mortar_dl.png"
+    },
+    "attack_interval_ms": 4700,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 104,
+    "deploy_ms": 3500,
+    "elixir": 4,
+    "flying": false,
+    "hp": 535,
+    "id": "mortar",
+    "kamikaze": false,
+    "kind": "building",
+    "lifetime_ms": 30000,
+    "limitations": [],
+    "name": "Mortar",
+    "radius": 600,
+    "range": 11500,
+    "raw_record": "Mortar",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Mortar",
+    "sources": [
+      {
+        "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+        "line": 5,
+        "member": "assets/csv_logic/spells_buildings.csv",
+        "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+        "record": "Mortar"
+      },
+      {
+        "decoded_sha256": "7681cc3adc4e77c33e10f56d76c179ed779981185de6207b46335be3bce2d8fe",
+        "member": "assets/csv_logic/characters/mortar.toml",
+        "packaged_sha256": "343e4d6c13573b5a8cb2081d253e7b1c9f8734e1eedc62e153f59eaff49313f2",
+        "record": "Mortar"
+      },
+      {
+        "decoded_sha256": "7681cc3adc4e77c33e10f56d76c179ed779981185de6207b46335be3bce2d8fe",
+        "member": "assets/csv_logic/characters/mortar.toml",
+        "packaged_sha256": "343e4d6c13573b5a8cb2081d253e7b1c9f8734e1eedc62e153f59eaff49313f2",
+        "record": "MortarProjectile"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 2000,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/inferno_tower.png",
+      "sha256": "f7cebd667d10563fcc71e41fd1b1adb2a1549f08ef7229a6633ef177a4f66ea4",
+      "source": "assets/image/chr/infernotower.png"
+    },
+    "attack_interval_ms": 400,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 17,
+    "deploy_ms": 1000,
+    "elixir": 5,
+    "flying": false,
+    "hp": 683,
+    "id": "inferno_tower",
+    "kamikaze": false,
+    "kind": "building",
+    "lifetime_ms": 30000,
+    "limitations": [
+      "Damage ramp omitted; uses stored initial damage."
+    ],
+    "name": "Inferno Tower",
+    "radius": 600,
+    "range": 6000,
+    "raw_record": "InfernoTower",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "InfernoTower",
+    "sources": [
+      {
+        "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+        "line": 6,
+        "member": "assets/csv_logic/spells_buildings.csv",
+        "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+        "record": "InfernoTower"
+      },
+      {
+        "decoded_sha256": "c8c747b96cece6ae3ac8cbaa21fbeccf614a7c6406c0b80f11503345c65d6d9b",
+        "member": "assets/csv_logic/characters/infernotower.toml",
+        "packaged_sha256": "b09d5aaf46532b3e74c39d119d66bc906cb7cb9b90ffc38854b2b79f96c65ae0",
+        "record": "InfernoTower"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/bomb_tower.png",
+      "sha256": "a28f6cc6435e5a2df81ea87b62abda27b89baa70977464aa61ee66f28af8877b",
+      "source": "assets/image/chr/bombtower_dl.png"
+    },
+    "attack_interval_ms": 1800,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 87,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 530,
+    "id": "bomb_tower",
+    "kamikaze": false,
+    "kind": "building",
+    "lifetime_ms": 30000,
+    "limitations": [
+      "Death-spawn units omitted."
+    ],
+    "name": "Bomb Tower",
+    "radius": 600,
+    "range": 6000,
+    "raw_record": "BombTower",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "BombTower",
+    "sources": [
+      {
+        "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+        "line": 7,
+        "member": "assets/csv_logic/spells_buildings.csv",
+        "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+        "record": "BombTower"
+      },
+      {
+        "decoded_sha256": "703444d299145c0bbc2ab1fdab4f2adb1beab0b73fa832354485156e894cc92d",
+        "member": "assets/csv_logic/characters/bombtower.toml",
+        "packaged_sha256": "50134e93cda9c837aedad730976cb162b1161ae47031c0a13ac6628bd6bf6448",
+        "record": "BombTower"
+      },
+      {
+        "decoded_sha256": "703444d299145c0bbc2ab1fdab4f2adb1beab0b73fa832354485156e894cc92d",
+        "member": "assets/csv_logic/characters/bombtower.toml",
+        "packaged_sha256": "50134e93cda9c837aedad730976cb162b1161ae47031c0a13ac6628bd6bf6448",
+        "record": "BombTowerProjectile"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 1500,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/tesla.png",
+      "sha256": "07496ab6c81e8db50cd85b75fecd35f8baee1f929792b2406102df306ea6dc23",
+      "source": "assets/image/chr/tesla_dl.png"
+    },
+    "attack_interval_ms": 1100,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 86,
+    "deploy_ms": 1000,
+    "elixir": 4,
+    "flying": false,
+    "hp": 462,
+    "id": "tesla",
+    "kamikaze": false,
+    "kind": "building",
+    "lifetime_ms": 25000,
+    "limitations": [
+      "Hiding behavior omitted."
+    ],
+    "name": "Tesla",
+    "radius": 500,
+    "range": 5500,
+    "raw_record": "Tesla",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sc_name": "Tesla",
+    "sources": [
+      {
+        "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+        "line": 9,
+        "member": "assets/csv_logic/spells_buildings.csv",
+        "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+        "record": "Tesla"
+      },
+      {
+        "decoded_sha256": "7c29b8858cf5c2133e3b4101944f43c05d377f330e96c5e04f023519658380a9",
+        "member": "assets/csv_logic/characters/tesla.toml",
+        "packaged_sha256": "c0ca7c7831400625de8c3ce71c8a70d7dc4d1c8c19b27d3d7c14d0c045bd1586",
+        "record": "Tesla"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/x_bow.png",
+      "sha256": "7823950e2696022700f6c8135288c268696a524a62bea2f28050c71c11cb1255",
+      "source": "assets/image/chr/xbow.png"
+    },
+    "attack_interval_ms": 400,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 24,
+    "deploy_ms": 3500,
+    "elixir": 6,
+    "flying": false,
+    "hp": 625,
+    "id": "x_bow",
+    "kamikaze": false,
+    "kind": "building",
+    "lifetime_ms": 30000,
+    "limitations": [],
+    "name": "X Bow",
+    "radius": 600,
+    "range": 11500,
+    "raw_record": "Xbow",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Xbow",
+    "sources": [
+      {
+        "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+        "line": 11,
+        "member": "assets/csv_logic/spells_buildings.csv",
+        "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+        "record": "Xbow"
+      },
+      {
+        "decoded_sha256": "79c0220a3bf1c8ef5f7fdd13c4e4115b8c49326b9f3569a1fa90a30ed108c8c3",
+        "member": "assets/csv_logic/characters/xbow.toml",
+        "packaged_sha256": "462c0a26fe3669751556d01a09d81addb7c58024a90f22639b034030e5deafa4",
+        "record": "Xbow"
+      },
+      {
+        "decoded_sha256": "79c0220a3bf1c8ef5f7fdd13c4e4115b8c49326b9f3569a1fa90a30ed108c8c3",
+        "member": "assets/csv_logic/characters/xbow.toml",
+        "packaged_sha256": "462c0a26fe3669751556d01a09d81addb7c58024a90f22639b034030e5deafa4",
+        "record": "xbow_projectile"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/arrows.png",
+      "sha256": "d59c4aceb21bcb677f26c2c9cc2a95106afecc1acb7af18b5a77cd0633d712d5",
+      "source": "assets/image/chr/arrows.png"
+    },
+    "attack_interval_ms": 0,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage_percent_raw": -80,
+    "damage": 48,
+    "deploy_ms": 0,
+    "elixir": 3,
+    "flying": false,
+    "hp": 0,
+    "id": "arrows",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Projectile waves represented by one stored projectile damage hit.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Arrows",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "ArrowsSpell",
+    "raw_speed": 1100,
+    "reconstruction_defaults": {
+      "attack_interval_ms": "0 when field absent; not a recovered engine default",
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Arrows",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 4,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Arrows"
+      },
+      {
+        "decoded_sha256": "db88e7e274dabb9d7d24af353bc35dfbf22072d0079dfc44455ac16c6bc3a987",
+        "member": "assets/csv_logic/characters/arrows.toml",
+        "packaged_sha256": "e4d01c123d67e36870d701bb0784427154e1535bedb3d8cea353c61f26116bb7",
+        "record": "ArrowsSpell"
+      }
+    ],
+    "speed": 13750,
+    "splash_radius": 1400,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/rocket.png",
+      "sha256": "2ca77fc4dbd13ae9f57447d1f9e38c10f207c4048242da4fe7cc197b12161a72",
+      "source": "assets/image/chr/rocket_dl.png"
+    },
+    "attack_interval_ms": 0,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage_percent_raw": -77,
+    "damage": 580,
+    "deploy_ms": 0,
+    "elixir": 6,
+    "flying": false,
+    "hp": 0,
+    "id": "rocket",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Attack knockback omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Rocket",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "RocketSpell",
+    "raw_speed": 350,
+    "reconstruction_defaults": {
+      "attack_interval_ms": "0 when field absent; not a recovered engine default",
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Rocket",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 6,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Rocket"
+      },
+      {
+        "decoded_sha256": "fe6d16904fa8a32edefcc20e7c09fcbc807029e6d0dc7a75ba283fe359657a9f",
+        "member": "assets/csv_logic/characters/rocketspell.toml",
+        "packaged_sha256": "8af343a2a47da0da00ff65ea32d3dcb5712356b222858368e3909a1a16025c73",
+        "record": "RocketSpell"
+      }
+    ],
+    "speed": 4375,
+    "splash_radius": 2000,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_barrel.png",
+      "sha256": "96a1cf346387effb826575e13bf365a817c9fa9ee9cdf50337499e408ec4b3b8",
+      "source": "assets/image/chr/goblin_barrel_dl.png"
+    },
+    "attack_interval_ms": 1100,
+    "can_deploy_enemy_side": true,
+    "count": 3,
+    "damage": 49,
+    "deploy_ms": 1000,
+    "elixir": 3,
+    "flying": false,
+    "hp": 79,
+    "id": "goblin_barrel",
+    "kamikaze": false,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Barrel projectile travel and deployment delay omitted; directly summons recovered goblins."
+    ],
+    "name": "Goblin Barrel",
+    "radius": 500,
+    "range": 500,
+    "raw_record": "BarrelGoblin",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "GoblinBarrel",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 7,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "GoblinBarrel"
+      },
+      {
+        "decoded_sha256": "bc193f808cc3c7fb21b63223e6d2cd6d76ccd29dc06fc7fe6728aca67a649075",
+        "member": "assets/csv_logic/characters/goblinbarrelspell.toml",
+        "packaged_sha256": "9a7ccb3b7d0a5b17eb882760d1840a4a1507f3f92125d0bc227fe20925101afe",
+        "record": "BarrelGoblin"
+      },
+      {
+        "decoded_sha256": "5c31c753aa5ee22d05259ce0d5a31542a52b2acaea2e9b131f00f1ea6dd48723",
+        "member": "assets/csv_logic/characters/goblin.toml",
+        "packaged_sha256": "e31e9cff3745b7ad643b2685ca57e9dc10571c34689e2d353651bb2914a171d9",
+        "record": "Goblin"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 0,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/freeze.png",
+      "sha256": "5057ffd7fa33dfd0d1317f4dfcc1f705f7f93ad4099e1ee9d411f736feb83b71",
+      "source": "assets/image/chr/freeze.png"
+    },
+    "attack_interval_ms": 0,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage": 15,
+    "damage": 58,
+    "deploy_ms": 0,
+    "elixir": 4,
+    "flying": false,
+    "hp": 0,
+    "id": "freeze",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Freeze",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "Freeze",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "attack_interval_ms": "0 when field absent; not a recovered engine default",
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Freeze",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 8,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Freeze"
+      },
+      {
+        "decoded_sha256": "6d35c05a46da2964b3e3e9ade2692aeb4dc96863c468ff93e7cc50988e9dffff",
+        "member": "assets/csv_logic/characters/freeze.toml",
+        "packaged_sha256": "a8a8c9178ec8091d1a4b6c6222f904cbc43ea8ad5a2427f212cf203b1be8af6e",
+        "record": "Freeze"
+      },
+      {
+        "decoded_sha256": "e006079ddc7375c4ce19db72c53eda757d99d02f30095f523895eb85057d4c7a",
+        "member": "assets/csv_logic/game_object_filters.toml",
+        "packaged_sha256": "b46dbccbd770f6fdb3f28d0d3803482adb5477c53129f7446adefc8166692b2b",
+        "record": "aeo_enemy_affects_hidden"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 3000,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/lightning.png",
+      "sha256": "8adad17bab0f21d7e755558acc95e9bb955f6cb1c764aa253f5cc9d738b3913d",
+      "source": "assets/image/chr/lightning.png"
+    },
+    "attack_interval_ms": 500,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage_percent_raw": -75,
+    "damage": 413,
+    "deploy_ms": 0,
+    "elixir": 6,
+    "flying": false,
+    "hp": 0,
+    "id": "lightning",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Lightning",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "Lightning",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Lightning",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 10,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Lightning"
+      },
+      {
+        "decoded_sha256": "adc70fd495d7c26c88a538e0905481713b8a208977d96a4396474961e1b749b2",
+        "member": "assets/csv_logic/characters/lightning.toml",
+        "packaged_sha256": "483059e8bdaa00fdb1afa61738c7cd17a9e4ccfdfd77b41b30c62a4958cca82f",
+        "record": "Lightning"
+      },
+      {
+        "decoded_sha256": "adc70fd495d7c26c88a538e0905481713b8a208977d96a4396474961e1b749b2",
+        "member": "assets/csv_logic/characters/lightning.toml",
+        "packaged_sha256": "483059e8bdaa00fdb1afa61738c7cd17a9e4ccfdfd77b41b30c62a4958cca82f",
+        "record": "LighningSpell"
+      },
+      {
+        "decoded_sha256": "e006079ddc7375c4ce19db72c53eda757d99d02f30095f523895eb85057d4c7a",
+        "member": "assets/csv_logic/game_object_filters.toml",
+        "packaged_sha256": "b46dbccbd770f6fdb3f28d0d3803482adb5477c53129f7446adefc8166692b2b",
+        "record": "CommonAreaDamageFilter"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 3500,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/zap.png",
+      "sha256": "edec78b079f28678684c13269078c79d52b5437225676de353218596befc4417",
+      "source": "assets/image/chr/zap_dl.png"
+    },
+    "attack_interval_ms": 0,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage": 19,
+    "damage": 75,
+    "deploy_ms": 0,
+    "elixir": 2,
+    "flying": false,
+    "hp": 0,
+    "id": "zap",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Zap",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "Zap",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "attack_interval_ms": "0 when field absent; not a recovered engine default",
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Zap",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 11,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Zap"
+      },
+      {
+        "decoded_sha256": "cf825b9035222dabf25534717c366c9c7a9110e1645ce4dae6cec7e6e0c60c02",
+        "member": "assets/csv_logic/characters/zap.toml",
+        "packaged_sha256": "5492c3d65f48bce84b3778905228471ed30960d98d07da73521261886b544ce7",
+        "record": "Zap"
+      },
+      {
+        "decoded_sha256": "e006079ddc7375c4ce19db72c53eda757d99d02f30095f523895eb85057d4c7a",
+        "member": "assets/csv_logic/game_object_filters.toml",
+        "packaged_sha256": "b46dbccbd770f6fdb3f28d0d3803482adb5477c53129f7446adefc8166692b2b",
+        "record": "CommonAreaDamageFilter"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 2500,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/poison.png",
+      "sha256": "4510093d78b8c9bd6ee14638fb64cf9b1eb236000a62eb519094f036fb88560e",
+      "source": "assets/image/chr/poison.png"
+    },
+    "attack_interval_ms": 250,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage_percent_raw": -78,
+    "damage": 36,
+    "deploy_ms": 0,
+    "elixir": 4,
+    "flying": false,
+    "hp": 0,
+    "id": "poison",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Damage-over-time/buff represented by one stored damage tick; duration and buff behavior omitted.",
+      "Damage-per-second field flattened to one immediate second of damage; timed application omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Poison",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "Poison",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Poison",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 12,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Poison"
+      },
+      {
+        "decoded_sha256": "2786733afebd261d61772b094c2db865ea5c9a51714f7354f5b97d616997043a",
+        "member": "assets/csv_logic/characters/poison.toml",
+        "packaged_sha256": "e662078d3e2d60998bb83c626bc34c739bbb8e1060e856a81dc5d75d4b7f1920",
+        "record": "Poison"
+      },
+      {
+        "decoded_sha256": "2786733afebd261d61772b094c2db865ea5c9a51714f7354f5b97d616997043a",
+        "member": "assets/csv_logic/characters/poison.toml",
+        "packaged_sha256": "e662078d3e2d60998bb83c626bc34c739bbb8e1060e856a81dc5d75d4b7f1920",
+        "record": "Poison"
+      },
+      {
+        "decoded_sha256": "e006079ddc7375c4ce19db72c53eda757d99d02f30095f523895eb85057d4c7a",
+        "member": "assets/csv_logic/game_object_filters.toml",
+        "packaged_sha256": "b46dbccbd770f6fdb3f28d0d3803482adb5477c53129f7446adefc8166692b2b",
+        "record": "CommonAreaDamageFilter"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 3500,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/the_log.png",
+      "sha256": "d1622755dcba0ba202a2008c14fa7a12afe9d242120077e97c97088d64cd6eaf",
+      "source": "assets/image/chr/the_log_dl.png"
+    },
+    "attack_interval_ms": 0,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage_percent_raw": -87,
+    "damage": 105,
+    "deploy_ms": 0,
+    "elixir": 2,
+    "flying": false,
+    "hp": 0,
+    "id": "the_log",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Chained projectile flattened to one area hit; travel path and pushback omitted.",
+      "Attack knockback omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "The Log",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "LogProjectile",
+    "raw_speed": 360,
+    "reconstruction_defaults": {
+      "attack_interval_ms": "0 when field absent; not a recovered engine default",
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Log",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 14,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Log"
+      },
+      {
+        "decoded_sha256": "49dd8888d4dc44485a58a26592c4d986b00829260bfd8ffd3c44436627313f98",
+        "member": "assets/csv_logic/characters/logprojectile.toml",
+        "packaged_sha256": "fc9ec2951132eb2aa8c12e51e2ab1a257e4a11fffb1414eb03cd9a5e301af280",
+        "record": "LogProjectile"
+      },
+      {
+        "decoded_sha256": "49dd8888d4dc44485a58a26592c4d986b00829260bfd8ffd3c44436627313f98",
+        "member": "assets/csv_logic/characters/logprojectile.toml",
+        "packaged_sha256": "fc9ec2951132eb2aa8c12e51e2ab1a257e4a11fffb1414eb03cd9a5e301af280",
+        "record": "LogProjectileRolling"
+      }
+    ],
+    "speed": 4500,
+    "splash_radius": 1950,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/tornado.png",
+      "sha256": "10701a2cd9d1616007542c5959cb2312351d2398a2bc89e386e3024dc01bdc5f",
+      "source": "assets/image/chr/tornado_dl.png"
+    },
+    "attack_interval_ms": 50,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage_percent_raw": -70,
+    "damage": 60,
+    "deploy_ms": 0,
+    "elixir": 3,
+    "flying": false,
+    "hp": 0,
+    "id": "tornado",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Damage-over-time/buff represented by one stored damage tick; duration and buff behavior omitted.",
+      "Damage-per-second field flattened to one immediate second of damage; timed application omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Tornado",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "Tornado",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Tornado",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 15,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Tornado"
+      },
+      {
+        "decoded_sha256": "65ef6d9268f069a03a762e271ff3015236d93743e424f928d8f5487b64d87f45",
+        "member": "assets/csv_logic/characters/tornado.toml",
+        "packaged_sha256": "3950f090e39f5b91d5622a4e098644fa8df97ef6e3118941ff190c0dc04955cf",
+        "record": "Tornado"
+      },
+      {
+        "decoded_sha256": "65ef6d9268f069a03a762e271ff3015236d93743e424f928d8f5487b64d87f45",
+        "member": "assets/csv_logic/characters/tornado.toml",
+        "packaged_sha256": "3950f090e39f5b91d5622a4e098644fa8df97ef6e3118941ff190c0dc04955cf",
+        "record": "Tornado"
+      },
+      {
+        "decoded_sha256": "e006079ddc7375c4ce19db72c53eda757d99d02f30095f523895eb85057d4c7a",
+        "member": "assets/csv_logic/game_object_filters.toml",
+        "packaged_sha256": "b46dbccbd770f6fdb3f28d0d3803482adb5477c53129f7446adefc8166692b2b",
+        "record": "CommonAreaDamageFilter"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 5500,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/earthquake.png",
+      "sha256": "d9f4921e51495f53a67d7dc21a184c6150309f3b590b03a4138746c8bc3288e1",
+      "source": "assets/image/chr/earthquake_dl.png"
+    },
+    "attack_interval_ms": 100,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage_percent_raw": -40,
+    "damage": 32,
+    "deploy_ms": 0,
+    "elixir": 3,
+    "flying": false,
+    "hp": 0,
+    "id": "earthquake",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Damage-over-time/buff represented by one stored damage tick; duration and buff behavior omitted.",
+      "Damage-per-second field flattened to one immediate second of damage; timed application omitted.",
+      "Scripted starting actions omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Earthquake",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "Earthquake",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "Earthquake",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 17,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Earthquake"
+      },
+      {
+        "decoded_sha256": "acd243d7a000d9de15abf552a088ca2d96f5aeae53c2fde3e6680357115e7a7a",
+        "member": "assets/csv_logic/characters/earthquake.toml",
+        "packaged_sha256": "793042b2f6bbff7d4cd09eabf4d8e9ec33a9042fd83c168c616c8e60807d0cab",
+        "record": "Earthquake"
+      },
+      {
+        "decoded_sha256": "acd243d7a000d9de15abf552a088ca2d96f5aeae53c2fde3e6680357115e7a7a",
+        "member": "assets/csv_logic/characters/earthquake.toml",
+        "packaged_sha256": "793042b2f6bbff7d4cd09eabf4d8e9ec33a9042fd83c168c616c8e60807d0cab",
+        "record": "Earthquake"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 3500,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/barbarian_barrel.png",
+      "sha256": "d3f08563ac227ceb6438459570f58d8144d75ecdfc4a0a95763e77182092e2ea",
+      "source": "assets/image/chr/barbarian_barrel_dl.png"
+    },
+    "attack_interval_ms": 0,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "damage": 84,
+    "deploy_ms": 0,
+    "elixir": 2,
+    "flying": false,
+    "hp": 0,
+    "id": "barbarian_barrel",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Chained projectile flattened to one area hit; travel path and pushback omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Barbarian Barrel",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "BarbLogProjectile",
+    "raw_speed": 360,
+    "reconstruction_defaults": {
+      "attack_interval_ms": "0 when field absent; not a recovered engine default",
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "target": "ground when AttacksAir absent"
+    },
+    "sc_name": "BarbLog",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 18,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "BarbLog"
+      },
+      {
+        "decoded_sha256": "d8c03bcd611b76c2dfa5514431f633720fb9447abb92c89f918bdd373ec7314f",
+        "member": "assets/csv_logic/characters/barblogprojectile.toml",
+        "packaged_sha256": "607e070c52a5599532f2c35767f870fb39c0f69a07844cc5e51fcc8e092ad72a",
+        "record": "BarbLogProjectile"
+      },
+      {
+        "decoded_sha256": "d8c03bcd611b76c2dfa5514431f633720fb9447abb92c89f918bdd373ec7314f",
+        "member": "assets/csv_logic/characters/barblogprojectile.toml",
+        "packaged_sha256": "607e070c52a5599532f2c35767f870fb39c0f69a07844cc5e51fcc8e092ad72a",
+        "record": "BarbLogProjectileRolling"
+      }
+    ],
+    "speed": 4500,
+    "splash_radius": 1300,
+    "support_status": "approximate",
+    "target": "ground"
+  },
+  {
+    "art": {
+      "path": "cards/heal_spirit.png",
+      "sha256": "df77d4f9a170a2a1b953146145c4e36534ff1821e18eb1d403b8e64e9f4924d2",
+      "source": "assets/image/chr/heal_spirit_dl.png"
+    },
+    "attack_interval_ms": 300,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 43,
+    "deploy_ms": 1000,
+    "elixir": 1,
+    "flying": false,
+    "hp": 84,
+    "id": "heal_spirit",
+    "kamikaze": true,
+    "kind": "troop",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Heal Spirit",
+    "radius": 400,
+    "range": 2500,
+    "raw_record": "HealSpirit",
+    "raw_speed": 120,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Heal",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 19,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Heal"
+      },
+      {
+        "decoded_sha256": "6a1a83d899a5bee03b85fb7fb91cdbb78081bc65e9458144c29dbd9c5d2b2178",
+        "member": "assets/csv_logic/characters/healspirit.toml",
+        "packaged_sha256": "71adc1bc8e21ead64ef47be819bc95a5f1e8eaf329422f734c3f899dde9f80fd",
+        "record": "HealSpirit"
+      },
+      {
+        "decoded_sha256": "6a1a83d899a5bee03b85fb7fb91cdbb78081bc65e9458144c29dbd9c5d2b2178",
+        "member": "assets/csv_logic/characters/healspirit.toml",
+        "packaged_sha256": "71adc1bc8e21ead64ef47be819bc95a5f1e8eaf329422f734c3f899dde9f80fd",
+        "record": "HealSpiritProjectile"
+      }
+    ],
+    "speed": 1500,
+    "splash_radius": 1500,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "attack_interval_ms": 0,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "crown_tower_damage_percent_raw": -75,
+    "damage": 70,
+    "deploy_ms": 0,
+    "elixir": 2,
+    "flying": false,
+    "hp": 0,
+    "id": "giant_snowball",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted.",
+      "Attack knockback omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Giant Snowball",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "SnowballSpell",
+    "raw_speed": 800,
+    "reconstruction_defaults": {
+      "attack_interval_ms": "0 when field absent; not a recovered engine default",
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "Snowball",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 20,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "Snowball"
+      },
+      {
+        "decoded_sha256": "ce7940793b44a312e019766160cd42be115ee34daa5a654b1c51c0f1b3b79255",
+        "member": "assets/csv_logic/characters/snowballspell.toml",
+        "packaged_sha256": "5772659ded155d346d0f9314ca026e63a745f02d020db8ae5e6e8597eb0dcd95",
+        "record": "SnowballSpell"
+      }
+    ],
+    "speed": 10000,
+    "splash_radius": 2500,
+    "support_status": "approximate",
+    "target": "air_ground"
+  },
+  {
+    "art": {
+      "path": "cards/royal_delivery.png",
+      "sha256": "9415c3461d392eb0ed84899db8e9d9e83cf7b69c78ccc97fee613c9cf41642c3",
+      "source": "assets/image/chr/royal_delivery_dl.png"
+    },
+    "attack_interval_ms": 0,
+    "can_deploy_enemy_side": true,
+    "count": 1,
+    "damage": 150,
+    "deploy_ms": 0,
+    "elixir": 3,
+    "flying": false,
+    "hp": 0,
+    "id": "royal_delivery",
+    "kamikaze": false,
+    "kind": "spell",
+    "lifetime_ms": 0,
+    "limitations": [
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Royal Delivery",
+    "radius": 0,
+    "range": 0,
+    "raw_record": "RoyalDeliveryArea",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "attack_interval_ms": "0 when field absent; not a recovered engine default",
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "flying": "false when FlyingHeight absent",
+      "hp": "0 when field absent; not a recovered engine default",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "radius": "0 when field absent; not a recovered engine default",
+      "range": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified"
+    },
+    "sc_name": "RoyalDelivery",
+    "sources": [
+      {
+        "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+        "line": 21,
+        "member": "assets/csv_logic/spells_other.csv",
+        "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+        "record": "RoyalDelivery"
+      },
+      {
+        "decoded_sha256": "eca0e069ea373c92078ccc33e3930f619adaa8e950e976b284054ffe00f0d29f",
+        "member": "assets/csv_logic/characters/royaldeliveryarea.toml",
+        "packaged_sha256": "9ab6502f8047427e9e7f8d3841254f66aa8cdad2fd96c96744febcebc1dcdf89",
+        "record": "RoyalDeliveryArea"
+      },
+      {
+        "decoded_sha256": "eca0e069ea373c92078ccc33e3930f619adaa8e950e976b284054ffe00f0d29f",
+        "member": "assets/csv_logic/characters/royaldeliveryarea.toml",
+        "packaged_sha256": "9ab6502f8047427e9e7f8d3841254f66aa8cdad2fd96c96744febcebc1dcdf89",
+        "record": "RoyalDeliveryProjectile"
+      },
+      {
+        "decoded_sha256": "e006079ddc7375c4ce19db72c53eda757d99d02f30095f523895eb85057d4c7a",
+        "member": "assets/csv_logic/game_object_filters.toml",
+        "packaged_sha256": "b46dbccbd770f6fdb3f28d0d3803482adb5477c53129f7446adefc8166692b2b",
+        "record": "aeo_enemy_no_buildings"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 3000,
+    "support_status": "approximate",
+    "target": "air_ground"
+  }
+]

@@ -1,0 +1,96 @@
+[
+  {
+    "attack_interval_ms": 800,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 50,
+    "deploy_ms": 0,
+    "elixir": 0,
+    "flying": false,
+    "hp": 1400,
+    "id": "princess_tower",
+    "kamikaze": false,
+    "kind": "building",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "Princess Tower",
+    "radius": 1000,
+    "range": 7500,
+    "raw_record": "PrincessTower",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "elixir": "0 for non-playable crown towers",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sources": [
+      {
+        "decoded_sha256": "75bcfa86b454942a2e5115bb932ce87e0a6ff5cb242fcd644564771fb4aab302",
+        "member": "assets/csv_logic/characters/princesstower.toml",
+        "packaged_sha256": "b4a2273dbfb48e3ec8bc4b2f6067fdea73a28cae01fcd4060c25ddf29366ba88",
+        "record": "PrincessTower"
+      },
+      {
+        "decoded_sha256": "75bcfa86b454942a2e5115bb932ce87e0a6ff5cb242fcd644564771fb4aab302",
+        "member": "assets/csv_logic/characters/princesstower.toml",
+        "packaged_sha256": "b4a2273dbfb48e3ec8bc4b2f6067fdea73a28cae01fcd4060c25ddf29366ba88",
+        "record": "TowerPrincessProjectile"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  },
+  {
+    "attack_interval_ms": 1000,
+    "can_deploy_enemy_side": false,
+    "count": 1,
+    "damage": 50,
+    "deploy_ms": 0,
+    "elixir": 0,
+    "flying": false,
+    "hp": 2400,
+    "id": "king_tower",
+    "kamikaze": false,
+    "kind": "building",
+    "lifetime_ms": 0,
+    "limitations": [],
+    "name": "King Tower",
+    "radius": 1400,
+    "range": 7000,
+    "raw_record": "KingTower",
+    "raw_speed": null,
+    "reconstruction_defaults": {
+      "count": "1 when field absent; reconstruction default",
+      "deploy_ms": "0 when field absent; not a recovered engine default",
+      "elixir": "0 for non-playable crown towers",
+      "flying": "false when FlyingHeight absent",
+      "lifetime_ms": "0 when field absent; not a recovered engine default",
+      "speed": "raw Speed * 1000 / 80; reconstruction assumption, native timebase unverified",
+      "splash_radius": "0 when area radius absent"
+    },
+    "sources": [
+      {
+        "decoded_sha256": "f8793bad0248d55a4ece227bb5f9966d50e6ed596341f5d88a32b86560edb48a",
+        "member": "assets/csv_logic/characters/king_tower.toml",
+        "packaged_sha256": "4bd8ef5a9a322274e945b2e3dbd8b7c897f199ecde66920d32cf5b48a02a992c",
+        "record": "KingTower"
+      },
+      {
+        "decoded_sha256": "f8793bad0248d55a4ece227bb5f9966d50e6ed596341f5d88a32b86560edb48a",
+        "member": "assets/csv_logic/characters/king_tower.toml",
+        "packaged_sha256": "4bd8ef5a9a322274e945b2e3dbd8b7c897f199ecde66920d32cf5b48a02a992c",
+        "record": "KingProjectile"
+      }
+    ],
+    "speed": 0,
+    "splash_radius": 0,
+    "support_status": "supported",
+    "target": "air_ground"
+  }
+]
