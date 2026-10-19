@@ -75,13 +75,17 @@ def main():
     speed = 1.
     latest_serial = -1
     pending = []
+    recent_plays = []
+    next_play_id = 0
 
     def publish(status):
         nonlocal state
         assert frame is not None and obs is not None
         frame['elapsed_ms'] = max(0, int(obs['tick']) - base_tick) * 50
         frame.update(runtime_status=status, runtime_error=state.get('error'),
-                     controller_names=['v4.4.2', 'v4.4.2'], playback_speed=speed)
+                     controller_names=['v4.4.2', 'v4.4.2'], playback_speed=speed,
+                     hands=obs['hands'], plays=[p for p in recent_plays if int(obs['tick'])-p['tick']<=40],
+                     match_id=match_number)
         atomic_json(frame_path, frame)
         frames_log.write(json.dumps(frame, separators=(',', ':')) + '\n')
         state.update(status=status, updated_at=utc_now(), tick=obs['tick'],
@@ -92,7 +96,7 @@ def main():
         atomic_json(status_path, state)
 
     def reset():
-        nonlocal episode, obs, frame, base_tick, accepted, rejected, match_number, paused, ended, pending
+        nonlocal episode, obs, frame, base_tick, accepted, rejected, match_number, paused, ended, pending, recent_plays
         match_number += 1
         r = engine.request({'op': 'reset', 'deck_preset': 'pixel9_mortar' if a.deck == 'mortar' else 'hog26',
                             'seed': a.seed + match_number - 1, 'max_ticks': a.max_ticks})
@@ -116,6 +120,7 @@ def main():
         base_tick = int(obs['tick'])
         episode = BananaEpisode((DECKS[a.deck], DECKS[a.deck]), battle_id=f'watched-442-{match_number}')
         accepted = rejected = 0
+        recent_plays = []
         pending = [policy.act(episode, obs, side, 0., deterministic=False) for side in (0, 1)]
         paused = ended = False
         state.pop('error', None)
@@ -192,6 +197,12 @@ def main():
                 if result.get('accepted') is True:
                     accepted += 1
                     policy.record_action(episode, action, game_seconds, True)
+                    hand_card = next(row for row in obs['hands'][action.side] if int(row['slot']) == action.slot)
+                    next_play_id += 1
+                    recent_plays.append({'id':next_play_id, 'side':action.side, 'name':hand_card['name'],
+                                         'card_id':int(hand_card['card_id']), 'cost':int(hand_card['cost']),
+                                         'x':action.x, 'y':action.y, 'tick':int(obs['tick'])})
+                    recent_plays = recent_plays[-32:]
                 else:
                     rejected += 1
                 actions_log.write(json.dumps({'match': match_number, 'at': utc_now(), 'game_seconds': game_seconds,

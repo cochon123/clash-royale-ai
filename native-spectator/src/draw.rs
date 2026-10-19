@@ -1,8 +1,12 @@
 //! Read-only battle renderer. All character, arena, and decoration artwork is
 //! loaded from the original SC5 bundle; spectator-owned bars/text use a font
 //! extracted from that same bundle.
-use crate::frame::{BattleFrame, Entity};
-use clash_native_ui_viewer::{Playback, Rendered, Scene};
+use crate::{
+    animation::{self, AnimationState, KingLayerOrder, PresentationHeading},
+    frame::{BattleFrame, Entity},
+    hud::HandHud,
+};
+use clash_native_ui_viewer::{Matrix, Playback, Rendered, Scene};
 use image::{imageops, Rgba, RgbaImage};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
@@ -28,18 +32,23 @@ pub struct Painter {
     width: u32,
     height: u32,
     scenes: BTreeMap<String, Scene>,
-    exports: BTreeMap<String, BTreeSet<String>>,
     bindings: BTreeMap<String, Visual>,
-    sprite_cache: BTreeMap<(String, String, usize), Option<Rendered>>,
+    sprite_cache: BTreeMap<(String, String, usize, u64), Option<Rendered>>,
     deco_cache: BTreeMap<String, RgbaImage>,
     text_cache: BTreeMap<(String, u32, u32, u8), RgbaImage>,
     arena_field: Option<RgbaImage>,
-    hud_cache: BTreeMap<String, Option<Rendered>>,
-    hud_fit_cache: BTreeMap<String, RgbaImage>,
     field_cache: Option<RgbaImage>,
-    sprite_fit_cache: BTreeMap<(String, String, usize, u64), (RgbaImage, i64, i64)>,
+    sprite_fit_cache: BTreeMap<(String, String, usize, u64, u64, bool), (RgbaImage, i64, i64)>,
     font_scene: String,
     pub unresolved_rows: BTreeSet<String>,
+    assets: Value,
+    hand_hud: HandHud,
+    headings: BTreeMap<u64, PresentationHeading>,
+    previous: BTreeMap<u64, Entity>,
+    attack_cues: BTreeMap<u64, u32>,
+    king_activations: BTreeMap<u64, u32>,
+    state_clocks: BTreeMap<u64, (AnimationState, u32)>,
+    last_match: Option<(u64, u32)>,
 }
 
 impl Painter {
@@ -186,16 +195,16 @@ impl Painter {
                 .map_err(|e| e.to_string())?
                 .ok_or("training_area_bg export rendered no image")?;
             let crop_x = (-270.0 - rendered.x).round() as i64;
-            let crop_y = (0.0 - rendered.y).round() as i64;
+            let crop_y = (-60.0 - rendered.y).round() as i64;
             if crop_x < 0
                 || crop_y < 0
                 || crop_x + 540 > rendered.image.width() as i64
-                || crop_y + 768 > rendered.image.height() as i64
+                || crop_y + 828 > rendered.image.height() as i64
             {
                 return Err(format!("calibrated arena crop is outside original background bounds: origin ({}, {}), image {}x{}", rendered.x, rendered.y, rendered.image.width(), rendered.image.height()));
             }
             Some(
-                imageops::crop_imm(&rendered.image, crop_x as u32, crop_y as u32, 540, 768)
+                imageops::crop_imm(&rendered.image, crop_x as u32, crop_y as u32, 540, 828)
                     .to_image(),
             )
         } else {
@@ -206,24 +215,30 @@ impl Painter {
             width: width.max(1),
             height: height.max(1),
             scenes,
-            exports,
             bindings,
             sprite_cache: BTreeMap::new(),
             deco_cache: BTreeMap::new(),
             text_cache: BTreeMap::new(),
             arena_field,
-            hud_cache: BTreeMap::new(),
-            hud_fit_cache: BTreeMap::new(),
             field_cache: None,
             sprite_fit_cache: BTreeMap::new(),
             font_scene,
             unresolved_rows: BTreeSet::new(),
+            assets: manifest,
+            hand_hud: HandHud::default(),
+            headings: BTreeMap::new(),
+            previous: BTreeMap::new(),
+            attack_cues: BTreeMap::new(),
+            king_activations: BTreeMap::new(),
+            state_clocks: BTreeMap::new(),
+            last_match: None,
         })
     }
 
     pub fn render(&mut self, frame: &BattleFrame) -> Result<RgbaImage> {
         let mut out = RgbaImage::from_pixel(self.width, self.height, Rgba([19, 27, 31, 255]));
-        let hud = ((self.width as f32 * 308.0 / 965.0).round() as u32).min(self.height / 3);
+        self.observe_visual_events(frame);
+        let hud = ((self.width as f32 * 0.235).round() as u32).min(self.height / 3);
         let field_h = self.height.saturating_sub(hud * 2).max(1);
         let field_w = ((field_h as f32 * 540.0 / 768.0).round() as u32)
             .min(self.width.saturating_sub(24).max(1));
@@ -256,7 +271,8 @@ impl Painter {
         for entity in entities {
             let px = field_x as f64 + ((entity.x as f64 / world_w) * field_w as f64);
             // Native side 0 is blue and uses the lower half of the board.
-            let py = field_y as f64 + ((1.0 - entity.y as f64 / world_h) * field_h as f64);
+            let py = field_y as f64
+                + (((1.0 - entity.y as f64 / world_h) * 768. + 60.) / 828. * field_h as f64);
             self.draw_entity(
                 &mut out,
                 frame,
@@ -266,7 +282,39 @@ impl Painter {
                 field_w as f64 / 540.0,
             )?;
         }
-        self.draw_hud(&mut out, frame, field_x, field_y, field_w, field_h)?;
+        self.hand_hud
+            .render(&mut out, &self.root, &self.scenes, &self.assets, frame, hud)?;
+        let secs = frame.elapsed_ms / 1000;
+        self.text(
+            &mut out,
+            &format!("{}:{:02}", secs / 60, secs % 60),
+            field_x + field_w - 34,
+            field_y + 6,
+            15.,
+            WHITE,
+            1,
+        )?;
+        if frame.terminated {
+            let msg = match frame.winner_side {
+                Some(0) => "BLUE WINS",
+                Some(1) => "RED WINS",
+                _ => "DRAW",
+            };
+            self.text(
+                &mut out,
+                msg,
+                self.width / 2,
+                field_y + field_h / 2,
+                26.,
+                WHITE,
+                1,
+            )?;
+        }
+        self.previous = frame
+            .entities
+            .iter()
+            .map(|e| (e.address, e.clone()))
+            .collect();
         Ok(out)
     }
 
@@ -312,7 +360,7 @@ impl Painter {
                     continue;
                 };
                 let px = x as f64 + px / 18000.0 * w as f64;
-                let py = y as f64 + (1.0 - py / 32000.0) * h as f64;
+                let py = y as f64 + ((1.0 - py / 32000.) * 768. + 60.) / 828. * h as f64;
                 if px < x as f64 || px > (x + w) as f64 || py < y as f64 || py > (y + h) as f64 {
                     continue;
                 }
@@ -355,6 +403,209 @@ impl Painter {
         Ok(())
     }
 
+    fn row_meta(&self, row: &str) -> Option<&Value> {
+        self.assets["scene"]["observed_entity_bindings"]
+            .as_array()?
+            .iter()
+            .find(|v| v["native_row"] == row)
+    }
+    fn is_projectile(&self, row: &str) -> bool {
+        self.row_meta(row)
+            .and_then(|v| v["source_row"].as_str())
+            .is_some_and(|v| v.starts_with("PROJECTILE."))
+            || self.assets["scene"]["projectile_bindings"]
+                .as_array()
+                .is_some_and(|v| v.iter().any(|v| v["native_row"] == row))
+    }
+    fn observe_visual_events(&mut self, frame: &BattleFrame) {
+        if self.last_match == Some((frame.match_id, frame.tick)) {
+            return;
+        }
+        if self
+            .last_match
+            .is_some_and(|(id, tick)| id != frame.match_id || tick > frame.tick)
+        {
+            self.headings.clear();
+            self.previous.clear();
+            self.attack_cues.clear();
+            self.king_activations.clear();
+            self.state_clocks.clear();
+        }
+        self.last_match = Some((frame.match_id, frame.tick));
+        // The original tower logic activates on King damage or an allied
+        // Princess tower's destruction. Trigger its source movie from those
+        // observations; this is not a recovered native activation flag.
+        let fallen_sides: BTreeSet<i32> = self
+            .previous
+            .values()
+            .filter(|e| {
+                e.row == "PrincessTower"
+                    && !frame.entities.iter().any(|now| now.address == e.address)
+            })
+            .map(|e| e.side)
+            .chain(
+                frame
+                    .entities
+                    .iter()
+                    .filter(|e| e.row == "PrincessTower" && e.hp == 0)
+                    .map(|e| e.side),
+            )
+            .collect();
+        for king in frame
+            .entities
+            .iter()
+            .filter(|e| e.row == "KingTower" && e.max_hp > 0)
+        {
+            if king.hp < king.max_hp || fallen_sides.contains(&king.side) {
+                self.king_activations
+                    .entry(king.address)
+                    .or_insert(frame.tick);
+            }
+        }
+        // These are presentation cues from actual native observations. They
+        // are never written back as engine attack flags or simulated damage.
+        for projectile in frame
+            .entities
+            .iter()
+            .filter(|e| self.is_projectile(&e.row) && !self.previous.contains_key(&e.address))
+            .collect::<Vec<_>>()
+        {
+            let shooter = frame
+                .entities
+                .iter()
+                .filter(|e| {
+                    e.side == projectile.side && e.max_hp > 0 && e.native_focus_entity.is_some()
+                })
+                .filter_map(|e| {
+                    let dx = e.x as i64 - projectile.x as i64;
+                    let dy = e.y as i64 - projectile.y as i64;
+                    let d = dx * dx + dy * dy;
+                    (d < 2500 * 2500).then_some((d, e.address))
+                })
+                .min();
+            if let Some((_, address)) = shooter {
+                self.attack_cues.insert(address, frame.tick);
+            }
+        }
+        for target in &frame.entities {
+            if !self
+                .previous
+                .get(&target.address)
+                .is_some_and(|old| old.hp > target.hp && target.hp >= 0)
+            {
+                continue;
+            }
+            for actor in &frame.entities {
+                let dx = actor.x as i64 - target.x as i64;
+                let dy = actor.y as i64 - target.y as i64;
+                if actor.side != target.side
+                    && !actor.moving
+                    && actor.native_focus_entity == Some(target.address)
+                    && dx * dx + dy * dy < 2500 * 2500
+                {
+                    self.attack_cues.insert(actor.address, frame.tick);
+                }
+            }
+        }
+        self.attack_cues
+            .retain(|_, t| frame.tick.saturating_sub(*t) < 60);
+        self.headings
+            .retain(|id, _| frame.entities.iter().any(|e| e.address == *id));
+        self.state_clocks
+            .retain(|id, _| frame.entities.iter().any(|e| e.address == *id));
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn layer(
+        &mut self,
+        out: &mut RgbaImage,
+        doc: &str,
+        export: &str,
+        playback: Playback,
+        frame_index: usize,
+        x: f64,
+        y: f64,
+        scale: f64,
+        flip: bool,
+    ) -> Result<f64> {
+        use std::hash::{Hash, Hasher};
+        let mut hasher = std::collections::hash_map::DefaultHasher::new();
+        playback.object_frames.hash(&mut hasher);
+        playback.hidden_objects.hash(&mut hasher);
+        playback.label.hash(&mut hasher);
+        playback
+            .root_transform
+            .map(|m| {
+                [
+                    m.a.to_bits(),
+                    m.b.to_bits(),
+                    m.c.to_bits(),
+                    m.d.to_bits(),
+                    m.tx.to_bits(),
+                    m.ty.to_bits(),
+                ]
+            })
+            .hash(&mut hasher);
+        playback
+            .root_color
+            .map(|c| {
+                [
+                    c.r_mul, c.g_mul, c.b_mul, c.alpha, c.r_add, c.g_add, c.b_add,
+                ]
+            })
+            .hash(&mut hasher);
+        let variant = hasher.finish();
+        let key = (doc.to_owned(), export.to_owned(), frame_index, variant);
+        if !self.sprite_cache.contains_key(&key) {
+            let scene = self
+                .scenes
+                .get(doc)
+                .ok_or_else(|| format!("original scene missing {doc}"))?;
+            let rendered = if let Some(id) = export.strip_prefix('#') {
+                scene.render_id(id.parse().map_err(|_| "object id")?, &playback)
+            } else {
+                scene.render(export, &playback)
+            }
+            .map_err(|e| e.to_string())?;
+            if self.sprite_cache.len() > 900 {
+                self.sprite_cache.clear();
+                self.sprite_fit_cache.clear();
+            }
+            self.sprite_cache.insert(key.clone(), rendered);
+        }
+        let fit = (
+            doc.to_owned(),
+            export.to_owned(),
+            frame_index,
+            variant,
+            scale.to_bits(),
+            flip,
+        );
+        if !self.sprite_fit_cache.contains_key(&fit) {
+            if let Some(Some(sprite)) = self.sprite_cache.get(&key) {
+                let sw = (sprite.image.width() as f64 * scale).round().max(1.) as u32;
+                let sh = (sprite.image.height() as f64 * scale).round().max(1.) as u32;
+                let mut image =
+                    imageops::resize(&sprite.image, sw, sh, imageops::FilterType::Triangle);
+                let fx = if flip {
+                    -(sprite.x + sprite.image.width() as f64) * scale
+                } else {
+                    sprite.x * scale
+                };
+                if flip {
+                    image = imageops::flip_horizontal(&image);
+                }
+                self.sprite_fit_cache.insert(
+                    fit.clone(),
+                    (image, fx.round() as i64, (sprite.y * scale).round() as i64),
+                );
+            }
+        }
+        if let Some((image, fx, fy)) = self.sprite_fit_cache.get(&fit) {
+            imageops::overlay(out, image, x.round() as i64 + *fx, y.round() as i64 + *fy);
+            return Ok(y + *fy as f64);
+        }
+        Ok(y)
+    }
     fn draw_entity(
         &mut self,
         out: &mut RgbaImage,
@@ -366,210 +617,427 @@ impl Painter {
     ) -> Result<()> {
         let Some(visual) = self.bindings.get(&entity.row).cloned() else {
             self.unresolved_rows.insert(entity.row.clone());
-            let team = if entity.side == 0 { BLUE } else { RED };
-            fill_circle(out, x, y, 9, team);
-            return Ok(());
-        };
-        let action = if entity.attacking {
-            "attack"
-        } else if entity.moving {
-            "run"
-        } else {
-            "idle"
-        };
-        let is_red = entity.side != 0;
-        let exports = self
-            .exports
-            .get(&visual.document)
-            .cloned()
-            .unwrap_or_default();
-        let chosen_prefix = if is_red {
-            visual.red_prefix.as_deref().unwrap_or(&visual.prefix)
-        } else {
-            &visual.prefix
-        };
-        let matches = |name: &&String| {
-            name.starts_with(chosen_prefix)
-                && name.to_lowercase().contains(action)
-                && (if is_red {
-                    name.to_lowercase().contains("enemy") || name.to_lowercase().contains("red")
-                } else {
-                    name.to_lowercase().contains("blue") || !name.to_lowercase().contains("enemy")
-                })
-        };
-        let export = exports
-            .iter()
-            .find(matches)
-            .or_else(|| exports.iter().find(|name| name.starts_with(chosen_prefix)))
-            .cloned();
-        let Some(export) = export else {
-            self.unresolved_rows.insert(entity.row.clone());
-            return Ok(());
-        };
-        let scene = self
-            .scenes
-            .get(&visual.document)
-            .ok_or("entity scene missing")?;
-        let fps = scene.framerate(&export).map_err(|e| e.to_string())? as u64;
-        let frame_count = scene
-            .frame_count(&export)
-            .map_err(|e| e.to_string())?
-            .max(1) as u64;
-        let frame_index = ((frame.elapsed_ms * fps / 1000) % frame_count) as usize;
-        let key = (visual.document.clone(), export.clone(), frame_index);
-        if !self.sprite_cache.contains_key(&key) {
-            let rendered = scene
-                .render(
-                    &export,
-                    &Playback {
-                        frame: Some(frame_index),
-                        time_seconds: Some(frame.elapsed_ms as f64 / 1000.0),
-                        ..Playback::default()
-                    },
-                )
-                .map_err(|e| e.to_string())?;
-            self.sprite_cache.insert(key.clone(), rendered);
-        }
-        let scale = field_scale * visual.scale_percent / 100.0;
-        let fit_key = (
-            visual.document.clone(),
-            export.clone(),
-            frame_index,
-            scale.to_bits(),
-        );
-        if !self.sprite_fit_cache.contains_key(&fit_key) {
-            if let Some(Some(sprite)) = self.sprite_cache.get(&key) {
-                let sw = (sprite.image.width() as f64 * scale).round().max(1.0) as u32;
-                let sh = (sprite.image.height() as f64 * scale).round().max(1.0) as u32;
-                let img = imageops::resize(&sprite.image, sw, sh, imageops::FilterType::Triangle);
-                let fx = if sprite.x.is_finite() {
-                    sprite.x * scale
-                } else {
-                    0.0
-                };
-                let fy = if sprite.y.is_finite() {
-                    sprite.y * scale
-                } else {
-                    0.0
-                };
-                self.sprite_fit_cache
-                    .insert(fit_key.clone(), (img, fx.round() as i64, fy.round() as i64));
-            }
-        }
-        if let Some((img, fx, fy)) = self.sprite_fit_cache.get(&fit_key) {
-            let sh = img.height();
-            imageops::overlay(out, img, x as i64 + *fx, y as i64 + *fy);
-            let color = if entity.side == 0 { BLUE } else { RED };
-            let bar_w = 36i32;
-            let bar_y = y - sh as i32 / 2 - 8;
-            fill_rect(out, x - bar_w / 2, bar_y, bar_w as i32, 5, DARK);
-            let ratio = if entity.max_hp > 0 {
-                (entity.hp as f32 / entity.max_hp as f32).clamp(0., 1.)
-            } else {
-                0.
-            };
-            fill_rect(
-                out,
-                x - bar_w / 2,
-                bar_y,
-                (bar_w as f32 * ratio).round() as i32,
-                5,
-                color,
-            );
-        }
-        Ok(())
-    }
-
-    fn draw_hud(
-        &mut self,
-        out: &mut RgbaImage,
-        frame: &BattleFrame,
-        x: u32,
-        y: u32,
-        _w: u32,
-        h: u32,
-    ) -> Result<()> {
-        for (export, team_label, clan_label, top) in [
-            ("spectate_hud_1v1_enemy", "RED PLAYER", "RIVAL", true),
-            ("spectate_hud_1v1_player", "BLUE PLAYER", "YOU", false),
-        ] {
-            if !self.hud_cache.contains_key(export) {
-                let scene = self
-                    .scenes
-                    .get("ui_spectate_hud")
-                    .ok_or("original spectator HUD SC5 document missing")?;
-                let mut text_values = BTreeMap::new();
-                text_values.insert(38, team_label.to_owned());
-                text_values.insert(39, clan_label.to_owned());
-                let rendered = scene
-                    .render(
-                        export,
-                        &Playback {
-                            text_values,
-                            hidden_objects: BTreeSet::from([11]),
-                            render_text: true,
-                            ..Playback::default()
-                        },
-                    )
-                    .map_err(|e| e.to_string())?;
-                self.hud_cache.insert(export.to_owned(), rendered);
-            }
-            if !self.hud_fit_cache.contains_key(export) {
-                if let Some(Some(hud)) = self.hud_cache.get(export) {
-                    let target_w = self.width;
-                    let scale = target_w as f64 / hud.image.width().max(1) as f64;
-                    let target_h = (hud.image.height() as f64 * scale).round().max(1.0) as u32;
-                    self.hud_fit_cache.insert(
-                        export.to_owned(),
-                        imageops::resize(
-                            &hud.image,
-                            target_w,
-                            target_h,
-                            imageops::FilterType::Lanczos3,
-                        ),
-                    );
-                }
-            }
-            if let Some(fitted) = self.hud_fit_cache.get(export) {
-                let target_h = fitted.height();
-                imageops::overlay(
-                    out,
-                    fitted,
-                    0,
-                    if top {
-                        0
-                    } else {
-                        self.height as i64 - target_h as i64
-                    },
-                );
-                let value_y = if top {
-                    (target_h as f64 * 0.54) as u32
-                } else {
-                    self.height.saturating_sub(target_h) + (target_h as f64 * 0.54) as u32
-                };
+            if entity.max_hp > 0 {
+                fill_circle(out, x, y, 5, if entity.side == 0 { BLUE } else { RED });
                 self.text(
                     out,
-                    &format!("ELIXIR {:.1}", frame.elixir[if top { 1 } else { 0 }]),
-                    self.width / 2,
-                    value_y,
-                    14.0,
+                    &entity.row,
+                    x.max(0) as u32,
+                    y.max(0) as u32,
+                    9.,
+                    WHITE,
+                    1,
+                )?;
+            }
+            return Ok(());
+        };
+        let projectile = self.is_projectile(&entity.row);
+        let old = self.previous.get(&entity.address);
+        let motion_dz = old.map(|p| i64::from(entity.z) - i64::from(p.z));
+        let motion = (
+            entity
+                .motion_dx
+                .unwrap_or_else(|| old.map_or(0, |p| entity.x as i64 - p.x as i64)),
+            entity
+                .motion_dy
+                .unwrap_or_else(|| old.map_or(0, |p| entity.y as i64 - p.y as i64)),
+        );
+        let target = entity
+            .native_focus_entity
+            .and_then(|p| frame.entities.iter().find(|e| e.address == p));
+        let vector = if let Some(target) = target {
+            if !entity.moving {
+                (
+                    target.x as i64 - entity.x as i64,
+                    target.y as i64 - entity.y as i64,
+                )
+            } else {
+                motion
+            }
+        } else {
+            motion
+        };
+        let heading = animation::direction_for_motion(
+            vector.0,
+            vector.1,
+            entity.side,
+            self.headings.get(&entity.address).copied(),
+        );
+        self.headings.insert(entity.address, heading);
+        let cue = self.attack_cues.get(&entity.address).copied();
+        let visual_attack =
+            entity.attacking || cue.is_some_and(|t| frame.tick.saturating_sub(t) < 16);
+        let state = if visual_attack {
+            AnimationState::Attacking
+        } else if entity.moving {
+            AnimationState::Moving
+        } else {
+            AnimationState::Idle
+        };
+        let clock = self
+            .state_clocks
+            .entry(entity.address)
+            .or_insert((state, frame.tick));
+        if clock.0 != state {
+            *clock = (state, frame.tick);
+        }
+        let phase = frame
+            .tick
+            .saturating_sub(if state == AnimationState::Attacking {
+                cue.unwrap_or(clock.1)
+            } else {
+                clock.1
+            }) as u64
+            * 50;
+        let age = frame
+            .tick
+            .saturating_sub(entity.first_seen_tick.unwrap_or(clock.1)) as u64
+            * 50;
+        let scale = field_scale * visual.scale_percent / 100.;
+        let red = entity.side != 0;
+        // Source z is actual native elevation. Projection scale is the same
+        // asset-calibrated camera convention as the arena plane.
+        let py = y as f64 - entity.z as f64 * 0.03 * field_scale;
+        let mut sprite_top = py - 40. * scale;
+        if entity.hp == 0
+            && entity.max_hp > 0
+            && matches!(entity.row.as_str(), "KingTower" | "PrincessTower")
+        {
+            let export = if entity.row == "KingTower" {
+                "kingtower_destroyed"
+            } else {
+                "princesstower_destroyed"
+            };
+            self.layer(
+                out,
+                "building_tower",
+                export,
+                Playback::default(),
+                0,
+                x as f64,
+                py,
+                scale,
+                false,
+            )?;
+            return Ok(());
+        }
+        if entity.row == "KingTower" {
+            let layers = animation::king_tower_layers_with_activation(
+                self.scenes.get("building_tower").ok_or("tower scene")?,
+                self.scenes.get("chr_king").ok_or("king scene")?,
+                red,
+                heading,
+                phase,
+                self.king_activations
+                    .get(&entity.address)
+                    .map(|tick| frame.tick.saturating_sub(*tick) as u64 * 50),
+            )?;
+            let root_frame = layers.root_playback.frame.unwrap_or(0);
+            let king_frame = layers.king_playback.frame.unwrap_or(0);
+            sprite_top = self.layer(
+                out,
+                "building_tower",
+                layers.root_export,
+                layers.root_playback,
+                root_frame,
+                x as f64,
+                py,
+                scale,
+                false,
+            )?;
+            let turret_frame = layers.turret_playback.frame.unwrap_or(0);
+            match layers.order {
+                KingLayerOrder::TurretThenKing => {
+                    self.layer(
+                        out,
+                        "building_tower",
+                        &format!("#{}", layers.turret_id),
+                        layers.turret_playback,
+                        turret_frame,
+                        x as f64 + layers.turret_offset[0] * scale,
+                        py + layers.turret_offset[1] * scale,
+                        scale,
+                        layers.turret_flip_horizontal,
+                    )?;
+                    self.layer(
+                        out,
+                        "chr_king",
+                        layers.king_export,
+                        layers.king_playback,
+                        king_frame,
+                        x as f64,
+                        py,
+                        scale,
+                        false,
+                    )?;
+                }
+                KingLayerOrder::KingThenTurret => {
+                    self.layer(
+                        out,
+                        "chr_king",
+                        layers.king_export,
+                        layers.king_playback,
+                        king_frame,
+                        x as f64,
+                        py,
+                        scale,
+                        false,
+                    )?;
+                    self.layer(
+                        out,
+                        "building_tower",
+                        &format!("#{}", layers.turret_id),
+                        layers.turret_playback,
+                        turret_frame,
+                        x as f64 + layers.turret_offset[0] * scale,
+                        py + layers.turret_offset[1] * scale,
+                        scale,
+                        layers.turret_flip_horizontal,
+                    )?;
+                }
+            }
+        } else if entity.row == "PrincessTower" {
+            let base = if red {
+                "StarTower_base_red"
+            } else {
+                "StarTower_base_blue"
+            };
+            let top = if red {
+                "StarTower_top_red"
+            } else {
+                "StarTower_top_blue"
+            };
+            sprite_top = self.layer(
+                out,
+                "building_tower",
+                base,
+                Playback::default(),
+                0,
+                x as f64,
+                py,
+                scale,
+                false,
+            )?;
+            self.layer(
+                out,
+                "building_tower",
+                top,
+                Playback::default(),
+                0,
+                x as f64,
+                py,
+                scale,
+                false,
+            )?;
+            let scene = self
+                .scenes
+                .get("chr_princess")
+                .ok_or("attached TowerPrincess scene missing")?;
+            if let Some(mut selected) = animation::select_for_heading(
+                scene,
+                "princess_tower",
+                Some("princess_tower_red"),
+                red,
+                state,
+                heading,
+                phase,
+            )? {
+                Self::align_attack_frame(scene, &mut selected, state, phase);
+                let top_y = py - 2200. * 0.03 * field_scale;
+                let sy = self.layer(
+                    out,
+                    "chr_princess",
+                    &selected.export,
+                    selected.playback,
+                    selected.frame_index,
+                    x as f64,
+                    top_y,
+                    field_scale,
+                    selected.flip_horizontal,
+                )?;
+                sprite_top = sprite_top.min(sy);
+            }
+        } else {
+            let scene = self
+                .scenes
+                .get(&visual.document)
+                .ok_or("entity scene missing")?;
+            let selection = if projectile {
+                // Original projectile art, with separate treatment for view
+                // banks and timed clips. The original client view accessor is
+                // unrecovered; in-plane flight orientation is presentation.
+                let export = if red {
+                    visual.red_prefix.as_deref().unwrap_or(&visual.prefix)
+                } else {
+                    &visual.prefix
+                };
+                let empty = serde_json::Map::new();
+                let fields = self
+                    .row_meta(&entity.row)
+                    .and_then(|v| v["source_fields"].as_object())
+                    .unwrap_or(&empty);
+                let mode = crate::projectile::mode_for_source(fields, export);
+                let flight = if motion == (0, 0) {
+                    (0, if red { -1 } else { 1 })
+                } else {
+                    motion
+                };
+                let mut presentation = crate::projectile::select_projectile(
+                    scene, export, mode, flight.0, flight.1, age, motion_dz,
+                )?;
+                let angle = presentation.rotation_radians;
+                if angle.abs() > 1e-8 {
+                    presentation.selection.playback.root_transform = Some(Matrix {
+                        a: angle.cos(),
+                        b: -angle.sin(),
+                        c: angle.sin(),
+                        d: angle.cos(),
+                        tx: 0.,
+                        ty: 0.,
+                    });
+                }
+                Some(presentation.selection)
+            } else {
+                animation::select_for_heading(
+                    scene,
+                    &visual.prefix,
+                    visual.red_prefix.as_deref(),
+                    red,
+                    state,
+                    heading,
+                    phase,
+                )?
+            };
+            if let Some(mut selected) = selection {
+                Self::align_attack_frame(scene, &mut selected, state, phase);
+                if !projectile {
+                    self.apply_deploy_filter(
+                        &entity.row,
+                        entity.first_seen_tick.map(|_| age),
+                        &mut selected.playback,
+                    );
+                }
+                sprite_top = self.layer(
+                    out,
+                    &visual.document,
+                    &selected.export,
+                    selected.playback,
+                    selected.frame_index,
+                    x as f64,
+                    py,
+                    scale,
+                    selected.flip_horizontal,
+                )?;
+            } else {
+                self.unresolved_rows.insert(entity.row.clone());
+            }
+        }
+        if entity.max_hp > 0 {
+            let width = if matches!(entity.row.as_str(), "KingTower" | "PrincessTower") {
+                48.
+            } else {
+                32.
+            };
+            let w = (width * field_scale).round().max(20.) as i32;
+            let by = (sprite_top - 9. * field_scale).round() as i32;
+            fill_rect(out, x - w / 2 - 1, by - 1, w + 2, 6, DARK);
+            fill_rect(
+                out,
+                x - w / 2,
+                by,
+                (w as f64 * entity.hp.max(0) as f64 / entity.max_hp as f64).round() as i32,
+                4,
+                if red { RED } else { BLUE },
+            );
+            if matches!(entity.row.as_str(), "KingTower" | "PrincessTower") {
+                self.text(
+                    out,
+                    &entity.hp.to_string(),
+                    x.max(0) as u32,
+                    (by - 15).max(0) as u32,
+                    12. * field_scale as f32,
                     WHITE,
                     1,
                 )?;
             }
         }
-        let secs = frame.elapsed_ms / 1000;
-        let title = format!("{}:{:02}", secs / 60, secs % 60);
-        self.text(out, &title, x / 2, y + 8, 19., WHITE, 1)?;
-        if frame.terminated {
-            let msg = match frame.winner_side {
-                Some(0) => "BLUE WINS",
-                Some(_) => "RED WINS",
-                None => "BATTLE ENDED",
-            };
-            self.text(out, msg, self.width / 2, y + h - 28, 20., WHITE, 1)?;
-        }
         Ok(())
+    }
+    fn apply_deploy_filter(&self, row: &str, age: Option<u64>, playback: &mut Playback) {
+        let Some(age) = age else {
+            return;
+        };
+        let Some(export) = self
+            .row_meta(row)
+            .and_then(|v| v["source_fields"]["DeployBaseAnimExportName"].as_str())
+        else {
+            return;
+        };
+        let Some(scene) = self.scenes.get("effects") else {
+            return;
+        };
+        let Some(movie) = scene
+            .document
+            .exports
+            .get(export)
+            .and_then(|id| scene.document.movies.get(id))
+        else {
+            return;
+        };
+        let index = (age * movie.framerate as u64 / 1000) as usize;
+        if index >= movie.frame_element_counts.len() || movie.frame_element_counts[index] != 1 {
+            return;
+        }
+        let offset = movie.frame_elements_offset as usize
+            + movie.frame_element_counts[..index]
+                .iter()
+                .map(|v| *v as usize * 3)
+                .sum::<usize>();
+        let Some(elements) = scene.document.frame_elements.get(offset..offset + 3) else {
+            return;
+        };
+        if elements[1] != u16::MAX {
+            playback.root_transform = scene
+                .document
+                .matrix_banks
+                .get(movie.matrix_bank_index)
+                .and_then(|bank| bank.get(elements[1] as usize))
+                .copied();
+        }
+        if elements[2] != u16::MAX {
+            playback.root_color = scene
+                .document
+                .color_banks
+                .get(movie.matrix_bank_index)
+                .and_then(|bank| bank.get(elements[2] as usize))
+                .copied();
+        }
+    }
+    fn align_attack_frame(
+        scene: &Scene,
+        selection: &mut animation::PlaybackSelection,
+        state: AnimationState,
+        phase: u64,
+    ) {
+        if state != AnimationState::Attacking {
+            return;
+        }
+        let Some(movie) = scene
+            .document
+            .exports
+            .get(&selection.export)
+            .and_then(|id| scene.document.movies.get(id))
+        else {
+            return;
+        };
+        if let Some(action) = movie.frame_labels.iter().position(|l| l == "action_frame") {
+            // Native projectile birth/target HP loss is the observed impact.
+            // Align it to the source authored action frame, then play recovery.
+            let elapsed = (phase * movie.framerate as u64 / 1000) as usize;
+            let index = (action + elapsed).min(movie.frame_element_counts.len().saturating_sub(1));
+            selection.frame_index = index;
+            selection.playback.frame = Some(index);
+        }
     }
 
     fn text(
@@ -655,7 +1123,31 @@ mod tests {
             max_hp: 3000,
             moving: false,
             attacking: false,
+            ..Entity::default()
         }
+    }
+
+    #[test]
+    fn original_deploy_filter_ends_instead_of_repeating() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../analysis/native-spectator");
+        let painter = Painter::load(&root, 540, 900).expect("source bundle");
+        let mut start = Playback::default();
+        painter.apply_deploy_filter("Knight", Some(0), &mut start);
+        let transform = start
+            .root_transform
+            .expect("Knight source deploy transform");
+        assert!(
+            transform.ty < -60.0,
+            "authored deployment begins above the board"
+        );
+        assert!(start.root_color.expect("source deploy color").alpha < 255);
+        let mut done = Playback::default();
+        painter.apply_deploy_filter("Knight", Some(600), &mut done);
+        assert!(done.root_transform.is_none());
+        assert!(done.root_color.is_none());
+        let mut unknown_age = Playback::default();
+        painter.apply_deploy_filter("Knight", None, &mut unknown_age);
+        assert!(unknown_age.root_transform.is_none());
     }
 
     #[test]
@@ -677,6 +1169,10 @@ mod tests {
                 tower(5, "PrincessTower", 1, 3500, 25500),
                 tower(6, "PrincessTower", 1, 14500, 25500),
             ],
+            hands: Default::default(),
+            controller_names: Default::default(),
+            plays: Vec::new(),
+            match_id: 0,
         };
         let mut frame = frame;
         let mut image = painter.render(&frame).expect("render initial tower frame");

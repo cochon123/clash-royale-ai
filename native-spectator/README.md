@@ -42,6 +42,24 @@ Space pauses, Right advances one tick, R restarts, +/- changes speed, S saves
 thread; drawing can skip old snapshots without changing game updates.
 The default window is 540×900. Use `--width` / `--height` to change it.
 
+The watched-policy view shows both actual four-card hands, original card
+portraits and elixir icons, native costs, affordability and live elixir.
+Characters use the original team variants and directional walk/idle/attack
+clips. Towers include the recovered King, cannon and attached Princess layers.
+Deployment uses the original scale, translation and color filter. Projectile
+view banks are selected separately from timed animations.
+
+Render a captured live frame without opening a window:
+
+```sh
+native-spectator/target/debug/clash-native-spectator \
+  --follow runs/v442-visual-capture/frames.jsonl --render runs/watch-preview.png
+```
+
+JSONL playback processes the preceding frames so movement, impact cues and
+animation clocks have their observed history. A single JSON snapshot is also
+supported, with less presentation history.
+
 The debug profile deliberately compiles the engine dependency at optimization
 level 3. The rest of the viewer uses level 1, avoiding another expensive build
 of the generated engine during development.
@@ -63,5 +81,8 @@ the original UI extraction setup. See [source bindings and verification](../docs
 
 The camera mapping and HUD layout are presentation approximations calibrated
 against original assets. Combat and positions come from original game routines.
-Original client camera behavior, attack-state selection, all effects and native
-UI layout parity remain unfinished. Missing visuals appear as explicit markers.
+Facing is derived from native motion and verified focus targets. Attack and
+King activation visuals use observed native damage/projectile events; the
+original client animation-state stream has not been recovered. Camera behavior,
+particle effects and exact native UI layout remain unfinished. Missing healthy
+unit visuals appear as explicit markers.

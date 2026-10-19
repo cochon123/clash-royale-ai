@@ -1495,6 +1495,7 @@ pub struct NativeSession {
     presentation_start_tick: u32,
     presentation_names: BTreeMap<u64, String>,
     presentation_positions: BTreeMap<u64, (i32, i32)>,
+    presentation_first_seen_ticks: BTreeMap<u64, u32>,
 }
 
 impl NativeSession {
@@ -1773,6 +1774,7 @@ impl NativeSession {
                     presentation_start_tick,
                     presentation_names: BTreeMap::new(),
                     presentation_positions: BTreeMap::new(),
+                    presentation_first_seen_ticks: BTreeMap::new(),
                 })
             }
             Err(error) => {
@@ -2002,6 +2004,7 @@ impl NativeSession {
         self.presentation_start_tick = read_mem_u32(&self.api, self.uc, self.world + 0x60)?;
         self.presentation_names.clear();
         self.presentation_positions.clear();
+        self.presentation_first_seen_ticks.clear();
 
         let mut actual_decks = Vec::new();
         for side in 0..2u64 {
@@ -2073,21 +2076,35 @@ impl NativeSession {
     pub fn presentation_snapshot(&mut self) -> Result<Value, String> {
         let world = self.world;
         let battle = self.battle;
+        let tick = read_mem_u32(&self.api, self.uc, world + 0x60)?;
         let manager = read_mem_u64(&self.api, self.uc, world + 0x40)?;
         let count = read_mem_i32(&self.api, self.uc, manager + 0x14)?;
         if !(0..=8192).contains(&count) {
             return Err(format!("invalid native entity count {count}"));
         }
         let array = read_mem_u64(&self.api, self.uc, manager + 8)?;
+        let entity_addresses = (0..count as u64)
+            .map(|index| read_mem_u64(&self.api, self.uc, array + index * 8))
+            .collect::<Result<Vec<_>, _>>()?;
+        // Original f8c9d8 passes each entity's second word (entity+8) as an
+        // integer identity when removing it; fc7e20 stores that same word in
+        // the candidate-target ID vector.
+        let entity_ids = entity_addresses
+            .iter()
+            .map(|address| Ok((*address, read_mem_i32(&self.api, self.uc, address + 8)?)))
+            .collect::<Result<BTreeMap<_, _>, String>>()?;
         let mut entities = Vec::with_capacity(count as usize);
         let mut positions = BTreeMap::new();
-        for index in 0..count as u64 {
-            let address = read_mem_u64(&self.api, self.uc, array + index * 8)?;
+        for address in entity_addresses {
             let row = read_mem_u64(&self.api, self.uc, address + 0x48)?;
             if !self.presentation_names.contains_key(&row) {
                 let name = self.native_string(row + 0x28)?;
                 self.presentation_names.insert(row, name);
             }
+            let first_seen_tick = *self
+                .presentation_first_seen_ticks
+                .entry(address)
+                .or_insert(tick);
             let side = read_mem_i32(&self.api, self.uc, address + 0x78)?;
             let x = read_mem_i32(&self.api, self.uc, address + 0x7c)?;
             let y = read_mem_i32(&self.api, self.uc, address + 0x80)?;
@@ -2102,6 +2119,41 @@ impl NativeSession {
             }
             let mut hp = -1;
             let mut max_hp = 0;
+            let mut native_focus_entity = None;
+            let mut native_action_timer_raw = None;
+            let mut native_secondary_timer_raw = None;
+            if component_count > 0 {
+                let component_mask = read_mem_u32(&self.api, self.uc, address + 0x30)?;
+                let component_table = read_mem_u64(&self.api, self.uc, address + 0x18)?;
+                // Concrete target/behavior component observed on native unit
+                // and tower entities. Its class is confirmed by the original
+                // vtable at RVA 0x193b570; original f8cd90 dispatches its
+                // update at virtual slot +0x18 when entity mask bit 0 is set.
+                // In original fc7e20, +0x10 is used as an entity target and
+                // +0x48/+0x44 are countdown fields. Keep the timer values raw:
+                // they are not a source-proven render animation flag.
+                if component_mask & 1 != 0 && component_table != 0 {
+                    let behavior = read_mem_u64(&self.api, self.uc, component_table)?;
+                    if behavior != 0 && read_mem_u64(&self.api, self.uc, behavior)? == 0x1193b570 {
+                        let target = read_mem_u64(&self.api, self.uc, behavior + 0x10)?;
+                        native_focus_entity = (target != 0).then_some(target);
+                        native_action_timer_raw =
+                            Some(read_mem_i32(&self.api, self.uc, behavior + 0x48)?);
+                        native_secondary_timer_raw =
+                            Some(read_mem_i32(&self.api, self.uc, behavior + 0x44)?);
+                    }
+                }
+            }
+            let base_vtable = read_mem_u64(&self.api, self.uc, address)?;
+            // Projectile class observed as TowerPrincessProjectile at runtime
+            // has original vtable RVA 0x1936050; its virtual getter f93450
+            // returns this byte verbatim. Preserve the byte's identity rather
+            // than assigning an undocumented active/visibility meaning.
+            let projectile_flag_0x170 = if base_vtable == 0x11936050 {
+                Some(read_mem(&self.api, self.uc, address + 0x170, 1)?[0] != 0)
+            } else {
+                None
+            };
             if component_count > 2 {
                 let table = read_mem_u64(&self.api, self.uc, address + 0x18)?;
                 let health = read_mem_u64(&self.api, self.uc, table + 16)?;
@@ -2114,9 +2166,20 @@ impl NativeSession {
                 .presentation_positions
                 .get(&address)
                 .is_some_and(|previous| *previous != (x, y));
+            // Keep the exact world-space displacement as presentation data.
+            // This is movement direction only; it is not a claimed native
+            // facing/animation state. The first observation of an entity has
+            // no prior position and therefore no displacement.
+            let motion_delta = self.presentation_positions.get(&address).map(|previous| {
+                (
+                    i64::from(x) - i64::from(previous.0),
+                    i64::from(y) - i64::from(previous.1),
+                )
+            });
             positions.insert(address, (x, y));
             entities.push(json!({
                 "address":address,
+                "native_entity_id":entity_ids[&address],
                 "row":self.presentation_names[&row],
                 "side":side,
                 "x":x,
@@ -2125,9 +2188,19 @@ impl NativeSession {
                 "hp":hp,
                 "max_hp":max_hp,
                 "moving":moving,
+                "motion_dx":motion_delta.map(|delta| delta.0),
+                "motion_dy":motion_delta.map(|delta| delta.1),
+                "first_seen_tick":first_seen_tick,
+                "native_focus_entity":native_focus_entity,
+                "native_focus_entity_id":native_focus_entity.and_then(|target| entity_ids.get(&target).copied()),
+                "native_action_timer_raw":native_action_timer_raw,
+                "native_secondary_timer_raw":native_secondary_timer_raw,
+                "projectile_flag_0x170":projectile_flag_0x170,
                 "attacking":false,
             }));
         }
+        self.presentation_first_seen_ticks
+            .retain(|address, _| positions.contains_key(address));
         self.presentation_positions = positions;
 
         let mut elixir = [0.0f64; 2];
@@ -2156,7 +2229,6 @@ impl NativeSession {
             elixir[side as usize] =
                 (raw as f64 / 10000.0 - reserved as f64).clamp(0.0, cap.max(0) as f64);
         }
-        let tick = read_mem_u32(&self.api, self.uc, world + 0x60)?;
         let terminated = read_mem(&self.api, self.uc, battle + 0x1e0, 1)?[0] != 0;
         let winner_side = if terminated {
             Some(read_mem_i32(&self.api, self.uc, battle + 0x1b8)?)
@@ -2176,6 +2248,52 @@ impl NativeSession {
             "elixir":elixir,
             "entities":entities,
         }))
+    }
+
+    /// Return the concrete component vtables for current entities. This is a
+    /// read-only reverse-engineering aid; callers must not assign semantics to
+    /// a slot or class without an original-code guard/accessor.
+    pub fn presentation_component_vtables(&mut self) -> Result<Value, String> {
+        let world = self.world;
+        let manager = read_mem_u64(&self.api, self.uc, world + 0x40)?;
+        let count = read_mem_i32(&self.api, self.uc, manager + 0x14)?;
+        if !(0..=8192).contains(&count) {
+            return Err(format!("invalid native entity count {count}"));
+        }
+        let array = read_mem_u64(&self.api, self.uc, manager + 8)?;
+        let mut entities = Vec::with_capacity(count as usize);
+        for index in 0..count as u64 {
+            let address = read_mem_u64(&self.api, self.uc, array + index * 8)?;
+            let row = read_mem_u64(&self.api, self.uc, address + 0x48)?;
+            let name = if let Some(name) = self.presentation_names.get(&row) {
+                name.clone()
+            } else {
+                self.native_string(row + 0x28)?
+            };
+            let component_count = read_mem_i32(&self.api, self.uc, address + 0x24)?;
+            if !(0..=32).contains(&component_count) {
+                return Err("unrecognized native component layout".into());
+            }
+            let mask = read_mem_u32(&self.api, self.uc, address + 0x30)?;
+            let table = read_mem_u64(&self.api, self.uc, address + 0x18)?;
+            let mut components = Vec::new();
+            for slot in 0..component_count as u64 {
+                let component = read_mem_u64(&self.api, self.uc, table + slot * 8)?;
+                if component != 0 {
+                    components.push(json!({
+                        "slot":slot,
+                        "enabled_by_mask":mask & (1u32 << slot) != 0,
+                        "component":component,
+                        "vtable":read_mem_u64(&self.api, self.uc, component)?,
+                    }));
+                }
+            }
+            let base_vtable = read_mem_u64(&self.api, self.uc, address)?;
+            entities.push(
+                json!({"entity":address,"row":name,"base_vtable":base_vtable,"components":components}),
+            );
+        }
+        Ok(Value::Array(entities))
     }
 
     fn ticks(&self) -> Result<[u32; 2], String> {

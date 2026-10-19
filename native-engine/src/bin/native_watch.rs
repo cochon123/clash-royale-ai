@@ -107,6 +107,10 @@ impl Server {
                     json!({"frame":session.presentation_snapshot()?,"observation":session.observe()?}),
                 )
             }
+            "inspect_components" => {
+                let session = self.session.as_mut().ok_or("reset required")?;
+                Ok(json!({"components":session.presentation_component_vtables()?}))
+            }
             "step" => {
                 if self.finished {
                     return Err("episode finished; reset required".into());

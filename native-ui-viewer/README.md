@@ -96,6 +96,11 @@ not evidence of parity with an executing official Clash Royale client.
 - Raw authoring placeholders and default state children can overlap. The
   viewer preserves the encoded data rather than fabricating gameplay values.
 
+The spectator can also opt into `Playback.root_transform` and `root_color` to
+apply recovered deployment filters and projectile rotation about the source
+export origin. Default playback still uses identity transforms/colors; the
+56-case static reference comparison remains exact with these fields absent.
+
 The PNG export path uses software rendering and works without X11. The
 optional desktop window currently uses minifb's X11 backend (including
 XWayland). Third-party provenance and licenses are in `THIRD_PARTY.md`.

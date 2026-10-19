@@ -160,6 +160,9 @@ pub struct Scene {
 
 #[derive(Default)]
 pub struct Playback {
+    /// A source-authored filter transform applied to the rendered root.
+    pub root_transform: Option<Matrix>,
+    pub root_color: Option<ColorTransform>,
     /// Explicit root frame, otherwise the root uses the selected label or frame 0.
     pub frame: Option<usize>,
     /// Select the same authored state label in every descendant that has it.
@@ -315,8 +318,8 @@ impl Scene {
         let mut stats = RenderStats::default();
         let parts = self.render_object(
             id,
-            Matrix::IDENTITY,
-            ColorTransform::IDENTITY,
+            playback.root_transform.unwrap_or(Matrix::IDENTITY),
+            playback.root_color.unwrap_or(ColorTransform::IDENTITY),
             &mut BTreeSet::new(),
             0,
             playback,

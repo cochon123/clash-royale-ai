@@ -143,6 +143,7 @@ impl Battle {
                 max_hp,
                 moving,
                 attacking: false,
+                ..Entity::default()
             });
         }
         self.previous_positions = positions;
@@ -185,6 +186,10 @@ impl Battle {
             arena_size: [i(m, battle + 0x188)? * 500, i(m, battle + 0x18c)? * 500],
             elixir,
             entities,
+            hands: Default::default(),
+            controller_names: Default::default(),
+            plays: Vec::new(),
+            match_id: 0,
         })
     }
 }

@@ -328,6 +328,31 @@ fn send_follow_control(path: &std::path::Path, op: &str, speed: Option<f64>) -> 
 
 fn follow(a: Args, frame_path: PathBuf) -> Result<()> {
     let mut painter = Painter::load(&a.assets, a.width, a.height)?;
+    if let Some(path) = &a.render {
+        let bytes = std::fs::read(&frame_path).map_err(|e| e.to_string())?;
+        let mut tick = 0;
+        let mut rendered = None;
+        if frame_path.extension().is_some_and(|v| v == "jsonl") {
+            for line in bytes.split(|v| *v == b'\n').filter(|line| !line.is_empty()) {
+                let frame: BattleFrame = serde_json::from_slice(line).map_err(|e| e.to_string())?;
+                tick = frame.tick;
+                rendered = Some(painter.render(&frame)?);
+            }
+        } else {
+            let frame: BattleFrame = serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
+            tick = frame.tick;
+            rendered = Some(painter.render(&frame)?);
+        }
+        rendered
+            .ok_or("empty frame stream")?
+            .save(path)
+            .map_err(|e| e.to_string())?;
+        println!(
+            "{}",
+            serde_json::json!({"rendered":path,"tick":tick,"unresolved_rows":painter.unresolved_rows})
+        );
+        return Ok(());
+    }
     let mut window = Window::new(
         &a.title,
         a.width as usize,

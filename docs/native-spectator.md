@@ -3,7 +3,9 @@
 The new `native-spectator` crate combines the existing static Rust engine with
 the original SC5 software renderer. It presents a read-only original `Normal`
 AI match, with pause, single-step, reset, playback speed and screenshot controls.
-It does not submit player input or run a Banana policy.
+It does not submit player input. External-frame mode also visualizes frozen
+v4.4.2 policies driven by `rl.banana_watch`, in a separate original-engine
+session independent of the ongoing Banana training run.
 
 ## Source bindings
 
@@ -21,6 +23,8 @@ eight-byte result slot as the reference runner. Snapshots read memory directly:
 | Native row | entity+0x48; native string at row+0x28 |
 | Side | entity+0x78; original f94124 |
 | X / Y | entity+0x7c / +0x80; f94298 / f942a0 |
+| Entity identity | entity+8; used by original removal/target routines |
+| Focus target | guarded component-slot-0 vtable 0x1193b570; component+0x10; original fc7e20 |
 | Z | entity+0x74 plus +0x8c; f942a8 |
 | Health | component slot 2 only when vtable is 0x1193b660; current +0x10, max +0x14; fcc140 and fc9ea8 |
 | Elixir | side+0x2f8 divided by 10000 minus native queued reservations; fa1c84 / f99808; cap through original globals chain |
@@ -28,8 +32,13 @@ eight-byte result slot as the reference runner. Snapshots read memory directly:
 | Arena dimensions | battle+0x188 / +0x18c cells ×500 |
 
 Unknown component classes are not interpreted as health. Moving means a native
-position changed since the previous snapshot. Active attack state has not been
-bound; the renderer does not infer it from the nearby target list. Time is
+position changed since the previous snapshot; exact X/Y deltas and first-seen
+ticks are included by `native-watch`. First-seen is an observer timestamp, not
+a recovered native birth field. Active attack state has not been bound: the
+snapshot's `attacking` remains false. The renderer uses explicitly observational
+attack cues: native projectile birth near its shooter, or target HP loss when a
+stationary actor's verified native focus points to that target. These visual
+cues do not affect the engine, damage, policy inputs or training rewards. Time is
 displayed using the 50-unit timer delta observed in original world components,
 with 20 updates per second. This is not a recovered original client clock UI.
 
@@ -42,27 +51,70 @@ JSONL captures add exact bindings for spawned units and projectiles.
 
 The original `arena_training:training_area_bg` export renders to 2373×1874 at
 origin (-1188,-553). Its playing field is cropped from SC bounds x[-270,270]
-and y[0,768]: image rectangle (918,553,540,768). Presentation maps world
-x[0,18000], y[0,32000] onto that field, with side 0 at the bottom. This camera
+and y[-60,768]: image rectangle (918,493,540,828), including headroom for the
+red King. Presentation maps world x[0,18000] across the field width and world Y
+using `((1-y/32000)*768+60)/828` across its height, with side 0 at the bottom.
+Native elevation is projected with `z*0.03` source pixels. This camera
 mapping is calibrated from assets and initial tower coordinates, rather than
 recovered from the original camera routine. Original location CSV data and
 TrainingCamp selection are preserved in `assets.json`.
 
 Character sprites use their source export origin and logic scale. Red/blue
-variants come from original exports. Root and child timelines use elapsed
-native tick time. Source frames, fitted HUD art and text are cached. Live
-elixir labels and player names use recovered text fields and original fonts.
-The HUD banners currently use a first-pass arrangement; native client layout,
-nine-slice resizing, all health effects, destruction visibility and precise
-animation-state transitions are not complete.
+variants come from original exports. Motion and resolved native focus provide
+a presentation heading; nine-view and five-view banks are mapped separately,
+with mirrored poses for the opposite half-turn. Source animation timing uses
+native ticks. Attack clips align their authored `action_frame` to the observed
+impact/projectile event, so wind-up timing remains incomplete.
+
+King reconstruction follows original routine RVA 0x83f4e4: it selects
+`chr_king:King_blue` / `King_red` and replaces the empty `king_dummy` child.
+The source team-specific child order is retained, with turret object 238 at
+(0,-57) for blue and (0,-33) for red. Its 36 frames encode 18 azimuth views,
+each held twice; they are not played as a spinning animation. Princess towers
+use their original base/top exports plus `TowerPrincess` from `chr_princess`,
+at the source attached-character height of 2200 native units.
+Observed King damage or allied Princess destruction triggers the original
+King/tower `start`→`stop` sequence, then holds the last pose. The trigger is a
+presentation inference from native health, not a recovered activation flag.
+
+Deployment applies the original `DeployBaseAnimExportName` movie's root matrix
+and color filter to the unit art, ending at the authored clip boundary.
+Projectile exports and logic fields distinguish authored view banks from timed
+movies; native X/Y/Z drive flight placement. Arrows and Rocket use audited
+neutral poses rotated along observed motion; these banks are not played by age
+or treated as world azimuth. The original client depth/pitch-to-frame mapping
+is unrecovered. Barbarian Barrel advances its authored timeline.
+
+The watch bridge publishes each side's real four-slot hand. The spectator uses
+hash-checked original PNG portraits, original `ui.sc` card frame and elixir
+icon, native costs and live elixir. Both hands are visible simultaneously in
+a spectator layout. Old captures without hands explicitly say they were not
+recorded. Original fonts render labels. Source sprites, fitted art and text
+are cached.
+
+The HUD arrangement, camera and event-to-animation mapping remain presentation
+approximations. Exact original client layout, nine-slice resizing, particles,
+all hit/death effects and animation-state transitions remain incomplete.
 
 The opt-in text renderer and object visibility controls added to
 `native-ui-viewer` preserve its default static-render behavior. The previous
-56 independent reference cases still match exactly. This establishes agreement
+56 independent reference cases still match exactly, including after the opt-in
+root transform/color controls added for deployment and projectiles (retained
+at `analysis/native-ui/visual-update-verification`). This establishes agreement
 with the corrected asset reference, not pixel parity with the running official
 client.
 
 ## Actual verification
+
+The visual update was checked against 652 snapshots from a fresh original-native
+v4.4.2 custom-deck match (ticks 100–750; 32.5 seconds of gameplay, not a complete
+match). Both four-slot hands and all displayed native costs were validated in
+every frame; blue changed hand six times and red seven times. All 28 bundled
+portraits matched their original hashes. Rendering the complete history left
+no unresolved visual rows. Retained inputs/checks are under
+`runs/v442-visual-capture/`, with the preview at
+`runs/native-ui-improvement-preview.png`. Nine Rust tests pass; two optional
+contact-sheet writers are ignored in the normal test run.
 
 The spectator advanced 100 original harness ticks, reading snapshots after
 every tick. Its saved result was compared with the original Unicorn runner:
