@@ -22,6 +22,28 @@ imports or execution failures produce errors and require reset.
 
 ## Use from Python
 
+The default executable remains the preserved Unicorn reference. To select the
+experimental [static Rust backend](../rust-engine/README.md), build it and pass
+its path; the action/observation protocol is the same:
+
+```sh
+cargo build --manifest-path rust-engine/Cargo.toml --release --offline
+tools/reverse-env/bin/python -m rl.benchmark --seconds 60 \
+  --binary rust-engine/target/release/rust_rl \
+  --out analysis/native-port/benchmark-fast-60s.json
+```
+
+```python
+from pathlib import Path
+from rl import NativeClashEnv
+
+env = NativeClashEnv(binary=Path("rust-engine/target/release/rust_rl"))
+```
+
+Both backends currently use the same fixed scenario/decks and partial
+observations. The Rust backend has limited translated-path coverage and guarded
+FP support; its README records validation and remaining limits.
+
 ```python
 from rl import NativeClashEnv
 
@@ -71,6 +93,11 @@ the same verified scenario, RNG state and decks. This first version does not
 randomize native decks or support arbitrary engine seeds.
 
 ## Measured throughput
+
+The experimental [Rust backend](../rust-engine/README.md#measured-rl-throughput)
+now measures **29.94 games/minute**, versus **10.97** in a fresh paired slow run
+(2.73×). Both completed without errors or truncations. The historical reference
+measurement below is retained for comparison.
 
 The [one-minute benchmark](../analysis/native-rl/benchmark-60s.json) completed
 **12 native games in 61.476 seconds: 11.71 games per minute**. All 12 reached

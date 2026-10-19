@@ -1,5 +1,6 @@
 """Measure actual end-to-end games/minute through the Gym interface."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import time
@@ -9,8 +10,10 @@ import numpy as np
 from .native_clash import NativeClashEnv, sample_affordable_action
 
 
-def run(seconds=60.0, seed=1, ticks_per_step=20, max_ticks=7200):
-    env = NativeClashEnv(ticks_per_step=ticks_per_step, max_ticks=max_ticks)
+def run(seconds=60.0, seed=1, ticks_per_step=20, max_ticks=7200, binary=None):
+    options = {} if binary is None else {"binary": binary}
+    env = NativeClashEnv(ticks_per_step=ticks_per_step, max_ticks=max_ticks, **options)
+    binary_sha256 = hashlib.sha256(env.binary.read_bytes()).hexdigest()
     started = time.perf_counter()
     episodes, decision_steps, ticks, accepted, attempts = [], 0, 0, 0, 0
     active = None
@@ -60,7 +63,8 @@ def run(seconds=60.0, seed=1, ticks_per_step=20, max_ticks=7200):
         "card_attempts": attempts, "accepted_cards": accepted,
         "episodes": episodes, "ticks_per_step": ticks_per_step,
         "max_ticks": max_ticks, "seed": seed,
-        "scope": "One process, two external affordable-random policies through the original native engine. Includes snapshot reset, observations, IPC and actions. Fixed native scenario/decks. No training or rendering. Truncations and unfinished episodes are excluded from completed-game throughput.",
+        "engine_binary": str(env.binary), "engine_binary_sha256": binary_sha256,
+        "scope": "One process, two external affordable-random policies through the selected original-engine backend. Includes snapshot reset, observations, IPC and actions. Fixed native scenario/decks. No training or rendering. Truncations and unfinished episodes are excluded from completed-game throughput.",
     }
     return report
 
@@ -71,11 +75,12 @@ def main():
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--ticks-per-step", type=int, default=20)
     parser.add_argument("--max-ticks", type=int, default=7200)
+    parser.add_argument("--binary", type=Path, help="Engine JSONL executable; defaults to the slow reference")
     parser.add_argument("--out", type=Path, default=Path("analysis/native-rl/benchmark.json"))
     args = parser.parse_args()
     if args.seconds <= 0:
         parser.error("--seconds must be positive")
-    report = run(args.seconds, args.seed, args.ticks_per_step, args.max_ticks)
+    report = run(args.seconds, args.seed, args.ticks_per_step, args.max_ticks, args.binary)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))

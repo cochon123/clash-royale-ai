@@ -160,7 +160,7 @@ impl Runtime {
         let mut stack = u64at(0);
         let gr_top = u64at(8);
         let mut gr_off = i32::from_le_bytes(layout[24..28].try_into().unwrap());
-        let mut next_arg =
+        let next_arg =
             |memory: &Memory, stack: &mut u64, gr_off: &mut i32| -> Result<u64, String> {
                 let p = if *gr_off < 0 {
                     let p = (gr_top as i64 + *gr_off as i64) as u64;

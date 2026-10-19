@@ -1,0 +1,31 @@
+{
+  "extra_rvas": [
+    "0xde1278",
+    "0xde1280",
+    "0xf7fedc",
+    "0xf81b3c",
+    "0xf8247c",
+    "0xf85b94",
+    "0xf85f1c",
+    "0xf870d8",
+    "0xf87130",
+    "0xf87170",
+    "0xf95c5c",
+    "0xfc1e80",
+    "0xfcfac4"
+  ],
+  "scope": "Additional exact original FDEs reached by external RL trajectories and their bounded direct-call dependencies.",
+  "source_sha256": "79fe6612e20922d4c4086b1e6c939464202cefa7cb3b20344236529f941423d6",
+  "forward_thread_rvas": [
+    "0xf9b008",
+    "0xfcdefc",
+    "0x11d7f84",
+    "0x11d9240",
+    "0x11d9304",
+    "0x11e5a88",
+    "0x128bd30",
+    "0x128ce98",
+    "0x128d1e4"
+  ],
+  "forward_thread_instruction_budget": 64
+}

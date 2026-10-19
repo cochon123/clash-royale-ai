@@ -8,6 +8,19 @@ The main checkout is `/home/cochon/Documents/mini-project/clash-rust` on
 `/home/cochon/Documents/mini-project/clash-rust-slow` on `slow-working`.
 You can use both checkouts without switching the active development directory.
 
+Run the experimental Rust backend from the main checkout:
+
+```sh
+cd /home/cochon/Documents/mini-project/clash-rust
+cargo build --manifest-path rust-engine/Cargo.toml --release --offline
+tools/reverse-env/bin/python -m rl.benchmark --seconds 60 \
+  --binary rust-engine/target/release/rust_rl \
+  --out /tmp/clash-rust-benchmark.json
+```
+
+Its [scope and validation](../rust-engine/README.md) describe the recovered
+routine recompilation, fixed native scenario, and current limits.
+
 Run the verified slow environment from its checkout:
 
 ```sh

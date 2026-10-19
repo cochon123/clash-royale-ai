@@ -1,6 +1,7 @@
 //! Minimal sequential JSON-lines interface to the original native engine.
 use clash_native_core::oracle::{NativeSession, PlayCardRequest};
 use serde_json::{json, Value};
+use std::fs;
 use std::io::{self, BufRead, Write};
 use std::path::PathBuf;
 use std::time::Instant;
@@ -11,6 +12,8 @@ struct Server {
     initial_tick: u64,
     max_ticks: u64,
     finished: bool,
+    profile_out: Option<PathBuf>,
+    profile_saved: bool,
 }
 
 fn tick(observation: &Value) -> Result<u64, String> {
@@ -43,6 +46,27 @@ fn action(value: &Value) -> Result<PlayCardRequest, String> {
 }
 
 impl Server {
+    fn save_profile(&mut self) -> Result<(), String> {
+        if self.profile_saved || self.profile_out.is_none() {
+            return Ok(());
+        }
+        let Some(session) = self.session.as_mut() else {
+            return Ok(());
+        };
+        let profile = session.finish_block_profile()?;
+        let path = self.profile_out.as_ref().unwrap();
+        if let Some(parent) = path.parent().filter(|p| !p.as_os_str().is_empty()) {
+            fs::create_dir_all(parent).map_err(|e| format!("create profile directory: {e}"))?;
+        }
+        fs::write(
+            path,
+            serde_json::to_vec_pretty(&profile).map_err(|e| e.to_string())?,
+        )
+        .map_err(|e| format!("write block profile: {e}"))?;
+        self.profile_saved = true;
+        Ok(())
+    }
+
     fn handle(&mut self, request: &Value) -> Result<Value, String> {
         match request["op"].as_str().ok_or("request needs op")? {
             "reset" => {
@@ -51,9 +75,14 @@ impl Server {
                     return Err("max_ticks must be 1..36000".into());
                 }
                 // Release the old instance before parsing the large snapshot again.
+                self.save_profile()?;
                 self.session = None;
                 let started = Instant::now();
                 let mut session = NativeSession::load(&self.checkpoint)?;
+                if self.profile_out.is_some() {
+                    session.start_block_profile()?;
+                    self.profile_saved = false;
+                }
                 let observation = session.observe()?;
                 self.initial_tick = tick(&observation)?;
                 self.finished = false;
@@ -111,6 +140,9 @@ impl Server {
                     return Err("native world did not advance".into());
                 }
                 self.finished = terminated || truncated;
+                if terminated {
+                    self.save_profile()?;
+                }
                 Ok(
                     json!({"observation":observation,"actions":results,"terminated":terminated,"truncated":truncated,"ticks_advanced":after.saturating_sub(before),"step_seconds":started.elapsed().as_secs_f64()}),
                 )
@@ -145,6 +177,8 @@ fn run() -> Result<(), String> {
         initial_tick: 0,
         max_ticks: 7200,
         finished: false,
+        profile_out: std::env::var_os("CLASH_NATIVE_PROFILE_OUT").map(PathBuf::from),
+        profile_saved: false,
     };
     let input = io::stdin();
     let mut output = io::BufWriter::new(io::stdout().lock());
@@ -153,7 +187,10 @@ fn run() -> Result<(), String> {
         let request = serde_json::from_str::<Value>(&line);
         let close = request.as_ref().is_ok_and(|v| v["op"] == "close");
         let response = if close {
-            json!({"ok":true,"result":{}})
+            match server.save_profile() {
+                Ok(()) => json!({"ok":true,"result":{}}),
+                Err(error) => json!({"ok":false,"error":error,"reset_required":true}),
+            }
         } else {
             let result = request
                 .map_err(|e| e.to_string())

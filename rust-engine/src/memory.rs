@@ -130,6 +130,15 @@ impl Memory {
     /// Map a zero-filled guest region, refusing to replace any existing host
     /// mapping. Both address and size must be page aligned.
     pub fn map_zeroed(&mut self, address: u64, size: usize) -> Result<(), String> {
+        // An in-place episode reset retains owned mappings while restoring
+        // allocator metadata. Reuse that exact reserved arena on re-expansion.
+        if self
+            .mappings
+            .iter()
+            .any(|m| m.address == address && m.size == size)
+        {
+            return Ok(());
+        }
         #[cfg(not(target_os = "linux"))]
         {
             let _ = (address, size);
@@ -177,7 +186,11 @@ impl Memory {
     /// `address..address+size_of::<T>()` must be mapped and readable, and the
     /// bytes must be a valid bit representation of `T`.
     pub unsafe fn read<T: Copy>(&self, address: u64) -> T {
-        debug_assert!(self.contains(address, std::mem::size_of::<T>()));
+        #[cfg(any(debug_assertions, feature = "checked-memory"))]
+        assert!(
+            self.contains(address, std::mem::size_of::<T>()),
+            "unmapped read at {address:#x}"
+        );
         std::ptr::read_unaligned(address as *const T)
     }
 
@@ -186,7 +199,11 @@ impl Memory {
     /// # Safety
     /// `address..address+size_of::<T>()` must be mapped and writable.
     pub unsafe fn write<T: Copy>(&mut self, address: u64, value: T) {
-        debug_assert!(self.contains(address, std::mem::size_of::<T>()));
+        #[cfg(any(debug_assertions, feature = "checked-memory"))]
+        assert!(
+            self.contains(address, std::mem::size_of::<T>()),
+            "unmapped write at {address:#x}"
+        );
         std::ptr::write_unaligned(address as *mut T, value);
     }
 

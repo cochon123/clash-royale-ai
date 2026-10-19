@@ -3,9 +3,9 @@
 The target is a desktop Rust port of the supplied Clash Royale build, with its
 original interface and recovered battle behavior. Planned modes are human vs AI
 and AI vs AI, selectable decks and controllers, and a fast headless engine for
-reinforcement learning. **The original native AI battle now runs to completion
-in Unicorn. The Rust combat rewrite and playable desktop interface are not
-complete.**
+reinforcement learning. **The recovered engine runs headlessly through both
+the verified Unicorn reference and an experimental static Rust recompilation.
+The playable desktop interface and complete Rust port remain unfinished.**
 
 Work uses [morluto/rea](https://github.com/morluto/rea), JADX, Ghidra, Android
 emulators and bounded ARM64 execution in Unicorn. Original APKs and libraries
@@ -55,6 +55,14 @@ recorded separately.
   opponent. The smoke test includes a complete Python-controlled native match;
   the initial benchmark completed **12 games in 61.5 seconds**, including resets,
   observations and actions, with no native errors or truncations.
+- Added a [native Rust recompilation backend](rust-engine/README.md) generated
+  from pinned recovered routines, with no emulator fallback. It shares the Gym
+  protocol, uses private checkpoint mappings for quick episode reset, and checks
+  execution against the original reference. The current one-minute RL benchmark
+  completes **30 games (29.94/minute)** versus 11 (10.97/minute) for the preserved
+  slow implementation, with no errors or truncations. Development is on `rust-fast`; the
+  preserved `slow-working` branch has its own checkout. See
+  [branch instructions](docs/branches.md).
 - Recovered the native scenario/deck fields and per-side deck construction path;
   [deck contracts](docs/native-deck-contracts.md) distinguish verified pointer
   layouts from the card-object lifetime rules still under investigation.

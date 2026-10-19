@@ -14,6 +14,7 @@ const UC_ARCH_ARM64: c_int = 2;
 const UC_MODE_ARM: u32 = 0;
 const UC_PROT_ALL: u32 = 7;
 const UC_HOOK_CODE: c_int = 1 << 2;
+const UC_HOOK_BLOCK: c_int = 1 << 3;
 const SOURCE_SHA256: &str = "79fe6612e20922d4c4086b1e6c939464202cefa7cb3b20344236529f941423d6";
 
 #[link(name = "dl")]
@@ -77,7 +78,10 @@ impl UnicornApi {
                 unsafe extern "C" fn(c_int, u32, *mut *mut c_void) -> c_int
             ),
             close: sym!("uc_close", unsafe extern "C" fn(*mut c_void) -> c_int),
-            hook_del: sym!("uc_hook_del", unsafe extern "C" fn(*mut c_void, usize) -> c_int),
+            hook_del: sym!(
+                "uc_hook_del",
+                unsafe extern "C" fn(*mut c_void, usize) -> c_int
+            ),
             mem_map: sym!(
                 "uc_mem_map",
                 unsafe extern "C" fn(*mut c_void, u64, usize, u32) -> c_int
@@ -603,6 +607,28 @@ unsafe extern "C" fn code_hook(uc: *mut c_void, address: u64, _size: u32, user: 
         s.error = Some(format!("import {name} at {address:#x}: {e}"));
         let _ = ((*s.api).emu_stop)(uc);
     }
+}
+
+struct BlockProfile {
+    hook: usize,
+    counts: Box<BTreeMap<u64, (u64, u32)>>,
+}
+
+unsafe extern "C" fn block_profile_hook(
+    _: *mut c_void,
+    address: u64,
+    size: u32,
+    opaque: *mut c_void,
+) {
+    // Unicorn calls this across all executable blocks. Count only source ELF
+    // executable PT_LOAD ranges so every output address has a valid source RVA.
+    let rva = address.wrapping_sub(0x1000_0000);
+    if !(rva < 0x0187_ed20 || (0x01ab_8000..0x01ae_3cb4).contains(&rva)) {
+        return;
+    }
+    let counts = &mut *opaque.cast::<BTreeMap<u64, (u64, u32)>>();
+    let entry = counts.entry(address).or_insert((0, size));
+    entry.0 += 1;
 }
 
 pub struct OracleReport {
@@ -1425,13 +1451,19 @@ pub struct NativeSession {
     commands: u64,
     descriptor_scratch: u64,
     initial_checkpoint_sha256: String,
+    block_profile: Option<BlockProfile>,
 }
 
 impl NativeSession {
     /// Collect original basic-block execution counts for selecting source ports.
     /// Profiling is opt-in and the hook is removed before this method returns.
     pub fn profile_original_match(&mut self) -> Result<Value, String> {
-        unsafe extern "C" fn count_block(_: *mut c_void, address: u64, size: u32, opaque: *mut c_void) {
+        unsafe extern "C" fn count_block(
+            _: *mut c_void,
+            address: u64,
+            size: u32,
+            opaque: *mut c_void,
+        ) {
             let counts = &mut *opaque.cast::<BTreeMap<u64, (u64, u32)>>();
             let entry = counts.entry(address).or_insert((0, size));
             entry.0 += 1;
@@ -1439,19 +1471,31 @@ impl NativeSession {
         let mut counts = Box::new(BTreeMap::<u64, (u64, u32)>::new());
         let mut hook = 0;
         let rc = unsafe {
-            (self.api.hook_add)(self.uc, &mut hook, 1 << 3,
-                count_block as *const c_void, (&mut *counts as *mut BTreeMap<u64, (u64, u32)>).cast(),
-                1u64, 0u64)
+            (self.api.hook_add)(
+                self.uc,
+                &mut hook,
+                1 << 3,
+                count_block as *const c_void,
+                (&mut *counts as *mut BTreeMap<u64, (u64, u32)>).cast(),
+                1u64,
+                0u64,
+            )
         };
-        if rc != 0 { return Err(format!("profile hook: {}", self.api.err(rc))); }
+        if rc != 0 {
+            return Err(format!("profile hook: {}", self.api.err(rc)));
+        }
         let result = self.native_match_until_terminal();
         let rc = unsafe { (self.api.hook_del)(self.uc, hook) };
-        if rc != 0 { return Err(format!("remove profile hook: {}", self.api.err(rc))); }
+        if rc != 0 {
+            return Err(format!("remove profile hook: {}", self.api.err(rc)));
+        }
         let outcome = result?;
         let blocks: Vec<_> = counts.iter().map(|(address, (calls, size))|
             json!({"rva":format!("{:#x}",address-0x10000000),"executions":calls,"bytes":size})).collect();
-        Ok(json!({"source_sha256":SOURCE_SHA256,"outcome":outcome,"blocks":blocks,
-            "scope":"Original fixed-snapshot harness match. Counts are dynamic basic blocks, not wall-time samples; profiling overhead excluded from performance claims."}))
+        Ok(
+            json!({"source_sha256":SOURCE_SHA256,"outcome":outcome,"blocks":blocks,
+            "scope":"Original fixed-snapshot harness match. Counts are dynamic basic blocks, not wall-time samples; profiling overhead excluded from performance claims."}),
+        )
     }
 
     pub fn load(checkpoint_dir: &Path) -> Result<Self, String> {
@@ -1672,6 +1716,7 @@ impl NativeSession {
                 commands,
                 descriptor_scratch,
                 initial_checkpoint_sha256: checkpoint_hash,
+                block_profile: None,
             }),
             Err(error) => {
                 unsafe {
@@ -1680,6 +1725,62 @@ impl NativeSession {
                 Err(error)
             }
         }
+    }
+
+    /// Start counting every executed basic block in the original source ELF.
+    /// Profiling is disabled by default and is intended for code coverage, not
+    /// for measuring runtime performance.
+    pub fn start_block_profile(&mut self) -> Result<(), String> {
+        if self.block_profile.is_some() {
+            return Err("basic-block profiling is already active".into());
+        }
+        let mut counts = Box::new(BTreeMap::<u64, (u64, u32)>::new());
+        let mut hook = 0usize;
+        let rc = unsafe {
+            (self.api.hook_add)(
+                self.uc,
+                &mut hook,
+                UC_HOOK_BLOCK,
+                block_profile_hook as *const c_void,
+                (&mut *counts as *mut BTreeMap<u64, (u64, u32)>).cast(),
+                1,
+                0,
+            )
+        };
+        if rc != 0 {
+            return Err(format!("start basic-block profile: {}", self.api.err(rc)));
+        }
+        self.block_profile = Some(BlockProfile { hook, counts });
+        Ok(())
+    }
+
+    /// Remove the active counter hook and return its source-relative profile.
+    pub fn finish_block_profile(&mut self) -> Result<Value, String> {
+        let profile = self
+            .block_profile
+            .as_ref()
+            .ok_or("basic-block profiling is not active")?;
+        let rc = unsafe { (self.api.hook_del)(self.uc, profile.hook) };
+        if rc != 0 {
+            return Err(format!("remove basic-block profile: {}", self.api.err(rc)));
+        }
+        let profile = self.block_profile.take().expect("profile checked above");
+        let blocks = profile
+            .counts
+            .iter()
+            .map(|(address, (executions, bytes))| {
+                json!({
+                    "rva": format!("{:#x}", address - 0x1000_0000),
+                    "bytes": bytes,
+                    "executions": executions,
+                })
+            })
+            .collect::<Vec<_>>();
+        Ok(json!({
+            "source_sha256": SOURCE_SHA256,
+            "blocks": blocks,
+            "scope": "Original session-wide basic-block counts across the external RL episode. Counts are not wall-time samples; profiling overhead is excluded from performance claims.",
+        }))
     }
 
     fn call(&mut self, rva: u64, args: &[u64], x8: u64) -> Result<u64, String> {
