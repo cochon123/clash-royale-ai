@@ -1,0 +1,16 @@
+[package]
+name = "clash-recompiled"
+version = "0.1.0"
+edition = "2021"
+description = "Source-bound native Rust compilation of recovered battle routines"
+
+[dependencies]
+serde_json = "1"
+
+[features]
+checked-memory = []
+
+[profile.release]
+opt-level = 3
+codegen-units = 16
+

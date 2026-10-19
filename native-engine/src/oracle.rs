@@ -45,6 +45,7 @@ struct UnicornApi {
         u64,
         ...
     ) -> c_int,
+    hook_del: unsafe extern "C" fn(*mut c_void, usize) -> c_int,
 }
 
 impl UnicornApi {
@@ -76,6 +77,7 @@ impl UnicornApi {
                 unsafe extern "C" fn(c_int, u32, *mut *mut c_void) -> c_int
             ),
             close: sym!("uc_close", unsafe extern "C" fn(*mut c_void) -> c_int),
+            hook_del: sym!("uc_hook_del", unsafe extern "C" fn(*mut c_void, usize) -> c_int),
             mem_map: sym!(
                 "uc_mem_map",
                 unsafe extern "C" fn(*mut c_void, u64, usize, u32) -> c_int
@@ -1426,6 +1428,32 @@ pub struct NativeSession {
 }
 
 impl NativeSession {
+    /// Collect original basic-block execution counts for selecting source ports.
+    /// Profiling is opt-in and the hook is removed before this method returns.
+    pub fn profile_original_match(&mut self) -> Result<Value, String> {
+        unsafe extern "C" fn count_block(_: *mut c_void, address: u64, size: u32, opaque: *mut c_void) {
+            let counts = &mut *opaque.cast::<BTreeMap<u64, (u64, u32)>>();
+            let entry = counts.entry(address).or_insert((0, size));
+            entry.0 += 1;
+        }
+        let mut counts = Box::new(BTreeMap::<u64, (u64, u32)>::new());
+        let mut hook = 0;
+        let rc = unsafe {
+            (self.api.hook_add)(self.uc, &mut hook, 1 << 3,
+                count_block as *const c_void, (&mut *counts as *mut BTreeMap<u64, (u64, u32)>).cast(),
+                1u64, 0u64)
+        };
+        if rc != 0 { return Err(format!("profile hook: {}", self.api.err(rc))); }
+        let result = self.native_match_until_terminal();
+        let rc = unsafe { (self.api.hook_del)(self.uc, hook) };
+        if rc != 0 { return Err(format!("remove profile hook: {}", self.api.err(rc))); }
+        let outcome = result?;
+        let blocks: Vec<_> = counts.iter().map(|(address, (calls, size))|
+            json!({"rva":format!("{:#x}",address-0x10000000),"executions":calls,"bytes":size})).collect();
+        Ok(json!({"source_sha256":SOURCE_SHA256,"outcome":outcome,"blocks":blocks,
+            "scope":"Original fixed-snapshot harness match. Counts are dynamic basic blocks, not wall-time samples; profiling overhead excluded from performance claims."}))
+    }
+
     pub fn load(checkpoint_dir: &Path) -> Result<Self, String> {
         let checkpoint_path = checkpoint_dir.join("checkpoint.json");
         let raw = fs::read(&checkpoint_path)
