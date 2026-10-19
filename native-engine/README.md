@@ -97,3 +97,33 @@ Reset reloads the original fixed prepared snapshot; this version prioritizes a
 working end-to-end loop over throughput or complete observations. The initial
 measurement completed 12 native games in 61.476 seconds (11.71 per minute),
 including resets, actions and observations.
+## Specialized native deck runner
+
+The separate `deck-setup-probe` JSONL executable rebuilds the original `Normal`
+harness using exact source card rows. Presets are `hog26` and `pixel9_mortar`
+(`mortar` is an alias). The deck is mirrored on both sides. An optional u32
+`seed` is passed to the original input constructor.
+
+```sh
+cargo build --release --offline --manifest-path native-engine/Cargo.toml --bin deck-setup-probe
+native-engine/target/release/deck-setup-probe \
+  --checkpoint analysis/native-pipeline/oracle-export-01/stage01-attempt001/state
+```
+
+Requests are one JSON object per line:
+
+```json
+{"op":"reset","deck_preset":"hog26","seed":42,"max_ticks":7300}
+{"op":"step","actions":[],"ticks":100}
+{"op":"observe"}
+{"op":"close"}
+```
+
+Reset reports both actual native eight-card deck lists. It updates only the
+scenario configuration input vector, then invokes original input/harness
+constructors `11d7968` and `11d58e0`; no battle instructions are patched.
+Fresh games have a startup period during which native submission rejects
+deployments, so the Banana adapter advances 100 action-free world ticks before
+sampling. The specialized training loop calls only world steps after submitting
+external actions; it does not call the original autonomous bot harness loop.
+See [Banana run instructions](../rl/README.md#banana-deck-specialists).

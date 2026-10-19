@@ -653,6 +653,30 @@ fn invoke_native(
     args: &[u64],
     x8: u64,
 ) -> Result<u64, String> {
+    invoke_native_at(
+        api,
+        uc,
+        ids,
+        state,
+        abi,
+        0x1000_0000 + rva,
+        &format!("{rva:#x}"),
+        args,
+        x8,
+    )
+}
+
+fn invoke_native_at(
+    api: &UnicornApi,
+    uc: *mut c_void,
+    ids: &BTreeMap<String, i32>,
+    state: &mut HookState,
+    abi: &Value,
+    entry: u64,
+    label: &str,
+    args: &[u64],
+    x8: u64,
+) -> Result<u64, String> {
     if args.len() > 8 {
         return Err("native call has more than eight register arguments".into());
     }
@@ -668,7 +692,6 @@ fn invoke_native(
     write_u64(api, uc, ids["sp"], num(&abi["call_stack_pointer"])?)?;
     let retaddr = num(&abi["return_address"])?;
     write_u64(api, uc, ids["x30"], retaddr)?;
-    let entry = 0x1000_0000_u64 + rva;
     write_u64(api, uc, ids["pc"], entry)?;
     state.returned = false;
     state.error = None;
@@ -677,11 +700,11 @@ fn invoke_native(
         return Err(e);
     }
     if rc != 0 {
-        return Err(format!("native function {rva:#x}: {}", api.err(rc)));
+        return Err(format!("native function {label}: {}", api.err(rc)));
     }
     if !state.returned && read_u64(api, uc, ids["pc"])? != retaddr {
         return Err(format!(
-            "native function {rva:#x} did not return; PC={:#x}",
+            "native function {label} did not return; PC={:#x}",
             read_u64(api, uc, ids["pc"])?
         ));
     }
@@ -1449,6 +1472,8 @@ pub struct NativeSession {
     harness: u64,
     entities: u64,
     commands: u64,
+    context: u64,
+    normal_test_row: u64,
     descriptor_scratch: u64,
     initial_checkpoint_sha256: String,
     block_profile: Option<BlockProfile>,
@@ -1614,6 +1639,8 @@ impl NativeSession {
                 }
             }
             let values = &cp["call_plan"]["values"];
+            let context = num(&values["context"])?;
+            let normal_test_row = num(&values["confirm_original_Normal"])?;
             let world = num(&values["battle_world"])?;
             let battle = num(&values["battle_state"])?;
             let harness = num(&values["battle_harness"])?;
@@ -1689,6 +1716,8 @@ impl NativeSession {
                 harness,
                 entities,
                 commands,
+                context,
+                normal_test_row,
                 descriptor_scratch,
             ))
         })();
@@ -1702,6 +1731,8 @@ impl NativeSession {
                 harness,
                 entities,
                 commands,
+                context,
+                normal_test_row,
                 descriptor_scratch,
             )) => Ok(Self {
                 api,
@@ -1714,6 +1745,8 @@ impl NativeSession {
                 harness,
                 entities,
                 commands,
+                context,
+                normal_test_row,
                 descriptor_scratch,
                 initial_checkpoint_sha256: checkpoint_hash,
                 block_profile: None,
@@ -1793,6 +1826,217 @@ impl NativeSession {
             rva,
             args,
             x8,
+        )
+    }
+
+    /// Replace the loaded Normal testing row's AlwaysSpells source-row vector,
+    /// then call the original input/harness constructors to make a fresh game.
+    /// The scenario is consumed independently for each side, so `cards` is a
+    /// mirrored 8-card deck. No battle object or game instruction is patched.
+    pub fn configure_normal_deck_and_rebuild(
+        &mut self,
+        cards: &[&str],
+        seed: u32,
+    ) -> Result<Value, String> {
+        if cards.len() != 8 {
+            return Err(format!(
+                "a configured deck must contain exactly 8 cards, got {}",
+                cards.len()
+            ));
+        }
+        let mut unique = BTreeSet::new();
+        if cards
+            .iter()
+            .any(|card| card.is_empty() || !unique.insert(*card))
+        {
+            return Err("deck names must be nonempty and unique".into());
+        }
+
+        let row_count = self.call(0xe1ac8c, &[self.context], 0)?;
+        if row_count == 0 || row_count > 100_000 {
+            return Err(format!("unexpected native card-row count {row_count}"));
+        }
+        let mut source_rows = BTreeMap::<String, u64>::new();
+        for index in 0..row_count {
+            let row = self.call(0xe1ad4c, &[self.context, index], 0)?;
+            if row == 0 {
+                return Err(format!("native card row {index} is null"));
+            }
+            let name = self.native_string(row + 0x28)?;
+            if cards.contains(&name.as_str()) && source_rows.insert(name.clone(), row).is_some() {
+                return Err(format!("duplicate native source row name {name}"));
+            }
+        }
+        let missing: Vec<_> = cards
+            .iter()
+            .filter(|name| !source_rows.contains_key(**name))
+            .copied()
+            .collect();
+        if !missing.is_empty() {
+            return Err(format!(
+                "native source rows not found by exact name: {}",
+                missing.join(", ")
+            ));
+        }
+        let row_ptrs: Vec<u64> = cards.iter().map(|name| source_rows[*name]).collect();
+        let vector_data =
+            self.state
+                .heap
+                .alloc(8 * row_ptrs.len() as u64, 8, &self.api, self.uc)?;
+        write_mem(
+            &self.api,
+            self.uc,
+            vector_data,
+            &row_ptrs
+                .iter()
+                .flat_map(|p| p.to_le_bytes())
+                .collect::<Vec<_>>(),
+        )?;
+        write_mem(
+            &self.api,
+            self.uc,
+            self.normal_test_row + 0x70,
+            &vector_data.to_le_bytes(),
+        )?;
+        write_mem(
+            &self.api,
+            self.uc,
+            self.normal_test_row + 0x78,
+            &(row_ptrs.len() as u32).to_le_bytes(),
+        )?;
+        write_mem(
+            &self.api,
+            self.uc,
+            self.normal_test_row + 0x7c,
+            &(row_ptrs.len() as u32).to_le_bytes(),
+        )?;
+
+        // Re-run the same original constructor chain as the scenario harness.
+        let name_bytes = self.state.heap.alloc(7, 8, &self.api, self.uc)?;
+        write_mem(&self.api, self.uc, name_bytes, b"Normal\0")?;
+        let name_string = self.state.heap.alloc(0x10, 8, &self.api, self.uc)?;
+        write_mem(&self.api, self.uc, name_string, &[0; 0x10])?;
+        self.call(0x142fde4, &[name_string, name_bytes], 0)?;
+        let resolved = self.call(0xe1b7e8, &[self.context, name_string, 0], 0)?;
+        if resolved != self.normal_test_row {
+            return Err(format!(
+                "Normal lookup changed unexpectedly: {resolved:#x} != {:#x}",
+                self.normal_test_row
+            ));
+        }
+        let input_sret = self.state.heap.alloc(8, 8, &self.api, self.uc)?;
+        write_mem(&self.api, self.uc, input_sret, &[0; 8])?;
+        self.call(
+            0x11d7968,
+            &[self.context, name_string, seed as u64, 0],
+            input_sret,
+        )?;
+        let battle_input = u64::from_le_bytes(
+            read_mem(&self.api, self.uc, input_sret, 8)?
+                .try_into()
+                .unwrap(),
+        );
+        if battle_input == 0 {
+            return Err("original battle-input constructor returned null".into());
+        }
+        let new_harness = self.state.heap.alloc(0x78, 16, &self.api, self.uc)?;
+        write_mem(&self.api, self.uc, new_harness, &[0; 0x78])?;
+        self.call(0x11d58e0, &[new_harness, self.context, input_sret], 0)?;
+        let new_world = u64::from_le_bytes(
+            read_mem(&self.api, self.uc, new_harness + 0x20, 8)?
+                .try_into()
+                .unwrap(),
+        );
+        if new_world == 0 {
+            return Err("original harness constructor returned a null world".into());
+        }
+        let new_battle = u64::from_le_bytes(
+            read_mem(&self.api, self.uc, new_world + 0xa8, 8)?
+                .try_into()
+                .unwrap(),
+        );
+        let new_entities = u64::from_le_bytes(
+            read_mem(&self.api, self.uc, new_world + 0x40, 8)?
+                .try_into()
+                .unwrap(),
+        );
+        let new_commands = u64::from_le_bytes(
+            read_mem(&self.api, self.uc, new_world + 0x38, 8)?
+                .try_into()
+                .unwrap(),
+        );
+        if new_battle == 0 || new_entities == 0 || new_commands == 0 {
+            return Err(
+                "fresh native harness has a null battle, entity manager, or command queue".into(),
+            );
+        }
+        self.harness = new_harness;
+        self.world = new_world;
+        self.battle = new_battle;
+        self.entities = new_entities;
+        self.commands = new_commands;
+
+        let mut actual_decks = Vec::new();
+        for side in 0..2u64 {
+            let deck = u64::from_le_bytes(
+                read_mem(&self.api, self.uc, self.battle + 0x88 + side * 8, 8)?
+                    .try_into()
+                    .unwrap(),
+            );
+            if deck == 0 {
+                return Err(format!("fresh native side {side} has null deck"));
+            }
+            let count = u32::from_le_bytes(
+                read_mem(&self.api, self.uc, deck + 0x2c, 4)?
+                    .try_into()
+                    .unwrap(),
+            );
+            if count != 8 {
+                return Err(format!(
+                    "fresh native side {side} deck has {count} rows, expected 8"
+                ));
+            }
+            let entries = u64::from_le_bytes(
+                read_mem(&self.api, self.uc, deck + 0x20, 8)?
+                    .try_into()
+                    .unwrap(),
+            );
+            let side_obj = self.side_object(side as u32)?;
+            let mut names = Vec::new();
+            for index in 0..count as u64 {
+                let wrapper = u64::from_le_bytes(
+                    read_mem(&self.api, self.uc, entries + index * 8, 8)?
+                        .try_into()
+                        .unwrap(),
+                );
+                if wrapper == 0 {
+                    return Err(format!("native side {side} deck entry {index} is null"));
+                }
+                write_mem(&self.api, self.uc, self.descriptor_scratch, &[0; 24])?;
+                self.call(0xe80bbc, &[wrapper, side_obj, 1], self.descriptor_scratch)?;
+                let row = self.call(0xe80680, &[self.descriptor_scratch], 0)?;
+                if row == 0 {
+                    return Err(format!(
+                        "native side {side} entry {index} has null source row"
+                    ));
+                }
+                names.push(self.native_string(row + 0x28)?);
+            }
+            let mut sorted_actual = names.clone();
+            let mut sorted_expected = cards
+                .iter()
+                .map(|name| name.to_string())
+                .collect::<Vec<_>>();
+            sorted_actual.sort();
+            sorted_expected.sort();
+            if sorted_actual != sorted_expected {
+                return Err(format!("native side {side} deck rows mismatch: {names:?}"));
+            }
+            actual_decks.push(json!({"side":side,"cards":names}));
+        }
+        let observation = self.observe()?;
+        Ok(
+            json!({"scenario":"Normal","seed":seed,"deck_source_rows":cards,"actual_native_decks":actual_decks,"observation":observation,"construction":"Original 11d7968 input and 11d58e0 fresh-harness constructors after setting the loaded Normal row's AlwaysSpells vector; no engine-code patches."}),
         )
     }
 

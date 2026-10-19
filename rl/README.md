@@ -6,6 +6,74 @@ Rust subprocess and a Gymnasium Python interface. It uses the prepared native
 hand cycling, completion and winner selection execute in the original engine.
 The original battle renderer and the Rust combat rewrite are separate work.
 
+## Banana deck specialists
+
+`banana_train.py` adds a separate warm-started PPO run using the actual sibling
+policy-bc-v4.4.2 checkpoint. `banana-hog-1` uses Hog Rider 2.6;
+`banana-mortar-1` uses the saved `pixel9` deck: Mortar, Knight, Archers,
+Skeletons, Barbarian Barrel, Arrows, Mini P.E.K.K.A and Rocket.
+Each specialist plays a frozen starting policy in mirrored-deck games, with
+independently alternating seats. They do not play Hog against Mortar directly.
+
+This specialized runner uses **the original ARM64 runtime through Unicorn**.
+It builds a fresh native harness with exact source deck rows and a native seed;
+the older fixed-deck static Rust backend is unchanged. The actor sees current
+hands, elixir and accepted play history, without battlefield positions or HP.
+Native placement rejection remains authoritative. These limits matter when
+interpreting any apparent win-rate improvement.
+
+The first real run started **2026-10-19 at 13:09:05 America/Edmonton**, with a
+shared 10,800-second budget and deadline **16:09:05**. Both specialists completed
+native matches, made PPO updates and saved current checkpoints during initial
+supervision. The initial actor weights exactly match the source checkpoint;
+48 actor tensors changed after the first Hog update, with finite values.
+These are initial plumbing checks, not a statistically meaningful strength result.
+
+Live dashboard: <http://127.0.0.1:8780>. Its `/report` page explains provenance,
+compute, objectives, metrics, observation limitations and saved artifacts.
+Run-wide curves are reconstructed from genuine completed-game log events.
+
+Stream work done and remaining time:
+
+```sh
+python3 -m rl.banana_monitor
+```
+
+The run and dashboard are durable local systemd user services:
+
+```sh
+systemctl --user status clash-banana-train.service
+systemctl --user status clash-banana-dashboard.service
+```
+
+Closing the browser does not stop training. The dashboard's Stop & save button
+creates `runs/banana-league-20261019/STOP`; the trainer saves and reports stopped
+status. Initial, latest and final checkpoints live under `models/hog/` and
+`models/mortar/` inside that run folder. `run-manifest.json` pins the actual
+trainer, adapter, native runner and base-weight hashes. `progress.jsonl` retains
+all game/update events. No fake-protocol smoke results enter this live folder.
+
+To reproduce in a **fresh run directory** using the existing CUDA environment:
+
+```sh
+cargo build --release --offline --manifest-path native-engine/Cargo.toml --bin deck-setup-probe
+/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_train \
+  --run-dir runs/banana-new-run \
+  --engine-bin native-engine/target/release/deck-setup-probe \
+  --checkpoint analysis/native-pipeline/oracle-export-01/stage01-attempt001/state \
+  --duration-seconds 10800 --seed 41019 --device cuda --torch-threads 3
+```
+
+The preflight checks both exact decks and accepted native deployments on both
+sides. Fresh games advance through 100 original startup ticks before actions;
+the displayed model clock begins afterward. Reward uses only native terminal
+outcomes (+1 / −1 / 0). Deadline truncations receive no invented outcome.
+The actor update preserves reward sign instead of centering the identical
+returns of a single episode. PPO reevaluation uses the rollout's fixed placement
+candidate support. Initial/periodic/final checkpoints are saved atomically.
+
+The original minimal Gym environment described below remains available.
+
 From the project root, using the existing local reverse-engineering environment:
 
 ```sh
