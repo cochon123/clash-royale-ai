@@ -1,5 +1,6 @@
 /target/
 /native-ui-viewer/target/
+/native-spectator/target/
 /native-engine/target/
 /rust-engine/target/
 /analysis

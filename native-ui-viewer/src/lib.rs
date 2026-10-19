@@ -117,6 +117,24 @@ pub struct TextField {
     pub id: u32,
     pub font_name: String,
     pub text: String,
+    #[serde(default)]
+    pub left: f64,
+    #[serde(default)]
+    pub top: f64,
+    #[serde(default)]
+    pub right: f64,
+    #[serde(default)]
+    pub bottom: f64,
+    #[serde(default)]
+    pub font_color: u32,
+    #[serde(default)]
+    pub outline_color: u32,
+    #[serde(default)]
+    pub font_size: f32,
+    #[serde(default)]
+    pub align: u8,
+    #[serde(default)]
+    pub styles: u32,
 }
 #[derive(Debug, Deserialize)]
 pub struct Document {
@@ -149,6 +167,15 @@ pub struct Playback {
     /// Native code drives descendant states. These explicit selections expose
     /// that binding point without fabricating game state or automatic transitions.
     pub object_frames: BTreeMap<u32, usize>,
+    /// Replace recovered text field contents by original text object id.
+    pub text_values: BTreeMap<u32, String>,
+    /// Omit these original objects and their descendants.
+    pub hidden_objects: BTreeSet<u32>,
+    /// Optional elapsed seconds for descendant timelines. Explicit frames and
+    /// labels take precedence; root frame selection remains authoritative.
+    pub time_seconds: Option<f64>,
+    /// Draw text fields from recovered metadata and fonts. Defaults off.
+    pub render_text: bool,
 }
 
 #[derive(Default, Debug, Serialize)]
@@ -177,6 +204,39 @@ struct Part {
 }
 
 impl Scene {
+    /// Draw a short spectator-owned label with a recovered game font.
+    pub fn render_text(
+        &self,
+        text: &str,
+        font_name: &str,
+        size: f32,
+        color: u32,
+        outline: Option<u32>,
+        align: u8,
+        width: u32,
+    ) -> Result<Rendered> {
+        let field = TextField {
+            id: 0,
+            font_name: font_name.into(),
+            text: text.into(),
+            left: 0.,
+            top: 0.,
+            right: width.max(1) as f64,
+            bottom: (size.max(1.) * 1.5).ceil() as f64,
+            font_color: color,
+            outline_color: outline.unwrap_or(0),
+            font_size: size,
+            align,
+            styles: 0,
+        };
+        Ok(Rendered {
+            image: self.render_text_field(&field, text)?,
+            x: 0.,
+            y: 0.,
+            stats: RenderStats::default(),
+        })
+    }
+
     pub fn load(root: &Path, document: &str) -> Result<Self> {
         if Path::new(document).components().count() != 1 || document == "." || document == ".." {
             return Err("--document must be one recovered document name".into());
@@ -307,6 +367,9 @@ impl Scene {
         root: bool,
         stats: &mut RenderStats,
     ) -> Result<Vec<Part>> {
+        if playback.hidden_objects.contains(&id) {
+            return Ok(Vec::new());
+        }
         if depth > 50 || visited.contains(&id) {
             stats.recursion_cycles += 1;
             return Ok(Vec::new());
@@ -344,8 +407,23 @@ impl Scene {
                 }
             }
         }
-        if self.document.text_fields.contains_key(&id) {
-            stats.skipped_text_fields.insert(id);
+        if let Some(field) = self.document.text_fields.get(&id) {
+            if playback.render_text {
+                let value = playback.text_values.get(&id).unwrap_or(&field.text);
+                if !value.is_empty() {
+                    let image = self.render_text_field(field, value)?;
+                    if image.pixels().any(|p| p[3] > 0) {
+                        parts.push(Part {
+                            image,
+                            x: matrix.tx + field.left,
+                            y: matrix.ty + field.top,
+                            blend: 0,
+                        });
+                    }
+                }
+            } else {
+                stats.skipped_text_fields.insert(id);
+            }
         }
         let Some(movie) = self.document.movies.get(&id) else {
             return Ok(parts);
@@ -356,6 +434,16 @@ impl Scene {
             .get(&id)
             .copied()
             .or(if root { playback.frame } else { None })
+            .or_else(|| {
+                if !root && playback.label.is_none() {
+                    playback.time_seconds.map(|t| {
+                        (t.max(0.) * movie.framerate.max(1) as f64).floor() as usize
+                            % movie.frame_element_counts.len().max(1)
+                    })
+                } else {
+                    None
+                }
+            })
             .unwrap_or_else(|| {
                 playback
                     .label
@@ -470,6 +558,160 @@ impl Scene {
         visited.remove(&id);
         Ok(parts)
     }
+
+    fn render_text_field(&self, field: &TextField, value: &str) -> Result<RgbaImage> {
+        let width = (field.right - field.left).ceil().max(1.) as u32;
+        let height = (field.bottom - field.top).ceil().max(1.) as u32;
+        if width > 4096 || height > 4096 {
+            return Err("Text field exceeds bounds".into());
+        }
+        let filename = font_filename(&field.font_name);
+        let path = self
+            .document_path
+            .parent()
+            .unwrap_or(Path::new("."))
+            .parent()
+            .unwrap_or(Path::new("."))
+            .join("fonts")
+            .join(filename);
+        let bytes = std::fs::read(&path)
+            .map_err(|e| format!("Cannot load recovered font {}: {e}", path.display()))?;
+        let font = fontdue::Font::from_bytes(bytes, fontdue::FontSettings::default())
+            .map_err(|e| format!("Invalid recovered font: {e}"))?;
+        let size = field.font_size.max(1.);
+        let mut image = RgbaImage::new(width, height);
+        let color = argb(field.font_color);
+        let outline = argb(field.outline_color);
+        let scale = width as f32 / (field.right - field.left).max(1.) as f32;
+        let glyphs: Vec<_> = value.chars().map(|ch| font.rasterize(ch, size)).collect();
+        let total: f32 = glyphs.iter().map(|(m, _)| m.advance_width).sum();
+        let mut x = match field.align {
+            1 => (width as f32 - total * scale) / 2.,
+            2 => width as f32 - total * scale,
+            _ => 0.,
+        }
+        .max(0.);
+        let baseline = ((height as f32 - size * 0.72) / 2.).max(0.);
+        for (metrics, bitmap) in glyphs {
+            let gx = x + metrics.xmin as f32 * scale;
+            let gy = baseline + (size - metrics.height as f32 - metrics.ymin as f32) * scale;
+            for py in 0..height {
+                for px in 0..width {
+                    let sx = ((px as f32 - gx) / scale).floor() as isize;
+                    let sy = ((py as f32 - gy) / scale).floor() as isize;
+                    if sx < 0
+                        || sy < 0
+                        || sx >= metrics.width as isize
+                        || sy >= metrics.height as isize
+                    {
+                        continue;
+                    }
+                    let alpha = bitmap[sy as usize * metrics.width + sx as usize];
+                    if alpha == 0 {
+                        continue;
+                    }
+                    if outline[3] > 0
+                        && (sx == 0
+                            || sy == 0
+                            || sx + 1 >= metrics.width as isize
+                            || sy + 1 >= metrics.height as isize)
+                    {
+                        blend_over(
+                            image.get_pixel_mut(px, py),
+                            Rgba([
+                                outline[0],
+                                outline[1],
+                                outline[2],
+                                ((u16::from(alpha) * u16::from(outline[3])) / 255) as u8,
+                            ]),
+                        );
+                    }
+                    blend_over(
+                        image.get_pixel_mut(px, py),
+                        Rgba([
+                            color[0],
+                            color[1],
+                            color[2],
+                            ((u16::from(alpha) * u16::from(color[3])) / 255) as u8,
+                        ]),
+                    );
+                }
+            }
+            x += metrics.advance_width * scale;
+        }
+        Ok(image)
+    }
+}
+
+/// Rasterize text with an original recovered font, useful for spectator-owned
+/// overlays such as a clock. Colors are ARGB, matching recovered metadata.
+pub fn rasterize_text(
+    root: &Path,
+    font_name: &str,
+    text: &str,
+    size: f32,
+    color: u32,
+) -> Result<RgbaImage> {
+    let path = root.join("fonts").join(font_filename(font_name));
+    let font = fontdue::Font::from_bytes(std::fs::read(path)?, fontdue::FontSettings::default())
+        .map_err(|e| format!("Invalid recovered font: {e}"))?;
+    let glyphs: Vec<_> = text
+        .chars()
+        .map(|ch| font.rasterize(ch, size.max(1.)))
+        .collect();
+    let width = glyphs
+        .iter()
+        .map(|(m, _)| m.advance_width.ceil() as u32)
+        .sum::<u32>()
+        .max(1);
+    let height = glyphs
+        .iter()
+        .map(|(m, _)| m.height as u32)
+        .max()
+        .unwrap_or(1)
+        .max(1);
+    let mut image = RgbaImage::new(width, height);
+    let c = argb(color);
+    let mut x = 0i32;
+    for (m, b) in glyphs {
+        let y = (height as i32 - m.height as i32) / 2 - m.ymin;
+        for gy in 0..m.height {
+            for gx in 0..m.width {
+                let xx = x + m.xmin + gx as i32;
+                let yy = y + gy as i32;
+                if xx >= 0 && yy >= 0 && xx < width as i32 && yy < height as i32 {
+                    let a = (u16::from(b[gy * m.width + gx]) * u16::from(c[3]) / 255) as u8;
+                    blend_over(
+                        image.get_pixel_mut(xx as u32, yy as u32),
+                        Rgba([c[0], c[1], c[2], a]),
+                    );
+                }
+            }
+        }
+        x += m.advance_width.ceil() as i32;
+    }
+    Ok(image)
+}
+fn font_filename(name: &str) -> &'static str {
+    match name {
+        "Supercell-Magic" => "supercell-magic_0.ttf",
+        "SC CCBackBeat" | "CCBackBeat Light" => "sc_ccbackbeatregular.ttf",
+        "Clash Title" => "clash_title_vi_th.ttf",
+        "Clash Text" | "Clash Regular" | "Supercell Text Bold" => "clash_text_vi_th.ttf",
+        "Noto Naskh Arabic" => "NotoNaskhArabic-Bold.ttf",
+        "SGB" => "sgb_20170216.ttf",
+        _ => "",
+    }
+}
+fn argb(v: u32) -> [u8; 4] {
+    [(v >> 16) as u8, (v >> 8) as u8, v as u8, (v >> 24) as u8]
+}
+fn blend_over(dst: &mut Rgba<u8>, src: Rgba<u8>) {
+    let a = u16::from(src[3]);
+    for c in 0..3 {
+        dst[c] = ((u16::from(src[c]) * a + u16::from(dst[c]) * (255 - a)) / 255) as u8;
+    }
+    dst[3] = (a + u16::from(dst[3]) * (255 - a) / 255).min(255) as u8;
 }
 
 fn rasterize(command: &DrawCommand, atlas: &RgbaImage, matrix: Matrix) -> Result<Option<Part>> {

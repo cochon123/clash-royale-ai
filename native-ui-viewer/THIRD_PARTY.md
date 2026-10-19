@@ -64,3 +64,7 @@ INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
 LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
 OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
+
+Opt-in original-font text rasterization uses fontdue 0.9.3:
+https://github.com/mooman219/fontdue, licensed MIT OR Apache-2.0 OR Zlib.
+Its package license files are retained by Cargo in the dependency source.

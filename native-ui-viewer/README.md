@@ -81,9 +81,11 @@ not evidence of parity with an executing official Clash Royale client.
 
 ## Explicit gaps
 
-- Native text fields and text layout are skipped and counted in metadata
-  and the window title. The original fonts and text records are preserved
-  in the recovery directory.
+- Native text fields remain skipped by default for static reference parity.
+  The library's opt-in `Playback.render_text` renders source text fields with
+  extracted original fonts; `text_values` and `hidden_objects` bind values and
+  visibility for the battle spectator. Exact native client text layout remains
+  unverified.
 - Game code must populate portraits, counters, localization and card data,
   select child states, control visibility, position controls and handle input.
 - Nine-slice scaling grids remain in the source documents; resizing/layout

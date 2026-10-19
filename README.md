@@ -17,7 +17,14 @@ recorded separately.
 - Decoded the original SC5 interface display trees, timeline frames, atlas
   textures and fonts. The separate [Rust UI viewer](native-ui-viewer/README.md)
   renders recovered components and plays their authored timelines. It is an
-  asset viewer; native text, game bindings and battles are still pending.
+  asset viewer. Opt-in original-font text and visibility bindings now support
+  the separate [desktop battle spectator](native-spectator/README.md).
+- Added an original-asset desktop spectator driven by the static Rust battle
+  backend: moving native entities, live health and elixir, original arena,
+  towers, characters and spectator HUD. Its 100-tick snapshot audit matches
+  the original runtime in all memory regions, registers and allocator state.
+  Camera calibration, animation selection and full native client layout remain
+  incomplete. See [spectator evidence](docs/native-spectator.md).
 - Reproduced the protection companion's native text-decryption routine, exposing
   approximately 4.86 MB of previously encrypted code. Its actual loader API now
   executes in the `libg.so` initializer probe. The exact 672-byte engine binding

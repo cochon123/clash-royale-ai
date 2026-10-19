@@ -238,6 +238,7 @@ fn run() -> Result<()> {
         frame: options.frame,
         label: options.label,
         object_frames: options.object_frames,
+        ..Playback::default()
     };
     let mut rendered = if let Some(object_id) = options.object_id {
         scene.render_id(object_id, &playback)?
