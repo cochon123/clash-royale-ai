@@ -19178,6 +19178,132 @@ super::chunk15::f_1187d480(cpu,rt,0x1187d480)?;return Ok(());
 }
 _=>return Err(format!("untranslated block {pc:#x} in 0x112949e0")),}}}
 #[inline]
+pub(super) unsafe fn f_11294f34(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+0x11294f34=>{
+// 0x11294f34 ldr w9, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x11294f38 sub w9, w1, w9
+{let a=((cpu.x[1] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x11294f3c cmp w9, w3
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[3] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294f40 b.le #0x11294f4c
+if cpu.condition(13){pc=0x11294f4c;continue;}pc=0x11294f44;continue;
+}
+0x11294f44=>{
+// 0x11294f44 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x11294f48 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+0x11294f4c=>{
+// 0x11294f4c neg w10, w3
+cpu.x[10]=(0u64.wrapping_sub(((cpu.x[3] as u32 as u64)))) as u32 as u64;
+// 0x11294f50 mov x8, x0
+cpu.x[8]=(((cpu.x[0]))) as u64;
+// 0x11294f54 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x11294f58 cmp w9, w10
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294f5c b.ge #0x11294f64
+if cpu.condition(10){pc=0x11294f64;continue;}pc=0x11294f60;continue;
+}
+0x11294f60=>{
+// 0x11294f60 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+0x11294f64=>{
+// 0x11294f64 ldr w8, [x8, #4]
+{let address=(cpu.x[8]).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x11294f68 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x11294f6c sub w8, w2, w8
+{let a=((cpu.x[2] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x11294f70 cmp w8, w3
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[3] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294f74 b.gt #0x11294f60
+if cpu.condition(12){pc=0x11294f60;continue;}pc=0x11294f78;continue;
+}
+0x11294f78=>{
+// 0x11294f78 cmp w8, w10
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294f7c b.lt #0x11294f60
+if cpu.condition(11){pc=0x11294f60;continue;}pc=0x11294f80;continue;
+}
+0x11294f80=>{
+// 0x11294f80 mov w10, #0x7ffe
+cpu.x[10]=(((0x7ffeu64))) as u32 as u64;
+// 0x11294f84 cmp w3, w10
+{let a=((cpu.x[3] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294f88 b.gt #0x11294fa4
+if cpu.condition(12){pc=0x11294fa4;continue;}pc=0x11294f8c;continue;
+}
+0x11294f8c=>{
+// 0x11294f8c mul w9, w9, w9
+cpu.x[9]=((((cpu.x[9] as u32 as u64))).wrapping_mul(((cpu.x[9] as u32 as u64)))) as u32 as u64;
+// 0x11294f90 madd w8, w8, w8, w9
+cpu.x[8]=((((cpu.x[9] as u32 as u64))).wrapping_add((((cpu.x[8] as u32 as u64))).wrapping_mul(((cpu.x[8] as u32 as u64))))) as u32 as u64;
+// 0x11294f94 mul w9, w3, w3
+cpu.x[9]=((((cpu.x[3] as u32 as u64))).wrapping_mul(((cpu.x[3] as u32 as u64)))) as u32 as u64;
+// 0x11294f98 cmp w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294f9c cset w0, ls
+cpu.x[0]=((cpu.condition(9)) as u64) as u32 as u64;
+// 0x11294fa0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+0x11294fa4=>{
+// 0x11294fa4 mov w11, #-0xb505
+cpu.x[11]=(((0xffffffffffff4afbu64))) as u32 as u64;
+// 0x11294fa8 mov w12, #0x95f7
+cpu.x[12]=(((0x95f7u64))) as u32 as u64;
+// 0x11294fac add w10, w9, w11
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[11] as u32 as u64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x11294fb0 movk w12, #0xfffe, lsl #16
+cpu.x[12]=((cpu.x[12] as u32 as u64 & !(0xffff0000u64)) | 0xfffe0000u64) as u32 as u64;
+// 0x11294fb4 cmp w10, w12
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[12] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294fb8 mov w10, #0x7fffffff
+cpu.x[10]=(((0x7fffffffu64))) as u32 as u64;
+// 0x11294fbc b.lo #0x11294fe8
+if cpu.condition(3){pc=0x11294fe8;continue;}pc=0x11294fc0;continue;
+}
+0x11294fc0=>{
+// 0x11294fc0 add w11, w8, w11
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[11] as u32 as u64));let result=a.wrapping_add(b);cpu.x[11]=(result) as u32 as u64;}
+// 0x11294fc4 cmp w11, w12
+{let a=((cpu.x[11] as u32 as u64));let b=((cpu.x[12] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294fc8 b.lo #0x11294fe8
+if cpu.condition(3){pc=0x11294fe8;continue;}pc=0x11294fcc;continue;
+}
+0x11294fcc=>{
+// 0x11294fcc mul w9, w9, w9
+cpu.x[9]=((((cpu.x[9] as u32 as u64))).wrapping_mul(((cpu.x[9] as u32 as u64)))) as u32 as u64;
+// 0x11294fd0 mul w8, w8, w8
+cpu.x[8]=((((cpu.x[8] as u32 as u64))).wrapping_mul(((cpu.x[8] as u32 as u64)))) as u32 as u64;
+// 0x11294fd4 eor w10, w9, #0x7fffffff
+{let a=((cpu.x[9] as u32 as u64));let b=((0x7fffffffu64));let result=a ^ b;cpu.x[10]=(result) as u32 as u64;}
+// 0x11294fd8 add w9, w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_add(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x11294fdc cmp w8, w10
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294fe0 mov w8, #0x7fffffff
+cpu.x[8]=(((0x7fffffffu64))) as u32 as u64;
+// 0x11294fe4 csel w10, w9, w8, lo
+cpu.x[10]=(if cpu.condition(3){((cpu.x[9] as u32 as u64))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+pc=0x11294fe8;continue;
+}
+0x11294fe8=>{
+// 0x11294fe8 mul w8, w3, w3
+cpu.x[8]=((((cpu.x[3] as u32 as u64))).wrapping_mul(((cpu.x[3] as u32 as u64)))) as u32 as u64;
+// 0x11294fec cmp w10, w8
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294ff0 cset w0, le
+cpu.x[0]=((cpu.condition(13)) as u64) as u32 as u64;
+// 0x11294ff4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("untranslated block {pc:#x} in 0x11294f34")),}}}
+#[inline]
 pub(super) unsafe fn f_112aef80(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x112aef80=>{
 // 0x112aef80 add x8, x2, w3, sxtw

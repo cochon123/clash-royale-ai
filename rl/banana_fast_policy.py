@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from contextlib import contextmanager
 from typing import Any
 
 import torch
@@ -11,8 +12,10 @@ from torch.nn import functional as F
 
 try:
     from .banana_policy import BananaEpisode, BananaPolicy, SampledAction
+    from .banana_fast_features import encode_online_sample
 except ImportError:
     from banana_policy import BananaEpisode, BananaPolicy, SampledAction
+    from banana_fast_features import encode_online_sample
 
 
 class FastBananaPolicy(BananaPolicy):
@@ -24,6 +27,88 @@ class FastBananaPolicy(BananaPolicy):
     :class:`BananaPolicy`. Sequence histories are right-padded only for the
     model call; their true lengths remain unchanged.
     """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Dense unidirectional GRU states at lengths-1 cannot depend on later
+        # right padding. This avoids a CUDA -> CPU lengths copy in pack().
+        self.model.padded_encoder = True
+
+    def _encode_policy_sample(self, *args, **kwargs):
+        return encode_online_sample(self._dataset, *args, **kwargs)
+
+    @contextmanager
+    def _ppo_backend(self):
+        encoder = self.model.encoder
+        if self.device.type != "cuda" or not torch.backends.cudnn.is_available():
+            with torch.backends.cudnn.flags(enabled=False):
+                yield
+            return
+        # cuDNN only retains GRU backward workspace in training mode. Change
+        # this child alone and explicitly disable inter-layer dropout, which
+        # is already disabled by the rollout's eval mode. All other dropout
+        # modules stay in eval. Restore both attributes even on failure.
+        training, dropout = encoder.training, encoder.dropout
+        try:
+            encoder.training, encoder.dropout = True, 0.0
+            with torch.backends.cudnn.flags(enabled=True):
+                yield
+        finally:
+            encoder.training, encoder.dropout = training, dropout
+
+    def _placement_from_context(self, first, caches, indices, slots):
+        """Reuse the card-independent trunk; retain full-model compatibility.
+
+        The selected-card 4.4.2 architecture applies placement_slots only after
+        fused/slot scoring. Eval disables dropout, so sharing this graph also
+        preserves PPO's gradients. Other architectures use the full path.
+        """
+        model = self.model
+        subset = [caches[i] for i in indices]
+        if (model.training or not model.card_conditioned_placement
+                or model.placement_mode != "heatmap"
+                or model.placement_card_mode != "selected"
+                or getattr(model, "arena_memory_channels", 0)):
+            return self._forward_batch(subset, slots)
+        ix = torch.tensor(indices, dtype=torch.long, device=self.device)
+        decks = torch.stack([cache["inputs"][2] for cache in subset]).to(self.device)
+        card_ids = decks.gather(1, slots[:, None]).squeeze(1)
+        place_in = torch.cat((first["fused"][ix], model.card_embedding(card_ids)), dim=-1)
+        zone_probs = F.softmax(model.zone_head(place_in), dim=-1)
+        return {"tile_logits": model.tile_head(torch.cat((place_in, zone_probs), dim=-1))}
+
+    def _tile_batch(self, logits, caches):
+        """One categorical per row, including variable masks/support sizes."""
+        candidates, counts = [], []
+        for cache in caches:
+            fixed = cache.get("tile_candidates")
+            mask = cache["tile_mask"]
+            row = (fixed.long() if fixed is not None else
+                   mask.nonzero(as_tuple=False).flatten() if mask is not None else
+                   torch.arange(logits.shape[1]))
+            if not row.numel():
+                raise ValueError("legal tile mask contains no legal locations")
+            candidates.append(row)
+            counts.append(len(row))
+        width = max(counts)
+        indices = torch.stack([F.pad(row, (0, width - len(row))) for row in candidates]).to(self.device)
+        valid = torch.arange(width, device=self.device)[None, :] < torch.tensor(counts, device=self.device)[:, None]
+        temperatures = logits.new_tensor([max(float(c["placement_temperature"]), 1e-4) for c in caches])
+        scores = (logits / temperatures[:, None]).gather(1, indices)
+        scores = scores.masked_fill(~valid, torch.finfo(scores.dtype).min)
+        fixed_rows = [c.get("tile_candidates") is not None for c in caches]
+        if not all(fixed_rows):
+            if any(fixed_rows):
+                raise ValueError("cannot mix fresh and fixed placement supports")
+            sizes = [max(1, min(int(c["placement_top_k"]), n)) for c, n in zip(caches, counts)]
+            scores, local = torch.topk(scores, max(sizes), dim=1)
+            indices = indices.gather(1, local)
+            valid = torch.arange(max(sizes), device=self.device)[None, :] < torch.tensor(sizes, device=self.device)[:, None]
+            scores = scores.masked_fill(~valid, torch.finfo(scores.dtype).min)
+            counts = sizes
+        # Inputs/supports were validated above. Distribution validation would
+        # otherwise synchronize CUDA for each tiny categorical.
+        return Categorical(logits=scores, validate_args=False), indices, counts
 
     @staticmethod
     def _cache_request(
@@ -113,6 +198,16 @@ class FastBananaPolicy(BananaPolicy):
             **kwargs,
         )
 
+    def act(self, episode, observation, side, now_seconds, temperature=1.,
+            placement_temperature=.8, placement_top_k=5, deterministic=False,
+            legal_tile_mask=None):
+        """Use the same fast path for the inherited trainer's periodic evaluations."""
+        return self.act_batch(
+            [(episode, observation, side, now_seconds)], temperature=temperature,
+            placement_temperature=placement_temperature, placement_top_k=placement_top_k,
+            deterministic=deterministic, legal_tile_masks=[legal_tile_mask],
+        )[0]
+
     def act_batch(
         self,
         requests: Sequence[tuple[BananaEpisode, Mapping[str, Any], int, float]],
@@ -153,143 +248,106 @@ class FastBananaPolicy(BananaPolicy):
         sides = [int(request[2]) for request in requests]
         with torch.no_grad():
             first = self._forward_batch(caches)
-            wait_logits = self.wait_head(first["fused"]).squeeze(-1)
-            value_rows = self.critic(first["fused"]).squeeze(-1)
-            pending: list[tuple[int, Tensor, Tensor, Tensor, int, int, str]] = []
-            results: list[SampledAction | None] = [None] * len(caches)
-            for i, cache in enumerate(caches):
-                wait_dist = Bernoulli(logits=wait_logits[i])
-                legal = cache["legal"]
-                legal_deck_slots = tuple(sorted({row[1] for row in legal}))
-                value = value_rows[i].detach()
-                if not cache["can_play"]:
-                    wait_choice = True
-                    log_prob = first["fused"][i].sum() * 0.0
-                    entropy = log_prob
-                else:
-                    wait_choice = (
-                        bool(wait_dist.sample().item())
-                        if not deterministic
-                        else bool(wait_dist.probs.item() >= 0.5)
-                    )
-                    wait_value = torch.tensor(float(wait_choice), device=self.device)
-                    log_prob = wait_dist.log_prob(wait_value)
-                    entropy = wait_dist.entropy()
-                if wait_choice:
-                    results[i] = SampledAction(
-                        sides[i], -1, -1, "", 0, 0, -1,
-                        log_prob.detach(), entropy.detach(), value,
-                        legal_deck_slots, True, cache,
-                    )
-                    continue
-                slot_logits = first["slot_logits"][i] / max(float(temperature), 1e-4)
-                mask = cache["inputs"][7].to(self.device)
-                slot_dist = Categorical(
-                    logits=slot_logits.masked_fill(~mask, torch.finfo(slot_logits.dtype).min)
-                )
-                slot_tensor = slot_logits.argmax() if deterministic else slot_dist.sample()
-                deck_slot = int(slot_tensor.item())
-                native_slot, _, card = next(row for row in legal if row[1] == deck_slot)
-                log_prob = log_prob + slot_dist.log_prob(slot_tensor)
-                entropy = entropy + slot_dist.entropy()
-                pending.append((i, slot_tensor, log_prob, entropy, native_slot, deck_slot, card))
-
+            wait_dist = Bernoulli(logits=self.wait_head(first["fused"]).squeeze(-1), validate_args=False)
+            values = self.critic(first["fused"]).squeeze(-1)
+            can_play = torch.tensor([c["can_play"] for c in caches], device=self.device)
+            waits = wait_dist.probs >= 0.5 if deterministic else wait_dist.sample().bool()
+            waits = waits | ~can_play
+            logp = torch.where(can_play, wait_dist.log_prob(waits.float()), 0.)
+            entropy = torch.where(can_play, wait_dist.entropy(), 0.)
+            # Transfer each decision vector once, rather than synchronizing for
+            # every action's wait/slot/tile/x/y scalar.
+            wait_rows = waits.cpu().tolist()
+            pending = [i for i, wait in enumerate(wait_rows) if not wait]
+            placements = {}
             if pending:
-                subset = [caches[row[0]] for row in pending]
-                selected_slots = torch.stack([row[1] for row in pending]).long()
-                second = self._forward_batch(subset, selected_slots)
-                for batch_index, row in enumerate(pending):
-                    i, _slot_tensor, log_prob, entropy, native_slot, deck_slot, card = row
-                    cache = caches[i]
-                    tile_dist, indices = self._tile_distribution(
-                        second["tile_logits"][batch_index], cache
-                    )
-                    cache["tile_candidates"] = indices.detach().cpu().clone()
-                    choice = tile_dist.logits.argmax() if deterministic else tile_dist.sample()
-                    tile = int(indices[choice].item())
-                    xy = torch.tensor(
-                        [((tile % 32) + 0.5) / 32, ((tile // 32) + 0.5) / 18],
-                        device=self.device,
-                    )
-                    offset = second.get("offset")
-                    if offset is not None:
-                        xy = (
-                            xy + offset[batch_index].detach()
-                            * xy.new_tensor([0.5 / 32, 0.5 / 18])
-                        ).clamp(0.0, 1.0)
-                    if sides[i] == 1:
-                        xy = torch.stack((xy[0], 1.0 - xy[1]))
-                    x = int(torch.round(xy[0] * 18000).clamp(0, 18000).item())
-                    y = int(torch.round(xy[1] * 32000).clamp(0, 32000).item())
-                    log_prob = log_prob + tile_dist.log_prob(choice)
-                    entropy = entropy + tile_dist.entropy()
-                    results[i] = SampledAction(
-                        sides[i], native_slot, deck_slot, card, x, y, tile,
-                        log_prob.detach(), entropy.detach(), value_rows[i].detach(),
-                        tuple(sorted({d for _, d, _ in cache["legal"]})), False, cache,
-                    )
-            if any(result is None for result in results):
-                raise RuntimeError("internal error: batch action was not filled")
-            return [result for result in results if result is not None]
+                subset = [caches[i] for i in pending]
+                ix = torch.tensor(pending, device=self.device)
+                mask = torch.stack([c["inputs"][7] for c in subset]).to(self.device)
+                slot_logits = first["slot_logits"][ix] / max(float(temperature), 1e-4)
+                slot_dist = Categorical(logits=slot_logits.masked_fill(~mask, torch.finfo(slot_logits.dtype).min),
+                                        validate_args=False)
+                slots = slot_dist.logits.argmax(-1) if deterministic else slot_dist.sample()
+                second = self._placement_from_context(first, caches, pending, slots)
+                tile_dist, indices, counts = self._tile_batch(second["tile_logits"], subset)
+                choices = tile_dist.logits.argmax(-1) if deterministic else tile_dist.sample()
+                tiles = indices.gather(1, choices[:, None]).squeeze(1)
+                xy = torch.stack(((tiles % 32 + .5) / 32, (tiles // 32 + .5) / 18), dim=1)
+                if second.get("offset") is not None:
+                    xy = (xy + second["offset"].detach() * xy.new_tensor([.5 / 32, .5 / 18])).clamp(0., 1.)
+                red = torch.tensor([sides[i] == 1 for i in pending], device=self.device)
+                xy[:, 1] = torch.where(red, 1. - xy[:, 1], xy[:, 1])
+                coords = torch.round(xy * xy.new_tensor([18000., 32000.])).clamp_min(0)
+                coords = torch.minimum(coords, coords.new_tensor([18000., 32000.])).long()
+                logp[ix] += slot_dist.log_prob(slots) + tile_dist.log_prob(choices)
+                entropy[ix] += slot_dist.entropy() + tile_dist.entropy()
+                decoded = torch.cat((slots[:, None], tiles[:, None], coords, indices), dim=1).cpu()
+                for row, i, count in zip(decoded, pending, counts):
+                    slot, tile, x, y = row[:4].tolist()
+                    caches[i]["tile_candidates"] = row[4:4 + count].clone()
+                    placements[i] = slot, tile, x, y
+            statistics = torch.stack((logp, entropy, values), dim=1).cpu()
+        results = []
+        for i, cache in enumerate(caches):
+            legal_slots = tuple(sorted({row[1] for row in cache["legal"]}))
+            lp, ent, val = statistics[i]
+            if wait_rows[i]:
+                results.append(SampledAction(sides[i], -1, -1, "", 0, 0, -1, lp, ent, val,
+                                             legal_slots, True, cache))
+            else:
+                slot, tile, x, y = placements[i]
+                native_slot, _, card = next(row for row in cache["legal"] if row[1] == slot)
+                results.append(SampledAction(sides[i], native_slot, slot, card, x, y, tile,
+                                             lp, ent, val, legal_slots, False, cache))
+        return results
 
     def evaluate_actions(self, actions: Sequence[SampledAction]) -> tuple[Tensor, Tensor, Tensor]:
-        """Batch PPO likelihood/value recomputation, including placement conditioning."""
+        """Vectorized PPO likelihoods; placement reuses the differentiable trunk."""
         if not actions:
             empty = torch.empty(0, device=self.device)
             return empty, empty, empty
         caches = [action.input_cache for action in actions]
-        log_probs: list[Tensor | None] = [None] * len(actions)
-        entropies: list[Tensor | None] = [None] * len(actions)
-        with torch.backends.cudnn.flags(enabled=False):
+        with self._ppo_backend():
             first = self._forward_batch(caches)
-            wait_logits = self.wait_head(first["fused"]).squeeze(-1)
+            wait_dist = Bernoulli(logits=self.wait_head(first["fused"]).squeeze(-1), validate_args=False)
             values = self.critic(first["fused"]).squeeze(-1)
-            pending: list[int] = []
-            for i, action in enumerate(actions):
-                cache = caches[i]
-                wait_dist = Bernoulli(logits=wait_logits[i])
-                wait_value = torch.tensor(float(action.wait), device=self.device)
-                can_play = bool(cache["can_play"])
-                if can_play:
-                    log_prob = wait_dist.log_prob(wait_value)
-                    entropy = wait_dist.entropy()
-                else:
-                    log_prob = first["fused"][i].sum() * 0.0
-                    entropy = log_prob
-                if not action.wait:
-                    slot_logits = first["slot_logits"][i] / max(float(cache["temperature"]), 1e-4)
-                    mask = cache["inputs"][7].to(self.device)
-                    slot_dist = Categorical(
-                        logits=slot_logits.masked_fill(~mask, torch.finfo(slot_logits.dtype).min)
-                    )
-                    slot_tensor = torch.tensor(action.deck_slot, device=self.device)
-                    log_prob = log_prob + slot_dist.log_prob(slot_tensor)
-                    entropy = entropy + slot_dist.entropy()
-                    pending.append(i)
-                log_probs[i] = log_prob
-                entropies[i] = entropy
-
+            can_play = torch.tensor([c["can_play"] for c in caches], device=self.device)
+            waits = torch.tensor([a.wait for a in actions], dtype=torch.float32, device=self.device)
+            logp = torch.where(can_play, wait_dist.log_prob(waits), 0.)
+            entropy = torch.where(can_play, wait_dist.entropy(), 0.)
+            pending = [i for i, action in enumerate(actions) if not action.wait]
             if pending:
-                second = self._forward_batch(
-                    [caches[i] for i in pending],
-                    torch.tensor([actions[i].deck_slot for i in pending], device=self.device),
-                )
-                for batch_index, i in enumerate(pending):
-                    cache = caches[i]
-                    action = actions[i]
-                    tile_dist, indices = self._tile_distribution(
-                        second["tile_logits"][batch_index], cache
-                    )
-                    choices = (indices == action.tile).nonzero(as_tuple=False).flatten()
-                    if choices.numel() != 1:
-                        raise ValueError(
-                            f"stored tile {action.tile} is not in this action's legal top-k set"
-                        )
-                    choice = choices[0]
-                    log_probs[i] = log_probs[i] + tile_dist.log_prob(choice)
-                    entropies[i] = entropies[i] + tile_dist.entropy()
-        return (
-            torch.stack([value for value in log_probs if value is not None]),
-            torch.stack([value for value in entropies if value is not None]),
-            values,
-        )
+                subset = [caches[i] for i in pending]
+                ix = torch.tensor(pending, device=self.device)
+                slots = torch.tensor([actions[i].deck_slot for i in pending], device=self.device)
+                mask = torch.stack([c["inputs"][7] for c in subset]).to(self.device)
+                temperatures = values.new_tensor([max(float(c["temperature"]), 1e-4) for c in subset])
+                slot_logits = first["slot_logits"][ix] / temperatures[:, None]
+                slot_dist = Categorical(logits=slot_logits.masked_fill(~mask, torch.finfo(slot_logits.dtype).min),
+                                        validate_args=False)
+                second = self._placement_from_context(first, caches, pending, slots)
+                # Rollout caches always contain fixed supports. Keep the base
+                # behavior for externally created legacy actions without one.
+                if all(c.get("tile_candidates") is not None for c in subset):
+                    choices = []
+                    for i, cache in zip(pending, subset):
+                        support = cache["tile_candidates"].tolist()
+                        if support.count(actions[i].tile) != 1:
+                            raise ValueError(f"stored tile {actions[i].tile} is not in this action's legal top-k set")
+                        choices.append(support.index(actions[i].tile))
+                    tiles, _, _ = self._tile_batch(second["tile_logits"], subset)
+                    choices = torch.tensor(choices, device=self.device)
+                    tile_logp, tile_entropy = tiles.log_prob(choices), tiles.entropy()
+                else:
+                    tile_logp, tile_entropy = [], []
+                    for row, i in enumerate(pending):
+                        dist, indices = self._tile_distribution(second["tile_logits"][row], caches[i])
+                        choice = (indices == actions[i].tile).nonzero(as_tuple=False).flatten()
+                        if choice.numel() != 1:
+                            raise ValueError(f"stored tile {actions[i].tile} is not in this action's legal top-k set")
+                        tile_logp.append(dist.log_prob(choice[0]))
+                        tile_entropy.append(dist.entropy())
+                    tile_logp, tile_entropy = torch.stack(tile_logp), torch.stack(tile_entropy)
+                logp = logp.index_add(0, ix, slot_dist.log_prob(slots) + tile_logp)
+                entropy = entropy.index_add(0, ix, slot_dist.entropy() + tile_entropy)
+        return logp, entropy, values

@@ -1,9 +1,20 @@
 {
   "source_sha256": "79fe6612e20922d4c4086b1e6c939464202cefa7cb3b20344236529f941423d6",
   "checkpoint_sha256": "66f9bf75bfde9b5e0c1f4056573079016d41576020018b9e57fca538fd1b840e",
-  "profile_sha256": "ef92ee9c59a1494c703519ef865f75b5e157f29f866308f623f882459c0a43cb",
-  "function_count": 1908,
-  "instruction_count": 103130,
+  "profile_sha256": "11d62baa3d615058cf966c664b6268a1ba37730c947565f24b924f6f8ba4570e",
+  "runtime_functions": [
+    {
+      "region": "cxx_runtime.bin",
+      "source_elf": "analysis/native/lib/arm64-v8a/libc++_shared.so",
+      "source_sha256": "4397241b4bd20a8e579bfb41d21107857e12985f6a01ca0c2a5f83380d1270b4",
+      "symbol": "_ZNSt6__ndk112__next_primeEm",
+      "start": "0x300cffbc",
+      "end_exclusive": "0x300d06dc",
+      "bytes": 1824
+    }
+  ],
+  "function_count": 1910,
+  "instruction_count": 103754,
   "unsupported_encodings": {},
   "forward_threading": {
     "0xf9b008": {
@@ -48,20 +59,20 @@
     "chunk0.rs": "01b845018c3276120b03b5795b594ac597a616e41b230c6104d999aab37f2a35",
     "chunk1.rs": "8f11fcb2735ce63afa2172e654c87c9308362bb6d0e5a90d5b0fb983ccfdcbff",
     "chunk10.rs": "2d83e675e21ea17e59b86784861acd32d4ce25325c6a3af5573d98974db1d7c8",
-    "chunk11.rs": "b197fe166c2b0200d2ce75e53749b0febdbfa020809edb8fd52a1e48f1523051",
+    "chunk11.rs": "d6a2bb51f9ba7abc4bd3ee2e1eb0455725f5faba1286575f5116b8818cff708b",
     "chunk12.rs": "bf84502e202f52804a8e17db762bce5732c1163547e74d8cb3ad8459dfbaf7cf",
     "chunk13.rs": "3020b8beb5662825152799256b817815613e2c5694090e31a9b5b336ee70e341",
-    "chunk14.rs": "12fdb7987966f148809f0d73020d0fa10f6af5aa4776e30f4962be0e7cf42e31",
-    "chunk15.rs": "eef4e5a38a99e27c4024a41910a5a16c656fe23029836cd6f883af40f879f595",
+    "chunk14.rs": "75e6dac102f07cf145cdd93ed3ac357f899dcdfe956702a7bee21fc697d33b10",
+    "chunk15.rs": "0ab8689e3c16e0e5bd7662922bec0bbc4c0dc654748cc2b87b8a80da7aa7992a",
     "chunk2.rs": "1cdf7fb6d239171a3773bd180951bba2369fdc028f2e796c8322d00d339a8af8",
-    "chunk3.rs": "8dadc05058c3cabaef9c8229b312697b3795959a2073577fc3f97808a7acb71e",
+    "chunk3.rs": "1f17d74ddbbc80b3946c33ec51465c40d66dc9ee90a9c9c54c2e9d39822b3bd2",
     "chunk4.rs": "2898ae6ff31766f2875fce2175357578d5f487b88d86ac35f628321410ec5b84",
     "chunk5.rs": "01bc12afebfc0415617071ac58cfb802f090b182ca6ef52be877c4e1e56a7737",
     "chunk6.rs": "cdb098bcd1cee1994ae221c04688b01bb99ca5d1f79661a9339d48842fbd2d91",
     "chunk7.rs": "336ea0e1e0acca6e437c281314979325c7961b1498788a55749acda098fbcfb7",
     "chunk8.rs": "aae661418eaeda5d07fb2a0ac004b5e3e9b5a4ada71bfa99e1efc590dfa5d809",
-    "chunk9.rs": "ec2755442ffd774522b114aec1d482edb02a035dacce04ec0f90a98fbe9a4f3a",
+    "chunk9.rs": "0bbfb8f827425cd32e2c9b621251812ef763544cc6050d340a6e73db986909e3",
     "helpers.rs": "1b2420a35f393069a0ff10a6d7b979fd889ffa26b962934864fef7d2399d0024",
-    "mod.rs": "745fa71f374c629f4edef8d9df456df50570a511de42a5a073ffa023a786b5b0"
+    "mod.rs": "5aec5dc1f607c78b30f6e631c02a3b93ad86d37e90321c5abb8c8ec98ef025a2"
   }
 }

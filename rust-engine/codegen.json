@@ -79,5 +79,13 @@
     "0x128ce98",
     "0x128d1e4"
   ],
-  "forward_thread_instruction_budget": 64
+  "forward_thread_instruction_budget": 64,
+  "extra_runtime_functions": [
+    {
+      "region": "cxx_runtime.bin",
+      "source_elf": "analysis/native/lib/arm64-v8a/libc++_shared.so",
+      "source_sha256": "4397241b4bd20a8e579bfb41d21107857e12985f6a01ca0c2a5f83380d1270b4",
+      "symbol": "_ZNSt6__ndk112__next_primeEm"
+    }
+  ]
 }

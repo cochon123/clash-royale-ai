@@ -339,6 +339,28 @@ def generate(profile,out,extra):
   pc=int(rva,0)+BASE;j=bisect.bisect_right(starts,pc)-1
   if j<0 or not rows[j][0]<=pc<rows[j][1]:raise ValueError('Extra RVA not in FDE '+rva)
   ranges[rows[j][0]]=rows[j]
+ # Whole external functions are bounded by the original ELF symbol table,
+ # not guessed coverage extents. Bind every byte to the retained checkpoint.
+ runtime_functions=[]
+ for entry in settings.get('extra_runtime_functions',[]):
+  from io import BytesIO
+  from elftools.elf.elffile import ELFFile
+  from elftools.elf.sections import SymbolTableSection
+  raw=(ROOT/entry['source_elf']).read_bytes()
+  if hashlib.sha256(raw).hexdigest()!=entry['source_sha256']:raise ValueError('Runtime ELF identity mismatch')
+  elf=ELFFile(BytesIO(raw))
+  symbols=[sym for section in elf.iter_sections() if isinstance(section,SymbolTableSection) for sym in section.iter_symbols() if sym.name==entry['symbol'] and sym['st_size']]
+  bounds={(int(sym['st_value']),int(sym['st_size'])) for sym in symbols}
+  if len(bounds)!=1:raise ValueError('Runtime symbol extent is missing or ambiguous')
+  offset,size=next(iter(bounds))
+  region=next(r for r in cp['regions'] if r['file']==entry['region'])
+  lo=int(region['base'],0)+offset;hi=lo+size
+  segments=[s for s in elf.iter_segments() if s['p_type']=='PT_LOAD' and s['p_flags']&1 and s['p_vaddr']<=offset and offset+size<=s['p_vaddr']+s['p_filesz']]
+  if len(segments)!=1:raise ValueError('Runtime symbol outside one executable segment')
+  segment=segments[0];file_offset=segment['p_offset']+offset-segment['p_vaddr']
+  if read(lo,size)!=raw[file_offset:file_offset+size]:raise ValueError('Runtime function differs from checkpoint bytes')
+  ranges[lo]=(lo,hi)
+  runtime_functions.append(dict(entry,start=hex(lo),end_exclusive=hex(hi),bytes=size))
  merged={}
  for lo,hi in sorted(ranges.values()):
   if merged and (lo>=BASE+0x187d10c):
@@ -400,7 +422,7 @@ def generate(profile,out,extra):
  mod+=''.join(f'{a:#x}..={b-1:#x}=>chunk{j}::{name}(cpu,rt,target),\n'for a,b,j,name in exports)
  mod+='address=>{if rt.imported(cpu,address)? {Ok(())}else{Err(format!("untranslated function {address:#x}"))}}}}\n'
  (out/'mod.rs').write_text(mod)
- report={'source_sha256':EXPECTED,'checkpoint_sha256':hashlib.sha256((cpdir/'checkpoint.json').read_bytes()).hexdigest(),'profile_sha256':hashlib.sha256(profile.read_bytes()).hexdigest(),'function_count':len(ranges),'instruction_count':total,'unsupported_encodings':dict(unsupported),'forward_threading':threaded,'method':'Original FDE bodies and profiled external runtime blocks compiled into Rust scalar/vector operations; no emulator fallback. Unsupported code stops explicitly.','generated_files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest()for p in sorted(out.glob('*.rs'))}}
+ report={'source_sha256':EXPECTED,'checkpoint_sha256':hashlib.sha256((cpdir/'checkpoint.json').read_bytes()).hexdigest(),'profile_sha256':hashlib.sha256(profile.read_bytes()).hexdigest(),'runtime_functions':runtime_functions,'function_count':len(ranges),'instruction_count':total,'unsupported_encodings':dict(unsupported),'forward_threading':threaded,'method':'Original FDE bodies and profiled external runtime blocks compiled into Rust scalar/vector operations; no emulator fallback. Unsupported code stops explicitly.','generated_files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest()for p in sorted(out.glob('*.rs'))}}
  (ROOT/'analysis/native-port/rust-generation.json').write_text(json.dumps(report,indent=2)+'\n')
  (out/'manifest.json').write_text(json.dumps(report,indent=2)+'\n')
  print(json.dumps({k:v for k,v in report.items() if k!='generated_files'},indent=2))

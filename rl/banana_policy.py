@@ -154,6 +154,10 @@ class BananaPolicy(nn.Module):
         nn.init.zeros_(self.wait_head.weight)
         nn.init.constant_(self.wait_head.bias, -2.0)
 
+    def _encode_policy_sample(self, *args, **kwargs):
+        """Online feature hook; the reference adapter retains its original encoder."""
+        return self._dataset.encode_policy_sample(*args, **kwargs)
+
     def _inputs(
         self, episode: BananaEpisode, side: int, now_seconds: float,
         hand_rows: Sequence[Mapping[str, Any]], elixir: float, opponent_elixir: float,
@@ -171,7 +175,7 @@ class BananaPolicy(nn.Module):
                  "card": acting[0], "x": 9000, "y": 16000}
         BattleExample = self._winner_dataset.BattleExample
         battle = BattleExample(episode.battle_id, team, opponent, 1, tuple(episode.events + [dummy]))
-        sample = self._dataset.encode_policy_sample(
+        sample = self._encode_policy_sample(
             battle, len(episode.events), self.vocab, self.costs,
             max_context=self.max_context, threat_dim=self.threat_dim,
             min_context=0, observation_seconds=float(dummy["seconds"]),

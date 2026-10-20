@@ -17828,7 +17828,7 @@ cpu.x[29]=(((cpu.sp))) as u64;
 // 0x300cffc8 cmp x0, #0xd3
 {let a=((cpu.x[0]));let b=((0xd3u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x300cffcc b.hi #0x300d0010
-if cpu.condition(8){super::dispatch(cpu,rt,0x300d0010)?;return Ok(());}pc=0x300cffd0;continue;
+if cpu.condition(8){pc=0x300d0010;continue;}pc=0x300cffd0;continue;
 }
 0x300cffd0=>{
 // 0x300cffd0 nop
@@ -17862,11 +17862,1103 @@ if (cpu.x[9]) != 0 {pc=0x300cffdc;continue;}pc=0x300d0000;continue;
 0x300d0000=>{
 // 0x300d0000 ldr w0, [x8]
 {let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+pc=0x300d0004;continue;
+}
+0x300d0004=>{
 // 0x300d0004 ldp x29, x30, [sp], #0x10
 {let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x10u64)))) as u64;}
 // 0x300d0008 autiasp
 
 // 0x300d000c ret
 cpu.pc=cpu.x[30];return Ok(());
+}
+0x300d0010=>{
+// 0x300d0010 cmn x0, #0x3a
+{let a=((cpu.x[0]));let b=((0x3au64));let result=a.wrapping_add(b);cpu.flags(a,b,result,64,false);}
+// 0x300d0014 b.hs #0x300d06d0
+if cpu.condition(2){pc=0x300d06d0;continue;}pc=0x300d0018;continue;
+}
+0x300d0018=>{
+// 0x300d0018 mov x8, #0x4e05
+cpu.x[8]=(((0x4e05u64))) as u64;
+// 0x300d001c mov w9, #0xd2
+cpu.x[9]=(((0xd2u64))) as u32 as u64;
+// 0x300d0020 mov w12, #0x30
+cpu.x[12]=(((0x30u64))) as u32 as u64;
+// 0x300d0024 movk x8, #0x4e0, lsl #16
+cpu.x[8]=((cpu.x[8] & !(0xffff0000u64)) | 0x4e00000u64) as u64;
+// 0x300d0028 movk x8, #0xe04e, lsl #32
+cpu.x[8]=((cpu.x[8] & !(0xffff00000000u64)) | 0xe04e00000000u64) as u64;
+// 0x300d002c movk x8, #0x4e04, lsl #48
+cpu.x[8]=((cpu.x[8] & !(0xffff000000000000u64)) | 0x4e04000000000000u64) as u64;
+// 0x300d0030 umulh x8, x0, x8
+cpu.x[8]=((((((cpu.x[0]))) as u128).wrapping_mul((((cpu.x[8]))) as u128) >> 64) as u64) as u64;
+// 0x300d0034 lsr x8, x8, #6
+cpu.x[8]=(((((cpu.x[8]))) as u64).wrapping_shr(((((0x6u64))) & 63) as u32) as u64) as u64;
+// 0x300d0038 mul x13, x8, x9
+cpu.x[13]=((((cpu.x[8]))).wrapping_mul(((cpu.x[9])))) as u64;
+// 0x300d003c nop
+
+// 0x300d0040 adr x9, #0x30059d14
+cpu.x[9]=(0x30059d14u64) as u64;
+// 0x300d0044 mov x11, x9
+cpu.x[11]=(((cpu.x[9]))) as u64;
+// 0x300d0048 sub x10, x0, x13
+{let a=((cpu.x[0]));let b=((cpu.x[13]));let result=a.wrapping_sub(b);cpu.x[10]=(result) as u64;}
+pc=0x300d004c;continue;
+}
+0x300d004c=>{
+// 0x300d004c lsr x14, x12, #1
+cpu.x[14]=(((((cpu.x[12]))) as u64).wrapping_shr(((((0x1u64))) & 63) as u32) as u64) as u64;
+// 0x300d0050 add x15, x11, x14, lsl #2
+{let a=((cpu.x[11]));let b=(((cpu.x[14])) as u64).wrapping_shl(2) as u64;let result=a.wrapping_add(b);cpu.x[15]=(result) as u64;}
+// 0x300d0054 mvn x17, x14
+cpu.x[17]=(!(((cpu.x[14])))) as u64;
+// 0x300d0058 add x12, x12, x17
+{let a=((cpu.x[12]));let b=((cpu.x[17]));let result=a.wrapping_add(b);cpu.x[12]=(result) as u64;}
+// 0x300d005c ldr w16, [x15], #4
+{let address=(cpu.x[15]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[16]=(v0) as u32 as u64;cpu.x[15]=((cpu.x[15]).wrapping_add(((0x4u64)))) as u64;}
+// 0x300d0060 cmp x10, x16
+{let a=((cpu.x[10]));let b=((cpu.x[16]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0064 csel x12, x12, x14, hi
+cpu.x[12]=(if cpu.condition(8){((cpu.x[12]))}else{((cpu.x[14]))}) as u64;
+// 0x300d0068 csel x11, x15, x11, hi
+cpu.x[11]=(if cpu.condition(8){((cpu.x[15]))}else{((cpu.x[11]))}) as u64;
+// 0x300d006c cbnz x12, #0x300d004c
+if (cpu.x[12]) != 0 {pc=0x300d004c;continue;}pc=0x300d0070;continue;
+}
+0x300d0070=>{
+// 0x300d0070 sub x10, x11, x9
+{let a=((cpu.x[11]));let b=((cpu.x[9]));let result=a.wrapping_sub(b);cpu.x[10]=(result) as u64;}
+// 0x300d0074 nop
+
+// 0x300d0078 adr x11, #0x30059c54
+cpu.x[11]=(0x30059c54u64) as u64;
+// 0x300d007c asr x10, x10, #2
+cpu.x[10]=(((((cpu.x[10]))) as i64).wrapping_shr(((((0x2u64))) & 63) as u32) as u64) as u64;
+// 0x300d0080 mov w12, #0xd2
+cpu.x[12]=(((0xd2u64))) as u32 as u64;
+pc=0x300d0084;continue;
+}
+0x300d0084=>{
+// 0x300d0084 ldr w14, [x9, x10, lsl #2]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[10])) as u64).wrapping_shl(2) as u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[14]=(v0) as u32 as u64;}
+// 0x300d0088 add x0, x13, x14
+{let a=((cpu.x[13]));let b=((cpu.x[14]));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x300d008c mov w13, #0x14
+cpu.x[13]=(((0x14u64))) as u32 as u64;
+pc=0x300d0090;continue;
+}
+0x300d0090=>{
+// 0x300d0090 ldr w14, [x11, x13]
+{let address=((cpu.x[11]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[13])));let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[14]=(v0) as u32 as u64;}
+// 0x300d0094 udiv x15, x0, x14
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[14])) as u64;cpu.x[15]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0098 cmp x15, x14
+{let a=((cpu.x[15]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d009c b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d00a0;continue;
+}
+0x300d00a0=>{
+// 0x300d00a0 mul x14, x15, x14
+cpu.x[14]=((((cpu.x[15]))).wrapping_mul(((cpu.x[14])))) as u64;
+// 0x300d00a4 cmp x0, x14
+{let a=((cpu.x[0]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d00a8 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d00ac;continue;
+}
+0x300d00ac=>{
+// 0x300d00ac add x13, x13, #4
+{let a=((cpu.x[13]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[13]=(result) as u64;}
+// 0x300d00b0 cmp x13, #0xbc
+{let a=((cpu.x[13]));let b=((0xbcu64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d00b4 b.ne #0x300d0090
+if cpu.condition(1){pc=0x300d0090;continue;}pc=0x300d00b8;continue;
+}
+0x300d00b8=>{
+// 0x300d00b8 mov w13, #0x1a3
+cpu.x[13]=(((0x1a3u64))) as u32 as u64;
+pc=0x300d00bc;continue;
+}
+0x300d00bc=>{
+// 0x300d00bc sub x14, x13, #0xd0
+{let a=((cpu.x[13]));let b=((0xd0u64));let result=a.wrapping_sub(b);cpu.x[14]=(result) as u64;}
+// 0x300d00c0 udiv x15, x0, x14
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[14])) as u64;cpu.x[15]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d00c4 cmp x15, x14
+{let a=((cpu.x[15]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d00c8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d00cc;continue;
+}
+0x300d00cc=>{
+// 0x300d00cc mul x15, x15, x14
+cpu.x[15]=((((cpu.x[15]))).wrapping_mul(((cpu.x[14])))) as u64;
+// 0x300d00d0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d00d4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d00d8;continue;
+}
+0x300d00d8=>{
+// 0x300d00d8 sub x15, x13, #0xc6
+{let a=((cpu.x[13]));let b=((0xc6u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d00dc add x14, x14, #0xa
+{let a=((cpu.x[14]));let b=((0xau64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d00e0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d00e4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d00e8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d00ec;continue;
+}
+0x300d00ec=>{
+// 0x300d00ec mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d00f0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d00f4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d00f8;continue;
+}
+0x300d00f8=>{
+// 0x300d00f8 sub x15, x13, #0xc4
+{let a=((cpu.x[13]));let b=((0xc4u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d00fc add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0100 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0104 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0108 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d010c;continue;
+}
+0x300d010c=>{
+// 0x300d010c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0110 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0114 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0118;continue;
+}
+0x300d0118=>{
+// 0x300d0118 sub x15, x13, #0xc0
+{let a=((cpu.x[13]));let b=((0xc0u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d011c add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0120 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0124 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0128 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d012c;continue;
+}
+0x300d012c=>{
+// 0x300d012c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0130 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0134 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0138;continue;
+}
+0x300d0138=>{
+// 0x300d0138 sub x15, x13, #0xbe
+{let a=((cpu.x[13]));let b=((0xbeu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d013c add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0140 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0144 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0148 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d014c;continue;
+}
+0x300d014c=>{
+// 0x300d014c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0150 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0154 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0158;continue;
+}
+0x300d0158=>{
+// 0x300d0158 sub x15, x13, #0xba
+{let a=((cpu.x[13]));let b=((0xbau64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d015c add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0160 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0164 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0168 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d016c;continue;
+}
+0x300d016c=>{
+// 0x300d016c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0170 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0174 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0178;continue;
+}
+0x300d0178=>{
+// 0x300d0178 sub x15, x13, #0xb4
+{let a=((cpu.x[13]));let b=((0xb4u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d017c add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0180 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0184 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0188 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d018c;continue;
+}
+0x300d018c=>{
+// 0x300d018c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0190 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0194 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0198;continue;
+}
+0x300d0198=>{
+// 0x300d0198 sub x15, x13, #0xb2
+{let a=((cpu.x[13]));let b=((0xb2u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d019c add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d01a0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d01a4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d01a8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d01ac;continue;
+}
+0x300d01ac=>{
+// 0x300d01ac mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d01b0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d01b4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d01b8;continue;
+}
+0x300d01b8=>{
+// 0x300d01b8 sub x15, x13, #0xac
+{let a=((cpu.x[13]));let b=((0xacu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d01bc add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d01c0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d01c4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d01c8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d01cc;continue;
+}
+0x300d01cc=>{
+// 0x300d01cc mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d01d0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d01d4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d01d8;continue;
+}
+0x300d01d8=>{
+// 0x300d01d8 sub x15, x13, #0xa8
+{let a=((cpu.x[13]));let b=((0xa8u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d01dc add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d01e0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d01e4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d01e8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d01ec;continue;
+}
+0x300d01ec=>{
+// 0x300d01ec mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d01f0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d01f4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d01f8;continue;
+}
+0x300d01f8=>{
+// 0x300d01f8 sub x15, x13, #0xa6
+{let a=((cpu.x[13]));let b=((0xa6u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d01fc add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0200 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0204 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0208 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d020c;continue;
+}
+0x300d020c=>{
+// 0x300d020c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0210 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0214 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0218;continue;
+}
+0x300d0218=>{
+// 0x300d0218 sub x15, x13, #0xa2
+{let a=((cpu.x[13]));let b=((0xa2u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d021c add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0220 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0224 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0228 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d022c;continue;
+}
+0x300d022c=>{
+// 0x300d022c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0230 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0234 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0238;continue;
+}
+0x300d0238=>{
+// 0x300d0238 sub x15, x13, #0x9c
+{let a=((cpu.x[13]));let b=((0x9cu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d023c add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0240 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0244 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0248 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d024c;continue;
+}
+0x300d024c=>{
+// 0x300d024c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0250 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0254 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0258;continue;
+}
+0x300d0258=>{
+// 0x300d0258 sub x15, x13, #0x96
+{let a=((cpu.x[13]));let b=((0x96u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d025c add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0260 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0264 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0268 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d026c;continue;
+}
+0x300d026c=>{
+// 0x300d026c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0270 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0274 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0278;continue;
+}
+0x300d0278=>{
+// 0x300d0278 sub x15, x13, #0x94
+{let a=((cpu.x[13]));let b=((0x94u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d027c add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0280 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0284 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0288 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d028c;continue;
+}
+0x300d028c=>{
+// 0x300d028c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0290 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0294 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0298;continue;
+}
+0x300d0298=>{
+// 0x300d0298 sub x15, x13, #0x8e
+{let a=((cpu.x[13]));let b=((0x8eu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d029c add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d02a0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d02a4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d02a8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d02ac;continue;
+}
+0x300d02ac=>{
+// 0x300d02ac mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d02b0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d02b4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d02b8;continue;
+}
+0x300d02b8=>{
+// 0x300d02b8 sub x15, x13, #0x8a
+{let a=((cpu.x[13]));let b=((0x8au64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d02bc add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d02c0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d02c4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d02c8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d02cc;continue;
+}
+0x300d02cc=>{
+// 0x300d02cc mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d02d0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d02d4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d02d8;continue;
+}
+0x300d02d8=>{
+// 0x300d02d8 sub x15, x13, #0x88
+{let a=((cpu.x[13]));let b=((0x88u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d02dc add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d02e0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d02e4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d02e8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d02ec;continue;
+}
+0x300d02ec=>{
+// 0x300d02ec mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d02f0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d02f4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d02f8;continue;
+}
+0x300d02f8=>{
+// 0x300d02f8 sub x15, x13, #0x82
+{let a=((cpu.x[13]));let b=((0x82u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d02fc add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0300 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0304 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0308 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d030c;continue;
+}
+0x300d030c=>{
+// 0x300d030c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0310 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0314 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0318;continue;
+}
+0x300d0318=>{
+// 0x300d0318 sub x15, x13, #0x7e
+{let a=((cpu.x[13]));let b=((0x7eu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d031c add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0320 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0324 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0328 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d032c;continue;
+}
+0x300d032c=>{
+// 0x300d032c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0330 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0334 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0338;continue;
+}
+0x300d0338=>{
+// 0x300d0338 sub x15, x13, #0x78
+{let a=((cpu.x[13]));let b=((0x78u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d033c add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0340 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0344 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0348 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d034c;continue;
+}
+0x300d034c=>{
+// 0x300d034c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0350 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0354 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0358;continue;
+}
+0x300d0358=>{
+// 0x300d0358 sub x15, x13, #0x70
+{let a=((cpu.x[13]));let b=((0x70u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d035c add x14, x14, #8
+{let a=((cpu.x[14]));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0360 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0364 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0368 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d036c;continue;
+}
+0x300d036c=>{
+// 0x300d036c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0370 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0374 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0378;continue;
+}
+0x300d0378=>{
+// 0x300d0378 sub x15, x13, #0x6c
+{let a=((cpu.x[13]));let b=((0x6cu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d037c add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0380 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0384 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0388 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d038c;continue;
+}
+0x300d038c=>{
+// 0x300d038c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0390 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0394 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0398;continue;
+}
+0x300d0398=>{
+// 0x300d0398 sub x15, x13, #0x6a
+{let a=((cpu.x[13]));let b=((0x6au64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d039c add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d03a0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d03a4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d03a8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d03ac;continue;
+}
+0x300d03ac=>{
+// 0x300d03ac mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d03b0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d03b4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d03b8;continue;
+}
+0x300d03b8=>{
+// 0x300d03b8 sub x15, x13, #0x66
+{let a=((cpu.x[13]));let b=((0x66u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d03bc add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d03c0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d03c4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d03c8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d03cc;continue;
+}
+0x300d03cc=>{
+// 0x300d03cc mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d03d0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d03d4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d03d8;continue;
+}
+0x300d03d8=>{
+// 0x300d03d8 sub x15, x13, #0x64
+{let a=((cpu.x[13]));let b=((0x64u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d03dc add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d03e0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d03e4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d03e8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d03ec;continue;
+}
+0x300d03ec=>{
+// 0x300d03ec mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d03f0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d03f4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d03f8;continue;
+}
+0x300d03f8=>{
+// 0x300d03f8 sub x15, x13, #0x60
+{let a=((cpu.x[13]));let b=((0x60u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d03fc add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0400 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0404 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0408 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d040c;continue;
+}
+0x300d040c=>{
+// 0x300d040c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0410 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0414 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0418;continue;
+}
+0x300d0418=>{
+// 0x300d0418 sub x15, x13, #0x58
+{let a=((cpu.x[13]));let b=((0x58u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d041c add x14, x14, #8
+{let a=((cpu.x[14]));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0420 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0424 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0428 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d042c;continue;
+}
+0x300d042c=>{
+// 0x300d042c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0430 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0434 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0438;continue;
+}
+0x300d0438=>{
+// 0x300d0438 sub x15, x13, #0x52
+{let a=((cpu.x[13]));let b=((0x52u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d043c add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0440 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0444 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0448 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d044c;continue;
+}
+0x300d044c=>{
+// 0x300d044c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0450 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0454 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0458;continue;
+}
+0x300d0458=>{
+// 0x300d0458 sub x15, x13, #0x4e
+{let a=((cpu.x[13]));let b=((0x4eu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d045c add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0460 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0464 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0468 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d046c;continue;
+}
+0x300d046c=>{
+// 0x300d046c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0470 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0474 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0478;continue;
+}
+0x300d0478=>{
+// 0x300d0478 sub x15, x13, #0x48
+{let a=((cpu.x[13]));let b=((0x48u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d047c add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0480 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0484 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0488 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d048c;continue;
+}
+0x300d048c=>{
+// 0x300d048c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0490 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0494 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0498;continue;
+}
+0x300d0498=>{
+// 0x300d0498 sub x15, x13, #0x46
+{let a=((cpu.x[13]));let b=((0x46u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d049c add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d04a0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d04a4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d04a8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d04ac;continue;
+}
+0x300d04ac=>{
+// 0x300d04ac mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d04b0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d04b4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d04b8;continue;
+}
+0x300d04b8=>{
+// 0x300d04b8 sub x15, x13, #0x42
+{let a=((cpu.x[13]));let b=((0x42u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d04bc add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d04c0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d04c4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d04c8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d04cc;continue;
+}
+0x300d04cc=>{
+// 0x300d04cc mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d04d0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d04d4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d04d8;continue;
+}
+0x300d04d8=>{
+// 0x300d04d8 sub x15, x13, #0x3c
+{let a=((cpu.x[13]));let b=((0x3cu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d04dc add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d04e0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d04e4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d04e8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d04ec;continue;
+}
+0x300d04ec=>{
+// 0x300d04ec mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d04f0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d04f4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d04f8;continue;
+}
+0x300d04f8=>{
+// 0x300d04f8 sub x15, x13, #0x3a
+{let a=((cpu.x[13]));let b=((0x3au64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d04fc add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0500 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0504 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0508 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d050c;continue;
+}
+0x300d050c=>{
+// 0x300d050c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0510 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0514 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0518;continue;
+}
+0x300d0518=>{
+// 0x300d0518 sub x15, x13, #0x34
+{let a=((cpu.x[13]));let b=((0x34u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d051c add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0520 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0524 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0528 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d052c;continue;
+}
+0x300d052c=>{
+// 0x300d052c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0530 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0534 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0538;continue;
+}
+0x300d0538=>{
+// 0x300d0538 sub x15, x13, #0x2e
+{let a=((cpu.x[13]));let b=((0x2eu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d053c add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0540 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0544 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0548 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d054c;continue;
+}
+0x300d054c=>{
+// 0x300d054c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0550 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0554 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0558;continue;
+}
+0x300d0558=>{
+// 0x300d0558 sub x15, x13, #0x2a
+{let a=((cpu.x[13]));let b=((0x2au64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d055c add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0560 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0564 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0568 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d056c;continue;
+}
+0x300d056c=>{
+// 0x300d056c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0570 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0574 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0578;continue;
+}
+0x300d0578=>{
+// 0x300d0578 sub x15, x13, #0x28
+{let a=((cpu.x[13]));let b=((0x28u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d057c add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0580 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0584 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0588 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d058c;continue;
+}
+0x300d058c=>{
+// 0x300d058c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0590 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0594 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0598;continue;
+}
+0x300d0598=>{
+// 0x300d0598 sub x15, x13, #0x24
+{let a=((cpu.x[13]));let b=((0x24u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d059c add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d05a0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d05a4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d05a8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d05ac;continue;
+}
+0x300d05ac=>{
+// 0x300d05ac mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d05b0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d05b4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d05b8;continue;
+}
+0x300d05b8=>{
+// 0x300d05b8 sub x15, x13, #0x1e
+{let a=((cpu.x[13]));let b=((0x1eu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d05bc add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d05c0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d05c4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d05c8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d05cc;continue;
+}
+0x300d05cc=>{
+// 0x300d05cc mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d05d0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d05d4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d05d8;continue;
+}
+0x300d05d8=>{
+// 0x300d05d8 sub x15, x13, #0x1c
+{let a=((cpu.x[13]));let b=((0x1cu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d05dc add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d05e0 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d05e4 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d05e8 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d05ec;continue;
+}
+0x300d05ec=>{
+// 0x300d05ec mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d05f0 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d05f4 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d05f8;continue;
+}
+0x300d05f8=>{
+// 0x300d05f8 sub x15, x13, #0x16
+{let a=((cpu.x[13]));let b=((0x16u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d05fc add x14, x14, #6
+{let a=((cpu.x[14]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0600 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0604 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0608 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d060c;continue;
+}
+0x300d060c=>{
+// 0x300d060c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0610 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0614 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0618;continue;
+}
+0x300d0618=>{
+// 0x300d0618 sub x15, x13, #0x12
+{let a=((cpu.x[13]));let b=((0x12u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d061c add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0620 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0624 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0628 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d062c;continue;
+}
+0x300d062c=>{
+// 0x300d062c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0630 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0634 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0638;continue;
+}
+0x300d0638=>{
+// 0x300d0638 sub x15, x13, #0x10
+{let a=((cpu.x[13]));let b=((0x10u64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d063c add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0640 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0644 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0648 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d064c;continue;
+}
+0x300d064c=>{
+// 0x300d064c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0650 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0654 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0658;continue;
+}
+0x300d0658=>{
+// 0x300d0658 sub x15, x13, #0xc
+{let a=((cpu.x[13]));let b=((0xcu64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d065c add x14, x14, #4
+{let a=((cpu.x[14]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0660 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0664 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0668 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d066c;continue;
+}
+0x300d066c=>{
+// 0x300d066c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0670 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0674 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0678;continue;
+}
+0x300d0678=>{
+// 0x300d0678 sub x15, x13, #0xa
+{let a=((cpu.x[13]));let b=((0xau64));let result=a.wrapping_sub(b);cpu.x[15]=(result) as u64;}
+// 0x300d067c add x14, x14, #2
+{let a=((cpu.x[14]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d0680 udiv x16, x0, x15
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[15])) as u64;cpu.x[16]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d0684 cmp x16, x14
+{let a=((cpu.x[16]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0688 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d068c;continue;
+}
+0x300d068c=>{
+// 0x300d068c mul x15, x16, x15
+cpu.x[15]=((((cpu.x[16]))).wrapping_mul(((cpu.x[15])))) as u64;
+// 0x300d0690 cmp x0, x15
+{let a=((cpu.x[0]));let b=((cpu.x[15]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d0694 b.eq #0x300d06b8
+if cpu.condition(0){pc=0x300d06b8;continue;}pc=0x300d0698;continue;
+}
+0x300d0698=>{
+// 0x300d0698 udiv x15, x0, x13
+{let a=((cpu.x[0])) as u64;let b=((cpu.x[13])) as u64;cpu.x[15]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x300d069c add x14, x14, #0xa
+{let a=((cpu.x[14]));let b=((0xau64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x300d06a0 cmp x15, x14
+{let a=((cpu.x[15]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d06a4 b.lo #0x300d0004
+if cpu.condition(3){pc=0x300d0004;continue;}pc=0x300d06a8;continue;
+}
+0x300d06a8=>{
+// 0x300d06a8 mul x14, x15, x13
+cpu.x[14]=((((cpu.x[15]))).wrapping_mul(((cpu.x[13])))) as u64;
+// 0x300d06ac add x13, x13, #0xd2
+{let a=((cpu.x[13]));let b=((0xd2u64));let result=a.wrapping_add(b);cpu.x[13]=(result) as u64;}
+// 0x300d06b0 cmp x0, x14
+{let a=((cpu.x[0]));let b=((cpu.x[14]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d06b4 b.ne #0x300d00bc
+if cpu.condition(1){pc=0x300d00bc;continue;}pc=0x300d06b8;continue;
+}
+0x300d06b8=>{
+// 0x300d06b8 add x13, x10, #1
+{let a=((cpu.x[10]));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[13]=(result) as u64;}
+// 0x300d06bc cmp x13, #0x30
+{let a=((cpu.x[13]));let b=((0x30u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x300d06c0 cinc x8, x8, eq
+cpu.x[8]=(if cpu.condition(0){(((cpu.x[8]))).wrapping_add(1)}else{((cpu.x[8]))}) as u64;
+// 0x300d06c4 csinc x10, xzr, x10, eq
+cpu.x[10]=(if cpu.condition(0){((0u64))}else{(((cpu.x[10]))).wrapping_add(1)}) as u64;
+// 0x300d06c8 mul x13, x8, x12
+cpu.x[13]=((((cpu.x[8]))).wrapping_mul(((cpu.x[12])))) as u64;
+// 0x300d06cc b #0x300d0084
+pc=0x300d0084;continue;
+}
+0x300d06d0=>{
+// 0x300d06d0 nop
+
+// 0x300d06d4 adr x0, #0x30056906
+cpu.x[0]=(0x30056906u64) as u64;
+// 0x300d06d8 bl #0x300d06dc
+cpu.x[30]=0x300d06dc;super::dispatch(cpu,rt,0x300d06dc)?;
+return Err("fell through function 0x300cffbc".into());
 }
 _=>return Err(format!("untranslated block {pc:#x} in 0x300cffbc")),}}}

@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import json
+import os
 import random
 import sys
 import time
@@ -36,6 +37,12 @@ DEFAULT_RUN_DIR = ROOT / "runs" / "banana-fast-league-20261019"
 DEFAULT_ENGINE = ROOT / "rust-engine" / "target" / "release" / "rust_deck_rl"
 
 
+def default_workers() -> int:
+    """Leave CPU room for input encoding, CUDA launches and the desktop."""
+    available = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else (os.cpu_count() or 1)
+    return max(1, min(16, available - 2))
+
+
 class TracingEngine:
     """Optional exact protocol trace, isolated per worker for source replays."""
     def __init__(self, client, path: Path):
@@ -47,7 +54,11 @@ class TracingEngine:
         return getattr(self.client, name)
 
     def request(self, value):
-        response = self.client.request(value)
+        try:
+            response = self.client.request(value)
+        except Exception as exc:
+            self.trace.write(json.dumps({"request": value, "error": f"{type(exc).__name__}: {exc}"}) + "\n")
+            raise
         semantic = {k:v for k,v in response.items() if k not in ("reset_seconds", "step_seconds")}
         self.trace.write(json.dumps({"request": value, "expected": semantic}) + "\n")
         return response
@@ -113,6 +124,7 @@ class FastBananaTrainer:
         self.failed = False
         self.last_eval = {"hog": 0, "mortar": 0}
         self.last_heartbeat = 0.0
+        self.pipeline_rounds = 0
         self.backend_label = f"Original recovered engine · {args.engine_bin.name} · parallel workers"
         self._write_fast_state()
         manifest = {
@@ -125,10 +137,12 @@ class FastBananaTrainer:
             "arguments": {name: str(value) if isinstance(value, Path) else value
                           for name, value in vars(args).items()},
             "torch_version": torch.__version__, "torch_threads": torch.get_num_threads(),
+            "compute": self.core.state["compute"],
             "reward": "original native terminal +1/-1/0; truncations have no training reward",
-            "collection": "synchronous complete-game waves; policy weights held fixed within each wave",
+            "collection": "complete-game waves; CPU steps overlap other actors' GPU inference; weights fixed within each wave",
             "source_files_sha256": {str(path.relative_to(ROOT)): base.sha256(path) for path in
-                [Path(__file__), ROOT / "rl/banana_fast_policy.py", ROOT / "rl/banana_engine.py", ROOT / "rl/banana_train.py", ROOT / "rl/banana_policy.py"]},
+                [Path(__file__), ROOT / "rl/banana_fast_policy.py", ROOT / "rl/banana_fast_features.py",
+                 ROOT / "rl/banana_engine.py", ROOT / "rl/banana_train.py", ROOT / "rl/banana_policy.py"]},
         }
         base.atomic_json(self.core.run_dir / "run-manifest.json", manifest)
 
@@ -170,7 +184,8 @@ class FastBananaTrainer:
         self.core.preflight()
         # Prove each worker process can independently configure both physical
         # sides and pass a native play through the same preflight path.
-        for worker_id in range(1, len(self.engines)):
+        def check_worker(worker_id):
+            checks = []
             for index, key in enumerate(("hog", "mortar")):
                 t0 = time.monotonic()
                 reset = self.engines[worker_id].request({"op": "reset", "deck_preset": base.PRESETS[key],
@@ -183,7 +198,16 @@ class FastBananaTrainer:
                 warm = self.engines[worker_id].request({"op": "step", "actions": [], "ticks": base.INPUT_WARMUP_TICKS})
                 if int(warm.get("ticks_advanced", 0)) < base.INPUT_WARMUP_TICKS:
                     raise RuntimeError(f"worker {worker_id} failed 100-tick native warmup")
-                self._timed("reset", t0)
+                checks.append((worker_id, key, time.monotonic() - t0))
+            return checks
+
+        # Each process owns different fixed guest mappings. Load/warm them in
+        # parallel rather than making startup grow linearly with CPU workers.
+        checks = self.executor.map(check_worker, range(1, len(self.engines)))
+        for worker_checks in checks:
+            for worker_id, key, elapsed in worker_checks:
+                self.timings["reset"] += elapsed
+                self.timing_counts["reset"] += 1
                 base.log_line(self.core.run_dir,
                     f"Worker {worker_id} preflight {key} passed: exact configured native decks and 100-tick warmup.",
                     {"event": "worker_preflight", "worker": worker_id, "deck": key})
@@ -191,7 +215,14 @@ class FastBananaTrainer:
         self.core.state["engine_binary"] = str(self.args.engine_bin)
         self._write_fast_state()
 
-    def _batch_sample(self, games: list[WorkerGame]) -> dict[int, tuple[SampledAction, SampledAction]]:
+    def _dispatch_round(self, games: list[WorkerGame]):
+        """Start each actor group's CPU games while the next actor uses CUDA.
+
+        The baseline is shared by both decks and evaluated first. Once one
+        specialist batch is ready its engines need no more GPU work this round.
+        Every engine has at most one outstanding request, and PPO still waits
+        for the entire complete-game wave before changing any actor weights.
+        """
         specialist_requests: dict[str, list[tuple[WorkerGame, tuple[Any, ...]]]] = {"hog": [], "mortar": []}
         baseline_requests: list[tuple[WorkerGame, tuple[Any, ...]]] = []
         for game in games:
@@ -201,22 +232,22 @@ class FastBananaTrainer:
             baseline_requests.append((game, (game.episode, game.observation, opponent_side, seconds)))
         started = time.monotonic()
         by_worker: dict[int, tuple[SampledAction, SampledAction]] = {}
+        baseline = self.core.baseline.act_batch([row for _, row in baseline_requests], deterministic=True)
+        baseline_by_worker = {game.worker_id: action for (game, _), action in zip(baseline_requests, baseline)}
+        futures = []
         for key, rows in specialist_requests.items():
             if not rows:
                 continue
             sampled = self.core.policies[key].act_batch([row for _, row in rows], deterministic=False)
             for (game, _), action in zip(rows, sampled):
-                by_worker.setdefault(game.worker_id, (None, None))
-                pair = list(by_worker[game.worker_id])
+                pair = [None, None]
                 pair[game.specialist_side] = action
+                pair[1 - game.specialist_side] = baseline_by_worker[game.worker_id]
                 by_worker[game.worker_id] = tuple(pair)
-        baseline = self.core.baseline.act_batch([row for _, row in baseline_requests], deterministic=True)
-        for (game, _), action in zip(baseline_requests, baseline):
-            pair = list(by_worker[game.worker_id])
-            pair[1 - game.specialist_side] = action
-            by_worker[game.worker_id] = tuple(pair)
+                futures.append(self.executor.submit(self._step_one, game, tuple(pair)))
         self._timed("inference", started)
-        return by_worker
+        self.pipeline_rounds += 1
+        return by_worker, futures
 
     def _step_one(self, game: WorkerGame, actions: tuple[SampledAction, SampledAction]) -> tuple[WorkerGame, dict[str, Any], list[dict[str, Any]]]:
         native_actions = [action.native_request() for action in actions if not action.wait]
@@ -276,6 +307,14 @@ class FastBananaTrainer:
             for name, value in self.timings.items()
         }
         self.core.state["active_workers"] = len(self.active)
+        self.core.state["pipeline_rounds"] = self.pipeline_rounds
+        self.core.state["timing_scope"] = "inference includes overlapping engine work; native_step is remaining wait after dispatch"
+        self.core.state["compute"] = {"device": str(self.core.baseline.device), "engine_workers": self.args.workers,
+                                      "torch_threads": torch.get_num_threads(), "pipelined": True,
+                                      "gpu_name": torch.cuda.get_device_name(self.core.baseline.device)
+                                      if self.core.baseline.device.type == "cuda" else None}
+        if self.core.baseline.device.type == "cuda":
+            self.core.state["compute"]["torch_peak_allocated_mib"] = round(torch.cuda.max_memory_allocated(self.core.baseline.device) / 2**20, 1)
         self.core.state["reference_recoveries"] = sum(getattr(engine, "fallback_count", 0) for engine in self.engines)
         self.core.state["reference_recovery_events"] = [event for engine in self.engines for event in getattr(engine, "fallback_events", [])]
         self.core._write_state()
@@ -319,9 +358,8 @@ class FastBananaTrainer:
                 if not self.active:
                     break
                 games = list(self.active.values())
-                actions_by_worker = self._batch_sample(games)
+                actions_by_worker, futures = self._dispatch_round(games)
                 t0 = time.monotonic()
-                futures = [self.executor.submit(self._step_one, game, actions_by_worker[game.worker_id]) for game in games]
                 stepped = [future.result() for future in futures]
                 self._timed("native_step", t0)
                 for game, response, result_rows in stepped:
@@ -418,11 +456,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--engine-bin", type=Path, default=DEFAULT_ENGINE)
     parser.add_argument("--trace-dir", type=Path, help="optional per-worker exact protocol traces for validation")
     parser.add_argument("--fallback-bin", type=Path, help="optional original reference executable for checked episode recovery on a coverage gap")
-    parser.add_argument("--workers", type=int, default=3)
+    parser.add_argument("--workers", type=int, default=default_workers(),
+                        help="independent CPU engines (default: available logical CPUs minus two, capped at sixteen)")
     parser.add_argument("--duration-seconds", type=float, default=10800.)
     parser.add_argument("--seed", type=int, default=41019)
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
-    parser.add_argument("--torch-threads", type=int, default=3)
+    parser.add_argument("--torch-threads", type=int, default=2)
     parser.add_argument("--learning-rate", type=float, default=3e-5)
     parser.add_argument("--clip-ratio", type=float, default=.2)
     parser.add_argument("--epochs", type=int, default=2)
@@ -434,8 +473,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--eval-games", type=int, default=4)
     parser.add_argument("--preflight-only", action="store_true")
     args = parser.parse_args(argv)
-    if not 1 <= args.workers <= 4:
-        parser.error("--workers must be between 1 and 4")
+    if not 1 <= args.workers <= 64:
+        parser.error("--workers must be between 1 and 64")
     if args.duration_seconds <= 0 or args.minibatch_size < 1 or args.epochs < 1 or args.torch_threads < 1:
         parser.error("duration, minibatch size, epochs, and torch threads must be positive")
     if not args.checkpoint.is_dir():

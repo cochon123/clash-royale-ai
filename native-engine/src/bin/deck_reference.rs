@@ -106,6 +106,9 @@ impl Server {
                 let seed: u32 = seed
                     .try_into()
                     .map_err(|_| "seed must be in 0..=4294967295")?;
+                if request.get("deck_preset_side1").is_some_and(|deck| deck != &request["deck_preset"]) {
+                    return Err("this isolated RL reference runner requires mirrored decks".into());
+                }
                 let started = Instant::now();
                 let mut session = NativeSession::load(&self.checkpoint)?;
                 if let Some(root) = std::env::var_os("CLASH_DECK_PROFILE_DIR") {
@@ -118,13 +121,8 @@ impl Server {
                     session.start_block_profile()?;
                     self.profile_active = true;
                 }
-                self.configured = session.configure_normal_decks_and_rebuild(
+                self.configured = session.configure_normal_deck_and_rebuild(
                     preset(&request["deck_preset"])?,
-                    preset(
-                        request
-                            .get("deck_preset_side1")
-                            .unwrap_or(&request["deck_preset"]),
-                    )?,
                     seed,
                 )?;
                 self.initial_tick = self.configured["observation"]["tick"]

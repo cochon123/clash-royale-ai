@@ -1,7 +1,7 @@
 //! Native Rust compilation runtime for source-bound recovered battle code.
 //!
-//! This crate is under development. The slow, verified original-engine runtime
-//! remains available on the `slow-working` Git branch and separate worktree.
+//! The original-engine reference runtime remains in `native-engine/` in this
+//! checkout. The earlier source is also retained on the `slow-working` branch.
 pub mod cpu;
 pub mod generated;
 pub mod heap;

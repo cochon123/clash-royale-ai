@@ -25,9 +25,12 @@ checkpoint SHA-256 is
 
 ## Coverage and limits
 
-The checked-in generation currently covers 1,908 recovered function bodies and runtime block ranges
-(103,130 translated source instructions), including the earlier 32 fixed-scenario
+The checked-in generation currently covers 1,910 recovered function bodies and runtime block ranges
+(103,754 translated source instructions), including the earlier 32 fixed-scenario
 rollouts and fresh Hog/Mortar constructor, card and model-action coverage.
+The original C++ `__next_prime` runtime helper is included in full, bounded by
+its ELF symbol and checked byte-for-byte against the checkpoint runtime image.
+Larger table sizes reached in longer training exposed this coverage gap.
 Nine profiled hot FDEs use bounded
 forward-edge threading: generated code keeps callable entry cases for the
 original blocks while threading observed forward edges through the same
@@ -67,7 +70,11 @@ The fresh-deck [validation summary](deck-validation.json) records exact replay
 of ten complete games (2,491 protocol responses), full state audits for four
 Hog/Mortar games, and the canonical fixed-scenario state audit. Current short
 training trials measured 3.43× decision throughput; a separate identical-input
-engine replay measured 2.02×. These results cover the recorded paths and do not
+engine replay measured 2.02×. Those measurements precede the latest CPU/GPU
+pipeline changes. The [compute validation](compute-validation.json) records
+the current build, 21 Python checks, 1,080 semantic replay replies, 606 complete
+integer-register helper comparisons, and the latest power-dependent timings.
+These results cover the recorded paths and do not
 establish general game or platform equivalence.
 
 ## Build and run
