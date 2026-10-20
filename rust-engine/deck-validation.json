@@ -1,0 +1,129 @@
+{
+  "format": "clash-rust-fresh-deck-validation-v1",
+  "created_utc": "2026-10-20T00:42:11.133068+00:00",
+  "source_sha256": "79fe6612e20922d4c4086b1e6c939464202cefa7cb3b20344236529f941423d6",
+  "checkpoint_sha256": "66f9bf75bfde9b5e0c1f4056573079016d41576020018b9e57fca538fd1b840e",
+  "generated_routine_ranges": 1908,
+  "translated_source_instructions": 103130,
+  "unsupported_encodings_in_generation": {},
+  "generated_manifest": {
+    "file": "rust-engine/src/generated/manifest.json",
+    "sha256": "9d35eeaa26ad6c7f7b02e8e7e1e9ab514640b4a6f3b0095809932b87048c6d14"
+  },
+  "executable": {
+    "file": "rust-engine/target/release/rust_deck_rl",
+    "sha256": "51fc0ba14da3a390c5b7eab6a9766c72c6a6027e578db3686e4a00ccccb761e1"
+  },
+  "state_audits": {
+    "fresh_deck_games": [
+      {
+        "deck": "hog26",
+        "seed": 1,
+        "matched": true,
+        "regions": 12,
+        "registers": 70,
+        "report": "analysis/fast-decks/final-state-compare-hog26-1.json"
+      },
+      {
+        "deck": "pixel9_mortar",
+        "seed": 1,
+        "matched": true,
+        "regions": 12,
+        "registers": 70,
+        "report": "analysis/fast-decks/final-state-compare-pixel9_mortar-1.json"
+      },
+      {
+        "deck": "hog26",
+        "seed": 2,
+        "matched": true,
+        "regions": 12,
+        "registers": 70,
+        "report": "analysis/fast-decks/final-state-compare-hog26-2.json"
+      },
+      {
+        "deck": "pixel9_mortar",
+        "seed": 2,
+        "matched": true,
+        "regions": 12,
+        "registers": 70,
+        "report": "analysis/fast-decks/final-state-compare-pixel9_mortar-2.json"
+      }
+    ],
+    "canonical": {
+      "matched": true,
+      "report": "analysis/fast-decks/final-canonical-compare.json"
+    }
+  },
+  "protocol_replays": {
+    "fresh_deck_requests": 775,
+    "real_model_requests": 1716,
+    "complete_fresh_deck_games": 4,
+    "complete_model_games": 6,
+    "all_matched": true,
+    "reports": [
+      {
+        "file": "analysis/fast-decks/final-policy-replay-0.json",
+        "sha256": "8cebcbb4d50deaed7044671ddf28bcae716498f45d34e0d46745783f4b4726fa"
+      },
+      {
+        "file": "analysis/fast-decks/final-policy-replay-1.json",
+        "sha256": "21cf7ad1d692682c9e17686bf9692257e4c83f2ba04a3ff4da10b3c462106a8e"
+      },
+      {
+        "file": "analysis/fast-decks/final-policy-replay-2.json",
+        "sha256": "a52f487e4b3d9df5290817c41c54298a9348291ff28b2d9c6747347eb5a2507b"
+      },
+      {
+        "file": "analysis/fast-decks/final-four-state-replay.json",
+        "sha256": "4598b3b92cdc2f16096f6ed4924d79bec4c777adb7f33edb4b40b6fdf45f7e48"
+      }
+    ]
+  },
+  "policy_tests": {
+    "passed": 7,
+    "includes": [
+      "batched action/output/gradient equivalence",
+      "reference recovery prefix checks and rejection on divergence"
+    ]
+  },
+  "memory_allocator_tests_passed": 3,
+  "real_reference_recovery": {
+    "file": "analysis/fast-decks/recovery-real-engine-check.json",
+    "sha256": "cf21581b90021c6d58f3515bdd8572e6f7603ff657a3273eb252e3937c0e26a4"
+  },
+  "performance": {
+    "format": "banana-performance-v1",
+    "engine_replay": {
+      "same_trace_sha256": "555653373397b004524519e7baef15e1c03f48d76ae3a79dfb5bd5c198cc5cd9",
+      "requests": 775,
+      "reference_seconds": 40.13022308499785,
+      "compiled_seconds": 19.88967271699221,
+      "speedup": 2.017641197821906,
+      "reference_binary_sha256": "e22b589aa560406b57bba89108ad1a167ec79256cdeb65648cff68baa23445c0",
+      "compiled_binary_sha256": "51fc0ba14da3a390c5b7eab6a9766c72c6a6027e578db3686e4a00ccccb761e1",
+      "scope": "Same 4 complete games, decks, seeds and requests. No rendering, model inference, audit writes or coverage profiling. Includes first load and repeated reset."
+    },
+    "training": {
+      "reference": {
+        "elapsed_seconds": 61.10461902618408,
+        "completed_games": 2,
+        "truncated_games": 1,
+        "decision_steps": 928
+      },
+      "compiled_parallel": {
+        "elapsed_seconds": 64.68732047080994,
+        "completed_games": 6,
+        "truncated_games": 0,
+        "decision_steps": 3374,
+        "reference_recoveries": 0
+      },
+      "decision_throughput_speedup": 3.434408741919844,
+      "scope": "60s budgets with actual elapsed through final updates; CUDA, 2 Torch threads, same starting 4.4.2, PPO 2 epochs/batch32, no eval. Collection and RNG order differ; short desktop trials are not policy-strength evidence."
+    }
+  },
+  "performance_artifact": {
+    "file": "analysis/fast-decks/performance-summary.json",
+    "sha256": "2dd27d59ec1c0fcef513cac1cf88a8819cab79dd015ee735d1f0abd11dbe69f4"
+  },
+  "scope": "Original-logic parity for these recorded paths, not complete game/platform coverage. Strict compiled runtime rejects missing/unsupported behavior. Optional trainer recovery replays the exact episode in the original runtime and verifies every prior semantic response. Benchmarks used strict Rust mode with no recoveries."
+}

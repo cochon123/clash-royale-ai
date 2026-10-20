@@ -150,6 +150,10 @@ impl Session {
         self.runtime.heap.reset();
         self.runtime.clock_calls = 0;
         self.runtime.calls.clear();
+        let values = &self.checkpoint["call_plan"]["values"];
+        self.world = num(&values["battle_world"])?;
+        self.battle = num(&values["battle_state"])?;
+        self.harness = num(&values["battle_harness"])?;
         Ok(())
     }
     pub fn call(&mut self, rva: u64, args: &[u64], x8: u64) -> Result<u64, String> {
@@ -217,6 +221,11 @@ impl Session {
             let base = num(&r["base"])?;
             let size = if name == "heap.bin" {
                 (num(&heap["primary_pointer"])? - num(&heap["base"])? + 4095) & !4095
+            } else if let Some(arena) = heap["extra_heaps"]
+                .as_array()
+                .and_then(|a| a.iter().find(|a| num(&a["base"]).ok() == Some(base)))
+            {
+                (num(&arena["pointer"])? - base + 4095) & !4095
             } else {
                 num(&r["size"])?
             };
@@ -224,6 +233,23 @@ impl Session {
             std::fs::write(&path, self.runtime.memory.read_bytes(base, size as usize)?)
                 .map_err(|e| e.to_string())?;
             rows.push(json!({"file":format!("regions/{name}"),"base":format!("{base:#x}"),"size":size,"sha256":sha256(&path)?}));
+        }
+        for (index, arena) in heap["extra_heaps"]
+            .as_array()
+            .ok_or("missing heap arenas")?
+            .iter()
+            .enumerate()
+        {
+            let base = num(&arena["base"])?;
+            if rows.iter().any(|r| num(&r["base"]).ok() == Some(base)) {
+                continue;
+            }
+            let size = (num(&arena["pointer"])? - base + 4095) & !4095;
+            let file = format!("heap_extra_{index:02}.bin");
+            let path = out.join("regions").join(&file);
+            std::fs::write(&path, self.runtime.memory.read_bytes(base, size as usize)?)
+                .map_err(|e| e.to_string())?;
+            rows.push(json!({"file":format!("regions/{file}"),"base":format!("{base:#x}"),"size":size,"sha256":sha256(&path)?}));
         }
         let mut registers = serde_json::Map::new();
         for i in 0..31 {

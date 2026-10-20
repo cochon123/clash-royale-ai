@@ -1842,6 +1842,97 @@ impl NativeSession {
         }))
     }
 
+    /// Read-only state audit for a fresh-deck session. Kept separate from the
+    /// training protocol so reference validation cannot modify a live episode.
+    pub fn audit_snapshot(&self, checkpoint_dir: &Path, out: &Path) -> Result<(), String> {
+        if out.exists() {
+            return Err(format!("audit output already exists: {}", out.display()));
+        }
+        if sha256(&checkpoint_dir.join("checkpoint.json"))? != self.initial_checkpoint_sha256 {
+            return Err("audit checkpoint identity mismatch".into());
+        }
+        let cp: Value = serde_json::from_slice(
+            &fs::read(checkpoint_dir.join("checkpoint.json")).map_err(|e| e.to_string())?,
+        )
+        .map_err(|e| e.to_string())?;
+        fs::create_dir_all(out.join("regions")).map_err(|e| e.to_string())?;
+        let mut rows = Vec::new();
+        let mut captured = BTreeSet::new();
+        for region in cp["regions"].as_array().ok_or("missing regions")? {
+            let base = num(&region["base"])?;
+            let file = region["file"].as_str().ok_or("missing region filename")?;
+            let size = if base == self.state.heap.base {
+                align(self.state.heap.pointer - base, 4096)?
+            } else if let Some(arena) = self.state.heap.extras.iter().find(|a| a.base == base) {
+                align(arena.pointer - base, 4096)?
+            } else {
+                num(&region["size"])?
+            };
+            let path = out.join("regions").join(file);
+            fs::write(&path, read_mem(&self.api, self.uc, base, size as usize)?)
+                .map_err(|e| e.to_string())?;
+            rows.push(json!({"file":format!("regions/{file}"),"base":format!("{base:#x}"),"size":size,"sha256":sha256(&path)?}));
+            captured.insert(base);
+        }
+        for (index, arena) in self
+            .state
+            .heap
+            .extras
+            .iter()
+            .enumerate()
+            .filter(|(_, a)| !captured.contains(&a.base))
+        {
+            let size = align(arena.pointer - arena.base, 4096)?;
+            let file = format!("heap_extra_{index:02}.bin");
+            let path = out.join("regions").join(&file);
+            fs::write(
+                &path,
+                read_mem(&self.api, self.uc, arena.base, size as usize)?,
+            )
+            .map_err(|e| e.to_string())?;
+            rows.push(json!({"file":format!("regions/{file}"),"base":format!("{:#x}",arena.base),"size":size,"sha256":sha256(&path)?}));
+        }
+        let mut registers = serde_json::Map::new();
+        for (name, id) in &self.ids {
+            let value = if name.starts_with('q') {
+                let mut bytes = [0u8; 16];
+                let rc = unsafe { (self.api.reg_read)(self.uc, *id, bytes.as_mut_ptr().cast()) };
+                if rc != 0 {
+                    return Err(format!("audit register {name}: {}", self.api.err(rc)));
+                }
+                u128::from_le_bytes(bytes)
+            } else {
+                read_u64(&self.api, self.uc, *id)? as u128
+            };
+            registers.insert(name.clone(), json!(format!("0x{value:x}")));
+        }
+        let heap = &self.state.heap;
+        let allocations = heap
+            .allocations
+            .iter()
+            .map(|(p, n)| (p.to_string(), json!(n)))
+            .collect::<serde_json::Map<_, _>>();
+        let free = heap
+            .free
+            .iter()
+            .map(|(size, items)| (size.to_string(), json!(items)))
+            .collect::<serde_json::Map<_, _>>();
+        let allocator = json!({"version":1,"base":heap.base,"capacity":heap.capacity,"primary_pointer":heap.pointer,"allocations":allocations,"free_buckets":free,"extra_heaps":heap.extras.iter().map(|a|json!({"base":a.base,"capacity":a.capacity,"pointer":a.pointer})).collect::<Vec<_>>()});
+        fs::write(
+            out.join("allocator.json"),
+            serde_json::to_vec(&allocator).map_err(|e| e.to_string())?,
+        )
+        .map_err(|e| e.to_string())?;
+        let meta = json!({"source_sha256":SOURCE_SHA256,"checkpoint_sha256":self.initial_checkpoint_sha256,"regions":rows,"registers":registers,"allocator_file":"allocator.json","imports_called":self.state.calls});
+        fs::write(
+            out.join("audit.json"),
+            serde_json::to_vec_pretty(&meta).map_err(|e| e.to_string())?,
+        )
+        .map_err(|e| e.to_string())?;
+        Ok(())
+    }
+
+
     fn call(&mut self, rva: u64, args: &[u64], x8: u64) -> Result<u64, String> {
         invoke_native(
             &self.api,

@@ -1,8 +1,8 @@
 //! Fast card-play and observation API for the compiled native session.
 
-use crate::session::Session;
+use crate::session::{num, Session};
 use serde_json::{json, Value};
-use std::path::Path;
+use std::{collections::BTreeMap, path::Path, time::Instant};
 
 #[derive(Clone, Copy, Debug)]
 pub struct PlayCardRequest {
@@ -51,6 +51,238 @@ impl RlSession {
             .runtime
             .memory
             .write_bytes(self.descriptor_scratch, &[0; 24])
+    }
+
+    /// Rebuild a fresh native harness after replacing the loaded Normal
+    /// scenario's AlwaysSpells vector with exact source-row pointers.
+    ///
+    /// This follows the original configure_normal_deck_and_rebuild sequence:
+    /// enumerate table 7 from the retained context, change only the scenario
+    /// row's vector, then call the original battle-input and harness
+    /// constructors. Both sides consume the same deck, as in the source
+    /// harness. No world/game fields are patched.
+    pub fn configure_normal_deck_and_rebuild(
+        &mut self,
+        cards: &[&str],
+        seed: u32,
+    ) -> Result<Value, String> {
+        if cards.len() != 8 {
+            return Err(format!(
+                "a configured deck must contain exactly 8 cards, got {}",
+                cards.len()
+            ));
+        }
+        let mut unique = std::collections::BTreeSet::new();
+        if cards
+            .iter()
+            .any(|card| card.is_empty() || !unique.insert(*card))
+        {
+            return Err("deck names must be nonempty and unique".into());
+        }
+
+        let values = &self.engine.checkpoint["call_plan"]["values"];
+        let context = num(&values["context"])?;
+        let normal_test_row = num(&values["confirm_original_Normal"])?;
+        let row_count = self.engine.call(0xe1ac8c, &[context], 0)?;
+        if row_count == 0 || row_count > 100_000 {
+            return Err(format!("unexpected native card-row count {row_count}"));
+        }
+        let mut source_rows = BTreeMap::<String, u64>::new();
+        for index in 0..row_count {
+            let row = self.engine.call(0xe1ad4c, &[context, index], 0)?;
+            if row == 0 {
+                return Err(format!("native card row {index} is null"));
+            }
+            let name = self.native_string(row + 0x28)?;
+            if cards.contains(&name.as_str()) && source_rows.insert(name.clone(), row).is_some() {
+                return Err(format!("duplicate native source row name {name}"));
+            }
+        }
+        let missing: Vec<_> = cards
+            .iter()
+            .filter(|name| !source_rows.contains_key(**name))
+            .copied()
+            .collect();
+        if !missing.is_empty() {
+            return Err(format!(
+                "native source rows not found by exact name: {}",
+                missing.join(", ")
+            ));
+        }
+        let row_ptrs: Vec<u64> = cards.iter().map(|name| source_rows[*name]).collect();
+        let vector_data = self.engine.runtime.heap.alloc(
+            8 * row_ptrs.len() as u64,
+            8,
+            &mut self.engine.runtime.memory,
+        )?;
+        let mut vector_bytes = Vec::with_capacity(row_ptrs.len() * 8);
+        for row in &row_ptrs {
+            vector_bytes.extend_from_slice(&row.to_le_bytes());
+        }
+        self.engine
+            .runtime
+            .memory
+            .write_bytes(vector_data, &vector_bytes)?;
+        self.engine
+            .runtime
+            .memory
+            .write_bytes(normal_test_row + 0x70, &vector_data.to_le_bytes())?;
+        self.engine.runtime.memory.write_bytes(
+            normal_test_row + 0x78,
+            &(row_ptrs.len() as u32).to_le_bytes(),
+        )?;
+        self.engine.runtime.memory.write_bytes(
+            normal_test_row + 0x7c,
+            &(row_ptrs.len() as u32).to_le_bytes(),
+        )?;
+
+        let name_bytes = self
+            .engine
+            .runtime
+            .heap
+            .alloc(7, 8, &mut self.engine.runtime.memory)?;
+        self.engine
+            .runtime
+            .memory
+            .write_bytes(name_bytes, b"Normal\0")?;
+        let name_string =
+            self.engine
+                .runtime
+                .heap
+                .alloc(0x10, 8, &mut self.engine.runtime.memory)?;
+        self.engine
+            .runtime
+            .memory
+            .write_bytes(name_string, &[0; 0x10])?;
+        self.engine.call(0x142fde4, &[name_string, name_bytes], 0)?;
+        let resolved = self.engine.call(0xe1b7e8, &[context, name_string, 0], 0)?;
+        if resolved != normal_test_row {
+            return Err(format!(
+                "Normal lookup changed unexpectedly: {resolved:#x} != {normal_test_row:#x}"
+            ));
+        }
+        let input_sret = self
+            .engine
+            .runtime
+            .heap
+            .alloc(8, 8, &mut self.engine.runtime.memory)?;
+        self.engine
+            .runtime
+            .memory
+            .write_bytes(input_sret, &[0; 8])?;
+        self.engine.call(
+            0x11d7968,
+            &[context, name_string, seed as u64, 0],
+            input_sret,
+        )?;
+        let battle_input = read_u64(&self.engine, input_sret)?;
+        if battle_input == 0 {
+            return Err("original battle-input constructor returned null".into());
+        }
+        let new_harness =
+            self.engine
+                .runtime
+                .heap
+                .alloc(0x78, 16, &mut self.engine.runtime.memory)?;
+        self.engine
+            .runtime
+            .memory
+            .write_bytes(new_harness, &[0; 0x78])?;
+        self.engine
+            .call(0x11d58e0, &[new_harness, context, input_sret], 0)?;
+        let new_world = read_u64(&self.engine, new_harness + 0x20)?;
+        if new_world == 0 {
+            return Err("original harness constructor returned a null world".into());
+        }
+        let new_battle = read_u64(&self.engine, new_world + 0xa8)?;
+        let new_entities = read_u64(&self.engine, new_world + 0x40)?;
+        let new_commands = read_u64(&self.engine, new_world + 0x38)?;
+        if new_battle == 0 || new_entities == 0 || new_commands == 0 {
+            return Err(
+                "fresh native harness has a null battle, entity manager, or command queue".into(),
+            );
+        }
+        self.engine.harness = new_harness;
+        self.engine.world = new_world;
+        self.engine.battle = new_battle;
+
+        let mut actual_decks = Vec::new();
+        for side in 0..2u64 {
+            let deck = read_u64(&self.engine, new_battle + 0x88 + side * 8)?;
+            if deck == 0 {
+                return Err(format!("fresh native side {side} has null deck"));
+            }
+            let count = read_u32(&self.engine, deck + 0x2c)?;
+            if count != 8 {
+                return Err(format!(
+                    "fresh native side {side} deck has {count} rows, expected 8"
+                ));
+            }
+            let entries = read_u64(&self.engine, deck + 0x20)?;
+            let side_obj = self.side_object(side as u32)?;
+            let mut names = Vec::new();
+            for index in 0..count as u64 {
+                let wrapper = read_u64(&self.engine, entries + index * 8)?;
+                if wrapper == 0 {
+                    return Err(format!("native side {side} deck entry {index} is null"));
+                }
+                self.engine
+                    .runtime
+                    .memory
+                    .write_bytes(self.descriptor_scratch, &[0; 24])?;
+                self.engine
+                    .call(0xe80bbc, &[wrapper, side_obj, 1], self.descriptor_scratch)?;
+                let row = self.engine.call(0xe80680, &[self.descriptor_scratch], 0)?;
+                if row == 0 {
+                    return Err(format!(
+                        "native side {side} entry {index} has null source row"
+                    ));
+                }
+                names.push(self.native_string(row + 0x28)?);
+            }
+            let mut sorted_actual = names.clone();
+            let mut sorted_expected = cards
+                .iter()
+                .map(|name| name.to_string())
+                .collect::<Vec<_>>();
+            sorted_actual.sort();
+            sorted_expected.sort();
+            if sorted_actual != sorted_expected {
+                return Err(format!("native side {side} deck rows mismatch: {names:?}"));
+            }
+            actual_decks.push(json!({"side":side,"cards":names}));
+        }
+        let observation = self.observe()?;
+        Ok(
+            json!({"scenario":"Normal","seed":seed,"deck_source_rows":cards,"actual_native_decks":actual_decks,"observation":observation,"construction":"Original 11d7968 input and 11d58e0 fresh-harness constructors after setting the loaded Normal row's AlwaysSpells vector; no engine-code patches."}),
+        )
+    }
+
+    pub fn native_match_until_terminal(&mut self) -> Result<Value, String> {
+        let start = Instant::now();
+        let before = self.engine.ticks();
+        let sret = self
+            .engine
+            .runtime
+            .heap
+            .alloc(8, 8, &mut self.engine.runtime.memory)?;
+        self.engine.runtime.memory.write_bytes(sret, &[0; 8])?;
+        let harness = self.engine.harness;
+        self.engine.call(0x11d6364, &[harness], sret)?;
+        let event = read_u64(&self.engine, sret)?;
+        self.engine.runtime.heap.free_ptr(sret)?;
+        if event == 0 {
+            return Err("original until-terminal harness returned a null event".into());
+        }
+        let event_code = read_u32(&self.engine, event)?;
+        let after = self.engine.ticks();
+        if !self.engine.is_terminal() {
+            return Err("original until-terminal harness returned before native completion".into());
+        }
+        let observation = self.observe()?;
+        Ok(
+            json!({"ticks_before":before,"ticks_after":after,"world_steps":after[0].wrapping_sub(before[0]),"event":format!("{event:#x}"),"event_code":event_code,"terminated":true,"winner_side":observation["winner_side"],"elapsed_seconds":start.elapsed().as_secs_f64()}),
+        )
     }
 
     pub fn world_step(&mut self) -> Result<(), String> {

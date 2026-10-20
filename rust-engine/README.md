@@ -25,9 +25,10 @@ checkpoint SHA-256 is
 
 ## Coverage and limits
 
-The checked-in generation currently covers 1,733 recovered function bodies and runtime block ranges
-(96,010 translated source instructions) and blocks observed in 32 full
-original-engine RL coverage rollouts. Nine profiled hot FDEs use bounded
+The checked-in generation currently covers 1,908 recovered function bodies and runtime block ranges
+(103,130 translated source instructions), including the earlier 32 fixed-scenario
+rollouts and fresh Hog/Mortar constructor, card and model-action coverage.
+Nine profiled hot FDEs use bounded
 forward-edge threading: generated code keeps callable entry cases for the
 original blocks while threading observed forward edges through the same
 translated source operations, reducing repeated PC dispatch. The generator
@@ -40,7 +41,7 @@ Exceptional result flags, all signed-zero cases, and alternate FP modes are not
 fully modeled; these guards and the recorded parity checks do not establish
 general AArch64 FP parity.
 
-The final optimized release passes the canonical full-match audit across all
+The earlier fixed-scenario optimized release passes the canonical full-match audit across all
 12 guest-memory regions, 70 architectural registers, and the allocator snapshot;
 see [`full-comparison-threaded-release.json`](../analysis/native-port/full-comparison-threaded-release.json).
 All 32 recorded RL games also match every semantic protocol response: 3,874
@@ -53,11 +54,21 @@ matches all 3,319 requests across 28 successive full games in one process.
 hashes alongside the benchmark summaries. Recorded-run agreement does not establish
 complete game coverage or platform equivalence.
 
-The Gym interface currently restores the same native scenario, decks, and engine
+The original Gym interface restores the same native scenario, decks, and engine
 RNG state each episode; policy seeds vary the external actions. Observations
 include tick, elixir, hand cards/costs, availability, and entity count. Positions
 and unit/tower HP are not exposed yet. This is a headless training foundation;
-the original UI, arbitrary deck setup, and Android port remain separate work.
+arbitrary deck setup and Android port remain separate work. The separate
+`rust_deck_rl` runner now calls original constructors for mirrored Hog 2.6 and
+custom Mortar games with caller-selected native seeds. It rejects unsupported
+asymmetric-deck requests. See [fast Banana training](../docs/fast-banana-training.md)
+for the batched learner, independent worker processes, validation and commands.
+The fresh-deck [validation summary](deck-validation.json) records exact replay
+of ten complete games (2,491 protocol responses), full state audits for four
+Hog/Mortar games, and the canonical fixed-scenario state audit. Current short
+training trials measured 3.43× decision throughput; a separate identical-input
+engine replay measured 2.02×. These results cover the recorded paths and do not
+establish general game or platform equivalence.
 
 ## Build and run
 
@@ -87,6 +98,10 @@ tools/reverse-env/bin/python -m rl.benchmark --seconds 60 \
 ```
 
 ## Measured RL throughput
+
+These earlier measurements use the fixed scenario and affordable-random
+policies. The neural Hog/Mortar training measurements are recorded separately
+in [fast Banana training](../docs/fast-banana-training.md).
 
 Paired one-minute runs on the local Intel Core i5-13420H measured:
 
