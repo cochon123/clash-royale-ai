@@ -9,6 +9,7 @@ import torch
 from torch import Tensor
 from torch.distributions import Bernoulli, Categorical
 from torch.nn import functional as F
+from torch.nn.utils.rnn import pad_sequence
 
 try:
     from .banana_policy import BananaEpisode, BananaPolicy, SampledAction
@@ -71,7 +72,7 @@ class FastBananaPolicy(BananaPolicy):
                 or getattr(model, "arena_memory_channels", 0)):
             return self._forward_batch(subset, slots)
         ix = torch.tensor(indices, dtype=torch.long, device=self.device)
-        decks = torch.stack([cache["inputs"][2] for cache in subset]).to(self.device)
+        decks = first["_deck_ids"][ix]
         card_ids = decks.gather(1, slots[:, None]).squeeze(1)
         place_in = torch.cat((first["fused"][ix], model.card_embedding(card_ids)), dim=-1)
         zone_probs = F.softmax(model.zone_head(place_in), dim=-1)
@@ -79,6 +80,16 @@ class FastBananaPolicy(BananaPolicy):
 
     def _tile_batch(self, logits, caches):
         """One categorical per row, including variable masks/support sizes."""
+        # The common unmasked rollout needs no CPU candidate tensors, padding,
+        # host-to-device copies, or gather of the entire 576-tile grid.
+        if all(c.get("tile_candidates") is None and c["tile_mask"] is None for c in caches):
+            sizes = [max(1, min(int(c["placement_top_k"]), logits.shape[1])) for c in caches]
+            temperatures = logits.new_tensor([max(float(c["placement_temperature"]), 1e-4) for c in caches])
+            scores, indices = torch.topk(logits / temperatures[:, None], max(sizes), dim=1)
+            if min(sizes) != max(sizes):
+                valid = torch.arange(max(sizes), device=self.device)[None, :] < torch.tensor(sizes, device=self.device)[:, None]
+                scores = scores.masked_fill(~valid, torch.finfo(scores.dtype).min)
+            return Categorical(logits=scores, validate_args=False), indices, sizes
         candidates, counts = [], []
         for cache in caches:
             fixed = cache.get("tile_candidates")
@@ -91,7 +102,7 @@ class FastBananaPolicy(BananaPolicy):
             candidates.append(row)
             counts.append(len(row))
         width = max(counts)
-        indices = torch.stack([F.pad(row, (0, width - len(row))) for row in candidates]).to(self.device)
+        indices = torch.stack([F.pad(row, (0, width - len(row))) for row in candidates]).to(self.device, non_blocking=True)
         valid = torch.arange(width, device=self.device)[None, :] < torch.tensor(counts, device=self.device)[:, None]
         temperatures = logits.new_tensor([max(float(c["placement_temperature"]), 1e-4) for c in caches])
         scores = (logits / temperatures[:, None]).gather(1, indices)
@@ -174,13 +185,8 @@ class FastBananaPolicy(BananaPolicy):
         if not caches:
             raise ValueError("cannot forward an empty batch")
         inputs = [cache["inputs"] for cache in caches]
-        max_steps = max(int(row[0].shape[0]) for row in inputs)
-        continuous = torch.stack(
-            [F.pad(row[0], (0, 0, 0, max_steps - row[0].shape[0])) for row in inputs]
-        )
-        card_ids = torch.stack(
-            [F.pad(row[1], (0, max_steps - row[1].shape[0])) for row in inputs]
-        )
+        continuous = pad_sequence([row[0] for row in inputs], batch_first=True)
+        card_ids = pad_sequence([row[1] for row in inputs], batch_first=True)
         batched = [
             continuous,
             card_ids,
@@ -188,17 +194,21 @@ class FastBananaPolicy(BananaPolicy):
         ]
         hand_mask = torch.stack([row[7] for row in inputs])
         kwargs: dict[str, Any] = {
-            "hand_mask": hand_mask.to(self.device),
+            "hand_mask": hand_mask.to(self.device, non_blocking=True),
             "think_steps": int(caches[0]["think_steps"]),
         }
         if any(int(cache["think_steps"]) != kwargs["think_steps"] for cache in caches):
             raise ValueError("batch rows use different think_steps")
         if placement_slots is not None:
-            kwargs["placement_slots"] = placement_slots.to(self.device, dtype=torch.long)
-        return self.model(
-            *(tensor.to(self.device) for tensor in batched),
-            **kwargs,
-        )
+            kwargs["placement_slots"] = placement_slots.to(self.device, dtype=torch.long, non_blocking=True)
+        # Queue all tiny input copies on the current stream before inference;
+        # blocking .to() synchronizes once per input even for pageable tensors.
+        batched = [tensor.to(self.device, non_blocking=True) for tensor in batched]
+        result = self.model(*batched, **kwargs)
+        # Placement and slot decoding reuse tensors already sent to the model.
+        result["_deck_ids"] = batched[2]
+        result["_hand_mask"] = kwargs["hand_mask"]
+        return result
 
     @staticmethod
     def _sample_with_uniform(distribution, caches, component):
@@ -212,6 +222,30 @@ class FastBananaPolicy(BananaPolicy):
         cdf = probs.cumsum(-1)
         cutoff = uniform.clamp_max(1 - torch.finfo(probs.dtype).eps) * cdf[:, -1]
         return (cutoff[:, None] >= cdf).sum(-1).clamp_max(probs.shape[-1] - 1)
+
+    def _select_batch(self, distribution, caches, component, deterministic):
+        """Select independently per row without drawing RNG for greedy rows."""
+        if deterministic is False or (not isinstance(deterministic, bool) and not any(deterministic)):
+            return self._sample_with_uniform(distribution, caches, component)
+        greedy = (distribution.probs >= .5 if isinstance(distribution, Bernoulli)
+                  else distribution.logits.argmax(-1))
+        if isinstance(deterministic, bool):
+            return greedy if deterministic else self._sample_with_uniform(distribution, caches, component)
+        if all(deterministic):
+            return greedy
+        if all("sample_uniforms" in cache for cache in caches):
+            sampled = self._sample_with_uniform(distribution, caches, component)
+            return torch.where(torch.tensor(deterministic, device=self.device), greedy, sampled)
+        # The original FastBananaPolicy uses torch's global RNG. Restrict draws
+        # to sampled rows so adding greedy rows never consumes extra samples.
+        rows = [i for i, flag in enumerate(deterministic) if not flag]
+        ix = torch.tensor(rows, device=self.device)
+        selected = (Bernoulli(logits=distribution.logits[ix], validate_args=False)
+                    if isinstance(distribution, Bernoulli) else
+                    Categorical(logits=distribution.logits[ix], validate_args=False))
+        result = greedy.to(distribution.probs.dtype) if isinstance(distribution, Bernoulli) else greedy.clone()
+        result[ix] = self._sample_with_uniform(selected, [caches[i] for i in rows], component)
+        return result
 
     def act(self, episode, observation, side, now_seconds, temperature=1.,
             placement_temperature=.8, placement_top_k=5, deterministic=False,
@@ -230,7 +264,7 @@ class FastBananaPolicy(BananaPolicy):
         temperature: float = 1.0,
         placement_temperature: float = 0.8,
         placement_top_k: int = 5,
-        deterministic: bool = False,
+        deterministic: bool | Sequence[bool] = False,
         legal_tile_masks: Sequence[Tensor | None] | None = None,
         placement_mask_provider=None,
     ) -> list[SampledAction]:
@@ -238,11 +272,19 @@ class FastBananaPolicy(BananaPolicy):
 
         One shared policy/device and shared decode parameters are used for the
         batch. ``legal_tile_masks`` is optional and aligned with ``requests``.
-        Returned actions preserve request order and have the same cache layout
-        consumed by the existing PPO trainer.
+        ``deterministic`` is a bool or one bool per request. A placement provider
+        may expose ``batch([(request, native_slot), ...])``; otherwise it is
+        called once per playing row as ``provider(request, native_slot)``.
+        Returned actions preserve request order and PPO's existing cache layout.
         """
         if not requests:
             return []
+        if not isinstance(deterministic, bool):
+            deterministic = tuple(bool(flag) for flag in deterministic)
+            if len(deterministic) != len(requests):
+                raise ValueError("deterministic must match requests length")
+            if all(deterministic) or not any(deterministic):
+                deterministic = all(deterministic)
         if legal_tile_masks is None:
             legal_tile_masks = [None] * len(requests)
         if len(legal_tile_masks) != len(requests):
@@ -267,34 +309,63 @@ class FastBananaPolicy(BananaPolicy):
             wait_dist = Bernoulli(logits=self.wait_head(first["fused"]).squeeze(-1), validate_args=False)
             values = self.critic(first["fused"]).squeeze(-1)
             can_play = torch.tensor([c["can_play"] for c in caches], device=self.device)
-            waits = wait_dist.probs >= 0.5 if deterministic else self._sample_with_uniform(wait_dist, caches, 0).bool()
+            waits = self._select_batch(wait_dist, caches, 0, deterministic).bool()
             waits = waits | ~can_play
             logp = torch.where(can_play, wait_dist.log_prob(waits.float()), 0.)
             entropy = torch.where(can_play, wait_dist.entropy(), 0.)
+            # Native masks need both wait decisions and chosen native slots on
+            # the host. With per-game uniforms (or greedy selection), decoding
+            # slots for every row is independent of which rows wait: transfer
+            # the two decision vectors together instead of synchronizing twice.
+            joint_slots = (placement_mask_provider is not None
+                           and any(c["can_play"] for c in caches)
+                           and (deterministic is True or all("sample_uniforms" in c for c in caches)))
+            if joint_slots:
+                slot_logits = first["slot_logits"] / max(float(temperature), 1e-4)
+                slot_dist = Categorical(logits=slot_logits.masked_fill(
+                    ~first["_hand_mask"], torch.finfo(slot_logits.dtype).min), validate_args=False)
+                all_slots = self._select_batch(slot_dist, caches, 1, deterministic)
+                decisions = torch.stack((waits.long(), all_slots), dim=1).cpu().tolist()
+                wait_rows = [bool(row[0]) for row in decisions]
+            else:
+                wait_rows = waits.cpu().tolist()
             # Transfer each decision vector once, rather than synchronizing for
             # every action's wait/slot/tile/x/y scalar.
-            wait_rows = waits.cpu().tolist()
             pending = [i for i, wait in enumerate(wait_rows) if not wait]
             placements = {}
             if pending:
                 subset = [caches[i] for i in pending]
                 ix = torch.tensor(pending, device=self.device)
-                mask = torch.stack([c["inputs"][7] for c in subset]).to(self.device)
-                slot_logits = first["slot_logits"][ix] / max(float(temperature), 1e-4)
-                slot_dist = Categorical(logits=slot_logits.masked_fill(~mask, torch.finfo(slot_logits.dtype).min),
-                                        validate_args=False)
-                slots = slot_dist.logits.argmax(-1) if deterministic else self._sample_with_uniform(slot_dist, subset, 1)
+                row_modes = deterministic if isinstance(deterministic, bool) else tuple(deterministic[i] for i in pending)
+                if joint_slots:
+                    slots = all_slots[ix]
+                    slot_logp = slot_dist.log_prob(all_slots)[ix]
+                    slot_entropy = slot_dist.entropy()[ix]
+                else:
+                    mask = first["_hand_mask"][ix]
+                    slot_logits = first["slot_logits"][ix] / max(float(temperature), 1e-4)
+                    slot_dist = Categorical(logits=slot_logits.masked_fill(~mask, torch.finfo(slot_logits.dtype).min),
+                                            validate_args=False)
+                    slots = self._select_batch(slot_dist, subset, 1, row_modes)
+                    slot_logp, slot_entropy = slot_dist.log_prob(slots), slot_dist.entropy()
                 if placement_mask_provider is not None:
-                    for i, slot in zip(pending, slots.cpu().tolist()):
-                        native_slot = next(row[0] for row in caches[i]["legal"] if row[1] == slot)
-                        mask = torch.as_tensor(placement_mask_provider(requests[i], native_slot), dtype=torch.bool).flatten().cpu()
+                    host_slots = [decisions[i][1] for i in pending] if joint_slots else slots.cpu().tolist()
+                    pairs = [(requests[i], next(row[0] for row in caches[i]["legal"] if row[1] == slot))
+                             for i, slot in zip(pending, host_slots)]
+                    batch_provider = getattr(placement_mask_provider, "batch", None)
+                    masks = (batch_provider(pairs) if batch_provider is not None else
+                             [placement_mask_provider(request, slot) for request, slot in pairs])
+                    if len(masks) != len(pending):
+                        raise ValueError("native placement masks must match playing rows")
+                    for i, native_mask in zip(pending, masks):
+                        mask = torch.as_tensor(native_mask, dtype=torch.bool).flatten().cpu()
                         if mask.numel() != 576 or not mask.any():
                             raise ValueError("native placement mask must contain 576 tiles and a legal target")
                         supplied = caches[i]["tile_mask"]
                         caches[i]["tile_mask"] = mask if supplied is None else mask & supplied
                 second = self._placement_from_context(first, caches, pending, slots)
                 tile_dist, indices, counts = self._tile_batch(second["tile_logits"], subset)
-                choices = tile_dist.logits.argmax(-1) if deterministic else self._sample_with_uniform(tile_dist, subset, 2)
+                choices = self._select_batch(tile_dist, subset, 2, row_modes)
                 tiles = indices.gather(1, choices[:, None]).squeeze(1)
                 xy = torch.stack(((tiles % 32 + .5) / 32, (tiles // 32 + .5) / 18), dim=1)
                 if second.get("offset") is not None:
@@ -303,8 +374,8 @@ class FastBananaPolicy(BananaPolicy):
                 xy[:, 1] = torch.where(red, 1. - xy[:, 1], xy[:, 1])
                 coords = torch.round(xy * xy.new_tensor([18000., 32000.])).clamp_min(0)
                 coords = torch.minimum(coords, coords.new_tensor([18000., 32000.])).long()
-                logp[ix] += slot_dist.log_prob(slots) + tile_dist.log_prob(choices)
-                entropy[ix] += slot_dist.entropy() + tile_dist.entropy()
+                logp[ix] += slot_logp + tile_dist.log_prob(choices)
+                entropy[ix] += slot_entropy + tile_dist.entropy()
                 decoded = torch.cat((slots[:, None], tiles[:, None], coords, indices), dim=1).cpu()
                 for row, i, count in zip(decoded, pending, counts):
                     slot, tile, x, y = row[:4].tolist()
@@ -344,7 +415,7 @@ class FastBananaPolicy(BananaPolicy):
                 subset = [caches[i] for i in pending]
                 ix = torch.tensor(pending, device=self.device)
                 slots = torch.tensor([actions[i].deck_slot for i in pending], device=self.device)
-                mask = torch.stack([c["inputs"][7] for c in subset]).to(self.device)
+                mask = first["_hand_mask"][ix]
                 temperatures = values.new_tensor([max(float(c["temperature"]), 1e-4) for c in subset])
                 slot_logits = first["slot_logits"][ix] / temperatures[:, None]
                 slot_dist = Categorical(logits=slot_logits.masked_fill(~mask, torch.finfo(slot_logits.dtype).min),
