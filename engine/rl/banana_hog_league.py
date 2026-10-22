@@ -541,6 +541,11 @@ class League:
                         dummy = Game(worker, job, BananaEpisode((tuple(self.hog["cards"]), tuple(self.decks[job["deck_id"]]["cards"]))), {"tick": 0}, 0)
                         completed.append(self.record(dummy, kind, "VOID", str(exc)))
                         self.restart_worker(worker)
+            # Keep the historical path intact for exact lockstep reproduction.
+            # The internal dynamic pipeline remains available for comparisons.
+            if getattr(self.args, "step_groups", 2) > 1 and not getattr(self.args, "pipeline", False):
+                self._play_step_groups(active, policy, kind, collecting, completed, transitions)
+                continue
             step_jobs = {}
             ready = list(active.values())
             held = []  # barrier mode keeps early finishers until the whole wave returns
@@ -576,6 +581,84 @@ class League:
                         held = []
                 self.publish()
         return completed, transitions
+
+    @staticmethod
+    def _split_step_groups(games, count, min_batch):
+        """Balanced, stable worker groups; merge small batches as a wave shrinks."""
+        games = sorted(games, key=lambda game: game.worker)
+        count = min(count, max(1, len(games) // min_batch))
+        width, extra = divmod(len(games), count)
+        groups, offset = deque(), 0
+        for index in range(count):
+            size = width + (index < extra)
+            groups.append(games[offset:offset + size])
+            offset += size
+        return groups
+
+    def _play_step_groups(self, active, policy, kind, collecting, completed, transitions):
+        """Round-robin inference overlaps other groups' native steps.
+
+        A group is inferred only after ALL its previous futures are consumed.
+        Thus masks on ready clients plus steps on other clients occupy at most
+        `workers` executor slots, including when masks use this same executor.
+        No policy update occurs here; the caller still owns the whole wave.
+        Pace's engine_s remains submission-to-consumption latency, including
+        overlapping inference; it is not additive with infer_s as wall time.
+        """
+        count = getattr(self.args, "step_groups", 2)
+        # Preserve singleton overlap for small waves, but avoid singleton tails
+        # when the initial wave can afford batches of at least two games.
+        min_batch = min(2, max(1, len(active) // count))
+        groups = self._split_step_groups(active.values(), count, min_batch)
+        step_jobs = {}
+        regroup = False
+        while active:
+            if self.stopping():
+                # Consume every submitted reply before voiding unfinished games.
+                # Native requests have their own 45s timeout; never reuse a
+                # client or discard its pending_rows while it is in flight.
+                if step_jobs:
+                    futures.wait(step_jobs, timeout=45)
+                    for future in list(step_jobs):
+                        game = step_jobs.pop(future)
+                        self._consume_step(game, future, kind, collecting, active, completed, transitions)
+                for game in list(active.values()):
+                    completed.append(self.record(game, kind, "VOID", "deadline_or_stop"))
+                return
+
+            # A terminal/error reply changes group sizes. Drain once and split
+            # the survivors afresh, instead of repeatedly inferring tiny tails.
+            if regroup:
+                if step_jobs:
+                    done = self._completed_steps(step_jobs, pipeline=False)
+                    self.publish()
+                    for future in done:
+                        game = step_jobs.pop(future)
+                        self._consume_step(game, future, kind, collecting, active, completed, transitions)
+                if not step_jobs and active:
+                    groups = self._split_step_groups(active.values(), count, min_batch)
+                    regroup = False
+                self.publish()
+                continue
+
+            group = groups[0]
+            workers = {game.worker for game in group}
+            pending = {future: game for future, game in step_jobs.items() if game.worker in workers}
+            if pending:
+                done = self._completed_steps(pending, pipeline=False)
+                self.publish()
+                if not done:
+                    continue
+                for future in done:
+                    game = step_jobs.pop(future)
+                    if not self._consume_step(game, future, kind, collecting, active, completed, transitions):
+                        regroup = True
+                self.publish()
+                # Recheck stop/deadline before starting another inference.
+                if regroup or self.stopping():
+                    continue
+            self._launch_steps(group, policy, collecting, step_jobs)
+            groups.rotate(-1)
 
     def _pace(self):
         pace = getattr(self, "pace", None)
@@ -625,6 +708,8 @@ class League:
                                            {"op": "step", "actions": native, "ticks": 20}, 45)] = game
 
     def _completed_steps(self, step_jobs, pipeline):
+        # Callers can pass just one group's futures: other groups keep running
+        # while this barrier preserves useful inference batch sizes.
         if not pipeline:
             done, _ = futures.wait(step_jobs, timeout=.5, return_when=futures.ALL_COMPLETED)
             return done if len(done) == len(step_jobs) else set()
@@ -895,6 +980,8 @@ def main():
     parser.add_argument("--checkpoint", type=Path, default=ROOT / "analysis/native-pipeline/oracle-export-01/stage01-attempt001/state")
     parser.add_argument("--deadline", default="2026-10-20T11:00:00Z")
     parser.add_argument("--workers", type=int, default=10)
+    parser.add_argument("--step-groups", type=int, default=2,
+                        help="Overlap inference with engine steps in N groups; 1 uses historical lockstep")
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--torch-threads", type=int, default=2)
     parser.add_argument("--learning-rate", type=float, default=1e-5)
@@ -908,8 +995,8 @@ def main():
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--max-waves", type=int, default=0, help="Bounded real-engine supervision run")
     args = parser.parse_args()
-    if args.workers < 1 or args.eval_seeds < 1:
-        parser.error("workers and eval-seeds must be positive")
+    if args.workers < 1 or args.eval_seeds < 1 or args.step_groups < 1:
+        parser.error("workers, eval-seeds and step-groups must be positive")
     if deadline_epoch(args.deadline) <= time.time():
         # A restarted overnight service must not begin another run after 05:00.
         if (args.run_dir / "state.json").exists():

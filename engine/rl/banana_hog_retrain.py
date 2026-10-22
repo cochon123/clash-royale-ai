@@ -518,6 +518,8 @@ def main(league_class=StableLeague, configure_parser=None):
     parser.add_argument("--duration-seconds", type=float, default=10800)
     parser.add_argument("--deadline", help="Persisted absolute UTC end; otherwise fresh run starts a three-hour budget")
     parser.add_argument("--workers", type=int, default=10)
+    parser.add_argument("--step-groups", type=int, default=2,
+                        help="Overlap inference with engine steps in N groups; 1 uses historical lockstep")
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--torch-threads", type=int, default=2)
     parser.add_argument("--learning-rate", type=float, default=3e-5)
@@ -552,8 +554,8 @@ def main(league_class=StableLeague, configure_parser=None):
     if core.deadline_epoch(args.deadline) <= time.time():
         print("Three-hour deadline passed; declining to restart training.", flush=True)
         return
-    if args.workers < 1 or args.eval_seeds < 1 or args.duration_seconds <= 0:
-        parser.error("workers, eval seeds, and duration must be positive")
+    if args.workers < 1 or args.eval_seeds < 1 or args.duration_seconds <= 0 or args.step_groups < 1:
+        parser.error("workers, eval seeds, duration, and step-groups must be positive")
     def stop(_signal, _frame):
         core.STOPPING = True
     signal.signal(signal.SIGINT, stop)

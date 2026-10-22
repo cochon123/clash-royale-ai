@@ -7,13 +7,37 @@ import unittest
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from zoneinfo import ZoneInfo
 
 from .banana_hog_league import HOLDOUTS, ROOT, Game, League, Sampler, deadline_epoch, macro_score, metric, paired_delta
 
 
 class OvernightInvariants(unittest.TestCase):
+    def test_step_groups_cli_defaults_and_validation(self):
+        from contextlib import redirect_stderr
+        from io import StringIO
+        from . import banana_hog_league as core, banana_hog_retrain as retrain
+
+        for entry in (core.main, retrain.main):
+            for value in (None, 3, 0, -1):
+                with self.subTest(entry=entry.__module__, step_groups=value):
+                    argv = ["trainer", "--run-dir", "/tmp/cr-prof/overlap/unused-cli-test",
+                            "--engine", "/unused", "--deadline", "2099-01-01T00:00:00Z"]
+                    if value is not None:
+                        argv.extend(["--step-groups", str(value)])
+                    with patch("sys.argv", argv), patch.object(core, "League") as constructor, \
+                            patch.object(core.signal, "signal"), redirect_stderr(StringIO()):
+                        call = (lambda: entry(constructor)) if entry is retrain.main else entry
+                        if value is not None and value <= 0:
+                            with self.assertRaises(SystemExit) as error:
+                                call()
+                            self.assertEqual(error.exception.code, 2)
+                            constructor.assert_not_called()
+                        else:
+                            call()
+                            self.assertEqual(constructor.call_args.args[0].step_groups, value or 2)
+
     def test_absolute_edmonton_deadline(self):
         at = dt.datetime.fromtimestamp(deadline_epoch("2026-10-20T11:00:00Z"), ZoneInfo("America/Edmonton"))
         self.assertEqual((at.year, at.month, at.day, at.hour, at.minute), (2026, 10, 20, 5, 0))
@@ -109,7 +133,7 @@ def _scheduling_league(pipeline):
     league = object.__new__(League)
     fast, slow = _ClockClient(0.04, 2), _ClockClient(0.25, 1)
     league.decks = {"hog-mirror": {"name": "Hog 2.6"}}
-    league.args = SimpleNamespace(workers=2, pipeline=pipeline)
+    league.args = SimpleNamespace(workers=2, pipeline=pipeline, step_groups=1)
     league.clients = [fast, slow]
     league.executor = ThreadPoolExecutor(max_workers=2)
     league.worker_states = [{}, {}]
