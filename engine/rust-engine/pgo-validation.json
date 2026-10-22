@@ -1,0 +1,181 @@
+{
+  "format": "clash-rust-pgo-validation-v1",
+  "created_utc": "2026-10-21",
+  "build": {
+    "codegen": {
+      "dense_dispatch": true,
+      "structured_cfg": true
+    },
+    "rustflags": [
+      "-C",
+      "target-cpu=native",
+      "-C",
+      "profile-use=/home/cochon/Documents/mini-project/clash-rust/analysis/rust-optimization-20261021/structured-pgo/profile.profdata",
+      "-C",
+      "llvm-args=-pgo-warn-missing-function"
+    ],
+    "lto": "thin",
+    "codegen_units": 16,
+    "profile_sha256": "79eafb766e6537bcaa5c3b0e324445564a9ea40bae9e3329a7225fc0414e3cb5",
+    "training": "36 development league traces replayed exactly by the instrumented rust_league_rl",
+    "source_files_sha256": {
+      "../tools/native_rust_codegen.py": "ca00527c9677a040ce4d9e7f1937f2c3d282ea81615b51c44a3620681fe75281",
+      "Cargo.lock": "07f47db2a8b2a09ad988da9999d0af1181d9b379ff2d3d0adcfb42afde30e7ae",
+      "Cargo.toml": "5e8516874bf544ff1412640f2301e1beffecf55412b542dfedb2e17b60e5a1d0",
+      "build.rs": "f1965efc233bc4bd82ac58660ae77323f0e1cb71b7670b2aee7a59215bb25702",
+      "codegen.json": "51cb7a12714337887eba0db22372de649ddcd0bb3d6f53c8c96141802f9250f6",
+      "src/bin/rust_deck_rl.rs": "20a363cd3d59a649a95912d622c136162b63429faa0f8c904668159a5155b500",
+      "src/bin/rust_league_rl.rs": "432a1037e0b9e06243633c14d9af4cb7ce1383bd41db312ebcaaf4e201c25ee1",
+      "src/bin/rust_rl.rs": "997ee2ce5f4f89864d2b9c0a9435d33ef2a10fde9da3289bffdfc3ab3da81f29",
+      "src/cpu.rs": "2114905fa8e963955ffdc87558baacad10e95893b61cfbf04e70a29c599e6118",
+      "src/generated/chunk0.rs": "281861d5cf6ee9e881aac3968561dd80622472547a45a5a0a8e649ac9c1e2a69",
+      "src/generated/chunk1.rs": "1eab91b05a73a5976e2727e28b7134a630cc3536dab1ac59be554f7b762f9a16",
+      "src/generated/chunk10.rs": "58f3f256fd492b7d6fa2f993146055788e1eb9cd79c2ea1c31afafe85498db93",
+      "src/generated/chunk11.rs": "d4d4eb6a91d530de700b74fb9b7e480eda967d48b69b6eebe2dc5c6bdb99fb95",
+      "src/generated/chunk12.rs": "5cc5e9827c50f3866b994feac6d5f7d3c1667613b782c11566b533c327ae6aea",
+      "src/generated/chunk13.rs": "9c867377b614512f7b92e4e209b3b8bdf911dab282c06439450d544b594fc64f",
+      "src/generated/chunk14.rs": "1f8e32ed1802455821ed391f496ee0596ac7ea149324ac2dfce1b14c613f969c",
+      "src/generated/chunk15.rs": "afe8edc507dc1e13ecd3eeb6e839acf621aa101979654e869a46928ceb45163a",
+      "src/generated/chunk2.rs": "3a090b79acf94ef64546402641f5a0cbeec433d5c71bbcd35da5cb27410f527b",
+      "src/generated/chunk3.rs": "623b3deb05d2cd0b72716939ee1c5be2c35cbb922c6c6743887312cb6879403d",
+      "src/generated/chunk4.rs": "8c459e021af834b7f7c7faa49725aa63e54c0d117484504352bf027ebde26c4c",
+      "src/generated/chunk5.rs": "7a2fabe61e394efe7595f61a49706e1f7ee2a535c5ddbd0c90bcbbcef6497e05",
+      "src/generated/chunk6.rs": "555b6523f44280949953d1d464367576a77da951caedd5d5c09fa1dbb80296a3",
+      "src/generated/chunk7.rs": "7a8e93d03db23d9f33ff74a029b1a17ccaa7eef5ac4c73b9ca8c59999b690c6b",
+      "src/generated/chunk8.rs": "ed4be9f9473fbb992368f8960aba89f164687bbb2b8dc2096463b55b8f0544a2",
+      "src/generated/chunk9.rs": "a705cce9d8b46535287e49fbc4da3b1fa5a1227fcefcc36bacac0e12d9aaf5e5",
+      "src/generated/helpers.rs": "1b2420a35f393069a0ff10a6d7b979fd889ffa26b962934864fef7d2399d0024",
+      "src/generated/manifest.json": "0e92eb7c723c1d80769bbf80351c0643bb99960f78525a7e70c00b8f6bbf2ed0",
+      "src/generated/mod.rs": "0e30a7a6655260d4cf4aa8d1db103a2127813b7684a35ce2620681a26c331d83",
+      "src/heap.rs": "74e8718cfaab5df09908882e97b0a7ede192d6c68522cb9cf1ed92ad1113d739",
+      "src/lib.rs": "e494fca1e5300cf3c4661b8a59c2fa496ba2cf43d57d48e047d905b2f6fed34b",
+      "src/main.rs": "7269f3b22286e9e69b7bd780ac312eaf76af82d3dd2d301963df134fa63c9473",
+      "src/memory.rs": "87d0e9db5d0108af15e06623354613eccebbe22ca2389a91502497774ed4273d",
+      "src/rl.rs": "74663a42a7b259e15c8afe5fbbca8b2397582d23f6cac297d0dcf529d58fc938",
+      "src/runtime.rs": "b23cdd0a8c4e4202dcd6b02412350db9757941c54a3544e8a0f5c67a81c5079f",
+      "src/session.rs": "4f4cdc287a3070c63951610e02178652d1c09c874d9daef7f3c61eb63a30bdf3"
+    },
+    "executables": {
+      "rust-engine/target/pgo/rust_league_rl": "b799b4306dc5267bb8cb877af7eff49ec2c01edd43dedfbab83dec7b6614850d",
+      "rust-engine/target/pgo/rust_deck_rl": "a5eec55616660526ba8edd6368622c9d3f79110ce9a682b02cccffb169f391dd"
+    }
+  },
+  "league_regression": {
+    "cycle": {
+      "split": "holdout",
+      "candidate_sha256": "b799b4306dc5267bb8cb877af7eff49ec2c01edd43dedfbab83dec7b6614850d",
+      "candidate_unchanged": true,
+      "total_games": 252,
+      "reference_completed": 252,
+      "fully_matched": 252,
+      "requests_compared": 33111,
+      "elapsed_seconds": 34.73644234000312
+    },
+    "random": {
+      "split": "holdout",
+      "candidate_sha256": "b799b4306dc5267bb8cb877af7eff49ec2c01edd43dedfbab83dec7b6614850d",
+      "candidate_unchanged": true,
+      "total_games": 252,
+      "reference_completed": 252,
+      "fully_matched": 252,
+      "requests_compared": 46044,
+      "elapsed_seconds": 58.11919696499899
+    },
+    "total_games": 504,
+    "fully_matched": 504,
+    "requests_compared": 79155
+  },
+  "deck_runner_replays": {
+    "traces": {
+      "callback-reference": {
+        "matched": true,
+        "requests_compared": 305,
+        "request_count": 305,
+        "wall_seconds": 3.9855036410008324,
+        "trace_sha256": "a34aec5e14f2303627a4b3ec36bd3e2dbad8d21381feb4e0ca303f3eb3433476"
+      },
+      "policy-v2-worker-0": {
+        "matched": true,
+        "requests_compared": 489,
+        "request_count": 489,
+        "wall_seconds": 5.3534272000033525,
+        "trace_sha256": "f086abdf066d1f860257f4885419841b3f6fef1e70a26ae48da934286ab50f64"
+      },
+      "policy-v2-worker-1": {
+        "matched": true,
+        "requests_compared": 613,
+        "request_count": 613,
+        "wall_seconds": 6.708185868999863,
+        "trace_sha256": "a916cebf6e8b2435feadc60904cb2542de35427bc9737b1829654f6092f1c791"
+      },
+      "policy-v2-worker-2": {
+        "matched": true,
+        "requests_compared": 614,
+        "request_count": 614,
+        "wall_seconds": 6.789658239002165,
+        "trace_sha256": "60f9b00db0bbe4b04bf25a5a6f3b8860a04ceee5f31edc29305d06c66a49da03"
+      },
+      "reference-four-games": {
+        "matched": true,
+        "requests_compared": 775,
+        "request_count": 775,
+        "wall_seconds": 6.621028148001642,
+        "trace_sha256": "555653373397b004524519e7baef15e1c03f48d76ae3a79dfb5bd5c198cc5cd9"
+      }
+    },
+    "all_matched": true,
+    "requests": 2796,
+    "wall_seconds": {
+      "release": 83.44495015500434,
+      "pgo": 29.457803097007854
+    }
+  },
+  "single_core_structured_vs_dense_pgo": {
+    "dev": {
+      "games_per_minute": {
+        "reference": 71.68483655994598,
+        "candidate": 84.47075802449787
+      },
+      "speedup": 1.1783629855089333
+    },
+    "holdout": {
+      "games_per_minute": {
+        "reference": 51.101448441073124,
+        "candidate": 59.05774480091486
+      },
+      "speedup": 1.1556961026068844
+    }
+  },
+  "earlier_dense_pgo_vs_release": {
+    "dev_games_per_minute": {
+      "release": 25.48,
+      "dense_pgo": 67.77
+    },
+    "holdout_games_per_minute": {
+      "release": 17.8,
+      "dense_pgo": 50.9
+    }
+  },
+  "training_2min_10_workers": {
+    "release": {
+      "trainer_elapsed_seconds": 120.08635902404785,
+      "decision_steps": 17674,
+      "games": 30,
+      "truncated_games": 10,
+      "decisions_per_second": 147.1774158500442,
+      "games_per_hour": 899.3527731020015
+    },
+    "pgo": {
+      "trainer_elapsed_seconds": 120.74410271644592,
+      "decision_steps": 26194,
+      "games": 44,
+      "truncated_games": 6,
+      "decisions_per_second": 216.93813122711003,
+      "games_per_hour": 1311.8653121468362
+    },
+    "decision_speedup": 1.4739906253561583,
+    "note": "Same starting 4.4.2, CUDA, AC power, balanced profile; collection order differs. PGO trainer averaged 2.1 CPU cores: Python/inference now limits throughput."
+  },
+  "evidence": "analysis/rust-optimization-20261021/",
+  "scope": "Exact semantic equality for the recorded paths only. The profile changes code layout and branch weights, not translated semantics; rebuild and revalidate after any generator or source change."
+}

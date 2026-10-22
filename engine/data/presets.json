@@ -1,0 +1,51 @@
+[
+  {
+    "id": "starter8",
+    "name": "Starter Eight",
+    "deck": ["knight", "archers", "giant", "minions", "skeletons", "musketeer", "mini_pekka", "fireball"],
+    "description": "A simple mixed deck using recovered basic melee, ranged, flying and area-damage statistics.",
+    "limitations": [
+      "Raw configuration baselines are used without displayed-level normalization.",
+      "Movement, targeting and collision follow the local reconstruction.",
+      "Fireball applies immediate area damage; projectile travel and knockback are omitted."
+    ]
+  },
+  {
+    "id": "hog_2_6",
+    "name": "Hog 2.6 (approx.)",
+    "deck": ["hog_rider", "musketeer", "ice_golem", "ice_spirit", "skeletons", "cannon", "fireball", "the_log"],
+    "description": "The eight-card Hog cycle composition with Hog Rider, Musketeer, Ice Golem, Ice Spirit, Skeletons, Cannon, Fireball and The Log.",
+    "limitations": [
+      "The card composition is preserved; combat behavior is approximate.",
+      "Hog Rider jumping, Ice Golem's death effect and Ice Spirit's freeze are omitted.",
+      "The Log is flattened to one area hit, and spell travel and knockback are omitted.",
+      "Raw stored statistics have not been normalized to a shared displayed level."
+    ]
+  },
+  {
+    "id": "logbait",
+    "name": "Logbait (approx.)",
+    "deck": ["goblin_barrel", "princess", "knight", "goblin_gang", "inferno_tower", "rocket", "the_log", "ice_spirit"],
+    "description": "Goblin Barrel and Princess pressure backed by Knight, Goblin Gang, Inferno Tower, Rocket, The Log and Ice Spirit.",
+    "limitations": [
+      "Goblin Barrel directly summons three recovered barrel goblins without projectile travel.",
+      "Goblin Gang uses six primary melee goblins instead of its mixed melee/spear group.",
+      "Inferno Tower uses initial damage without its ramp, and Ice Spirit's freeze is omitted.",
+      "Princess projectile patterns, rolling Log damage and spell timing are simplified.",
+      "Raw stored statistics have not been normalized to a shared displayed level."
+    ]
+  },
+  {
+    "id": "golem",
+    "name": "Golem Beatdown (approx.)",
+    "deck": ["golem", "night_witch", "baby_dragon", "mega_minion", "lumberjack", "lightning", "tornado", "barbarian_barrel"],
+    "description": "A Golem push with Night Witch, Baby Dragon, Mega Minion and Lumberjack, supported by Lightning, Tornado and Barbarian Barrel.",
+    "limitations": [
+      "Golem death-spawn Golemites and Night Witch bat summons are omitted.",
+      "Lumberjack's death Rage effect is omitted.",
+      "Lightning targeting and timing are simplified; Tornado applies one stored second of damage without pulling units.",
+      "Barbarian Barrel is flattened to damage without its spawned Barbarian.",
+      "Raw stored statistics have not been normalized to a shared displayed level."
+    ]
+  }
+]

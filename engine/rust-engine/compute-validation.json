@@ -1,0 +1,85 @@
+{
+  "format": "banana-compute-validation-v1",
+  "engine_sha256": "bb7f24fcb9dfeeb257659c8cea8a39f8b8797a3be3bc1560c62ffcb1e7ba0025",
+  "generation": {
+    "ranges": 1910,
+    "instructions": 103754,
+    "unsupported_encodings": {},
+    "manifest_sha256": "50803d1843d3d1b395e98838cadb61cc83937d65a15fc38729a2156f2dbe9fbb"
+  },
+  "validation": {
+    "python_tests_passed": 21,
+    "semantic_game_replies_matched": 1080,
+    "next_prime_inputs_and_integer_register_states_matched": 606,
+    "reference_runner_cargo_check": "passed"
+  },
+  "evidence": {
+    "analysis/cpu-gpu-tuning/final-four-games-replay.json": "bc1a7cc070dc3e503ccf47ccec135b94e771b17f155ec1386b624cdbd3ca62e3",
+    "analysis/cpu-gpu-tuning/final-callback-replay.json": "42e76b46f6d5f913e6de85a37343067b9665729ae36ffc8846bc0698e87ee5df",
+    "analysis/cpu-gpu-tuning/final-next-prime-validation.json": "38f55166d639ad3519ff98ad1da073d274ac276ec089a43b3d66f6d78535b87c"
+  },
+  "throughput": {
+    "before_three_workers": {
+      "elapsed_seconds": 60.06650733947754,
+      "decision_steps": 3226,
+      "completed_games": 3,
+      "truncated_games": 3
+    },
+    "eight_workers": {
+      "trainer_elapsed_seconds": 60.52802920341492,
+      "decision_steps": 8366,
+      "games": 10,
+      "truncated_games": 6,
+      "decisions_per_second": 138.21695683969173,
+      "games_per_hour": 594.7657717223168
+    },
+    "ten_workers_final": {
+      "trainer_elapsed_seconds": 120.89436435699463,
+      "decision_steps": 9814,
+      "games": 11,
+      "truncated_games": 9,
+      "decisions_per_second": 81.17830845298776,
+      "games_per_hour": 327.5586931667328
+    },
+    "final_reference_recoveries": 0
+  },
+  "power_state": {
+    "phase": "observed during final ten-worker trial",
+    "profile": "balanced",
+    "ac_adapter_online": 0,
+    "cpu0_scaling_khz": 1132280,
+    "cpu8_scaling_khz": 1311389,
+    "note": "Earlier trials did not record power state; do not treat their comparison as a controlled hardware experiment."
+  },
+  "resources": {
+    "preparing": {
+      "sample_count": 14,
+      "cpu_average_cores": 2.425402756096365,
+      "cpu_peak_cores": 8.801091525447642,
+      "whole_device_gpu_average_utilization_percent": 0.0,
+      "whole_device_gpu_peak_utilization_percent": 0,
+      "whole_device_gpu_average_memory_mib": 2166.5714285714284,
+      "whole_device_gpu_peak_memory_mib": 2283
+    },
+    "training": {
+      "sample_count": 114,
+      "cpu_average_cores": 3.474160241088849,
+      "cpu_peak_cores": 5.5959814182856995,
+      "whole_device_gpu_average_utilization_percent": 3.508771929824561,
+      "whole_device_gpu_peak_utilization_percent": 42,
+      "whole_device_gpu_average_memory_mib": 2215.2105263157896,
+      "whole_device_gpu_peak_memory_mib": 2283
+    }
+  },
+  "runs": [
+    "runs/perf-cpu-gpu-before-20261019",
+    "runs/perf-cpu-gpu-eight-fixed-20261019",
+    "runs/perf-cpu-gpu-ten-final-20261019"
+  ],
+  "limits": [
+    "Short desktop trials; power state changed, so timings are not a controlled speedup comparison.",
+    "Batching changes RNG draw order and collection waves; this is throughput evidence, not stronger-policy evidence.",
+    "Parity covers the recorded paths, not complete native-engine coverage.",
+    "GPU utilization is whole-device, including background services."
+  ]
+}

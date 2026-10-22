@@ -1,0 +1,3713 @@
+[
+  {
+    "art": {
+      "path": "cards/knight.png",
+      "sha256": "e48b2809ea3eef5757e0520bbcba697148c1175784ebf9075e350b8e4ac3d571",
+      "source": "assets/image/chr/knight.png"
+    },
+    "art_source": "image/chr/knight.png",
+    "elixir": 3,
+    "id": "knight",
+    "limitations": [],
+    "name": "Knight",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Knight",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 3,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Knight"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/archers.png",
+      "sha256": "7f3f0831927e50fc10046db66f4caeeb698608db303e21b9383b9a8b7bb9f555",
+      "source": "assets/image/chr/archers.png"
+    },
+    "art_source": "image/chr/archers.png",
+    "elixir": 3,
+    "id": "archers",
+    "limitations": [],
+    "name": "Archers",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Archer",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 4,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Archer"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/goblins.png",
+      "sha256": "fad8289449c0979c054eefe83582c6d3297faed1bf6a259a06b7a15fc72e2131",
+      "source": "assets/image/chr/goblins.png"
+    },
+    "art_source": "image/chr/goblins.png",
+    "elixir": 2,
+    "id": "goblins",
+    "limitations": [],
+    "name": "Goblins",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Goblins",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 5,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Goblins"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/giant.png",
+      "sha256": "46ea658b64f7fb70cf64d0a4e425d646865c480474635f1cba23096b567268fc",
+      "source": "assets/image/chr/giant.png"
+    },
+    "art_source": "image/chr/giant.png",
+    "elixir": 5,
+    "id": "giant",
+    "limitations": [],
+    "name": "Giant",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "Giant",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 6,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Giant"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/pekka.png",
+      "sha256": "87cd9d27ab2cd81ca151f741a2782234f5c4f2d1edffe91227a5f1b46440be59",
+      "source": "assets/image/chr/pekka_dl.png"
+    },
+    "art_source": "image/chr/pekka_dl.png",
+    "elixir": 7,
+    "id": "pekka",
+    "limitations": [],
+    "name": "Pekka",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Pekka",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 7,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Pekka"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/minions.png",
+      "sha256": "766a6f3e32d625f7548fbeefa4b4cba8e1a3022653e1f3e35b62ca65800e587a",
+      "source": "assets/image/chr/minions.png"
+    },
+    "art_source": "image/chr/minions.png",
+    "elixir": 3,
+    "id": "minions",
+    "limitations": [],
+    "name": "Minions",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Minions",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 8,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Minions"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/balloon.png",
+      "sha256": "c36e93ad2bad82130d6a635ec05c36d354af2a5936ab169629f2bdb639bade02",
+      "source": "assets/image/chr/balloon_dl.png"
+    },
+    "art_source": "image/chr/balloon_dl.png",
+    "elixir": 5,
+    "id": "balloon",
+    "limitations": [
+      "Death-spawn units omitted."
+    ],
+    "name": "Balloon",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Balloon",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 9,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Balloon"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/witch.png",
+      "sha256": "88a0c8d7311a71c793457cb1fe531c89fb2ebceec0fe2d2fa4f7df8fd90d9b6c",
+      "source": "assets/image/chr/witch_dl.png"
+    },
+    "art_source": "image/chr/witch_dl.png",
+    "elixir": 5,
+    "id": "witch",
+    "limitations": [
+      "Periodic summoned units omitted."
+    ],
+    "name": "Witch",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Witch",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 10,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Witch"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/barbarians.png",
+      "sha256": "c9db44472b6d4cb6663ea7204f6f99eab831230801c305ab58bf53f4d8a50e88",
+      "source": "assets/image/chr/barbarians_dl.png"
+    },
+    "art_source": "image/chr/barbarians_dl.png",
+    "elixir": 5,
+    "id": "barbarians",
+    "limitations": [],
+    "name": "Barbarians",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Barbarians",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 11,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Barbarians"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/golem.png",
+      "sha256": "d728a87a529486b425f90949ad392e9094d06ebf3f0c1421b6215c4c7dc77f6d",
+      "source": "assets/image/chr/golem_dl.png"
+    },
+    "art_source": "image/chr/golem_dl.png",
+    "elixir": 8,
+    "id": "golem",
+    "limitations": [
+      "Death-spawn units omitted.",
+      "Death area effects omitted."
+    ],
+    "name": "Golem",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Golem",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 12,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Golem"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/skeletons.png",
+      "sha256": "dc861dfcbf34b1ef08472cc7f141aa899af326a3acf2108fabfe221e2ae8251b",
+      "source": "assets/image/chr/skeletons_dl.png"
+    },
+    "art_source": "image/chr/skeletons_dl.png",
+    "elixir": 1,
+    "id": "skeletons",
+    "limitations": [],
+    "name": "Skeletons",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Skeletons",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 13,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Skeletons"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/valkyrie.png",
+      "sha256": "1c991e39051f742e7a7e15bd1b2a046a2c867717dd3af8206bffe52f0f8a5dd9",
+      "source": "assets/image/chr/valkyrie_dl.png"
+    },
+    "art_source": "image/chr/valkyrie_dl.png",
+    "elixir": 4,
+    "id": "valkyrie",
+    "limitations": [],
+    "name": "Valkyrie",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "Valkyrie",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 14,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Valkyrie"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/skeleton_army.png",
+      "sha256": "a926a76bac0e03d02fd2539c5204a04b509a969cf0100c02f70319dbc8592af9",
+      "source": "assets/image/chr/skeleton_army_dl.png"
+    },
+    "art_source": "image/chr/skeleton_army_dl.png",
+    "elixir": 3,
+    "id": "skeleton_army",
+    "limitations": [],
+    "name": "Skeleton Army",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "SkeletonArmy",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 15,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SkeletonArmy"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/bomber.png",
+      "sha256": "0154a49985e1e3dbc490cc487d145e355e2848a4e49ff6249c46e146567a1f52",
+      "source": "assets/image/chr/bomber_dl.png"
+    },
+    "art_source": "image/chr/bomber_dl.png",
+    "elixir": 2,
+    "id": "bomber",
+    "limitations": [],
+    "name": "Bomber",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Bomber",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 16,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Bomber"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/musketeer.png",
+      "sha256": "ffb148ff3c5ab80abadee9d6763f12bed8793994a168fe3dde0de69cdef1a3f2",
+      "source": "assets/image/chr/musketeer_dl.png"
+    },
+    "art_source": "image/chr/musketeer_dl.png",
+    "elixir": 4,
+    "id": "musketeer",
+    "limitations": [],
+    "name": "Musketeer",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "Musketeer",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 17,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Musketeer"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/baby_dragon.png",
+      "sha256": "2c2b595d0116ad27456c3350c31710aad9d4204e792bf6444c152ae4549da7b3",
+      "source": "assets/image/chr/baby_dragon_dl.png"
+    },
+    "art_source": "image/chr/baby_dragon_dl.png",
+    "elixir": 4,
+    "id": "baby_dragon",
+    "limitations": [],
+    "name": "Baby Dragon",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "BabyDragon",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 18,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "BabyDragon"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/prince.png",
+      "sha256": "03dddd476429a7a94d96253a4fc0f955c9b5b74479191cc811a2e2dcac89acdf",
+      "source": "assets/image/chr/prince_dl.png"
+    },
+    "art_source": "image/chr/prince_dl.png",
+    "elixir": 5,
+    "id": "prince",
+    "limitations": [
+      "Jump/pathfinding behavior simplified.",
+      "Charge behavior omitted."
+    ],
+    "name": "Prince",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Prince",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 19,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Prince"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/wizard.png",
+      "sha256": "36a1542e30355bdc83434991795ebe98e25970780401d701041e642a969c0edb",
+      "source": "assets/image/chr/wizard_dl.png"
+    },
+    "art_source": "image/chr/wizard_dl.png",
+    "elixir": 5,
+    "id": "wizard",
+    "limitations": [],
+    "name": "Wizard",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "Wizard",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 21,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Wizard"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/mini_pekka.png",
+      "sha256": "e82363df840830723c7871b668847a4acf75de64cb4e1be4ae563729301f905e",
+      "source": "assets/image/chr/mini_pekka.png"
+    },
+    "art_source": "image/chr/mini_pekka.png",
+    "elixir": 4,
+    "id": "mini_pekka",
+    "limitations": [],
+    "name": "Mini P.E.K.K.A",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "MiniPekka",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 22,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "MiniPekka"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/spear_goblins.png",
+      "sha256": "5a4ee8507ba63b780b59da4f23bdc12af2a478979eb064a8aeb95f074e65fa96",
+      "source": "assets/image/chr/spear_goblins.png"
+    },
+    "art_source": "image/chr/spear_goblins.png",
+    "elixir": 2,
+    "id": "spear_goblins",
+    "limitations": [],
+    "name": "Spear Goblins",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "SpearGoblins",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 23,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SpearGoblins"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/giant_skeleton.png",
+      "sha256": "633882223fcbf62cb9e092bc44411915434e42d7bcc6fdea9075ac4f36a15169",
+      "source": "assets/image/chr/giant_skeleton_dl.png"
+    },
+    "art_source": "image/chr/giant_skeleton_dl.png",
+    "elixir": 6,
+    "id": "giant_skeleton",
+    "limitations": [
+      "Death-spawn units omitted."
+    ],
+    "name": "Giant Skeleton",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "GiantSkeleton",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 24,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "GiantSkeleton"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/hog_rider.png",
+      "sha256": "f7f5c82b9c77319977d4c81991f063d538bc0b892457e24ac8e4e835f226ca08",
+      "source": "assets/image/chr/hog_rider_dl.png"
+    },
+    "art_source": "image/chr/hog_rider_dl.png",
+    "elixir": 4,
+    "id": "hog_rider",
+    "limitations": [
+      "Scripted starting actions omitted.",
+      "Jump/pathfinding behavior simplified."
+    ],
+    "name": "Hog Rider",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "HogRider",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 25,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "HogRider"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/minion_horde.png",
+      "sha256": "7864c8c3f81231ee4f5cc2726e44983b4160a2702a1c566a1e3e2e9a4846f189",
+      "source": "assets/image/chr/minions_horde_dl.png"
+    },
+    "art_source": "image/chr/minions_horde_dl.png",
+    "elixir": 5,
+    "id": "minion_horde",
+    "limitations": [],
+    "name": "Minion Horde",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "MinionHorde",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 26,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "MinionHorde"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/ice_wizard.png",
+      "sha256": "7ddac50daac0ebbfc4fe27395ce7803f5a07b4fc0f55c2e3f19133b91ffa0fc4",
+      "source": "assets/image/chr/ice_wizard_dl.png"
+    },
+    "art_source": "image/chr/ice_wizard_dl.png",
+    "elixir": 3,
+    "id": "ice_wizard",
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted.",
+      "Custom summon list approximated using first listed unit type."
+    ],
+    "name": "Ice Wizard",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "IceWizard",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 27,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "IceWizard"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/royal_giant.png",
+      "sha256": "623eb78f127dece7e6033c0bdd4d5ee6cdfa4d3a48a650d02afa43e1d3ef2aa7",
+      "source": "assets/image/chr/royal_giant_dl.png"
+    },
+    "art_source": "image/chr/royal_giant_dl.png",
+    "elixir": 6,
+    "id": "royal_giant",
+    "limitations": [],
+    "name": "Royal Giant",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "RoyalGiant",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 28,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "RoyalGiant"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/guards.png",
+      "sha256": "5c16b158748d0dc5fd9d7ff80f208099ec09206bb221f1afee229ab5280bd279",
+      "source": "assets/image/chr/guards_dl.png"
+    },
+    "art_source": "image/chr/guards_dl.png",
+    "elixir": 3,
+    "id": "guards",
+    "limitations": [
+      "Shield layer omitted."
+    ],
+    "name": "Guards",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "SkeletonWarriors",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 29,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SkeletonWarriors"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/princess.png",
+      "sha256": "1c7c60da04814c62bc91c3dc7fa269ae85e94c2dfd2d7118e1cc2700754eff4c",
+      "source": "assets/image/chr/princess_dl.png"
+    },
+    "art_source": "image/chr/princess_dl.png",
+    "elixir": 3,
+    "id": "princess",
+    "limitations": [
+      "Multiple projectile pattern simplified to a single damage hit.",
+      "Projectile patterns simplified to primary damaging projectile."
+    ],
+    "name": "Princess",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "Princess",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 30,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Princess"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/dark_prince.png",
+      "sha256": "261911ee15608c11b3dd59b27357773b35f0fc9c78bc4d5cafd7fb1ee8b08ba4",
+      "source": "assets/image/chr/dark_prince_dl.png"
+    },
+    "art_source": "image/chr/dark_prince_dl.png",
+    "elixir": 4,
+    "id": "dark_prince",
+    "limitations": [
+      "Jump/pathfinding behavior simplified.",
+      "Shield layer omitted.",
+      "Charge behavior omitted."
+    ],
+    "name": "Dark Prince",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "DarkPrince",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 31,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "DarkPrince"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/three_musketeers.png",
+      "sha256": "680e381e51b0cc57e6adbf2e78258256dd74f497fcd4cd6019c65b2c3cb4a99f",
+      "source": "assets/image/chr/three_musketeers.png"
+    },
+    "art_source": "image/chr/three_musketeers.png",
+    "elixir": 9,
+    "id": "three_musketeers",
+    "limitations": [
+      "Custom summon list approximated using first listed unit type."
+    ],
+    "name": "Three Musketeers",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "ThreeMusketeers",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 32,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "ThreeMusketeers"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/lava_hound.png",
+      "sha256": "4d2b4bdce67499e87f59efb25a5e7601b7ba0672eff888e294f151b9c84bb2f6",
+      "source": "assets/image/chr/lava_hound_dl.png"
+    },
+    "art_source": "image/chr/lava_hound_dl.png",
+    "elixir": 7,
+    "id": "lava_hound",
+    "limitations": [
+      "Death-spawn units omitted."
+    ],
+    "name": "Lava Hound",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "LavaHound",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 33,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "LavaHound"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/ice_spirit.png",
+      "sha256": "2300953d32dcdb22f48644ad063e046ef45c19eb14754419bbc04e70c0deaa9c",
+      "source": "assets/image/chr/ice_spirit_dl.png"
+    },
+    "art_source": "image/chr/ice_spirit_dl.png",
+    "elixir": 1,
+    "id": "ice_spirit",
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted."
+    ],
+    "name": "Ice Spirit",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "IceSpirits",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 34,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "IceSpirits"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/fire_spirit.png",
+      "sha256": "d5906f8303dca82dd2e100b519a5d5d992cde112756dc0a9969b1bfa99977e9a",
+      "source": "assets/image/chr/fire_spirit.png"
+    },
+    "art_source": "image/chr/fire_spirit.png",
+    "elixir": 1,
+    "id": "fire_spirit",
+    "limitations": [],
+    "name": "Fire Spirit",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "FireSpirits",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 35,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "FireSpirits"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/miner.png",
+      "sha256": "6f4e36b10889a6399fc25a5a3e116397bce04c573ad770d3aa0933c44015980f",
+      "source": "assets/image/chr/miner_dl.png"
+    },
+    "art_source": "image/chr/miner_dl.png",
+    "elixir": 3,
+    "id": "miner",
+    "limitations": [],
+    "name": "Miner",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "Miner",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 36,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Miner"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/sparky.png",
+      "sha256": "43d14bbbc282adb5d2f35dfaa3f578aa88e8e6a36a30eb1ed360abc64b90911b",
+      "source": "assets/image/chr/sparky_dl.png"
+    },
+    "art_source": "image/chr/sparky_dl.png",
+    "elixir": 6,
+    "id": "sparky",
+    "limitations": [],
+    "name": "Sparky",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "ZapMachine",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 37,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "ZapMachine"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/bowler.png",
+      "sha256": "06ed0bba4f92793bf070f0a6be90e427320d5b7dd362e248763de583e46e0e00",
+      "source": "assets/image/chr/bowler_dl.png"
+    },
+    "art_source": "image/chr/bowler_dl.png",
+    "elixir": 5,
+    "id": "bowler",
+    "limitations": [
+      "Attack knockback omitted."
+    ],
+    "name": "Bowler",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Bowler",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 38,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Bowler"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/lumberjack.png",
+      "sha256": "779e44721735e826b2ebd5f34cbf27d22957b8493822f66d68dba400c9969145",
+      "source": "assets/image/chr/lumberjack_dl.png"
+    },
+    "art_source": "image/chr/lumberjack_dl.png",
+    "elixir": 4,
+    "id": "lumberjack",
+    "limitations": [
+      "Death area effects omitted."
+    ],
+    "name": "Lumberjack",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "RageBarbarian",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 39,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "RageBarbarian"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/battle_ram.png",
+      "sha256": "fb69465f874c2e8213ad9b9470dd0cb4e210e5b4f860a9cfd0aeb5a25eb430c5",
+      "source": "assets/image/chr/battle_ram_dl.png"
+    },
+    "art_source": "image/chr/battle_ram_dl.png",
+    "elixir": 4,
+    "id": "battle_ram",
+    "limitations": [
+      "Death-spawn units omitted.",
+      "Charge behavior omitted."
+    ],
+    "name": "Battle Ram",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "BattleRam",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 40,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "BattleRam"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/inferno_dragon.png",
+      "sha256": "87faeaf8612a9d78cd52fcf7de151e4907b93b1059d1ca896bc59af8f9ab712d",
+      "source": "assets/image/chr/inferno_dragon_dl.png"
+    },
+    "art_source": "image/chr/inferno_dragon_dl.png",
+    "elixir": 4,
+    "id": "inferno_dragon",
+    "limitations": [
+      "Damage ramp omitted; uses stored initial damage."
+    ],
+    "name": "Inferno Dragon",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "InfernoDragon",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 41,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "InfernoDragon"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/ice_golem.png",
+      "sha256": "f9032cbdaf5867dded00259b7019d9f6919f629b3bd3e50bede41e49231a318d",
+      "source": "assets/image/chr/ice_golem_dl.png"
+    },
+    "art_source": "image/chr/ice_golem_dl.png",
+    "elixir": 2,
+    "id": "ice_golem",
+    "limitations": [
+      "Scripted death actions omitted.",
+      "Death area effects omitted."
+    ],
+    "name": "Ice Golem",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "IceGolemite",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 42,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "IceGolemite"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/mega_minion.png",
+      "sha256": "a1ee47d4699cedb07b019c207aa0846d1c6619b82debb0f76a7a34041161b59f",
+      "source": "assets/image/chr/mega_minion_dl.png"
+    },
+    "art_source": "image/chr/mega_minion_dl.png",
+    "elixir": 3,
+    "id": "mega_minion",
+    "limitations": [],
+    "name": "Mega Minion",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "MegaMinion",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 43,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "MegaMinion"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/dart_goblin.png",
+      "sha256": "59d527a57ab1e1fb213758d3557a94f4d614b3cde8aa6a8bc1250b43c6f4e924",
+      "source": "assets/image/chr/dart_goblin_dl.png"
+    },
+    "art_source": "image/chr/dart_goblin_dl.png",
+    "elixir": 3,
+    "id": "dart_goblin",
+    "limitations": [],
+    "name": "Dart Goblin",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "BlowdartGoblin",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 44,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "BlowdartGoblin"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_gang.png",
+      "sha256": "6a7e5302606d8e198ddea950ccc109afb6e1d8ff810efa43c6180d9646a9ff59",
+      "source": "assets/image/chr/goblins_gang_dl.png"
+    },
+    "art_source": "image/chr/goblins_gang_dl.png",
+    "elixir": 3,
+    "id": "goblin_gang",
+    "limitations": [
+      "Mixed summon group approximated with the primary unit type and total stored count."
+    ],
+    "name": "Goblin Gang",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "GoblinGang",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 45,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "GoblinGang"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/electro_wizard.png",
+      "sha256": "523eb3d8e6857dc030ef06607604a23daea81f1a1fdad234f15be4cb37907139",
+      "source": "assets/image/chr/electro_wizard_dl.png"
+    },
+    "art_source": "image/chr/electro_wizard_dl.png",
+    "elixir": 4,
+    "id": "electro_wizard",
+    "limitations": [
+      "On-hit buff omitted.",
+      "Custom summon list approximated using first listed unit type."
+    ],
+    "name": "Electro Wizard",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "ElectroWizard",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 46,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "ElectroWizard"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/elite_barbarians.png",
+      "sha256": "6e8aac36c909dce99ba2c977649c31c8fca7acd1958755cadd7c42fd42b8bd9b",
+      "source": "assets/image/chr/elite_barbarians_dl.png"
+    },
+    "art_source": "image/chr/elite_barbarians_dl.png",
+    "elixir": 6,
+    "id": "elite_barbarians",
+    "limitations": [],
+    "name": "Elite Barbarians",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "AngryBarbarians",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 47,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "AngryBarbarians"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/hunter.png",
+      "sha256": "03bfc6758cdbb0c26a57176be0661dd693f7ebf6db5096f651dffc6066184df0",
+      "source": "assets/image/chr/hunter_dl.png"
+    },
+    "art_source": "image/chr/hunter_dl.png",
+    "elixir": 4,
+    "id": "hunter",
+    "limitations": [
+      "Multiple projectile pattern simplified to a single damage hit.",
+      "Projectile patterns simplified to primary damaging projectile."
+    ],
+    "name": "Hunter",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Hunter",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 48,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Hunter"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/executioner.png",
+      "sha256": "fdacc092d24b5c49315a377099e7aef79ae1a9a04388f3fef780f23b44bfe8ae",
+      "source": "assets/image/chr/executioner_dl.png"
+    },
+    "art_source": "image/chr/executioner_dl.png",
+    "elixir": 5,
+    "id": "executioner",
+    "limitations": [],
+    "name": "Executioner",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "AxeMan",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 49,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "AxeMan"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/bandit.png",
+      "sha256": "2f1158c0934abba291ff3efbd6fee7083049924a976ca80c5fae54169ef43141",
+      "source": "assets/image/chr/bandit_dl.png"
+    },
+    "art_source": "image/chr/bandit_dl.png",
+    "elixir": 3,
+    "id": "bandit",
+    "limitations": [
+      "Dash behavior omitted."
+    ],
+    "name": "Bandit",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "Assassin",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 50,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Assassin"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/royal_recruits.png",
+      "sha256": "a11116859a3aa3440361c3d80e3e861eb2cf4222278c810e107a0cd79ef08464",
+      "source": "assets/image/chr/royal_recruits_dl.png"
+    },
+    "art_source": "image/chr/royal_recruits_dl.png",
+    "elixir": 7,
+    "id": "royal_recruits",
+    "limitations": [
+      "Shield layer omitted."
+    ],
+    "name": "Royal Recruits",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "RoyalRecruits",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 51,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "RoyalRecruits"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/night_witch.png",
+      "sha256": "0d677662cdbd2f5f5a9e2f3caa08cdb6f28586583a7b410fdd2f3f6355f151ae",
+      "source": "assets/image/chr/night_witch_dl.png"
+    },
+    "art_source": "image/chr/night_witch_dl.png",
+    "elixir": 4,
+    "id": "night_witch",
+    "limitations": [
+      "Death-spawn units omitted.",
+      "Periodic summoned units omitted."
+    ],
+    "name": "Night Witch",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "DarkWitch",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 52,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "DarkWitch"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/bats.png",
+      "sha256": "5825df7a75b7c8d3f69da48f9608266ef97119f4b8fa7497f02bdf6b9d09e8f9",
+      "source": "assets/image/chr/bats_dl.png"
+    },
+    "art_source": "image/chr/bats_dl.png",
+    "elixir": 2,
+    "id": "bats",
+    "limitations": [],
+    "name": "Bats",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Bats",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 53,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Bats"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/royal_ghost.png",
+      "sha256": "39ce43e93bbd904dec0d35fabbdf188726bc01b90ba2fb890f1a98d55a5b8cc7",
+      "source": "assets/image/chr/royal_ghost_dl.png"
+    },
+    "art_source": "image/chr/royal_ghost_dl.png",
+    "elixir": 3,
+    "id": "royal_ghost",
+    "limitations": [],
+    "name": "Royal Ghost",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "Ghost",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 54,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Ghost"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/ram_rider.png",
+      "sha256": "6869206af86fa81d9922785b600148908c424e39c0c913ecf897b94c34dcd23f",
+      "source": "assets/image/chr/ram_rider_dl.png"
+    },
+    "art_source": "image/chr/ram_rider_dl.png",
+    "elixir": 5,
+    "id": "ram_rider",
+    "limitations": [
+      "Periodic summoned units omitted.",
+      "Scripted starting actions omitted.",
+      "Jump/pathfinding behavior simplified.",
+      "Charge behavior omitted."
+    ],
+    "name": "Ram Rider",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "RamRider",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 55,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "RamRider"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/zappies.png",
+      "sha256": "d1c584caedec3f9d5bc1d360dce43367a85ae19275e6490d79b72979c0be4297",
+      "source": "assets/image/chr/zappies_dl.png"
+    },
+    "art_source": "image/chr/zappies_dl.png",
+    "elixir": 4,
+    "id": "zappies",
+    "limitations": [
+      "On-hit buff omitted."
+    ],
+    "name": "Zappies",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "MiniSparkys",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 56,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "MiniSparkys"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/rascals.png",
+      "sha256": "2dd27e26576244f512ed3f71fbd374e3f0abf72635c1c45b3ba5df738754b45d",
+      "source": "assets/image/chr/rascals_dl.png"
+    },
+    "art_source": "image/chr/rascals_dl.png",
+    "elixir": 5,
+    "id": "rascals",
+    "limitations": [
+      "Mixed summon group approximated with the primary unit type and total stored count."
+    ],
+    "name": "Rascals",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Rascals",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 57,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Rascals"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/cannon_cart.png",
+      "sha256": "85724e28bc3ee0f3968926390b4ad9737e4c51a520e665837fb673d7d1297e7b",
+      "source": "assets/image/chr/cannon_cart_dl.png"
+    },
+    "art_source": "image/chr/cannon_cart_dl.png",
+    "elixir": 5,
+    "id": "cannon_cart",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Cannon Cart",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "MovingCannon",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 58,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "MovingCannon"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/mega_knight.png",
+      "sha256": "5fe34bf80edfde179164ac569de11f5a11528102fc6ec368624afa627480a2b8",
+      "source": "assets/image/chr/mega_knight_dl.png"
+    },
+    "art_source": "image/chr/mega_knight_dl.png",
+    "elixir": 7,
+    "id": "mega_knight",
+    "limitations": [
+      "Dash behavior omitted."
+    ],
+    "name": "Mega Knight",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "MegaKnight",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 59,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "MegaKnight"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/skeleton_barrel.png",
+      "sha256": "2e773091168fc71b1cbf6dee4ac8fa99fc818697442b228cc6bc4a3bfef3241e",
+      "source": "assets/image/chr/skeleton_barrel_dl.png"
+    },
+    "art_source": "image/chr/skeleton_barrel_dl.png",
+    "elixir": 3,
+    "id": "skeleton_barrel",
+    "limitations": [
+      "No directly recoverable damage for simplified combat"
+    ],
+    "name": "Skeleton Barrel",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "SkeletonBalloon",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 60,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SkeletonBalloon"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/flying_machine.png",
+      "sha256": "91bbc8cd3964f74ea382c33864fd66f54e1fe375279606be3ba39cc7fe4d01be",
+      "source": "assets/image/chr/flying_machine_dl.png"
+    },
+    "art_source": "image/chr/flying_machine_dl.png",
+    "elixir": 4,
+    "id": "flying_machine",
+    "limitations": [],
+    "name": "Flying Machine",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "DartBarrell",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 61,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "DartBarrell"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/wall_breakers.png",
+      "sha256": "358762289571504a0129ffb1abbed7cb6c89be757e480ae0653a9c7d38c78599",
+      "source": "assets/image/chr/wall_breakers_dl.png"
+    },
+    "art_source": "image/chr/wall_breakers_dl.png",
+    "elixir": 2,
+    "id": "wall_breakers",
+    "limitations": [],
+    "name": "Wall Breakers",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Wallbreakers",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 62,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Wallbreakers"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/royal_hogs.png",
+      "sha256": "34cd830c0d4ceccf36332d6b1ced2eaab68d3729d8b3fbe131476544e38fbd1a",
+      "source": "assets/image/chr/royal_hogs_dl.png"
+    },
+    "art_source": "image/chr/royal_hogs_dl.png",
+    "elixir": 5,
+    "id": "royal_hogs",
+    "limitations": [
+      "Scripted starting actions omitted.",
+      "Jump/pathfinding behavior simplified."
+    ],
+    "name": "Royal Hogs",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "RoyalHogs",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 63,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "RoyalHogs"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_giant.png",
+      "sha256": "94204f68db20856cb34e86ed5666fe9f3b085d9fea8eaf9eef8252d3deae0be6",
+      "source": "assets/image/chr/goblin_giant_dl.png"
+    },
+    "art_source": "image/chr/goblin_giant_dl.png",
+    "elixir": 6,
+    "id": "goblin_giant",
+    "limitations": [
+      "Periodic summoned units omitted."
+    ],
+    "name": "Goblin Giant",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "GoblinGiant",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 64,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "GoblinGiant"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/fisherman.png",
+      "sha256": "155d5b4216051c1f26d24fb9f45356586c53c5404230298d291d3ddb33dae807",
+      "source": "assets/image/chr/fisherman_dl.png"
+    },
+    "art_source": "image/chr/fisherman_dl.png",
+    "elixir": 3,
+    "id": "fisherman",
+    "limitations": [],
+    "name": "Fisherman",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "Fisherman",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 65,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Fisherman"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/magic_archer.png",
+      "sha256": "e2e97bde1595d4c5669f8c5a40645536dca3d2f375c76b89a1ac535b5ccb6108",
+      "source": "assets/image/chr/magic_archer_dl.png"
+    },
+    "art_source": "image/chr/magic_archer_dl.png",
+    "elixir": 4,
+    "id": "magic_archer",
+    "limitations": [],
+    "name": "Magic Archer",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "EliteArcher",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 66,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "EliteArcher"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/electro_dragon.png",
+      "sha256": "5dc126f441202f6f4cbc8adf235a1eeb64b24a4df9966cbdd61a502a24e2a1f7",
+      "source": "assets/image/chr/electro_dragon_dl.png"
+    },
+    "art_source": "image/chr/electro_dragon_dl.png",
+    "elixir": 5,
+    "id": "electro_dragon",
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted."
+    ],
+    "name": "Electro Dragon",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "ElectroDragon",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 67,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "ElectroDragon"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/firecracker.png",
+      "sha256": "7c4f37cb4cb79fcc80458b54550885c96194f63ff40bb74a849227a7181fef6f",
+      "source": "assets/image/chr/firecracker_dl.png"
+    },
+    "art_source": "image/chr/firecracker_dl.png",
+    "elixir": 3,
+    "id": "firecracker",
+    "limitations": [
+      "Chained projectile flattened to one area hit; travel path and pushback omitted."
+    ],
+    "name": "Firecracker",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Firecracker",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 68,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Firecracker"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/mighty_miner.png",
+      "sha256": "7428553bc4572185c958d4a2e7bd393ff5ec835465af82fcaeece7792504dc4b",
+      "source": "assets/image/chr_champions/champion_hires_mighty_miner_dl.png"
+    },
+    "art_source": "image/chr_champions/champion_hires_mighty_miner_dl.png",
+    "elixir": 4,
+    "id": "mighty_miner",
+    "limitations": [
+      "Damage ramp omitted; uses stored initial damage.",
+      "Active champion ability omitted."
+    ],
+    "name": "Mighty Miner",
+    "playable": true,
+    "rarity": "Champion",
+    "sc_name": "MightyMiner",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 69,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "MightyMiner"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/super_witch.png",
+      "sha256": "88a0c8d7311a71c793457cb1fe531c89fb2ebceec0fe2d2fa4f7df8fd90d9b6c",
+      "source": "assets/image/chr/witch_dl.png"
+    },
+    "art_source": "image/chr/witch_dl.png",
+    "elixir": 6,
+    "id": "super_witch",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Super Witch",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "SuperWitch",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 70,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SuperWitch"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/elixir_golem.png",
+      "sha256": "80a5040f8cad6632e7a86feb049314ec6ac18aa4a2188752fa151d1e24ce0b22",
+      "source": "assets/image/chr/elixir_golem_dl.png"
+    },
+    "art_source": "image/chr/elixir_golem_dl.png",
+    "elixir": 3,
+    "id": "elixir_golem",
+    "limitations": [
+      "Death-spawn units omitted."
+    ],
+    "name": "Elixir Golem",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "ElixirGolem",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 71,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "ElixirGolem"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/battle_healer.png",
+      "sha256": "a6ad7d6e67a85037aff254cd654da0dfb79a053a3d7512b201debe93d26b73dd",
+      "source": "assets/image/chr/battle_healer_dl.png"
+    },
+    "art_source": "image/chr/battle_healer_dl.png",
+    "elixir": 4,
+    "id": "battle_healer",
+    "limitations": [
+      "Scripted starting actions omitted.",
+      "On-hit area effect omitted."
+    ],
+    "name": "Battle Healer",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "BattleHealer",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 72,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "BattleHealer"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/skeleton_king.png",
+      "sha256": "83f84819d107717bb73181abda1e514cf2425cdeb31e16ef68df6ae3745f7d84",
+      "source": "assets/image/chr_champions/champion_hires_skeleton_king_dl.png"
+    },
+    "art_source": "image/chr_champions/champion_hires_skeleton_king_dl.png",
+    "elixir": 4,
+    "id": "skeleton_king",
+    "limitations": [
+      "Scripted starting actions omitted.",
+      "Active champion ability omitted."
+    ],
+    "name": "Skeleton King",
+    "playable": true,
+    "rarity": "Champion",
+    "sc_name": "SkeletonKing",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 73,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SkeletonKing"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/super_lava_hound.png",
+      "sha256": "4d2b4bdce67499e87f59efb25a5e7601b7ba0672eff888e294f151b9c84bb2f6",
+      "source": "assets/image/chr/lava_hound_dl.png"
+    },
+    "art_source": "image/chr/lava_hound_dl.png",
+    "elixir": 8,
+    "id": "super_lava_hound",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Super Lava Hound",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "SuperLavaHound",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 74,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SuperLavaHound"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/super_magic_archer.png",
+      "sha256": "e2e97bde1595d4c5669f8c5a40645536dca3d2f375c76b89a1ac535b5ccb6108",
+      "source": "assets/image/chr/magic_archer_dl.png"
+    },
+    "art_source": "image/chr/magic_archer_dl.png",
+    "elixir": 5,
+    "id": "super_magic_archer",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Super Magic Archer",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "SuperEliteArcher",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 75,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SuperEliteArcher"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/archer_queen.png",
+      "sha256": "cbc78f6cb21fb82c2d1615bcfcdf2b85087940031a2af66e494c130d31e9db43",
+      "source": "assets/image/chr_champions/champion_hires_archer_queen_dl.png"
+    },
+    "art_source": "image/chr_champions/champion_hires_archer_queen_dl.png",
+    "elixir": 5,
+    "id": "archer_queen",
+    "limitations": [
+      "Active champion ability omitted."
+    ],
+    "name": "Archer Queen",
+    "playable": true,
+    "rarity": "Champion",
+    "sc_name": "ArcherQueen",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 76,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "ArcherQueen"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/santa_hog_rider.png",
+      "sha256": "f7f5c82b9c77319977d4c81991f063d538bc0b892457e24ac8e4e835f226ca08",
+      "source": "assets/image/chr/hog_rider_dl.png"
+    },
+    "art_source": "image/chr/hog_rider_dl.png",
+    "elixir": 5,
+    "id": "santa_hog_rider",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Santa Hog Rider",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "SuperHogRider",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 77,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SuperHogRider"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/golden_knight.png",
+      "sha256": "279561128d01145059e3e8f539a4cbd1478d88f29687080113035a4960bedff4",
+      "source": "assets/image/chr_champions/champion_hires_golden_knight_dl.png"
+    },
+    "art_source": "image/chr_champions/champion_hires_golden_knight_dl.png",
+    "elixir": 4,
+    "id": "golden_knight",
+    "limitations": [
+      "Active champion ability omitted.",
+      "Dash behavior omitted."
+    ],
+    "name": "Golden Knight",
+    "playable": true,
+    "rarity": "Champion",
+    "sc_name": "GoldenKnight",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 78,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "GoldenKnight"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/super_ice_golem.png",
+      "sha256": "f9032cbdaf5867dded00259b7019d9f6919f629b3bd3e50bede41e49231a318d",
+      "source": "assets/image/chr/ice_golem_dl.png"
+    },
+    "art_source": "image/chr/ice_golem_dl.png",
+    "elixir": 4,
+    "id": "super_ice_golem",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Super Ice Golem",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "SuperIceGolemite",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 79,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SuperIceGolemite"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 3,
+    "id": "c_h_a_r__d_i_s_a_b_l_e_d_1",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "C H A R  D I S A B L E D 1",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "CHAR_DISABLED_1",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 80,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "CHAR_DISABLED_1"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/monk.png",
+      "sha256": "e272a86ff8ba11884510a9855a1fbc49fba8ef76ebd52bf7f2337d126c11e535",
+      "source": "assets/image/chr_champions/champion_hires_monk_dl.png"
+    },
+    "art_source": "image/chr_champions/champion_hires_monk_dl.png",
+    "elixir": 5,
+    "id": "monk",
+    "limitations": [
+      "Damage ramp omitted; uses stored initial damage.",
+      "Active champion ability omitted."
+    ],
+    "name": "Monk",
+    "playable": true,
+    "rarity": "Champion",
+    "sc_name": "Monk",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 81,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Monk"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/super_archers.png",
+      "sha256": "7f3f0831927e50fc10046db66f4caeeb698608db303e21b9383b9a8b7bb9f555",
+      "source": "assets/image/chr/archers.png"
+    },
+    "art_source": "image/chr/archers.png",
+    "elixir": 3,
+    "id": "super_archers",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Super Archers",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "SuperArcher",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 82,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SuperArcher"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/royal_recruits__chess.png",
+      "sha256": "a11116859a3aa3440361c3d80e3e861eb2cf4222278c810e107a0cd79ef08464",
+      "source": "assets/image/chr/royal_recruits_dl.png"
+    },
+    "art_source": "image/chr/royal_recruits_dl.png",
+    "elixir": 7,
+    "id": "royal_recruits__chess",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Royal Recruits  Chess",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "RoyalRecruits_Chess",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 83,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "RoyalRecruits_Chess"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/skeleton_dragons.png",
+      "sha256": "a5cdb3eb5ccf7174eb653483ce15c9e6beb76a21bac0c3c460ffde21aec4b6a1",
+      "source": "assets/image/chr/skeleton_dragon_dl.png"
+    },
+    "art_source": "image/chr/skeleton_dragon_dl.png",
+    "elixir": 4,
+    "id": "skeleton_dragons",
+    "limitations": [],
+    "name": "Skeleton Dragons",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "SkeletonDragons",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 84,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SkeletonDragons"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/terry.png",
+      "sha256": "f7f5c82b9c77319977d4c81991f063d538bc0b892457e24ac8e4e835f226ca08",
+      "source": "assets/image/chr/hog_rider_dl.png"
+    },
+    "art_source": "image/chr/hog_rider_dl.png",
+    "elixir": 4,
+    "id": "terry",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Terry",
+    "playable": false,
+    "rarity": "Champion",
+    "sc_name": "SuperHogRiderTerry",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 85,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SuperHogRiderTerry"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/super_mini_pekka.png",
+      "sha256": "e82363df840830723c7871b668847a4acf75de64cb4e1be4ae563729301f905e",
+      "source": "assets/image/chr/mini_pekka.png"
+    },
+    "art_source": "image/chr/mini_pekka.png",
+    "elixir": 5,
+    "id": "super_mini_pekka",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Super Mini Pekka",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "SuperMiniPekka",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 86,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SuperMiniPekka"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/mother_witch.png",
+      "sha256": "f65bb75e88dba0f77e6ed5bdc0e5a4dee651eca278ed3ad234dd0e7656e5b6c3",
+      "source": "assets/image/chr/mother_witch_dl.png"
+    },
+    "art_source": "image/chr/mother_witch_dl.png",
+    "elixir": 4,
+    "id": "mother_witch",
+    "limitations": [
+      "On-hit buff omitted.",
+      "Projectile/on-hit buff and stun effects omitted."
+    ],
+    "name": "Mother Witch",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "WitchMother",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 87,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "WitchMother"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/electro_spirit.png",
+      "sha256": "546f8528b81ff67c5fd5c795f2e285cbfa9921edd20d0a986d6e9d839637b86b",
+      "source": "assets/image/chr/electro_spirit_dl.png"
+    },
+    "art_source": "image/chr/electro_spirit_dl.png",
+    "elixir": 1,
+    "id": "electro_spirit",
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted."
+    ],
+    "name": "Electro Spirit",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "ElectroSpirit",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 88,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "ElectroSpirit"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/electro_giant.png",
+      "sha256": "af832811d91f3e3559e26b07e6d57e9dfde8c2d967281ff4f4389925284c7139",
+      "source": "assets/image/chr/electro_giant_dl.png"
+    },
+    "art_source": "image/chr/electro_giant_dl.png",
+    "elixir": 7,
+    "id": "electro_giant",
+    "limitations": [],
+    "name": "Electro Giant",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "ElectroGiant",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 89,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "ElectroGiant"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/raging_prince.png",
+      "sha256": "03dddd476429a7a94d96253a4fc0f955c9b5b74479191cc811a2e2dcac89acdf",
+      "source": "assets/image/chr/prince_dl.png"
+    },
+    "art_source": "image/chr/prince_dl.png",
+    "elixir": 5,
+    "id": "raging_prince",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Raging Prince",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "PrinceBuff",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 90,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "PrinceBuff"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/phoenix.png",
+      "sha256": "a3285b99eb1bf1dbb3ff34fc50ce0a40d047fa860a37008c9d109c574a11989b",
+      "source": "assets/image/chr/phoenix_dl.png"
+    },
+    "art_source": "image/chr/phoenix_dl.png",
+    "elixir": 4,
+    "id": "phoenix",
+    "limitations": [],
+    "name": "Phoenix",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "Phoenix",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 91,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Phoenix"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art_source": null,
+    "elixir": 3,
+    "id": "c_h_a_r__d_i_s_a_b_l_e_d_3",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "C H A R  D I S A B L E D 3",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "CHAR_DISABLED_3",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 92,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "CHAR_DISABLED_3"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 3,
+    "id": "c_h_a_r__d_i_s_a_b_l_e_d_4",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "C H A R  D I S A B L E D 4",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "CHAR_DISABLED_4",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 93,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "CHAR_DISABLED_4"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 3,
+    "id": "c_h_a_r__d_i_s_a_b_l_e_d_5",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "C H A R  D I S A B L E D 5",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "CHAR_DISABLED_5",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 94,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "CHAR_DISABLED_5"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 3,
+    "id": "c_h_a_r__d_i_s_a_b_l_e_d_6",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "C H A R  D I S A B L E D 6",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "CHAR_DISABLED_6",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 95,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "CHAR_DISABLED_6"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 3,
+    "id": "c_h_a_r__d_i_s_a_b_l_e_d_7",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "C H A R  D I S A B L E D 7",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "CHAR_DISABLED_7",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 96,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "CHAR_DISABLED_7"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/little_prince.png",
+      "sha256": "8994a21582b3962f996170cddab470643192335ec99c695b4f4b0b4bf0717594",
+      "source": "assets/image/chr_champions/champion_hires_little_prince_dl.png"
+    },
+    "art_source": "image/chr_champions/champion_hires_little_prince_dl.png",
+    "elixir": 3,
+    "id": "little_prince",
+    "limitations": [
+      "Scripted starting actions omitted.",
+      "Scripted attack actions omitted.",
+      "Active champion ability omitted."
+    ],
+    "name": "Little Prince",
+    "playable": true,
+    "rarity": "Champion",
+    "sc_name": "LittlePrince",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 97,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "LittlePrince"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art_source": null,
+    "elixir": 7,
+    "id": "tri_wizards",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Tri Wizards",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "TriWizards",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 98,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "TriWizards"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_demolisher.png",
+      "sha256": "fcc4d4065a620e5002c28440cd87a08ad73d68c6ae53d3650836dd6881640d63",
+      "source": "assets/image/chr_goblin_faction/goblin_demolisher_dl.png"
+    },
+    "art_source": "image/chr_goblin_faction/goblin_demolisher_dl.png",
+    "elixir": 4,
+    "id": "goblin_demolisher",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Goblin Demolisher",
+    "playable": false,
+    "rarity": "Rare",
+    "sc_name": "GoblinDemolisher",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 99,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "GoblinDemolisher"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_machine.png",
+      "sha256": "05a68c1261ceffc8959a88fa25ecf0f4703f206ae42e16307c2e40d81f728509",
+      "source": "assets/image/chr_goblin_faction/goblin_machine_dl.png"
+    },
+    "art_source": "image/chr_goblin_faction/goblin_machine_dl.png",
+    "elixir": 5,
+    "id": "goblin_machine",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Goblin Machine",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "GoblinMachine",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 100,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "GoblinMachine"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/suspicious_bush.png",
+      "sha256": "e245bea69cca0507f0ff42449da0985f3d9ea17e271ef830b5f3bf20b5825c49",
+      "source": "assets/image/chr_goblin_faction/goblin_bush_dl.png"
+    },
+    "art_source": "image/chr_goblin_faction/goblin_bush_dl.png",
+    "elixir": 2,
+    "id": "suspicious_bush",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Suspicious Bush",
+    "playable": false,
+    "rarity": "Rare",
+    "sc_name": "SuspiciousBush",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 101,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SuspiciousBush"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/super_knight.png",
+      "sha256": "e48b2809ea3eef5757e0520bbcba697148c1175784ebf9075e350b8e4ac3d571",
+      "source": "assets/image/chr/knight.png"
+    },
+    "art_source": "image/chr/knight.png",
+    "elixir": 4,
+    "id": "super_knight",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Super Knight",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "SuperKnight",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 102,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SuperKnight"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/goblinstein.png",
+      "sha256": "99de722107ded83626151b9bdc1d565dd3177a676b1b4a8d08153acbe98453a7",
+      "source": "assets/image/chr_champions/champion_hires_goblinstein.png"
+    },
+    "art_source": "image/chr_champions/champion_hires_goblinstein.png",
+    "elixir": 5,
+    "id": "goblinstein",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Goblinstein",
+    "playable": false,
+    "rarity": "Champion",
+    "sc_name": "Goblinstein",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 103,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Goblinstein"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/skeleton_warriors__spooky_chess.png",
+      "sha256": "5c16b158748d0dc5fd9d7ff80f208099ec09206bb221f1afee229ab5280bd279",
+      "source": "assets/image/chr/guards_dl.png"
+    },
+    "art_source": "image/chr/guards_dl.png",
+    "elixir": 7,
+    "id": "skeleton_warriors__spooky_chess",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Skeleton Warriors  Spooky Chess",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "SkeletonWarriors_SpookyChess",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 104,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "SkeletonWarriors_SpookyChess"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/giant_buffer.png",
+      "sha256": "2ba3e20eaca225166bbd4c004cefdd4c8e9972466ff2196a5c6108ea941b19a8",
+      "source": "assets/image/chr/buff_giant_dl.png"
+    },
+    "art_source": "image/chr/buff_giant_dl.png",
+    "elixir": 4,
+    "id": "giant_buffer",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Giant Buffer",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "GiantBuffer",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 105,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "GiantBuffer"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/berserker.png",
+      "sha256": "0c36eb2cee49beb3c7b5772c889afa80106a95c4124a590dfdd58911ab1da772",
+      "source": "assets/image/chr/berserker_dl.png"
+    },
+    "art_source": "image/chr/berserker_dl.png",
+    "elixir": 2,
+    "id": "berserker",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Berserker",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "Berserker",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 106,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Berserker"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/boss_bandit.png",
+      "sha256": "58d1aeb509214c9589895e6442662eb1aa823bb560a2c894c23bbdaa1ca7f5ad",
+      "source": "assets/image/chr_champions/champion_hires_boss_bandit.png"
+    },
+    "art_source": "image/chr_champions/champion_hires_boss_bandit.png",
+    "elixir": 6,
+    "id": "boss_bandit",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Boss Bandit",
+    "playable": false,
+    "rarity": "Champion",
+    "sc_name": "BossBandit",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 107,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "BossBandit"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/merge_maiden__normal.png",
+      "sha256": "917a85d834ec5c91e52d82003c558a6e82e533c441ba4efbc0983afba86326f9",
+      "source": "assets/image/chr/merge_maiden.png"
+    },
+    "art_source": "image/chr/merge_maiden.png",
+    "elixir": 3,
+    "id": "merge_maiden__normal",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Merge Maiden  Normal",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "MergeMaiden_Normal",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 108,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "MergeMaiden_Normal"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/merge_maiden__mounted.png",
+      "sha256": "c288481f63563c9374970cce4cdca514372923b3d5c54e2b75158718f247e18a",
+      "source": "assets/image/chr/merge_maiden_dragon.png"
+    },
+    "art_source": "image/chr/merge_maiden_dragon.png",
+    "elixir": 6,
+    "id": "merge_maiden__mounted",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Merge Maiden  Mounted",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "MergeMaiden_Mounted",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 109,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "MergeMaiden_Mounted"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 5,
+    "id": "ronin",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Ronin",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "Ronin",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 110,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "Ronin"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 4,
+    "id": "minion_giant",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Minion Giant",
+    "playable": false,
+    "rarity": "Rare",
+    "sc_name": "MinionGiant",
+    "source": {
+      "decoded_sha256": "2cd3effdcdb2c4247ea68b3ee29d8fb9a22da5db6afcd03206c15f36daec3f28",
+      "line": 111,
+      "member": "assets/csv_logic/spells_characters.csv",
+      "packaged_sha256": "0099ce80b2f9a5b8d6b107bfeb1045c2acf78b9730a345147609030b8b7f991f",
+      "record": "MinionGiant"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/cannon.png",
+      "sha256": "cece0853a4d017bd8213ee3d159d19e7420a079389d54f0b92e78f2cd5d49b5c",
+      "source": "assets/image/chr/cannon_dl.png"
+    },
+    "art_source": "image/chr/cannon_dl.png",
+    "elixir": 3,
+    "id": "cannon",
+    "limitations": [],
+    "name": "Cannon",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Cannon",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 3,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "Cannon"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_hut.png",
+      "sha256": "71db208041ed738a93dbf66b11bc0912d8970b4a52d6d0c1c35e94fb5887688d",
+      "source": "assets/image/chr/goblinhut_dl.png"
+    },
+    "art_source": "image/chr/goblinhut_dl.png",
+    "elixir": 4,
+    "id": "goblin_hut",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Goblin Hut",
+    "playable": false,
+    "rarity": "Rare",
+    "sc_name": "GoblinHut",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 4,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "GoblinHut"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/mortar.png",
+      "sha256": "77d4ff3913ae0e564c58d868573f35850d7cabcdb7d32e8075d7d7c999006fb3",
+      "source": "assets/image/chr/mortar_dl.png"
+    },
+    "art_source": "image/chr/mortar_dl.png",
+    "elixir": 4,
+    "id": "mortar",
+    "limitations": [],
+    "name": "Mortar",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Mortar",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 5,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "Mortar"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/inferno_tower.png",
+      "sha256": "f7cebd667d10563fcc71e41fd1b1adb2a1549f08ef7229a6633ef177a4f66ea4",
+      "source": "assets/image/chr/infernotower.png"
+    },
+    "art_source": "image/chr/infernotower.png",
+    "elixir": 5,
+    "id": "inferno_tower",
+    "limitations": [
+      "Damage ramp omitted; uses stored initial damage."
+    ],
+    "name": "Inferno Tower",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "InfernoTower",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 6,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "InfernoTower"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/bomb_tower.png",
+      "sha256": "a28f6cc6435e5a2df81ea87b62abda27b89baa70977464aa61ee66f28af8877b",
+      "source": "assets/image/chr/bombtower_dl.png"
+    },
+    "art_source": "image/chr/bombtower_dl.png",
+    "elixir": 4,
+    "id": "bomb_tower",
+    "limitations": [
+      "Death-spawn units omitted."
+    ],
+    "name": "Bomb Tower",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "BombTower",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 7,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "BombTower"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art_source": null,
+    "elixir": 6,
+    "id": "barbarian_hut",
+    "limitations": [
+      "No directly recoverable damage for simplified combat"
+    ],
+    "name": "Barbarian Hut",
+    "playable": false,
+    "rarity": "Rare",
+    "sc_name": "BarbarianHut",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 8,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "BarbarianHut"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/tesla.png",
+      "sha256": "07496ab6c81e8db50cd85b75fecd35f8baee1f929792b2406102df306ea6dc23",
+      "source": "assets/image/chr/tesla_dl.png"
+    },
+    "art_source": "image/chr/tesla_dl.png",
+    "elixir": 4,
+    "id": "tesla",
+    "limitations": [
+      "Hiding behavior omitted."
+    ],
+    "name": "Tesla",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Tesla",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 9,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "Tesla"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/elixir__collector.png",
+      "sha256": "01060d7b2b0051311eefbaf25f5c4b0c4009a79ba7bf01a1054f19b4e1f7a366",
+      "source": "assets/image/chr/elixir_pump.png"
+    },
+    "art_source": "image/chr/elixir_pump.png",
+    "elixir": 6,
+    "id": "elixir__collector",
+    "limitations": [
+      "No directly recoverable damage for simplified combat"
+    ],
+    "name": "Elixir  Collector",
+    "playable": false,
+    "rarity": "Rare",
+    "sc_name": "Elixir Collector",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 10,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "Elixir Collector"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/x_bow.png",
+      "sha256": "7823950e2696022700f6c8135288c268696a524a62bea2f28050c71c11cb1255",
+      "source": "assets/image/chr/xbow.png"
+    },
+    "art_source": "image/chr/xbow.png",
+    "elixir": 6,
+    "id": "x_bow",
+    "limitations": [],
+    "name": "X Bow",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Xbow",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 11,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "Xbow"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art": {
+      "path": "cards/tombstone.png",
+      "sha256": "65393adfecbe0e07f0be58143f5abd70ffc0dac0b6b424de428a2c7188e484c6",
+      "source": "assets/image/chr/tombstone_dl.png"
+    },
+    "art_source": "image/chr/tombstone_dl.png",
+    "elixir": 3,
+    "id": "tombstone",
+    "limitations": [
+      "No directly recoverable damage for simplified combat"
+    ],
+    "name": "Tombstone",
+    "playable": false,
+    "rarity": "Rare",
+    "sc_name": "Tombstone",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 12,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "Tombstone"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/furnace.png",
+      "sha256": "849a1ad17c88d66994df0f04117402ea51ed534d3c6ccce317ad7b57bed80b06",
+      "source": "assets/image/chr/furnace.png"
+    },
+    "art_source": "image/chr/furnace.png",
+    "elixir": 4,
+    "id": "furnace",
+    "limitations": [
+      "'Furnace_rework'"
+    ],
+    "name": "Furnace",
+    "playable": false,
+    "rarity": "Rare",
+    "sc_name": "FirespiritHut",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 13,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "FirespiritHut"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/barbarian_launcher.png",
+      "sha256": "77d4ff3913ae0e564c58d868573f35850d7cabcdb7d32e8075d7d7c999006fb3",
+      "source": "assets/image/chr/mortar_dl.png"
+    },
+    "art_source": "image/chr/mortar_dl.png",
+    "elixir": 5,
+    "id": "barbarian_launcher",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Barbarian Launcher",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "BarbarianLauncher",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 14,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "BarbarianLauncher"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_cage.png",
+      "sha256": "8d74e79ef01e1e83d66850eceb38774fad3a332353bfe15a601edad830c2f379",
+      "source": "assets/image/chr/goblin_cage.png"
+    },
+    "art_source": "image/chr/goblin_cage.png",
+    "elixir": 4,
+    "id": "goblin_cage",
+    "limitations": [
+      "No directly recoverable damage for simplified combat"
+    ],
+    "name": "Goblin Cage",
+    "playable": false,
+    "rarity": "Rare",
+    "sc_name": "GoblinCage",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 15,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "GoblinCage"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_drill.png",
+      "sha256": "5afbe6cd266dfd3c029e2f7ab6093816fa72bd904d3c9b145ccd92935dff77b0",
+      "source": "assets/image/chr/goblin_drill_dl.png"
+    },
+    "art_source": "image/chr/goblin_drill_dl.png",
+    "elixir": 4,
+    "id": "goblin_drill",
+    "limitations": [
+      "'GoblinDrillDig'"
+    ],
+    "name": "Goblin Drill",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "GoblinDrill",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 16,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "GoblinDrill"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/party_hut.png",
+      "sha256": "71db208041ed738a93dbf66b11bc0912d8970b4a52d6d0c1c35e94fb5887688d",
+      "source": "assets/image/chr/goblinhut_dl.png"
+    },
+    "art_source": "image/chr/goblinhut_dl.png",
+    "elixir": 5,
+    "id": "party_hut",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Party Hut",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "GoblinPartyHut",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 17,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "GoblinPartyHut"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 3,
+    "id": "dark_elixir__bottle",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Dark Elixir  Bottle",
+    "playable": false,
+    "rarity": "Champion",
+    "sc_name": "DarkElixir_Bottle",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 18,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "DarkElixir_Bottle"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 6,
+    "id": "elixir_barrel",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Elixir Barrel",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "ElixirBarrel",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 19,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "ElixirBarrel"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 7,
+    "id": "goblin_rocket_silo",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Goblin Rocket Silo",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "GoblinRocketSilo",
+    "source": {
+      "decoded_sha256": "41e6772063222ada356c1c0efdbdbf33ad01f1bbdf11f2b388b5eb90ec0eed62",
+      "line": 20,
+      "member": "assets/csv_logic/spells_buildings.csv",
+      "packaged_sha256": "66c75082b7a5e9c9b95b43d5ab2e2f55707c75936c2e86aada85698611574fcf",
+      "record": "GoblinRocketSilo"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/fireball.png",
+      "sha256": "1380eaa22ef85695fe8b06dafb3f4930211a234c020030b4fff77d02e1189485",
+      "source": "assets/image/chr/fireball.png"
+    },
+    "art_source": "image/chr/fireball.png",
+    "elixir": 4,
+    "id": "fireball",
+    "limitations": [
+      "Attack knockback omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Fireball",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "Fireball",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 3,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Fireball"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/arrows.png",
+      "sha256": "d59c4aceb21bcb677f26c2c9cc2a95106afecc1acb7af18b5a77cd0633d712d5",
+      "source": "assets/image/chr/arrows.png"
+    },
+    "art_source": "image/chr/arrows.png",
+    "elixir": 3,
+    "id": "arrows",
+    "limitations": [
+      "Projectile waves represented by one stored projectile damage hit.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Arrows",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Arrows",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 4,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Arrows"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/rage.png",
+      "sha256": "4252dba50a673e1af8f03c6460abe7c77e65f40da8a6ca9172ab307e0b8d2207",
+      "source": "assets/image/chr/rage.png"
+    },
+    "art_source": "image/chr/rage.png",
+    "elixir": 2,
+    "id": "rage",
+    "limitations": [
+      "'RageBottle'"
+    ],
+    "name": "Rage",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "Rage",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 5,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Rage"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/rocket.png",
+      "sha256": "2ca77fc4dbd13ae9f57447d1f9e38c10f207c4048242da4fe7cc197b12161a72",
+      "source": "assets/image/chr/rocket_dl.png"
+    },
+    "art_source": "image/chr/rocket_dl.png",
+    "elixir": 6,
+    "id": "rocket",
+    "limitations": [
+      "Attack knockback omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Rocket",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "Rocket",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 6,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Rocket"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_barrel.png",
+      "sha256": "96a1cf346387effb826575e13bf365a817c9fa9ee9cdf50337499e408ec4b3b8",
+      "source": "assets/image/chr/goblin_barrel_dl.png"
+    },
+    "art_source": "image/chr/goblin_barrel_dl.png",
+    "elixir": 3,
+    "id": "goblin_barrel",
+    "limitations": [
+      "Barrel projectile travel and deployment delay omitted; directly summons recovered goblins."
+    ],
+    "name": "Goblin Barrel",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "GoblinBarrel",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 7,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "GoblinBarrel"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/freeze.png",
+      "sha256": "5057ffd7fa33dfd0d1317f4dfcc1f705f7f93ad4099e1ee9d411f736feb83b71",
+      "source": "assets/image/chr/freeze.png"
+    },
+    "art_source": "image/chr/freeze.png",
+    "elixir": 4,
+    "id": "freeze",
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Freeze",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Freeze",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 8,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Freeze"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/mirror.png",
+      "sha256": "a25170f508af0680b042e90043136a5f9dc2584986ea90905cff5d2614f3728c",
+      "source": "assets/image/chr/mirror_dl.png"
+    },
+    "art_source": "image/chr/mirror_dl.png",
+    "elixir": 1,
+    "id": "mirror",
+    "limitations": [
+      "None"
+    ],
+    "name": "Mirror",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "Mirror",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 9,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Mirror"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/lightning.png",
+      "sha256": "8adad17bab0f21d7e755558acc95e9bb955f6cb1c764aa253f5cc9d738b3913d",
+      "source": "assets/image/chr/lightning.png"
+    },
+    "art_source": "image/chr/lightning.png",
+    "elixir": 6,
+    "id": "lightning",
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Lightning",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Lightning",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 10,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Lightning"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/zap.png",
+      "sha256": "edec78b079f28678684c13269078c79d52b5437225676de353218596befc4417",
+      "source": "assets/image/chr/zap_dl.png"
+    },
+    "art_source": "image/chr/zap_dl.png",
+    "elixir": 2,
+    "id": "zap",
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Zap",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Zap",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 11,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Zap"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/poison.png",
+      "sha256": "4510093d78b8c9bd6ee14638fb64cf9b1eb236000a62eb519094f036fb88560e",
+      "source": "assets/image/chr/poison.png"
+    },
+    "art_source": "image/chr/poison.png",
+    "elixir": 4,
+    "id": "poison",
+    "limitations": [
+      "Damage-over-time/buff represented by one stored damage tick; duration and buff behavior omitted.",
+      "Damage-per-second field flattened to one immediate second of damage; timed application omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Poison",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Poison",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 12,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Poison"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/graveyard.png",
+      "sha256": "b3ed75022d440cbc9540abc7b9724b3481771a8e2f340e6ab7d06a3d5ba00bdf",
+      "source": "assets/image/chr/graveyard_dl.png"
+    },
+    "art_source": "image/chr/graveyard_dl.png",
+    "elixir": 5,
+    "id": "graveyard",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Graveyard",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "Graveyard",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 13,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Graveyard"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/the_log.png",
+      "sha256": "d1622755dcba0ba202a2008c14fa7a12afe9d242120077e97c97088d64cd6eaf",
+      "source": "assets/image/chr/the_log_dl.png"
+    },
+    "art_source": "image/chr/the_log_dl.png",
+    "elixir": 2,
+    "id": "the_log",
+    "limitations": [
+      "Chained projectile flattened to one area hit; travel path and pushback omitted.",
+      "Attack knockback omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "The Log",
+    "playable": true,
+    "rarity": "Legendary",
+    "sc_name": "Log",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 14,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Log"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/tornado.png",
+      "sha256": "10701a2cd9d1616007542c5959cb2312351d2398a2bc89e386e3024dc01bdc5f",
+      "source": "assets/image/chr/tornado_dl.png"
+    },
+    "art_source": "image/chr/tornado_dl.png",
+    "elixir": 3,
+    "id": "tornado",
+    "limitations": [
+      "Damage-over-time/buff represented by one stored damage tick; duration and buff behavior omitted.",
+      "Damage-per-second field flattened to one immediate second of damage; timed application omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Tornado",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "Tornado",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 15,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Tornado"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/clone.png",
+      "sha256": "88f61c550241c9948d46e79e4139f32223c963b8c2b940e7bf82c6ff7548d54b",
+      "source": "assets/image/chr/clone_dl.png"
+    },
+    "art_source": "image/chr/clone_dl.png",
+    "elixir": 3,
+    "id": "clone",
+    "limitations": [
+      "No directly recoverable damage for simplified combat"
+    ],
+    "name": "Clone",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "Clone",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 16,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Clone"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/earthquake.png",
+      "sha256": "d9f4921e51495f53a67d7dc21a184c6150309f3b590b03a4138746c8bc3288e1",
+      "source": "assets/image/chr/earthquake_dl.png"
+    },
+    "art_source": "image/chr/earthquake_dl.png",
+    "elixir": 3,
+    "id": "earthquake",
+    "limitations": [
+      "Damage-over-time/buff represented by one stored damage tick; duration and buff behavior omitted.",
+      "Damage-per-second field flattened to one immediate second of damage; timed application omitted.",
+      "Scripted starting actions omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Earthquake",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "Earthquake",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 17,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Earthquake"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/barbarian_barrel.png",
+      "sha256": "d3f08563ac227ceb6438459570f58d8144d75ecdfc4a0a95763e77182092e2ea",
+      "source": "assets/image/chr/barbarian_barrel_dl.png"
+    },
+    "art_source": "image/chr/barbarian_barrel_dl.png",
+    "elixir": 2,
+    "id": "barbarian_barrel",
+    "limitations": [
+      "Chained projectile flattened to one area hit; travel path and pushback omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Barbarian Barrel",
+    "playable": true,
+    "rarity": "Epic",
+    "sc_name": "BarbLog",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 18,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "BarbLog"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/heal_spirit.png",
+      "sha256": "df77d4f9a170a2a1b953146145c4e36534ff1821e18eb1d403b8e64e9f4924d2",
+      "source": "assets/image/chr/heal_spirit_dl.png"
+    },
+    "art_source": "image/chr/heal_spirit_dl.png",
+    "elixir": 1,
+    "id": "heal_spirit",
+    "limitations": [],
+    "name": "Heal Spirit",
+    "playable": true,
+    "rarity": "Rare",
+    "sc_name": "Heal",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 19,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Heal"
+    },
+    "support_status": "supported"
+  },
+  {
+    "art_source": null,
+    "elixir": 2,
+    "id": "giant_snowball",
+    "limitations": [
+      "Projectile/on-hit buff and stun effects omitted.",
+      "Attack knockback omitted.",
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Giant Snowball",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "Snowball",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 20,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Snowball"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/royal_delivery.png",
+      "sha256": "9415c3461d392eb0ed84899db8e9d9e83cf7b69c78ccc97fee613c9cf41642c3",
+      "source": "assets/image/chr/royal_delivery_dl.png"
+    },
+    "art_source": "image/chr/royal_delivery_dl.png",
+    "elixir": 3,
+    "id": "royal_delivery",
+    "limitations": [
+      "Projectile travel, knockback, stun and timed pulses are simplified to immediate area damage."
+    ],
+    "name": "Royal Delivery",
+    "playable": true,
+    "rarity": "Common",
+    "sc_name": "RoyalDelivery",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 21,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "RoyalDelivery"
+    },
+    "support_status": "approximate"
+  },
+  {
+    "art": {
+      "path": "cards/global_clone.png",
+      "sha256": "88f61c550241c9948d46e79e4139f32223c963b8c2b940e7bf82c6ff7548d54b",
+      "source": "assets/image/chr/clone_dl.png"
+    },
+    "art_source": "image/chr/clone_dl.png",
+    "elixir": 3,
+    "id": "global_clone",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Global Clone",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "GlobalClone",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 22,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "GlobalClone"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/party_rocket.png",
+      "sha256": "2ca77fc4dbd13ae9f57447d1f9e38c10f207c4048242da4fe7cc197b12161a72",
+      "source": "assets/image/chr/rocket_dl.png"
+    },
+    "art_source": "image/chr/rocket_dl.png",
+    "elixir": 5,
+    "id": "party_rocket",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Party Rocket",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "GoblinPartyRocket",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 23,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "GoblinPartyRocket"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 1,
+    "id": "warm_spell",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Warm Spell",
+    "playable": false,
+    "rarity": "Common",
+    "sc_name": "WarmSpell",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 24,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "WarmSpell"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art_source": null,
+    "elixir": 1,
+    "id": "global_lightning",
+    "limitations": [
+      "Stored NotInUse or NotVisible flag is set"
+    ],
+    "name": "Global Lightning",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "GlobalLightning",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 25,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "GlobalLightning"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/dark_magic.png",
+      "sha256": "5172616a79dd1d5b9d39b0982e98ebf80a705d4b64aec4fef389ff624344fc9c",
+      "source": "assets/image/chr/dark_spell_dl.png"
+    },
+    "art_source": "image/chr/dark_spell_dl.png",
+    "elixir": 5,
+    "id": "dark_magic",
+    "limitations": [
+      "No directly recoverable damage for simplified combat"
+    ],
+    "name": "Dark Magic",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "DarkMagic",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 26,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "DarkMagic"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/goblin_curse.png",
+      "sha256": "6282aebba53d30ef0fe3519306522729dcaf33a62e124f89c76358f347bec02d",
+      "source": "assets/image/chr_goblin_faction/goblin_curse_dl.png"
+    },
+    "art_source": "image/chr_goblin_faction/goblin_curse_dl.png",
+    "elixir": 2,
+    "id": "goblin_curse",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Goblin Curse",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "GoblinCurse",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 27,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "GoblinCurse"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/merge_maiden.png",
+      "sha256": "c288481f63563c9374970cce4cdca514372923b3d5c54e2b75158718f247e18a",
+      "source": "assets/image/chr/merge_maiden_dragon.png"
+    },
+    "art_source": "image/chr/merge_maiden_dragon.png",
+    "elixir": 6,
+    "id": "merge_maiden",
+    "limitations": [
+      "None"
+    ],
+    "name": "Merge Maiden",
+    "playable": false,
+    "rarity": "Legendary",
+    "sc_name": "MergeMaiden",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 28,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "MergeMaiden"
+    },
+    "support_status": "unsupported"
+  },
+  {
+    "art": {
+      "path": "cards/vines.png",
+      "sha256": "abbe0e6c3b7de2758625645cde24b29be7774dd701db3a2545931534b223f3c9",
+      "source": "assets/image/chr/vines_dl.png"
+    },
+    "art_source": "image/chr/vines_dl.png",
+    "elixir": 3,
+    "id": "vines",
+    "limitations": [
+      "'Name'"
+    ],
+    "name": "Vines",
+    "playable": false,
+    "rarity": "Epic",
+    "sc_name": "Vines",
+    "source": {
+      "decoded_sha256": "ee21f208ec1fb1b6793d35e0d72a57e09be4b374998640e1087a6f3b99726fa9",
+      "line": 29,
+      "member": "assets/csv_logic/spells_other.csv",
+      "packaged_sha256": "274aca81cb1a71c491514bba84603fefda4a29542047b765d909ba6f91cf5f83",
+      "record": "Vines"
+    },
+    "support_status": "unsupported"
+  }
+]

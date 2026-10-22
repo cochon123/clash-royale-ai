@@ -1,0 +1,850 @@
+{
+  "format": "source-bound-six-deck-validation-v1",
+  "source_sha256": "79fe6612e20922d4c4086b1e6c939464202cefa7cb3b20344236529f941423d6",
+  "checkpoint_sha256": "66f9bf75bfde9b5e0c1f4056573079016d41576020018b9e57fca538fd1b840e",
+  "candidate_binary_sha256": "e3b42d15ecc14f51f4939a3a980a0e2345bf5db1b35b433ab47f0e72866626c6",
+  "generation": {
+    "functions": 1949,
+    "source_instructions": 105466,
+    "unsupported_encodings": {}
+  },
+  "selection": "User-approved classic Hog2.6,LogBait,PEKKABridgeSpam,LavaLoon,GolemNightWitch and saved Mortar; no heroes/evolutions.",
+  "target_passed": true,
+  "accuracy": {
+    "split": "combined-holdout",
+    "candidate_sha256": "e3b42d15ecc14f51f4939a3a980a0e2345bf5db1b35b433ab47f0e72866626c6",
+    "candidate_unchanged": true,
+    "requests_compared": 79155,
+    "overall": {
+      "games": 504,
+      "candidate_completed": 504,
+      "winner_agreements": 504,
+      "winner_agreement": 1.0,
+      "winner_agreement_wilson_95_lower": 0.9924357124571619,
+      "every_reply_exact": 504,
+      "hp": {
+        "PrincessTower": {
+          "measured_towers": 2016,
+          "mae_pp": 0.0,
+          "maximum_error_pp": 0.0,
+          "mae_pp_with_failures_penalized": 0.0
+        },
+        "KingTower": {
+          "measured_towers": 1008,
+          "mae_pp": 0.0,
+          "maximum_error_pp": 0.0,
+          "mae_pp_with_failures_penalized": 0.0
+        }
+      },
+      "reference_outcomes": {
+        "1": 242,
+        "0": 262
+      },
+      "candidate_outcomes": {
+        "1": 242,
+        "0": 262
+      }
+    },
+    "per_deck": {
+      "custom-mortar": {
+        "games": 154,
+        "candidate_completed": 154,
+        "winner_agreements": 154,
+        "winner_agreement": 1.0,
+        "winner_agreement_wilson_95_lower": 0.9756625486776705,
+        "every_reply_exact": 154,
+        "hp": {
+          "PrincessTower": {
+            "measured_towers": 616,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          },
+          "KingTower": {
+            "measured_towers": 308,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          }
+        },
+        "reference_outcomes": {
+          "1": 77,
+          "0": 77
+        },
+        "candidate_outcomes": {
+          "1": 77,
+          "0": 77
+        }
+      },
+      "golem": {
+        "games": 154,
+        "candidate_completed": 154,
+        "winner_agreements": 154,
+        "winner_agreement": 1.0,
+        "winner_agreement_wilson_95_lower": 0.9756625486776705,
+        "every_reply_exact": 154,
+        "hp": {
+          "PrincessTower": {
+            "measured_towers": 616,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          },
+          "KingTower": {
+            "measured_towers": 308,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          }
+        },
+        "reference_outcomes": {
+          "1": 78,
+          "0": 76
+        },
+        "candidate_outcomes": {
+          "1": 78,
+          "0": 76
+        }
+      },
+      "hog-mirror": {
+        "games": 154,
+        "candidate_completed": 154,
+        "winner_agreements": 154,
+        "winner_agreement": 1.0,
+        "winner_agreement_wilson_95_lower": 0.9756625486776705,
+        "every_reply_exact": 154,
+        "hp": {
+          "PrincessTower": {
+            "measured_towers": 616,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          },
+          "KingTower": {
+            "measured_towers": 308,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          }
+        },
+        "reference_outcomes": {
+          "1": 76,
+          "0": 78
+        },
+        "candidate_outcomes": {
+          "1": 76,
+          "0": 78
+        }
+      },
+      "lava-loon": {
+        "games": 154,
+        "candidate_completed": 154,
+        "winner_agreements": 154,
+        "winner_agreement": 1.0,
+        "winner_agreement_wilson_95_lower": 0.9756625486776705,
+        "every_reply_exact": 154,
+        "hp": {
+          "PrincessTower": {
+            "measured_towers": 616,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          },
+          "KingTower": {
+            "measured_towers": 308,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          }
+        },
+        "reference_outcomes": {
+          "1": 68,
+          "0": 86
+        },
+        "candidate_outcomes": {
+          "1": 68,
+          "0": 86
+        }
+      },
+      "log-bait": {
+        "games": 154,
+        "candidate_completed": 154,
+        "winner_agreements": 154,
+        "winner_agreement": 1.0,
+        "winner_agreement_wilson_95_lower": 0.9756625486776705,
+        "every_reply_exact": 154,
+        "hp": {
+          "PrincessTower": {
+            "measured_towers": 616,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          },
+          "KingTower": {
+            "measured_towers": 308,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          }
+        },
+        "reference_outcomes": {
+          "1": 67,
+          "0": 87
+        },
+        "candidate_outcomes": {
+          "1": 67,
+          "0": 87
+        }
+      },
+      "pekka-bridge": {
+        "games": 154,
+        "candidate_completed": 154,
+        "winner_agreements": 154,
+        "winner_agreement": 1.0,
+        "winner_agreement_wilson_95_lower": 0.9756625486776705,
+        "every_reply_exact": 154,
+        "hp": {
+          "PrincessTower": {
+            "measured_towers": 616,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          },
+          "KingTower": {
+            "measured_towers": 308,
+            "mae_pp": 0.0,
+            "maximum_error_pp": 0.0,
+            "mae_pp_with_failures_penalized": 0.0
+          }
+        },
+        "reference_outcomes": {
+          "1": 83,
+          "0": 71
+        },
+        "candidate_outcomes": {
+          "1": 83,
+          "0": 71
+        }
+      }
+    },
+    "cohorts": [
+      {
+        "directory": "analysis/fast-league-worktree-20261022/holdout-final",
+        "overall": {
+          "games": 252,
+          "candidate_completed": 252,
+          "winner_agreements": 252,
+          "winner_agreement": 1.0,
+          "winner_agreement_wilson_95_lower": 0.984985002671571,
+          "every_reply_exact": 252,
+          "hp": {
+            "PrincessTower": {
+              "measured_towers": 1008,
+              "mae_pp": 0.0,
+              "maximum_error_pp": 0.0,
+              "mae_pp_with_failures_penalized": 0.0
+            },
+            "KingTower": {
+              "measured_towers": 504,
+              "mae_pp": 0.0,
+              "maximum_error_pp": 0.0,
+              "mae_pp_with_failures_penalized": 0.0
+            }
+          },
+          "reference_outcomes": {
+            "1": 127,
+            "0": 125
+          },
+          "candidate_outcomes": {
+            "1": 127,
+            "0": 125
+          }
+        },
+        "per_deck": {
+          "custom-mortar": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "1": 38,
+              "0": 39
+            },
+            "candidate_outcomes": {
+              "1": 38,
+              "0": 39
+            }
+          },
+          "golem": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "1": 38,
+              "0": 39
+            },
+            "candidate_outcomes": {
+              "1": 38,
+              "0": 39
+            }
+          },
+          "hog-mirror": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "1": 39,
+              "0": 38
+            },
+            "candidate_outcomes": {
+              "1": 39,
+              "0": 38
+            }
+          },
+          "lava-loon": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "1": 42,
+              "0": 35
+            },
+            "candidate_outcomes": {
+              "1": 42,
+              "0": 35
+            }
+          },
+          "log-bait": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "1": 32,
+              "0": 45
+            },
+            "candidate_outcomes": {
+              "1": 32,
+              "0": 45
+            }
+          },
+          "pekka-bridge": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "1": 44,
+              "0": 33
+            },
+            "candidate_outcomes": {
+              "1": 44,
+              "0": 33
+            }
+          }
+        }
+      },
+      {
+        "directory": "analysis/fast-league-worktree-20261022/holdout-cycle",
+        "overall": {
+          "games": 252,
+          "candidate_completed": 252,
+          "winner_agreements": 252,
+          "winner_agreement": 1.0,
+          "winner_agreement_wilson_95_lower": 0.984985002671571,
+          "every_reply_exact": 252,
+          "hp": {
+            "PrincessTower": {
+              "measured_towers": 1008,
+              "mae_pp": 0.0,
+              "maximum_error_pp": 0.0,
+              "mae_pp_with_failures_penalized": 0.0
+            },
+            "KingTower": {
+              "measured_towers": 504,
+              "mae_pp": 0.0,
+              "maximum_error_pp": 0.0,
+              "mae_pp_with_failures_penalized": 0.0
+            }
+          },
+          "reference_outcomes": {
+            "0": 137,
+            "1": 115
+          },
+          "candidate_outcomes": {
+            "0": 137,
+            "1": 115
+          }
+        },
+        "per_deck": {
+          "custom-mortar": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "1": 39,
+              "0": 38
+            },
+            "candidate_outcomes": {
+              "1": 39,
+              "0": 38
+            }
+          },
+          "golem": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "0": 37,
+              "1": 40
+            },
+            "candidate_outcomes": {
+              "0": 37,
+              "1": 40
+            }
+          },
+          "hog-mirror": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "0": 40,
+              "1": 37
+            },
+            "candidate_outcomes": {
+              "0": 40,
+              "1": 37
+            }
+          },
+          "lava-loon": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "1": 26,
+              "0": 51
+            },
+            "candidate_outcomes": {
+              "1": 26,
+              "0": 51
+            }
+          },
+          "log-bait": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "0": 42,
+              "1": 35
+            },
+            "candidate_outcomes": {
+              "0": 42,
+              "1": 35
+            }
+          },
+          "pekka-bridge": {
+            "games": 77,
+            "candidate_completed": 77,
+            "winner_agreements": 77,
+            "winner_agreement": 1.0,
+            "winner_agreement_wilson_95_lower": 0.9524815747175658,
+            "every_reply_exact": 77,
+            "hp": {
+              "PrincessTower": {
+                "measured_towers": 308,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              },
+              "KingTower": {
+                "measured_towers": 154,
+                "mae_pp": 0.0,
+                "maximum_error_pp": 0.0,
+                "mae_pp_with_failures_penalized": 0.0
+              }
+            },
+            "reference_outcomes": {
+              "1": 39,
+              "0": 38
+            },
+            "candidate_outcomes": {
+              "1": 39,
+              "0": 38
+            }
+          }
+        }
+      }
+    ],
+    "per_deck_denominator": "Each distinct game involving the deck, including mirrors once.",
+    "scope": "Agreement with the pinned recovered build on the recorded scripted action distribution. Not accuracy against the current live game or every possible policy.",
+    "confidence_note": "Wilson interval describes the tested distribution under a binomial model; it is not a guarantee for unseen strategies.",
+    "target_passed": true
+  },
+  "coverage": {
+    "holdout-final": {
+      "accepted_card_types": 38,
+      "accepted_deployments": 16094,
+      "deployments_by_card": {
+        "MegaMinion": 778,
+        "Princess": 387,
+        "RageBarbarian": 227,
+        "Log": 1441,
+        "GoblinBarrel": 379,
+        "Tornado": 350,
+        "GoblinGang": 385,
+        "BarbLog": 900,
+        "IceSpirits": 1803,
+        "DarkWitch": 235,
+        "Knight": 825,
+        "BabyDragon": 230,
+        "InfernoTower": 36,
+        "Minions": 421,
+        "Zap": 744,
+        "SkeletonWarriors": 432,
+        "Tombstone": 427,
+        "Fireball": 184,
+        "Lightning": 23,
+        "Pekka": 13,
+        "Assassin": 251,
+        "BattleRam": 136,
+        "Ghost": 253,
+        "Poison": 143,
+        "Balloon": 20,
+        "IceGolemite": 908,
+        "Musketeer": 97,
+        "Skeletons": 1868,
+        "Cannon": 754,
+        "Rocket": 24,
+        "HogRider": 76,
+        "Archer": 462,
+        "Arrows": 472,
+        "Mortar": 78,
+        "MiniPekka": 67,
+        "LavaHound": 14,
+        "EliteArcher": 125,
+        "ElectroWizard": 126
+      },
+      "golem_deployed_games": 0,
+      "golem_eligible_games": 77,
+      "destroyed_towers": {
+        "PrincessTower": 403,
+        "KingTower": 160
+      }
+    },
+    "holdout-cycle": {
+      "accepted_card_types": 39,
+      "accepted_deployments": 7182,
+      "deployments_by_card": {
+        "Rocket": 485,
+        "Golem": 113,
+        "InfernoTower": 267,
+        "Lightning": 111,
+        "GoblinGang": 220,
+        "Princess": 226,
+        "RageBarbarian": 102,
+        "GoblinBarrel": 221,
+        "BabyDragon": 98,
+        "Knight": 391,
+        "Log": 410,
+        "DarkWitch": 105,
+        "IceSpirits": 397,
+        "MegaMinion": 175,
+        "Tornado": 68,
+        "BarbLog": 204,
+        "LavaHound": 134,
+        "Minions": 109,
+        "Balloon": 135,
+        "Tombstone": 107,
+        "Fireball": 371,
+        "SkeletonWarriors": 106,
+        "Zap": 121,
+        "Pekka": 107,
+        "BattleRam": 94,
+        "ElectroWizard": 95,
+        "Poison": 93,
+        "Musketeer": 239,
+        "Cannon": 202,
+        "HogRider": 238,
+        "IceGolemite": 192,
+        "Skeletons": 328,
+        "MiniPekka": 188,
+        "Arrows": 166,
+        "Mortar": 186,
+        "Archer": 162,
+        "EliteArcher": 95,
+        "Ghost": 60,
+        "Assassin": 61
+      },
+      "golem_deployed_games": 73,
+      "golem_eligible_games": 77,
+      "destroyed_towers": {
+        "KingTower": 214,
+        "PrincessTower": 449
+      }
+    }
+  },
+  "development": {
+    "games": 36,
+    "fully_matched": 36,
+    "replies": 4702
+  },
+  "full_state_audits": {
+    "matched": true,
+    "games": 8,
+    "regions_each": 12,
+    "registers_each": 70,
+    "allocator_exact": true
+  },
+  "instruction_checks": {
+    "matched": true,
+    "transitions": 3200,
+    "scope": "Single original instruction transitions for selected generated scalar integer, SIMD integer, move/address and FMOV cases. Memory, control-flow, FP arithmetic and system instructions are excluded. Compares X0-X30, Q0-Q31, NZCV and SP."
+  },
+  "legacy_runner": {
+    "matched": true,
+    "replies": 422
+  },
+  "benchmark": {
+    "binary_sha256": {
+      "reference": "bb07c5bd56ea4cc17a945b5e79c3f4f62bc7f352d593598634d4e64ef80d2f93",
+      "candidate": "e3b42d15ecc14f51f4939a3a980a0e2345bf5db1b35b433ab47f0e72866626c6"
+    },
+    "workers": 1,
+    "rounds": 2,
+    "summaries": {
+      "reference": {
+        "games": 12,
+        "wall_seconds": 67.40662089199759,
+        "games_per_minute": 10.681443313315196,
+        "ticks_per_second": 461.73505789391965,
+        "median_game_seconds": 5.288676706999468,
+        "engine_step_seconds": 45.72317062599999
+      },
+      "candidate": {
+        "games": 12,
+        "wall_seconds": 27.611266706000606,
+        "games_per_minute": 26.07631180656867,
+        "ticks_per_second": 1127.2210120383934,
+        "median_game_seconds": 2.040190239998992,
+        "engine_step_seconds": 27.111469911
+      }
+    },
+    "speedup": 2.4412723113984653,
+    "scope": "Complete games including reset, legal-mask query, action submission, observations, tower HP and JSON IPC. Excludes process startup and neural-policy inference. Engines run sequentially, alternating order by round. Host load may affect results."
+  },
+  "superseded_discovery": {
+    "games": 252,
+    "fully_matched": 250,
+    "missing_functions_added": [
+      "0xd374e8",
+      "0xf95c34"
+    ],
+    "instructions_added": 29,
+    "included_in_final_accuracy": false
+  },
+  "evidence_sha256": {
+    "analysis/fast-league-worktree-20261022/accuracy-combined.json": "10b308435d759f9ec70764e32448698371d35f9ea936004435bd3d73b9ae061c",
+    "analysis/fast-league-worktree-20261022/frozen-v2/manifest.json": "2ff50c601e2a4338c47bafd1c894f9bd607f27af571a7f685ce7e4e118496d2d",
+    "analysis/fast-league-worktree-20261022/development/summary.json": "cb479e94418604abe8193f817358cd189a76f7da827946b2a3645bd30c370e77",
+    "analysis/fast-league-worktree-20261022/holdout-final/manifest.json": "fe356dc5407d7ac65d4706f6356426d2960a3bc4e095e59be0208eedcc15ef2d",
+    "analysis/fast-league-worktree-20261022/holdout-final/summary.json": "28ac338f896521fde3debbd2e6971b8b535b1fefd59a31827ea442b57a847c87",
+    "analysis/fast-league-worktree-20261022/holdout-final/cohort-stats.json": "5bfb08ec1a45fbdd335f9814a2ab77bc763fb88128690bbf29f58a1fb0e1f4c5",
+    "analysis/fast-league-worktree-20261022/holdout-cycle/manifest.json": "24feddeb1ee7dad0ed1262f06d1444649bef7a9deec83664aee4095ebcfcac0f",
+    "analysis/fast-league-worktree-20261022/holdout-cycle/summary.json": "0bbd609b66ad8cc5312b36b5024be77a4a8983794e518f56f49fa760324a649c",
+    "analysis/fast-league-worktree-20261022/holdout-cycle/cohort-stats.json": "25c9e9acf4ec8b8463b5994b4f727c28fdf423ef974bd45569d0cd8dc1182760",
+    "analysis/fast-league-worktree-20261022/audits-final/summary.json": "06aa7be1a8058f589d4acf7896457cd2c421a3b8fbd09db798cecccbe8e768f7",
+    "analysis/fast-league-worktree-20261022/audits-repaired-final/summary.json": "63ef0771318d8e2ea6839f9dd3a2a0a5bb3513ad362412cb4878768dd4a9cacd",
+    "analysis/fast-league-worktree-20261022/benchmark/report.json": "9d4394f78f8a1f601cab734bc4df92181f4e2668ab93e3bfbf8e78bb3b0dba6e",
+    "analysis/fast-league-worktree-20261022/integer-probe-final/report.json": "366f3509c91d615348a19cc8f5db5ca1462a60d29820cdb85660886e9bafbf44",
+    "analysis/fast-league-worktree-20261022/legacy-compat-final.json": "63a4e0f5ff9d5903ff27c801f5378444356236037ae2387b2aef06a21d7efe0e"
+  },
+  "limitations": [
+    "Agreement with the pinned recovered build and tested scripts, not the current live game or all possible policies.",
+    "Unknown code paths and guarded unsupported inputs still fail explicitly; no emulator fallback.",
+    "Throughput excludes neural-policy inference and process startup."
+  ]
+}

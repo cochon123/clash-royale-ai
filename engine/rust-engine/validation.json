@@ -1,0 +1,144 @@
+{
+  "format": "clash-rust-native-validation-v1",
+  "report_created_utc": "2026-10-19T18:20:17.603829+00:00",
+  "source_sha256": "79fe6612e20922d4c4086b1e6c939464202cefa7cb3b20344236529f941423d6",
+  "checkpoint_sha256": "66f9bf75bfde9b5e0c1f4056573079016d41576020018b9e57fca538fd1b840e",
+  "generated_manifest_sha256": "9c0cfdf79717ac1f39de3530e5ccb86bed76baae693da9896a3ee4307912d11e",
+  "generated_routine_ranges": 1733,
+  "translated_source_instructions": 96010,
+  "unsupported_encodings_in_generation": {},
+  "build_provenance": {
+    "compiler": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+    "opt_level": "3",
+    "profile": "release",
+    "source_files_sha256": {
+      "../tools/native_rust_codegen.py": "7c7810012bab4a8e71c29bd5ce9617b4ae43c89a4fa7639e97e62da503ed6c00",
+      "Cargo.lock": "07f47db2a8b2a09ad988da9999d0af1181d9b379ff2d3d0adcfb42afde30e7ae",
+      "Cargo.toml": "5e8516874bf544ff1412640f2301e1beffecf55412b542dfedb2e17b60e5a1d0",
+      "build.rs": "30e34ebd95fbb1516671cb9226782d9b0e1360281f02ea307d8090fc16def4a8",
+      "codegen.json": "479a0d342edf3b8d2d45dee8e363f0bad30c8ad50e5283062fdcd4f216b66d8b",
+      "src/bin/rust_rl.rs": "997ee2ce5f4f89864d2b9c0a9435d33ef2a10fde9da3289bffdfc3ab3da81f29",
+      "src/cpu.rs": "3e81969ff624c998b5f256277a0b7cce53d910247abd8b0714dc5c4c58a851bf",
+      "src/generated/chunk0.rs": "96e2e4c9eaf76dccd18cfac2fddf6de304379cc9732f7f57b672052a6988f994",
+      "src/generated/chunk1.rs": "af8e471dbe70e65804f138802cb3a3ccc89f0945e4f5ea085f6737931327e150",
+      "src/generated/chunk10.rs": "ce9f6a5e4fd4789fed15dab472de45f299693af61fd01deb47e2321db595cee9",
+      "src/generated/chunk11.rs": "aafbfd2aab5055f129931848d1b434c9e384c75d49ef6afdced0f6d56d5c1cd3",
+      "src/generated/chunk12.rs": "d750018a7842ea50033b5e6cc940a5f428b88801603b9f9d288f4d39aa214b43",
+      "src/generated/chunk13.rs": "db5b05ffc07e7af056ca3434d0386229f6b663c31eb53accce17194e1533f223",
+      "src/generated/chunk14.rs": "928ef95272eef0a68cb6749fcef1904467d5e9ced6874d2ad84fd1c9006a6bba",
+      "src/generated/chunk15.rs": "b80ae566ea531d2f3d645801e1669a9dfa45ce99f55703b453c4ceec7e848376",
+      "src/generated/chunk2.rs": "6b440417442be6285c00c067f455b02c04fb36696b3af08831c6595dbc8eae53",
+      "src/generated/chunk3.rs": "145ec3c1408ac28f088c2d18bb0a246ed77c47721f5f331973935eb405f2ab78",
+      "src/generated/chunk4.rs": "f7b543003ba93ab67a0ca3d2bee35ab0f18246c29fc0af7bbaedfabd8d89715b",
+      "src/generated/chunk5.rs": "80e309e22a36ee27493fda35377c1995f712139183f58858d15e59de9bef6b85",
+      "src/generated/chunk6.rs": "fbc714faf2b0cc96129930d372a441b4ef76314fba8e77de3950b03226f0732d",
+      "src/generated/chunk7.rs": "a5389eb767e4ad04ddcabc7a3cf33a926011df49e1979ebbc6ae7813408f943b",
+      "src/generated/chunk8.rs": "1dddb3221a0b13a4bbe5a224c015e5cc2a221bc8ecc0490a148651edf24dea3f",
+      "src/generated/chunk9.rs": "80e3515c892ac21f5e1711ca25a653d93ba88cfbd70cbe81e8cf267945fcb58d",
+      "src/generated/helpers.rs": "1b2420a35f393069a0ff10a6d7b979fd889ffa26b962934864fef7d2399d0024",
+      "src/generated/manifest.json": "9c0cfdf79717ac1f39de3530e5ccb86bed76baae693da9896a3ee4307912d11e",
+      "src/generated/mod.rs": "6ea1b2d63aada0ed918ed0b1d826a1f199bca9db7b51a93f65d517371f24ffe4",
+      "src/heap.rs": "74e8718cfaab5df09908882e97b0a7ede192d6c68522cb9cf1ed92ad1113d739",
+      "src/lib.rs": "f8f5e98c7bf7e581e1352ffe707992483e55d0c8067843eee587315338555b85",
+      "src/main.rs": "7269f3b22286e9e69b7bd780ac312eaf76af82d3dd2d301963df134fa63c9473",
+      "src/memory.rs": "87d0e9db5d0108af15e06623354613eccebbe22ca2389a91502497774ed4273d",
+      "src/rl.rs": "836ea7cdd0b24778600d7baa0fc31448321c6cf4dacc65af27dd20d0e853f5d5",
+      "src/runtime.rs": "ad62c40f9edcdbac6f74680a2f40e732964e6821190e5985d9c7995ba4ee6025",
+      "src/session.rs": "cb21ef06e35b8193c46b03206df4a72bd93f5325a98eb585e64213f50ad6aec2"
+    },
+    "target": "x86_64-unknown-linux-gnu"
+  },
+  "canonical_audit": {
+    "file": "analysis/native-port/full-comparison-threaded-release.json",
+    "sha256": "e8365182ab11383ef68e677cdc2d90a51043870e8093ef0893839c1589e2d12d",
+    "matched": true,
+    "memory_regions": 12,
+    "registers": 70,
+    "allocator_equal": true
+  },
+  "rl_replays": {
+    "file": "analysis/native-port/rl-replay-threaded-release-summary.json",
+    "sha256": "3a522fe7358338894273aa2100b0cb7c1503fc85d646c8966f5177acbf0e706b",
+    "matched_games": 32,
+    "requests_compared": 3874,
+    "binary_sha256": "cec2ab5eb99e5ba17fb001330328940a5460398707b69e4a7af1f3aa44697305"
+  },
+  "persistent_reset_replay": {
+    "file": "analysis/native-port/rl-replay-reset-sequence-release.json",
+    "sha256": "cbff7d8d3c2e363895dc167e16cbdec96c5649e706f9f1fa8a1b8c186e833433",
+    "matched": true,
+    "episodes": 28,
+    "requests_compared": 3319
+  },
+  "instruction_probe": {
+    "file": "analysis/native-port/instruction-probe/report-threaded-current.json",
+    "sha256": "c16147613099e8b6fd4414d775bbbb87efabc4778d1ea11496c38bb92cb03fe2",
+    "signatures": 240,
+    "transitions": 2368,
+    "mismatches": 0
+  },
+  "unit_tests": {
+    "file": "analysis/native-port/rust-unit-tests-final.log",
+    "sha256": "375a08467971061385517fe7f900ab8c042426907306b6ed051207e45d2663d1",
+    "passed": 3,
+    "command": "cargo test --manifest-path rust-engine/Cargo.toml --offline --lib"
+  },
+  "benchmarks": {
+    "fast": {
+      "file": "analysis/native-port/benchmark-fast-60s.json",
+      "sha256": "24d9c6013e4975aad420b29d6ef4c7becb3eae0a2752b02325469e8bfb6e6174",
+      "engine_binary_sha256": "cec2ab5eb99e5ba17fb001330328940a5460398707b69e4a7af1f3aa44697305",
+      "requested_seconds": 60.0,
+      "elapsed_seconds": 60.11609867500374,
+      "completed_games": 30,
+      "completed_games_per_minute": 29.9420627697592,
+      "truncated_episodes": 0,
+      "error": null,
+      "decision_steps": 3542,
+      "native_ticks": 70541,
+      "native_ticks_per_second": 1173.4128054675466,
+      "card_attempts": 1577,
+      "accepted_cards": 1155,
+      "unfinished_episode": {
+        "seed": 31,
+        "reset_seconds": 0.001532029,
+        "steps": 16
+      },
+      "median_warm_reset_seconds": 0.001135443
+    },
+    "slow": {
+      "file": "analysis/native-port/benchmark-slow-60s.json",
+      "sha256": "85e4a878ebf626cd8012179922f86701d06b089b259fcb689251c8607d6343f8",
+      "engine_binary_sha256": "f9c418a7c4f3dccde3af89c2348426c9e78857b5ab8065132bd507da9be4a179",
+      "requested_seconds": 60.0,
+      "elapsed_seconds": 60.14260377098981,
+      "completed_games": 11,
+      "completed_games_per_minute": 10.973917965260352,
+      "truncated_episodes": 0,
+      "error": null,
+      "decision_steps": 1263,
+      "native_ticks": 25152,
+      "native_ticks_per_second": 418.20603736701264,
+      "card_attempts": 569,
+      "accepted_cards": 404,
+      "unfinished_episode": {
+        "seed": 12,
+        "reset_seconds": 1.674388199,
+        "steps": 13
+      },
+      "median_warm_reset_seconds": 1.683351858
+    },
+    "games_per_minute_ratio": 2.7284751776480807,
+    "benchmark_outcomes_match_captured_references": true,
+    "scope": "One process, two external affordable-random policies through the selected original-engine backend. Includes snapshot reset, observations, IPC and actions. Fixed native scenario/decks. No training or rendering. Truncations and unfinished episodes are excluded from completed-game throughput.",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "cpu_model": "13th Gen Intel(R) Core(TM) i5-13420H"
+  },
+  "limits": [
+    "Fixed prepared scenario/decks/engine RNG; external policy seeds vary actions.",
+    "Partial observations omit positions and unit/tower HP.",
+    "Coverage and architectural FP handling remain incomplete; unsupported paths fail explicitly.",
+    "One fixed-address session per Linux process.",
+    "Headless backend; original battle UI and Android port remain unfinished."
+  ]
+}

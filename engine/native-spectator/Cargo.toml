@@ -1,0 +1,29 @@
+[package]
+name = "clash-native-spectator"
+version = "0.1.0"
+edition = "2021"
+description = "Read-only original-asset battle spectator for the recovered engine"
+
+[features]
+default = []
+compiled-engine = ["dep:clash-recompiled"]
+
+[dependencies]
+clash-recompiled = { path = "../rust-engine", optional = true }
+clash-native-ui-viewer = { path = "../native-ui-viewer" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+image = { version = "0.25", default-features = false, features = ["png"] }
+minifb = { version = "0.28", default-features = false, features = ["x11"] }
+
+[profile.release]
+opt-level = 3
+codegen-units = 16
+
+[profile.dev]
+# Software compositing of interpolated 60 FPS frames needs optimized code.
+opt-level = 3
+debug = 0
+
+[profile.dev.package.clash-recompiled]
+opt-level = 3

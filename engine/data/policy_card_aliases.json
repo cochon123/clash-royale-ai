@@ -1,0 +1,974 @@
+{
+  "source": "clash-royale-ai/data/v9_card_stats/cards.json",
+  "description": "Explicit recovered Supercell card identifier to replay-policy slug aliases. No fuzzy name guessing.",
+  "cards": [
+    {
+      "internal_id": "Knight",
+      "policy_id": "knight",
+      "numeric_id": 26000000,
+      "name": "Knight",
+      "elixir": 3,
+      "engine_id": "knight"
+    },
+    {
+      "internal_id": "Archer",
+      "policy_id": "archers",
+      "numeric_id": 26000001,
+      "name": "Archers",
+      "elixir": 3,
+      "engine_id": "archers"
+    },
+    {
+      "internal_id": "Goblins",
+      "policy_id": "goblins",
+      "numeric_id": 26000002,
+      "name": "Goblins",
+      "elixir": 2,
+      "engine_id": "goblins"
+    },
+    {
+      "internal_id": "Giant",
+      "policy_id": "giant",
+      "numeric_id": 26000003,
+      "name": "Giant",
+      "elixir": 5,
+      "engine_id": "giant"
+    },
+    {
+      "internal_id": "Pekka",
+      "policy_id": "pekka",
+      "numeric_id": 26000004,
+      "name": "P.E.K.K.A",
+      "elixir": 7,
+      "engine_id": "pekka"
+    },
+    {
+      "internal_id": "Minions",
+      "policy_id": "minions",
+      "numeric_id": 26000005,
+      "name": "Minions",
+      "elixir": 3,
+      "engine_id": "minions"
+    },
+    {
+      "internal_id": "Balloon",
+      "policy_id": "balloon",
+      "numeric_id": 26000006,
+      "name": "Balloon",
+      "elixir": 5,
+      "engine_id": "balloon"
+    },
+    {
+      "internal_id": "Witch",
+      "policy_id": "witch",
+      "numeric_id": 26000007,
+      "name": "Witch",
+      "elixir": 5,
+      "engine_id": "witch"
+    },
+    {
+      "internal_id": "Barbarians",
+      "policy_id": "barbarians",
+      "numeric_id": 26000008,
+      "name": "Barbarians",
+      "elixir": 5,
+      "engine_id": "barbarians"
+    },
+    {
+      "internal_id": "Golem",
+      "policy_id": "golem",
+      "numeric_id": 26000009,
+      "name": "Golem",
+      "elixir": 8,
+      "engine_id": "golem"
+    },
+    {
+      "internal_id": "Skeletons",
+      "policy_id": "skeletons",
+      "numeric_id": 26000010,
+      "name": "Skeletons",
+      "elixir": 1,
+      "engine_id": "skeletons"
+    },
+    {
+      "internal_id": "Valkyrie",
+      "policy_id": "valkyrie",
+      "numeric_id": 26000011,
+      "name": "Valkyrie",
+      "elixir": 4,
+      "engine_id": "valkyrie"
+    },
+    {
+      "internal_id": "SkeletonArmy",
+      "policy_id": "skeleton-army",
+      "numeric_id": 26000012,
+      "name": "Skeleton Army",
+      "elixir": 3,
+      "engine_id": "skeleton_army"
+    },
+    {
+      "internal_id": "Bomber",
+      "policy_id": "bomber",
+      "numeric_id": 26000013,
+      "name": "Bomber",
+      "elixir": 2,
+      "engine_id": "bomber"
+    },
+    {
+      "internal_id": "Musketeer",
+      "policy_id": "musketeer",
+      "numeric_id": 26000014,
+      "name": "Musketeer",
+      "elixir": 4,
+      "engine_id": "musketeer"
+    },
+    {
+      "internal_id": "BabyDragon",
+      "policy_id": "baby-dragon",
+      "numeric_id": 26000015,
+      "name": "Baby Dragon",
+      "elixir": 4,
+      "engine_id": "baby_dragon"
+    },
+    {
+      "internal_id": "Prince",
+      "policy_id": "prince",
+      "numeric_id": 26000016,
+      "name": "Prince",
+      "elixir": 5,
+      "engine_id": "prince"
+    },
+    {
+      "internal_id": "Wizard",
+      "policy_id": "wizard",
+      "numeric_id": 26000017,
+      "name": "Wizard",
+      "elixir": 5,
+      "engine_id": "wizard"
+    },
+    {
+      "internal_id": "MiniPekka",
+      "policy_id": "mini-pekka",
+      "numeric_id": 26000018,
+      "name": "Mini P.E.K.K.A",
+      "elixir": 4,
+      "engine_id": "mini_pekka"
+    },
+    {
+      "internal_id": "SpearGoblins",
+      "policy_id": "spear-goblins",
+      "numeric_id": 26000019,
+      "name": "Spear Goblins",
+      "elixir": 2,
+      "engine_id": "spear_goblins"
+    },
+    {
+      "internal_id": "GiantSkeleton",
+      "policy_id": "giant-skeleton",
+      "numeric_id": 26000020,
+      "name": "Giant Skeleton",
+      "elixir": 6,
+      "engine_id": "giant_skeleton"
+    },
+    {
+      "internal_id": "HogRider",
+      "policy_id": "hog-rider",
+      "numeric_id": 26000021,
+      "name": "Hog Rider",
+      "elixir": 4,
+      "engine_id": "hog_rider"
+    },
+    {
+      "internal_id": "MinionHorde",
+      "policy_id": "minion-horde",
+      "numeric_id": 26000022,
+      "name": "Minion Horde",
+      "elixir": 5,
+      "engine_id": "minion_horde"
+    },
+    {
+      "internal_id": "IceWizard",
+      "policy_id": "ice-wizard",
+      "numeric_id": 26000023,
+      "name": "Ice Wizard",
+      "elixir": 3,
+      "engine_id": "ice_wizard"
+    },
+    {
+      "internal_id": "RoyalGiant",
+      "policy_id": "royal-giant",
+      "numeric_id": 26000024,
+      "name": "Royal Giant",
+      "elixir": 6,
+      "engine_id": "royal_giant"
+    },
+    {
+      "internal_id": "SkeletonWarriors",
+      "policy_id": "guards",
+      "numeric_id": 26000025,
+      "name": "Guards",
+      "elixir": 3,
+      "engine_id": "guards"
+    },
+    {
+      "internal_id": "Princess",
+      "policy_id": "princess",
+      "numeric_id": 26000026,
+      "name": "Princess",
+      "elixir": 3,
+      "engine_id": "princess"
+    },
+    {
+      "internal_id": "DarkPrince",
+      "policy_id": "dark-prince",
+      "numeric_id": 26000027,
+      "name": "Dark Prince",
+      "elixir": 4,
+      "engine_id": "dark_prince"
+    },
+    {
+      "internal_id": "ThreeMusketeers",
+      "policy_id": "three-musketeers",
+      "numeric_id": 26000028,
+      "name": "Three Musketeers",
+      "elixir": 9,
+      "engine_id": "three_musketeers"
+    },
+    {
+      "internal_id": "LavaHound",
+      "policy_id": "lava-hound",
+      "numeric_id": 26000029,
+      "name": "Lava Hound",
+      "elixir": 7,
+      "engine_id": "lava_hound"
+    },
+    {
+      "internal_id": "IceSpirits",
+      "policy_id": "ice-spirit",
+      "numeric_id": 26000030,
+      "name": "Ice Spirit",
+      "elixir": 1,
+      "engine_id": "ice_spirit"
+    },
+    {
+      "internal_id": "FireSpirits",
+      "policy_id": "fire-spirit",
+      "numeric_id": 26000031,
+      "name": "Fire Spirit",
+      "elixir": 1,
+      "engine_id": "fire_spirit"
+    },
+    {
+      "internal_id": "Miner",
+      "policy_id": "miner",
+      "numeric_id": 26000032,
+      "name": "Miner",
+      "elixir": 3,
+      "engine_id": "miner"
+    },
+    {
+      "internal_id": "ZapMachine",
+      "policy_id": "sparky",
+      "numeric_id": 26000033,
+      "name": "Sparky",
+      "elixir": 6,
+      "engine_id": "sparky"
+    },
+    {
+      "internal_id": "Bowler",
+      "policy_id": "bowler",
+      "numeric_id": 26000034,
+      "name": "Bowler",
+      "elixir": 5,
+      "engine_id": "bowler"
+    },
+    {
+      "internal_id": "RageBarbarian",
+      "policy_id": "lumberjack",
+      "numeric_id": 26000035,
+      "name": "Lumberjack",
+      "elixir": 4,
+      "engine_id": "lumberjack"
+    },
+    {
+      "internal_id": "BattleRam",
+      "policy_id": "battle-ram",
+      "numeric_id": 26000036,
+      "name": "Battle Ram",
+      "elixir": 4,
+      "engine_id": "battle_ram"
+    },
+    {
+      "internal_id": "InfernoDragon",
+      "policy_id": "inferno-dragon",
+      "numeric_id": 26000037,
+      "name": "Inferno Dragon",
+      "elixir": 4,
+      "engine_id": "inferno_dragon"
+    },
+    {
+      "internal_id": "IceGolemite",
+      "policy_id": "ice-golem",
+      "numeric_id": 26000038,
+      "name": "Ice Golem",
+      "elixir": 2,
+      "engine_id": "ice_golem"
+    },
+    {
+      "internal_id": "MegaMinion",
+      "policy_id": "mega-minion",
+      "numeric_id": 26000039,
+      "name": "Mega Minion",
+      "elixir": 3,
+      "engine_id": "mega_minion"
+    },
+    {
+      "internal_id": "BlowdartGoblin",
+      "policy_id": "dart-goblin",
+      "numeric_id": 26000040,
+      "name": "Dart Goblin",
+      "elixir": 3,
+      "engine_id": "dart_goblin"
+    },
+    {
+      "internal_id": "GoblinGang",
+      "policy_id": "goblin-gang",
+      "numeric_id": 26000041,
+      "name": "Goblin Gang",
+      "elixir": 3,
+      "engine_id": "goblin_gang"
+    },
+    {
+      "internal_id": "ElectroWizard",
+      "policy_id": "electro-wizard",
+      "numeric_id": 26000042,
+      "name": "Electro Wizard",
+      "elixir": 4,
+      "engine_id": "electro_wizard"
+    },
+    {
+      "internal_id": "AngryBarbarians",
+      "policy_id": "elite-barbarians",
+      "numeric_id": 26000043,
+      "name": "Elite Barbarians",
+      "elixir": 6,
+      "engine_id": "elite_barbarians"
+    },
+    {
+      "internal_id": "Hunter",
+      "policy_id": "hunter",
+      "numeric_id": 26000044,
+      "name": "Hunter",
+      "elixir": 4,
+      "engine_id": "hunter"
+    },
+    {
+      "internal_id": "AxeMan",
+      "policy_id": "executioner",
+      "numeric_id": 26000045,
+      "name": "Executioner",
+      "elixir": 5,
+      "engine_id": "executioner"
+    },
+    {
+      "internal_id": "Assassin",
+      "policy_id": "bandit",
+      "numeric_id": 26000046,
+      "name": "Bandit",
+      "elixir": 3,
+      "engine_id": "bandit"
+    },
+    {
+      "internal_id": "RoyalRecruits",
+      "policy_id": "royal-recruits",
+      "numeric_id": 26000047,
+      "name": "Royal Recruits",
+      "elixir": 7,
+      "engine_id": "royal_recruits"
+    },
+    {
+      "internal_id": "DarkWitch",
+      "policy_id": "night-witch",
+      "numeric_id": 26000048,
+      "name": "Night Witch",
+      "elixir": 4,
+      "engine_id": "night_witch"
+    },
+    {
+      "internal_id": "Bats",
+      "policy_id": "bats",
+      "numeric_id": 26000049,
+      "name": "Bats",
+      "elixir": 2,
+      "engine_id": "bats"
+    },
+    {
+      "internal_id": "Ghost",
+      "policy_id": "royal-ghost",
+      "numeric_id": 26000050,
+      "name": "Royal Ghost",
+      "elixir": 3,
+      "engine_id": "royal_ghost"
+    },
+    {
+      "internal_id": "RamRider",
+      "policy_id": "ram-rider",
+      "numeric_id": 26000051,
+      "name": "Ram Rider",
+      "elixir": 5,
+      "engine_id": "ram_rider"
+    },
+    {
+      "internal_id": "MiniSparkys",
+      "policy_id": "zappies",
+      "numeric_id": 26000052,
+      "name": "Zappies",
+      "elixir": 4,
+      "engine_id": "zappies"
+    },
+    {
+      "internal_id": "Rascals",
+      "policy_id": "rascals",
+      "numeric_id": 26000053,
+      "name": "Rascals",
+      "elixir": 5,
+      "engine_id": "rascals"
+    },
+    {
+      "internal_id": "MovingCannon",
+      "policy_id": "cannon-cart",
+      "numeric_id": 26000054,
+      "name": "Cannon Cart",
+      "elixir": 5,
+      "engine_id": "cannon_cart"
+    },
+    {
+      "internal_id": "MegaKnight",
+      "policy_id": "mega-knight",
+      "numeric_id": 26000055,
+      "name": "Mega Knight",
+      "elixir": 7,
+      "engine_id": "mega_knight"
+    },
+    {
+      "internal_id": "SkeletonBalloon",
+      "policy_id": "skeleton-barrel",
+      "numeric_id": 26000056,
+      "name": "Skeleton Barrel",
+      "elixir": 3,
+      "engine_id": "skeleton_barrel"
+    },
+    {
+      "internal_id": "DartBarrell",
+      "policy_id": "flying-machine",
+      "numeric_id": 26000057,
+      "name": "Flying Machine",
+      "elixir": 4,
+      "engine_id": "flying_machine"
+    },
+    {
+      "internal_id": "Wallbreakers",
+      "policy_id": "wall-breakers",
+      "numeric_id": 26000058,
+      "name": "Wall Breakers",
+      "elixir": 2,
+      "engine_id": "wall_breakers"
+    },
+    {
+      "internal_id": "RoyalHogs",
+      "policy_id": "royal-hogs",
+      "numeric_id": 26000059,
+      "name": "Royal Hogs",
+      "elixir": 5,
+      "engine_id": "royal_hogs"
+    },
+    {
+      "internal_id": "GoblinGiant",
+      "policy_id": "goblin-giant",
+      "numeric_id": 26000060,
+      "name": "Goblin Giant",
+      "elixir": 6,
+      "engine_id": "goblin_giant"
+    },
+    {
+      "internal_id": "Fisherman",
+      "policy_id": "fisherman",
+      "numeric_id": 26000061,
+      "name": "Fisherman",
+      "elixir": 3,
+      "engine_id": "fisherman"
+    },
+    {
+      "internal_id": "EliteArcher",
+      "policy_id": "magic-archer",
+      "numeric_id": 26000062,
+      "name": "Magic Archer",
+      "elixir": 4,
+      "engine_id": "magic_archer"
+    },
+    {
+      "internal_id": "ElectroDragon",
+      "policy_id": "electro-dragon",
+      "numeric_id": 26000063,
+      "name": "Electro Dragon",
+      "elixir": 5,
+      "engine_id": "electro_dragon"
+    },
+    {
+      "internal_id": "Firecracker",
+      "policy_id": "firecracker",
+      "numeric_id": 26000064,
+      "name": "Firecracker",
+      "elixir": 3,
+      "engine_id": "firecracker"
+    },
+    {
+      "internal_id": "MightyMiner",
+      "policy_id": "mighty-miner",
+      "numeric_id": 26000065,
+      "name": "Mighty Miner",
+      "elixir": 4,
+      "engine_id": "mighty_miner"
+    },
+    {
+      "internal_id": "SuperWitch",
+      "policy_id": "super-witch",
+      "numeric_id": 26000066,
+      "name": "Super Witch",
+      "elixir": 6,
+      "engine_id": "super_witch"
+    },
+    {
+      "internal_id": "ElixirGolem",
+      "policy_id": "elixir-golem",
+      "numeric_id": 26000067,
+      "name": "Elixir Golem",
+      "elixir": 3,
+      "engine_id": "elixir_golem"
+    },
+    {
+      "internal_id": "BattleHealer",
+      "policy_id": "battle-healer",
+      "numeric_id": 26000068,
+      "name": "Battle Healer",
+      "elixir": 4,
+      "engine_id": "battle_healer"
+    },
+    {
+      "internal_id": "SkeletonKing",
+      "policy_id": "skeleton-king",
+      "numeric_id": 26000069,
+      "name": "Skeleton King",
+      "elixir": 4,
+      "engine_id": "skeleton_king"
+    },
+    {
+      "internal_id": "SuperLavaHound",
+      "policy_id": "super-lava-hound",
+      "numeric_id": 26000070,
+      "name": "Super Lava Hound",
+      "elixir": 8,
+      "engine_id": "super_lava_hound"
+    },
+    {
+      "internal_id": "SuperEliteArcher",
+      "policy_id": "super-magic-archer",
+      "numeric_id": 26000071,
+      "name": "Super Magic Archer",
+      "elixir": 5,
+      "engine_id": "super_magic_archer"
+    },
+    {
+      "internal_id": "ArcherQueen",
+      "policy_id": "archer-queen",
+      "numeric_id": 26000072,
+      "name": "Archer Queen",
+      "elixir": 5,
+      "engine_id": "archer_queen"
+    },
+    {
+      "internal_id": "SuperHogRider",
+      "policy_id": "santa-hog-rider",
+      "numeric_id": 26000073,
+      "name": "Santa Hog Rider",
+      "elixir": 5,
+      "engine_id": "santa_hog_rider"
+    },
+    {
+      "internal_id": "GoldenKnight",
+      "policy_id": "golden-knight",
+      "numeric_id": 26000074,
+      "name": "Golden Knight",
+      "elixir": 4,
+      "engine_id": "golden_knight"
+    },
+    {
+      "internal_id": "SuperIceGolemite",
+      "policy_id": "super-ice-golem",
+      "numeric_id": 26000075,
+      "name": "Super Ice Golem",
+      "elixir": 4,
+      "engine_id": "super_ice_golem"
+    },
+    {
+      "internal_id": "Monk",
+      "policy_id": "monk",
+      "numeric_id": 26000077,
+      "name": "Monk",
+      "elixir": 5,
+      "engine_id": "monk"
+    },
+    {
+      "internal_id": "SuperArcher",
+      "policy_id": "super-archers",
+      "numeric_id": 26000078,
+      "name": "Super Archers",
+      "elixir": 3,
+      "engine_id": "super_archers"
+    },
+    {
+      "internal_id": "SkeletonDragons",
+      "policy_id": "skeleton-dragons",
+      "numeric_id": 26000080,
+      "name": "Skeleton Dragons",
+      "elixir": 4,
+      "engine_id": "skeleton_dragons"
+    },
+    {
+      "internal_id": "SuperHogRiderTerry",
+      "policy_id": "terry",
+      "numeric_id": 26000081,
+      "name": "Terry",
+      "elixir": 4,
+      "engine_id": "terry"
+    },
+    {
+      "internal_id": "SuperMiniPekka",
+      "policy_id": "super-mini-pekka",
+      "numeric_id": 26000082,
+      "name": "Super Mini P.E.K.K.A",
+      "elixir": 5,
+      "engine_id": "super_mini_pekka"
+    },
+    {
+      "internal_id": "WitchMother",
+      "policy_id": "mother-witch",
+      "numeric_id": 26000083,
+      "name": "Mother Witch",
+      "elixir": 4,
+      "engine_id": "mother_witch"
+    },
+    {
+      "internal_id": "ElectroSpirit",
+      "policy_id": "electro-spirit",
+      "numeric_id": 26000084,
+      "name": "Electro Spirit",
+      "elixir": 1,
+      "engine_id": "electro_spirit"
+    },
+    {
+      "internal_id": "ElectroGiant",
+      "policy_id": "electro-giant",
+      "numeric_id": 26000085,
+      "name": "Electro Giant",
+      "elixir": 7,
+      "engine_id": "electro_giant"
+    },
+    {
+      "internal_id": "PrinceBuff",
+      "policy_id": "raging-prince",
+      "numeric_id": 26000086,
+      "name": "Raging Prince",
+      "elixir": 5,
+      "engine_id": "raging_prince"
+    },
+    {
+      "internal_id": "Phoenix",
+      "policy_id": "phoenix",
+      "numeric_id": 26000087,
+      "name": "Phoenix",
+      "elixir": 4,
+      "engine_id": "phoenix"
+    },
+    {
+      "internal_id": "Cannon",
+      "policy_id": "cannon",
+      "numeric_id": 27000000,
+      "name": "Cannon",
+      "elixir": 3,
+      "engine_id": "cannon"
+    },
+    {
+      "internal_id": "GoblinHut",
+      "policy_id": "goblin-hut",
+      "numeric_id": 27000001,
+      "name": "Goblin Hut",
+      "elixir": 5,
+      "engine_id": "goblin_hut"
+    },
+    {
+      "internal_id": "Mortar",
+      "policy_id": "mortar",
+      "numeric_id": 27000002,
+      "name": "Mortar",
+      "elixir": 4,
+      "engine_id": "mortar"
+    },
+    {
+      "internal_id": "InfernoTower",
+      "policy_id": "inferno-tower",
+      "numeric_id": 27000003,
+      "name": "Inferno Tower",
+      "elixir": 5,
+      "engine_id": "inferno_tower"
+    },
+    {
+      "internal_id": "BombTower",
+      "policy_id": "bomb-tower",
+      "numeric_id": 27000004,
+      "name": "Bomb Tower",
+      "elixir": 4,
+      "engine_id": "bomb_tower"
+    },
+    {
+      "internal_id": "BarbarianHut",
+      "policy_id": "barbarian-hut",
+      "numeric_id": 27000005,
+      "name": "Barbarian Hut",
+      "elixir": 6,
+      "engine_id": "barbarian_hut"
+    },
+    {
+      "internal_id": "Tesla",
+      "policy_id": "tesla",
+      "numeric_id": 27000006,
+      "name": "Tesla",
+      "elixir": 4,
+      "engine_id": "tesla"
+    },
+    {
+      "internal_id": "Elixir Collector",
+      "policy_id": "elixir-collector",
+      "numeric_id": 27000007,
+      "name": "Elixir Collector",
+      "elixir": 6,
+      "engine_id": "elixir_collector"
+    },
+    {
+      "internal_id": "Xbow",
+      "policy_id": "x-bow",
+      "numeric_id": 27000008,
+      "name": "X-Bow",
+      "elixir": 6,
+      "engine_id": "x_bow"
+    },
+    {
+      "internal_id": "Tombstone",
+      "policy_id": "tombstone",
+      "numeric_id": 27000009,
+      "name": "Tombstone",
+      "elixir": 3,
+      "engine_id": "tombstone"
+    },
+    {
+      "internal_id": "FirespiritHut",
+      "policy_id": "furnace",
+      "numeric_id": 27000010,
+      "name": "Furnace",
+      "elixir": 4,
+      "engine_id": "furnace"
+    },
+    {
+      "internal_id": "GoblinCage",
+      "policy_id": "goblin-cage",
+      "numeric_id": 27000012,
+      "name": "Goblin Cage",
+      "elixir": 4,
+      "engine_id": "goblin_cage"
+    },
+    {
+      "internal_id": "GoblinDrill",
+      "policy_id": "goblin-drill",
+      "numeric_id": 27000013,
+      "name": "Goblin Drill",
+      "elixir": 4,
+      "engine_id": "goblin_drill"
+    },
+    {
+      "internal_id": "GoblinPartyHut",
+      "policy_id": "party-hut",
+      "numeric_id": 27000014,
+      "name": "Party Hut",
+      "elixir": 5,
+      "engine_id": "party_hut"
+    },
+    {
+      "internal_id": "Fireball",
+      "policy_id": "fireball",
+      "numeric_id": 28000000,
+      "name": "Fireball",
+      "elixir": 4,
+      "engine_id": "fireball"
+    },
+    {
+      "internal_id": "Arrows",
+      "policy_id": "arrows",
+      "numeric_id": 28000001,
+      "name": "Arrows",
+      "elixir": 3,
+      "engine_id": "arrows"
+    },
+    {
+      "internal_id": "Rage",
+      "policy_id": "rage",
+      "numeric_id": 28000002,
+      "name": "Rage",
+      "elixir": 2,
+      "engine_id": "rage"
+    },
+    {
+      "internal_id": "Rocket",
+      "policy_id": "rocket",
+      "numeric_id": 28000003,
+      "name": "Rocket",
+      "elixir": 6,
+      "engine_id": "rocket"
+    },
+    {
+      "internal_id": "GoblinBarrel",
+      "policy_id": "goblin-barrel",
+      "numeric_id": 28000004,
+      "name": "Goblin Barrel",
+      "elixir": 3,
+      "engine_id": "goblin_barrel"
+    },
+    {
+      "internal_id": "Freeze",
+      "policy_id": "freeze",
+      "numeric_id": 28000005,
+      "name": "Freeze",
+      "elixir": 4,
+      "engine_id": "freeze"
+    },
+    {
+      "internal_id": "Mirror",
+      "policy_id": "mirror",
+      "numeric_id": 28000006,
+      "name": "Mirror",
+      "elixir": 1,
+      "engine_id": "mirror"
+    },
+    {
+      "internal_id": "Lightning",
+      "policy_id": "lightning",
+      "numeric_id": 28000007,
+      "name": "Lightning",
+      "elixir": 6,
+      "engine_id": "lightning"
+    },
+    {
+      "internal_id": "Zap",
+      "policy_id": "zap",
+      "numeric_id": 28000008,
+      "name": "Zap",
+      "elixir": 2,
+      "engine_id": "zap"
+    },
+    {
+      "internal_id": "Poison",
+      "policy_id": "poison",
+      "numeric_id": 28000009,
+      "name": "Poison",
+      "elixir": 4,
+      "engine_id": "poison"
+    },
+    {
+      "internal_id": "Graveyard",
+      "policy_id": "graveyard",
+      "numeric_id": 28000010,
+      "name": "Graveyard",
+      "elixir": 5,
+      "engine_id": "graveyard"
+    },
+    {
+      "internal_id": "Log",
+      "policy_id": "the-log",
+      "numeric_id": 28000011,
+      "name": "The Log",
+      "elixir": 2,
+      "engine_id": "the_log"
+    },
+    {
+      "internal_id": "Tornado",
+      "policy_id": "tornado",
+      "numeric_id": 28000012,
+      "name": "Tornado",
+      "elixir": 3,
+      "engine_id": "tornado"
+    },
+    {
+      "internal_id": "Clone",
+      "policy_id": "clone",
+      "numeric_id": 28000013,
+      "name": "Clone",
+      "elixir": 3,
+      "engine_id": "clone"
+    },
+    {
+      "internal_id": "Earthquake",
+      "policy_id": "earthquake",
+      "numeric_id": 28000014,
+      "name": "Earthquake",
+      "elixir": 3,
+      "engine_id": "earthquake"
+    },
+    {
+      "internal_id": "BarbLog",
+      "policy_id": "barbarian-barrel",
+      "numeric_id": 28000015,
+      "name": "Barbarian Barrel",
+      "elixir": 2,
+      "engine_id": "barbarian_barrel"
+    },
+    {
+      "internal_id": "Heal",
+      "policy_id": "heal-spirit",
+      "numeric_id": 28000016,
+      "name": "Heal Spirit",
+      "elixir": 1,
+      "engine_id": "heal_spirit"
+    },
+    {
+      "internal_id": "Snowball",
+      "policy_id": "giant-snowball",
+      "numeric_id": 28000017,
+      "name": "Giant Snowball",
+      "elixir": 2,
+      "engine_id": "giant_snowball"
+    },
+    {
+      "internal_id": "RoyalDelivery",
+      "policy_id": "royal-delivery",
+      "numeric_id": 28000018,
+      "name": "Royal Delivery",
+      "elixir": 3,
+      "engine_id": "royal_delivery"
+    },
+    {
+      "internal_id": "GoblinPartyRocket",
+      "policy_id": "party-rocket",
+      "numeric_id": 28000020,
+      "name": "Party Rocket",
+      "elixir": 5,
+      "engine_id": "party_rocket"
+    },
+    {
+      "internal_id": "LittlePrince",
+      "policy_id": "little-prince",
+      "engine_id": "little_prince",
+      "name": "Little Prince",
+      "elixir": 3,
+      "mapping_source": "Recovered card_catalog.json LittlePrince record; existing policy vocabulary little-prince and data/card_costs.json."
+    }
+  ]
+}

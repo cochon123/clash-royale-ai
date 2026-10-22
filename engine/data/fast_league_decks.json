@@ -1,0 +1,165 @@
+{
+  "format": "fast-league-decks-v1",
+  "selection": "User-approved classic archetypes supported by the recovered build; not a claim of today\u2019s exact live popularity ranking. No heroes/evolutions.",
+  "accuracy_target": {
+    "winner_agreement_minimum": 0.95,
+    "per_deck_winner_agreement_minimum": 0.95,
+    "princess_mean_absolute_remaining_hp_error_maximum_percentage_points": 5,
+    "king_mean_absolute_remaining_hp_error_maximum_percentage_points": 5,
+    "unsupported_games_count_as_failures": true,
+    "holdout_ordered_matchups": 36,
+    "holdout_seeds_per_matchup": 7
+  },
+  "decks": [
+    {
+      "id": "hog-mirror",
+      "name": "Hog 2.6",
+      "archetype": "Cycle",
+      "cards": [
+        "hog-rider",
+        "musketeer",
+        "ice-golem",
+        "skeletons",
+        "ice-spirit",
+        "cannon",
+        "fireball",
+        "the-log"
+      ],
+      "native_cards": [
+        "HogRider",
+        "Musketeer",
+        "IceGolemite",
+        "Skeletons",
+        "IceSpirits",
+        "Cannon",
+        "Fireball",
+        "Log"
+      ]
+    },
+    {
+      "id": "log-bait",
+      "name": "Classic Log Bait",
+      "archetype": "Bait",
+      "cards": [
+        "goblin-barrel",
+        "princess",
+        "knight",
+        "goblin-gang",
+        "inferno-tower",
+        "rocket",
+        "the-log",
+        "ice-spirit"
+      ],
+      "native_cards": [
+        "GoblinBarrel",
+        "Princess",
+        "Knight",
+        "GoblinGang",
+        "InfernoTower",
+        "Rocket",
+        "Log",
+        "IceSpirits"
+      ]
+    },
+    {
+      "id": "pekka-bridge",
+      "name": "PEKKA Bridge Spam",
+      "archetype": "Bridge spam",
+      "cards": [
+        "pekka",
+        "battle-ram",
+        "bandit",
+        "royal-ghost",
+        "electro-wizard",
+        "magic-archer",
+        "poison",
+        "zap"
+      ],
+      "native_cards": [
+        "Pekka",
+        "BattleRam",
+        "Assassin",
+        "Ghost",
+        "ElectroWizard",
+        "EliteArcher",
+        "Poison",
+        "Zap"
+      ]
+    },
+    {
+      "id": "lava-loon",
+      "name": "LavaLoon",
+      "archetype": "Air beatdown",
+      "cards": [
+        "lava-hound",
+        "balloon",
+        "tombstone",
+        "mega-minion",
+        "minions",
+        "guards",
+        "fireball",
+        "zap"
+      ],
+      "native_cards": [
+        "LavaHound",
+        "Balloon",
+        "Tombstone",
+        "MegaMinion",
+        "Minions",
+        "SkeletonWarriors",
+        "Fireball",
+        "Zap"
+      ]
+    },
+    {
+      "id": "golem",
+      "name": "Golem Night Witch",
+      "archetype": "Beatdown",
+      "cards": [
+        "golem",
+        "night-witch",
+        "baby-dragon",
+        "mega-minion",
+        "lumberjack",
+        "tornado",
+        "lightning",
+        "barbarian-barrel"
+      ],
+      "native_cards": [
+        "Golem",
+        "DarkWitch",
+        "BabyDragon",
+        "MegaMinion",
+        "RageBarbarian",
+        "Tornado",
+        "Lightning",
+        "BarbLog"
+      ]
+    },
+    {
+      "id": "custom-mortar",
+      "name": "Custom Mortar",
+      "archetype": "Siege",
+      "cards": [
+        "mortar",
+        "knight",
+        "archers",
+        "skeletons",
+        "barbarian-barrel",
+        "arrows",
+        "mini-pekka",
+        "rocket"
+      ],
+      "native_cards": [
+        "Mortar",
+        "Knight",
+        "Archer",
+        "Skeletons",
+        "BarbLog",
+        "Arrows",
+        "MiniPekka",
+        "Rocket"
+      ]
+    }
+  ]
+}
