@@ -119,7 +119,7 @@ Reproduce the function check with the installed analysis environment:
 ```sh
 cargo build --release --offline --manifest-path rust-engine/Cargo.toml --example next_prime_probe
 tools/reverse-env/bin/python tools/validate_next_prime.py
-PYTHONPATH=rl /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python \
+PYTHONPATH=rl ../.venv/bin/python \
   -m unittest rl.test_banana_fast_features rl.test_banana_fast_policy \
   rl.test_banana_fast_train rl.test_banana_engine
 ```
@@ -179,7 +179,7 @@ From the repository root:
 
 ```sh
 cargo build --release --offline --manifest-path rust-engine/Cargo.toml --bin rust_deck_rl
-/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_fast_train \
+../.venv/bin/python -m rl.banana_fast_train \
   --run-dir runs/banana-fast-new-run \
   --checkpoint analysis/native-pipeline/oracle-export-01/stage01-attempt001/state \
   --workers 10 --duration-seconds 10800 --device cuda --torch-threads 2
@@ -243,7 +243,7 @@ python3 tools/native_deck_validation.py \
   --trace analysis/fast-decks/new-reference.json \
   --binary rust-engine/target/release/rust_deck_rl \
   --output analysis/fast-decks/new-replay.json --audit
-PYTHONPATH=rl /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python \
+PYTHONPATH=rl ../.venv/bin/python \
   -m unittest rl/test_banana_fast_policy.py
 ```
 

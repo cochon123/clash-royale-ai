@@ -409,7 +409,7 @@ with NativeClashEnv(ticks_per_step=20) as env:
         observation, reward, terminated, truncated, info = env.step(action)
         done = terminated or truncated"""
 sections.append(section("reproduce", 13, "Run it and find the implementation", "Commands are for the existing local workspace and its retained native artifacts.", f"""
-<p>Run from <code>/home/cochon/Documents/mini-project/clash-rust</code>. The prepared snapshot, original extracted libraries and resources are required; this HTML file alone is not a distributable game or a complete runtime bundle.</p>
+<p>Run from <code>engine/</code> in the clash-royale-ai repository. The prepared snapshot, original extracted libraries and resources are required; this HTML file alone is not a distributable game or a complete runtime bundle.</p>
 {code(run_commands)}
 <p>The repeat benchmark uses a different output filename to preserve the original measured report.</p>
 {code(gym_example, "Python")}

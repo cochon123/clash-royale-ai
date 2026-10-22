@@ -13,9 +13,11 @@ dependencies = [
     "scikit-learn>=1.4",
     "Pillow>=10.0",
     "rich>=13.7",
+    "Markdown>=3.7",
 ]
 
 [project.optional-dependencies]
+arena-web = ["starlette>=1.0,<2", "uvicorn>=0.38,<1", "itsdangerous>=2.2,<3"]
 detector-training = ["roboflow>=1.1"]
 phone-ocr = ["rapidocr>=2.0"]
 

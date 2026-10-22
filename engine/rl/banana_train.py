@@ -36,7 +36,7 @@ except ImportError:
 ROOT = Path(__file__).resolve().parents[1]
 RUN_DIR = ROOT / "runs" / "banana-league-20261019"
 ENGINE_DIR = ROOT / "native-engine"
-CHECKPOINT_ROOT = ROOT.parent / "clash-royale-ai" / "models" / "policy_bc_v4.4.2"
+CHECKPOINT_ROOT = ROOT.parent / "models" / "policy_bc_v4.4.2"
 BASE_CHECKPOINT = CHECKPOINT_ROOT / "best_model.pt"
 SOURCE_SHA = ""
 DECKS: dict[str, tuple[str, ...]] = {

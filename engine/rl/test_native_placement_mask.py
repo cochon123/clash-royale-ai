@@ -27,7 +27,8 @@ class NativePlacementMask(unittest.TestCase):
             self.assertEqual(len(result["mask"]), 576)
             self.assertFalse(result["mask"][8 * 32 + 2])
             # The exact target rejected in the user's watched match.
-            bad = engines[0].request(dict(op="step", actions=[dict(side=0, slot=0, x=1406, y=15111)], ticks=1))
+            bad = engines[0].request(dict(op="step", actions=[dict(side=0, slot=0, x=1406, y=15111)], ticks=1,
+                                         raw_targets=True))
             self.assertFalse(bad["actions"][0]["accepted"])
             engines[1].request(dict(op="step", actions=[], ticks=1))
             tile = next(i for i, valid in enumerate(result["mask"]) if valid)

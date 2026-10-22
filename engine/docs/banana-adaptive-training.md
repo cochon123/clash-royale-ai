@@ -58,7 +58,7 @@ HP checkpoints and will reject their additional weights.
 Example only; running this command starts a new three-hour budget:
 
 ```sh
-/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python \
+../.venv/bin/python \
   -m rl.banana_hog_adaptive \
   --run-dir runs/banana-hog-adaptive-NEW \
   --engine native-engine/target/release/league_reference \
@@ -84,7 +84,7 @@ regression rollback, old-checkpoint compatibility, HP-checkpoint round trips,
 per-game sampling independence, and original adapter regression tests.
 
 ```sh
-PYTHONPATH=rl /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python \
+PYTHONPATH=rl ../.venv/bin/python \
   -m unittest rl.test_banana_tower_hp rl.test_banana_hog_adaptive \
   rl.test_hog_retrain rl.test_hog_continue rl.test_banana_fast_policy
 ```

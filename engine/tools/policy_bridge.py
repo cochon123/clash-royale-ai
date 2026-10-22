@@ -16,7 +16,7 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_AI_REPO = ROOT.parent / "clash-royale-ai"
+DEFAULT_AI_REPO = ROOT.parent
 MODELS = {
     "v9": ("v9", "models/policy_v9/final_model/best.pt", "Policy v9 (experimental)"),
     "v4.4.1": ("legacy", "models/policy_bc_v4.4.1/best_model.pt", "Policy v4.4.1"),

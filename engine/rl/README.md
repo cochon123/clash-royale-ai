@@ -17,7 +17,7 @@ in the historical commands below no longer exist. Mortar models remain.
 
 The spectator now defaults to the learned timing controller in
 `banana_timed_policy.py`, following the two-phone harness in
-`../clash-royale-ai/src/cr_replay_pipeline/phone_lab/battle.py`: choose from the
+`../src/cr_replay_pipeline/phone_lab/battle.py`: choose from the
 actual hand (including unaffordable cards), anchor the model's delay to the
 latest confirmed event, and check native elixir before executing. A planned
 card persists while saving, with replanning after confirmed events or hand
@@ -28,7 +28,7 @@ This inference controller is separate from the existing PPO wait-head trainer.
 For the current matchup:
 
 ```sh
-../clash-royale-ai/.venv/bin/python -m rl.banana_watch \
+../.venv/bin/python -m rl.banana_watch \
   --deck-a hog --checkpoint-a runs/banana-hog-1/models/final.pt \
   --deck-b log-bait --checkpoint-b runs/banana-1/base.pt
 ```
@@ -92,7 +92,7 @@ To reproduce in a **fresh run directory** using the existing CUDA environment:
 
 ```sh
 cargo build --release --offline --manifest-path native-engine/Cargo.toml --bin deck-setup-probe
-/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_train \
+../.venv/bin/python -m rl.banana_train \
   --run-dir runs/banana-new-run \
   --engine-bin native-engine/target/release/deck-setup-probe \
   --checkpoint analysis/native-pipeline/oracle-export-01/stage01-attempt001/state \
@@ -112,7 +112,7 @@ The original minimal Gym environment described below remains available.
 ## Watch the two trained specialists fight
 
 ```sh
-/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_watch
+../.venv/bin/python -m rl.banana_watch
 ```
 
 This opens the original-asset desktop spectator with `banana-hog-1` (Hog 2.6)
@@ -127,7 +127,7 @@ model clock begins.
 Point either side at another saved `banana-native-ppo-v1` checkpoint:
 
 ```sh
-/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_watch \
+../.venv/bin/python -m rl.banana_watch \
   --deck-a hog --deck-b mortar \
   --checkpoint-a runs/banana-league-20261019/models/hog/latest.pt \
   --checkpoint-b runs/banana-league-20261019/models/mortar/latest.pt
@@ -140,7 +140,7 @@ To compare the untrained warm-start actor against the trained Hog specialist,
 mirror Hog 2.6 and load the final checkpoint on side 1 only:
 
 ```sh
-/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_watch \
+../.venv/bin/python -m rl.banana_watch \
   --deck hog --checkpoint-b runs/banana-league-20261019/models/hog/final.pt
 ```
 
@@ -150,8 +150,8 @@ initial `models/hog/initial.pt` has the same actor weights.
 ## Play against a Banana AI
 
 ```sh
-cd /home/cochon/Documents/mini-project/clash-rust
-../clash-royale-ai/.venv/bin/python -m rl.banana_play --opponent banana-hog-1 --deck hog --ai-deck log-bait
+cd engine  # from the repository root
+../.venv/bin/python -m rl.banana_play --opponent banana-hog-1 --deck hog --ai-deck log-bait
 ```
 
 You play blue (bottom) with `--deck`; the saved actor plays red with
@@ -185,7 +185,7 @@ choose its most likely actions instead of sampling. `--headless` reads
 ## Watch a separate frozen 4.4.2 match
 
 ```sh
-/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_watch --deck mortar
+../.venv/bin/python -m rl.banana_watch --deck mortar
 ```
 
 This opens the original-asset desktop spectator for a mirrored custom Mortar

@@ -1,6 +1,6 @@
 """Warm-started actor/critic adapter for the original native Clash session.
 
-The actor is loaded from sibling clash-royale-ai policy-bc-v4.4.2. The model
+The actor is loaded from the repository's policy-bc-v4.4.2. The model
 only knows decks, elixir, and causal card-play history; the native observation
 currently contains no battlefield entity features. Call ``record_action`` only
 for accepted native actions so self-play history stays authoritative.
@@ -20,7 +20,7 @@ from torch import Tensor, nn
 from torch.distributions import Categorical
 
 ROOT = Path(__file__).resolve().parents[1]
-SIBLING = ROOT.parent / "clash-royale-ai"
+SIBLING = ROOT.parent  # repository root: replay pipeline and BC checkpoints
 DEFAULT_CHECKPOINT = SIBLING / "models" / "policy_bc_v4.4.2"
 
 

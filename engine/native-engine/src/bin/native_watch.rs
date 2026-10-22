@@ -41,6 +41,27 @@ fn preset(value: &Value) -> Result<&'static [&'static str; 8], String> {
     }
 }
 
+/// A side's deck: an explicit `deck0`/`deck1` array of eight native card
+/// names, or a named preset (`deck_preset`, `deck_preset_side1`).
+fn side_deck(request: &Value, side: usize) -> Result<Vec<String>, String> {
+    let key = if side == 0 { "deck0" } else { "deck1" };
+    if let Some(values) = request.get(key).filter(|v| !v.is_null()) {
+        let names = values
+            .as_array()
+            .ok_or_else(|| format!("{key} must be an array of native card names"))?
+            .iter()
+            .map(|v| v.as_str().map(str::to_string).ok_or_else(|| format!("{key} entries must be strings")))
+            .collect::<Result<Vec<_>, _>>()?;
+        return Ok(names);
+    }
+    let named = if side == 0 {
+        &request["deck_preset"]
+    } else {
+        request.get("deck_preset_side1").unwrap_or(&request["deck_preset"])
+    };
+    Ok(preset(named)?.iter().map(|name| name.to_string()).collect())
+}
+
 fn action(value: &Value) -> Result<PlayCardRequest, String> {
     let side = value["side"]
         .as_u64()
@@ -86,13 +107,12 @@ impl Server {
                     .try_into()
                     .map_err(|_| "seed must be in 0..=4294967295")?;
                 let started = Instant::now();
+                let deck0 = side_deck(request, 0)?;
+                let deck1 = side_deck(request, 1)?;
+                let deck0: Vec<&str> = deck0.iter().map(String::as_str).collect();
+                let deck1: Vec<&str> = deck1.iter().map(String::as_str).collect();
                 let mut session = NativeSession::load(&self.checkpoint)?;
-                self.configured = session
-                    .configure_normal_decks_and_rebuild(
-                        preset(&request["deck_preset"])?,
-                        preset(request.get("deck_preset_side1").unwrap_or(&request["deck_preset"]))?,
-                        seed,
-                    )?;
+                self.configured = session.configure_normal_decks_and_rebuild(&deck0, &deck1, seed)?;
                 self.initial_tick = self.configured["observation"]["tick"]
                     .as_u64()
                     .ok_or("configured observation missing tick")?;
@@ -121,8 +141,16 @@ impl Server {
                 let slot = request["slot"].as_u64().filter(|v| *v < 4).ok_or("invalid placement slot")? as u32;
                 self.session.as_mut().ok_or("reset required")?.placement_mask(side, slot)
             }
+            "placement_tiles" => {
+                let side = request["side"].as_u64().filter(|v| *v < 2).ok_or("invalid placement side")? as u32;
+                let slot = request["slot"].as_u64().filter(|v| *v < 4).ok_or("invalid placement slot")? as u32;
+                self.session.as_mut().ok_or("reset required")?.placement_tiles(side, slot)
+            }
             "validate_target" => {
                 self.session.as_mut().ok_or("reset required")?.validate_target(action(request)?)
+            }
+            "resolve_target" => {
+                self.session.as_mut().ok_or("reset required")?.resolve_target(action(request)?)
             }
             "inspect_components" => {
                 let session = self.session.as_mut().ok_or("reset required")?;
@@ -152,8 +180,15 @@ impl Server {
                     .as_u64()
                     .ok_or("frame tick is not an unsigned integer")?;
                 let mut results = Vec::new();
+                // Raw submission is retained only for native differential probes.
+                // Live harnesses need the resolved target returned by default.
+                let raw_targets = request["raw_targets"].as_bool().unwrap_or(false);
                 for action in actions {
-                    results.push(session.play_card(action)?);
+                    results.push(if raw_targets {
+                        session.play_card(action)?
+                    } else {
+                        session.play_card_resolved(action)?
+                    });
                 }
                 let mut advanced = 0u64;
                 for _ in 0..count {
@@ -202,7 +237,7 @@ fn run() -> Result<(), String> {
                 ))
             }
             "--help" | "-h" => {
-                println!("native-watch --checkpoint DIR; JSONL reset, observe, step, close; reset requires deck_preset=hog26|pixel9_mortar, optional deck_preset_side1, and accepts seed");
+                println!("native-watch --checkpoint DIR; JSONL reset, observe, step, close; reset takes deck0/deck1 arrays of 8 native card names or deck_preset=hog26|pixel9_mortar|log-bait with optional deck_preset_side1, and accepts seed");
                 return Ok(());
             }
             _ => return Err(format!("unknown argument {arg}")),

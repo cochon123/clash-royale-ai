@@ -4,6 +4,38 @@ A data-driven Clash Royale research project: collect replays, build causal
 observations, train action-sequence policies, and evaluate offline before
 spending time on live games.
 
+The former `clash-rust` repository now lives in **[`engine/`](engine/README.md)**,
+with both Git histories preserved. It contains the recovered reference engine,
+the fast training engine, RL runners, original-asset viewer, and local engine
+artifacts. The replay pipeline and its model/report directories stay here at
+the repository root.
+
+## Open the websites
+
+Hosted Arena: **https://calgarypermit.ca/clashroyale/** (one concurrent match).
+[Deployment and operations](deploy/arena/README.md).
+
+```sh
+cd /home/cochon/Documents/mini-project/clash-royale-ai
+.venv/bin/python -m webapps
+```
+
+- **[Arena](http://127.0.0.1:8800/):** choose models and decks, play against an AI,
+  or watch two AIs. Six presets and a custom deck builder are included. Matches
+  use the original-asset renderer from `rl.banana_play`.
+- **[Lab](http://127.0.0.1:8801/):** inspect all models, RL runs and training
+  activity, metrics and curves, engine validation, data, reports and docs.
+
+The very fast engine is used for training; Arena uses the reference engine for
+every deck. [Setup, controls, phone-browser access and API](webapps/README.md).
+
+The original desktop command now runs from `engine/`:
+
+```sh
+cd engine
+../.venv/bin/python -m rl.banana_play --opponent banana-hog-1 --deck hog --ai-deck log-bait
+```
+
 ## Start here: where everything lives
 
 | What | Location | Contents |
@@ -42,6 +74,9 @@ has already been consumed and must not be reused for model selection.
 | `src/cr_replay_pipeline/v9_*.py` | v9 cache, trainer, suite, evaluator, inference/export, diagnostics and watchdog |
 | `extension/`, `systemd/` | Browser replay collector and persistent local ingest service |
 | `scripts/` | Experiment helpers, detector training, comparisons and Hugging Face publishing |
+| `engine/` | Recovered game engines, RL training, original-asset desktop viewer, local runs and extracted assets (merged clash-rust) |
+| `webapps/` | Arena player/model lobby and read-only Lab research dashboard |
+| `models/registry.json` | Curated engine-compatible models used by Arena and Lab |
 | `tests/` | Pipeline, causal features, leakage, policy and integration checks |
 | `data/raw/`, `data/metadata/` | Collected replay payloads and official battle metadata (Hugging Face dataset) |
 | `data/splits/`, `data/card_costs.json` | Reserved battle IDs, split manifests and costs |

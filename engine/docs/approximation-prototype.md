@@ -36,10 +36,10 @@ trained AI. No official game client, account, or game server is involved.
 
 ## Your trained policies
 
-The bridge discovers checkpoints in `../clash-royale-ai` and uses that project's
-existing Python environment. Available models appear automatically in the UI:
+The bridge discovers checkpoints in the repository root (`../models`) and uses
+its existing Python environment (`../.venv`). Available models appear automatically in the UI:
 v9 (experimental), v4.4.1, and v4.4.2. The three built-in bots work without Python
-or model weights. Override the sibling checkout with `CLASH_AI_REPO=/path/to/repo`.
+or model weights. Override the checkout with `CLASH_AI_REPO=/path/to/repo`.
 
 ```sh
 python3 tools/policy_bridge.py --list

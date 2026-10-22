@@ -21,6 +21,7 @@ import time
 import torch
 
 from .banana_policy import BananaEpisode, _native_card
+from .banana_placement import resolved_play_target
 from .banana_hog_adaptive import AdaptiveHogPolicy, SamplingPolicy
 from .banana_tower_hp import tower_hp_features
 from .banana_timed_policy import PhoneStyleScheduler
@@ -190,7 +191,7 @@ def main(argv=None):
         'decision_ticks': a.decision_ticks, 'learning': False, 'action_selection': 'greedy' if a.greedy else 'sampled',
         'native_placement_masks': not a.unmasked_placement,
         'timing_controller': 'legacy_wait_head' if a.legacy_wait_head else 'phone_style_learned_delay',
-        'reference_harness': str(ROOT.parent / 'clash-royale-ai/src/cr_replay_pipeline/phone_lab/battle.py'),
+        'reference_harness': str(ROOT.parent / 'src/cr_replay_pipeline/phone_lab/battle.py'),
         'note': 'Independent watched match. No optimizer, no RL-run files or weights are modified. Each side samples its own saved actor through the native adapter.',
     }
     atomic_json(a.run_dir / 'manifest.json', manifest)
@@ -404,13 +405,14 @@ def main(argv=None):
                 elif not a.legacy_wait_head:
                     scheduler.observe_result(action, result)
                 if result.get('accepted') is True:
+                    land_x, land_y = resolved_play_target(result)
                     accepted += 1
-                    episode.record_action(action.side, action.card, action.x, action.y, game_seconds, True)
+                    episode.record_action(action.side, action.card, land_x, land_y, game_seconds, True)
                     hand_card = next(row for row in obs['hands'][action.side] if int(row['slot']) == action.slot)
                     next_play_id += 1
                     recent_plays.append({'id':next_play_id, 'side':action.side, 'name':hand_card['name'],
                                          'card_id':int(hand_card['card_id']), 'cost':int(hand_card['cost']),
-                                         'x':action.x, 'y':action.y, 'tick':int(obs['tick'])})
+                                         'x':land_x, 'y':land_y, 'tick':int(obs['tick'])})
                     recent_plays = recent_plays[-32:]
                 else:
                     rejected += 1

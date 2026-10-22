@@ -1,5 +1,10 @@
 # Original-engine desktop spectator
 
+The browser Arena reuses this viewer’s `Painter` through the windowless
+`clash-web-renderer` binary, including original artwork, animation, effects,
+HUD and control geometry. [Arena instructions](../../webapps/README.md).
+`rl.banana_play` still opens the existing desktop window unchanged.
+
 This viewer runs the recovered `Normal` scenario through the static Rust
 recompilation and reads presentation snapshots without calling native getters.
 It draws original SC5 arena, character, tower and spectator HUD assets.
@@ -16,7 +21,7 @@ with their own native decks at 1×:
 ```sh
 cargo build --release --offline --manifest-path native-engine/Cargo.toml --bin native-watch
 cargo build --offline --manifest-path native-spectator/Cargo.toml
-/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_watch
+../.venv/bin/python -m rl.banana_watch
 ```
 
 The driver runs on CPU independently of training, verifies each side's native

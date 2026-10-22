@@ -1,5 +1,10 @@
 # Clash Rust: native engine recovery
 
+This former standalone repository is now `clash-royale-ai/engine/`.
+Commands in this document run from this directory; the shared Python environment
+is `../.venv/`. For the model lobby and technical dashboard, see
+[Arena and Lab](../webapps/README.md). Both websites run from the parent repo.
+
 The target is a desktop Rust port of the supplied Clash Royale build, with its
 original interface and recovered battle behavior. Planned modes are human vs AI
 and AI vs AI, selectable decks and controllers, and a fast headless engine for

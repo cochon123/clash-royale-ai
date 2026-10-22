@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f1b">
+<title>Match · Clash Royale AI Arena</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="game">
+  <nav class="match-toolbar" aria-label="Match controls">
+    <a class="icon-btn" href="/" title="Back to the lobby" aria-label="Back to the lobby">←</a>
+    <span id="match-title">Preparing match</span>
+    <div class="speed" id="speed" hidden></div>
+    <button class="icon-btn" id="pause" title="Pause (Space)" aria-label="Pause">❚❚</button>
+    <button class="icon-btn" id="rematch" title="New match (R)" aria-label="New match">↻</button>
+    <button class="icon-btn" id="fullscreen" title="Full screen" aria-label="Full screen">⛶</button>
+    <button class="icon-btn" id="end-match">End</button>
+  </nav>
+  <div class="native-wrap" id="native-wrap">
+    <div class="native-stage" id="native-stage">
+      <img id="board-stream" width="540" height="900" alt="Original game view" draggable="false" hidden>
+      <canvas id="board" width="540" height="900" aria-label="Original game view. Use keys 1 to 4 to select a card, then click the arena to play."></canvas>
+      <div id="hand-targets" aria-label="Your hand"></div>
+    </div>
+    <div class="overlay show" id="loading"><div class="box"><div class="spinner"></div>
+      <h2>Preparing the match</h2><p id="loading-msg">Connecting...</p>
+      <a class="btn" href="/">Back to the lobby</a>
+    </div></div>
+  </div>
+  <div class="sr-only" id="feedback" role="status" aria-live="polite"></div>
+</main>
+<script src="/play.js"></script>
+</body>
+</html>

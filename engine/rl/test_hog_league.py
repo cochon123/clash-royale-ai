@@ -4,12 +4,13 @@ import json
 import tempfile
 import time
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock
 from zoneinfo import ZoneInfo
 
-from .banana_hog_league import HOLDOUTS, ROOT, League, Sampler, deadline_epoch, macro_score, metric, paired_delta
+from .banana_hog_league import HOLDOUTS, ROOT, Game, League, Sampler, deadline_epoch, macro_score, metric, paired_delta
 
 
 class OvernightInvariants(unittest.TestCase):
@@ -78,6 +79,80 @@ class OvernightInvariants(unittest.TestCase):
             league.run()
             league.play.assert_not_called()
             league.evaluate.assert_not_called()
+
+
+class _Wait:
+    def __init__(self, side):
+        self.side = side
+        self.wait = True
+        self.card = "hog-rider"
+
+
+class _ClockClient:
+    def __init__(self, delay, steps):
+        self.delay = delay
+        self.limit = steps
+        self.n = 0
+        self.starts = []
+        self.ends = []
+
+    def request(self, payload, timeout=45):
+        self.starts.append(time.perf_counter())
+        time.sleep(self.delay)
+        self.n += 1
+        self.ends.append(time.perf_counter())
+        return {"observation": {"tick": 100 + self.n * 20, "winner_side": 0, "entity_count": 1},
+                "actions": [], "terminated": self.n >= self.limit, "truncated": False}
+
+
+def _scheduling_league(pipeline):
+    league = object.__new__(League)
+    fast, slow = _ClockClient(0.04, 2), _ClockClient(0.25, 1)
+    league.decks = {"hog-mirror": {"name": "Hog 2.6"}}
+    league.args = SimpleNamespace(workers=2, pipeline=pipeline)
+    league.clients = [fast, slow]
+    league.executor = ThreadPoolExecutor(max_workers=2)
+    league.worker_states = [{}, {}]
+    league.parent_policy = object()
+    league.base = object()
+    league.fun = {"card_plays": {}}
+    league.counters = __import__("collections").Counter()
+    league.infer_at = []
+    league.stopping = lambda: False
+    league.publish = lambda force=False: None
+    league.reset = lambda worker, job: Game(worker, job, object(), {"tick": 100}, 100)
+    league.record = lambda game, kind, result, error=None: {"result": result, "worker": game.worker}
+
+    def learner_actions(policy, requests, games, collecting):
+        league.infer_at.append(time.perf_counter())
+        return [_Wait(game.job["seat"]) for game in games]
+
+    league.learner_actions = learner_actions
+    league.opponent_actions = lambda policy, requests, games, controller: [_Wait(1 - game.job["seat"]) for game in games]
+    return league, fast, slow
+
+
+class PipelineScheduling(unittest.TestCase):
+    def test_ready_game_is_not_held_for_the_slow_engine(self):
+        league, fast, slow = _scheduling_league(pipeline=True)
+        jobs = [{"deck_id": "hog-mirror", "controller": "bc-greedy", "seat": 0, "seed": 1},
+                {"deck_id": "hog-mirror", "controller": "bc-greedy", "seat": 0, "seed": 2}]
+        try:
+            rows, _ = league.play(jobs, object(), "train")
+        finally:
+            league.executor.shutdown(wait=True)
+        self.assertEqual(sorted(row["result"] for row in rows), ["W", "W"])
+        self.assertLess(fast.starts[1], slow.ends[0])
+
+    def test_barrier_holds_the_fast_game_until_the_slow_one_returns(self):
+        league, fast, slow = _scheduling_league(pipeline=False)
+        jobs = [{"deck_id": "hog-mirror", "controller": "bc-greedy", "seat": 0, "seed": 1},
+                {"deck_id": "hog-mirror", "controller": "bc-greedy", "seat": 0, "seed": 2}]
+        try:
+            league.play(jobs, object(), "train")
+        finally:
+            league.executor.shutdown(wait=True)
+        self.assertGreaterEqual(fast.starts[1], slow.ends[0])
 
 
 if __name__ == "__main__":

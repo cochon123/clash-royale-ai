@@ -1,0 +1,71 @@
+{
+  "format": "clash-model-registry-v1",
+  "description": "Models that can play live matches in the recovered original engine (engine/), as used by the Arena website. Paths are relative to the repository root. Offline replay models (models/policy_bc_*, models/policy_v9, winner/realism/style models) are discovered automatically by the Lab website and are not listed here.",
+  "engine_models": [
+    {
+      "id": "banana-hog-2",
+      "name": "Banana Hog 2",
+      "kind": "rl",
+      "checkpoint": "engine/runs/banana-hog-2/models/final.pt",
+      "trained_deck": "hog-mirror",
+      "parent": "banana-hog-1",
+      "run": "engine/runs/banana-hog-2",
+      "created": "2026-10-22",
+      "summary": "Overnight PPO continuation of Banana Hog 1 (13,632 games, 744 updates) on Hog 2.6 against the six-deck classic pool in the fast compiled league engine, with native placement masks and a greedy regression guard.",
+      "result": "Fresh-seed confirmation (144 games): 48.6% macro score vs 21.5% for Banana Hog 1 (+27.1 paired). Mirror 0.79, Log Bait 0.75, LavaLoon 0.54, Mortar 0.50, Golem 0.33, PEKKA Bridge Spam 0.00.",
+      "recommended": true
+    },
+    {
+      "id": "banana-hog-1",
+      "name": "Banana Hog 1",
+      "kind": "rl",
+      "checkpoint": "engine/runs/banana-hog-1/models/final.pt",
+      "trained_deck": "hog-mirror",
+      "parent": "banana-1",
+      "run": "engine/runs/banana-hog-1",
+      "created": "2026-10-21",
+      "summary": "PPO fine-tune of Banana 1 on Hog 2.6 for two hours in the original engine, with tower-HP inputs and trainable placement.",
+      "result": "Sampled score against the original bots rose from 13.6% (parent) to 31.8% on the 44-game selection bank.",
+      "recommended": true
+    },
+    {
+      "id": "banana-1",
+      "name": "Banana 1",
+      "kind": "imitation",
+      "checkpoint": "engine/runs/banana-1/base.pt",
+      "trained_deck": null,
+      "parent": "policy-bc-v4.4.2",
+      "run": null,
+      "created": "2026-10-21",
+      "summary": "Exact export of the policy-bc-v4.4.2 behaviour-cloning actor (learned from human replays), with no reinforcement learning. Plays any deck it has seen in replays.",
+      "result": "Reference opponent for every RL run.",
+      "recommended": true
+    },
+    {
+      "id": "banana-mortar-1",
+      "name": "Banana Mortar 1",
+      "kind": "rl",
+      "checkpoint": "engine/runs/banana-league-20261019/models/mortar/final.pt",
+      "trained_deck": "custom-mortar",
+      "parent": "policy-bc-v4.4.2",
+      "run": "engine/runs/banana-league-20261019",
+      "created": "2026-10-19",
+      "summary": "Three-hour PPO run on the Custom Mortar deck (first Banana league), without tower-HP inputs.",
+      "result": "319 completed training games; no separate evaluation bank.",
+      "recommended": false
+    },
+    {
+      "id": "random",
+      "name": "Random bot",
+      "kind": "baseline",
+      "checkpoint": null,
+      "trained_deck": null,
+      "parent": null,
+      "run": null,
+      "created": null,
+      "summary": "Plays a random affordable card on a random legal tile every few seconds. A sanity baseline, not a trained model.",
+      "result": null,
+      "recommended": false
+    }
+  ]
+}

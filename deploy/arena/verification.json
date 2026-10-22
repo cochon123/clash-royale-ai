@@ -1,0 +1,39 @@
+{
+  "verified_at": "2026-10-22T12:00:46.426087+00:00",
+  "release": "20261022-03",
+  "url": "https://calgarypermit.ca/clashroyale/",
+  "archive_sha256": "dacbf332f6df52b43e2e3ec5a3801268171f4ab8034c256b984a8ba841cc9e29",
+  "runtime_files": 901,
+  "configured_max_fps": 60,
+  "jpeg_quality": 88,
+  "public_measurement": {
+    "frames": 260,
+    "sample_seconds": 15.4,
+    "delivered_fps": 16.81,
+    "renderer_sequence_fps": 17.2,
+    "mean_jpeg_bytes": 107003,
+    "mbps": 14.45,
+    "native_ticks_per_second": 18.62
+  },
+  "local_renderer_measurement": {
+    "fps": 59.58,
+    "median_render_ms": 2.98,
+    "median_encode_ms": 1.34,
+    "p95_encode_ms": 2.9,
+    "scene": "Original-asset start snapshot replayed at20native ticks/s"
+  },
+  "vps_cpu_steal_percent_during_startup_sample": 69.4,
+  "verification": {
+    "python_tests_passed": 52,
+    "mouse_card_accepted": true,
+    "touch_card_accepted": true,
+    "pause_resume": true,
+    "reset": true,
+    "polling_fallback_and_touch": true,
+    "other_session_video_and_view_rejected": true,
+    "phone_horizontal_overflow": false,
+    "browser_exceptions": 0,
+    "own_test_match_closed": true
+  },
+  "note": "Single18second HTTPS stream sample; excludes the first2seconds for frame-rate calculation. Performance varies with shared VPS contention and battle complexity. Target60FPS is a ceiling, not a guaranteed public rate."
+}

@@ -33,6 +33,10 @@ HOLDOUTS = {"miner-wallbreakers", "giant-princes"}
 CONTROLLERS = ("bc-greedy", "bc-sampled", "hog1-greedy")
 EVAL_CONTROLLERS = ("bc-greedy", "hog1-greedy")
 STOPPING = False
+# After the first engine in a wave returns, wait this long for others that are
+# already finishing so the GPU still sees a batch. Games still inside the
+# engine are not held for this window.
+PIPELINE_GATHER_S = 0.015
 
 
 def deadline_epoch(value: str) -> float:
@@ -213,6 +217,7 @@ class League:
         self.sampler = self.make_sampler(self.pool, args.seed + 14)
         self.counters = Counter()
         self.errors = Counter()
+        self.pace = {"infer_s": 0., "infer_batches": 0, "infer_games": 0, "engine_s": 0., "engine_steps": 0}
         self.train_rows = []
         self.recent = deque(maxlen=40)
         self.fun = {"card_plays": {}, "quickest_win": None, "longest_game": None,
@@ -536,90 +541,156 @@ class League:
                         dummy = Game(worker, job, BananaEpisode((tuple(self.hog["cards"]), tuple(self.decks[job["deck_id"]]["cards"]))), {"tick": 0}, 0)
                         completed.append(self.record(dummy, kind, "VOID", str(exc)))
                         self.restart_worker(worker)
+            step_jobs = {}
+            ready = list(active.values())
+            held = []  # barrier mode keeps early finishers until the whole wave returns
             while active:
                 if self.stopping():
-                    for game in active.values():
+                    if step_jobs:
+                        futures.wait(step_jobs, timeout=45)
+                        for future in list(step_jobs):
+                            game = step_jobs.pop(future)
+                            if game.worker in active:
+                                self._consume_step(game, future, kind, collecting, active, completed, transitions)
+                    for game in list(active.values()):
                         completed.append(self.record(game, kind, "VOID", "deadline_or_stop"))
                     break
-                games = list(active.values())
-                sampled = {g.worker: [] for g in games}
-                # One learner batch and one batch per frozen controller style.
-                requests = [(g.episode, g.obs, g.job["seat"], (int(g.obs["tick"]) - g.start_tick) / 20.) for g in games]
-                actions = self.learner_actions(policy, requests, games, collecting)
-                for game, action in zip(games, actions):
-                    sampled[game.worker].append((policy, action))
-                    if collecting:
-                        game.decisions.append(action)
-                for controller in CONTROLLERS:
-                    subset = [g for g in games if g.job["controller"] == controller]
-                    if not subset:
-                        continue
-                    opponent = self.parent_policy if controller == "hog1-greedy" else self.base
-                    requests = [(g.episode, g.obs, 1 - g.job["seat"], (int(g.obs["tick"]) - g.start_tick) / 20.) for g in subset]
-                    actions = self.opponent_actions(opponent, requests, subset, controller)
-                    for game, action in zip(subset, actions):
-                        sampled[game.worker].append((opponent, action))
-                step_jobs = {}
-                for game in games:
-                    rows = sampled[game.worker]
-                    # Physical side order keeps event history deterministic and
-                    # independent of which side the learner occupies.
-                    rows.sort(key=lambda pair: pair[1].side)
-                    requests = [a.native_request() for _, a in rows if not a.wait]
-                    step_jobs[self.executor.submit(self.clients[game.worker].request,
-                                                   {"op": "step", "actions": requests, "ticks": 20}, 45)] = game
-                while step_jobs:
-                    done, _ = futures.wait(step_jobs, timeout=.5, return_when=futures.FIRST_COMPLETED)
-                    self.publish()
-                    for future in done:
-                        game = step_jobs.pop(future)
-                        try:
-                            reply = future.result()
-                            if "reward_state" in reply:
-                                reply["observation"]["tower_state"] = reply["reward_state"]
-                            now = (int(game.obs["tick"]) - game.start_tick) / 20.
-                            rows = sampled[game.worker]
-                            submitted = [(p, a) for p, a in rows if not a.wait]
-                            if len(reply["actions"]) != len(submitted):
-                                raise RuntimeError("native_action_result_count")
-                            for (agent, action), response in zip(submitted, reply["actions"]):
-                                if not isinstance(response.get("accepted"), bool):
-                                    raise RuntimeError("native_action_result_missing_status")
-                                if response["accepted"]:
-                                    agent.record_action(game.episode, action, now, True)
-                                    self.counters["accepted_plays"] += 1
-                                    if collecting and action.side == game.job["seat"]:
-                                        plays = self.fun["card_plays"]
-                                        plays[action.card] = plays.get(action.card, 0) + 1
-                                else:
-                                    self.counters["rejected_plays"] += 1
-                            self.counters["decisions"] += len(rows)
-                            if collecting:
-                                self.after_native_step(game, reply)
-                            game.obs = reply["observation"]
-                            game.steps += 1
-                            self.worker_states[game.worker].update(status="playing", tick=game.obs["tick"],
-                                                                  entity_count=game.obs.get("entity_count"))
-                            if reply["terminated"]:
-                                winner = game.obs["winner_side"]
-                                if winner not in (0, 1, -1):
-                                    raise RuntimeError("unresolved_native_winner")
-                                result = "D" if winner == -1 else "W" if winner == game.job["seat"] else "L"
-                                completed.append(self.record(game, kind, result))
-                                if collecting:
-                                    outcome = {"W": 1., "D": 0., "L": -1.}[result]
-                                    transitions.extend(self.game_transitions(game, outcome))
-                                del active[game.worker]
-                                self.worker_states[game.worker]["status"] = "finished"
-                            elif reply["truncated"]:
-                                completed.append(self.record(game, kind, "VOID", "native_tick_cap"))
-                                del active[game.worker]
-                        except Exception as exc:
-                            completed.append(self.record(game, kind, "VOID", str(exc)))
-                            active.pop(game.worker, None)
-                            self.restart_worker(game.worker)
+                if ready:
+                    self._launch_steps(ready, policy, collecting, step_jobs)
+                    ready = []
+                if not step_jobs:
+                    break
+                done = self._completed_steps(step_jobs, pipeline=getattr(self.args, "pipeline", False))
+                self.publish()
+                finished_early = []
+                for future in done:
+                    game = step_jobs.pop(future)
+                    if self._consume_step(game, future, kind, collecting, active, completed, transitions):
+                        finished_early.append(game)
+                if getattr(self.args, "pipeline", False):
+                    ready = finished_early
+                else:
+                    held.extend(finished_early)
+                    if not step_jobs:
+                        ready = held
+                        held = []
                 self.publish()
         return completed, transitions
+
+    def _pace(self):
+        pace = getattr(self, "pace", None)
+        if pace is None:
+            pace = {"infer_s": 0., "infer_batches": 0, "infer_games": 0, "engine_s": 0., "engine_steps": 0}
+            self.pace = pace
+        return pace
+
+    def _launch_steps(self, games, policy, collecting, step_jobs):
+        """Infer one ready batch and send those games back to their engines.
+
+        Only games whose previous step has already returned are included, so a
+        worker's client is never asked for a decision and a step at once.
+        """
+        sampled = {game.worker: [] for game in games}
+        requests = [(game.episode, game.obs, game.job["seat"], (int(game.obs["tick"]) - game.start_tick) / 20.)
+                    for game in games]
+        started = time.perf_counter()
+        actions = self.learner_actions(policy, requests, games, collecting)
+        for game, action in zip(games, actions):
+            sampled[game.worker].append((policy, action))
+            if collecting:
+                game.decisions.append(action)
+        for controller in CONTROLLERS:
+            subset = [game for game in games if game.job["controller"] == controller]
+            if not subset:
+                continue
+            opponent = self.parent_policy if controller == "hog1-greedy" else self.base
+            requests = [(game.episode, game.obs, 1 - game.job["seat"], (int(game.obs["tick"]) - game.start_tick) / 20.)
+                        for game in subset]
+            actions = self.opponent_actions(opponent, requests, subset, controller)
+            for game, action in zip(subset, actions):
+                sampled[game.worker].append((opponent, action))
+        pace = self._pace()
+        pace["infer_s"] += time.perf_counter() - started
+        pace["infer_batches"] += 1
+        pace["infer_games"] += len(games)
+        for game in games:
+            rows = sampled[game.worker]
+            # Physical side order keeps event history deterministic and
+            # independent of which side the learner occupies.
+            rows.sort(key=lambda pair: pair[1].side)
+            game.pending_rows = rows
+            native = [action.native_request() for _, action in rows if not action.wait]
+            game.step_sent = time.perf_counter()
+            step_jobs[self.executor.submit(self.clients[game.worker].request,
+                                           {"op": "step", "actions": native, "ticks": 20}, 45)] = game
+
+    def _completed_steps(self, step_jobs, pipeline):
+        if not pipeline:
+            done, _ = futures.wait(step_jobs, timeout=.5, return_when=futures.ALL_COMPLETED)
+            return done if len(done) == len(step_jobs) else set()
+        done, _ = futures.wait(step_jobs, timeout=.5, return_when=futures.FIRST_COMPLETED)
+        if not done:
+            return set()
+        pending = [future for future in step_jobs if future not in done]
+        if pending:
+            extra, _ = futures.wait(pending, timeout=PIPELINE_GATHER_S, return_when=futures.ALL_COMPLETED)
+            done = set(done) | set(extra)
+        return done
+
+    def _consume_step(self, game, future, kind, collecting, active, completed, transitions):
+        """Apply one engine reply. True means the game still needs another decision."""
+        pace = self._pace()
+        pace["engine_s"] += max(0., time.perf_counter() - getattr(game, "step_sent", time.perf_counter()))
+        pace["engine_steps"] += 1
+        try:
+            reply = future.result()
+            if "reward_state" in reply:
+                reply["observation"]["tower_state"] = reply["reward_state"]
+            now = (int(game.obs["tick"]) - game.start_tick) / 20.
+            rows = game.pending_rows
+            submitted = [(agent, action) for agent, action in rows if not action.wait]
+            if len(reply["actions"]) != len(submitted):
+                raise RuntimeError("native_action_result_count")
+            for (agent, action), response in zip(submitted, reply["actions"]):
+                if not isinstance(response.get("accepted"), bool):
+                    raise RuntimeError("native_action_result_missing_status")
+                if response["accepted"]:
+                    agent.record_action(game.episode, action, now, True)
+                    self.counters["accepted_plays"] += 1
+                    if collecting and action.side == game.job["seat"]:
+                        plays = self.fun["card_plays"]
+                        plays[action.card] = plays.get(action.card, 0) + 1
+                else:
+                    self.counters["rejected_plays"] += 1
+            self.counters["decisions"] += len(rows)
+            if collecting:
+                self.after_native_step(game, reply)
+            game.obs = reply["observation"]
+            game.steps += 1
+            self.worker_states[game.worker].update(status="playing", tick=game.obs["tick"],
+                                                  entity_count=game.obs.get("entity_count"))
+            if reply["terminated"]:
+                winner = game.obs["winner_side"]
+                if winner not in (0, 1, -1):
+                    raise RuntimeError("unresolved_native_winner")
+                result = "D" if winner == -1 else "W" if winner == game.job["seat"] else "L"
+                completed.append(self.record(game, kind, result))
+                if collecting:
+                    outcome = {"W": 1., "D": 0., "L": -1.}[result]
+                    transitions.extend(self.game_transitions(game, outcome))
+                del active[game.worker]
+                self.worker_states[game.worker]["status"] = "finished"
+                return False
+            if reply["truncated"]:
+                completed.append(self.record(game, kind, "VOID", "native_tick_cap"))
+                del active[game.worker]
+                return False
+            return True
+        except Exception as exc:
+            completed.append(self.record(game, kind, "VOID", str(exc)))
+            active.pop(game.worker, None)
+            self.restart_worker(game.worker)
+            return False
 
     def learner_actions(self, policy, requests, games, collecting):
         return policy.act_batch(requests, deterministic=not collecting)

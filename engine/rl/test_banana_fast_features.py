@@ -8,7 +8,7 @@ from unittest.mock import patch
 import torch
 
 ROOT = Path(__file__).resolve().parents[1]
-SIBLING_SRC = ROOT.parent / "clash-royale-ai" / "src"
+SIBLING_SRC = ROOT.parent / "src"
 if str(SIBLING_SRC) not in sys.path:
     sys.path.insert(0, str(SIBLING_SRC))
 
@@ -25,10 +25,10 @@ class FastFeatureParity(unittest.TestCase):
     def setUpClass(cls) -> None:
         torch.set_num_threads(2)
         _, cls.vocab, _, _ = policy_infer.load_policy(
-            ROOT.parent / "clash-royale-ai" / "models" / "policy_bc_v4.4.2", "cpu"
+            ROOT.parent / "models" / "policy_bc_v4.4.2", "cpu"
         )
         cls.costs = winner_dataset.load_card_costs(
-            ROOT.parent / "clash-royale-ai" / "data" / "card_costs.json"
+            ROOT.parent / "data" / "card_costs.json"
         )
 
     @staticmethod

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1220">
+<title>Arena · Clash Royale AI</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="lobby">
+  <div class="topbar">
+    <div class="brand">Clash Royale AI <span>Arena</span></div>
+    <div class="spacer"></div>
+    <a class="pill-link" id="lab-link" href="#" target="_blank" rel="noopener">Lab ↗</a>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button id="tab-play" class="active" data-mode="human">Play vs AI</button>
+    <button id="tab-watch" data-mode="watch">Watch AI vs AI</button>
+  </div>
+
+  <section class="section" id="active-section" style="display:none">
+    <h2>Matches in progress</h2>
+    <div class="matches" id="active"></div>
+  </section>
+
+  <section class="section">
+    <h2><span class="side-dot red"></span><span id="red-title">Opponent</span></h2>
+    <p class="hint">Models that can play in the recovered original game engine.</p>
+    <div class="models" id="red-models"></div>
+  </section>
+
+  <section class="section">
+    <h2><span class="side-dot red"></span><span id="red-deck-title">Opponent's deck</span></h2>
+    <p class="hint">★ marks the deck the selected model was trained on.</p>
+    <div class="decks" id="red-decks"></div>
+    <div class="note" id="red-note"></div>
+  </section>
+
+  <section class="section" id="blue-model-section" style="display:none">
+    <h2><span class="side-dot blue"></span>Blue model</h2>
+    <p class="hint">Plays from the bottom of the screen.</p>
+    <div class="models" id="blue-models"></div>
+  </section>
+
+  <section class="section">
+    <h2><span class="side-dot blue"></span><span id="blue-deck-title">Your deck</span></h2>
+    <p class="hint" id="blue-deck-hint">You play blue, from the bottom.</p>
+    <div class="decks" id="blue-decks"></div>
+    <div class="note" id="blue-note"></div>
+  </section>
+
+  <section class="section">
+    <details>
+      <summary>Advanced</summary>
+      <div class="row" style="margin-top:10px">
+        <label>Seed <input type="number" id="seed" min="0" max="4294967295" placeholder="random"></label>
+        <span class="note" style="margin:0">The same seed, decks and models replay the same opening.</span>
+      </div>
+    </details>
+    <p class="note">The six presets are supported by the fast training engine. All browser matches use the
+      original engine, including custom decks. Specialist models may play less well outside their training deck.
+      A fresh match takes about 10 seconds to start.</p>
+    <div class="error-box" id="error"></div>
+  </section>
+</main>
+
+<div class="startbar"><button class="start" id="start">Play</button></div>
+
+<div class="sheet-backdrop" id="backdrop"></div>
+<div class="sheet" id="builder" role="dialog" aria-label="Deck builder">
+  <header>
+    <h3>Build a deck</h3>
+    <input type="search" id="card-search" placeholder="Search cards">
+    <button class="btn" id="builder-close">Cancel</button>
+  </header>
+  <div class="slots" id="slots"></div>
+  <div class="card-pool" id="pool"></div>
+  <footer>
+    <div class="grow" id="builder-info">Pick 8 cards.</div>
+    <button class="btn primary" id="builder-save" disabled>Use deck</button>
+  </footer>
+</div>
+
+<script src="/lobby.js"></script>
+</body>
+</html>

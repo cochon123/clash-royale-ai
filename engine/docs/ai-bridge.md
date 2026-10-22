@@ -1,8 +1,7 @@
 # Trained AI subprocess bridge
 
-`tools/policy_bridge.py` runs the existing checkpoints from the neighboring
-`clash-royale-ai` project. It neither copies their weights nor modifies that
-project. The battle simulation and server are Rust; trained model inference
+`tools/policy_bridge.py` runs the existing checkpoints from the repository root
+(`../models`, `../src`). It neither copies their weights nor modifies them. The battle simulation and server are Rust; trained model inference
 currently remains Python/PyTorch.
 
 ```sh
@@ -10,7 +9,7 @@ python3 tools/policy_bridge.py --list
 python3 tools/policy_bridge.py --model v4.4.1
 ```
 
-The bridge automatically uses `../clash-royale-ai/.venv/bin/python` if the
+The bridge automatically uses `../.venv/bin/python` if the
 invoking Python does not have PyTorch. Set `CLASH_AI_REPO` or `--ai-repo PATH`
 to use another checkout. CPU inference uses one PyTorch thread per process.
 The server should create one persistent subprocess for each policy player.

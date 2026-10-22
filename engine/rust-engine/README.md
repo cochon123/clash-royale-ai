@@ -142,10 +142,9 @@ The [Rust run](../analysis/native-port/benchmark-fast-60s.json) and
 per-episode outcomes, action counts and executable hashes. All 30 Rust benchmark
 outcomes match their captured original references after repeated resets.
 
-The original, slower verified Unicorn implementation is preserved in the
-separate `/home/cochon/Documents/mini-project/clash-rust-slow` worktree on the
-`slow-working` branch. This Rust backend is being developed on `rust-fast` in
-the main worktree.
+The original, slower verified Unicorn implementation is preserved as the
+`archive/clash-rust-slow-working` Git tag. This Rust backend is developed on
+`main` under `engine/`.
 
 ## Regenerate and audit
 

@@ -303,6 +303,26 @@ fn align(v: u64, a: u64) -> Result<u64, String> {
         .map(|x| x & !(a - 1))
         .ok_or("alignment overflow".into())
 }
+fn engine_root() -> PathBuf {
+    std::env::var_os("CLASH_ENGINE_ROOT")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).join(".."))
+}
+
+/// Host paths recorded in a checkpoint before clash-rust moved into
+/// clash-royale-ai/engine. A missing path under the old checkout is remapped to
+/// this engine root; callers still verify the file's recorded SHA-256.
+fn recorded_host_path(recorded: &str) -> PathBuf {
+    let path = PathBuf::from(recorded);
+    if path.exists() {
+        return path;
+    }
+    match recorded.split_once("/clash-rust/") {
+        Some((_, relative)) => engine_root().join(relative),
+        None => path,
+    }
+}
+
 fn sha256(path: &Path) -> Result<String, String> {
     let out = Command::new("sha256sum")
         .arg(path)
@@ -749,7 +769,7 @@ pub fn run_checkpoint(
     let cp: Value = serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
     let checkpoint_hash = sha256(&checkpoint_path)?;
     let abi = &cp["emulation_abi"];
-    let lib = PathBuf::from(
+    let lib = recorded_host_path(
         abi["unicorn_library"]
             .as_str()
             .ok_or("missing Unicorn path")?,
@@ -762,8 +782,7 @@ pub fn run_checkpoint(
     {
         return Err("Unicorn library SHA-256 mismatch".into());
     }
-    let source =
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("../analysis/libg-cipher/libg.decrypted.so");
+    let source = engine_root().join("analysis/libg-cipher/libg.decrypted.so");
     let sourcehash = sha256(&source)?;
     if sourcehash != SOURCE_SHA256 || cp["source_sha256"] != SOURCE_SHA256 {
         return Err("original engine SHA-256 mismatch".into());
@@ -1599,7 +1618,7 @@ impl NativeSession {
         let cp: Value = serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
         let checkpoint_hash = sha256(&checkpoint_path)?;
         let abi = cp["emulation_abi"].clone();
-        let lib = PathBuf::from(
+        let lib = recorded_host_path(
             abi["unicorn_library"]
                 .as_str()
                 .ok_or("missing Unicorn path")?,
@@ -1611,8 +1630,7 @@ impl NativeSession {
         {
             return Err("Unicorn library SHA-256 mismatch".into());
         }
-        let source =
-            Path::new(env!("CARGO_MANIFEST_DIR")).join("../analysis/libg-cipher/libg.decrypted.so");
+        let source = engine_root().join("analysis/libg-cipher/libg.decrypted.so");
         if sha256(&source)? != SOURCE_SHA256 || cp["source_sha256"] != SOURCE_SHA256 {
             return Err("original engine SHA-256 mismatch".into());
         }
@@ -2601,6 +2619,105 @@ impl NativeSession {
             return Err("native placement query changed tick or command queue".into());
         }
         Ok(json!({"side":side,"slot":slot,"mask":mask,"tick":tick,"query_seconds":started.elapsed().as_secs_f64()}))
+    }
+
+    /// Query the original target validator at the centre of every real arena
+    /// tile (18 x 32, 1000 native units each), indexed `row * 18 + column` in
+    /// absolute coordinates. For interactive placement previews; never submits
+    /// a command or advances the world.
+    pub fn placement_tiles(&mut self, side: u32, slot: u32) -> Result<Value, String> {
+        if side > 1 || slot > 3 {
+            return Err("placement_tiles needs side 0..1 and slot 0..3".into());
+        }
+        let side_obj = self.side_object(side)?;
+        if side_obj == 0 { return Err("null native battle side".into()); }
+        let tick = read_mem_u32(&self.api, self.uc, self.world + 0x60)?;
+        let queue = read_mem_u32(&self.api, self.uc, self.commands + 0x14)?;
+        let wrapper = self.call(0xf9dd98, &[side_obj, slot as u64], 0)?;
+        if wrapper == 0 { return Err("placement_tiles requested an empty hand slot".into()); }
+        write_mem(&self.api, self.uc, self.descriptor_scratch, &[0; 24])?;
+        self.call(0xe80bbc, &[wrapper, side_obj, 1], self.descriptor_scratch)?;
+        let proxy = self.call(0xe80680, &[self.descriptor_scratch], 0)?;
+        if proxy == 0 { return Err("null native card selection proxy".into()); }
+        let mut mask = Vec::with_capacity(18 * 32);
+        for tile in 0..18 * 32 {
+            let x = (tile % 18) * 1000 + 500;
+            let y = (tile / 18) * 1000 + 500;
+            let code = self.call(0xd42214, &[self.battle, x as u64, y as u64, proxy, 0], 0)? as u32;
+            mask.push(code == 0);
+        }
+        if tick != read_mem_u32(&self.api, self.uc, self.world + 0x60)?
+            || queue != read_mem_u32(&self.api, self.uc, self.commands + 0x14)? {
+            return Err("native placement query changed tick or command queue".into());
+        }
+        Ok(json!({"side":side,"slot":slot,"columns":18,"rows":32,"mask":mask,"tick":tick}))
+    }
+
+    /// Resolve a requested deployment through the original placement routine.
+    /// Unlike d42214 (which only rejects blocked/out-of-arena targets),
+    /// f9e16c applies territory, pocket and card-specific placement rules.
+    /// Both the human caller be1634 and native deployment fa35c4 use it.
+    /// No command is submitted and no world time is advanced.
+    pub fn resolve_target(&mut self, request: PlayCardRequest) -> Result<Value, String> {
+        if request.side > 1 || request.slot > 3 {
+            return Err("target resolution needs side 0..1 and slot 0..3".into());
+        }
+        let side_obj = self.side_object(request.side)?;
+        if side_obj == 0 { return Err("null native battle side".into()); }
+        let tick = read_mem_u32(&self.api, self.uc, self.world + 0x60)?;
+        let queue = read_mem_u32(&self.api, self.uc, self.commands + 0x14)?;
+        let wrapper = self.call(0xf9dd98, &[side_obj, request.slot as u64], 0)?;
+        if wrapper == 0 {
+            return Ok(json!({"valid":false,"rejection":"empty_hand_slot"}));
+        }
+        write_mem(&self.api, self.uc, self.descriptor_scratch, &[0; 24])?;
+        self.call(0xe80bbc, &[wrapper, side_obj, 1], self.descriptor_scratch)?;
+        let proxy = self.call(0xe80680, &[self.descriptor_scratch], 0)?;
+        if proxy == 0 { return Err("null native card selection proxy".into()); }
+        let target = self.state.heap.alloc(8, 8, &self.api, self.uc)?;
+        let resolved = (|| -> Result<Option<(i32, i32)>, String> {
+            write_mem(&self.api, self.uc, target, &[0xff; 8])?;
+            let mode = self.call(0xf93d3c, &[side_obj], 0)?;
+            // The ninth AArch64 argument is a false byte on the caller's stack,
+            // as in fa3688; the first eight arguments are passed in x0..x7.
+            let stack = num(&self.abi["call_stack_pointer"])?;
+            write_mem(&self.api, self.uc, stack, &[0; 8])?;
+            let valid = self.call(0xf9e16c, &[
+                side_obj, proxy, request.x as i64 as u64, request.y as i64 as u64,
+                target, self.world, 0, mode,
+            ], 0)?;
+            if valid & 1 == 0 { return Ok(None); }
+            Ok(Some((read_mem_i32(&self.api, self.uc, target)?,
+                     read_mem_i32(&self.api, self.uc, target + 4)?)))
+        })();
+        self.state.heap.free_ptr(target)?;
+        let resolved = resolved?;
+        if tick != read_mem_u32(&self.api, self.uc, self.world + 0x60)?
+            || queue != read_mem_u32(&self.api, self.uc, self.commands + 0x14)? {
+            return Err("native target resolution changed tick or command queue".into());
+        }
+        Ok(match resolved {
+            Some((x, y)) => json!({"valid":true,"x":x,"y":y}),
+            None => json!({"valid":false,"rejection":"no_resolved_target"}),
+        })
+    }
+
+    /// Watched matches submit and report the resolved deployment coordinate.
+    /// A successful raw validator result does not imply that a troop lands at
+    /// the requested point. Recording that point would corrupt policy history.
+    pub fn play_card_resolved(&mut self, request: PlayCardRequest) -> Result<Value, String> {
+        let target = self.resolve_target(request)?;
+        if target["valid"] != true {
+            return Ok(json!({"accepted":false,"rejection":target["rejection"]}));
+        }
+        let effective = PlayCardRequest {
+            x: target["x"].as_i64().ok_or("resolved target missing x")? as i32,
+            y: target["y"].as_i64().ok_or("resolved target missing y")? as i32,
+            ..request
+        };
+        let mut result = self.play_card(effective)?;
+        result["resolved_target"] = json!({"x":effective.x,"y":effective.y});
+        Ok(result)
     }
 
     /// Check an exact human cursor position through the original validator.

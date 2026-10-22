@@ -2,11 +2,18 @@
 name = "clash-native-spectator"
 version = "0.1.0"
 edition = "2021"
+default-run = "clash-native-spectator"
 description = "Read-only original-asset battle spectator for the recovered engine"
 
 [features]
 default = []
 compiled-engine = ["dep:clash-recompiled"]
+web-jpeg = ["dep:turbojpeg"]
+
+[[bin]]
+name = "clash-web-renderer"
+path = "src/bin/clash-web-renderer.rs"
+required-features = ["web-jpeg"]
 
 [dependencies]
 clash-recompiled = { path = "../rust-engine", optional = true }
@@ -14,6 +21,7 @@ clash-native-ui-viewer = { path = "../native-ui-viewer" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 image = { version = "0.25", default-features = false, features = ["png"] }
+turbojpeg = { version = "1.5.1", optional = true }
 minifb = { version = "0.28", default-features = false, features = ["x11"] }
 
 [profile.release]

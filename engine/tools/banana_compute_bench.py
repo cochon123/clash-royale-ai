@@ -15,7 +15,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CHECKPOINT = ROOT / "analysis/native-pipeline/oracle-export-01/stage01-attempt001/state"
-DEFAULT_PYTHON = ROOT.parent / "clash-royale-ai/.venv/bin/python"
+DEFAULT_PYTHON = ROOT.parent / ".venv/bin/python"
 AVAILABLE_CPUS = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else (os.cpu_count() or 1)
 
 

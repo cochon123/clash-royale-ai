@@ -1,4 +1,4 @@
-"""Inference scheduler based on clash-royale-ai's two-phone harness.
+"""Inference scheduler based on the replay pipeline's two-phone harness.
 
 Choose from the actual hand, schedule the learned inter-event delay, then check
 elixir at execution. Plans persist between polls; confirmed events permit a
