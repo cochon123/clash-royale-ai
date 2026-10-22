@@ -14,6 +14,7 @@ use crate::{
     hud::{HandHud, HandLayout},
     input::{ControlLayout, PlayerInput},
     presentation::Presentation,
+    scene,
     vfx::{self, Anchor, Layer, Vfx, VfxSprite},
 };
 use clash_native_ui_viewer::{Matrix, Playback, Rendered, Scene};
@@ -98,6 +99,7 @@ struct HpBar {
 }
 
 struct Plan {
+    uid: u64,
     parts: Vec<Part>,
     shadow: Option<ShadowSpec>,
     ground_parts: Vec<Part>,
@@ -1023,6 +1025,7 @@ impl Painter {
     /// Render the scene at a fractional native tick between observed snapshots.
     pub fn draw(&mut self, display_tick: f64) -> Result<RgbaImage> {
         let mut out = RgbaImage::from_pixel(self.width, self.height, Rgba([19, 27, 31, 255]));
+        scene::register_root(&out);
         let Some(latest) = self.history.back() else {
             return Ok(out);
         };
@@ -1055,7 +1058,7 @@ impl Painter {
             self.draw_decorations(&mut field_layer, field_w, field_h)?;
             self.field_cache = Some(field_layer);
         }
-        imageops::replace(
+        scene::replace(
             &mut out,
             self.field_cache.as_ref().expect("field cache initialized"),
             layout.field_x as i64,
@@ -1144,8 +1147,9 @@ impl Painter {
 
         let mut plans = Vec::with_capacity(states.len());
         let mut beam_anchors = BTreeMap::new();
-        for (state, _, velocity) in &states {
-            if let Some(plan) = self.plan_entity(&a, state, *velocity, now_ms, &layout)? {
+        for (state, uid, velocity) in &states {
+            if let Some(mut plan) = self.plan_entity(&a, state, *velocity, now_ms, &layout)? {
+                plan.uid = *uid;
                 if let Some(bar) = &plan.hp {
                     let bottom = plan
                         .parts
@@ -1171,6 +1175,7 @@ impl Painter {
         self.draw_vfx_layer(&mut out, &sprites, Layer::Ground, &layout);
         for plan in &plans {
             if let Some(spec) = &plan.shadow {
+                let _scope = scene::ScopeGuard::enter(format!("entity-{}-shadow", plan.uid));
                 let part = spec.source.as_ref().unwrap_or(&plan.parts[spec.part]);
                 let t = Affine {
                     m: [
@@ -1204,10 +1209,12 @@ impl Painter {
                 layout.scale,
             );
         }
-        self.shadows.apply(&mut out);
+        scene::scope("shadows", || self.shadows.apply(&mut out));
         for plan in &plans {
-            for part in &plan.ground_parts {
-                draw_part(&mut out, part);
+            for (index, part) in plan.ground_parts.iter().enumerate() {
+                scene::scope(format!("entity-{}-ground-{index}", plan.uid), || {
+                    draw_part(&mut out, part)
+                });
             }
         }
         self.draw_vfx_layer(&mut out, &sprites, Layer::Base, &layout);
@@ -1234,7 +1241,7 @@ impl Painter {
         air.sort_by(|x, y| x.sort_y.total_cmp(&y.sort_y));
         for (_, item) in items {
             match item {
-                Item::Plan(plan) => plan.parts.iter().for_each(|p| draw_part(&mut out, p)),
+                Item::Plan(plan) => draw_plan(&mut out, plan),
                 Item::Sprite(sprite) => {
                     let (sx, sy) = layout.ground(sprite.anchor.x, sprite.anchor.y);
                     vfx::draw_sprite(
@@ -1251,12 +1258,13 @@ impl Painter {
             }
         }
         for plan in air {
-            plan.parts.iter().for_each(|p| draw_part(&mut out, p));
+            draw_plan(&mut out, plan);
         }
         self.draw_vfx_layer(&mut out, &sprites, Layer::Above, &layout);
         self.draw_targeted_beams(&mut out, &states, &beam_anchors, now_ms, &layout)?;
         for plan in &plans {
             if let Some(bar) = &plan.hp {
+                let _scope = scene::ScopeGuard::enter(format!("entity-{}-hp", plan.uid));
                 self.draw_hp_bar(&mut out, bar, layout.scale)?;
             }
         }
@@ -1353,7 +1361,7 @@ impl Painter {
             return;
         };
         let fitted = imageops::resize(arena, w, h, imageops::FilterType::Lanczos3);
-        imageops::overlay(out, &fitted, 0, 0);
+        scene::overlay(out, &fitted, 0, 0);
     }
 
     fn draw_decorations(&mut self, out: &mut RgbaImage, w: u32, h: u32) -> Result<()> {
@@ -1409,7 +1417,7 @@ impl Painter {
                     }
                 }
                 if let Some(sprite) = self.deco_cache.get(&cache_key) {
-                    imageops::overlay(
+                    scene::overlay(
                         out,
                         sprite,
                         px as i64 - sprite.width() as i64 / 2,
@@ -1434,7 +1442,7 @@ impl Painter {
         layout: &Layout,
     ) -> Result<()> {
         let mut beams = Vec::new();
-        for (source, _, _) in states {
+        for (source, source_uid, _) in states {
             let Some(row) = self.logic.row(&source.row) else {
                 continue;
             };
@@ -1506,6 +1514,7 @@ impl Painter {
                 let fps = scene.framerate(export).map_err(|e| e.to_string())?;
                 let frame = (age * fps as f64 / 1000.) as usize % count.max(1);
                 beams.push((
+                    *source_uid,
                     doc.to_owned(),
                     export.clone(),
                     frame,
@@ -1516,7 +1525,8 @@ impl Painter {
                 ));
             }
         }
-        for (doc, export, frame, age, width, start, end) in beams {
+        for (uid, doc, export, frame, age, width, start, end) in beams {
+            let _scope = scene::ScopeGuard::enter(format!("entity-{uid}-beam-{doc}-{export}"));
             let playback = Playback {
                 frame: Some(frame),
                 time_seconds: Some(age / 1000.),
@@ -1710,6 +1720,7 @@ impl Painter {
                     if entity.side == 0 { BLUE } else { RED },
                 );
                 return Ok(Some(Plan {
+                    uid: 0,
                     parts: vec![Part {
                         sprite: Rc::new(Fitted {
                             image: marker,
@@ -1863,6 +1874,7 @@ impl Painter {
                 parts.push(p);
             }
             return Ok(Some(Plan {
+                uid: 0,
                 parts,
                 shadow: None,
                 ground_parts,
@@ -2162,6 +2174,7 @@ impl Painter {
             top,
         });
         Ok(Some(Plan {
+            uid: 0,
             parts,
             shadow,
             ground_parts,
@@ -2368,8 +2381,16 @@ impl Painter {
             .get(&key)
             .ok_or("cached font render missing")?;
         let x = cx as i64 - rendered.width() as i64 / 2;
-        imageops::overlay(out, rendered, x, y as i64);
+        scene::overlay(out, rendered, x, y as i64);
         Ok(())
+    }
+}
+
+fn draw_plan(out: &mut RgbaImage, plan: &Plan) {
+    for (index, part) in plan.parts.iter().enumerate() {
+        scene::scope(format!("entity-{}-part-{index}", plan.uid), || {
+            draw_part(out, part)
+        });
     }
 }
 
@@ -2506,18 +2527,7 @@ fn aim_turret_view(scene: &Scene, selection: &mut animation::PlaybackSelection, 
 }
 
 fn fill_rect(img: &mut RgbaImage, x: i32, y: i32, w: i32, h: i32, color: Rgba<u8>) {
-    if w <= 0 || h <= 0 {
-        return;
-    }
-    let x0 = x.max(0) as u32;
-    let y0 = y.max(0) as u32;
-    let x1 = (x.saturating_add(w)).max(0).min(img.width() as i32) as u32;
-    let y1 = (y.saturating_add(h)).max(0).min(img.height() as i32) as u32;
-    for py in y0..y1 {
-        for px in x0..x1 {
-            img.put_pixel(px, py, color);
-        }
-    }
+    scene::fill_rect(img, x, y, w, h, color);
 }
 
 fn fill_circle(img: &mut RgbaImage, cx: i32, cy: i32, radius: i32, color: Rgba<u8>) {

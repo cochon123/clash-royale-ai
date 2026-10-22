@@ -25,6 +25,7 @@ from webapps.common import catalog, paths
 
 from .placement import CACHE
 from .renderer import NativeRenderer, spectator_hands
+from .scene import NativeSceneRenderer, browser_scene_enabled
 
 if str(paths.ENGINE) not in sys.path:
     sys.path.insert(0, str(paths.ENGINE))
@@ -210,17 +211,22 @@ class Match:
                 "decks": [[{"id": c, "name": cards[c]["name"], "art": cards[c]["art"], "elixir": cards[c]["elixir"]}
                            for c in side["deck"]] for side in self.sides],
                 "rows": dict(self.rows), "arena": {"width": 18000, "height": 32000, "columns": 18, "rows": 32},
-                "renderer": {"kind": "original-spectator", "width": 540, "height": 900},
+                "renderer": {"kind": "browser-scene" if browser_scene_enabled() else "original-spectator",
+                             "width": 540, "height": 900},
                 "ticks_per_second": TICKS_PER_SECOND}
 
     def events(self):
         """Server-sent event stream for one browser tab."""
         self.subscribers += 1
         last = -1
+        interval = 1 / 30
+        next_at = 0.
         try:
             yield "meta", self.meta()
             sent_rows = set(self.rows)
             while not self.closed.is_set():
+                if self.closed.wait(max(0., next_at - time.monotonic())):
+                    break
                 with self.cond:
                     self.cond.wait_for(lambda: self.seq != last or self.closed.is_set(), timeout=10)
                     payload, seq = self.payload, self.seq
@@ -234,6 +240,7 @@ class Match:
                     sent_rows |= new_rows.keys()
                     yield "rows", new_rows
                 yield "frame", payload
+                next_at = time.monotonic() + interval
             yield "closed", {"id": self.id}
         finally:
             self.subscribers -= 1
@@ -265,7 +272,7 @@ class Match:
                 engine, policies = self._load()
             if self.closed.is_set():
                 return
-            self.renderer = NativeRenderer(self.run_dir)
+            self.renderer = (NativeSceneRenderer if browser_scene_enabled() else NativeRenderer)(self.run_dir)
             self._loop(engine, policies)
         except Exception as exc:  # surface to the browser instead of dying silently
             import traceback

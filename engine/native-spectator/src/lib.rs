@@ -10,4 +10,5 @@ pub mod hud;
 pub mod input;
 pub mod presentation;
 pub mod projectile;
+pub mod scene;
 pub mod vfx;

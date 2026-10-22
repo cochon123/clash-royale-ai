@@ -28,6 +28,7 @@ def build(output):
                  "engine/runs/banana-league-20261019/models/mortar/final.pt",
                  "engine/native-engine/target/release/native-watch",
                  "engine/native-spectator/target/debug/clash-web-renderer",
+                 "engine/native-spectator/target/debug/clash-web-scene",
                  "engine/analysis/libg-cipher/libg.decrypted.so",
                  "engine/tools/reverse-env/lib/python3.13/site-packages/unicorn/lib/libunicorn.so.2"):
         path = ROOT / name
@@ -37,7 +38,7 @@ def build(output):
     manifest = {"created_at": dt.datetime.now(dt.timezone.utc).isoformat(), "files": {}}
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    with tarfile.open(output, "w:gz", compresslevel=3) as archive:
+    with tarfile.open(output, "w:gz", compresslevel=3, dereference=True) as archive:
         for path in sorted(files):
             relative = path.relative_to(ROOT).as_posix()
             manifest["files"][relative] = {"bytes": path.stat().st_size,

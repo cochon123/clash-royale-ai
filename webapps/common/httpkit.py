@@ -11,6 +11,7 @@ import mimetypes
 import re
 import sys
 import traceback
+import zlib
 from dataclasses import dataclass, field
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -54,9 +55,57 @@ class Request:
 @dataclass
 class EventStream:
     """Return from a route to stream server-sent events. ``events`` yields
-    (event_name_or_None, json_payload) pairs until the client disconnects."""
+    (event_name_or_None, json_payload) pairs until the client disconnects.
+    ``gzip=True`` negotiates compression, flushing after each event."""
     events: Iterable[tuple[str | None, Any]]
     on_close: Callable[[], None] | None = None
+    gzip: bool = False
+
+
+def accepts_gzip(accept_encoding: str) -> bool:
+    """Negotiate gzip without treating an explicit ``gzip;q=0`` as support.
+
+    An absent header keeps the original identity response. An explicit gzip
+    preference overrides wildcard, including its refusal or malformed weight.
+    Conflicting duplicate weights conservatively retain the lowest quality.
+    """
+    qualities = {}
+    for item in accept_encoding.split(','):
+        coding, *parameters = item.strip().lower().split(';')
+        coding = coding.strip()
+        if coding not in ('gzip', '*'):
+            continue
+        quality = 1.
+        weights = [part.partition('=')[2].strip() for part in parameters
+                   if part.partition('=')[0].strip() == 'q']
+        if weights:
+            quality = float(weights[0]) if len(weights) == 1 and re.fullmatch(
+                r'(?:0(?:\.[0-9]{0,3})?|1(?:\.0{0,3})?)', weights[0]) else 0.
+        qualities[coding] = min(qualities.get(coding, 1.), quality)
+    return qualities.get('gzip', qualities.get('*', 0.)) > 0
+
+
+def event_stream_chunks(events, *, gzip=False):
+    """Encode SSE and optionally flush gzip after every individual event.
+
+    The flush emits a complete decodable event without waiting for a second
+    native tick. Closing the iterator on disconnect also closes its source.
+    """
+    source = iter(events)
+    compressor = zlib.compressobj(level=3, wbits=16 + zlib.MAX_WBITS) if gzip else None
+    try:
+        for event, payload in source:
+            chunk = ((f'event: {event}\n' if event else '') + 'data: ' +
+                     json.dumps(payload, separators=(',', ':'), default=str) + '\n\n').encode()
+            if compressor:
+                chunk = compressor.compress(chunk) + compressor.flush(zlib.Z_SYNC_FLUSH)
+            yield chunk
+        if compressor:
+            yield compressor.flush(zlib.Z_FINISH)
+    finally:
+        close = getattr(source, 'close', None)
+        if close:
+            close()
 
 
 @dataclass
@@ -113,6 +162,8 @@ class App:
         class Handler(BaseHTTPRequestHandler):
             server_version = f"{app.name}/1"
             protocol_version = "HTTP/1.1"
+            # Tiny texture bodies and SSE chunks must not wait for delayed ACKs.
+            disable_nagle_algorithm = True
 
             def log_message(self, fmt, *args):  # keep the console readable
                 if not self.path.startswith(("/api/", "/static/", "/cards/")) or "error" in fmt:
@@ -194,7 +245,8 @@ class App:
                 self.send_response(status)
                 self.send_header("Content-Type", content_type)
                 self.send_header("Content-Length", str(len(body)))
-                self.send_header("Cache-Control", "no-store")
+                if not any(key.lower() == 'cache-control' for key in (headers or {})):
+                    self.send_header("Cache-Control", "no-store")
                 for key, value in (headers or {}).items():
                     self.send_header(key, value)
                 self.end_headers()
@@ -208,26 +260,31 @@ class App:
                 self._send(path.read_bytes(), content_type, head=head)
 
             def _stream(self, stream: EventStream):
+                compress = stream.gzip and accepts_gzip(','.join(self.headers.get_all('Accept-Encoding', [])))
                 self.send_response(200)
                 self.send_header("Content-Type", "text/event-stream")
                 self.send_header("Cache-Control", "no-store")
                 self.send_header("Connection", "close")
                 self.send_header("X-Accel-Buffering", "no")
+                if stream.gzip:
+                    self.send_header('Vary', 'Accept-Encoding')
+                if compress:
+                    self.send_header('Content-Encoding', 'gzip')
                 self.end_headers()
                 self.close_connection = True
+                chunks = event_stream_chunks(stream.events, gzip=compress)
                 try:
-                    for event, payload in stream.events:
-                        chunk = ""
-                        if event:
-                            chunk += f"event: {event}\n"
-                        chunk += "data: " + json.dumps(payload, separators=(",", ":"), default=str) + "\n\n"
-                        self.wfile.write(chunk.encode())
+                    for chunk in chunks:
+                        self.wfile.write(chunk)
                         self.wfile.flush()
                 except (BrokenPipeError, ConnectionResetError, TimeoutError):
                     pass
                 finally:
-                    if stream.on_close:
-                        stream.on_close()
+                    try:
+                        chunks.close()
+                    finally:
+                        if stream.on_close:
+                            stream.on_close()
 
             def _stream_bytes(self, stream: ByteStream):
                 self.send_response(200)

@@ -3,7 +3,7 @@
 //! Panels use the original `ui_spectate_hud` wood planks and its elixir bar.
 //! The client assembles that bar in code (a narrow body stretched by elixir,
 //! nine dividers placed at runtime); the same pieces are composed here.
-use crate::frame::BattleFrame;
+use crate::{frame::BattleFrame, scene as target};
 use clash_native_ui_viewer::{Playback, Scene};
 use image::{imageops, Rgba, RgbaImage};
 use serde_json::Value;
@@ -182,7 +182,7 @@ impl SpectateArt {
 }
 
 fn place(out: &mut RgbaImage, image: &RgbaImage, x: f64, y: f64) {
-    imageops::overlay(out, image, x.round() as i64, y.round() as i64);
+    target::overlay(out, image, x.round() as i64, y.round() as i64);
 }
 
 fn scaled(piece: &Piece, sx: f64, sy: f64) -> RgbaImage {
@@ -223,7 +223,7 @@ impl HandHud {
             self.labels.insert(key.clone(), text.image);
         }
         let text = &self.labels[&key];
-        imageops::overlay(out, text, x - text.width() as i64 / 2, y);
+        target::overlay(out, text, x - text.width() as i64 / 2, y);
         Ok(())
     }
     fn card(
@@ -266,7 +266,7 @@ impl HandHud {
             h.saturating_sub(5).max(1),
             imageops::FilterType::Triangle,
         );
-        imageops::overlay(&mut card, &art, 2, 2);
+        target::overlay(&mut card, &art, 2, 2);
         let export = metadata["ui"]["frame_export"]
             .as_str()
             .unwrap_or("card_item_frame");
@@ -275,7 +275,7 @@ impl HandHud {
             .map_err(|e| e.to_string())?
         {
             let frame = imageops::resize(&frame.image, width, h, imageops::FilterType::Triangle);
-            imageops::overlay(&mut card, &frame, 0, 0);
+            target::overlay(&mut card, &frame, 0, 0);
         }
         self.cards.insert(key, card.clone());
         Ok(Some(card))
@@ -390,6 +390,7 @@ impl HandHud {
         );
         let inner = (row_w + 4 * gap, card_h + 2 * gap);
         for side in [1usize, 0] {
+            let _scope = target::ScopeGuard::enter(format!("hud-{side}"));
             let top = if side == 1 { 0 } else { height - panel_h };
             let accent = if side == 0 {
                 [58, 151, 246]
@@ -400,9 +401,9 @@ impl HandHud {
             let (x0, cy) = (hand_layout.x, hand_layout.y);
             if self.planks(side, width, panel_h, inner) {
                 let back = &self.fitted[&("back", side, width, panel_h)];
-                imageops::replace(out, back, 0, top as i64);
+                target::replace(out, back, 0, top as i64);
                 let front = &self.fitted[&("front", side, inner.0, inner.1)];
-                imageops::overlay(out, front, (x0 - 2 * gap) as i64, cy as i64 - gap as i64);
+                target::overlay(out, front, (x0 - 2 * gap) as i64, cy as i64 - gap as i64);
             } else {
                 for y in top..top + panel_h {
                     let t = (y - top) as f32 / panel_h as f32;
@@ -412,17 +413,18 @@ impl HandHud {
                         (32. + accent[2] as f32 * 0.13 * (1. - t)) as u8,
                         255,
                     ]);
-                    for x in 0..width {
-                        out.put_pixel(x, y, c);
-                    }
+                    target::fill_rect(out, 0, y as i32, width as i32, 1, c);
                 }
             }
             let edge = if side == 1 { top + panel_h - 2 } else { top };
-            for y in edge..edge + 2 {
-                for x in 0..width {
-                    out.put_pixel(x, y, Rgba([accent[0], accent[1], accent[2], 255]));
-                }
-            }
+            target::fill_rect(
+                out,
+                0,
+                edge as i32,
+                width as i32,
+                2,
+                Rgba([accent[0], accent[1], accent[2], 255]),
+            );
             let who = if frame.controller_names[side].is_empty() {
                 if side == 0 {
                     "BLUE"
@@ -500,14 +502,14 @@ impl HandHud {
                 if let Some(card) = row {
                     let meta = &manifest["scene"]["card_visuals"][&card.name];
                     if let Some(image) = self.card(root, scene, meta, &card.name, cw)? {
-                        imageops::overlay(out, &image, x as i64, cy as i64);
+                        target::overlay(out, &image, x as i64, cy as i64);
                         if frame.elixir[side] + 0.001 < card.cost as f64 {
                             let shade = RgbaImage::from_pixel(
                                 image.width(),
                                 image.height(),
                                 Rgba([5, 9, 16, 128]),
                             );
-                            imageops::overlay(out, &shade, x as i64, cy as i64);
+                            target::overlay(out, &shade, x as i64, cy as i64);
                         }
                         let iconw = (cw as f64 * 0.34).round().max(14.) as u32;
                         if let Some(icon) = scene
@@ -525,7 +527,7 @@ impl HandHud {
                             );
                             let ix = x + cw / 2 - iconw / 2;
                             let iy = cy + card_h - ih / 2;
-                            imageops::overlay(out, &image, ix as i64, iy as i64);
+                            target::overlay(out, &image, ix as i64, iy as i64);
                             self.label(
                                 out,
                                 scene,
@@ -571,22 +573,24 @@ impl HandHud {
                 let bar_y = top + panel_h - 10;
                 let bar_x = (width as f32 * 0.23) as u32;
                 let bar_w = (width as f32 * 0.54) as u32;
-                for y in bar_y..bar_y + 5 {
-                    for x in bar_x..bar_x + bar_w {
-                        out.put_pixel(
-                            x,
-                            y,
-                            if x - bar_x
-                                < (bar_w as f64 * frame.elixir[side] / 10.).clamp(0., bar_w as f64)
-                                    as u32
-                            {
-                                Rgba([209, 68, 233, 255])
-                            } else {
-                                Rgba([40, 30, 57, 255])
-                            },
-                        );
-                    }
-                }
+                let fill_w =
+                    (bar_w as f64 * frame.elixir[side] / 10.).clamp(0., bar_w as f64) as i32;
+                target::fill_rect(
+                    out,
+                    bar_x as i32,
+                    bar_y as i32,
+                    bar_w as i32,
+                    5,
+                    Rgba([40, 30, 57, 255]),
+                );
+                target::fill_rect(
+                    out,
+                    bar_x as i32,
+                    bar_y as i32,
+                    fill_w,
+                    5,
+                    Rgba([209, 68, 233, 255]),
+                );
                 self.label(
                     out,
                     scene,

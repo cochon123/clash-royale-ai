@@ -27,14 +27,18 @@ one and a 15-minute maximum session lifetime, including pauses. When occupied,
 new starts return 429; players can retry after the slot is released. Unwatched
 matches retain the two-minute idle timeout. Start attempts are rate limited.
 
-Rendering uses the existing original-asset Rust Painter, targeting up to 60 FPS
-with JPEG quality 88 on this VPS. Actual frame rate depends on available CPU.
-SIMD libjpeg-turbo encodes RGBA directly in Rust; Python forwards compressed
-bytes through a persistent MJPEG connection. A slow viewer receives the latest
-frame without accumulating a render queue. Idle frames repeat every five seconds
-to keep paused streams connected. Local defaults remain 30 FPS / quality 88. The service
-has a 150% CPU quota and a 4 GiB memory limit; it cannot consume all VPS RAM.
-No GPU or fast training engine is needed.
+Rendering defaults to original-sprite display lists and cached textures. The
+browser composites with WebGL2, with a Canvas compatibility path. Combat, AI,
+pose selection and animation tracking remain authoritative on the server.
+Both state and scene SSE negotiate gzip and flush each event immediately.
+Presentation output is paced at 30 updates/s independently of client display
+refresh. Original JPEG/MJPEG remains an explicit, lazily started stream view.
+The service has a 150% CPU quota and a 4 GiB memory limit.
+No GPU or fast training engine is needed on the server.
+
+The local browser-renderer checks and measured limits are recorded in
+[the validation report](../../webapps/arena/BROWSER_RENDERER_VALIDATION.md).
+Production performance depends on VPS load and must be measured separately.
 
 Release `20261022-03` was checked over public HTTPS: 16.81 delivered FPS in a
 15.4-second sample after warmup, with 69.4% host CPU steal measured during
@@ -61,15 +65,17 @@ Build the native watcher and original renderer locally, then package:
 
 ```sh
 cargo build --release --offline --manifest-path engine/native-engine/Cargo.toml --bin native-watch
+cargo build --offline --manifest-path engine/native-spectator/Cargo.toml --bin clash-web-scene
 TURBOJPEG_STATIC=1 cargo build --offline --manifest-path engine/native-spectator/Cargo.toml --features web-jpeg --bin clash-web-renderer
 .venv/bin/python deploy/arena/package.py /tmp/clash-arena-runtime.tar.gz
 ```
 
-The browser renderer build needs CMake, a C compiler and NASM for SIMD. Its
+The optional JPEG fallback build needs CMake, a C compiler and NASM for SIMD. Its
 JPEG library is statically linked, so the VPS needs no codec installation.
 The `web-jpeg` feature is separate from the desktop viewer build.
 
-The allowlist includes Arena/shared Python code, inference adapters, card
+The archive dereferences allowlisted runtime inputs so an isolated worktree’s
+read-only artifact links become portable files. The allowlist includes Arena/shared Python code, inference adapters, card
 metadata/art, four controller entries and their three saved checkpoints, the
 base BC checkpoint, pinned Unicorn library and original engine library, recovered engine state and original
 spectator assets. It excludes Git metadata, local AGENTS instructions,

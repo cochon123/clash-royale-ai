@@ -74,11 +74,11 @@ class HumanController:
         self.engine, self.deck = engine, deck
         self.own_side_only = set(own_side_only)
         self.card_name = card_name or (lambda row: _native_card(row['name'], deck))
-        self.last_serial = 0
         self.reset(0)
 
     def reset(self, match_id):
         self.match_id = match_id
+        self.last_serial = 0
         self.selection = self.target = None
         self.feedback = 'Select a card with 1-4 or click your hand'
         self.feedback_until = None
@@ -125,6 +125,10 @@ class HumanController:
                    for x0, y0, x1, y1 in self.forbidden_zones(row, entities, arena_size))
 
     def handle(self, command, obs, *, paused=False, ended=False, arena_size=(18000, 32000), entities=()):
+        # Delayed requests from a previous round must neither act on this
+        # round nor advance its serial barrier (including delayed close).
+        if type(command.get('match_id')) is not type(self.match_id) or command.get('match_id') != self.match_id:
+            return None
         serial = command.get('serial')
         if not isinstance(serial, int) or isinstance(serial, bool) or serial <= self.last_serial:
             return None
@@ -132,8 +136,6 @@ class HumanController:
         op = command.get('op')
         if op == 'close':
             return op
-        if command.get('match_id') != self.match_id:
-            return None
         if op in ('pause', 'reset'):
             return op
         if op == 'cancel':
@@ -159,11 +161,19 @@ class HumanController:
             self.selection, self.target = selection, None
             self.message(f"{card.replace('-', ' ').title()}: click the arena", obs['tick'])
             return None
-        if self.selection != selection:
+        if op == 'aim' and self.selection != selection:
             return None
         x, y = command.get('x'), command.get('y')
         if type(x) is not int or type(y) is not int or not (0 <= x <= arena_size[0] and 0 <= y <= arena_size[1]):
             return None
+        if op == 'play':
+            if ended or paused:
+                self.message('Press R for a new match' if ended else 'Press Space to resume', obs['tick'])
+                return None
+            # Browser plays carry the exact current hand identity and target.
+            # They need not wait for an earlier select or every mouse preview.
+            # The native engine still validates the target and affordability.
+            self.selection = selection
         # Like the real game, an own-side-only card dropped past the edge of
         # your territory lands at that edge in the same column (by the bridge).
         snaps = self.snaps_back(row, x, y, entities, arena_size)
@@ -174,9 +184,7 @@ class HumanController:
                            snaps=snaps)
         if op == 'aim':
             return None
-        if ended or paused:
-            self.message('Press R for a new match' if ended else 'Press Space to resume', obs['tick'])
-        elif not check.get('valid'):
+        if not check.get('valid'):
             self.message('You cannot place that card here', obs['tick'])
         elif not check.get('affordable'):
             self.message(f"Need {check.get('cost', row['cost'])} elixir", obs['tick'])

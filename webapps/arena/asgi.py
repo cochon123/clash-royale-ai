@@ -6,7 +6,6 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from email.message import Message
-import json
 import mimetypes
 import os
 from pathlib import Path
@@ -24,7 +23,8 @@ from starlette.requests import Request as WebRequest
 from starlette.responses import FileResponse, JSONResponse, Response, StreamingResponse
 from starlette.routing import Mount, Route
 
-from webapps.common.httpkit import ByteStream, EventStream, HTTPError, MAX_BODY_BYTES, Raw, Request
+from webapps.common.httpkit import (ByteStream, EventStream, HTTPError, MAX_BODY_BYTES, Raw, Request,
+                                  accepts_gzip, event_stream_chunks)
 from .server import app as router, manager, warmup
 
 
@@ -71,21 +71,18 @@ def create_app(*, secret=None, secure=True, base_path="", allowed_hosts=None, ma
         finally:
             manager.close_all()
 
-    def result_response(value, *, method):
+    def result_response(value, *, method, accept_encoding=""):
         if isinstance(value, EventStream):
             # A synchronous iterator is scheduled by Starlette outside the
             # event loop; waiting for a native tick never blocks other clients.
-            def iterator():
-                try:
-                    for event, payload in value.events:
-                        yield ((f"event: {event}\n" if event else "") + "data: " +
-                               json.dumps(payload, separators=(",", ":"), default=str) + "\n\n").encode()
-                finally:
-                    close = getattr(value.events, "close", None)
-                    if close:
-                        close()
-            return ClosingStreamingResponse(iterator(), on_close=value.on_close, media_type="text/event-stream",
-                                     headers={"X-Accel-Buffering": "no", "Cache-Control": "no-store"})
+            compress = value.gzip and accepts_gzip(accept_encoding)
+            headers = {"X-Accel-Buffering": "no", "Cache-Control": "no-store"}
+            if value.gzip:
+                headers["Vary"] = "Accept-Encoding"
+            if compress:
+                headers["Content-Encoding"] = "gzip"
+            return ClosingStreamingResponse(event_stream_chunks(value.events, gzip=compress),
+                                     on_close=value.on_close, media_type="text/event-stream", headers=headers)
         if isinstance(value, ByteStream):
             return ClosingStreamingResponse(value.chunks, on_close=value.on_close, media_type=value.content_type,
                                      headers={"X-Accel-Buffering": "no", "Cache-Control": "no-store"})
@@ -136,7 +133,8 @@ def create_app(*, secret=None, secure=True, base_path="", allowed_hosts=None, ma
                     request = Request(web.method, path, dict(web.query_params), match.groupdict(),
                                       headers, bytes(body), session_id=sid)
                     value = await run_in_threadpool(function, request)
-                    response = result_response(value, method=web.method)
+                    response = result_response(value, method=web.method,
+                                               accept_encoding=','.join(web.headers.getlist('accept-encoding')))
                     break
             else:
                 static = router.resolve_static(path) if web.method in ("GET", "HEAD") else None

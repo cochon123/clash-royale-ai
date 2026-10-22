@@ -27,6 +27,17 @@ pub fn blit(
     if opacity <= 0.003 {
         return;
     }
+    if crate::scene::capture_blit(
+        dst,
+        src,
+        [1., 0., 0., 1., x as f64, y as f64],
+        opacity,
+        blend,
+        add,
+        false,
+    ) {
+        return;
+    }
     let (dw, dh) = (dst.width() as i64, dst.height() as i64);
     let (sw, sh) = (src.width() as i64, src.height() as i64);
     let x0 = x.max(0);
@@ -106,6 +117,17 @@ pub fn blit_affine(
     let [a, b, c, d] = t.m;
     let det = a * d - b * c;
     if det.abs() < 1e-9 {
+        return;
+    }
+    if crate::scene::capture_blit(
+        dst,
+        src,
+        crate::scene::affine_matrix(origin_x, origin_y, t),
+        opacity,
+        blend,
+        [0; 3],
+        false,
+    ) {
         return;
     }
     let (ia, ib, ic, id) = (d / det, -b / det, -c / det, a / det);
@@ -259,6 +281,9 @@ impl ShadowMask {
         t: &Affine,
         strength: f32,
     ) {
+        if crate::scene::capture_shadow(src, origin_x, origin_y, t, strength) {
+            return;
+        }
         let [a, b, c, d] = t.m;
         let det = a * d - b * c;
         if det.abs() < 1e-9 || src.width() == 0 {
@@ -314,6 +339,9 @@ impl ShadowMask {
         if rx < 0.5 || ry < 0.5 {
             return;
         }
+        if crate::scene::capture_ellipse(cx, cy, rx, ry, strength) {
+            return;
+        }
         let x0 = ((cx - rx).floor() as i64).max(0);
         let y0 = ((cy - ry).floor() as i64).max(0);
         let x1 = ((cx + rx).ceil() as i64 + 1).min(self.width as i64);
@@ -341,6 +369,9 @@ impl ShadowMask {
 
     /// Darken `dst` by the accumulated mask and clear it.
     pub fn apply(&mut self, dst: &mut RgbaImage) {
+        if crate::scene::capture_shadow_apply(dst) {
+            return;
+        }
         let Some((x0, y0, x1, y1)) = self.dirty.take() else {
             return;
         };

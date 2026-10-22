@@ -43,7 +43,10 @@ class HumanTests(unittest.TestCase):
         self.assertIsNotNone(self.controller.selection)
         self.controller.observe_result(action, {'accepted': True}, 101)
         self.assertIsNone(self.controller.selection)
-        self.assertIsNone(self.send('play'))
+        # A self-contained browser play needs no separate selection, but the
+        # same acknowledged command must never be replayed.
+        self.assertIsNone(self.controller.handle(dict(op='play', serial=self.serial, match_id=1,
+                                                     slot=0, card_id=26, x=4500, y=13000), self.obs))
         self.send('select')
         self.obs['hands'][0][0]['card_id'] = 27
         self.assertIsNone(self.send('play'))
@@ -71,7 +74,7 @@ class HumanTests(unittest.TestCase):
         self.assertEqual(self.engine.requests[-1], dict(op='validate_target', side=0, slot=0, x=4123, y=13210))
         self.assertTrue(self.controller.snapshot(self.obs)['target']['valid'])
         self.send('cancel')
-        self.assertIsNone(self.send('play'))
+        self.assertIsNone(self.send('aim'))
         self.assertEqual(len(self.engine.requests), 1)
 
     def test_cards_use_the_supplied_policy_mapping_and_unknown_cards_are_refused(self):

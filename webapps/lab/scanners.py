@@ -453,7 +453,7 @@ def run_status(state, stop, processes, units, run_id, current=None, directory=No
     deadline = stamp(state.get('deadline'))
     reported = str(state.get('status', 'unknown')).lower()
     directory = directory or paths.ENGINE_RUNS / run_id
-    location = str(directory)
+    location = str(directory.resolve())
     def owns(p):
         args = p.get('argv', [])
         destinations = [a.partition('=')[2] for a in args if a.startswith('--run-dir=')]

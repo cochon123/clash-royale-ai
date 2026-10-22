@@ -1,6 +1,7 @@
 """Arena website: pick a model and decks, then play or watch in the browser.
 
-Control routes return JSON; the original spectator view returns JPEG frames.
+Control routes return JSON; original sprites are composited in the browser.
+The JPEG spectator remains an explicit compatibility view.
 A future phone app can reuse the same endpoints:
 
 GET  /api/health                 server and engine readiness
@@ -9,6 +10,8 @@ GET  /api/matches                active matches
 POST /api/matches                start one: {"mode": "human"|"watch", "sides": [...], "seed"?}
 GET  /api/matches/{id}           summary of one match
 GET  /api/matches/{id}/stream    server-sent events: meta, rows, frame, status, closed
+GET  /api/matches/{id}/scene     original-sprite display-list SSE
+GET  /api/matches/{id}/textures/{id}.png   immutable original sprite
 GET  /api/matches/{id}/view      rendered original spectator frame (JPEG)
 GET  /api/matches/{id}/video     multipart/x-mixed-replace JPEG stream of the match
 POST /api/matches/{id}/input     human command: select/aim/play/cancel/pause/reset
@@ -29,6 +32,7 @@ from webapps.common.httpkit import App, ByteStream, EventStream, HTTPError
 from .match import MatchManager
 from .placement import Warmer
 from .renderer import ASSETS, BINARY, register_routes
+from .scene import BINARY as SCENE_BINARY, browser_scene_enabled, register_routes as register_scene_routes
 
 HERE = paths.REPO / "webapps" / "arena"
 app = App("arena")
@@ -56,8 +60,9 @@ def warmup():
         if _warming:
             return
         _warming = True
-        for preset in catalog.presets():
-            warmer.enqueue(preset["cards"], preset["cards"])
+        if os.environ.get("ARENA_WARM_PLACEMENTS", "1") == "1":
+            for preset in catalog.presets():
+                warmer.enqueue(preset["cards"], preset["cards"])
         threading.Thread(target=_warm_imports, daemon=True).start()
 
 
@@ -66,7 +71,7 @@ def _checkpoint_available():
 
 
 def _renderer_binary():
-    return BINARY
+    return SCENE_BINARY if browser_scene_enabled() else BINARY
 
 
 def _renderer_assets():
@@ -85,6 +90,7 @@ def health(_request):
     return {"ok": True, "engine_built": paths.NATIVE_WATCH.is_file(),
             "engine_checkpoint": _checkpoint_available(),
             "renderer_built": _renderer_binary().is_file(),
+            "scene_built": SCENE_BINARY.is_file(), "stream_renderer_built": BINARY.is_file(),
             "renderer_assets": _renderer_assets().is_file(),
             "matches": len(manager.list()), "max_matches": manager.max_matches,
             "placement_warmer": warmer.status}
@@ -95,6 +101,8 @@ def get_catalog(_request):
     return {"models": catalog.engine_models(), "presets": catalog.presets(),
             "public": os.environ.get("ARENA_PUBLIC", "0") == "1",
             "cards": list(catalog.cards().values()),
+            "rendering": {"default": "browser" if browser_scene_enabled() else "stream",
+                          "scene_available": SCENE_BINARY.is_file(), "stream_available": BINARY.is_file()},
             "notes": {
                 "presets": "These six presets are supported by the fast training engine. "
                            "Browser matches use the original engine.",
@@ -168,8 +176,10 @@ def create_match(request):
     if not _checkpoint_available():
         raise HTTPError(503, f"the original engine checkpoint is missing: {paths.relative(paths.ENGINE_CHECKPOINT)}")
     if not _renderer_binary().is_file():
-        raise HTTPError(503, "the original renderer is not built yet; run: TURBOJPEG_STATIC=1 cargo build --offline "
-                             "--manifest-path engine/native-spectator/Cargo.toml --features web-jpeg --bin clash-web-renderer")
+        build = ("cargo build --offline --manifest-path engine/native-spectator/Cargo.toml --bin clash-web-scene"
+                 if browser_scene_enabled() else
+                 "TURBOJPEG_STATIC=1 cargo build --offline --manifest-path engine/native-spectator/Cargo.toml --features web-jpeg --bin clash-web-renderer")
+        raise HTTPError(503, f"the original renderer is not built yet; run: {build}")
     if not _renderer_assets().is_file():
         raise HTTPError(503, f"the original renderer assets are missing: {paths.relative(_renderer_assets())}")
     if request.session_id is not None and manager.list(owner=request.session_id):
@@ -202,7 +212,7 @@ def get_match(request):
 
 @app.route("GET", "/api/matches/{id}/stream")
 def stream(request):
-    return EventStream(_match(request).events())
+    return EventStream(_match(request).events(), gzip=True)
 
 
 @app.route("GET", "/api/matches/{id}/video")
@@ -273,3 +283,4 @@ def close_match(request):
 
 
 register_routes(app, manager)
+register_scene_routes(app, manager)

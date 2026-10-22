@@ -41,12 +41,12 @@ app is future work.
 
 Arena uses **the same original-asset Rust Painter as `rl.banana_play`**:
 arena and tower sprites, character animation, projectiles, effects, health
-bars, card portraits and wood-panel HUD. A persistent windowless renderer
-receives the complete native frame and encodes JPEG directly with SIMD
-libjpeg-turbo. One persistent MJPEG connection carries the images without a
-request round trip for each frame; polling is retained as a fallback.
-Browser code displays those pixels and maps input through the
-renderer’s exported card rectangles and arena camera geometry.
+bars, card portraits and wood-panel HUD. In the browser renderer prototype,
+the Painter exports compact drawing commands and immutable original sprites.
+WebGL2 composites and interpolates them locally. A separate immediate input
+overlay uses the original card rectangles and camera geometry. The toolbar
+retains an explicit JPEG/MJPEG stream view, created lazily when requested.
+[Local prototype setup and limits](arena/README.md).
 
 Select a card by tapping it or pressing 1–4, then tap/click the arena; dragging a
 card onto the arena also plays it. Right click or Escape cancels. Space pauses,
@@ -66,10 +66,11 @@ native or visual coverage limits; errors are shown in the match view.
 The existing project environment needs PyTorch and Pillow. Original extracted
 assets, the reference checkpoint and model weights remain local ignored
 artifacts under `engine/analysis/`, `engine/runs/`, and `models/`; a code-only
-clone does not include them. Build the two browser binaries from the repo root:
+clone does not include them. Build the engine and scene presenter from the repo root (the JPEG binary is optional for the stream fallback):
 
 ```sh
 cargo build --release --offline --manifest-path engine/native-engine/Cargo.toml --bin native-watch
+cargo build --offline --manifest-path engine/native-spectator/Cargo.toml --bin clash-web-scene
 TURBOJPEG_STATIC=1 cargo build --offline --manifest-path engine/native-spectator/Cargo.toml --features web-jpeg --bin clash-web-renderer
 ```
 
@@ -95,6 +96,8 @@ playable. Missing checkpoints remain visible but cannot be selected.
 | `POST /api/matches` | Start a match with two controllers and decks |
 | `GET /api/matches/{id}` | Match status and completed results |
 | `GET /api/matches/{id}/stream` | SSE metadata, game state and status |
+| `GET /api/matches/{id}/scene` | Original-sprite display lists over SSE |
+| `GET /api/matches/{id}/textures/{id}.png` | Cached, owner-scoped original texture |
 | `GET /api/matches/{id}/view?after=N` | Next original-asset JPEG; sequence and input layout in response headers |
 | `GET /api/matches/{id}/video` | Persistent MJPEG stream of the latest original-asset frames |
 | `POST /api/matches/{id}/input` | Human select/aim/play/cancel commands |

@@ -67,6 +67,7 @@ struct Emitter {
 }
 
 struct Particle {
+    uid: u64,
     emitter: u64,
     doc: String,
     export: String,
@@ -96,6 +97,7 @@ enum GroundContact {
 }
 
 struct Clip {
+    uid: u64,
     doc: String,
     export: String,
     layer: Layer,
@@ -121,6 +123,7 @@ struct PendingEffect {
 /// One sprite to composite. `offset` is in SC pixels on the screen plane
 /// (x right, y down), already including elevation.
 pub struct VfxSprite {
+    pub uid: u64,
     pub layer: Layer,
     pub anchor: Anchor,
     pub offset: [f64; 2],
@@ -394,7 +397,10 @@ impl Vfx {
                         .and_then(|s| s.to_str())
                         .unwrap_or_default()
                         .to_owned();
+                    let uid = self.next_id;
+                    self.next_id += 1;
                     self.clips.push(Clip {
+                        uid,
                         doc,
                         export: export.to_owned(),
                         layer,
@@ -598,7 +604,10 @@ impl Vfx {
         };
         let rotation = if spin != 0. { self.random() * 360. } else { 0. };
         let gravity = def.particle_gravity.unwrap_or(0.);
+        let uid = self.next_id;
+        self.next_id += 1;
         self.particles.push(Particle {
+            uid,
             emitter: id,
             doc,
             export,
@@ -728,6 +737,7 @@ impl Vfx {
             // emitters mirror their smoke with negative z in the source data.
             let z = p.pos[2] * Z_FORESHORTEN;
             out.push(VfxSprite {
+                uid: p.uid,
                 layer: p.layer,
                 anchor: p.anchor,
                 offset: [p.pos[0], p.pos[1] - z],
@@ -757,6 +767,7 @@ impl Vfx {
                 raw
             };
             out.push(VfxSprite {
+                uid: c.uid,
                 layer: c.layer,
                 anchor: Anchor { z: 0., ..c.anchor },
                 offset: [0., if c.layer.on_ground() { 0. } else { -c.anchor.z }],
@@ -819,6 +830,7 @@ pub fn draw_sprite(
     sy: f64,
     field_scale: f64,
 ) {
+    let _scope = crate::scene::ScopeGuard::enter(format!("vfx-{}", sprite.uid));
     let Some(image) = cache.get(scenes, &sprite.doc, &sprite.export, sprite.frame) else {
         return;
     };
