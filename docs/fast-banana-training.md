@@ -10,6 +10,10 @@ Unsupported code paths fail explicitly. Asymmetric decks currently require the
 original native watch/setup runner; the compiled runner rejects that request.
 The isolated `deck_reference` recovery tool also accepts mirrored games only.
 
+The trainer prefers the profile-guided runner at `rust-engine/target/pgo/rust_deck_rl`
+(about 2.8× faster engine replay, +47% training decisions/second; see the
+[league simulator notes](fast-league-simulator.md#profile-guided-build)).
+
 The separate `rl.banana_fast_train` runner owns one engine subprocess per worker.
 It chooses the available logical CPU count minus two, capped at sixteen
 (ten engine workers on this machine). Workers collect complete-game waves. Actor weights stay fixed

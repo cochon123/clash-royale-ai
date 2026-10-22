@@ -8,7 +8,7 @@
     "king_mean_absolute_remaining_hp_error_maximum_percentage_points": 5,
     "unsupported_games_count_as_failures": true,
     "holdout_ordered_matchups": 36,
-    "holdout_seeds_per_matchup": 5
+    "holdout_seeds_per_matchup": 7
   },
   "decks": [
     {

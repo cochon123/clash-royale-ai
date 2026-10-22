@@ -25,8 +25,8 @@ checkpoint SHA-256 is
 
 ## Coverage and limits
 
-The checked-in generation currently covers 1,910 recovered function bodies and runtime block ranges
-(103,754 translated source instructions), including the earlier 32 fixed-scenario
+The checked-in generation currently covers 1,949 recovered function bodies and runtime block ranges
+(105,466 translated source instructions), including the earlier 32 fixed-scenario
 rollouts and fresh Hog/Mortar constructor, card and model-action coverage.
 The original C++ `__next_prime` runtime helper is included in full, bounded by
 its ELF symbol and checked byte-for-byte against the checkpoint runtime image.
@@ -76,6 +76,16 @@ the current build, 21 Python checks, 1,080 semantic replay replies, 606 complete
 integer-register helper comparisons, and the latest power-dependent timings.
 These results cover the recorded paths and do not
 establish general game or platform equivalence.
+
+The separate `rust_league_rl` runner supports asymmetric eight-card decks,
+native tower HP, and the original legal-placement mask. Its six-deck scope,
+accuracy validation and reproducible commands are described in
+[six-deck simulator validation](../docs/fast-league-simulator.md). The older
+`rust_deck_rl` interface retains its mirrored-deck contract.
+The frozen six-deck release matched all 504 fresh test games and 79,155
+semantic replies, with zero final tower-HP error. Its separate single-process
+replay benchmark measured 2.44× throughput. [league-validation.json](league-validation.json)
+records the scope, per-deck results, source identities and evidence hashes.
 
 ## Build and run
 

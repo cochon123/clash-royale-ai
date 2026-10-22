@@ -34,7 +34,9 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RUN_DIR = ROOT / "runs" / "banana-fast-league-20261019"
-DEFAULT_ENGINE = ROOT / "rust-engine" / "target" / "release" / "rust_deck_rl"
+# Prefer the profile-guided build from tools/league_pgo.py when it is installed.
+PGO_ENGINE = ROOT / "rust-engine" / "target" / "pgo" / "rust_deck_rl"
+DEFAULT_ENGINE = PGO_ENGINE if PGO_ENGINE.is_file() else ROOT / "rust-engine" / "target" / "release" / "rust_deck_rl"
 
 
 def default_workers() -> int:

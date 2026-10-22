@@ -68,11 +68,11 @@ def val(i,o,bits=64):
  return shift(extend(e,o.ext),o.shift.type,o.shift.value,bits)
 
 def vparse(s):
- m=re.fullmatch(r'([vqdshb])(\d+)(?:\.(\d+)?([bhsd]))?(?:\[(\d+|0x[0-9a-f]+)\])?',s)
+ m=re.fullmatch(r'([vqdshb])(\d+)(?:\.(\d+)?([bhsd]))?(?:\[(\d+)\])?',s)
  if not m:raise ValueError('vector '+s)
  idx=int(m[2]);lb={'b':8,'h':16,'s':32,'d':64}.get(m[4],{'b':8,'h':16,'s':32,'d':64,'q':128,'v':128}[m[1]])
  lanes=int(m[3]) if m[3] else 1
- return idx,lb,lanes,int(m[5],0) if m[5] else None
+ return idx,lb,lanes,int(m[5]) if m[5] else None
 
 def vector(i,o):
  m=i.mnemonic;d,bits,lanes,lane=vparse(o[0]);total=bits*lanes
@@ -82,8 +82,7 @@ def vector(i,o):
  def put(e):
   if lane is not None:return f'cpu.q[{d}]=(cpu.q[{d}] & !({mask(bits)} << {lane*bits})) | ((({e}) as u128 & {mask(bits)}) << {lane*bits});'
   return f'cpu.q[{d}]=({e}) & {mask(total)};'
- try:a=(vec(o[1]) if not re.match('[xw]',o[1]) else f'({rr(o[1])}) as u128') if len(o)>1 and not o[1].startswith('#') else None
- except ValueError:a=None
+ a=(vec(o[1]) if not re.match('[xw]',o[1]) else f'({rr(o[1])}) as u128') if len(o)>1 and not o[1].startswith('#') else None
  b=vec(o[2]) if len(o)>2 and o[2].startswith('v') else None
  if m=='mov':
   if re.match('[xw]',o[1]):return put(f'({rr(o[1])}) as u128')
@@ -96,83 +95,21 @@ def vector(i,o):
   return put(f'lane_dup({a},{bits},{lanes})')
  if m in ('and','orr','eor','bic','orn','bsl','bit','bif','not','mvn'):
   old=f'cpu.q[{d}]'
-  if len(o)>1 and o[1].startswith('#'):
-   # Two-operand immediate form (e.g. `bic v21.4s, #3`): Vd = Vd op imm,
-   # modified immediate imm8 optionally shifted (lsl #n), replicated per lane.
-   n=int(o[1].split('#')[1].split(',')[0],0)
-   sh=int(o[2].split('#')[1],0) if len(o)>2 else 0
-   b=f'lane_dup({n<<sh}u128,{bits},{lanes})';a=old
-  elif b is None and len(o)>2 and o[2].startswith('#'):
-   n=int(o[2].split('#')[1].split(',')[0],0)
-   sh=int(o[3].split('#')[1],0) if len(o)>3 else 0
-   b=f'lane_dup({n<<sh}u128,{bits},{lanes})'
   ex={'and':f'{a}&{b}','orr':f'{a}|{b}','eor':f'{a}^{b}','bic':f'{a}&!{b}','orn':f'{a}|!{b}','bsl':f'({old}&{a})|(!{old}&{b})','bit':f'({old}&!{b})|({a}&{b})','bif':f'({old}&{b})|({a}&!{b})','not':f'!{a}','mvn':f'!{a}'}[m]
   return put(ex)
- if m in ('fmul','fadd','fsub','fdiv','fmax','fmin','fnmul','fabd'):
-  if b is None:raise ValueError('vector '+m+' '+i.op_str)
-  if '[' in o[2]:
-   n2,lb2,_,j2=vparse(o[2]);b=f'lane_dup((cpu.q[{n2}] >> {j2*lb2}) & {mask(lb2)},{bits},{lanes})'
-  return put(f'lane_fp_binary({a},{b},{bits},{lanes},"{m}")')
- if m in ('add','sub','mul','cmeq','cmgt','cmge','cmhi','cmhs','cmtst','sabd','uabd','smin','smax','cmlt','uqsub','umin','umax'):
-  if '[' in o[2]:
-   n2,lb2,_,j2=vparse(o[2]);b=f'lane_dup((cpu.q[{n2}] >> {j2*lb2}) & {mask(lb2)},{bits},{lanes})'
+ if m in ('add','sub','mul','cmeq','cmgt','cmge','cmhi','cmhs','sabd','uabd','smin','smax','cmlt'):
   b='0u128' if o[2]=='#0' else b
   return put(f'lane_binary({a},{b},{bits},{lanes},"{m}")')
- if m=='neg':return put(f'lane_binary(0u128,{a},{bits},{lanes},"neg")')
- if m=='fmov':
-  if o[1].startswith('#'):
-   imm=float(o[1][1:]);ty='f32' if bits==32 else 'f64'
-   return put(f'lane_dup(({imm!r}{ty}).to_bits() as u128,{bits},{lanes})')
-  return put(a)
- if m in ('fmul','fadd','fsub','fdiv','fsqrt','fabs','fneg','frintp','frintm','frintz','frinta'):
-  bb='0u128' if b is None else b
-  return put(f'lane_fp_binary({a},{bb},{bits},{lanes},"{m}")')
- if m in ('scvtf','ucvtf'):
-  return put(f'lane_int_to_fp({a},{bits},{lanes},{str(m=="scvtf").lower()})')
- if m in ('fcvtzs','fcvtzu'):
-  return put(f'lane_fp_to_int({a},{bits},{lanes},{str(m=="fcvtzs").lower()})')
- if m in ('fcvtl','fcvtl2'):
-  return put(f'lane_fp_cvtl({a},{lanes},{str(m=="fcvtl2").lower()})')
- if m in ('fcvtn','fcvtn2'):
-  return f'cpu.q[{d}]=lane_fp_cvtn(cpu.q[{d}],{a},{lanes},{str(m=="fcvtn2").lower()});'
- if m=='tbl':
-  regs=[s.strip() for s in o[1].strip('{}').split(',')]
-  tvals=[f'(cpu.q[{int(s[1:s.index(".")])}])' for s in regs]
-  while len(tvals)<4:tvals.append('0u128')
-  return put(f'lane_tbl({b},[{",".join(tvals)}],{16*len(regs)})')
- if m in ('fmla','fmls'):
-  if '[' in o[2]:
-   n2,lb2,_,j2=vparse(o[2]);b=f'lane_dup((cpu.q[{n2}] >> {j2*lb2}) & {mask(lb2)},{bits},{lanes})'
-  return f'cpu.q[{d}]=lane_fp_tma(cpu.q[{d}],{a},{b},{bits},{lanes},{str(m=="fmls").lower()}) & {mask(total)};'
- if m in ('fmaxnm','fminnm'):
-  return put(f'lane_fp_minmax({a},{b},{bits},{lanes},{str(m=="fmaxnm").lower()})')
- if m in ('fcmeq','fcmgt','fcmge'):
-  if o[2].startswith('#'):b='0u128'
-  elif '[' in o[2]:
-   n2,lb2,_,j2=vparse(o[2]);b=f'lane_dup((cpu.q[{n2}] >> {j2*lb2}) & {mask(lb2)},{bits},{lanes})'
-  return put(f'lane_fp_cmp({a},{b},{bits},{lanes},"{m}")')
- if m=='faddp':return put(f'lane_fp_addp({a},{b},{bits},{lanes})')
- if m in ('rev64','rev32','rev16'):
-  return put(f'lane_rev({a},{bits},{lanes},{int(m[3:])})')
- if m=='ushl':return put(f'lane_ushl({a},{b},{bits},{lanes})')
- if m in ('ssra','usra'):
-  n=int(o[2][1:],0);sh_op='sshr' if m=='ssra' else 'ushr'
-  return put(f'lane_binary(cpu.q[{d}],lane_shift({a},{bits},{lanes},{n},"{sh_op}"),{bits},{lanes},"add")')
- if m in ('uaddw','uaddw2','saddw','saddw2'):
-  _,sb,_,_=vparse(o[2]);n2=int(o[2][1:o[2].index('.')],0)
-  src=f'(cpu.q[{n2}] >> {64 if m.endswith("2") else 0})'
-  return put(f'lane_widen_add({a},{src},{bits},{sb},{lanes},{str(m.endswith("2")).lower()})')
  if m in ('cnt',):return put(f'lane_count({a},{bits},{lanes})')
  if m in ('ushr','sshr','shl'):
   n=int(o[2][1:],0);return put(f'lane_shift({a},{bits},{lanes},{n},"{m}")')
- if m in ('addv','uaddlv','saddlv','smaxv','umaxv','uminv'):
+ if m in ('addv','uaddlv','saddlv','smaxv','umaxv'):
   _,sb,sl,_=vparse(o[1]);return put(f'lane_reduce({a},{sb},{sl},"{m}")')
  if m in ('uzp1','uzp2','zip1','zip2','trn1','trn2'):
   return put(f'lane_shuffle({a},{b},{bits},{lanes},"{m}")')
- if m in ('xtn','shrn','ushll','sshll','shll','ushll2','sshll2'):
+ if m in ('xtn','shrn','ushll','sshll','shll'):
   _,sb,sl,_=vparse(o[1]);n=int(o[2][1:],0) if len(o)>2 else 0
-  if m.endswith('2'):a=f'({a} >> 64)'
-  return put(f'lane_resize({a},{sb},{bits},{lanes},{n},"{m[:-1] if m.endswith("2") else m}")')
+  return put(f'lane_resize({a},{sb},{bits},{lanes},{n},"{m}")')
  if m=='ext':
   n=int(o[3][1:],0)*8
   return put(a if n==0 else f'({a} >> {n}) | ({b} << {total-n})')
@@ -188,7 +125,6 @@ class Compiler:
   return prefix+call
  def emit(self,i,start,end):
   m=i.mnemonic;o=parts(i.op_str);ops=i.operands;p=i.address;nextpc=p+4
-  m={'stlr':'str','stlrb':'strb','stlrh':'strh','ldar':'ldr','ldarb':'ldrb','ldarh':'ldrh'}.get(m,m)
   r=lambda j:rr(regname(i,ops[j]));w=lambda j,e:wr(regname(i,ops[j]),e)
   v=lambda j:val(i,ops[j],width(regname(i,ops[0])))
   bits=width(regname(i,ops[0])) if ops and ops[0].type==ARM64_OP_REG else 64
@@ -207,24 +143,7 @@ class Compiler:
   if m=='bl':return self.call(ops[0].imm,nextpc),False
   if m=='blr':return '{let target='+r(0)+';'+self.call('target',nextpc)+'}',False
   if m=='br':return '{let target='+r(0)+f';if target>={start:#x} && target<{end:#x}{{pc=target;continue;}}'+self.call('target')+'return Ok(());}',True
-  if m in ('nop','hint','yield','dmb','dsb','isb','paciasp','autiasp','bti','prfm'):return '',False
-  if m=='brk':return 'return Err('+json.dumps(f'software breakpoint hit at {p:#x}')+'.into());',True
-  if m=='clrex':return 'rt.memory.clear_exclusive();',False
-  if m in ('ldaxr','ldxr'):
-   ty='u'+str(bits);address=rr(i.reg_name(ops[1].mem.base))
-   return '{let address='+address+';let value=rt.memory.load_exclusive::<'+ty+'>(address);'+w(0,'value')+'}',False
-  if m in ('stlxr','stxr'):
-   ty='u'+str(width(regname(i,ops[1])));address=rr(i.reg_name(ops[2].mem.base))
-   return '{let address='+address+';let value='+r(1)+';let status=rt.memory.store_exclusive::<'+ty+'>(address,value as '+ty+');'+w(0,'status')+'}',False
-  if m in ('ldadd','ldadda','ldaddl','ldaddal'):
-   ty='u'+str(bits);address=rr(i.reg_name(ops[2].mem.base))
-   return '{let address='+address+';let value=('+r(0)+') as '+ty+';assert_eq!(address % std::mem::size_of::<'+ty+'>() as u64,0,"unaligned atomic add");let old=rt.memory.read::<'+ty+'>(address);rt.memory.write::<'+ty+'>(address,old.wrapping_add(value));'+w(1,'old')+'}',False
-  if m in ('cas','casa','casl','casal'):
-   # Compare and swap: if memory holds the expected value, store the data
-   # register; the destination receives the old memory value either way.
-   ty='u32' if o[0][0]=='w' else 'u64'
-   mo=ops[2];addr=f'({rr(i.reg_name(mo.mem.base))}).wrapping_add({mo.mem.disp & ((1<<64)-1):#x}u64)'
-   return '{let address='+addr+f';let old=rt.memory.read::<{ty}>(address);if old==(({r(1)}) as {ty}){{rt.memory.write::<{ty}>(address,({r(0)}) as {ty});}}'+w(0,'old as u64')+'}',False
+  if m in ('nop','hint','yield','dmb','dsb','isb','paciasp','autiasp','bti'):return '',False
   if m in ('adr','adrp'):return w(0,f'{ops[1].imm:#x}u64'),False
   if m in ('mrs','msr'):
    field=o[1] if m=='mrs' else o[0]
@@ -235,44 +154,6 @@ class Compiler:
    d,lb,lanes,_=vparse(o[0].strip('{}'))
    mem=ops[-1].mem;address=f'({rr(i.reg_name(mem.base))}).wrapping_add({mem.disp & ((1<<64)-1):#x}u64)'
    return f'cpu.q[{d}]=lane_dup(rt.memory.read::<u{lb}>({address}) as u128,{lb},{lanes});',False
-  if m in ('ld1','st1') and '[' in o[0]:
-   # One element lane to/from memory: ld1 {vN.T}[i], [xM] (, #imm post-index)
-   lm=re.fullmatch(r'([vqd]\d+)\.([bhsd])\[(\d+|0x[0-9a-f]+)\]',o[0].replace('{','').replace('}',''))
-   if not lm:raise ValueError('lane mem '+i.op_str)
-   n=int(lm[1][1:],0);eb={'b':8,'h':16,'s':32,'d':64}[lm[2]];lanei=int(lm[3],0)
-   mo=ops[1];base=i.reg_name(mo.mem.base)
-   addr=f'({rr(base)}).wrapping_add({mo.mem.disp & ((1<<64)-1):#x}u64)'
-   if mo.mem.index:
-    ir=shift(extend(rr(i.reg_name(mo.mem.index)),mo.ext),mo.shift.type,mo.shift.value);addr=f'({addr}).wrapping_add({ir})'
-   code='{let address='+addr+';'
-   if m=='ld1':
-    code+=f'cpu.q[{n}]=(cpu.q[{n}] & !({mask(eb)} << {lanei*eb})) | ((rt.memory.read::<u{eb}>(address) as u128 & {mask(eb)}) << {lanei*eb});'
-   else:
-    code+=f'rt.memory.write::<u{eb}>(address,((cpu.q[{n}] >> {lanei*eb}) & {mask(eb)}) as u{eb});'
-   if i.writeback:
-    if len(ops)>2 and ops[2].type==ARM64_OP_IMM:code+=wr(base,f'({rr(base)}).wrapping_add({ops[2].imm & ((1<<64)-1)})')
-    else:code+=wr(base,'address')
-   return code+'}',False
-  if m in ('ld1','ld2','ld3','ld4','st1','st2','st3','st4') and o and o[0].startswith('{') and '[' not in o[0]:
-   # Interleaved multi-register structures: ldN/stN {vA.T,...,vK.T}, [xM]
-   k=int(m[2]);parsed=[vparse(s.strip().strip('{}')) for s in o[0].strip('{}').split(',')]
-   if len(parsed)!=k or len({(p[1],p[2]) for p in parsed})!=1:raise ValueError('structure '+i.op_str)
-   eb=parsed[0][1];per=parsed[0][2]
-   mo=ops[1];base=i.reg_name(mo.mem.base)
-   addr=f'({rr(base)}).wrapping_add({mo.mem.disp & ((1<<64)-1):#x}u64)'
-   if mo.mem.index:
-    ir=shift(extend(rr(i.reg_name(mo.mem.index)),mo.ext),mo.shift.type,mo.shift.value);addr=f'({addr}).wrapping_add({ir})'
-   code='{let address='+addr+';'
-   for eidx in range(k*per):
-    rn=parsed[eidx%k][0];ln=eidx//k
-    if m[0]=='l':
-     code+=f'cpu.q[{rn}]=(cpu.q[{rn}] & !({mask(eb)} << {ln*eb})) | ((rt.memory.read::<u{eb}>(address.wrapping_add({eidx*(eb//8)})) as u128 & {mask(eb)}) << {ln*eb});'
-    else:
-     code+=f'rt.memory.write::<u{eb}>(address.wrapping_add({eidx*(eb//8)}),((cpu.q[{rn}] >> {ln*eb}) & {mask(eb)}) as u{eb});'
-   if i.writeback:
-    if len(ops)>2 and ops[2].type==ARM64_OP_IMM:code+=wr(base,f'({rr(base)}).wrapping_add({ops[2].imm & ((1<<64)-1)})')
-    else:code+=wr(base,f'address.wrapping_add({k*per*(eb//8)})')
-   return code+'}',False
   if m.startswith(('ldr','ldur','ldar','str','stur')) or m in ('ldp','stp','ldpsw','ldnp','stnp'):
    pair=m in ('ldp','stp','ldpsw','ldnp','stnp');mi=2 if pair else 1;mo=ops[mi]
    if mo.type==ARM64_OP_IMM:addr=f'{mo.imm:#x}u64';base=None
@@ -299,19 +180,13 @@ class Compiler:
     if mi+1<len(ops):code+=wr(base,f'({rr(base)}).wrapping_add({val(i,ops[mi+1])})')
     else:code+=wr(base,'address')
    return code+'}',False
-  if m in ('fmov','scvtf','ucvtf','fcvtzs','fcvtzu','fcvtpu','fcvtps','fcvtms','fcvtmu','fcvtns','fcvtnu','fcvtas','fcvtau','fcvt','frintp','frintm','frintz','frintn','frinta','frintx','frinti','fmul','fadd','fsub','fdiv','fneg','fabs','fsqrt','fmax','fmin','fmaxnm','fminnm','fnmul','fabd','fcmp','fcmpe','fccmp','fccmpe','fcsel','fmadd','fmsub','fnmadd','fnmsub','fmla','fmls','faddp'):
-   if o[0][0]=='v':return vector(i,o),False
+  if m in ('fmov','scvtf','ucvtf','fcvtzs','fcvtzu','fcvtpu','fcvtps','fcvtms','fcvtmu','fcvtns','fcvtnu','fcvtas','fcvtau','fcvt','fmul','fadd','fsub','fdiv','fneg','fabs','fsqrt','fmax','fmin','fcmp','fcmpe','fcsel'):
    if m=='fmov':
     if ops[1].type==ARM64_OP_FP:
      ty='f32' if o[0].startswith('s') else 'f64';return w(0,f'({ops[1].fp!r}{ty}).to_bits()'),False
     return w(0,r(1)),False
    def fp(j):
     if ops[j].type==ARM64_OP_FP:return repr(ops[j].fp)+('f32' if o[0].startswith('s') else 'f64')
-    if o[j].startswith('v') and '[' in o[j]:
-     # Scalar read of one vector lane, e.g. `fmul s25, s25, v1.s[1]`:
-     # reinterpret the addressed lane, not the whole 128-bit q register.
-     n,lb,_,ix=vparse(o[j]);ty='f32' if lb==32 else 'f64';uint='u32' if ty=='f32' else 'u64'
-     return f'{ty}::from_bits((((cpu.q[{n}] >> {ix*lb}) & {mask(lb)})) as {uint})'
     ty='f32' if o[j].startswith('s') else 'f64';uint='u32' if ty=='f32' else 'u64'
     return f'{ty}::from_bits(({r(j)}) as {uint})'
    ty='f32' if o[0].startswith('s') else 'f64'
@@ -321,47 +196,15 @@ class Compiler:
     it=('u' if m.endswith('u') else 'i')+str(width(o[0]));rounding={'z':'trunc','p':'ceil','m':'floor','n':'round_ties_even','a':'round'}[m[4]]
     return w(0,f'({fp(1)}.{rounding}() as {it}) as u64'),False
    if m=='fcvt':return w(0,f'({fp(1)} as {ty}).to_bits()'),False
-   if m.startswith('frint'):
-    # Round to an integral value in place. FRINTP/FRINTM/FRINTZ/FRINTN/FRINTA are
-    # directed; FRINTX/FRINTI follow FPCR, which fp_domain pins to nearest-even.
-    rounding={'p':f'({fp(1)}).ceil()','m':f'({fp(1)}).floor()','z':f'({fp(1)}).trunc()','n':f'({fp(1)}).round_ties_even()','a':f'({fp(1)}).round()','x':f'({fp(1)}).round_ties_even()','i':f'({fp(1)}).round_ties_even()'}[m[5]]
-    return w(0,f'({rounding}).to_bits()'),False
    if m in ('fcmp','fcmpe'):
     return f'{{let a={fp(0)};let b={fp(1)};cpu.nzcv=if a.is_nan()||b.is_nan(){{0x30000000}}else if a==b{{0x60000000}}else if a<b{{0x80000000}}else{{0x20000000}};}}',False
-   if m in ('fccmp','fccmpe'):
-    code=f'{{let a={fp(0)};let b={fp(1)};cpu.nzcv=if a.is_nan()||b.is_nan(){{0x30000000}}else if a==b{{0x60000000}}else if a<b{{0x80000000}}else{{0x20000000}};}}'
-    return f'if {cond(o[3])}{{{code}}}else{{cpu.nzcv={ops[2].imm}u64 << 28;}}',False
-   if m=='faddp':
-    # Scalar pairwise: add the two lanes of one vector register.
-    n,lb,_,_=vparse(o[1]);uint='u32' if lb==32 else 'u64'
-    lo=f'{ty}::from_bits(((cpu.q[{n}]) & {mask(lb)}) as {uint})'
-    hi=f'{ty}::from_bits(((cpu.q[{n}] >> {lb}) & {mask(lb)}) as {uint})'
-    return w(0,f'({lo} + {hi}).to_bits()'),False
-   if m in ('fmla','fmls'):
-    # Scalar by-element fused multiply-accumulate into the destination.
-    a0=fp(1);d0=fp(0)
-    e=f'{a0}.mul_add({fp(2)},{d0})' if m=='fmla' else f'(-({a0})).mul_add({fp(2)},{d0})'
-    return w(0,f'({e}).to_bits()'),False
    if m=='fcsel':return w(0,f'if {cond(o[3])}{{{r(1)}}}else{{{r(2)}}}'),False
    a=fp(1)
-   if m in ('fmaxnm','fminnm'):
-    # maxNum/minNum semantics; f32::maximum/minimum are unstable on stable Rust.
-    fn='fp_minmax_f32' if ty=='f32' else 'fp_minmax_f64'
-    return w(0,f'{fn}({a},{fp(2)},{str(m=="fmaxnm").lower()}).to_bits()'),False
    if m in ('fneg','fabs','fsqrt'):e=f'-({a})' if m=='fneg' else f'({a}).'+('abs' if m=='fabs' else 'sqrt')+'()'
-   elif m in ('fmadd','fmsub','fnmadd','fnmsub'):
-    b=fp(2);c=fp(3)
-    # ARM64 fused, a=Sn b=Sm c=Sa: FMADD=Sa+Sn*Sm, FMSUB=Sa-Sn*Sm,
-    # FNMADD=-(Sa+Sn*Sm), FNMSUB=-(Sa-Sn*Sm). Negation is exact so one rounding.
-    e={'fmadd':f'{a}.mul_add({b},{c})','fmsub':f'(-({a})).mul_add({b},{c})','fnmadd':f'(-({a})).mul_add({b},-({c}))','fnmsub':f'{a}.mul_add({b},-({c}))'}[m]
    else:
-    b=fp(2);e={'fmul':f'{a}*{b}','fadd':f'{a}+{b}','fsub':f'{a}-{b}','fdiv':f'{a}/{b}','fmax':f'({a}).max({b})','fmin':f'({a}).min({b})','fnmul':f'-(({a})*({b}))','fabd':f'(({a})-({b})).abs()'}[m]
+    b=fp(2);e={'fmul':f'{a}*{b}','fadd':f'{a}+{b}','fsub':f'{a}-{b}','fdiv':f'{a}/{b}','fmax':f'({a}).max({b})','fmin':f'({a}).min({b})'}[m]
    return w(0,f'({e}).to_bits()'),False
-  if o and (o[0].startswith('v') or m in ('movi','mvni','cnt','uaddlv','saddlv','addv','smaxv','umaxv','uminv')):return vector(i,o),False
-  if m=='addp' and not o[0].startswith('v'):
-   # ADDP Dd,Vn.2D: integer pairwise add across one vector register.
-   n,lb,_,_=vparse(o[1])
-   return w(0,f'lane_binary((cpu.q[{n}] & {mask(lb)}),((cpu.q[{n}] >> {lb}) & {mask(lb)}),{lb},1,"add")'),False
+  if o and (o[0].startswith('v') or m in ('movi','mvni','cnt','uaddlv','saddlv','addv','smaxv','umaxv')):return vector(i,o),False
   if m in ('umov','smov'):
    a,b,l,j=vparse(o[1]);e=f'((cpu.q[{a}] >> {j*b}) & {mask(b)})'
    if m=='smov':e=f'(({e}) as i{b} as i64 as u64)'
@@ -430,15 +273,8 @@ class Compiler:
    return w(0,e),False
   if m in ('clz','cls','rbit','rev','rev16','rev32'):
    ty='u32' if bits==32 else 'u64';a=f'({v(1)} as {ty})'
-   if m=='clz':e=a+'.leading_zeros() as u64'
-   elif m=='rbit':e=a+'.reverse_bits() as u64'
-   elif m=='rev':e=a+'.swap_bytes() as u64'
-   elif m=='rev16':
-    e=f'((({a}) & 0x00ff00ff00ff00ff) << 8) | ((({a}) >> 8) & 0x00ff00ff00ff00ff)'
-   else:
-    b16=f'((({a}) & 0x00ff00ff00ff00ff) << 8) | ((({a}) >> 8) & 0x00ff00ff00ff00ff)'
-    e=f'(({b16} & 0x0000ffff0000ffff) << 16) | (({b16} >> 16) & 0x0000ffff0000ffff)'
-   return w(0,f'(({e}) & {hex((1<<bits)-1)})'),False
+   e=a+'.leading_zeros() as u64' if m=='clz' else a+'.reverse_bits() as u64' if m=='rbit' else a+'.swap_bytes() as u64' if m=='rev' else None
+   if e:return w(0,e),False
   raise ValueError(m+' '+i.op_str)
 
 def thread_forward_edges(lines,budget):
@@ -468,6 +304,194 @@ def thread_forward_edges(lines,budget):
  result=[lines[0]]
  for address in blocks:result += [f'{address:#x}=>{{',expand(address,[budget]),'}']
  return result+[lines[-1]],stats
+
+def dense_dispatch(lines):
+ """Use compact internal block IDs, preserving the public ARM entry address.
+
+ Only constant local transfers are eligible. Functions with indirect local
+ branches retain their original dispatcher. Every original entry is checked
+ once on entry; all internal IDs are produced by this verified mapping.
+ """
+ addresses=[int(m[1],0) for line in lines if (m:=re.fullmatch(r'(0x[0-9a-f]+)=>\{',line))]
+ if len(addresses)<2:return lines,{'blocks':len(addresses),'applied':False}
+ transfer=re.compile(r'(?<![\w.])pc=(0x[0-9a-f]+);continue;')
+ if re.search(r'(?<![\w.])pc\s*=',transfer.sub('', '\n'.join(lines))):
+  return lines,{'blocks':len(addresses),'applied':False,'reason':'indirect local transfer'}
+ ids={address:index for index,address in enumerate(addresses)}
+ if any(int(m[1],0) not in ids for line in lines for m in transfer.finditer(line)):
+  return lines,{'blocks':len(addresses),'applied':False,'reason':'transfer outside translated blocks'}
+ entry=(f'let mut block:u32=if pc=={addresses[0]:#x}{{0}}else{{match pc{{'+
+        ''.join(f'{address:#x}=>{index},' for address,index in ids.items())+
+        '_=>return Err(format!("untranslated block {pc:#x} in '+hex(addresses[0])+'").into()),}};')
+ result=[lines[0].replace('>{loop{match pc{','>{'+entry+'loop{match block{')]
+ assert result[0]!=lines[0],'unexpected generated function header'
+ for line in lines[1:-1]:
+  if m:=re.fullmatch(r'(0x[0-9a-f]+)=>\{',line):line=f'{ids[int(m[1],0)]}=>{{'
+  line=transfer.sub(lambda m:f'block={ids[int(m[1],0)]};continue;',line)
+  result.append(line)
+ result.append(lines[-1].replace('untranslated block {pc:#x}','invalid internal block {block}'))
+ return result,{'blocks':len(addresses),'applied':True}
+
+PROMOTE_EVENT=re.compile(
+ r'(?P<call>super::(?:chunk\d+::f_[0-9a-f]+|dispatch)\(cpu,rt,[^;]*?\)\?;)(?P<tail>return Ok\(\(\)\);)?'
+ r'|(?P<ret>return Ok\(\(\)\);)'
+ r'|(?P<transfer>(?<![\w.])pc=0x[0-9a-f]+;continue;)'
+ r'|cpu\.x\[(?P<x>\d+)\](?P<xw>=(?!=))?'
+ r'|cpu\.q\[(?P<q>\d+)\](?P<qw>=(?!=))?'
+ r'|cpu\.sp(?![\w])(?P<spw>=(?!=))?'
+ r'|cpu\.nzcv(?![\w])(?P<nw>=(?!=))?'
+ r'|cpu\.(?P<flags>flags|logical_flags)\('
+ r'|cpu\.condition\(')
+
+def promote_registers(text,rpo,sites,limit=None):
+ """Keep guest registers in Rust locals within one structured function.
+
+ Locals are loaded on entry and after every non-tail call. Before each call
+ and each normal return, every register that may have been written since the
+ last synchronization is stored back, so callees, callers and host code see
+ exactly the architectural values the memory-resident translation stores.
+ May-dirty sets are a forward union dataflow over the function's local CFG.
+ """
+ used=set()
+ for a in rpo:
+  for m in PROMOTE_EVENT.finditer(text[a]):
+   if m['x'] is not None:used.add(('x',int(m['x'])))
+   elif m['q'] is not None:used.add(('q',int(m['q'])))
+   elif m[0].startswith('cpu.sp'):used.add(('sp',0))
+   elif m[0].startswith(('cpu.nzcv','cpu.flags','cpu.logical_flags','cpu.condition')):used.add(('nzcv',0))
+ if limit is not None and len(used)>limit:return None,None  # host register pressure would force spills
+ local=lambda r:{'x':f'gx{r[1]}','q':f'gq{r[1]}','sp':'gsp','nzcv':'gnzcv'}[r[0]]
+ field=lambda r:{'x':f'cpu.x[{r[1]}]','q':f'cpu.q[{r[1]}]','sp':'cpu.sp','nzcv':'cpu.nzcv'}[r[0]]
+ order=sorted(used)
+ store=lambda dirty:''.join(f'{field(r)}={local(r)};' for r in sorted(dirty))
+ reload=''.join(f'{local(r)}={field(r)};' for r in order)
+ def scan(a,dirty,emit):
+  dirty=set(dirty);out=[];pos=0;s=text[a];at_transfer=[]
+  for m in PROMOTE_EVENT.finditer(s):
+   out.append(s[pos:m.start()]);pos=m.end()
+   if m['call']:
+    out.append(store(dirty)+m['call'])
+    if m['tail']:out.append(m['tail'])  # path ends: callee results stay in cpu
+    else:out.append(reload);dirty=set()
+   elif m['ret']:out.append(store(dirty)+m['ret'])
+   elif m['transfer']:out.append(m[0]);at_transfer.append(frozenset(dirty))
+   elif m['x'] is not None:
+    r=('x',int(m['x']));out.append(local(r)+('=' if m['xw'] else ''))
+    if m['xw']:dirty.add(r)
+   elif m['q'] is not None:
+    r=('q',int(m['q']));out.append(local(r)+('=' if m['qw'] else ''))
+    if m['qw']:dirty.add(r)
+   elif m[0].startswith('cpu.sp'):
+    out.append('gsp'+('=' if m['spw'] else ''))
+    if m['spw']:dirty.add(('sp',0))
+   elif m[0].startswith('cpu.nzcv'):
+    out.append('gnzcv'+('=' if m['nw'] else ''))
+    if m['nw']:dirty.add(('nzcv',0))
+   elif m['flags']:
+    out.append('gnzcv=nzcv_'+m['flags']+'(');dirty.add(('nzcv',0))
+   else:out.append('nzcv_condition(gnzcv,')
+  out.append(s[pos:])
+  return ''.join(out),at_transfer
+ # Transfer sites in a block appear in the same order as `sites[a]`.
+ dirty_in={a:frozenset() for a in rpo};changed=True
+ while changed:
+  changed=False
+  for a in rpo:
+   _,outs=scan(a,dirty_in[a],False)
+   assert len(outs)==len(sites[a]),f'transfer scan mismatch in {a:#x}'
+   for t,d in zip(sites[a],outs):
+    if not d<=dirty_in[t]:dirty_in[t]=dirty_in[t]|d;changed=True
+ rewritten={a:scan(a,dirty_in[a],True)[0] for a in rpo}
+ prologue=''.join(f'let mut {local(r)}={field(r)};' for r in order)
+ return rewritten,prologue
+
+def structured_cfg(lines,lo,promote=False,promote_limit=None):
+ """Lower the PC-loop body of one function into structured Rust control flow.
+
+ Uses Ramsey's dominator-tree algorithm ("Beyond Relooper", 2022): forward
+ edges to merge nodes become `break` out of labeled blocks, back edges become
+ `continue` of labeled loops, and single-predecessor successors are emitted in
+ place. Every reachable block is emitted exactly once with its instruction text
+ unchanged; only `pc=constant;continue;` transfers are rewritten. Returns None
+ for indirect local branches or irreducible control flow.
+ """
+ blocks={};order=[];address=None
+ for line in lines[1:-1]:
+  match=re.fullmatch(r'(0x[0-9a-f]+)=>\{',line)
+  if match:address=int(match[1],0);blocks[address]=[];order.append(address)
+  elif line=='}':address=None
+  else:blocks[address].append(line)
+ if not order or order[0]!=lo:return None,'entry is not the first block'
+ transfer=re.compile(r'(?<![\w.])pc=(0x[0-9a-f]+);continue;')
+ text={a:'\n'.join(body) for a,body in blocks.items()}
+ for a,body in text.items():
+  if re.search(r'(?<![\w.])pc\s*=',transfer.sub('',body)) or re.search(r'\b(continue|break)\b',transfer.sub('',body)):
+   return None,'indirect or unstructured local transfer'
+ sites={a:[int(m[1],0) for m in transfer.finditer(body)] for a,body in text.items()}
+ if any(t not in blocks for ts in sites.values() for t in ts):return None,'transfer outside translated blocks'
+ # Reverse postorder from the function entry; other blocks are mid-entries only.
+ seen=set();post=[];stack=[(lo,iter(dict.fromkeys(sites[lo])))];seen.add(lo)
+ while stack:
+  node,it=stack[-1]
+  for t in it:
+   if t not in seen:seen.add(t);stack.append((t,iter(dict.fromkeys(sites[t]))));break
+  else:post.append(node);stack.pop()
+ rpo=post[::-1];index={a:i for i,a in enumerate(rpo)}
+ preds=collections.defaultdict(list)
+ for a in rpo:
+  for t in sites[a]:preds[t].append(a)
+ idom={lo:lo}
+ def intersect(a,b):
+  while a!=b:
+   while index[a]>index[b]:a=idom[a]
+   while index[b]>index[a]:b=idom[b]
+  return a
+ changed=True
+ while changed:
+  changed=False
+  for a in rpo[1:]:
+   ps=[p for p in preds[a] if p in idom]
+   new=ps[0]
+   for p in ps[1:]:new=intersect(p,new)
+   if idom.get(a)!=new:idom[a]=new;changed=True
+ def dominates(a,b):
+  while True:
+   if a==b:return True
+   if b==lo:return False
+   b=idom[b]
+ headers=set();forward=collections.Counter()
+ for a in rpo:
+  for t in sites[a]:
+   if index[t]<=index[a]:
+    if not dominates(t,a):return None,'irreducible control flow'
+    headers.add(t)
+   else:forward[t]+=1
+ merges={a for a in rpo if forward[a]>=2}
+ children=collections.defaultdict(list)
+ for a in rpo[1:]:children[idom[a]].append(a)
+ def do_tree(x):
+  ys=sorted((c for c in children[x] if c in merges),key=index.get)
+  inner=node_within(x,ys)
+  return f"'l{x:x}: loop {{\n{inner}\n}}" if x in headers else inner
+ def node_within(x,ys):
+  if not ys:return transfer.sub(lambda m:branch(x,int(m[1],0)),text[x])
+  y=ys[-1]
+  return f"'b{y:x}: {{\n{node_within(x,ys[:-1])}\n}}\n{do_tree(y)}"
+ def branch(source,target):
+  if index[target]<=index[source]:return f"continue 'l{target:x};"
+  if target in merges:return f"break 'b{target:x};"
+  return '{\n'+do_tree(target)+'\n}'
+ prologue=''
+ if promote:
+  rewritten,prologue=promote_registers(text,rpo,sites,promote_limit)
+  if rewritten is None:prologue=''
+  else:text.update(rewritten)
+ body=prologue+'\n'+do_tree(lo)
+ # Structural audit: each reachable block's instruction text appears exactly once.
+ instructions=lambda s:re.findall(r'^// 0x[0-9a-f]+ .*$',s,re.M)
+ if collections.Counter(instructions(body))!=collections.Counter(i for a in rpo for i in instructions(text[a])):
+  raise AssertionError(f'structured lowering changed instruction multiset in {lo:#x}')
+ return body,{'blocks':len(order),'reachable':len(rpo),'loops':len(headers),'merges':len(merges),'promoted':bool(prologue)}
 
 def generate(profile,out,extra):
  source=SOURCE.read_bytes();assert hashlib.sha256(source).hexdigest()==EXPECTED
@@ -535,7 +559,7 @@ def generate(profile,out,extra):
  ranges=merged
  out.mkdir(parents=True,exist_ok=True)
  functions={start:(int.from_bytes(hashlib.sha256(str(start).encode()).digest()[:2],'little')%16,f'f_{start:x}') for start in sorted(ranges)}
- compiler=Compiler(functions);chunks=[[]for _ in range(16)];unsupported=collections.Counter();total=0;exports=[];threaded={}
+ compiler=Compiler(functions);chunks=[[]for _ in range(16)];unsupported=collections.Counter();total=0;exports=[];threaded={};dense={};structured={}
  for start,(lo,hi) in sorted(ranges.items()):
   ins=list(md.disasm(read(lo,hi-lo),lo));total+=len(ins)
   boundaries={lo}|{int(block['rva'],0)+BASE for block in x['blocks'] if lo<=int(block['rva'],0)+BASE<hi}
@@ -558,40 +582,52 @@ def generate(profile,out,extra):
     code,terminated=compiler.emit(i,lo,hi)
     if i.mnemonic.startswith('f') and i.mnemonic!='fmov':
      inputs=[]
-     for op in i.operands[1:] if i.mnemonic not in ('fcmp','fcmpe','fccmp','fccmpe') else i.operands:
+     for op in i.operands[1:] if i.mnemonic not in ('fcmp','fcmpe') else i.operands:
       if op.type==ARM64_OP_REG and re.fullmatch('[sd][0-9]+',i.reg_name(op.reg)):
        fpreg=i.reg_name(op.reg);typ='f32' if fpreg[0]=='s' else 'f64';uint='u32' if typ=='f32' else 'u64'
        inputs.append(f'{typ}::from_bits(({rr(fpreg)}) as {uint}) as f64')
        if typ=='f32':code=f'if f32::from_bits(({rr(fpreg)}) as u32).is_subnormal(){{return Err(\"subnormal f32 operand requires architectural handling\".into());}}'+code
      code='fp_domain(cpu,&['+','.join(inputs)+'])?;'+code
-     if i.operands and i.operands[0].type==ARM64_OP_REG and re.fullmatch('[sd][0-9]+',i.reg_name(i.operands[0].reg)) and i.mnemonic not in ('fcmp','fcmpe','fccmp','fccmpe'):
+     if i.operands and i.operands[0].type==ARM64_OP_REG and re.fullmatch('[sd][0-9]+',i.reg_name(i.operands[0].reg)) and i.mnemonic not in ('fcmp','fcmpe'):
       fpreg=i.reg_name(i.operands[0].reg);typ='f32' if fpreg[0]=='s' else 'f64';uint='u32' if typ=='f32' else 'u64'
       code+=f'fp_domain(cpu,&[{typ}::from_bits(({rr(fpreg)}) as {uint}) as f64])?;'
 
    except (ValueError,KeyError,IndexError) as e:
     unsupported[str(e)]+=1;code='return Err('+json.dumps(f'unsupported {i.address:#x}: {i.mnemonic} {i.op_str}')+'.into());';terminated=True
-   # Match the source-bound reference's asymmetric Normal-row deck hooks.
-   # These change the scenario vector at precisely the same original PCs;
-   # all translated game instructions and CPU state remain unchanged.
    if i.address in (0x111d6f18,0x111d6068):
     code=f'rt.deck_swap_hook({i.address:#x})?;'+code
    lines.append(f'// {i.address:#x} {i.mnemonic} {i.op_str}'.rstrip()+'\n'+code)
   if opened:
    if not terminated:lines.append(f'return Err("fell through function {lo:#x}".into());')
    lines.append('}')
-  lines.append(f'_=>return Err(format!("untranslated block {{pc:#x}} in {lo:#x}")),}}}}}}')
+  lines.append(f'_=>return Err(format!("untranslated block {{pc:#x}} in {lo:#x}").into()),}}}}}}')
+  fast=None
+  if settings.get('structured_cfg',False):
+   fast,stats=structured_cfg(lines,lo,settings.get('promote_registers',False),settings.get('promote_register_limit'));structured[hex(start-BASE)]=stats if fast is not None else {'applied':False,'reason':stats}
   if start in thread_targets:
    lines,stats=thread_forward_edges(lines,thread_budget);threaded[hex(start-BASE)]=stats
+  if settings.get('dense_dispatch',False):
+   lines,stats=dense_dispatch(lines);dense[hex(start-BASE)]=stats
+  if fast is not None:
+   # Entry at the function start runs the structured body; any other block
+   # entry (e.g. a computed branch into the middle) keeps the PC dispatcher.
+   slow=name+'_slow'
+   lines[0]=lines[0].replace('#[inline]','#[cold]\n#[inline(never)]').replace(f'fn {name}(',f'fn {slow}(')
+   # Measured: limiting #[inline] to small bodies cuts .text 45->17 MB but costs
+   # 26% throughput (lost cross-CGU inlining), so the default keeps the hint.
+   limit=settings.get('structured_inline_instructions')
+   attribute='#[inline]\n' if limit is None or len(ins)<=limit else ''
+   chunks[group].append(f'{attribute}pub(super) unsafe fn {name}(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{{if pc!={lo:#x}{{return {slow}(cpu,rt,pc);}}\n{fast}\n}}')
   chunks[group].append('\n'.join(lines));exports.append((lo,hi,group,name))
  for j,chunk in enumerate(chunks):
-  (out/f'chunk{j}.rs').write_text('#![allow(unused_parens,unreachable_code,unused_variables,unused_mut)]\nuse crate::{cpu::Cpu,runtime::Runtime};\nuse super::helpers::*;\n'+'\n'.join(chunk)+'\n')
+  (out/f'chunk{j}.rs').write_text('#![allow(unused_parens,unreachable_code,unused_variables,unused_mut,unused_labels,unused_assignments,unused_imports)]\nuse crate::{cpu::{Cpu,nzcv_flags,nzcv_logical_flags,nzcv_condition},runtime::Runtime};\nuse super::helpers::*;\n'+'\n'.join(chunk)+'\n')
  mod='//! Generated source-bound original routine translations. Do not edit by hand.\n'
  mod+='#![allow(unreachable_patterns)]\nmod helpers;\n'+''.join(f'mod chunk{j};\n' for j in range(16))
  mod+='use crate::{cpu::Cpu,runtime::Runtime};\n#[inline]\npub unsafe fn dispatch(cpu:&mut Cpu,rt:&mut Runtime,target:u64)->Result<(),String>{cpu.pc=target;match target{\n'
  mod+=''.join(f'{a:#x}..={b-1:#x}=>chunk{j}::{name}(cpu,rt,target),\n'for a,b,j,name in exports)
- mod+='address=>{if rt.imported(cpu,address)? {Ok(())}else{Err(format!("untranslated function {address:#x}"))}}}}\n'
+ mod+='address=>{if rt.imported(cpu,address)? {Ok(())}else{Err(format!("untranslated function {address:#x}").into())}}}}\n'
  (out/'mod.rs').write_text(mod)
- report={'source_sha256':EXPECTED,'checkpoint_sha256':hashlib.sha256((cpdir/'checkpoint.json').read_bytes()).hexdigest(),'profile_sha256':hashlib.sha256(profile.read_bytes()).hexdigest(),'runtime_functions':runtime_functions,'function_count':len(ranges),'instruction_count':total,'unsupported_encodings':dict(unsupported),'forward_threading':threaded,'method':'Original FDE bodies and profiled external runtime blocks compiled into Rust scalar/vector operations; no emulator fallback. Unsupported code stops explicitly.','generated_files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest()for p in sorted(out.glob('*.rs'))}}
+ report={'source_sha256':EXPECTED,'checkpoint_sha256':hashlib.sha256((cpdir/'checkpoint.json').read_bytes()).hexdigest(),'profile_sha256':hashlib.sha256(profile.read_bytes()).hexdigest(),'runtime_functions':runtime_functions,'function_count':len(ranges),'instruction_count':total,'unsupported_encodings':dict(unsupported),'forward_threading':threaded,'dense_dispatch':dense,'structured_cfg':structured,'method':'Original FDE bodies and profiled external runtime blocks compiled into Rust scalar/vector operations; no emulator fallback. Unsupported code stops explicitly.','generated_files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest()for p in sorted(out.glob('*.rs'))}}
  (ROOT/'analysis/native-port/rust-generation.json').write_text(json.dumps(report,indent=2)+'\n')
  (out/'manifest.json').write_text(json.dumps(report,indent=2)+'\n')
  print(json.dumps({k:v for k,v in report.items() if k!='generated_files'},indent=2))

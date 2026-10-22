@@ -55,7 +55,19 @@ fn main() {
         .arg("--version")
         .output()
         .unwrap();
-    let record = serde_json::json!({"compiler":String::from_utf8_lossy(&rust.stdout).trim(),"profile":std::env::var("PROFILE").unwrap(),"opt_level":std::env::var("OPT_LEVEL").unwrap(),"target":std::env::var("TARGET").unwrap(),"source_files_sha256":identities});
+    let mut build_settings = BTreeMap::new();
+    for name in [
+        "CARGO_ENCODED_RUSTFLAGS",
+        "CARGO_PROFILE_RELEASE_LTO",
+        "CARGO_PROFILE_RELEASE_CODEGEN_UNITS",
+        "CLASH_PGO_SHA256",
+    ] {
+        println!("cargo:rerun-if-env-changed={name}");
+        if let Ok(value) = std::env::var(name) {
+            build_settings.insert(name, value);
+        }
+    }
+    let record = serde_json::json!({"compiler":String::from_utf8_lossy(&rust.stdout).trim(),"profile":std::env::var("PROFILE").unwrap(),"opt_level":std::env::var("OPT_LEVEL").unwrap(),"target":std::env::var("TARGET").unwrap(),"build_settings":build_settings,"source_files_sha256":identities});
     let out = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("provenance.json");
     std::fs::write(out, serde_json::to_vec_pretty(&record).unwrap()).unwrap();
 }

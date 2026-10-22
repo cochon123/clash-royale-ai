@@ -54,12 +54,14 @@ class Engine:
             self.proc.terminate()
             try:self.proc.wait(timeout=5)
             except subprocess.TimeoutExpired:self.proc.kill();self.proc.wait(timeout=5)
-        self.selector.close();self.err.close()
+        self.selector.close();self.proc.stdin.close();self.proc.stdout.close();self.err.close()
 
 def choose(obs,side,rng,seen,style):
     hand=[c for c in obs["hands"][side] if c["available"]]
+    if style=="cycle" and sum(s==side for s,name in seen)==8:
+        seen.difference_update({key for key in seen if key[0]==side})
     unseen=[c for c in hand if (side,c["name"]) not in seen]
-    target=max(unseen,key=lambda c:c["cost"]) if unseen and style=="coverage" else None
+    target=max(unseen,key=lambda c:c["cost"]) if unseen and style in ("coverage","cycle") else None
     legal=([target] if target and target["cost"]<=obs["elixir"][side] else [] if target else [c for c in hand if c["cost"]<=obs["elixir"][side]])
     if not legal or rng.random()<.12:return None
     card=rng.choice(legal);name=card["name"]
@@ -129,23 +131,28 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("--record",action="store_true");p.add_argument("--reference",type=Path)
     p.add_argument("--candidate",type=Path);p.add_argument("--out",type=Path,required=True);p.add_argument("--workers",type=int,default=6)
     p.add_argument("--seeds-per-matchup",type=int,default=1);p.add_argument("--seed-base",type=int,default=710000);p.add_argument("--split",choices=("development","holdout"),default="development")
+    p.add_argument("--policy",choices=("auto","cycle"),default="auto",help="cycle saves elixir and repeatedly plays all eight cards")
     p.add_argument("--limit",type=int,default=0);args=p.parse_args();args.out.mkdir(parents=True,exist_ok=True)
     decks=json.loads((ROOT/"data/fast_league_decks.json").read_text())["decks"]
     if not args.record and not (args.out/"manifest.json").exists():p.error("replay requires a recorded manifest")
     if args.record and not args.reference:p.error("record requires --reference")
+    if args.record and (args.out/"manifest.json").exists():p.error("record requires a fresh output directory; replay existing traces without --record")
     if args.record:
         jobs=[]
         for a in decks:
             for b in decks:
                 for repeat in range(args.seeds_per_matchup):
                     jobs.append(dict(id=len(jobs),deck0=a,deck1=b,seed=args.seed_base+len(jobs)*17,
-                                     style="coverage" if args.split=="development" else ("random","grid","random","grid","random")[repeat%5],
+                                     style="cycle" if args.policy=="cycle" else "coverage" if args.split=="development" else ("random","grid","random","grid","random")[repeat%5],
                                      ticks_per_step=20 if args.split=="development" else (10,20,40,20,20)[repeat%5]))
         if args.limit:jobs=jobs[:args.limit]
         manifest=dict(format="native-league-validation-v1",split=args.split,jobs=jobs,reference=str(args.reference.resolve()),reference_sha256=sha(args.reference),
+                      candidate_sha256_before_recording=sha(args.candidate) if args.candidate else None,
+                      policy_source_sha256=sha(Path(__file__)),
                       deck_file_sha256=sha(ROOT/"data/fast_league_decks.json"),checkpoint_sha256=sha(CHECKPOINT/"checkpoint.json"))
         (args.out/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
-    else:jobs=json.loads((args.out/"manifest.json").read_text())["jobs"]
+    else:
+        manifest=json.loads((args.out/"manifest.json").read_text());jobs=manifest["jobs"];args.split=manifest["split"]
     candidate_hash=sha(args.candidate) if args.candidate else None;started=time.monotonic();results=[]
     with futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
         tasks=[pool.submit(run_worker,jobs[i::args.workers],args,i) for i in range(args.workers)]

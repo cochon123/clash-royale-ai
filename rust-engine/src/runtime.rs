@@ -28,19 +28,26 @@ pub struct DeckSwap {
 
 impl Runtime {
     pub fn deck_swap_hook(&mut self, address: u64) -> Result<(), String> {
-        let Some(state) = self.deck_swap.as_mut() else { return Ok(()); };
+        let Some(state) = self.deck_swap.as_mut() else {
+            return Ok(());
+        };
         let (pointer, count) = match address {
             0x111d6f18 => {
                 state.calls += 1;
-                if state.calls != 2 { return Ok(()); }
+                if state.calls != 2 {
+                    return Ok(());
+                }
                 (state.second_ptr, state.second_count)
             }
             0x111d6068 if state.calls == 2 => (state.original_ptr, state.original_count),
             _ => return Ok(()),
         };
-        self.memory.write_bytes(state.slot, &pointer.to_le_bytes())?;
-        self.memory.write_bytes(state.slot + 8, &count.to_le_bytes())?;
-        self.memory.write_bytes(state.slot + 12, &count.to_le_bytes())
+        self.memory
+            .write_bytes(state.slot, &pointer.to_le_bytes())?;
+        self.memory
+            .write_bytes(state.slot + 8, &count.to_le_bytes())?;
+        self.memory
+            .write_bytes(state.slot + 12, &count.to_le_bytes())
     }
 
     /// Execute a modeled host import at `address` and return through X30.
