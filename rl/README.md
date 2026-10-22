@@ -8,12 +8,47 @@ The original battle renderer and the Rust combat rewrite are separate work.
 
 ## Banana deck specialists
 
+The current **banana-hog-1** is the fresh two-hour run at `runs/banana-hog-1`,
+started 21 October 2026 directly from original Banana-1 / policy-bc-v4.4.2.
+It uses tower-HP inputs, trainable representation/placement and matched sampled
+evaluation. [Current trainer details](../docs/banana-adaptive-training.md).
+Earlier Hog checkpoints were deleted at the user's request; the old Hog paths
+in the historical commands below no longer exist. Mortar models remain.
+
+The spectator now defaults to the learned timing controller in
+`banana_timed_policy.py`, following the two-phone harness in
+`../clash-royale-ai/src/cr_replay_pipeline/phone_lab/battle.py`: choose from the
+actual hand (including unaffordable cards), anchor the model's delay to the
+latest confirmed event, and check native elixir before executing. A planned
+card persists while saving, with replanning after confirmed events or hand
+changes. Both sides use independent clocks; native tile masks stay enabled.
+`--legacy-wait-head` reproduces the former affordable-card/PPO-wait behavior.
+This inference controller is separate from the existing PPO wait-head trainer.
+
+For the current matchup:
+
+```sh
+../clash-royale-ai/.venv/bin/python -m rl.banana_watch \
+  --deck-a hog --checkpoint-a runs/banana-hog-1/models/final.pt \
+  --deck-b log-bait --checkpoint-b runs/banana-1/base.pt
+```
+
+Each launch picks a fresh random seed and prints it. Pass `--seed NUMBER` to
+reproduce a particular match; the chosen seed is also saved in `manifest.json`.
+
+`decisions.jsonl` records predicted delays, planned cards, and waits for elixir.
+A 90-second native check of this command deployed three Hogs, played an
+original-model Rocket after saving to six elixir, and recorded zero rejections.
+
+
 `banana_train.py` adds a separate warm-started PPO run using the actual sibling
 policy-bc-v4.4.2 checkpoint. `banana-hog-1` uses Hog Rider 2.6;
 `banana-mortar-1` uses the saved `pixel9` deck: Mortar, Knight, Archers,
 Skeletons, Barbarian Barrel, Arrows, Mini P.E.K.K.A and Rocket.
 Each specialist plays a frozen starting policy in mirrored-deck games, with
-independently alternating seats. They do not play Hog against Mortar directly.
+independently alternating seats during training. A separate spectator can load
+both final checkpoints and run one asymmetric Hog-versus-Mortar match without
+training either model.
 
 This specialized runner uses **the original ARM64 runtime through Unicorn**.
 It builds a fresh native harness with exact source deck rows and a native seed;
@@ -74,10 +109,83 @@ candidate support. Initial/periodic/final checkpoints are saved atomically.
 
 The original minimal Gym environment described below remains available.
 
-## Watch a separate frozen 4.4.2 match
+## Watch the two trained specialists fight
 
 ```sh
 /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_watch
+```
+
+This opens the original-asset desktop spectator with `banana-hog-1` (Hog 2.6)
+on the blue side against `banana-mortar-1` (Mortar) on the red side. It loads
+each specialist's final checkpoint from the Banana League run, sends both deck
+presets to the original engine (the native watch runner accepts a separate
+`deck_preset_side1`), and samples each actor from its own causal perspective.
+No optimizer or training-run file is written. Space pauses, R restarts, +/-
+changes speed, and Esc closes. Initial startup is skipped before the displayed
+model clock begins.
+
+Point either side at another saved `banana-native-ppo-v1` checkpoint:
+
+```sh
+/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_watch \
+  --deck-a hog --deck-b mortar \
+  --checkpoint-a runs/banana-league-20261019/models/hog/latest.pt \
+  --checkpoint-b runs/banana-league-20261019/models/mortar/latest.pt
+```
+
+Use `--headless --max-play-ticks 200` for a bounded frame/action capture without
+a window. `--deck mortar` keeps the older mirrored-deck frozen-4.4.2 view.
+
+To compare the untrained warm-start actor against the trained Hog specialist,
+mirror Hog 2.6 and load the final checkpoint on side 1 only:
+
+```sh
+/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_watch \
+  --deck hog --checkpoint-b runs/banana-league-20261019/models/hog/final.pt
+```
+
+The base actor is the frozen 4.4.2 checkpoint the league started from; the
+initial `models/hog/initial.pt` has the same actor weights.
+
+## Play against a Banana AI
+
+```sh
+cd /home/cochon/Documents/mini-project/clash-rust
+../clash-royale-ai/.venv/bin/python -m rl.banana_play --opponent banana-hog-1 --deck hog --ai-deck log-bait
+```
+
+You play blue (bottom) with `--deck`; the saved actor plays red with
+`--ai-deck`. `--opponent` is `banana-1` (original warm start) or
+`banana-hog-1` (`runs/banana-hog-1/models/final.pt`); decks are `hog`,
+`log-bait` or `mortar`. The command rebuilds `native-watch` and the spectator
+when their sources changed.
+
+- Drag a card from your hand and drop it on the arena to deploy. You can also
+  press **1-4** or click a card, then click the arena.
+  Right-click or **Esc** cancels the selection.
+- **Space** pauses, **R** starts a new match, **Q** or closing the window quits.
+  **S** saves `screenshot.png` in the session folder.
+- Cursor colours: green is accepted, red is a blocked tile (towers, outside
+  the arena), and amber is not enough elixir. Aiming a troop, building or the
+  Log past your territory shades the no-deploy zone red, and the cursor jumps to
+  where it will land: the edge of your side by the bridge, in the same column.
+  A lane whose enemy Princess Tower has fallen is not shaded (its pocket rule
+  is not modelled). The engine still validates every play.
+
+Every human play is checked by the original target validator and submitted
+through the same native path as the AI's plays. The AI uses the learned-delay
+scheduler and native placement masks from `banana_watch`. The opponent's hand is
+hidden, and the display trails the engine by 2 ticks (100 ms) instead of the
+spectator's 16. Each session writes `runs/banana-play/<time>-<pid>/`. In it,
+`actions.jsonl` tags every play `human` or `ai`, and `inputs.jsonl` holds the
+raw viewer commands. `--seed N` reproduces a match, and `--greedy` makes the AI
+choose its most likely actions instead of sampling. `--headless` reads
+`inputs.jsonl` without a window for scripted checks.
+
+## Watch a separate frozen 4.4.2 match
+
+```sh
+/home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_watch --deck mortar
 ```
 
 This opens the original-asset desktop spectator for a mirrored custom Mortar

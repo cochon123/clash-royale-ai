@@ -179,6 +179,7 @@ impl Battle {
             None
         };
         Ok(BattleFrame {
+            human: None,
             tick,
             elapsed_ms: (tick - self.initial_tick) as u64 * 50,
             terminated,

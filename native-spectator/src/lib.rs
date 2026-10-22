@@ -1,6 +1,13 @@
+pub mod actors;
 pub mod animation;
+#[cfg(feature = "compiled-engine")]
 pub mod backend;
+pub mod blit;
+pub mod clock;
 pub mod draw;
 pub mod frame;
 pub mod hud;
+pub mod input;
+pub mod presentation;
 pub mod projectile;
+pub mod vfx;

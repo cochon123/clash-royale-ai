@@ -56,7 +56,7 @@ CARD_ASSET_EXPORTS = {
 FIXED_TRAINING_CARDS = {
     "HogRider", "Musketeer", "IceGolemite", "Skeletons", "IceSpirits", "Cannon",
     "Fireball", "Log", "Mortar", "Knight", "Archer", "BarbLog", "Arrows",
-    "MiniPekka", "Rocket",
+    "MiniPekka", "Rocket", "GoblinBarrel", "Princess", "GoblinGang", "InfernoTower",
 }
 TOWER_ATTACHED_ROWS = {"TowerPrincess"}
 PARSER_COMMIT = "9108080256a0df6cd772d81afdbc26047d79d78d"
@@ -306,6 +306,26 @@ def observed_entity_bindings(logic_dir: Path, names: set[str]) -> list[dict]:
                         "source_fields": source_fields,
                         "match_basis": "exact original nested logic row FileName and export fields",
                     }
+    # EXT rows inherit original art and stats through an explicit typed Base.
+    # BarrelGoblin, for example, is EXT.BarrelGoblin -> CHARACTER.Goblin.
+    if names - found.keys():
+        from spectator_presentation import index_logic, pick_row
+        index, _ = index_logic(logic_dir)
+        for name in names - found.keys():
+            picked = pick_row(index, name)
+            if picked is None:
+                continue
+            rel, kind, fields = picked
+            source_file = fields.get("FileName")
+            blue = fields.get("BlueExportName") or fields.get("ExportName")
+            if source_file and blue:
+                found[name] = {"native_row": name, "document": Path(source_file).stem,
+                               "source_file": source_file, "source_row": f"{kind}.{name}",
+                               "blue_export": blue,
+                               "red_export": fields.get("RedExportName") or blue,
+                               "scale_percent": fields.get("Scale", 100),
+                               "source_fields": {k: v for k, v in fields.items() if isinstance(v, (str, int, float, bool))},
+                               "match_basis": f"original typed Base inheritance: {fields.get('Base')} ({rel})"}
     return [found[name] if name in found else {
         "native_row": name,
         "document": None,
@@ -433,7 +453,7 @@ def observed_decks(paths: list[Path], included_docs: set[str], character_rows: d
         if not path.exists():
             continue
         data = json.loads(path.read_text())
-        hashes.append({"file": path.relative_to(ROOT).as_posix(), "sha256": sha256(path.read_bytes())})
+        hashes.append({"file": (path.relative_to(ROOT) if path.is_relative_to(ROOT) else path).as_posix(), "sha256": sha256(path.read_bytes())})
         for item in data.get("requests", []):
             obs = item.get("expected", {}).get("observation", {})
             hands = obs.get("hands", [])
@@ -468,10 +488,17 @@ def main() -> int:
     ap.add_argument("--locations", type=Path, default=DEFAULT_LOCATIONS)
     ap.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     ap.add_argument("--docs", nargs="+", default=DEFAULT_DOCS, help="SC document stems to extract")
+    ap.add_argument("--frames", nargs="*", type=Path, default=[], help="Additional native captures to include in exact visual bindings")
+    ap.add_argument("--reuse-existing", action="store_true", help="Reuse matching source-verified decoded documents and atlases")
     args = ap.parse_args()
     apk = args.apk.resolve()
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=True)
+    previous = json.loads((out / "assets.json").read_text()) if args.reuse_existing and (out / "assets.json").exists() else {}
+    cached_docs = {doc["name"]: doc for doc in previous.get("documents", [])}
+    for stem in cached_docs:
+        if stem not in args.docs:
+            args.docs.append(stem)
     trace_paths = sorted((ROOT / "analysis/native-port").glob("rl-trace-seed[0-9]*.json"))
     character_rows = observed_character_rows(args.logic, observed_card_names(trace_paths) | FIXED_TRAINING_CARDS | TOWER_ATTACHED_ROWS)
     for binding in character_rows.values():
@@ -481,6 +508,7 @@ def main() -> int:
         ROOT / "runs/v442-custom-watch/frames.jsonl",
         ROOT / "runs/v442-watch-smoke/frames.jsonl",
     })
+    battle_frames = sorted(set(battle_frames) | {path.resolve() for path in args.frames} | {ROOT / "runs/banana-duel-watch/frames.jsonl"})
     battle_frames = [path for path in battle_frames if path.is_file()]
     live_names = observed_entity_names(battle_frames)
     live_bindings = observed_entity_bindings(args.logic, live_names)
@@ -507,6 +535,16 @@ def main() -> int:
             source_path.write_bytes(archive.read(entry))
             source_hash = sha256(source_path.read_bytes())
             input_hashes[entry] = source_hash
+            cached = cached_docs.get(stem)
+            if cached and cached.get("sha256") == source_hash and (out / "display-trees" / f"{stem}.json").exists():
+                atlas_entries = [(atlas, by_basename.get(atlas["original_file"])) for atlas in cached["atlases"]]
+                if all(atlas_entry and (out / atlas["file"]).is_file()
+                       and sha256(archive.read(atlas_entry)) == previous.get("extracted_source_hashes", {}).get(atlas_entry)
+                       for atlas, atlas_entry in atlas_entries):
+                    input_hashes.update({atlas_entry: previous["extracted_source_hashes"][atlas_entry]
+                                         for _, atlas_entry in atlas_entries})
+                    docs_meta.append(cached)
+                    continue
             raw_sc = source_path.read_bytes()
             fd_size = struct.unpack_from("<I", raw_sc, 6)[0]
             descriptor = FileDescriptor.GetRootAs(raw_sc[10 : 10 + fd_size], 0)
@@ -733,7 +771,7 @@ def main() -> int:
                   "card_visuals": card_visuals,
                   "card_contact_sheet": card_contact_sheet,
                   "observed_frame_sources": [
-                      {"file": path.relative_to(ROOT).as_posix(), "sha256": sha256(path.read_bytes())}
+                      {"file": (path.relative_to(ROOT) if path.is_relative_to(ROOT) else path).as_posix(), "sha256": sha256(path.read_bytes())}
                       for path in battle_frames
                   ],
                   "fixed_training_deck_assets": [

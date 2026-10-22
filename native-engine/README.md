@@ -101,8 +101,10 @@ including resets, actions and observations.
 
 The separate `deck-setup-probe` JSONL executable rebuilds the original `Normal`
 harness using exact source card rows. Presets are `hog26` and `pixel9_mortar`
-(`mortar` is an alias). The deck is mirrored on both sides. An optional u32
-`seed` is passed to the original input constructor.
+(`mortar` is an alias). The deck is mirrored on both sides unless the request
+also carries `deck_preset_side1`, which supplies a distinct side-1 deck by
+intercepting the second original `11d6f18` deck build. An optional u32 `seed` is
+passed to the original input constructor.
 
 ```sh
 cargo build --release --offline --manifest-path native-engine/Cargo.toml --bin deck-setup-probe

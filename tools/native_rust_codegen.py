@@ -68,11 +68,11 @@ def val(i,o,bits=64):
  return shift(extend(e,o.ext),o.shift.type,o.shift.value,bits)
 
 def vparse(s):
- m=re.fullmatch(r'([vqdshb])(\d+)(?:\.(\d+)?([bhsd]))?(?:\[(\d+)\])?',s)
+ m=re.fullmatch(r'([vqdshb])(\d+)(?:\.(\d+)?([bhsd]))?(?:\[(\d+|0x[0-9a-f]+)\])?',s)
  if not m:raise ValueError('vector '+s)
  idx=int(m[2]);lb={'b':8,'h':16,'s':32,'d':64}.get(m[4],{'b':8,'h':16,'s':32,'d':64,'q':128,'v':128}[m[1]])
  lanes=int(m[3]) if m[3] else 1
- return idx,lb,lanes,int(m[5]) if m[5] else None
+ return idx,lb,lanes,int(m[5],0) if m[5] else None
 
 def vector(i,o):
  m=i.mnemonic;d,bits,lanes,lane=vparse(o[0]);total=bits*lanes
@@ -82,7 +82,8 @@ def vector(i,o):
  def put(e):
   if lane is not None:return f'cpu.q[{d}]=(cpu.q[{d}] & !({mask(bits)} << {lane*bits})) | ((({e}) as u128 & {mask(bits)}) << {lane*bits});'
   return f'cpu.q[{d}]=({e}) & {mask(total)};'
- a=(vec(o[1]) if not re.match('[xw]',o[1]) else f'({rr(o[1])}) as u128') if len(o)>1 and not o[1].startswith('#') else None
+ try:a=(vec(o[1]) if not re.match('[xw]',o[1]) else f'({rr(o[1])}) as u128') if len(o)>1 and not o[1].startswith('#') else None
+ except ValueError:a=None
  b=vec(o[2]) if len(o)>2 and o[2].startswith('v') else None
  if m=='mov':
   if re.match('[xw]',o[1]):return put(f'({rr(o[1])}) as u128')
@@ -95,21 +96,83 @@ def vector(i,o):
   return put(f'lane_dup({a},{bits},{lanes})')
  if m in ('and','orr','eor','bic','orn','bsl','bit','bif','not','mvn'):
   old=f'cpu.q[{d}]'
+  if len(o)>1 and o[1].startswith('#'):
+   # Two-operand immediate form (e.g. `bic v21.4s, #3`): Vd = Vd op imm,
+   # modified immediate imm8 optionally shifted (lsl #n), replicated per lane.
+   n=int(o[1].split('#')[1].split(',')[0],0)
+   sh=int(o[2].split('#')[1],0) if len(o)>2 else 0
+   b=f'lane_dup({n<<sh}u128,{bits},{lanes})';a=old
+  elif b is None and len(o)>2 and o[2].startswith('#'):
+   n=int(o[2].split('#')[1].split(',')[0],0)
+   sh=int(o[3].split('#')[1],0) if len(o)>3 else 0
+   b=f'lane_dup({n<<sh}u128,{bits},{lanes})'
   ex={'and':f'{a}&{b}','orr':f'{a}|{b}','eor':f'{a}^{b}','bic':f'{a}&!{b}','orn':f'{a}|!{b}','bsl':f'({old}&{a})|(!{old}&{b})','bit':f'({old}&!{b})|({a}&{b})','bif':f'({old}&{b})|({a}&!{b})','not':f'!{a}','mvn':f'!{a}'}[m]
   return put(ex)
- if m in ('add','sub','mul','cmeq','cmgt','cmge','cmhi','cmhs','sabd','uabd','smin','smax','cmlt'):
+ if m in ('fmul','fadd','fsub','fdiv','fmax','fmin','fnmul','fabd'):
+  if b is None:raise ValueError('vector '+m+' '+i.op_str)
+  if '[' in o[2]:
+   n2,lb2,_,j2=vparse(o[2]);b=f'lane_dup((cpu.q[{n2}] >> {j2*lb2}) & {mask(lb2)},{bits},{lanes})'
+  return put(f'lane_fp_binary({a},{b},{bits},{lanes},"{m}")')
+ if m in ('add','sub','mul','cmeq','cmgt','cmge','cmhi','cmhs','cmtst','sabd','uabd','smin','smax','cmlt','uqsub','umin','umax'):
+  if '[' in o[2]:
+   n2,lb2,_,j2=vparse(o[2]);b=f'lane_dup((cpu.q[{n2}] >> {j2*lb2}) & {mask(lb2)},{bits},{lanes})'
   b='0u128' if o[2]=='#0' else b
   return put(f'lane_binary({a},{b},{bits},{lanes},"{m}")')
+ if m=='neg':return put(f'lane_binary(0u128,{a},{bits},{lanes},"neg")')
+ if m=='fmov':
+  if o[1].startswith('#'):
+   imm=float(o[1][1:]);ty='f32' if bits==32 else 'f64'
+   return put(f'lane_dup(({imm!r}{ty}).to_bits() as u128,{bits},{lanes})')
+  return put(a)
+ if m in ('fmul','fadd','fsub','fdiv','fsqrt','fabs','fneg','frintp','frintm','frintz','frinta'):
+  bb='0u128' if b is None else b
+  return put(f'lane_fp_binary({a},{bb},{bits},{lanes},"{m}")')
+ if m in ('scvtf','ucvtf'):
+  return put(f'lane_int_to_fp({a},{bits},{lanes},{str(m=="scvtf").lower()})')
+ if m in ('fcvtzs','fcvtzu'):
+  return put(f'lane_fp_to_int({a},{bits},{lanes},{str(m=="fcvtzs").lower()})')
+ if m in ('fcvtl','fcvtl2'):
+  return put(f'lane_fp_cvtl({a},{lanes},{str(m=="fcvtl2").lower()})')
+ if m in ('fcvtn','fcvtn2'):
+  return f'cpu.q[{d}]=lane_fp_cvtn(cpu.q[{d}],{a},{lanes},{str(m=="fcvtn2").lower()});'
+ if m=='tbl':
+  regs=[s.strip() for s in o[1].strip('{}').split(',')]
+  tvals=[f'(cpu.q[{int(s[1:s.index(".")])}])' for s in regs]
+  while len(tvals)<4:tvals.append('0u128')
+  return put(f'lane_tbl({b},[{",".join(tvals)}],{16*len(regs)})')
+ if m in ('fmla','fmls'):
+  if '[' in o[2]:
+   n2,lb2,_,j2=vparse(o[2]);b=f'lane_dup((cpu.q[{n2}] >> {j2*lb2}) & {mask(lb2)},{bits},{lanes})'
+  return f'cpu.q[{d}]=lane_fp_tma(cpu.q[{d}],{a},{b},{bits},{lanes},{str(m=="fmls").lower()}) & {mask(total)};'
+ if m in ('fmaxnm','fminnm'):
+  return put(f'lane_fp_minmax({a},{b},{bits},{lanes},{str(m=="fmaxnm").lower()})')
+ if m in ('fcmeq','fcmgt','fcmge'):
+  if o[2].startswith('#'):b='0u128'
+  elif '[' in o[2]:
+   n2,lb2,_,j2=vparse(o[2]);b=f'lane_dup((cpu.q[{n2}] >> {j2*lb2}) & {mask(lb2)},{bits},{lanes})'
+  return put(f'lane_fp_cmp({a},{b},{bits},{lanes},"{m}")')
+ if m=='faddp':return put(f'lane_fp_addp({a},{b},{bits},{lanes})')
+ if m in ('rev64','rev32','rev16'):
+  return put(f'lane_rev({a},{bits},{lanes},{int(m[3:])})')
+ if m=='ushl':return put(f'lane_ushl({a},{b},{bits},{lanes})')
+ if m in ('ssra','usra'):
+  n=int(o[2][1:],0);sh_op='sshr' if m=='ssra' else 'ushr'
+  return put(f'lane_binary(cpu.q[{d}],lane_shift({a},{bits},{lanes},{n},"{sh_op}"),{bits},{lanes},"add")')
+ if m in ('uaddw','uaddw2','saddw','saddw2'):
+  _,sb,_,_=vparse(o[2]);n2=int(o[2][1:o[2].index('.')],0)
+  src=f'(cpu.q[{n2}] >> {64 if m.endswith("2") else 0})'
+  return put(f'lane_widen_add({a},{src},{bits},{sb},{lanes},{str(m.endswith("2")).lower()})')
  if m in ('cnt',):return put(f'lane_count({a},{bits},{lanes})')
  if m in ('ushr','sshr','shl'):
   n=int(o[2][1:],0);return put(f'lane_shift({a},{bits},{lanes},{n},"{m}")')
- if m in ('addv','uaddlv','saddlv','smaxv','umaxv'):
+ if m in ('addv','uaddlv','saddlv','smaxv','umaxv','uminv'):
   _,sb,sl,_=vparse(o[1]);return put(f'lane_reduce({a},{sb},{sl},"{m}")')
  if m in ('uzp1','uzp2','zip1','zip2','trn1','trn2'):
   return put(f'lane_shuffle({a},{b},{bits},{lanes},"{m}")')
- if m in ('xtn','shrn','ushll','sshll','shll'):
+ if m in ('xtn','shrn','ushll','sshll','shll','ushll2','sshll2'):
   _,sb,sl,_=vparse(o[1]);n=int(o[2][1:],0) if len(o)>2 else 0
-  return put(f'lane_resize({a},{sb},{bits},{lanes},{n},"{m}")')
+  if m.endswith('2'):a=f'({a} >> 64)'
+  return put(f'lane_resize({a},{sb},{bits},{lanes},{n},"{m[:-1] if m.endswith("2") else m}")')
  if m=='ext':
   n=int(o[3][1:],0)*8
   return put(a if n==0 else f'({a} >> {n}) | ({b} << {total-n})')
@@ -125,6 +188,7 @@ class Compiler:
   return prefix+call
  def emit(self,i,start,end):
   m=i.mnemonic;o=parts(i.op_str);ops=i.operands;p=i.address;nextpc=p+4
+  m={'stlr':'str','stlrb':'strb','stlrh':'strh','ldar':'ldr','ldarb':'ldrb','ldarh':'ldrh'}.get(m,m)
   r=lambda j:rr(regname(i,ops[j]));w=lambda j,e:wr(regname(i,ops[j]),e)
   v=lambda j:val(i,ops[j],width(regname(i,ops[0])))
   bits=width(regname(i,ops[0])) if ops and ops[0].type==ARM64_OP_REG else 64
@@ -143,7 +207,24 @@ class Compiler:
   if m=='bl':return self.call(ops[0].imm,nextpc),False
   if m=='blr':return '{let target='+r(0)+';'+self.call('target',nextpc)+'}',False
   if m=='br':return '{let target='+r(0)+f';if target>={start:#x} && target<{end:#x}{{pc=target;continue;}}'+self.call('target')+'return Ok(());}',True
-  if m in ('nop','hint','yield','dmb','dsb','isb','paciasp','autiasp','bti'):return '',False
+  if m in ('nop','hint','yield','dmb','dsb','isb','paciasp','autiasp','bti','prfm'):return '',False
+  if m=='brk':return 'return Err('+json.dumps(f'software breakpoint hit at {p:#x}')+'.into());',True
+  if m=='clrex':return 'rt.memory.clear_exclusive();',False
+  if m in ('ldaxr','ldxr'):
+   ty='u'+str(bits);address=rr(i.reg_name(ops[1].mem.base))
+   return '{let address='+address+';let value=rt.memory.load_exclusive::<'+ty+'>(address);'+w(0,'value')+'}',False
+  if m in ('stlxr','stxr'):
+   ty='u'+str(width(regname(i,ops[1])));address=rr(i.reg_name(ops[2].mem.base))
+   return '{let address='+address+';let value='+r(1)+';let status=rt.memory.store_exclusive::<'+ty+'>(address,value as '+ty+');'+w(0,'status')+'}',False
+  if m in ('ldadd','ldadda','ldaddl','ldaddal'):
+   ty='u'+str(bits);address=rr(i.reg_name(ops[2].mem.base))
+   return '{let address='+address+';let value=('+r(0)+') as '+ty+';assert_eq!(address % std::mem::size_of::<'+ty+'>() as u64,0,"unaligned atomic add");let old=rt.memory.read::<'+ty+'>(address);rt.memory.write::<'+ty+'>(address,old.wrapping_add(value));'+w(1,'old')+'}',False
+  if m in ('cas','casa','casl','casal'):
+   # Compare and swap: if memory holds the expected value, store the data
+   # register; the destination receives the old memory value either way.
+   ty='u32' if o[0][0]=='w' else 'u64'
+   mo=ops[2];addr=f'({rr(i.reg_name(mo.mem.base))}).wrapping_add({mo.mem.disp & ((1<<64)-1):#x}u64)'
+   return '{let address='+addr+f';let old=rt.memory.read::<{ty}>(address);if old==(({r(1)}) as {ty}){{rt.memory.write::<{ty}>(address,({r(0)}) as {ty});}}'+w(0,'old as u64')+'}',False
   if m in ('adr','adrp'):return w(0,f'{ops[1].imm:#x}u64'),False
   if m in ('mrs','msr'):
    field=o[1] if m=='mrs' else o[0]
@@ -154,6 +235,44 @@ class Compiler:
    d,lb,lanes,_=vparse(o[0].strip('{}'))
    mem=ops[-1].mem;address=f'({rr(i.reg_name(mem.base))}).wrapping_add({mem.disp & ((1<<64)-1):#x}u64)'
    return f'cpu.q[{d}]=lane_dup(rt.memory.read::<u{lb}>({address}) as u128,{lb},{lanes});',False
+  if m in ('ld1','st1') and '[' in o[0]:
+   # One element lane to/from memory: ld1 {vN.T}[i], [xM] (, #imm post-index)
+   lm=re.fullmatch(r'([vqd]\d+)\.([bhsd])\[(\d+|0x[0-9a-f]+)\]',o[0].replace('{','').replace('}',''))
+   if not lm:raise ValueError('lane mem '+i.op_str)
+   n=int(lm[1][1:],0);eb={'b':8,'h':16,'s':32,'d':64}[lm[2]];lanei=int(lm[3],0)
+   mo=ops[1];base=i.reg_name(mo.mem.base)
+   addr=f'({rr(base)}).wrapping_add({mo.mem.disp & ((1<<64)-1):#x}u64)'
+   if mo.mem.index:
+    ir=shift(extend(rr(i.reg_name(mo.mem.index)),mo.ext),mo.shift.type,mo.shift.value);addr=f'({addr}).wrapping_add({ir})'
+   code='{let address='+addr+';'
+   if m=='ld1':
+    code+=f'cpu.q[{n}]=(cpu.q[{n}] & !({mask(eb)} << {lanei*eb})) | ((rt.memory.read::<u{eb}>(address) as u128 & {mask(eb)}) << {lanei*eb});'
+   else:
+    code+=f'rt.memory.write::<u{eb}>(address,((cpu.q[{n}] >> {lanei*eb}) & {mask(eb)}) as u{eb});'
+   if i.writeback:
+    if len(ops)>2 and ops[2].type==ARM64_OP_IMM:code+=wr(base,f'({rr(base)}).wrapping_add({ops[2].imm & ((1<<64)-1)})')
+    else:code+=wr(base,'address')
+   return code+'}',False
+  if m in ('ld1','ld2','ld3','ld4','st1','st2','st3','st4') and o and o[0].startswith('{') and '[' not in o[0]:
+   # Interleaved multi-register structures: ldN/stN {vA.T,...,vK.T}, [xM]
+   k=int(m[2]);parsed=[vparse(s.strip().strip('{}')) for s in o[0].strip('{}').split(',')]
+   if len(parsed)!=k or len({(p[1],p[2]) for p in parsed})!=1:raise ValueError('structure '+i.op_str)
+   eb=parsed[0][1];per=parsed[0][2]
+   mo=ops[1];base=i.reg_name(mo.mem.base)
+   addr=f'({rr(base)}).wrapping_add({mo.mem.disp & ((1<<64)-1):#x}u64)'
+   if mo.mem.index:
+    ir=shift(extend(rr(i.reg_name(mo.mem.index)),mo.ext),mo.shift.type,mo.shift.value);addr=f'({addr}).wrapping_add({ir})'
+   code='{let address='+addr+';'
+   for eidx in range(k*per):
+    rn=parsed[eidx%k][0];ln=eidx//k
+    if m[0]=='l':
+     code+=f'cpu.q[{rn}]=(cpu.q[{rn}] & !({mask(eb)} << {ln*eb})) | ((rt.memory.read::<u{eb}>(address.wrapping_add({eidx*(eb//8)})) as u128 & {mask(eb)}) << {ln*eb});'
+    else:
+     code+=f'rt.memory.write::<u{eb}>(address.wrapping_add({eidx*(eb//8)}),((cpu.q[{rn}] >> {ln*eb}) & {mask(eb)}) as u{eb});'
+   if i.writeback:
+    if len(ops)>2 and ops[2].type==ARM64_OP_IMM:code+=wr(base,f'({rr(base)}).wrapping_add({ops[2].imm & ((1<<64)-1)})')
+    else:code+=wr(base,f'address.wrapping_add({k*per*(eb//8)})')
+   return code+'}',False
   if m.startswith(('ldr','ldur','ldar','str','stur')) or m in ('ldp','stp','ldpsw','ldnp','stnp'):
    pair=m in ('ldp','stp','ldpsw','ldnp','stnp');mi=2 if pair else 1;mo=ops[mi]
    if mo.type==ARM64_OP_IMM:addr=f'{mo.imm:#x}u64';base=None
@@ -180,13 +299,19 @@ class Compiler:
     if mi+1<len(ops):code+=wr(base,f'({rr(base)}).wrapping_add({val(i,ops[mi+1])})')
     else:code+=wr(base,'address')
    return code+'}',False
-  if m in ('fmov','scvtf','ucvtf','fcvtzs','fcvtzu','fcvtpu','fcvtps','fcvtms','fcvtmu','fcvtns','fcvtnu','fcvtas','fcvtau','fcvt','fmul','fadd','fsub','fdiv','fneg','fabs','fsqrt','fmax','fmin','fcmp','fcmpe','fcsel'):
+  if m in ('fmov','scvtf','ucvtf','fcvtzs','fcvtzu','fcvtpu','fcvtps','fcvtms','fcvtmu','fcvtns','fcvtnu','fcvtas','fcvtau','fcvt','frintp','frintm','frintz','frintn','frinta','frintx','frinti','fmul','fadd','fsub','fdiv','fneg','fabs','fsqrt','fmax','fmin','fmaxnm','fminnm','fnmul','fabd','fcmp','fcmpe','fccmp','fccmpe','fcsel','fmadd','fmsub','fnmadd','fnmsub','fmla','fmls','faddp'):
+   if o[0][0]=='v':return vector(i,o),False
    if m=='fmov':
     if ops[1].type==ARM64_OP_FP:
      ty='f32' if o[0].startswith('s') else 'f64';return w(0,f'({ops[1].fp!r}{ty}).to_bits()'),False
     return w(0,r(1)),False
    def fp(j):
     if ops[j].type==ARM64_OP_FP:return repr(ops[j].fp)+('f32' if o[0].startswith('s') else 'f64')
+    if o[j].startswith('v') and '[' in o[j]:
+     # Scalar read of one vector lane, e.g. `fmul s25, s25, v1.s[1]`:
+     # reinterpret the addressed lane, not the whole 128-bit q register.
+     n,lb,_,ix=vparse(o[j]);ty='f32' if lb==32 else 'f64';uint='u32' if ty=='f32' else 'u64'
+     return f'{ty}::from_bits((((cpu.q[{n}] >> {ix*lb}) & {mask(lb)})) as {uint})'
     ty='f32' if o[j].startswith('s') else 'f64';uint='u32' if ty=='f32' else 'u64'
     return f'{ty}::from_bits(({r(j)}) as {uint})'
    ty='f32' if o[0].startswith('s') else 'f64'
@@ -196,15 +321,47 @@ class Compiler:
     it=('u' if m.endswith('u') else 'i')+str(width(o[0]));rounding={'z':'trunc','p':'ceil','m':'floor','n':'round_ties_even','a':'round'}[m[4]]
     return w(0,f'({fp(1)}.{rounding}() as {it}) as u64'),False
    if m=='fcvt':return w(0,f'({fp(1)} as {ty}).to_bits()'),False
+   if m.startswith('frint'):
+    # Round to an integral value in place. FRINTP/FRINTM/FRINTZ/FRINTN/FRINTA are
+    # directed; FRINTX/FRINTI follow FPCR, which fp_domain pins to nearest-even.
+    rounding={'p':f'({fp(1)}).ceil()','m':f'({fp(1)}).floor()','z':f'({fp(1)}).trunc()','n':f'({fp(1)}).round_ties_even()','a':f'({fp(1)}).round()','x':f'({fp(1)}).round_ties_even()','i':f'({fp(1)}).round_ties_even()'}[m[5]]
+    return w(0,f'({rounding}).to_bits()'),False
    if m in ('fcmp','fcmpe'):
     return f'{{let a={fp(0)};let b={fp(1)};cpu.nzcv=if a.is_nan()||b.is_nan(){{0x30000000}}else if a==b{{0x60000000}}else if a<b{{0x80000000}}else{{0x20000000}};}}',False
+   if m in ('fccmp','fccmpe'):
+    code=f'{{let a={fp(0)};let b={fp(1)};cpu.nzcv=if a.is_nan()||b.is_nan(){{0x30000000}}else if a==b{{0x60000000}}else if a<b{{0x80000000}}else{{0x20000000}};}}'
+    return f'if {cond(o[3])}{{{code}}}else{{cpu.nzcv={ops[2].imm}u64 << 28;}}',False
+   if m=='faddp':
+    # Scalar pairwise: add the two lanes of one vector register.
+    n,lb,_,_=vparse(o[1]);uint='u32' if lb==32 else 'u64'
+    lo=f'{ty}::from_bits(((cpu.q[{n}]) & {mask(lb)}) as {uint})'
+    hi=f'{ty}::from_bits(((cpu.q[{n}] >> {lb}) & {mask(lb)}) as {uint})'
+    return w(0,f'({lo} + {hi}).to_bits()'),False
+   if m in ('fmla','fmls'):
+    # Scalar by-element fused multiply-accumulate into the destination.
+    a0=fp(1);d0=fp(0)
+    e=f'{a0}.mul_add({fp(2)},{d0})' if m=='fmla' else f'(-({a0})).mul_add({fp(2)},{d0})'
+    return w(0,f'({e}).to_bits()'),False
    if m=='fcsel':return w(0,f'if {cond(o[3])}{{{r(1)}}}else{{{r(2)}}}'),False
    a=fp(1)
+   if m in ('fmaxnm','fminnm'):
+    # maxNum/minNum semantics; f32::maximum/minimum are unstable on stable Rust.
+    fn='fp_minmax_f32' if ty=='f32' else 'fp_minmax_f64'
+    return w(0,f'{fn}({a},{fp(2)},{str(m=="fmaxnm").lower()}).to_bits()'),False
    if m in ('fneg','fabs','fsqrt'):e=f'-({a})' if m=='fneg' else f'({a}).'+('abs' if m=='fabs' else 'sqrt')+'()'
+   elif m in ('fmadd','fmsub','fnmadd','fnmsub'):
+    b=fp(2);c=fp(3)
+    # ARM64 fused, a=Sn b=Sm c=Sa: FMADD=Sa+Sn*Sm, FMSUB=Sa-Sn*Sm,
+    # FNMADD=-(Sa+Sn*Sm), FNMSUB=-(Sa-Sn*Sm). Negation is exact so one rounding.
+    e={'fmadd':f'{a}.mul_add({b},{c})','fmsub':f'(-({a})).mul_add({b},{c})','fnmadd':f'(-({a})).mul_add({b},-({c}))','fnmsub':f'{a}.mul_add({b},-({c}))'}[m]
    else:
-    b=fp(2);e={'fmul':f'{a}*{b}','fadd':f'{a}+{b}','fsub':f'{a}-{b}','fdiv':f'{a}/{b}','fmax':f'({a}).max({b})','fmin':f'({a}).min({b})'}[m]
+    b=fp(2);e={'fmul':f'{a}*{b}','fadd':f'{a}+{b}','fsub':f'{a}-{b}','fdiv':f'{a}/{b}','fmax':f'({a}).max({b})','fmin':f'({a}).min({b})','fnmul':f'-(({a})*({b}))','fabd':f'(({a})-({b})).abs()'}[m]
    return w(0,f'({e}).to_bits()'),False
-  if o and (o[0].startswith('v') or m in ('movi','mvni','cnt','uaddlv','saddlv','addv','smaxv','umaxv')):return vector(i,o),False
+  if o and (o[0].startswith('v') or m in ('movi','mvni','cnt','uaddlv','saddlv','addv','smaxv','umaxv','uminv')):return vector(i,o),False
+  if m=='addp' and not o[0].startswith('v'):
+   # ADDP Dd,Vn.2D: integer pairwise add across one vector register.
+   n,lb,_,_=vparse(o[1])
+   return w(0,f'lane_binary((cpu.q[{n}] & {mask(lb)}),((cpu.q[{n}] >> {lb}) & {mask(lb)}),{lb},1,"add")'),False
   if m in ('umov','smov'):
    a,b,l,j=vparse(o[1]);e=f'((cpu.q[{a}] >> {j*b}) & {mask(b)})'
    if m=='smov':e=f'(({e}) as i{b} as i64 as u64)'
@@ -273,8 +430,15 @@ class Compiler:
    return w(0,e),False
   if m in ('clz','cls','rbit','rev','rev16','rev32'):
    ty='u32' if bits==32 else 'u64';a=f'({v(1)} as {ty})'
-   e=a+'.leading_zeros() as u64' if m=='clz' else a+'.reverse_bits() as u64' if m=='rbit' else a+'.swap_bytes() as u64' if m=='rev' else None
-   if e:return w(0,e),False
+   if m=='clz':e=a+'.leading_zeros() as u64'
+   elif m=='rbit':e=a+'.reverse_bits() as u64'
+   elif m=='rev':e=a+'.swap_bytes() as u64'
+   elif m=='rev16':
+    e=f'((({a}) & 0x00ff00ff00ff00ff) << 8) | ((({a}) >> 8) & 0x00ff00ff00ff00ff)'
+   else:
+    b16=f'((({a}) & 0x00ff00ff00ff00ff) << 8) | ((({a}) >> 8) & 0x00ff00ff00ff00ff)'
+    e=f'(({b16} & 0x0000ffff0000ffff) << 16) | (({b16} >> 16) & 0x0000ffff0000ffff)'
+   return w(0,f'(({e}) & {hex((1<<bits)-1)})'),False
   raise ValueError(m+' '+i.op_str)
 
 def thread_forward_edges(lines,budget):
@@ -394,18 +558,23 @@ def generate(profile,out,extra):
     code,terminated=compiler.emit(i,lo,hi)
     if i.mnemonic.startswith('f') and i.mnemonic!='fmov':
      inputs=[]
-     for op in i.operands[1:] if i.mnemonic not in ('fcmp','fcmpe') else i.operands:
+     for op in i.operands[1:] if i.mnemonic not in ('fcmp','fcmpe','fccmp','fccmpe') else i.operands:
       if op.type==ARM64_OP_REG and re.fullmatch('[sd][0-9]+',i.reg_name(op.reg)):
        fpreg=i.reg_name(op.reg);typ='f32' if fpreg[0]=='s' else 'f64';uint='u32' if typ=='f32' else 'u64'
        inputs.append(f'{typ}::from_bits(({rr(fpreg)}) as {uint}) as f64')
        if typ=='f32':code=f'if f32::from_bits(({rr(fpreg)}) as u32).is_subnormal(){{return Err(\"subnormal f32 operand requires architectural handling\".into());}}'+code
      code='fp_domain(cpu,&['+','.join(inputs)+'])?;'+code
-     if i.operands and i.operands[0].type==ARM64_OP_REG and re.fullmatch('[sd][0-9]+',i.reg_name(i.operands[0].reg)) and i.mnemonic not in ('fcmp','fcmpe'):
+     if i.operands and i.operands[0].type==ARM64_OP_REG and re.fullmatch('[sd][0-9]+',i.reg_name(i.operands[0].reg)) and i.mnemonic not in ('fcmp','fcmpe','fccmp','fccmpe'):
       fpreg=i.reg_name(i.operands[0].reg);typ='f32' if fpreg[0]=='s' else 'f64';uint='u32' if typ=='f32' else 'u64'
       code+=f'fp_domain(cpu,&[{typ}::from_bits(({rr(fpreg)}) as {uint}) as f64])?;'
 
    except (ValueError,KeyError,IndexError) as e:
     unsupported[str(e)]+=1;code='return Err('+json.dumps(f'unsupported {i.address:#x}: {i.mnemonic} {i.op_str}')+'.into());';terminated=True
+   # Match the source-bound reference's asymmetric Normal-row deck hooks.
+   # These change the scenario vector at precisely the same original PCs;
+   # all translated game instructions and CPU state remain unchanged.
+   if i.address in (0x111d6f18,0x111d6068):
+    code=f'rt.deck_swap_hook({i.address:#x})?;'+code
    lines.append(f'// {i.address:#x} {i.mnemonic} {i.op_str}'.rstrip()+'\n'+code)
   if opened:
    if not terminated:lines.append(f'return Err("fell through function {lo:#x}".into());')

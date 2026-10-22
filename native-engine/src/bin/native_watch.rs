@@ -25,13 +25,18 @@ const MORTAR: [&str; 8] = [
     "MiniPekka",
     "Rocket",
 ];
+const LOG_BAIT: [&str; 8] = [
+    "GoblinBarrel", "Princess", "Knight", "GoblinGang",
+    "InfernoTower", "Rocket", "Log", "IceSpirits",
+];
 
 fn preset(value: &Value) -> Result<&'static [&'static str; 8], String> {
     match value.as_str().ok_or("reset needs deck_preset")? {
         "hog26" => Ok(&HOG26),
         "mortar" | "pixel9_mortar" => Ok(&MORTAR),
+        "log-bait" | "logbait" => Ok(&LOG_BAIT),
         other => Err(format!(
-            "unknown deck_preset {other:?}; use hog26 or pixel9_mortar"
+            "unknown deck_preset {other:?}; use hog26, pixel9_mortar or log-bait"
         )),
     }
 }
@@ -83,7 +88,11 @@ impl Server {
                 let started = Instant::now();
                 let mut session = NativeSession::load(&self.checkpoint)?;
                 self.configured = session
-                    .configure_normal_deck_and_rebuild(preset(&request["deck_preset"])?, seed)?;
+                    .configure_normal_decks_and_rebuild(
+                        preset(&request["deck_preset"])?,
+                        preset(request.get("deck_preset_side1").unwrap_or(&request["deck_preset"]))?,
+                        seed,
+                    )?;
                 self.initial_tick = self.configured["observation"]["tick"]
                     .as_u64()
                     .ok_or("configured observation missing tick")?;
@@ -106,6 +115,14 @@ impl Server {
                 Ok(
                     json!({"frame":session.presentation_snapshot()?,"observation":session.observe()?}),
                 )
+            }
+            "placement_mask" => {
+                let side = request["side"].as_u64().filter(|v| *v < 2).ok_or("invalid placement side")? as u32;
+                let slot = request["slot"].as_u64().filter(|v| *v < 4).ok_or("invalid placement slot")? as u32;
+                self.session.as_mut().ok_or("reset required")?.placement_mask(side, slot)
+            }
+            "validate_target" => {
+                self.session.as_mut().ok_or("reset required")?.validate_target(action(request)?)
             }
             "inspect_components" => {
                 let session = self.session.as_mut().ok_or("reset required")?;
@@ -185,7 +202,7 @@ fn run() -> Result<(), String> {
                 ))
             }
             "--help" | "-h" => {
-                println!("native-watch --checkpoint DIR; JSONL reset, observe, step, close; reset requires deck_preset=hog26|pixel9_mortar and accepts seed");
+                println!("native-watch --checkpoint DIR; JSONL reset, observe, step, close; reset requires deck_preset=hog26|pixel9_mortar, optional deck_preset_side1, and accepts seed");
                 return Ok(());
             }
             _ => return Err(format!("unknown argument {arg}")),

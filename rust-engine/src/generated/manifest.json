@@ -1,7 +1,7 @@
 {
   "source_sha256": "79fe6612e20922d4c4086b1e6c939464202cefa7cb3b20344236529f941423d6",
   "checkpoint_sha256": "66f9bf75bfde9b5e0c1f4056573079016d41576020018b9e57fca538fd1b840e",
-  "profile_sha256": "11d62baa3d615058cf966c664b6268a1ba37730c947565f24b924f6f8ba4570e",
+  "profile_sha256": "df98cd6f19502ff0dbb87645a04bbf050d1fb2b8952c018237efe1e233f4fe2c",
   "runtime_functions": [
     {
       "region": "cxx_runtime.bin",
@@ -13,8 +13,8 @@
       "bytes": 1824
     }
   ],
-  "function_count": 1910,
-  "instruction_count": 103754,
+  "function_count": 7281,
+  "instruction_count": 510606,
   "unsupported_encodings": {},
   "forward_threading": {
     "0xf9b008": {
@@ -56,23 +56,23 @@
   },
   "method": "Original FDE bodies and profiled external runtime blocks compiled into Rust scalar/vector operations; no emulator fallback. Unsupported code stops explicitly.",
   "generated_files": {
-    "chunk0.rs": "01b845018c3276120b03b5795b594ac597a616e41b230c6104d999aab37f2a35",
-    "chunk1.rs": "8f11fcb2735ce63afa2172e654c87c9308362bb6d0e5a90d5b0fb983ccfdcbff",
-    "chunk10.rs": "2d83e675e21ea17e59b86784861acd32d4ce25325c6a3af5573d98974db1d7c8",
-    "chunk11.rs": "d6a2bb51f9ba7abc4bd3ee2e1eb0455725f5faba1286575f5116b8818cff708b",
-    "chunk12.rs": "bf84502e202f52804a8e17db762bce5732c1163547e74d8cb3ad8459dfbaf7cf",
-    "chunk13.rs": "3020b8beb5662825152799256b817815613e2c5694090e31a9b5b336ee70e341",
-    "chunk14.rs": "75e6dac102f07cf145cdd93ed3ac357f899dcdfe956702a7bee21fc697d33b10",
-    "chunk15.rs": "0ab8689e3c16e0e5bd7662922bec0bbc4c0dc654748cc2b87b8a80da7aa7992a",
-    "chunk2.rs": "1cdf7fb6d239171a3773bd180951bba2369fdc028f2e796c8322d00d339a8af8",
-    "chunk3.rs": "1f17d74ddbbc80b3946c33ec51465c40d66dc9ee90a9c9c54c2e9d39822b3bd2",
-    "chunk4.rs": "2898ae6ff31766f2875fce2175357578d5f487b88d86ac35f628321410ec5b84",
-    "chunk5.rs": "01bc12afebfc0415617071ac58cfb802f090b182ca6ef52be877c4e1e56a7737",
-    "chunk6.rs": "cdb098bcd1cee1994ae221c04688b01bb99ca5d1f79661a9339d48842fbd2d91",
-    "chunk7.rs": "336ea0e1e0acca6e437c281314979325c7961b1498788a55749acda098fbcfb7",
-    "chunk8.rs": "aae661418eaeda5d07fb2a0ac004b5e3e9b5a4ada71bfa99e1efc590dfa5d809",
-    "chunk9.rs": "0bbfb8f827425cd32e2c9b621251812ef763544cc6050d340a6e73db986909e3",
-    "helpers.rs": "1b2420a35f393069a0ff10a6d7b979fd889ffa26b962934864fef7d2399d0024",
-    "mod.rs": "5aec5dc1f607c78b30f6e631c02a3b93ad86d37e90321c5abb8c8ec98ef025a2"
+    "chunk0.rs": "5bc3fdc7b4c0589290bcc573c50c8c4a0ccda1f187e06ac352700a6ea2e60ac0",
+    "chunk1.rs": "d2ff16397e30e2e18f01b0e4333c630fc12acbc9431bd353f27673541effa11d",
+    "chunk10.rs": "e88e11d65dded1a7e5e0ec4ae4cc75c3a5318b30bc9df7cb7dcc96d1240071bb",
+    "chunk11.rs": "9ce30334388dba164adc568dd6be2950cc532ea4f288a8b0704c8bd0c4a8bab0",
+    "chunk12.rs": "bc64e650d5803f493722c4ca106f891a7f11b1f14e4f8ce987f8334f9c95ddc2",
+    "chunk13.rs": "565afe7f058e718b1df03e64a1cafe8083efbdddbc3db0a75ecba0ab1a134e14",
+    "chunk14.rs": "70e86ef1511011561b3fe5c93119a5f98cc2d3b10dc213c703ac473fa0cbbf91",
+    "chunk15.rs": "95698e5b77e218521baed3e89504caee51f085069517f01d299e1a6b94b5548b",
+    "chunk2.rs": "b81a4214698eea95a39d1a930aca5a49bda2b0d99f3925b683c4d3b598159e16",
+    "chunk3.rs": "f6356ea3966dd7186ebebaf0a12e2d282373d4fc7185de4e8a496d1f275b7fb7",
+    "chunk4.rs": "2301dd31a418e374a90cf693189f0e6a76350990370328dee1d934249a7f8d46",
+    "chunk5.rs": "caf90ac9458825b3462bc3a646f157a15f0240f20265ac850a9210292b951dd0",
+    "chunk6.rs": "1ba99e692723c2cae06bc04d68e007093540aa434550b90033ee73f1568673ae",
+    "chunk7.rs": "568c42d75ca8d6dc71a3d0d0da22f9daf0ae4879e767866499691e0cbba16ebd",
+    "chunk8.rs": "710c1f3b51f3d80922a8e0a80ee7c50c53065ab529d6abeb63ed07cd4d18106f",
+    "chunk9.rs": "85dabbc6335a3ab2568159b562ab0f6766b5159b7bd0aeb9edc259f6d21ab895",
+    "helpers.rs": "8278c85ace9a0d0ba8b91257afea0ddc8701bbcfe3fab94ad227f70cb66d3290",
+    "mod.rs": "0d98a2749222764d899c2dbb30f632f3b7ff6c5d5fc403bf1a815c423aabd67e"
   }
 }

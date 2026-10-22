@@ -121,6 +121,7 @@ class BananaPolicy(nn.Module):
         device: str | torch.device | None = None,
         seed: int = 0,
         specialization: str = "banana-hog-1",
+        weights: str | Path | None = None,
     ) -> None:
         super().__init__()
         infer, self._dataset, winner_dataset = _pipeline()
@@ -153,6 +154,19 @@ class BananaPolicy(nn.Module):
         self.wait_head = nn.Linear(d_model, 1).to(self.device)
         nn.init.zeros_(self.wait_head.weight)
         nn.init.constant_(self.wait_head.bias, -2.0)
+        self.checkpoint_source = str(weights) if weights is not None else None
+        self.checkpoint_name = None
+        self.checkpoint_updates = 0
+        if weights is not None:
+            path = Path(weights)
+            payload = torch.load(path, map_location=self.device, weights_only=False)
+            if payload.get("format") != "banana-native-ppo-v1":
+                raise ValueError(f"not a banana-native-ppo-v1 checkpoint: {path}")
+            self.model.load_state_dict(payload["model_state"])
+            self.critic.load_state_dict(payload["critic_state"])
+            self.wait_head.load_state_dict(payload["wait_state"])
+            self.checkpoint_name = payload.get("name")
+            self.checkpoint_updates = int(payload.get("updates", 0))
 
     def _encode_policy_sample(self, *args, **kwargs):
         """Online feature hook; the reference adapter retains its original encoder."""
@@ -161,6 +175,7 @@ class BananaPolicy(nn.Module):
     def _inputs(
         self, episode: BananaEpisode, side: int, now_seconds: float,
         hand_rows: Sequence[Mapping[str, Any]], elixir: float, opponent_elixir: float,
+        *, require_affordable: bool = True,
     ) -> tuple[tuple[Tensor, ...], list[tuple[int, int, str]], Tensor]:
         if side not in (0, 1):
             raise ValueError("side must be 0 or 1")
@@ -209,7 +224,7 @@ class BananaPolicy(nn.Module):
                 continue
             cost = float(row.get("cost", self.costs.get(card, 4)))
             # Native observations and card descriptors report elixir in units.
-            if cost <= float(elixir) + 1e-6 and self.vocab.encode(card) != self.vocab.unk_id:
+            if (not require_affordable or cost <= float(elixir) + 1e-6) and self.vocab.encode(card) != self.vocab.unk_id:
                 legal.append((native_slot, deck_slot, card))
         legal_slots = sorted({d for _, d, _ in legal})
         hard_mask = torch.zeros(8, dtype=torch.bool)

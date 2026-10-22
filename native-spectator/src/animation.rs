@@ -277,9 +277,19 @@ pub fn select_export(
     } else {
         blue_prefix
     };
+    // Exclude the other team's family only when its stem is more specific
+    // than ours: Musketeer's red stem `chr_musketeer` prefixes the blue stem
+    // `chr_musketeer_blue`, while Knight's blue stem prefixes `Knight_enemy`.
+    let other = if red_team {
+        Some(blue_prefix)
+    } else {
+        red_prefix
+    };
     let is_allowed_export = |name: &str| {
         name.starts_with(prefix)
-            && (red_team || red_prefix.is_none_or(|red| red == prefix || !name.starts_with(red)))
+            && other.is_none_or(|other| {
+                other == prefix || other.len() <= prefix.len() || !name.starts_with(other)
+            })
     };
     let token = match state {
         AnimationState::Idle => "idle",
@@ -680,6 +690,25 @@ mod tests {
         .unwrap();
         assert_eq!(blue.export, "Knight_run1_7");
         assert!(!blue.export.starts_with("Knight_enemy"));
+
+        let musketeer = Scene::load(&root, "chr_musketeer").unwrap();
+        for (red, expected) in [
+            (false, "chr_musketeer_blue_idle1_5"),
+            (true, "chr_musketeer_idle1_5"),
+        ] {
+            let selected = select_export(
+                &musketeer,
+                "chr_musketeer_blue",
+                Some("chr_musketeer"),
+                red,
+                AnimationState::Idle,
+                Some(5),
+                0,
+            )
+            .unwrap()
+            .unwrap();
+            assert_eq!(selected.export, expected);
+        }
 
         let mortar = Scene::load(&root, "building_mortar").unwrap();
         let blue_east = select_export(

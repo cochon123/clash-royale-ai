@@ -12,9 +12,37 @@ pub struct Runtime {
     pub baseline_clock: u64,
     pub clock_calls: u64,
     pub calls: BTreeMap<String, u64>,
+    /// Temporary host-side deck-vector substitution at the same two original
+    /// instruction addresses used by the verified reference's code hooks.
+    pub deck_swap: Option<DeckSwap>,
+}
+
+pub struct DeckSwap {
+    pub slot: u64,
+    pub second_ptr: u64,
+    pub second_count: u32,
+    pub original_ptr: u64,
+    pub original_count: u32,
+    pub calls: u32,
 }
 
 impl Runtime {
+    pub fn deck_swap_hook(&mut self, address: u64) -> Result<(), String> {
+        let Some(state) = self.deck_swap.as_mut() else { return Ok(()); };
+        let (pointer, count) = match address {
+            0x111d6f18 => {
+                state.calls += 1;
+                if state.calls != 2 { return Ok(()); }
+                (state.second_ptr, state.second_count)
+            }
+            0x111d6068 if state.calls == 2 => (state.original_ptr, state.original_count),
+            _ => return Ok(()),
+        };
+        self.memory.write_bytes(state.slot, &pointer.to_le_bytes())?;
+        self.memory.write_bytes(state.slot + 8, &count.to_le_bytes())?;
+        self.memory.write_bytes(state.slot + 12, &count.to_le_bytes())
+    }
+
     /// Execute a modeled host import at `address` and return through X30.
     /// Returns `false` when the address is not an import.
     pub fn imported(&mut self, cpu: &mut Cpu, address: u64) -> Result<bool, String> {

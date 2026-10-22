@@ -121,6 +121,7 @@ class FastBananaPolicy(BananaPolicy):
         placement_temperature: float,
         placement_top_k: int,
         legal_tile_mask: Tensor | None,
+        *, require_affordable: bool = True,
     ) -> dict[str, Any]:
         hands = observation.get("hands")
         elixirs = observation.get("elixir")
@@ -138,6 +139,7 @@ class FastBananaPolicy(BananaPolicy):
             hands[side],
             float(elixirs[side]),
             float(elixirs[1 - side]),
+            require_affordable=require_affordable,
         )
         return {
             "inputs": tuple(
@@ -198,6 +200,19 @@ class FastBananaPolicy(BananaPolicy):
             **kwargs,
         )
 
+    @staticmethod
+    def _sample_with_uniform(distribution, caches, component):
+        """Optional per-game random streams, independent of worker scheduling."""
+        if not all("sample_uniforms" in cache for cache in caches):
+            return distribution.sample()
+        probs = distribution.probs
+        uniform = probs.new_tensor([cache["sample_uniforms"][component] for cache in caches])
+        if isinstance(distribution, Bernoulli):
+            return (uniform < probs).to(probs.dtype)
+        cdf = probs.cumsum(-1)
+        cutoff = uniform.clamp_max(1 - torch.finfo(probs.dtype).eps) * cdf[:, -1]
+        return (cutoff[:, None] >= cdf).sum(-1).clamp_max(probs.shape[-1] - 1)
+
     def act(self, episode, observation, side, now_seconds, temperature=1.,
             placement_temperature=.8, placement_top_k=5, deterministic=False,
             legal_tile_mask=None):
@@ -217,6 +232,7 @@ class FastBananaPolicy(BananaPolicy):
         placement_top_k: int = 5,
         deterministic: bool = False,
         legal_tile_masks: Sequence[Tensor | None] | None = None,
+        placement_mask_provider=None,
     ) -> list[SampledAction]:
         """Sample a batch of independent observations with two model passes.
 
@@ -251,7 +267,7 @@ class FastBananaPolicy(BananaPolicy):
             wait_dist = Bernoulli(logits=self.wait_head(first["fused"]).squeeze(-1), validate_args=False)
             values = self.critic(first["fused"]).squeeze(-1)
             can_play = torch.tensor([c["can_play"] for c in caches], device=self.device)
-            waits = wait_dist.probs >= 0.5 if deterministic else wait_dist.sample().bool()
+            waits = wait_dist.probs >= 0.5 if deterministic else self._sample_with_uniform(wait_dist, caches, 0).bool()
             waits = waits | ~can_play
             logp = torch.where(can_play, wait_dist.log_prob(waits.float()), 0.)
             entropy = torch.where(can_play, wait_dist.entropy(), 0.)
@@ -267,10 +283,18 @@ class FastBananaPolicy(BananaPolicy):
                 slot_logits = first["slot_logits"][ix] / max(float(temperature), 1e-4)
                 slot_dist = Categorical(logits=slot_logits.masked_fill(~mask, torch.finfo(slot_logits.dtype).min),
                                         validate_args=False)
-                slots = slot_dist.logits.argmax(-1) if deterministic else slot_dist.sample()
+                slots = slot_dist.logits.argmax(-1) if deterministic else self._sample_with_uniform(slot_dist, subset, 1)
+                if placement_mask_provider is not None:
+                    for i, slot in zip(pending, slots.cpu().tolist()):
+                        native_slot = next(row[0] for row in caches[i]["legal"] if row[1] == slot)
+                        mask = torch.as_tensor(placement_mask_provider(requests[i], native_slot), dtype=torch.bool).flatten().cpu()
+                        if mask.numel() != 576 or not mask.any():
+                            raise ValueError("native placement mask must contain 576 tiles and a legal target")
+                        supplied = caches[i]["tile_mask"]
+                        caches[i]["tile_mask"] = mask if supplied is None else mask & supplied
                 second = self._placement_from_context(first, caches, pending, slots)
                 tile_dist, indices, counts = self._tile_batch(second["tile_logits"], subset)
-                choices = tile_dist.logits.argmax(-1) if deterministic else tile_dist.sample()
+                choices = tile_dist.logits.argmax(-1) if deterministic else self._sample_with_uniform(tile_dist, subset, 2)
                 tiles = indices.gather(1, choices[:, None]).squeeze(1)
                 xy = torch.stack(((tiles % 32 + .5) / 32, (tiles // 32 + .5) / 18), dim=1)
                 if second.get("offset") is not None:

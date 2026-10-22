@@ -90,10 +90,10 @@ pub fn select_projectile(
             (-(motion_dy as f64)).atan2(motion_dx as f64) - std::f64::consts::FRAC_PI_2
         }
         ProjectileMovieMode::RollingTimeline if motion_dx != 0 || motion_dy != 0 => {
-            // The original barrel roll art is upright (its long axis is the
-            // screen's vertical axis). In screen coordinates +rotation moves
-            // that axis from native north toward east.
-            (motion_dx as f64).atan2(motion_dy as f64)
+            // The original barrel and log roll art lies along the screen's
+            // vertical axis, i.e. it is authored rolling east. Turn it with
+            // the motion so the roller stays perpendicular to its path.
+            (-(motion_dy as f64)).atan2(motion_dx as f64)
         }
         _ => 0.0,
     };
@@ -142,7 +142,7 @@ pub fn mode_for_source(
     }
     if matches!(
         export,
-        "projectile_arrow_basic" | "projectile_arrow_basic_enemy"
+        "projectile_arrow_basic" | "projectile_arrow_basic_enemy" | "projectile_princess"
     ) {
         return ProjectileMovieMode::View180;
     }
@@ -152,7 +152,10 @@ pub fn mode_for_source(
     ) {
         return ProjectileMovieMode::Static;
     }
-    if export.starts_with("barb_barrel_roll_projectile_") {
+    if export.starts_with("barb_barrel_roll_projectile_")
+        || export.starts_with("log_roll_projectile")
+        || export == "log_projectile"
+    {
         return ProjectileMovieMode::RollingTimeline;
     }
     ProjectileMovieMode::Timeline
@@ -304,7 +307,13 @@ mod tests {
         )
         .unwrap();
         assert_eq!(barrel.selection.frame_index, 6);
-        assert!((barrel.rotation_radians - std::f64::consts::FRAC_PI_4).abs() < 1e-9);
+        // North-east travel turns the east-authored roller by -45 degrees.
+        assert!((barrel.rotation_radians + std::f64::consts::FRAC_PI_4).abs() < 1e-9);
+        let empty = serde_json::Map::new();
+        assert_eq!(
+            mode_for_source(&empty, "log_roll_projectile_red"),
+            ProjectileMovieMode::RollingTimeline
+        );
     }
 
     #[test]
@@ -318,6 +327,10 @@ mod tests {
         fields.insert("use360Frames".into(), serde_json::Value::Bool(false));
         assert_eq!(
             mode_for_source(&fields, "projectile_arrow_basic"),
+            ProjectileMovieMode::View180
+        );
+        assert_eq!(
+            mode_for_source(&fields, "projectile_princess"),
             ProjectileMovieMode::View180
         );
         assert_eq!(

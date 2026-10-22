@@ -129,7 +129,7 @@ def build(args: argparse.Namespace) -> dict:
         "limitations": [
             "This prepares inputs only; original-native execution must confirm the loaded row and live deck.",
             "Use the VFS manifest before testing.csv is parsed; a postloaded context checkpoint has already consumed the original table.",
-            "Per-side asymmetric decks require separate native deck construction and d3bd58 calls with side 0 and side 1.",
+            "Per-side asymmetric decks are supported at runtime by the native-watch/deck-setup-probe `deck_preset_side1` field; this CSV override still prepares a single mirrored AlwaysSpells vector.",
         ],
     }
     metadata_path = output / "deck-config.json"

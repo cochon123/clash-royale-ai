@@ -83,7 +83,11 @@ impl Server {
                 let started = Instant::now();
                 let mut session = NativeSession::load(&self.checkpoint)?;
                 self.configured = session
-                    .configure_normal_deck_and_rebuild(preset(&request["deck_preset"])?, seed)?;
+                    .configure_normal_decks_and_rebuild(
+                        preset(&request["deck_preset"])?,
+                        preset(request.get("deck_preset_side1").unwrap_or(&request["deck_preset"]))?,
+                        seed,
+                    )?;
                 self.initial_tick = self.configured["observation"]["tick"]
                     .as_u64()
                     .ok_or("configured observation has no tick")?;
@@ -173,7 +177,7 @@ fn run() -> Result<(), String> {
                 ))
             }
             "--help" | "-h" => {
-                println!("deck-setup-probe --checkpoint DIR; JSONL reset requires deck_preset=hog26|pixel9_mortar; step, observe, finish, close supported");
+                println!("deck-setup-probe --checkpoint DIR; JSONL reset requires deck_preset=hog26|pixel9_mortar, optional deck_preset_side1; step, observe, finish, close supported");
                 return Ok(());
             }
             _ => return Err(format!("unknown argument {arg}")),

@@ -49,6 +49,22 @@ source hashes, extracts the original atlas pixels and fonts, and joins native
 rows to original nested logic `FileName` and export fields. Observed native
 JSONL captures add exact bindings for spawned units and projectiles.
 
+Hog 2.6 and Classic Log Bait artwork includes Princess, both Goblin Gang
+units, Barrel Goblins, Goblin Barrel flight and Inferno Tower, plus their hand
+portraits. Spawned `EXT` rows inherit the original typed `Base` before applying
+their overrides (BarrelGoblin inherits Goblin art and keeps its own load time).
+To refresh this bundle without re-decoding unchanged source documents:
+
+```sh
+.venv-ui/bin/python tools/spectator_assets.py --reuse-existing --frames runs/banana-duel-watch/frames.jsonl
+.venv-ui/bin/python tools/spectator_presentation.py
+```
+
+Inferno Tower uses the original animated beam exports, stretched toward its
+live, in-range native focus. Warm-up, damage-stage timing and attachment points
+are presentation estimates from engagement time, original logic and sprite
+bounds. They do not change gameplay or model decisions.
+
 The original `arena_training:training_area_bg` export renders to 2373×1874 at
 origin (-1188,-553). Its playing field is cropped from SC bounds x[-270,270]
 and y[-60,768]: image rectangle (918,493,540,828), including headroom for the
@@ -63,8 +79,10 @@ Character sprites use their source export origin and logic scale. Red/blue
 variants come from original exports. Motion and resolved native focus provide
 a presentation heading; nine-view and five-view banks are mapped separately,
 with mirrored poses for the opposite half-turn. Source animation timing uses
-native ticks. Attack clips align their authored `action_frame` to the observed
-impact/projectile event, so wind-up timing remains incomplete.
+native ticks; frames are drawn at fractional ticks between snapshots (see
+"Interpolated presentation" below). Attack clips align their authored
+`action_frame` to the observed impact/projectile event; the display lag makes
+each observed impact known before its wind-up starts.
 
 King reconstruction follows original routine RVA 0x83f4e4: it selects
 `chr_king:King_blue` / `King_red` and replaces the empty `king_dummy` child.
@@ -83,18 +101,72 @@ Projectile exports and logic fields distinguish authored view banks from timed
 movies; native X/Y/Z drive flight placement. Arrows and Rocket use audited
 neutral poses rotated along observed motion; these banks are not played by age
 or treated as world azimuth. The original client depth/pitch-to-frame mapping
-is unrecovered. Barbarian Barrel advances its authored timeline.
+is unrecovered. Barbarian Barrel and Log advance their authored timelines; their
+art is authored rolling east and is turned with the path so the roller stays
+perpendicular to it. Rotation follows projected screen velocity, including the
+native arc.
 
 The watch bridge publishes each side's real four-slot hand. The spectator uses
 hash-checked original PNG portraits, original `ui.sc` card frame and elixir
 icon, native costs and live elixir. Both hands are visible simultaneously in
-a spectator layout. Old captures without hands explicitly say they were not
-recorded. Original fonts render labels. Source sprites, fitted art and text
+a spectator layout on the original `ui_spectate_hud` red/blue `panel_back` and
+`panel` planks. Its elixir bar is assembled from the original `bar_bg`,
+`bar_body` (stretched to the elixir fraction), `bar_end`, nine `d1` dividers
+and `elixirBarLeft`, as the client places those pieces in code. Old captures
+without hands explicitly say they were not recorded. Original fonts render labels. Source sprites, fitted art and text
 are cached.
 
 The HUD arrangement, camera and event-to-animation mapping remain presentation
-approximations. Exact original client layout, nine-slice resizing, particles,
-all hit/death effects and animation-state transitions remain incomplete.
+approximations. Exact original client layout, nine-slice resizing and the
+client's own animation-state transitions remain unrecovered.
+
+## Interpolated presentation
+
+`tools/spectator_presentation.py` writes `presentation.json` beside the asset
+bundle. It joins every native row, transitively through `Projectile`,
+`SpawnProjectile` and area-effect links, to its original logic row in
+`csv_logic` (attack/load times, range, collision radius, projectile export and
+shadow, shadow shear, effect names, health-bar size). It copies the referenced
+entries of the APK's `assets/legacy_vfx/effects.json` and `emitters.json`,
+including nested effects and enemy variants, and checks every referenced SC
+export against the bundled display trees. Unresolved rows, effects, emitters
+and exports are listed in the file; nothing is synthesized.
+
+The renderer observes every snapshot and draws any fractional tick between the
+two that bracket the display clock. The clock trails the newest snapshot by 16
+ticks with soft jitter correction. Per-entity presentation state is kept by
+time (walk intervals, impacts, damage filters), because it is observed ahead
+of display:
+
+- Walking survives up to three ticks without displacement; observed native
+  units pause for single ticks while walking.
+- Engagement means two still ticks, a native focus target, and center distance
+  within original `Range` plus both collision radii (+400). Engaged units cycle
+  `HitSpeed` after `LoadTime`; projectile births and melee HP loss
+  re-synchronize the cycle. Clips longer than `HitSpeed` are compressed.
+- Removed projectiles continue one observed tick to their impact point, where
+  `HitEffect`/`DeathEffect` start; new projectiles leave their attributed
+  shooter during the preceding interval.
+- HP loss applies `filter_damage_{up,down,left,right}` from the original effects
+  document, pushed away from the attributed attacker.
+- Legacy effects interpret emitter fields as: milliseconds for lives, delays and
+  intervals; SC pixels and pixels per second for positions and speeds;
+  `ParticleCount` as the live-particle budget; `Inertia`/10 as exponential
+  damping per second; negative gravity downward. Particle heights are drawn at
+  0.65 of their simulated value. Effect `Scale` values of 10 or less (muzzle
+  flashes use 1) are multipliers, larger values percentages. Exports whose root
+  children all use SC blend 8 or 4 are composited additively or as screen,
+  since rendering them alone leaves premultiplied color.
+- Unit shadows are the sprite silhouette scaled by `ShadowScaleX/Y`, sheared by
+  `ShadowSkew` and offset by `ShadowX/Y`, darkened once with TrainingCamp
+  `ShadowB=100`, `ShadowA=60` (drawn at 0.5 without the client's blur).
+- Health bars are the original `ui.sc` `hp_{player,enemy}_{small,medium,high}`
+  and `hp_*_tower_withNumber` movies; the `bar` child's frame is the depleted
+  percentage (0 full, 99 empty). Own full-health troops hide their bar, as in
+  `health_bars.csv`; card levels are not exposed by the engine and are left blank.
+
+These are presentation interpretations of original data, not recovered client
+code; they never affect the engine, policy inputs or rewards.
 
 The opt-in text renderer and object visibility controls added to
 `native-ui-viewer` preserve its default static-render behavior. The previous

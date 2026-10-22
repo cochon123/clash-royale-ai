@@ -52,6 +52,9 @@ struct Mapping {
 /// A process-local view of fixed-address guest memory.
 pub struct Memory {
     mappings: Vec<Mapping>,
+    // One guest CPU executes synchronously per process. No host thread shares
+    // these mappings. Track its outstanding load-exclusive reservation.
+    exclusive: Option<(u64, usize)>,
 }
 
 impl Memory {
@@ -73,6 +76,7 @@ impl Memory {
                 .ok_or("checkpoint regions missing or not an array")?;
             let mut memory = Self {
                 mappings: Vec::with_capacity(regions.len()),
+                exclusive: None,
             };
             for region in regions {
                 let file = region["file"]
@@ -105,6 +109,7 @@ impl Memory {
 
     /// Drop all private modifications and restore anonymous tails to zero.
     pub fn reset(&mut self) -> Result<(), String> {
+        self.exclusive = None;
         #[cfg(not(target_os = "linux"))]
         {
             return Err("fixed guest memory mappings require Linux".into());
@@ -204,7 +209,48 @@ impl Memory {
             self.contains(address, std::mem::size_of::<T>()),
             "unmapped write at {address:#x}"
         );
+        self.invalidate_exclusive(address, std::mem::size_of::<T>());
         std::ptr::write_unaligned(address as *mut T, value);
+    }
+
+    fn invalidate_exclusive(&mut self, address: u64, len: usize) {
+        if let Some((reserved, size)) = self.exclusive {
+            if address < reserved.saturating_add(size as u64)
+                && reserved < address.saturating_add(len as u64)
+            {
+                self.exclusive = None;
+            }
+        }
+    }
+
+    /// Guest LDAXR/LDXR. Acquire ordering is inherent in synchronous execution.
+    ///
+    /// # Safety
+    /// The naturally aligned range must be mapped and readable as `T`.
+    pub unsafe fn load_exclusive<T: Copy>(&mut self, address: u64) -> T {
+        let size = std::mem::size_of::<T>();
+        assert_eq!(address % size as u64, 0, "unaligned exclusive load");
+        let value = self.read::<T>(address);
+        self.exclusive = Some((address, size));
+        value
+    }
+
+    /// Guest STLXR/STXR; clear the reservation on both success and failure.
+    ///
+    /// # Safety
+    /// The naturally aligned range must be mapped and writable as `T`.
+    pub unsafe fn store_exclusive<T: Copy>(&mut self, address: u64, value: T) -> u32 {
+        let size = std::mem::size_of::<T>();
+        assert_eq!(address % size as u64, 0, "unaligned exclusive store");
+        if self.exclusive.take() != Some((address, size)) {
+            return 1;
+        }
+        self.write(address, value);
+        0
+    }
+
+    pub fn clear_exclusive(&mut self) {
+        self.exclusive = None;
     }
 
     /// Copy bytes from a single mapped guest region.
@@ -221,6 +267,7 @@ impl Memory {
     pub fn write_bytes(&mut self, address: u64, bytes: &[u8]) -> Result<(), String> {
         self.check_range(address, bytes.len())?;
         if !bytes.is_empty() {
+            self.invalidate_exclusive(address, bytes.len());
             unsafe {
                 std::ptr::copy_nonoverlapping(bytes.as_ptr(), address as *mut u8, bytes.len())
             };
@@ -455,6 +502,7 @@ mod tests {
         let address = 0x4f00_0000_0000_u64 + (u64::from(std::process::id()) << 12);
         let mut memory = Memory {
             mappings: Vec::new(),
+            exclusive: None,
         };
         memory
             .map_private_file(&path, address, page, page * 2)
@@ -472,6 +520,60 @@ mod tests {
             memory.read_bytes(address + page as u64 + 10, 2).unwrap(),
             [0, 0]
         );
+        drop(memory);
+        std::fs::remove_file(path).expect("remove temporary mapping source");
+    }
+
+    #[test]
+    fn exclusive_store_requires_matching_reservation() {
+        let page = page_size();
+        let path = std::env::temp_dir().join(format!(
+            "clash-recompiled-exclusive-{}-{}.bin",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("test")
+        ));
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&path)
+            .expect("create temporary mapping source");
+        file.write_all(&vec![0x5a; page])
+            .expect("write baseline mapping");
+        drop(file);
+
+        let address = 0x4f01_0000_0000_u64 + (u64::from(std::process::id()) << 12);
+        let mut memory = Memory {
+            mappings: Vec::new(),
+            exclusive: None,
+        };
+        memory
+            .map_private_file(&path, address, page, page)
+            .expect("map private checkpoint page");
+        let word = address + 0x40;
+
+        unsafe {
+            let first: u32 = memory.load_exclusive(word);
+            assert_eq!(first, 0x5a5a_5a5a);
+            // A plain write between the exclusive load and store clears it.
+            memory.write(word, 1u32);
+            assert_eq!(memory.store_exclusive(word, 2u32), 1);
+            assert_eq!(memory.read::<u32>(word), 1);
+
+            // A matching reservation succeeds and returns status zero.
+            let _: u32 = memory.load_exclusive(word);
+            assert_eq!(memory.store_exclusive(word, 3u32), 0);
+            assert_eq!(memory.read::<u32>(word), 3);
+
+            // A mismatched address fails and consumes the reservation.
+            let _: u32 = memory.load_exclusive(word);
+            assert_eq!(memory.store_exclusive(word + 4, 4u32), 1);
+            assert_eq!(memory.store_exclusive(word, 4u32), 1);
+
+            // Episode reset also discards any outstanding reservation.
+            let _: u32 = memory.load_exclusive(word);
+            memory.reset().expect("reset mapped pages");
+            assert_eq!(memory.store_exclusive(word, 5u32), 1);
+        }
         drop(memory);
         std::fs::remove_file(path).expect("remove temporary mapping source");
     }

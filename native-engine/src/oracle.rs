@@ -1498,6 +1498,56 @@ pub struct NativeSession {
     presentation_first_seen_ticks: BTreeMap<u64, u32>,
 }
 
+/// One-shot code hooks around the original per-side deck builder. The loaded
+/// Normal row carries a single `AlwaysSpells` vector; `11d59dc` calls
+/// `11d6f18` once for side 0 and once for side 1, so the second entry is the
+/// point where an asymmetric side-1 deck can be supplied.
+struct DeckSwapHook {
+    api: *const UnicornApi,
+    uc: *mut c_void,
+    entry: u64,
+    restore: u64,
+    slot: u64,
+    second_ptr: u64,
+    second_count: u32,
+    original_ptr: u64,
+    original_count: u32,
+    calls: u32,
+    error: Option<String>,
+}
+
+unsafe extern "C" fn deck_swap_hook(
+    _: *mut c_void,
+    address: u64,
+    _size: u32,
+    opaque: *mut c_void,
+) {
+    let state = &mut *opaque.cast::<DeckSwapHook>();
+    let (pointer, count) = if address == state.entry {
+        state.calls += 1;
+        if state.calls != 2 {
+            return;
+        }
+        (state.second_ptr, state.second_count)
+    } else if address == state.restore && state.calls == 2 {
+        (state.original_ptr, state.original_count)
+    } else {
+        return;
+    };
+    let api = &*state.api;
+    let slot = state.slot;
+    let pointer_bytes = pointer.to_le_bytes();
+    let count_bytes = count.to_le_bytes();
+    let failed = (api.mem_write)(state.uc, slot, pointer_bytes.as_ptr().cast(), 8) != 0
+        || (api.mem_write)(state.uc, slot + 8, count_bytes.as_ptr().cast(), 4) != 0
+        || (api.mem_write)(state.uc, slot + 12, count_bytes.as_ptr().cast(), 4) != 0;
+    if failed {
+        state.error = Some(format!(
+            "deck-swap hook could not rewrite the AlwaysSpells vector at {slot:#x}"
+        ));
+    }
+}
+
 impl NativeSession {
     /// Collect original basic-block execution counts for selecting source ports.
     /// Profiling is opt-in and the hook is removed before this method returns.
@@ -1932,7 +1982,6 @@ impl NativeSession {
         Ok(())
     }
 
-
     fn call(&mut self, rva: u64, args: &[u64], x8: u64) -> Result<u64, String> {
         invoke_native(
             &self.api,
@@ -1946,27 +1995,41 @@ impl NativeSession {
         )
     }
 
-    /// Replace the loaded Normal testing row's AlwaysSpells source-row vector,
-    /// then call the original input/harness constructors to make a fresh game.
-    /// The scenario is consumed independently for each side, so `cards` is a
-    /// mirrored 8-card deck. No battle object or game instruction is patched.
+    /// Mirrored-deck convenience wrapper for
+    /// [`configure_normal_decks_and_rebuild`](Self::configure_normal_decks_and_rebuild).
     pub fn configure_normal_deck_and_rebuild(
         &mut self,
         cards: &[&str],
         seed: u32,
     ) -> Result<Value, String> {
-        if cards.len() != 8 {
-            return Err(format!(
-                "a configured deck must contain exactly 8 cards, got {}",
-                cards.len()
-            ));
-        }
-        let mut unique = BTreeSet::new();
-        if cards
-            .iter()
-            .any(|card| card.is_empty() || !unique.insert(*card))
-        {
-            return Err("deck names must be nonempty and unique".into());
+        self.configure_normal_decks_and_rebuild(cards, cards, seed)
+    }
+
+    /// Replace the loaded Normal testing row's AlwaysSpells source-row vector,
+    /// then call the original input/harness constructors to make a fresh game.
+    /// The scenario supplies one vector to both sides, so an asymmetric
+    /// `cards_side1` is installed only for the original `11d6f18` call that
+    /// builds side 1. No battle object or game instruction is patched.
+    pub fn configure_normal_decks_and_rebuild(
+        &mut self,
+        cards: &[&str],
+        cards_side1: &[&str],
+        seed: u32,
+    ) -> Result<Value, String> {
+        for (label, deck) in [("side 0", cards), ("side 1", cards_side1)] {
+            if deck.len() != 8 {
+                return Err(format!(
+                    "the {label} deck must contain exactly 8 cards, got {}",
+                    deck.len()
+                ));
+            }
+            let mut unique = BTreeSet::new();
+            if deck
+                .iter()
+                .any(|card| card.is_empty() || !unique.insert(*card))
+            {
+                return Err(format!("{label} deck names must be nonempty and unique"));
+            }
         }
 
         let row_count = self.call(0xe1ac8c, &[self.context], 0)?;
@@ -1980,12 +2043,15 @@ impl NativeSession {
                 return Err(format!("native card row {index} is null"));
             }
             let name = self.native_string(row + 0x28)?;
-            if cards.contains(&name.as_str()) && source_rows.insert(name.clone(), row).is_some() {
+            if (cards.contains(&name.as_str()) || cards_side1.contains(&name.as_str()))
+                && source_rows.insert(name.clone(), row).is_some()
+            {
                 return Err(format!("duplicate native source row name {name}"));
             }
         }
         let missing: Vec<_> = cards
             .iter()
+            .chain(cards_side1)
             .filter(|name| !source_rows.contains_key(**name))
             .copied()
             .collect();
@@ -1995,20 +2061,24 @@ impl NativeSession {
                 missing.join(", ")
             ));
         }
-        let row_ptrs: Vec<u64> = cards.iter().map(|name| source_rows[*name]).collect();
-        let vector_data =
-            self.state
+        let mut deck_vector = |deck: &[&str]| -> Result<(u64, Vec<u64>), String> {
+            let row_ptrs: Vec<u64> = deck.iter().map(|name| source_rows[*name]).collect();
+            let data = self
+                .state
                 .heap
                 .alloc(8 * row_ptrs.len() as u64, 8, &self.api, self.uc)?;
-        write_mem(
-            &self.api,
-            self.uc,
-            vector_data,
-            &row_ptrs
-                .iter()
-                .flat_map(|p| p.to_le_bytes())
-                .collect::<Vec<_>>(),
-        )?;
+            write_mem(
+                &self.api,
+                self.uc,
+                data,
+                &row_ptrs
+                    .iter()
+                    .flat_map(|p| p.to_le_bytes())
+                    .collect::<Vec<_>>(),
+            )?;
+            Ok((data, row_ptrs))
+        };
+        let (vector_data, row_ptrs) = deck_vector(cards)?;
         write_mem(
             &self.api,
             self.uc,
@@ -2027,6 +2097,12 @@ impl NativeSession {
             self.normal_test_row + 0x7c,
             &(row_ptrs.len() as u32).to_le_bytes(),
         )?;
+        let second_vector = if cards_side1 != cards {
+            let (data, pointers) = deck_vector(cards_side1)?;
+            Some((data, pointers.len() as u32))
+        } else {
+            None
+        };
 
         // Re-run the same original constructor chain as the scenario harness.
         let name_bytes = self.state.heap.alloc(7, 8, &self.api, self.uc)?;
@@ -2058,7 +2134,61 @@ impl NativeSession {
         }
         let new_harness = self.state.heap.alloc(0x78, 16, &self.api, self.uc)?;
         write_mem(&self.api, self.uc, new_harness, &[0; 0x78])?;
-        self.call(0x11d58e0, &[new_harness, self.context, input_sret], 0)?;
+        let mut swap = second_vector.map(|(data, count)| {
+            Box::new(DeckSwapHook {
+                api: &*self.api as *const UnicornApi,
+                uc: self.uc,
+                entry: 0x1000_0000 + 0x11d6f18,
+                restore: 0x1000_0000 + 0x11d6_068,
+                slot: self.normal_test_row + 0x70,
+                second_ptr: data,
+                second_count: count,
+                original_ptr: vector_data,
+                original_count: row_ptrs.len() as u32,
+                calls: 0,
+                error: None,
+            })
+        });
+        let mut hooks = Vec::new();
+        if let Some(state) = swap.as_mut() {
+            for address in [state.entry, state.restore] {
+                let mut hook = 0usize;
+                let rc = unsafe {
+                    (self.api.hook_add)(
+                        self.uc,
+                        &mut hook,
+                        UC_HOOK_CODE,
+                        deck_swap_hook as *const c_void,
+                        (&mut **state as *mut DeckSwapHook).cast(),
+                        address,
+                        address,
+                    )
+                };
+                if rc != 0 {
+                    for installed in hooks.drain(..) {
+                        unsafe { (self.api.hook_del)(self.uc, installed) };
+                    }
+                    return Err(format!("deck-swap hook: {}", self.api.err(rc)));
+                }
+                hooks.push(hook);
+            }
+        }
+        let constructed = self.call(0x11d58e0, &[new_harness, self.context, input_sret], 0);
+        for hook in hooks {
+            unsafe { (self.api.hook_del)(self.uc, hook) };
+        }
+        constructed?;
+        if let Some(state) = swap {
+            if let Some(error) = state.error {
+                return Err(error);
+            }
+            if state.calls != 2 {
+                return Err(format!(
+                    "expected two native 11d6f18 deck builds, observed {}",
+                    state.calls
+                ));
+            }
+        }
         let new_world = u64::from_le_bytes(
             read_mem(&self.api, self.uc, new_harness + 0x20, 8)?
                 .try_into()
@@ -2144,7 +2274,8 @@ impl NativeSession {
                 names.push(self.native_string(row + 0x28)?);
             }
             let mut sorted_actual = names.clone();
-            let mut sorted_expected = cards
+            let expected = if side == 0 { cards } else { cards_side1 };
+            let mut sorted_expected = expected
                 .iter()
                 .map(|name| name.to_string())
                 .collect::<Vec<_>>();
@@ -2156,8 +2287,13 @@ impl NativeSession {
             actual_decks.push(json!({"side":side,"cards":names}));
         }
         let observation = self.observe()?;
+        let deck_source_rows = if cards == cards_side1 {
+            json!(cards)
+        } else {
+            json!([cards, cards_side1])
+        };
         Ok(
-            json!({"scenario":"Normal","seed":seed,"deck_source_rows":cards,"actual_native_decks":actual_decks,"observation":observation,"construction":"Original 11d7968 input and 11d58e0 fresh-harness constructors after setting the loaded Normal row's AlwaysSpells vector; no engine-code patches."}),
+            json!({"scenario":"Normal","seed":seed,"deck_source_rows":deck_source_rows,"actual_native_decks":actual_decks,"observation":observation,"construction":"Original 11d7968 input and 11d58e0 fresh-harness constructors after setting the loaded Normal row's AlwaysSpells vector; for asymmetric decks the second native 11d6f18 call receives a separate source-row vector. No game instruction is patched."}),
         )
     }
 
@@ -2433,6 +2569,65 @@ impl NativeSession {
     /// Read the source-proven native match-completion byte without a full observation.
     pub fn is_terminal(&self) -> Result<bool, String> {
         Ok(read_mem(&self.api, self.uc, self.battle + 0x1e0, 1)?[0] != 0)
+    }
+
+    /// Query the original target validator for every policy heatmap center.
+    /// This never submits a command or advances the world.
+    pub fn placement_mask(&mut self, side: u32, slot: u32) -> Result<Value, String> {
+        if side > 1 || slot > 3 {
+            return Err("placement_mask needs side 0..1 and slot 0..3".into());
+        }
+        let side_obj = self.side_object(side)?;
+        if side_obj == 0 { return Err("null native battle side".into()); }
+        let tick = read_mem_u32(&self.api, self.uc, self.world + 0x60)?;
+        let queue = read_mem_u32(&self.api, self.uc, self.commands + 0x14)?;
+        let wrapper = self.call(0xf9dd98, &[side_obj, slot as u64], 0)?;
+        if wrapper == 0 { return Err("placement_mask requested an empty hand slot".into()); }
+        write_mem(&self.api, self.uc, self.descriptor_scratch, &[0; 24])?;
+        self.call(0xe80bbc, &[wrapper, side_obj, 1], self.descriptor_scratch)?;
+        let proxy = self.call(0xe80680, &[self.descriptor_scratch], 0)?;
+        if proxy == 0 { return Err("null native card selection proxy".into()); }
+        let mut mask = Vec::with_capacity(576);
+        let started = Instant::now();
+        for tile in 0..576 {
+            let x = (((tile % 32) as f64 + 0.5) * 18000.0 / 32.0).round() as i32;
+            let y = ((tile / 32) as f64 + 0.5) / 18.0;
+            let y = ((if side == 1 { 1.0 - y } else { y }) * 32000.0).round() as i32;
+            let code = self.call(0xd42214, &[self.battle, x as u64, y as u64, proxy, 0], 0)? as u32;
+            mask.push(code == 0);
+        }
+        if tick != read_mem_u32(&self.api, self.uc, self.world + 0x60)?
+            || queue != read_mem_u32(&self.api, self.uc, self.commands + 0x14)? {
+            return Err("native placement query changed tick or command queue".into());
+        }
+        Ok(json!({"side":side,"slot":slot,"mask":mask,"tick":tick,"query_seconds":started.elapsed().as_secs_f64()}))
+    }
+
+    /// Check an exact human cursor position through the original validator.
+    /// No command is submitted and no world time is advanced.
+    pub fn validate_target(&mut self, request: PlayCardRequest) -> Result<Value, String> {
+        if request.side > 1 || request.slot > 3 {
+            return Err("target check needs side 0..1 and slot 0..3".into());
+        }
+        let side_obj = self.side_object(request.side)?;
+        if side_obj == 0 { return Err("null native battle side".into()); }
+        let tick = read_mem_u32(&self.api, self.uc, self.world + 0x60)?;
+        let queue = read_mem_u32(&self.api, self.uc, self.commands + 0x14)?;
+        let wrapper = self.call(0xf9dd98, &[side_obj, request.slot as u64], 0)?;
+        if wrapper == 0 { return Ok(json!({"valid":false,"affordable":false,"rejection":"empty_hand_slot"})); }
+        write_mem(&self.api, self.uc, self.descriptor_scratch, &[0; 24])?;
+        self.call(0xe80bbc, &[wrapper, side_obj, 1], self.descriptor_scratch)?;
+        let proxy = self.call(0xe80680, &[self.descriptor_scratch], 0)?;
+        if proxy == 0 { return Err("null native card selection proxy".into()); }
+        let code = self.call(0xd42214, &[self.battle, request.x as i64 as u64,
+            request.y as i64 as u64, proxy, 0], 0)? as u32;
+        let cost = self.call(0xe80638, &[self.descriptor_scratch], 0)? as u32;
+        let mana = self.call(0xfa1c84, &[side_obj, 1], 0)? as u32;
+        if tick != read_mem_u32(&self.api, self.uc, self.world + 0x60)?
+            || queue != read_mem_u32(&self.api, self.uc, self.commands + 0x14)? {
+            return Err("native target check changed tick or command queue".into());
+        }
+        Ok(json!({"valid":code==0,"affordable":mana>=cost,"target_validity_code":code,"cost":cost,"mana":mana}))
     }
 
     /// Submit one card using the native hand descriptor, validator and queue.

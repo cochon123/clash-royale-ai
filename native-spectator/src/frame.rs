@@ -54,6 +54,45 @@ pub struct CardPlay {
     pub tick: u32,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CardSelection {
+    pub slot: u32,
+    pub card_id: u32,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct HumanTarget {
+    pub slot: u32,
+    pub card_id: u32,
+    pub x: i32,
+    pub y: i32,
+    pub valid: bool,
+    pub affordable: bool,
+    pub cost: u32,
+    /// Own-side-only card aimed past the player's territory; the engine will
+    /// move it back. A presentation hint from original card data.
+    #[serde(default)]
+    pub snaps: bool,
+    /// Where the card will be submitted; differs from x/y when it snaps.
+    #[serde(default)]
+    pub land_x: Option<i32>,
+    #[serde(default)]
+    pub land_y: Option<i32>,
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct HumanFrame {
+    pub side: usize,
+    pub selection: Option<CardSelection>,
+    pub target: Option<HumanTarget>,
+    pub last_serial: u64,
+    pub paused: bool,
+    pub feedback: String,
+    /// Native-unit rectangles [x0, y0, x1, y1] the selected card cannot land in.
+    pub forbidden: Vec<[i32; 4]>,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct BattleFrame {
     pub tick: u32,
@@ -71,4 +110,6 @@ pub struct BattleFrame {
     pub plays: Vec<CardPlay>,
     #[serde(default)]
     pub match_id: u64,
+    #[serde(default)]
+    pub human: Option<HumanFrame>,
 }
