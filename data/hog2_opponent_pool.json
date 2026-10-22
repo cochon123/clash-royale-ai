@@ -1,0 +1,284 @@
+{
+  "format": "banana-opponent-pool-v1",
+  "description": "Classic archetype variants using recovered base cards; not a claim of current top-ladder meta or human-level pilots.",
+  "sources": [
+    "https://royaleapi.com/deck-list/3971433291592896154?lang=en"
+  ],
+  "decks": [
+    {
+      "id": "hog-mirror",
+      "name": "Hog 2.6",
+      "archetype": "Cycle",
+      "cards": [
+        "hog-rider",
+        "musketeer",
+        "ice-golem",
+        "skeletons",
+        "ice-spirit",
+        "cannon",
+        "fireball",
+        "the-log"
+      ],
+      "native_cards": [
+        "HogRider",
+        "Musketeer",
+        "IceGolemite",
+        "Skeletons",
+        "IceSpirits",
+        "Cannon",
+        "Fireball",
+        "Log"
+      ]
+    },
+    {
+      "id": "log-bait",
+      "name": "Classic Log Bait",
+      "archetype": "Bait",
+      "cards": [
+        "goblin-barrel",
+        "princess",
+        "knight",
+        "goblin-gang",
+        "inferno-tower",
+        "rocket",
+        "the-log",
+        "ice-spirit"
+      ],
+      "native_cards": [
+        "GoblinBarrel",
+        "Princess",
+        "Knight",
+        "GoblinGang",
+        "InfernoTower",
+        "Rocket",
+        "Log",
+        "IceSpirits"
+      ]
+    },
+    {
+      "id": "x-bow",
+      "name": "X-Bow 2.9",
+      "archetype": "Siege",
+      "cards": [
+        "x-bow",
+        "tesla",
+        "archers",
+        "ice-golem",
+        "skeletons",
+        "ice-spirit",
+        "fireball",
+        "the-log"
+      ],
+      "native_cards": [
+        "Xbow",
+        "Tesla",
+        "Archer",
+        "IceGolemite",
+        "Skeletons",
+        "IceSpirits",
+        "Fireball",
+        "Log"
+      ]
+    },
+    {
+      "id": "pekka-bridge",
+      "name": "PEKKA Bridge Spam",
+      "archetype": "Bridge spam",
+      "cards": [
+        "pekka",
+        "battle-ram",
+        "bandit",
+        "royal-ghost",
+        "electro-wizard",
+        "magic-archer",
+        "poison",
+        "zap"
+      ],
+      "native_cards": [
+        "Pekka",
+        "BattleRam",
+        "Assassin",
+        "Ghost",
+        "ElectroWizard",
+        "EliteArcher",
+        "Poison",
+        "Zap"
+      ]
+    },
+    {
+      "id": "lava-loon",
+      "name": "LavaLoon",
+      "archetype": "Air beatdown",
+      "cards": [
+        "lava-hound",
+        "balloon",
+        "tombstone",
+        "mega-minion",
+        "minions",
+        "guards",
+        "fireball",
+        "zap"
+      ],
+      "native_cards": [
+        "LavaHound",
+        "Balloon",
+        "Tombstone",
+        "MegaMinion",
+        "Minions",
+        "SkeletonWarriors",
+        "Fireball",
+        "Zap"
+      ]
+    },
+    {
+      "id": "golem",
+      "name": "Golem Night Witch",
+      "archetype": "Beatdown",
+      "cards": [
+        "golem",
+        "night-witch",
+        "baby-dragon",
+        "mega-minion",
+        "lumberjack",
+        "tornado",
+        "lightning",
+        "barbarian-barrel"
+      ],
+      "native_cards": [
+        "Golem",
+        "DarkWitch",
+        "BabyDragon",
+        "MegaMinion",
+        "RageBarbarian",
+        "Tornado",
+        "Lightning",
+        "BarbLog"
+      ]
+    },
+    {
+      "id": "royal-giant",
+      "name": "Royal Giant Fisherman",
+      "archetype": "Control",
+      "cards": [
+        "royal-giant",
+        "fisherman",
+        "hunter",
+        "mega-minion",
+        "skeletons",
+        "electro-spirit",
+        "fireball",
+        "the-log"
+      ],
+      "native_cards": [
+        "RoyalGiant",
+        "Fisherman",
+        "Hunter",
+        "MegaMinion",
+        "Skeletons",
+        "ElectroSpirit",
+        "Fireball",
+        "Log"
+      ]
+    },
+    {
+      "id": "splashyard",
+      "name": "Splashyard",
+      "archetype": "Control",
+      "cards": [
+        "graveyard",
+        "poison",
+        "knight",
+        "baby-dragon",
+        "ice-wizard",
+        "tombstone",
+        "tornado",
+        "barbarian-barrel"
+      ],
+      "native_cards": [
+        "Graveyard",
+        "Poison",
+        "Knight",
+        "BabyDragon",
+        "IceWizard",
+        "Tombstone",
+        "Tornado",
+        "BarbLog"
+      ]
+    },
+    {
+      "id": "miner-wallbreakers",
+      "name": "Miner Wall Breakers",
+      "archetype": "Cycle",
+      "cards": [
+        "miner",
+        "wall-breakers",
+        "valkyrie",
+        "bomb-tower",
+        "bats",
+        "spear-goblins",
+        "poison",
+        "the-log"
+      ],
+      "native_cards": [
+        "Miner",
+        "Wallbreakers",
+        "Valkyrie",
+        "BombTower",
+        "Bats",
+        "SpearGoblins",
+        "Poison",
+        "Log"
+      ]
+    },
+    {
+      "id": "giant-princes",
+      "name": "Giant Double Prince",
+      "archetype": "Beatdown",
+      "cards": [
+        "giant",
+        "prince",
+        "dark-prince",
+        "mega-minion",
+        "electro-wizard",
+        "miner",
+        "fireball",
+        "zap"
+      ],
+      "native_cards": [
+        "Giant",
+        "Prince",
+        "DarkPrince",
+        "MegaMinion",
+        "ElectroWizard",
+        "Miner",
+        "Fireball",
+        "Zap"
+      ]
+    },
+    {
+      "id": "custom-mortar",
+      "name": "Custom Mortar",
+      "archetype": "Siege",
+      "cards": [
+        "mortar",
+        "knight",
+        "archers",
+        "skeletons",
+        "barbarian-barrel",
+        "arrows",
+        "mini-pekka",
+        "rocket"
+      ],
+      "native_cards": [
+        "Mortar",
+        "Knight",
+        "Archer",
+        "Skeletons",
+        "BarbLog",
+        "Arrows",
+        "MiniPekka",
+        "Rocket"
+      ]
+    }
+  ]
+}

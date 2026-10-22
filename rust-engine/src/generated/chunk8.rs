@@ -1,9 +1,10 @@
-#![allow(unused_parens,unreachable_code,unused_variables,unused_mut)]
-use crate::{cpu::Cpu,runtime::Runtime};
+#![allow(unused_parens,unreachable_code,unused_variables,unused_mut,unused_labels,unused_assignments,unused_imports)]
+use crate::{cpu::{Cpu,nzcv_flags,nzcv_logical_flags,nzcv_condition},runtime::Runtime};
 use super::helpers::*;
 #[inline]
-pub(super) unsafe fn f_10789f34(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10789f34=>{
+pub(super) unsafe fn f_10789f34(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10789f34{return f_10789f34_slow(cpu,rt,pc);}
+
+'b10789f84: {
 // 0x10789f34 stp x29, x30, [sp, #-0x30]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10789f38 str x21, [sp, #0x10]
@@ -17,9 +18,8 @@ cpu.x[29]=(((cpu.sp))) as u64;
 // 0x10789f48 mov x19, x0
 cpu.x[19]=(((cpu.x[0]))) as u64;
 // 0x10789f4c cbz x20, #0x10789f84
-if (cpu.x[20]) == 0 {pc=0x10789f84;continue;}pc=0x10789f50;continue;
-}
-0x10789f50=>{
+if (cpu.x[20]) == 0 {break 'b10789f84;}{
+'b10789f7c: {
 // 0x10789f50 ldr x8, [x19, #0x40]
 {let address=(cpu.x[19]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10789f54 mov x0, x20
@@ -27,9 +27,8 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10789f58 cmp x8, x20
 {let a=((cpu.x[8]));let b=((cpu.x[20]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10789f5c b.eq #0x10789f7c
-if cpu.condition(0){pc=0x10789f7c;continue;}pc=0x10789f60;continue;
-}
-0x10789f60=>{
+if cpu.condition(0){break 'b10789f7c;}{
+'l10789f60: loop {
 // 0x10789f60 sub x0, x8, #0x10
 {let a=((cpu.x[8]));let b=((0x10u64));let result=a.wrapping_sub(b);cpu.x[0]=(result) as u64;}
 // 0x10789f64 sub x21, x8, #0x18
@@ -41,40 +40,47 @@ cpu.x[30]=0x10789f6c;super::chunk4::f_1142fcc4(cpu,rt,0x1142fcc4)?;
 // 0x10789f70 mov x8, x21
 cpu.x[8]=(((cpu.x[21]))) as u64;
 // 0x10789f74 b.ne #0x10789f60
-if cpu.condition(1){pc=0x10789f60;continue;}pc=0x10789f78;continue;
-}
-0x10789f78=>{
+if cpu.condition(1){continue 'l10789f60;}{
 // 0x10789f78 ldr x0, [x19, #0x38]
 {let address=(cpu.x[19]).wrapping_add(0x38u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
-pc=0x10789f7c;continue;
+break 'b10789f7c;
 }
-0x10789f7c=>{
+}
+}
+}
 // 0x10789f7c str x20, [x19, #0x40]
 {let address=(cpu.x[19]).wrapping_add(0x40u64);let v0=cpu.x[20];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10789f80 bl #0x1187d2c0
 cpu.x[30]=0x10789f84;super::dispatch(cpu,rt,0x1187d2c0)?;
-pc=0x10789f84;continue;
+break 'b10789f84;
 }
-0x10789f84=>{
+}
+'b10789f94: {
 // 0x10789f84 ldr x0, [x19, #0x20]
 {let address=(cpu.x[19]).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10789f88 cbz x0, #0x10789f94
-if (cpu.x[0]) == 0 {pc=0x10789f94;continue;}pc=0x10789f8c;continue;
-}
-0x10789f8c=>{
+if (cpu.x[0]) == 0 {break 'b10789f94;}{
 // 0x10789f8c str x0, [x19, #0x28]
 {let address=(cpu.x[19]).wrapping_add(0x28u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10789f90 bl #0x1187d2c0
 cpu.x[30]=0x10789f94;super::dispatch(cpu,rt,0x1187d2c0)?;
-pc=0x10789f94;continue;
+break 'b10789f94;
 }
-0x10789f94=>{
+}
 // 0x10789f94 ldr x21, [x19, #8]
 {let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
 // 0x10789f98 cbz x21, #0x10789fd8
-if (cpu.x[21]) == 0 {pc=0x10789fd8;continue;}pc=0x10789f9c;continue;
-}
-0x10789f9c=>{
+if (cpu.x[21]) == 0 {{
+// 0x10789fd8 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10789fdc ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10789fe0 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10789fe4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
+'b10789fc4: {
 // 0x10789f9c ldr x20, [x19, #0x10]
 {let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
 // 0x10789fa0 mov x0, x21
@@ -82,9 +88,8 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10789fa4 cmp x20, x21
 {let a=((cpu.x[20]));let b=((cpu.x[21]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10789fa8 b.eq #0x10789fc4
-if cpu.condition(0){pc=0x10789fc4;continue;}pc=0x10789fac;continue;
-}
-0x10789fac=>{
+if cpu.condition(0){break 'b10789fc4;}{
+'l10789fac: loop {
 // 0x10789fac sub x20, x20, #0x18
 {let a=((cpu.x[20]));let b=((0x18u64));let result=a.wrapping_sub(b);cpu.x[20]=(result) as u64;}
 // 0x10789fb0 mov x0, x20
@@ -94,14 +99,14 @@ cpu.x[30]=0x10789fb8;super::chunk4::f_1142fcc4(cpu,rt,0x1142fcc4)?;
 // 0x10789fb8 cmp x20, x21
 {let a=((cpu.x[20]));let b=((cpu.x[21]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10789fbc b.ne #0x10789fac
-if cpu.condition(1){pc=0x10789fac;continue;}pc=0x10789fc0;continue;
-}
-0x10789fc0=>{
+if cpu.condition(1){continue 'l10789fac;}{
 // 0x10789fc0 ldr x0, [x19, #8]
 {let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
-pc=0x10789fc4;continue;
+break 'b10789fc4;
 }
-0x10789fc4=>{
+}
+}
+}
 // 0x10789fc4 str x21, [x19, #0x10]
 {let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10789fc8 ldp x20, x19, [sp, #0x20]
@@ -113,7 +118,121 @@ pc=0x10789fc4;continue;
 // 0x10789fd4 b #0x1187d2c0
 super::dispatch(cpu,rt,0x1187d2c0)?;return Ok(());
 }
-0x10789fd8=>{
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10789f34_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10789f34{0}else{match pc{0x10789f34=>0,0x10789f50=>1,0x10789f60=>2,0x10789f78=>3,0x10789f7c=>4,0x10789f84=>5,0x10789f8c=>6,0x10789f94=>7,0x10789f9c=>8,0x10789fac=>9,0x10789fc0=>10,0x10789fc4=>11,0x10789fd8=>12,_=>return Err(format!("untranslated block {pc:#x} in 0x10789f34").into()),}};loop{match block{
+0=>{
+// 0x10789f34 stp x29, x30, [sp, #-0x30]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10789f38 str x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10789f3c stp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10789f40 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10789f44 ldr x20, [x0, #0x38]
+{let address=(cpu.x[0]).wrapping_add(0x38u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
+// 0x10789f48 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10789f4c cbz x20, #0x10789f84
+if (cpu.x[20]) == 0 {block=5;continue;}block=1;continue;
+}
+1=>{
+// 0x10789f50 ldr x8, [x19, #0x40]
+{let address=(cpu.x[19]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10789f54 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10789f58 cmp x8, x20
+{let a=((cpu.x[8]));let b=((cpu.x[20]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10789f5c b.eq #0x10789f7c
+if cpu.condition(0){block=4;continue;}block=2;continue;
+}
+2=>{
+// 0x10789f60 sub x0, x8, #0x10
+{let a=((cpu.x[8]));let b=((0x10u64));let result=a.wrapping_sub(b);cpu.x[0]=(result) as u64;}
+// 0x10789f64 sub x21, x8, #0x18
+{let a=((cpu.x[8]));let b=((0x18u64));let result=a.wrapping_sub(b);cpu.x[21]=(result) as u64;}
+// 0x10789f68 bl #0x1142fcc4
+cpu.x[30]=0x10789f6c;super::chunk4::f_1142fcc4(cpu,rt,0x1142fcc4)?;
+// 0x10789f6c cmp x21, x20
+{let a=((cpu.x[21]));let b=((cpu.x[20]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10789f70 mov x8, x21
+cpu.x[8]=(((cpu.x[21]))) as u64;
+// 0x10789f74 b.ne #0x10789f60
+if cpu.condition(1){block=2;continue;}block=3;continue;
+}
+3=>{
+// 0x10789f78 ldr x0, [x19, #0x38]
+{let address=(cpu.x[19]).wrapping_add(0x38u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+block=4;continue;
+}
+4=>{
+// 0x10789f7c str x20, [x19, #0x40]
+{let address=(cpu.x[19]).wrapping_add(0x40u64);let v0=cpu.x[20];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10789f80 bl #0x1187d2c0
+cpu.x[30]=0x10789f84;super::dispatch(cpu,rt,0x1187d2c0)?;
+block=5;continue;
+}
+5=>{
+// 0x10789f84 ldr x0, [x19, #0x20]
+{let address=(cpu.x[19]).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10789f88 cbz x0, #0x10789f94
+if (cpu.x[0]) == 0 {block=7;continue;}block=6;continue;
+}
+6=>{
+// 0x10789f8c str x0, [x19, #0x28]
+{let address=(cpu.x[19]).wrapping_add(0x28u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10789f90 bl #0x1187d2c0
+cpu.x[30]=0x10789f94;super::dispatch(cpu,rt,0x1187d2c0)?;
+block=7;continue;
+}
+7=>{
+// 0x10789f94 ldr x21, [x19, #8]
+{let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10789f98 cbz x21, #0x10789fd8
+if (cpu.x[21]) == 0 {block=12;continue;}block=8;continue;
+}
+8=>{
+// 0x10789f9c ldr x20, [x19, #0x10]
+{let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
+// 0x10789fa0 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10789fa4 cmp x20, x21
+{let a=((cpu.x[20]));let b=((cpu.x[21]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10789fa8 b.eq #0x10789fc4
+if cpu.condition(0){block=11;continue;}block=9;continue;
+}
+9=>{
+// 0x10789fac sub x20, x20, #0x18
+{let a=((cpu.x[20]));let b=((0x18u64));let result=a.wrapping_sub(b);cpu.x[20]=(result) as u64;}
+// 0x10789fb0 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10789fb4 bl #0x1142fcc4
+cpu.x[30]=0x10789fb8;super::chunk4::f_1142fcc4(cpu,rt,0x1142fcc4)?;
+// 0x10789fb8 cmp x20, x21
+{let a=((cpu.x[20]));let b=((cpu.x[21]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10789fbc b.ne #0x10789fac
+if cpu.condition(1){block=9;continue;}block=10;continue;
+}
+10=>{
+// 0x10789fc0 ldr x0, [x19, #8]
+{let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+block=11;continue;
+}
+11=>{
+// 0x10789fc4 str x21, [x19, #0x10]
+{let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10789fc8 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10789fcc ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10789fd0 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10789fd4 b #0x1187d2c0
+super::dispatch(cpu,rt,0x1187d2c0)?;return Ok(());
+}
+12=>{
 // 0x10789fd8 ldp x20, x19, [sp, #0x20]
 {let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10789fdc ldr x21, [sp, #0x10]
@@ -123,37 +242,58 @@ super::dispatch(cpu,rt,0x1187d2c0)?;return Ok(());
 // 0x10789fe4 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10789f34")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10789f34").into()),}}}
 #[inline]
-pub(super) unsafe fn f_108346d8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_108346d8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x108346d8{return f_108346d8_slow(cpu,rt,pc);}
+
+// 0x108346d8 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_108346d8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x108346d8=>{
 // 0x108346d8 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x108346d8")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x108346d8").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10834700(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10834700(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10834700{return f_10834700_slow(cpu,rt,pc);}
+
+// 0x10834700 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10834700_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10834700=>{
 // 0x10834700 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10834700")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10834700").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10834748(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10834748(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10834748{return f_10834748_slow(cpu,rt,pc);}
+
+// 0x10834748 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10834748_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10834748=>{
 // 0x10834748 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10834748")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10834748").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d19614(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d19614=>{
+pub(super) unsafe fn f_10d19614(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d19614{return f_10d19614_slow(cpu,rt,pc);}
+
+'b10d19644: {
 // 0x10d19614 ldr x8, [x0, #0x18]
 {let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d19618 cbz x8, #0x10d19644
-if (cpu.x[8]) == 0 {pc=0x10d19644;continue;}pc=0x10d1961c;continue;
-}
-0x10d1961c=>{
+if (cpu.x[8]) == 0 {break 'b10d19644;}{
+'b10d1963c: {
 // 0x10d1961c ldr w9, [x0, #8]
 {let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10d19620 sub w9, w9, #2
@@ -161,9 +301,7 @@ if (cpu.x[8]) == 0 {pc=0x10d19644;continue;}pc=0x10d1961c;continue;
 // 0x10d19624 cmp w9, #0x12
 {let a=((cpu.x[9] as u32 as u64));let b=((0x12u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d19628 b.hs #0x10d1963c
-if cpu.condition(2){pc=0x10d1963c;continue;}pc=0x10d1962c;continue;
-}
-0x10d1962c=>{
+if cpu.condition(2){break 'b10d1963c;}{
 // 0x10d1962c mov w10, #0xa617
 cpu.x[10]=(((0xa617u64))) as u32 as u64;
 // 0x10d19630 movk w10, #2, lsl #16
@@ -171,23 +309,75 @@ cpu.x[10]=((cpu.x[10] as u32 as u64 & !(0xffff0000u64)) | 0x20000u64) as u32 as 
 // 0x10d19634 lsr w9, w10, w9
 cpu.x[9]=(((((cpu.x[10] as u32 as u64))) as u32).wrapping_shr(((((cpu.x[9] as u32 as u64))) & 31) as u32) as u64) as u32 as u64;
 // 0x10d19638 tbnz w9, #0, #0x10d19644
-if ((cpu.x[9] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10d19644;continue;}pc=0x10d1963c;continue;
+if ((cpu.x[9] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10d19644;}break 'b10d1963c;
 }
-0x10d1963c=>{
+}
 // 0x10d1963c ldr x0, [x8, #0x1f0]
 {let address=(cpu.x[8]).wrapping_add(0x1f0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10d19640 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10d19644=>{
+}
 // 0x10d19644 mov x0, xzr
 cpu.x[0]=(((0u64))) as u64;
 // 0x10d19648 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d19614")),}}}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d19614_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d19614{0}else{match pc{0x10d19614=>0,0x10d1961c=>1,0x10d1962c=>2,0x10d1963c=>3,0x10d19644=>4,_=>return Err(format!("untranslated block {pc:#x} in 0x10d19614").into()),}};loop{match block{
+0=>{
+// 0x10d19614 ldr x8, [x0, #0x18]
+{let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d19618 cbz x8, #0x10d19644
+if (cpu.x[8]) == 0 {block=4;continue;}block=1;continue;
+}
+1=>{
+// 0x10d1961c ldr w9, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10d19620 sub w9, w9, #2
+{let a=((cpu.x[9] as u32 as u64));let b=((0x2u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x10d19624 cmp w9, #0x12
+{let a=((cpu.x[9] as u32 as u64));let b=((0x12u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d19628 b.hs #0x10d1963c
+if cpu.condition(2){block=3;continue;}block=2;continue;
+}
+2=>{
+// 0x10d1962c mov w10, #0xa617
+cpu.x[10]=(((0xa617u64))) as u32 as u64;
+// 0x10d19630 movk w10, #2, lsl #16
+cpu.x[10]=((cpu.x[10] as u32 as u64 & !(0xffff0000u64)) | 0x20000u64) as u32 as u64;
+// 0x10d19634 lsr w9, w10, w9
+cpu.x[9]=(((((cpu.x[10] as u32 as u64))) as u32).wrapping_shr(((((cpu.x[9] as u32 as u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10d19638 tbnz w9, #0, #0x10d19644
+if ((cpu.x[9] as u32 as u64) & (1u64 << 0)) != 0 {block=4;continue;}block=3;continue;
+}
+3=>{
+// 0x10d1963c ldr x0, [x8, #0x1f0]
+{let address=(cpu.x[8]).wrapping_add(0x1f0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d19640 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+4=>{
+// 0x10d19644 mov x0, xzr
+cpu.x[0]=(((0u64))) as u64;
+// 0x10d19648 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10d19614").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d22e80(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10d22e80(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d22e80{return f_10d22e80_slow(cpu,rt,pc);}
+
+// 0x10d22e80 ldr d0, [x1]
+{let address=(cpu.x[1]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.q[0]=(v0) as u128 & 0xffffffffffffffffu128;}
+// 0x10d22e84 str d0, [x0, #0x20]
+{let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=(cpu.q[0] & 0xffffffffffffffffu128) as u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d22e88 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d22e80_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10d22e80=>{
 // 0x10d22e80 ldr d0, [x1]
 {let address=(cpu.x[1]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.q[0]=(v0) as u128 & 0xffffffffffffffffu128;}
@@ -196,10 +386,10 @@ pub(super) unsafe fn f_10d22e80(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result
 // 0x10d22e88 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d22e80")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10d22e80").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d24b04(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d24b04=>{
+pub(super) unsafe fn f_10d24b04(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d24b04{return f_10d24b04_slow(cpu,rt,pc);}
+
 // 0x10d24b04 stp x29, x30, [sp, #-0x40]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d24b08 str x23, [sp, #0x10]
@@ -215,9 +405,37 @@ cpu.x[20]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
 // 0x10d24b1c cmp w1, #0
 {let a=((cpu.x[1] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d24b20 b.le #0x10d24bd4
-if cpu.condition(13){pc=0x10d24bd4;continue;}pc=0x10d24b24;continue;
+if cpu.condition(13){{
+'b10d24be8: {
+// 0x10d24bd4 cbz w20, #0x10d24be8
+if (cpu.x[20] as u32 as u64) == 0 {break 'b10d24be8;}{
+// 0x10d24bd8 adrp x0, #0x102d1000
+cpu.x[0]=(0x102d1000u64) as u64;
+// 0x10d24bdc add x0, x0, #0xfd6
+{let a=((cpu.x[0]));let b=((0xfd6u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10d24be0 mov w1, #1
+cpu.x[1]=(((0x1u64))) as u32 as u64;
+// 0x10d24be4 bl #0x1128df18
+cpu.x[30]=0x10d24be8;super::dispatch(cpu,rt,0x1128df18)?;
+break 'b10d24be8;
 }
-0x10d24b24=>{
+}
+// 0x10d24be8 mov w23, wzr
+cpu.x[23]=(((0u64))) as u32 as u64;
+// 0x10d24bec mov w0, w23
+cpu.x[0]=(((cpu.x[23] as u32 as u64))) as u32 as u64;
+// 0x10d24bf0 ldp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10d24bf4 ldr x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x10d24bf8 ldp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x10d24bfc ldp x29, x30, [sp], #0x40
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x40u64)))) as u64;}
+// 0x10d24c00 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
+'b10d24b40: {
 // 0x10d24b24 mov x22, x0
 cpu.x[22]=(((cpu.x[0]))) as u64;
 // 0x10d24b28 ldr x0, [x0, #0x10]
@@ -227,21 +445,17 @@ cpu.x[21]=(((cpu.x[3] as u32 as u64))) as u32 as u64;
 // 0x10d24b30 mov w19, w2
 cpu.x[19]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
 // 0x10d24b34 cbnz x0, #0x10d24b40
-if (cpu.x[0]) != 0 {pc=0x10d24b40;continue;}pc=0x10d24b38;continue;
-}
-0x10d24b38=>{
+if (cpu.x[0]) != 0 {break 'b10d24b40;}{
 // 0x10d24b38 ldr x0, [x22, #8]
 {let address=(cpu.x[22]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10d24b3c bl #0x110cbf10
 cpu.x[30]=0x10d24b40;super::chunk14::f_110cbf10(cpu,rt,0x110cbf10)?;
-pc=0x10d24b40;continue;
+break 'b10d24b40;
 }
-0x10d24b40=>{
+}
 // 0x10d24b40 bl #0x10e167a4
 cpu.x[30]=0x10d24b44;super::chunk15::f_10e167a4(cpu,rt,0x10e167a4)?;
-pc=0x10d24b44;continue;
-}
-0x10d24b44=>{
+{
 // 0x10d24b44 mov x2, x0
 cpu.x[2]=(((cpu.x[0]))) as u64;
 // 0x10d24b48 mov x0, x22
@@ -256,35 +470,29 @@ cpu.x[4]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 cpu.x[5]=(((0x1u64))) as u32 as u64;
 // 0x10d24b5c bl #0x10d24c34
 cpu.x[30]=0x10d24b60;super::chunk3::f_10d24c34(cpu,rt,0x10d24c34)?;
-pc=0x10d24b60;continue;
-}
-0x10d24b60=>{
+{
+'b10d24bbc: {
 // 0x10d24b60 mov w23, w0
 cpu.x[23]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10d24b64 cmp w0, #1
 {let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d24b68 b.lt #0x10d24bbc
-if cpu.condition(11){pc=0x10d24bbc;continue;}pc=0x10d24b6c;continue;
-}
-0x10d24b6c=>{
+if cpu.condition(11){break 'b10d24bbc;}{
+'b10d24b7c: {
 // 0x10d24b6c ldr x0, [x22, #0x10]
 {let address=(cpu.x[22]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10d24b70 cbnz x0, #0x10d24b7c
-if (cpu.x[0]) != 0 {pc=0x10d24b7c;continue;}pc=0x10d24b74;continue;
-}
-0x10d24b74=>{
+if (cpu.x[0]) != 0 {break 'b10d24b7c;}{
 // 0x10d24b74 ldr x0, [x22, #8]
 {let address=(cpu.x[22]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10d24b78 bl #0x110cbf10
 cpu.x[30]=0x10d24b7c;super::chunk14::f_110cbf10(cpu,rt,0x110cbf10)?;
-pc=0x10d24b7c;continue;
+break 'b10d24b7c;
 }
-0x10d24b7c=>{
+}
 // 0x10d24b7c bl #0x10e167cc
 cpu.x[30]=0x10d24b80;super::chunk14::f_10e167cc(cpu,rt,0x10e167cc)?;
-pc=0x10d24b80;continue;
-}
-0x10d24b80=>{
+{
 // 0x10d24b80 mov x2, x0
 cpu.x[2]=(((cpu.x[0]))) as u64;
 // 0x10d24b84 mov x0, x22
@@ -299,19 +507,13 @@ cpu.x[4]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 cpu.x[5]=(((0x1u64))) as u32 as u64;
 // 0x10d24b98 bl #0x10d24c34
 cpu.x[30]=0x10d24b9c;super::chunk3::f_10d24c34(cpu,rt,0x10d24c34)?;
-pc=0x10d24b9c;continue;
-}
-0x10d24b9c=>{
+{
 // 0x10d24b9c ldr x0, [x22, #0x100]
 {let address=(cpu.x[22]).wrapping_add(0x100u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10d24ba0 cbz x0, #0x10d24bbc
-if (cpu.x[0]) == 0 {pc=0x10d24bbc;continue;}pc=0x10d24ba4;continue;
-}
-0x10d24ba4=>{
+if (cpu.x[0]) == 0 {break 'b10d24bbc;}{
 // 0x10d24ba4 tbz w21, #0, #0x10d24bbc
-if ((cpu.x[21] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10d24bbc;continue;}pc=0x10d24ba8;continue;
-}
-0x10d24ba8=>{
+if ((cpu.x[21] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10d24bbc;}{
 // 0x10d24ba8 ldr x8, [x0]
 {let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d24bac mov w1, w20
@@ -322,9 +524,13 @@ cpu.x[2]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 {let address=(cpu.x[8]).wrapping_add(0x48u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d24bb8 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10d24bbc;super::dispatch(cpu,rt,target)?;}
-pc=0x10d24bbc;continue;
+break 'b10d24bbc;
 }
-0x10d24bbc=>{
+}
+}
+}
+}
+}
 // 0x10d24bbc mov w0, w23
 cpu.x[0]=(((cpu.x[23] as u32 as u64))) as u32 as u64;
 // 0x10d24bc0 ldp x20, x19, [sp, #0x30]
@@ -338,11 +544,156 @@ cpu.x[0]=(((cpu.x[23] as u32 as u64))) as u32 as u64;
 // 0x10d24bd0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10d24bd4=>{
-// 0x10d24bd4 cbz w20, #0x10d24be8
-if (cpu.x[20] as u32 as u64) == 0 {pc=0x10d24be8;continue;}pc=0x10d24bd8;continue;
 }
-0x10d24bd8=>{
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d24b04_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d24b04{0}else{match pc{0x10d24b04=>0,0x10d24b24=>1,0x10d24b38=>2,0x10d24b40=>3,0x10d24b44=>4,0x10d24b60=>5,0x10d24b6c=>6,0x10d24b74=>7,0x10d24b7c=>8,0x10d24b80=>9,0x10d24b9c=>10,0x10d24ba4=>11,0x10d24ba8=>12,0x10d24bbc=>13,0x10d24bd4=>14,0x10d24bd8=>15,0x10d24be8=>16,_=>return Err(format!("untranslated block {pc:#x} in 0x10d24b04").into()),}};loop{match block{
+0=>{
+// 0x10d24b04 stp x29, x30, [sp, #-0x40]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d24b08 str x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[23];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d24b0c stp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d24b10 stp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d24b14 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d24b18 mov w20, w1
+cpu.x[20]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
+// 0x10d24b1c cmp w1, #0
+{let a=((cpu.x[1] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d24b20 b.le #0x10d24bd4
+if cpu.condition(13){block=14;continue;}block=1;continue;
+}
+1=>{
+// 0x10d24b24 mov x22, x0
+cpu.x[22]=(((cpu.x[0]))) as u64;
+// 0x10d24b28 ldr x0, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d24b2c mov w21, w3
+cpu.x[21]=(((cpu.x[3] as u32 as u64))) as u32 as u64;
+// 0x10d24b30 mov w19, w2
+cpu.x[19]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
+// 0x10d24b34 cbnz x0, #0x10d24b40
+if (cpu.x[0]) != 0 {block=3;continue;}block=2;continue;
+}
+2=>{
+// 0x10d24b38 ldr x0, [x22, #8]
+{let address=(cpu.x[22]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d24b3c bl #0x110cbf10
+cpu.x[30]=0x10d24b40;super::chunk14::f_110cbf10(cpu,rt,0x110cbf10)?;
+block=3;continue;
+}
+3=>{
+// 0x10d24b40 bl #0x10e167a4
+cpu.x[30]=0x10d24b44;super::chunk15::f_10e167a4(cpu,rt,0x10e167a4)?;
+block=4;continue;
+}
+4=>{
+// 0x10d24b44 mov x2, x0
+cpu.x[2]=(((cpu.x[0]))) as u64;
+// 0x10d24b48 mov x0, x22
+cpu.x[0]=(((cpu.x[22]))) as u64;
+// 0x10d24b4c mov w1, wzr
+cpu.x[1]=(((0u64))) as u32 as u64;
+// 0x10d24b50 mov w3, w20
+cpu.x[3]=(((cpu.x[20] as u32 as u64))) as u32 as u64;
+// 0x10d24b54 mov w4, w19
+cpu.x[4]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10d24b58 mov w5, #1
+cpu.x[5]=(((0x1u64))) as u32 as u64;
+// 0x10d24b5c bl #0x10d24c34
+cpu.x[30]=0x10d24b60;super::chunk3::f_10d24c34(cpu,rt,0x10d24c34)?;
+block=5;continue;
+}
+5=>{
+// 0x10d24b60 mov w23, w0
+cpu.x[23]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10d24b64 cmp w0, #1
+{let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d24b68 b.lt #0x10d24bbc
+if cpu.condition(11){block=13;continue;}block=6;continue;
+}
+6=>{
+// 0x10d24b6c ldr x0, [x22, #0x10]
+{let address=(cpu.x[22]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d24b70 cbnz x0, #0x10d24b7c
+if (cpu.x[0]) != 0 {block=8;continue;}block=7;continue;
+}
+7=>{
+// 0x10d24b74 ldr x0, [x22, #8]
+{let address=(cpu.x[22]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d24b78 bl #0x110cbf10
+cpu.x[30]=0x10d24b7c;super::chunk14::f_110cbf10(cpu,rt,0x110cbf10)?;
+block=8;continue;
+}
+8=>{
+// 0x10d24b7c bl #0x10e167cc
+cpu.x[30]=0x10d24b80;super::chunk14::f_10e167cc(cpu,rt,0x10e167cc)?;
+block=9;continue;
+}
+9=>{
+// 0x10d24b80 mov x2, x0
+cpu.x[2]=(((cpu.x[0]))) as u64;
+// 0x10d24b84 mov x0, x22
+cpu.x[0]=(((cpu.x[22]))) as u64;
+// 0x10d24b88 mov w1, wzr
+cpu.x[1]=(((0u64))) as u32 as u64;
+// 0x10d24b8c mov w3, w23
+cpu.x[3]=(((cpu.x[23] as u32 as u64))) as u32 as u64;
+// 0x10d24b90 mov w4, w19
+cpu.x[4]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10d24b94 mov w5, #1
+cpu.x[5]=(((0x1u64))) as u32 as u64;
+// 0x10d24b98 bl #0x10d24c34
+cpu.x[30]=0x10d24b9c;super::chunk3::f_10d24c34(cpu,rt,0x10d24c34)?;
+block=10;continue;
+}
+10=>{
+// 0x10d24b9c ldr x0, [x22, #0x100]
+{let address=(cpu.x[22]).wrapping_add(0x100u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d24ba0 cbz x0, #0x10d24bbc
+if (cpu.x[0]) == 0 {block=13;continue;}block=11;continue;
+}
+11=>{
+// 0x10d24ba4 tbz w21, #0, #0x10d24bbc
+if ((cpu.x[21] as u32 as u64) & (1u64 << 0)) == 0 {block=13;continue;}block=12;continue;
+}
+12=>{
+// 0x10d24ba8 ldr x8, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d24bac mov w1, w20
+cpu.x[1]=(((cpu.x[20] as u32 as u64))) as u32 as u64;
+// 0x10d24bb0 mov w2, w19
+cpu.x[2]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10d24bb4 ldr x8, [x8, #0x48]
+{let address=(cpu.x[8]).wrapping_add(0x48u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d24bb8 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10d24bbc;super::dispatch(cpu,rt,target)?;}
+block=13;continue;
+}
+13=>{
+// 0x10d24bbc mov w0, w23
+cpu.x[0]=(((cpu.x[23] as u32 as u64))) as u32 as u64;
+// 0x10d24bc0 ldp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10d24bc4 ldr x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x10d24bc8 ldp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x10d24bcc ldp x29, x30, [sp], #0x40
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x40u64)))) as u64;}
+// 0x10d24bd0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+14=>{
+// 0x10d24bd4 cbz w20, #0x10d24be8
+if (cpu.x[20] as u32 as u64) == 0 {block=16;continue;}block=15;continue;
+}
+15=>{
 // 0x10d24bd8 adrp x0, #0x102d1000
 cpu.x[0]=(0x102d1000u64) as u64;
 // 0x10d24bdc add x0, x0, #0xfd6
@@ -351,9 +702,9 @@ cpu.x[0]=(0x102d1000u64) as u64;
 cpu.x[1]=(((0x1u64))) as u32 as u64;
 // 0x10d24be4 bl #0x1128df18
 cpu.x[30]=0x10d24be8;super::dispatch(cpu,rt,0x1128df18)?;
-pc=0x10d24be8;continue;
+block=16;continue;
 }
-0x10d24be8=>{
+16=>{
 // 0x10d24be8 mov w23, wzr
 cpu.x[23]=(((0u64))) as u32 as u64;
 // 0x10d24bec mov w0, w23
@@ -369,10 +720,11 @@ cpu.x[0]=(((cpu.x[23] as u32 as u64))) as u32 as u64;
 // 0x10d24c00 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d24b04")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10d24b04").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d27c68(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d27c68=>{
+pub(super) unsafe fn f_10d27c68(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d27c68{return f_10d27c68_slow(cpu,rt,pc);}
+
+'b10d27c8c: {
 // 0x10d27c68 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d27c6c stp x20, x19, [sp, #0x10]
@@ -386,21 +738,17 @@ cpu.x[20]=(((cpu.x[0]))) as u64;
 // 0x10d27c7c mov w19, w1
 cpu.x[19]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
 // 0x10d27c80 cbnz x0, #0x10d27c8c
-if (cpu.x[0]) != 0 {pc=0x10d27c8c;continue;}pc=0x10d27c84;continue;
-}
-0x10d27c84=>{
+if (cpu.x[0]) != 0 {break 'b10d27c8c;}{
 // 0x10d27c84 ldr x0, [x20, #8]
 {let address=(cpu.x[20]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10d27c88 bl #0x110cbf10
 cpu.x[30]=0x10d27c8c;super::chunk14::f_110cbf10(cpu,rt,0x110cbf10)?;
-pc=0x10d27c8c;continue;
+break 'b10d27c8c;
 }
-0x10d27c8c=>{
+}
 // 0x10d27c8c bl #0x10e167b4
 cpu.x[30]=0x10d27c90;super::chunk8::f_10e167b4(cpu,rt,0x10e167b4)?;
-pc=0x10d27c90;continue;
-}
-0x10d27c90=>{
+{
 // 0x10d27c90 mov x2, x0
 cpu.x[2]=(((cpu.x[0]))) as u64;
 // 0x10d27c94 mov x0, x20
@@ -418,14 +766,66 @@ cpu.x[4]=(((0x1u64))) as u32 as u64;
 // 0x10d27cac b #0x10d24ff4
 super::chunk15::f_10d24ff4(cpu,rt,0x10d24ff4)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d27c68")),}}}
-#[inline]
-pub(super) unsafe fn f_10d282a4(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d282a4=>{
-// 0x10d282a4 tbnz w1, #0x1f, #0x10d282f0
-if ((cpu.x[1] as u32 as u64) & (1u64 << 31)) != 0 {pc=0x10d282f0;continue;}pc=0x10d282a8;continue;
 }
-0x10d282a8=>{
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d27c68_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d27c68{0}else{match pc{0x10d27c68=>0,0x10d27c84=>1,0x10d27c8c=>2,0x10d27c90=>3,_=>return Err(format!("untranslated block {pc:#x} in 0x10d27c68").into()),}};loop{match block{
+0=>{
+// 0x10d27c68 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d27c6c stp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d27c70 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d27c74 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10d27c78 ldr x0, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d27c7c mov w19, w1
+cpu.x[19]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
+// 0x10d27c80 cbnz x0, #0x10d27c8c
+if (cpu.x[0]) != 0 {block=2;continue;}block=1;continue;
+}
+1=>{
+// 0x10d27c84 ldr x0, [x20, #8]
+{let address=(cpu.x[20]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d27c88 bl #0x110cbf10
+cpu.x[30]=0x10d27c8c;super::chunk14::f_110cbf10(cpu,rt,0x110cbf10)?;
+block=2;continue;
+}
+2=>{
+// 0x10d27c8c bl #0x10e167b4
+cpu.x[30]=0x10d27c90;super::chunk8::f_10e167b4(cpu,rt,0x10e167b4)?;
+block=3;continue;
+}
+3=>{
+// 0x10d27c90 mov x2, x0
+cpu.x[2]=(((cpu.x[0]))) as u64;
+// 0x10d27c94 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10d27c98 mov w1, wzr
+cpu.x[1]=(((0u64))) as u32 as u64;
+// 0x10d27c9c mov w3, w19
+cpu.x[3]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10d27ca0 mov w4, #1
+cpu.x[4]=(((0x1u64))) as u32 as u64;
+// 0x10d27ca4 ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10d27ca8 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10d27cac b #0x10d24ff4
+super::chunk15::f_10d24ff4(cpu,rt,0x10d24ff4)?;return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10d27c68").into()),}}}
+#[inline]
+pub(super) unsafe fn f_10d282a4(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d282a4{return f_10d282a4_slow(cpu,rt,pc);}
+
+// 0x10d282a4 tbnz w1, #0x1f, #0x10d282f0
+if ((cpu.x[1] as u32 as u64) & (1u64 << 31)) != 0 {{
+// 0x10d282f0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
+'b10d282cc: {
 // 0x10d282a8 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d282ac stp x20, x19, [sp, #0x10]
@@ -439,21 +839,17 @@ cpu.x[20]=(((cpu.x[0]))) as u64;
 // 0x10d282bc mov w19, w1
 cpu.x[19]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
 // 0x10d282c0 cbnz x0, #0x10d282cc
-if (cpu.x[0]) != 0 {pc=0x10d282cc;continue;}pc=0x10d282c4;continue;
-}
-0x10d282c4=>{
+if (cpu.x[0]) != 0 {break 'b10d282cc;}{
 // 0x10d282c4 ldr x0, [x20, #8]
 {let address=(cpu.x[20]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10d282c8 bl #0x110cbf10
 cpu.x[30]=0x10d282cc;super::chunk14::f_110cbf10(cpu,rt,0x110cbf10)?;
-pc=0x10d282cc;continue;
+break 'b10d282cc;
 }
-0x10d282cc=>{
+}
 // 0x10d282cc bl #0x10e1afac
 cpu.x[30]=0x10d282d0;super::chunk13::f_10e1afac(cpu,rt,0x10e1afac)?;
-pc=0x10d282d0;continue;
-}
-0x10d282d0=>{
+{
 // 0x10d282d0 mov x2, x0
 cpu.x[2]=(((cpu.x[0]))) as u64;
 // 0x10d282d4 mov x0, x20
@@ -471,20 +867,95 @@ cpu.x[4]=(((0x1u64))) as u32 as u64;
 // 0x10d282ec b #0x10d24ff4
 super::chunk15::f_10d24ff4(cpu,rt,0x10d24ff4)?;return Ok(());
 }
-0x10d282f0=>{
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d282a4_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d282a4{0}else{match pc{0x10d282a4=>0,0x10d282a8=>1,0x10d282c4=>2,0x10d282cc=>3,0x10d282d0=>4,0x10d282f0=>5,_=>return Err(format!("untranslated block {pc:#x} in 0x10d282a4").into()),}};loop{match block{
+0=>{
+// 0x10d282a4 tbnz w1, #0x1f, #0x10d282f0
+if ((cpu.x[1] as u32 as u64) & (1u64 << 31)) != 0 {block=5;continue;}block=1;continue;
+}
+1=>{
+// 0x10d282a8 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d282ac stp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d282b0 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d282b4 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10d282b8 ldr x0, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d282bc mov w19, w1
+cpu.x[19]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
+// 0x10d282c0 cbnz x0, #0x10d282cc
+if (cpu.x[0]) != 0 {block=3;continue;}block=2;continue;
+}
+2=>{
+// 0x10d282c4 ldr x0, [x20, #8]
+{let address=(cpu.x[20]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d282c8 bl #0x110cbf10
+cpu.x[30]=0x10d282cc;super::chunk14::f_110cbf10(cpu,rt,0x110cbf10)?;
+block=3;continue;
+}
+3=>{
+// 0x10d282cc bl #0x10e1afac
+cpu.x[30]=0x10d282d0;super::chunk13::f_10e1afac(cpu,rt,0x10e1afac)?;
+block=4;continue;
+}
+4=>{
+// 0x10d282d0 mov x2, x0
+cpu.x[2]=(((cpu.x[0]))) as u64;
+// 0x10d282d4 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10d282d8 mov w1, wzr
+cpu.x[1]=(((0u64))) as u32 as u64;
+// 0x10d282dc mov w3, w19
+cpu.x[3]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10d282e0 mov w4, #1
+cpu.x[4]=(((0x1u64))) as u32 as u64;
+// 0x10d282e4 ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10d282e8 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10d282ec b #0x10d24ff4
+super::chunk15::f_10d24ff4(cpu,rt,0x10d24ff4)?;return Ok(());
+}
+5=>{
 // 0x10d282f0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d282a4")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10d282a4").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d296d0(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10d296d0(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d296d0{return f_10d296d0_slow(cpu,rt,pc);}
+
+// 0x10d296d0 b #0x10d294b0
+super::chunk12::f_10d294b0(cpu,rt,0x10d294b0)?;return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d296d0_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10d296d0=>{
 // 0x10d296d0 b #0x10d294b0
 super::chunk12::f_10d294b0(cpu,rt,0x10d294b0)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d296d0")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10d296d0").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d2d554(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10d2d554(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d2d554{return f_10d2d554_slow(cpu,rt,pc);}
+
+// 0x10d2d554 adrp x8, #0x1190d000
+cpu.x[8]=(0x1190d000u64) as u64;
+// 0x10d2d558 add x8, x8, #0x508
+{let a=((cpu.x[8]));let b=((0x508u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u64;}
+// 0x10d2d55c str x8, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=cpu.x[8];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d2d560 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d2d554_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10d2d554=>{
 // 0x10d2d554 adrp x8, #0x1190d000
 cpu.x[8]=(0x1190d000u64) as u64;
@@ -495,18 +966,17 @@ cpu.x[8]=(0x1190d000u64) as u64;
 // 0x10d2d560 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d2d554")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10d2d554").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d339d0(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d339d0=>{
+pub(super) unsafe fn f_10d339d0(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d339d0{return f_10d339d0_slow(cpu,rt,pc);}
+
+'b10d339f4: {
 // 0x10d339d0 mov x8, x0
 cpu.x[8]=(((cpu.x[0]))) as u64;
 // 0x10d339d4 mov x0, xzr
 cpu.x[0]=(((0u64))) as u64;
 // 0x10d339d8 tbnz w1, #0x1f, #0x10d339f4
-if ((cpu.x[1] as u32 as u64) & (1u64 << 31)) != 0 {pc=0x10d339f4;continue;}pc=0x10d339dc;continue;
-}
-0x10d339dc=>{
+if ((cpu.x[1] as u32 as u64) & (1u64 << 31)) != 0 {break 'b10d339f4;}{
 // 0x10d339dc ldr x8, [x8, #0x2e8]
 {let address=(cpu.x[8]).wrapping_add(0x2e8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d339e0 ldr w9, [x8, #0xc]
@@ -514,23 +984,54 @@ if ((cpu.x[1] as u32 as u64) & (1u64 << 31)) != 0 {pc=0x10d339f4;continue;}pc=0x
 // 0x10d339e4 cmp w9, w1
 {let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d339e8 b.le #0x10d339f4
-if cpu.condition(13){pc=0x10d339f4;continue;}pc=0x10d339ec;continue;
-}
-0x10d339ec=>{
+if cpu.condition(13){break 'b10d339f4;}{
 // 0x10d339ec ldr x8, [x8]
 {let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d339f0 ldr x0, [x8, w1, uxtw #3]
 {let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[1] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
-pc=0x10d339f4;continue;
+break 'b10d339f4;
 }
-0x10d339f4=>{
+}
+}
 // 0x10d339f4 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d339d0")),}}}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d339d0_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d339d0{0}else{match pc{0x10d339d0=>0,0x10d339dc=>1,0x10d339ec=>2,0x10d339f4=>3,_=>return Err(format!("untranslated block {pc:#x} in 0x10d339d0").into()),}};loop{match block{
+0=>{
+// 0x10d339d0 mov x8, x0
+cpu.x[8]=(((cpu.x[0]))) as u64;
+// 0x10d339d4 mov x0, xzr
+cpu.x[0]=(((0u64))) as u64;
+// 0x10d339d8 tbnz w1, #0x1f, #0x10d339f4
+if ((cpu.x[1] as u32 as u64) & (1u64 << 31)) != 0 {block=3;continue;}block=1;continue;
+}
+1=>{
+// 0x10d339dc ldr x8, [x8, #0x2e8]
+{let address=(cpu.x[8]).wrapping_add(0x2e8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d339e0 ldr w9, [x8, #0xc]
+{let address=(cpu.x[8]).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10d339e4 cmp w9, w1
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d339e8 b.le #0x10d339f4
+if cpu.condition(13){block=3;continue;}block=2;continue;
+}
+2=>{
+// 0x10d339ec ldr x8, [x8]
+{let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d339f0 ldr x0, [x8, w1, uxtw #3]
+{let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[1] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+block=3;continue;
+}
+3=>{
+// 0x10d339f4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10d339d0").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d398e8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d398e8=>{
+pub(super) unsafe fn f_10d398e8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d398e8{return f_10d398e8_slow(cpu,rt,pc);}
+
 // 0x10d398e8 stp x29, x30, [sp, #-0x30]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d398ec str x21, [sp, #0x10]
@@ -555,9 +1056,7 @@ cpu.x[21]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
 {let address=(cpu.x[8]).wrapping_add(0x88u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d39914 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10d39918;super::dispatch(cpu,rt,target)?;}
-pc=0x10d39918;continue;
-}
-0x10d39918=>{
+{
 // 0x10d39918 ldr x8, [x20, #0x2a8]
 {let address=(cpu.x[20]).wrapping_add(0x2a8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d3991c ldr x9, [x19]
@@ -574,22 +1073,19 @@ cpu.x[9]=((cpu.condition(1)) as u64) as u32 as u64;
 {let a=((cpu.x[21] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a & b;cpu.x[1]=(result) as u32 as u64;}
 // 0x10d39934 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10d39938;super::dispatch(cpu,rt,target)?;}
-pc=0x10d39938;continue;
-}
-0x10d39938=>{
+{
+'b10d39948: {
 // 0x10d39938 tbz w0, #0, #0x10d39948
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10d39948;continue;}pc=0x10d3993c;continue;
-}
-0x10d3993c=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10d39948;}{
 // 0x10d3993c ldr x0, [x20, #0x2a8]
 {let address=(cpu.x[20]).wrapping_add(0x2a8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10d39940 mov x1, x19
 cpu.x[1]=(((cpu.x[19]))) as u64;
 // 0x10d39944 bl #0x10f19548
 cpu.x[30]=0x10d39948;super::dispatch(cpu,rt,0x10f19548)?;
-pc=0x10d39948;continue;
+break 'b10d39948;
 }
-0x10d39948=>{
+}
 // 0x10d39948 ldr x8, [x20, #0x2c8]
 {let address=(cpu.x[20]).wrapping_add(0x2c8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d3994c ldr x9, [x19]
@@ -604,13 +1100,10 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x10d39960 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10d39964;super::dispatch(cpu,rt,target)?;}
-pc=0x10d39964;continue;
-}
-0x10d39964=>{
+{
+'b10d3997c: {
 // 0x10d39964 tbz w0, #0, #0x10d3997c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10d3997c;continue;}pc=0x10d39968;continue;
-}
-0x10d39968=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10d3997c;}{
 // 0x10d39968 ldr x1, [x20, #0x2c8]
 {let address=(cpu.x[20]).wrapping_add(0x2c8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[1]=(v0) as u64;}
 // 0x10d3996c ldr x3, [x20, #0x20]
@@ -621,9 +1114,9 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[2]=(((0x5du64))) as u32 as u64;
 // 0x10d39978 bl #0x111dd77c
 cpu.x[30]=0x10d3997c;super::chunk15::f_111dd77c(cpu,rt,0x111dd77c)?;
-pc=0x10d3997c;continue;
+break 'b10d3997c;
 }
-0x10d3997c=>{
+}
 // 0x10d3997c ldr x8, [x20, #0x2d0]
 {let address=(cpu.x[20]).wrapping_add(0x2d0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d39980 ldr x9, [x19]
@@ -638,13 +1131,10 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x10d39994 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10d39998;super::dispatch(cpu,rt,target)?;}
-pc=0x10d39998;continue;
-}
-0x10d39998=>{
+{
+'b10d399b0: {
 // 0x10d39998 tbz w0, #0, #0x10d399b0
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10d399b0;continue;}pc=0x10d3999c;continue;
-}
-0x10d3999c=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10d399b0;}{
 // 0x10d3999c ldr x1, [x20, #0x2d0]
 {let address=(cpu.x[20]).wrapping_add(0x2d0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[1]=(v0) as u64;}
 // 0x10d399a0 ldr x3, [x20, #0x20]
@@ -655,22 +1145,20 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[2]=(((0x5du64))) as u32 as u64;
 // 0x10d399ac bl #0x111dd77c
 cpu.x[30]=0x10d399b0;super::chunk15::f_111dd77c(cpu,rt,0x111dd77c)?;
-pc=0x10d399b0;continue;
+break 'b10d399b0;
 }
-0x10d399b0=>{
+}
+'b10d399e4: {
 // 0x10d399b0 ldr w8, [x20, #0x60]
 {let address=(cpu.x[20]).wrapping_add(0x60u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10d399b4 cmp w8, #1
 {let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d399b8 b.lt #0x10d399e4
-if cpu.condition(11){pc=0x10d399e4;continue;}pc=0x10d399bc;continue;
-}
-0x10d399bc=>{
+if cpu.condition(11){break 'b10d399e4;}{
 // 0x10d399bc mov x21, xzr
 cpu.x[21]=(((0u64))) as u64;
-pc=0x10d399c0;continue;
-}
-0x10d399c0=>{
+{
+'l10d399c0: loop {
 // 0x10d399c0 ldr x8, [x20, #0x2e8]
 {let address=(cpu.x[20]).wrapping_add(0x2e8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d399c4 mov x1, x19
@@ -681,9 +1169,7 @@ cpu.x[1]=(((cpu.x[19]))) as u64;
 {let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[21])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10d399d0 bl #0x110278cc
 cpu.x[30]=0x10d399d4;super::chunk5::f_110278cc(cpu,rt,0x110278cc)?;
-pc=0x10d399d4;continue;
-}
-0x10d399d4=>{
+{
 // 0x10d399d4 ldrsw x8, [x20, #0x60]
 {let address=(cpu.x[20]).wrapping_add(0x60u64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
 // 0x10d399d8 add x21, x21, #1
@@ -691,9 +1177,12 @@ pc=0x10d399d4;continue;
 // 0x10d399dc cmp x21, x8
 {let a=((cpu.x[21]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10d399e0 b.lt #0x10d399c0
-if cpu.condition(11){pc=0x10d399c0;continue;}pc=0x10d399e4;continue;
+if cpu.condition(11){continue 'l10d399c0;}break 'b10d399e4;
 }
-0x10d399e4=>{
+}
+}
+}
+}
 // 0x10d399e4 ldp x20, x19, [sp, #0x20]
 {let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10d399e8 ldr x21, [sp, #0x10]
@@ -703,10 +1192,190 @@ if cpu.condition(11){pc=0x10d399c0;continue;}pc=0x10d399e4;continue;
 // 0x10d399f0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d398e8")),}}}
+}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d398e8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d398e8{0}else{match pc{0x10d398e8=>0,0x10d39918=>1,0x10d39938=>2,0x10d3993c=>3,0x10d39948=>4,0x10d39964=>5,0x10d39968=>6,0x10d3997c=>7,0x10d39998=>8,0x10d3999c=>9,0x10d399b0=>10,0x10d399bc=>11,0x10d399c0=>12,0x10d399d4=>13,0x10d399e4=>14,_=>return Err(format!("untranslated block {pc:#x} in 0x10d398e8").into()),}};loop{match block{
+0=>{
+// 0x10d398e8 stp x29, x30, [sp, #-0x30]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d398ec str x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d398f0 stp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d398f4 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d398f8 ldr x8, [x1]
+{let address=(cpu.x[1]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d398fc mov x19, x1
+cpu.x[19]=(((cpu.x[1]))) as u64;
+// 0x10d39900 ldr w1, [x0, #0x60]
+{let address=(cpu.x[0]).wrapping_add(0x60u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[1]=(v0) as u32 as u64;}
+// 0x10d39904 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10d39908 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10d3990c mov w21, w2
+cpu.x[21]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
+// 0x10d39910 ldr x8, [x8, #0x88]
+{let address=(cpu.x[8]).wrapping_add(0x88u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d39914 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10d39918;super::dispatch(cpu,rt,target)?;}
+block=1;continue;
+}
+1=>{
+// 0x10d39918 ldr x8, [x20, #0x2a8]
+{let address=(cpu.x[20]).wrapping_add(0x2a8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d3991c ldr x9, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10d39920 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10d39924 cmp x8, #0
+{let a=((cpu.x[8]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10d39928 ldr x8, [x9, #0x40]
+{let address=(cpu.x[9]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d3992c cset w9, ne
+cpu.x[9]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x10d39930 and w1, w21, w9
+{let a=((cpu.x[21] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a & b;cpu.x[1]=(result) as u32 as u64;}
+// 0x10d39934 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10d39938;super::dispatch(cpu,rt,target)?;}
+block=2;continue;
+}
+2=>{
+// 0x10d39938 tbz w0, #0, #0x10d39948
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=4;continue;}block=3;continue;
+}
+3=>{
+// 0x10d3993c ldr x0, [x20, #0x2a8]
+{let address=(cpu.x[20]).wrapping_add(0x2a8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d39940 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x10d39944 bl #0x10f19548
+cpu.x[30]=0x10d39948;super::dispatch(cpu,rt,0x10f19548)?;
+block=4;continue;
+}
+4=>{
+// 0x10d39948 ldr x8, [x20, #0x2c8]
+{let address=(cpu.x[20]).wrapping_add(0x2c8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d3994c ldr x9, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10d39950 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10d39954 cmp x8, #0
+{let a=((cpu.x[8]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10d39958 ldr x8, [x9, #0x40]
+{let address=(cpu.x[9]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d3995c cset w1, ne
+cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x10d39960 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10d39964;super::dispatch(cpu,rt,target)?;}
+block=5;continue;
+}
+5=>{
+// 0x10d39964 tbz w0, #0, #0x10d3997c
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=7;continue;}block=6;continue;
+}
+6=>{
+// 0x10d39968 ldr x1, [x20, #0x2c8]
+{let address=(cpu.x[20]).wrapping_add(0x2c8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[1]=(v0) as u64;}
+// 0x10d3996c ldr x3, [x20, #0x20]
+{let address=(cpu.x[20]).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[3]=(v0) as u64;}
+// 0x10d39970 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10d39974 mov w2, #0x5d
+cpu.x[2]=(((0x5du64))) as u32 as u64;
+// 0x10d39978 bl #0x111dd77c
+cpu.x[30]=0x10d3997c;super::chunk15::f_111dd77c(cpu,rt,0x111dd77c)?;
+block=7;continue;
+}
+7=>{
+// 0x10d3997c ldr x8, [x20, #0x2d0]
+{let address=(cpu.x[20]).wrapping_add(0x2d0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d39980 ldr x9, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10d39984 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10d39988 cmp x8, #0
+{let a=((cpu.x[8]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10d3998c ldr x8, [x9, #0x40]
+{let address=(cpu.x[9]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d39990 cset w1, ne
+cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x10d39994 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10d39998;super::dispatch(cpu,rt,target)?;}
+block=8;continue;
+}
+8=>{
+// 0x10d39998 tbz w0, #0, #0x10d399b0
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=10;continue;}block=9;continue;
+}
+9=>{
+// 0x10d3999c ldr x1, [x20, #0x2d0]
+{let address=(cpu.x[20]).wrapping_add(0x2d0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[1]=(v0) as u64;}
+// 0x10d399a0 ldr x3, [x20, #0x20]
+{let address=(cpu.x[20]).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[3]=(v0) as u64;}
+// 0x10d399a4 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10d399a8 mov w2, #0x5d
+cpu.x[2]=(((0x5du64))) as u32 as u64;
+// 0x10d399ac bl #0x111dd77c
+cpu.x[30]=0x10d399b0;super::chunk15::f_111dd77c(cpu,rt,0x111dd77c)?;
+block=10;continue;
+}
+10=>{
+// 0x10d399b0 ldr w8, [x20, #0x60]
+{let address=(cpu.x[20]).wrapping_add(0x60u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10d399b4 cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d399b8 b.lt #0x10d399e4
+if cpu.condition(11){block=14;continue;}block=11;continue;
+}
+11=>{
+// 0x10d399bc mov x21, xzr
+cpu.x[21]=(((0u64))) as u64;
+block=12;continue;
+}
+12=>{
+// 0x10d399c0 ldr x8, [x20, #0x2e8]
+{let address=(cpu.x[20]).wrapping_add(0x2e8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d399c4 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x10d399c8 ldr x8, [x8]
+{let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d399cc ldr x0, [x8, x21, lsl #3]
+{let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[21])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d399d0 bl #0x110278cc
+cpu.x[30]=0x10d399d4;super::chunk5::f_110278cc(cpu,rt,0x110278cc)?;
+block=13;continue;
+}
+13=>{
+// 0x10d399d4 ldrsw x8, [x20, #0x60]
+{let address=(cpu.x[20]).wrapping_add(0x60u64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
+// 0x10d399d8 add x21, x21, #1
+{let a=((cpu.x[21]));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[21]=(result) as u64;}
+// 0x10d399dc cmp x21, x8
+{let a=((cpu.x[21]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10d399e0 b.lt #0x10d399c0
+if cpu.condition(11){block=12;continue;}block=14;continue;
+}
+14=>{
+// 0x10d399e4 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10d399e8 ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10d399ec ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10d399f0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10d398e8").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d3d63c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d3d63c=>{
+pub(super) unsafe fn f_10d3d63c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d3d63c{return f_10d3d63c_slow(cpu,rt,pc);}
+
 // 0x10d3d63c stp x29, x30, [sp, #-0x30]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d3d640 str x21, [sp, #0x10]
@@ -723,9 +1392,7 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[1]=(((cpu.x[20]))) as u64;
 // 0x10d3d658 bl #0x10fa4038
 cpu.x[30]=0x10d3d65c;super::chunk15::f_10fa4038(cpu,rt,0x10fa4038)?;
-pc=0x10d3d65c;continue;
-}
-0x10d3d65c=>{
+{
 // 0x10d3d65c mov w21, w0
 cpu.x[21]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10d3d660 mov x0, x20
@@ -734,9 +1401,7 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 cpu.x[1]=(((cpu.x[19]))) as u64;
 // 0x10d3d668 bl #0x10fa4038
 cpu.x[30]=0x10d3d66c;super::chunk15::f_10fa4038(cpu,rt,0x10fa4038)?;
-pc=0x10d3d66c;continue;
-}
-0x10d3d66c=>{
+{
 // 0x10d3d66c cmp w21, w0
 {let a=((cpu.x[21] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d3d670 cset w0, eq
@@ -750,14 +1415,66 @@ cpu.x[0]=((cpu.condition(0)) as u64) as u32 as u64;
 // 0x10d3d680 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d3d63c")),}}}
-#[inline]
-pub(super) unsafe fn f_10d3dcac(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d3dcac=>{
-// 0x10d3dcac cbz x1, #0x10d3dd88
-if (cpu.x[1]) == 0 {pc=0x10d3dd88;continue;}pc=0x10d3dcb0;continue;
 }
-0x10d3dcb0=>{
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d3d63c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d3d63c{0}else{match pc{0x10d3d63c=>0,0x10d3d65c=>1,0x10d3d66c=>2,_=>return Err(format!("untranslated block {pc:#x} in 0x10d3d63c").into()),}};loop{match block{
+0=>{
+// 0x10d3d63c stp x29, x30, [sp, #-0x30]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d3d640 str x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d3d644 stp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d3d648 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d3d64c ldp x19, x20, [x0, #0xe0]
+{let address=(cpu.x[0]).wrapping_add(0xe0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[19]=(v0) as u64;cpu.x[20]=(v1) as u64;}
+// 0x10d3d650 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10d3d654 mov x1, x20
+cpu.x[1]=(((cpu.x[20]))) as u64;
+// 0x10d3d658 bl #0x10fa4038
+cpu.x[30]=0x10d3d65c;super::chunk15::f_10fa4038(cpu,rt,0x10fa4038)?;
+block=1;continue;
+}
+1=>{
+// 0x10d3d65c mov w21, w0
+cpu.x[21]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10d3d660 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10d3d664 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x10d3d668 bl #0x10fa4038
+cpu.x[30]=0x10d3d66c;super::chunk15::f_10fa4038(cpu,rt,0x10fa4038)?;
+block=2;continue;
+}
+2=>{
+// 0x10d3d66c cmp w21, w0
+{let a=((cpu.x[21] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d3d670 cset w0, eq
+cpu.x[0]=((cpu.condition(0)) as u64) as u32 as u64;
+// 0x10d3d674 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10d3d678 ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10d3d67c ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10d3d680 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10d3d63c").into()),}}}
+#[inline]
+pub(super) unsafe fn f_10d3dcac(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d3dcac{return f_10d3dcac_slow(cpu,rt,pc);}
+
+// 0x10d3dcac cbz x1, #0x10d3dd88
+if (cpu.x[1]) == 0 {{
+// 0x10d3dd88 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10d3dd8c ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
 // 0x10d3dcb0 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d3dcb4 str x19, [sp, #0x10]
@@ -770,9 +1487,11 @@ cpu.x[19]=(((cpu.x[0]))) as u64;
 cpu.x[0]=(((cpu.x[1]))) as u64;
 // 0x10d3dcc4 bl #0x10d22e78
 cpu.x[30]=0x10d3dcc8;super::chunk0::f_10d22e78(cpu,rt,0x10d22e78)?;
-pc=0x10d3dcc8;continue;
-}
-0x10d3dcc8=>{
+{
+'b10d3dd7c: {
+'b10d3dd20: {
+'b10d3dd6c: {
+'b10d3dd3c: {
 // 0x10d3dcc8 ldr w11, [x19, #0x60]
 {let address=(cpu.x[19]).wrapping_add(0x60u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[11]=(v0) as u32 as u64;}
 // 0x10d3dccc ldp w10, w9, [x0]
@@ -780,25 +1499,15 @@ pc=0x10d3dcc8;continue;
 // 0x10d3dcd0 cmp w11, #1
 {let a=((cpu.x[11] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d3dcd4 b.lt #0x10d3dd3c
-if cpu.condition(11){pc=0x10d3dd3c;continue;}pc=0x10d3dcd8;continue;
-}
-0x10d3dcd8=>{
+if cpu.condition(11){break 'b10d3dd3c;}{
 // 0x10d3dcd8 mov x8, xzr
 cpu.x[8]=(((0u64))) as u64;
 // 0x10d3dcdc add x12, x19, #0x30
 {let a=((cpu.x[19]));let b=((0x30u64));let result=a.wrapping_add(b);cpu.x[12]=(result) as u64;}
 // 0x10d3dce0 b #0x10d3dcf0
-pc=0x10d3dcf0;continue;
-}
-0x10d3dce4=>{
-// 0x10d3dce4 add x8, x8, #1
-{let a=((cpu.x[8]));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u64;}
-// 0x10d3dce8 cmp x11, x8
-{let a=((cpu.x[11]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
-// 0x10d3dcec b.eq #0x10d3dd3c
-if cpu.condition(0){pc=0x10d3dd3c;continue;}pc=0x10d3dcf0;continue;
-}
-0x10d3dcf0=>{
+{
+'l10d3dcf0: loop {
+'b10d3dce4: {
 // 0x10d3dcf0 ldr x13, [x12, x8, lsl #3]
 {let address=((cpu.x[12]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[8])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[13]=(v0) as u64;}
 // 0x10d3dcf4 ldr w14, [x13]
@@ -806,21 +1515,15 @@ if cpu.condition(0){pc=0x10d3dd3c;continue;}pc=0x10d3dcf0;continue;
 // 0x10d3dcf8 cmp w14, w10
 {let a=((cpu.x[14] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d3dcfc b.ne #0x10d3dce4
-if cpu.condition(1){pc=0x10d3dce4;continue;}pc=0x10d3dd00;continue;
-}
-0x10d3dd00=>{
+if cpu.condition(1){break 'b10d3dce4;}{
 // 0x10d3dd00 ldr w13, [x13, #4]
 {let address=(cpu.x[13]).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[13]=(v0) as u32 as u64;}
 // 0x10d3dd04 cmp w13, w9
 {let a=((cpu.x[13] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d3dd08 b.ne #0x10d3dce4
-if cpu.condition(1){pc=0x10d3dce4;continue;}pc=0x10d3dd0c;continue;
-}
-0x10d3dd0c=>{
+if cpu.condition(1){break 'b10d3dce4;}{
 // 0x10d3dd0c tbnz w8, #0x1f, #0x10d3dd6c
-if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) != 0 {pc=0x10d3dd6c;continue;}pc=0x10d3dd10;continue;
-}
-0x10d3dd10=>{
+if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) != 0 {break 'b10d3dd6c;}{
 // 0x10d3dd10 ldr x9, [x19, #0x2e8]
 {let address=(cpu.x[19]).wrapping_add(0x2e8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
 // 0x10d3dd14 ldr w10, [x9, #0xc]
@@ -828,30 +1531,21 @@ if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) != 0 {pc=0x10d3dd6c;continue;}pc=0x
 // 0x10d3dd18 cmp w10, w8
 {let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d3dd1c b.le #0x10d3dd6c
-if cpu.condition(13){pc=0x10d3dd6c;continue;}pc=0x10d3dd20;continue;
+if cpu.condition(13){break 'b10d3dd6c;}break 'b10d3dd20;
 }
-0x10d3dd20=>{
-// 0x10d3dd20 ldr x9, [x9]
-{let address=(cpu.x[9]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
-// 0x10d3dd24 ldr x0, [x9, w8, uxtw #3]
-{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
-// 0x10d3dd28 cbz x0, #0x10d3dd7c
-if (cpu.x[0]) == 0 {pc=0x10d3dd7c;continue;}pc=0x10d3dd2c;continue;
 }
-0x10d3dd2c=>{
-// 0x10d3dd2c bl #0x110293f8
-cpu.x[30]=0x10d3dd30;super::chunk11::f_110293f8(cpu,rt,0x110293f8)?;
-pc=0x10d3dd30;continue;
 }
-0x10d3dd30=>{
-// 0x10d3dd30 cmp w0, #3
-{let a=((cpu.x[0] as u32 as u64));let b=((0x3u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10d3dd34 cset w0, eq
-cpu.x[0]=((cpu.condition(0)) as u64) as u32 as u64;
-// 0x10d3dd38 b #0x10d3dd7c
-pc=0x10d3dd7c;continue;
 }
-0x10d3dd3c=>{
+// 0x10d3dce4 add x8, x8, #1
+{let a=((cpu.x[8]));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u64;}
+// 0x10d3dce8 cmp x11, x8
+{let a=((cpu.x[11]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10d3dcec b.eq #0x10d3dd3c
+if cpu.condition(0){break 'b10d3dd3c;}continue 'l10d3dcf0;
+}
+}
+}
+}
 // 0x10d3dd3c ldr w8, [x19, #0x28]
 {let address=(cpu.x[19]).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10d3dd40 mov w0, wzr
@@ -859,17 +1553,13 @@ cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10d3dd44 cmp w8, w10
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d3dd48 b.ne #0x10d3dd7c
-if cpu.condition(1){pc=0x10d3dd7c;continue;}pc=0x10d3dd4c;continue;
-}
-0x10d3dd4c=>{
+if cpu.condition(1){break 'b10d3dd7c;}{
 // 0x10d3dd4c ldr w8, [x19, #0x2c]
 {let address=(cpu.x[19]).wrapping_add(0x2cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10d3dd50 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d3dd54 b.ne #0x10d3dd7c
-if cpu.condition(1){pc=0x10d3dd7c;continue;}pc=0x10d3dd58;continue;
-}
-0x10d3dd58=>{
+if cpu.condition(1){break 'b10d3dd7c;}{
 // 0x10d3dd58 mov w8, #0x64
 cpu.x[8]=(((0x64u64))) as u32 as u64;
 // 0x10d3dd5c ldr x9, [x19, #0x2e8]
@@ -879,9 +1569,10 @@ cpu.x[8]=(((0x64u64))) as u32 as u64;
 // 0x10d3dd64 cmp w10, w8
 {let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d3dd68 b.gt #0x10d3dd20
-if cpu.condition(12){pc=0x10d3dd20;continue;}pc=0x10d3dd6c;continue;
+if cpu.condition(12){break 'b10d3dd20;}break 'b10d3dd6c;
 }
-0x10d3dd6c=>{
+}
+}
 // 0x10d3dd6c mov w0, wzr
 cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10d3dd70 ldr x19, [sp, #0x10]
@@ -891,7 +1582,24 @@ cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10d3dd78 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10d3dd7c=>{
+// 0x10d3dd20 ldr x9, [x9]
+{let address=(cpu.x[9]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10d3dd24 ldr x0, [x9, w8, uxtw #3]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d3dd28 cbz x0, #0x10d3dd7c
+if (cpu.x[0]) == 0 {break 'b10d3dd7c;}{
+// 0x10d3dd2c bl #0x110293f8
+cpu.x[30]=0x10d3dd30;super::chunk11::f_110293f8(cpu,rt,0x110293f8)?;
+{
+// 0x10d3dd30 cmp w0, #3
+{let a=((cpu.x[0] as u32 as u64));let b=((0x3u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d3dd34 cset w0, eq
+cpu.x[0]=((cpu.condition(0)) as u64) as u32 as u64;
+// 0x10d3dd38 b #0x10d3dd7c
+break 'b10d3dd7c;
+}
+}
+}
 // 0x10d3dd7c ldr x19, [sp, #0x10]
 {let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
 // 0x10d3dd80 ldp x29, x30, [sp], #0x20
@@ -899,16 +1607,167 @@ cpu.pc=cpu.x[30];return Ok(());
 // 0x10d3dd84 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10d3dd88=>{
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d3dcac_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d3dcac{0}else{match pc{0x10d3dcac=>0,0x10d3dcb0=>1,0x10d3dcc8=>2,0x10d3dcd8=>3,0x10d3dce4=>4,0x10d3dcf0=>5,0x10d3dd00=>6,0x10d3dd0c=>7,0x10d3dd10=>8,0x10d3dd20=>9,0x10d3dd2c=>10,0x10d3dd30=>11,0x10d3dd3c=>12,0x10d3dd4c=>13,0x10d3dd58=>14,0x10d3dd6c=>15,0x10d3dd7c=>16,0x10d3dd88=>17,_=>return Err(format!("untranslated block {pc:#x} in 0x10d3dcac").into()),}};loop{match block{
+0=>{
+// 0x10d3dcac cbz x1, #0x10d3dd88
+if (cpu.x[1]) == 0 {block=17;continue;}block=1;continue;
+}
+1=>{
+// 0x10d3dcb0 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d3dcb4 str x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d3dcb8 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d3dcbc mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10d3dcc0 mov x0, x1
+cpu.x[0]=(((cpu.x[1]))) as u64;
+// 0x10d3dcc4 bl #0x10d22e78
+cpu.x[30]=0x10d3dcc8;super::chunk0::f_10d22e78(cpu,rt,0x10d22e78)?;
+block=2;continue;
+}
+2=>{
+// 0x10d3dcc8 ldr w11, [x19, #0x60]
+{let address=(cpu.x[19]).wrapping_add(0x60u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[11]=(v0) as u32 as u64;}
+// 0x10d3dccc ldp w10, w9, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[10]=(v0) as u32 as u64;cpu.x[9]=(v1) as u32 as u64;}
+// 0x10d3dcd0 cmp w11, #1
+{let a=((cpu.x[11] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d3dcd4 b.lt #0x10d3dd3c
+if cpu.condition(11){block=12;continue;}block=3;continue;
+}
+3=>{
+// 0x10d3dcd8 mov x8, xzr
+cpu.x[8]=(((0u64))) as u64;
+// 0x10d3dcdc add x12, x19, #0x30
+{let a=((cpu.x[19]));let b=((0x30u64));let result=a.wrapping_add(b);cpu.x[12]=(result) as u64;}
+// 0x10d3dce0 b #0x10d3dcf0
+block=5;continue;
+}
+4=>{
+// 0x10d3dce4 add x8, x8, #1
+{let a=((cpu.x[8]));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u64;}
+// 0x10d3dce8 cmp x11, x8
+{let a=((cpu.x[11]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10d3dcec b.eq #0x10d3dd3c
+if cpu.condition(0){block=12;continue;}block=5;continue;
+}
+5=>{
+// 0x10d3dcf0 ldr x13, [x12, x8, lsl #3]
+{let address=((cpu.x[12]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[8])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[13]=(v0) as u64;}
+// 0x10d3dcf4 ldr w14, [x13]
+{let address=(cpu.x[13]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[14]=(v0) as u32 as u64;}
+// 0x10d3dcf8 cmp w14, w10
+{let a=((cpu.x[14] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d3dcfc b.ne #0x10d3dce4
+if cpu.condition(1){block=4;continue;}block=6;continue;
+}
+6=>{
+// 0x10d3dd00 ldr w13, [x13, #4]
+{let address=(cpu.x[13]).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[13]=(v0) as u32 as u64;}
+// 0x10d3dd04 cmp w13, w9
+{let a=((cpu.x[13] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d3dd08 b.ne #0x10d3dce4
+if cpu.condition(1){block=4;continue;}block=7;continue;
+}
+7=>{
+// 0x10d3dd0c tbnz w8, #0x1f, #0x10d3dd6c
+if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) != 0 {block=15;continue;}block=8;continue;
+}
+8=>{
+// 0x10d3dd10 ldr x9, [x19, #0x2e8]
+{let address=(cpu.x[19]).wrapping_add(0x2e8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10d3dd14 ldr w10, [x9, #0xc]
+{let address=(cpu.x[9]).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10d3dd18 cmp w10, w8
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d3dd1c b.le #0x10d3dd6c
+if cpu.condition(13){block=15;continue;}block=9;continue;
+}
+9=>{
+// 0x10d3dd20 ldr x9, [x9]
+{let address=(cpu.x[9]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10d3dd24 ldr x0, [x9, w8, uxtw #3]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d3dd28 cbz x0, #0x10d3dd7c
+if (cpu.x[0]) == 0 {block=16;continue;}block=10;continue;
+}
+10=>{
+// 0x10d3dd2c bl #0x110293f8
+cpu.x[30]=0x10d3dd30;super::chunk11::f_110293f8(cpu,rt,0x110293f8)?;
+block=11;continue;
+}
+11=>{
+// 0x10d3dd30 cmp w0, #3
+{let a=((cpu.x[0] as u32 as u64));let b=((0x3u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d3dd34 cset w0, eq
+cpu.x[0]=((cpu.condition(0)) as u64) as u32 as u64;
+// 0x10d3dd38 b #0x10d3dd7c
+block=16;continue;
+}
+12=>{
+// 0x10d3dd3c ldr w8, [x19, #0x28]
+{let address=(cpu.x[19]).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10d3dd40 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10d3dd44 cmp w8, w10
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d3dd48 b.ne #0x10d3dd7c
+if cpu.condition(1){block=16;continue;}block=13;continue;
+}
+13=>{
+// 0x10d3dd4c ldr w8, [x19, #0x2c]
+{let address=(cpu.x[19]).wrapping_add(0x2cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10d3dd50 cmp w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d3dd54 b.ne #0x10d3dd7c
+if cpu.condition(1){block=16;continue;}block=14;continue;
+}
+14=>{
+// 0x10d3dd58 mov w8, #0x64
+cpu.x[8]=(((0x64u64))) as u32 as u64;
+// 0x10d3dd5c ldr x9, [x19, #0x2e8]
+{let address=(cpu.x[19]).wrapping_add(0x2e8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10d3dd60 ldr w10, [x9, #0xc]
+{let address=(cpu.x[9]).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10d3dd64 cmp w10, w8
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d3dd68 b.gt #0x10d3dd20
+if cpu.condition(12){block=9;continue;}block=15;continue;
+}
+15=>{
+// 0x10d3dd6c mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10d3dd70 ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10d3dd74 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10d3dd78 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+16=>{
+// 0x10d3dd7c ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10d3dd80 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10d3dd84 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+17=>{
 // 0x10d3dd88 mov w0, wzr
 cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10d3dd8c ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d3dcac")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10d3dcac").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d44be8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d44be8=>{
+pub(super) unsafe fn f_10d44be8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d44be8{return f_10d44be8_slow(cpu,rt,pc);}
+
 // 0x10d44be8 stp x29, x30, [sp, #-0x30]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d44bec str x21, [sp, #0x10]
@@ -921,9 +1780,7 @@ cpu.x[29]=(((cpu.sp))) as u64;
 cpu.q[0]=(lane_dup(18446744073709551615u128,64,2)) & 0xffffffffffffffffffffffffffffffffu128;
 // 0x10d44bfc mov x8, #-1
 cpu.x[8]=(((0xffffffffffffffffu64))) as u64;
-pc=0x10d44c00;continue;
-}
-0x10d44c00=>{
+{
 // 0x10d44c00 mov x19, x0
 cpu.x[19]=(((cpu.x[0]))) as u64;
 // 0x10d44c04 str wzr, [x0]
@@ -988,18 +1845,14 @@ cpu.x[20]=(((cpu.x[1]))) as u64;
 cpu.x[0]=(((0x28u64))) as u32 as u64;
 // 0x10d44c7c bl #0x1187d2b0
 cpu.x[30]=0x10d44c80;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
-pc=0x10d44c80;continue;
-}
-0x10d44c80=>{
+{
 // 0x10d44c80 mov x1, x20
 cpu.x[1]=(((cpu.x[20]))) as u64;
 // 0x10d44c84 mov x21, x0
 cpu.x[21]=(((cpu.x[0]))) as u64;
 // 0x10d44c88 bl #0x10d5402c
 cpu.x[30]=0x10d44c8c;super::chunk9::f_10d5402c(cpu,rt,0x10d5402c)?;
-pc=0x10d44c8c;continue;
-}
-0x10d44c8c=>{
+{
 // 0x10d44c8c ldr x20, [x19, #0x188]
 {let address=(cpu.x[19]).wrapping_add(0x188u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
 // 0x10d44c90 mov w0, #0x28
@@ -1008,18 +1861,14 @@ cpu.x[0]=(((0x28u64))) as u32 as u64;
 {let address=(cpu.x[19]).wrapping_add(0x108u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10d44c98 bl #0x1187d2b0
 cpu.x[30]=0x10d44c9c;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
-pc=0x10d44c9c;continue;
-}
-0x10d44c9c=>{
+{
 // 0x10d44c9c mov x1, x20
 cpu.x[1]=(((cpu.x[20]))) as u64;
 // 0x10d44ca0 mov x21, x0
 cpu.x[21]=(((cpu.x[0]))) as u64;
 // 0x10d44ca4 bl #0x10d5402c
 cpu.x[30]=0x10d44ca8;super::chunk9::f_10d5402c(cpu,rt,0x10d5402c)?;
-pc=0x10d44ca8;continue;
-}
-0x10d44ca8=>{
+{
 // 0x10d44ca8 str x21, [x19, #0x110]
 {let address=(cpu.x[19]).wrapping_add(0x110u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10d44cac ldp x20, x19, [sp, #0x20]
@@ -1031,10 +1880,141 @@ pc=0x10d44ca8;continue;
 // 0x10d44cb8 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d44be8")),}}}
+}
+}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d44be8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d44be8{0}else{match pc{0x10d44be8=>0,0x10d44c00=>1,0x10d44c80=>2,0x10d44c8c=>3,0x10d44c9c=>4,0x10d44ca8=>5,_=>return Err(format!("untranslated block {pc:#x} in 0x10d44be8").into()),}};loop{match block{
+0=>{
+// 0x10d44be8 stp x29, x30, [sp, #-0x30]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d44bec str x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d44bf0 stp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d44bf4 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d44bf8 movi v0.2d, #0xffffffffffffffff
+cpu.q[0]=(lane_dup(18446744073709551615u128,64,2)) & 0xffffffffffffffffffffffffffffffffu128;
+// 0x10d44bfc mov x8, #-1
+cpu.x[8]=(((0xffffffffffffffffu64))) as u64;
+block=1;continue;
+}
+1=>{
+// 0x10d44c00 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10d44c04 str wzr, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d44c08 mov x20, x1
+cpu.x[20]=(((cpu.x[1]))) as u64;
+// 0x10d44c0c stur x8, [x0, #4]
+{let address=(cpu.x[0]).wrapping_add(0x4u64);let v0=cpu.x[8];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d44c10 str w8, [x0, #0xc]
+{let address=(cpu.x[0]).wrapping_add(0xcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d44c14 stp xzr, xzr, [x0, #0x118]
+{let address=(cpu.x[0]).wrapping_add(0x118u64);let v0=0u64;let v1=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d44c18 stp xzr, xzr, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=0u64;let v1=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d44c1c stur q0, [x0, #0x48]
+{let address=(cpu.x[0]).wrapping_add(0x48u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c20 stur q0, [x0, #0x58]
+{let address=(cpu.x[0]).wrapping_add(0x58u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c24 stur q0, [x0, #0x68]
+{let address=(cpu.x[0]).wrapping_add(0x68u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c28 stur q0, [x0, #0x78]
+{let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c2c stp xzr, xzr, [x0, #0x160]
+{let address=(cpu.x[0]).wrapping_add(0x160u64);let v0=0u64;let v1=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d44c30 stur q0, [x0, #0x98]
+{let address=(cpu.x[0]).wrapping_add(0x98u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c34 stur q0, [x0, #0x88]
+{let address=(cpu.x[0]).wrapping_add(0x88u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c38 stp xzr, xzr, [x0, #0x138]
+{let address=(cpu.x[0]).wrapping_add(0x138u64);let v0=0u64;let v1=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d44c3c stp x8, x8, [x0, #0x38]
+{let address=(cpu.x[0]).wrapping_add(0x38u64);let v0=cpu.x[8];let v1=cpu.x[8];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d44c40 stp x8, x8, [x0, #0x28]
+{let address=(cpu.x[0]).wrapping_add(0x28u64);let v0=cpu.x[8];let v1=cpu.x[8];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d44c44 stur q0, [x0, #0xb8]
+{let address=(cpu.x[0]).wrapping_add(0xb8u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c48 stur q0, [x0, #0xa8]
+{let address=(cpu.x[0]).wrapping_add(0xa8u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c4c stp xzr, xzr, [x0, #0x128]
+{let address=(cpu.x[0]).wrapping_add(0x128u64);let v0=0u64;let v1=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d44c50 str xzr, [x0, #0x20]
+{let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d44c54 stur q0, [x0, #0xd8]
+{let address=(cpu.x[0]).wrapping_add(0xd8u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c58 stur q0, [x0, #0xc8]
+{let address=(cpu.x[0]).wrapping_add(0xc8u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c5c stp xzr, xzr, [x0, #0x150]
+{let address=(cpu.x[0]).wrapping_add(0x150u64);let v0=0u64;let v1=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d44c60 str xzr, [x0, #0x148]
+{let address=(cpu.x[0]).wrapping_add(0x148u64);let v0=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d44c64 stur q0, [x0, #0xf8]
+{let address=(cpu.x[0]).wrapping_add(0xf8u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c68 stur q0, [x0, #0xe8]
+{let address=(cpu.x[0]).wrapping_add(0xe8u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d44c6c str wzr, [x0, #0x180]
+{let address=(cpu.x[0]).wrapping_add(0x180u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d44c70 stp xzr, xzr, [x0, #0x170]
+{let address=(cpu.x[0]).wrapping_add(0x170u64);let v0=0u64;let v1=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d44c74 str x1, [x0, #0x188]
+{let address=(cpu.x[0]).wrapping_add(0x188u64);let v0=cpu.x[1];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d44c78 mov w0, #0x28
+cpu.x[0]=(((0x28u64))) as u32 as u64;
+// 0x10d44c7c bl #0x1187d2b0
+cpu.x[30]=0x10d44c80;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
+block=2;continue;
+}
+2=>{
+// 0x10d44c80 mov x1, x20
+cpu.x[1]=(((cpu.x[20]))) as u64;
+// 0x10d44c84 mov x21, x0
+cpu.x[21]=(((cpu.x[0]))) as u64;
+// 0x10d44c88 bl #0x10d5402c
+cpu.x[30]=0x10d44c8c;super::chunk9::f_10d5402c(cpu,rt,0x10d5402c)?;
+block=3;continue;
+}
+3=>{
+// 0x10d44c8c ldr x20, [x19, #0x188]
+{let address=(cpu.x[19]).wrapping_add(0x188u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
+// 0x10d44c90 mov w0, #0x28
+cpu.x[0]=(((0x28u64))) as u32 as u64;
+// 0x10d44c94 str x21, [x19, #0x108]
+{let address=(cpu.x[19]).wrapping_add(0x108u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d44c98 bl #0x1187d2b0
+cpu.x[30]=0x10d44c9c;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
+block=4;continue;
+}
+4=>{
+// 0x10d44c9c mov x1, x20
+cpu.x[1]=(((cpu.x[20]))) as u64;
+// 0x10d44ca0 mov x21, x0
+cpu.x[21]=(((cpu.x[0]))) as u64;
+// 0x10d44ca4 bl #0x10d5402c
+cpu.x[30]=0x10d44ca8;super::chunk9::f_10d5402c(cpu,rt,0x10d5402c)?;
+block=5;continue;
+}
+5=>{
+// 0x10d44ca8 str x21, [x19, #0x110]
+{let address=(cpu.x[19]).wrapping_add(0x110u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d44cac ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10d44cb0 ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10d44cb4 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10d44cb8 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10d44be8").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d54838(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d54838=>{
+pub(super) unsafe fn f_10d54838(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d54838{return f_10d54838_slow(cpu,rt,pc);}
+
 // 0x10d54838 stp x29, x30, [sp, #-0x40]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d5483c str x23, [sp, #0x10]
@@ -1061,9 +2041,7 @@ cpu.x[22]=(((cpu.x[1]))) as u64;
 cpu.x[23]=(((cpu.x[0]))) as u64;
 // 0x10d54868 bl #0x10d54530
 cpu.x[30]=0x10d5486c;super::chunk14::f_10d54530(cpu,rt,0x10d54530)?;
-pc=0x10d5486c;continue;
-}
-0x10d5486c=>{
+{
 // 0x10d5486c mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10d54870 mov x1, x22
@@ -1087,10 +2065,69 @@ cpu.x[5]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10d54894 b #0x10d54530
 super::chunk14::f_10d54530(cpu,rt,0x10d54530)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d54838")),}}}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d54838_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d54838{0}else{match pc{0x10d54838=>0,0x10d5486c=>1,_=>return Err(format!("untranslated block {pc:#x} in 0x10d54838").into()),}};loop{match block{
+0=>{
+// 0x10d54838 stp x29, x30, [sp, #-0x40]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d5483c str x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[23];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d54840 stp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d54844 stp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d54848 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d5484c mov w19, w4
+cpu.x[19]=(((cpu.x[4] as u32 as u64))) as u32 as u64;
+// 0x10d54850 mov w4, wzr
+cpu.x[4]=(((0u64))) as u32 as u64;
+// 0x10d54854 mov w5, #1
+cpu.x[5]=(((0x1u64))) as u32 as u64;
+// 0x10d54858 mov w20, w3
+cpu.x[20]=(((cpu.x[3] as u32 as u64))) as u32 as u64;
+// 0x10d5485c mov w21, w2
+cpu.x[21]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
+// 0x10d54860 mov x22, x1
+cpu.x[22]=(((cpu.x[1]))) as u64;
+// 0x10d54864 mov x23, x0
+cpu.x[23]=(((cpu.x[0]))) as u64;
+// 0x10d54868 bl #0x10d54530
+cpu.x[30]=0x10d5486c;super::chunk14::f_10d54530(cpu,rt,0x10d54530)?;
+block=1;continue;
+}
+1=>{
+// 0x10d5486c mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10d54870 mov x1, x22
+cpu.x[1]=(((cpu.x[22]))) as u64;
+// 0x10d54874 mov w2, w21
+cpu.x[2]=(((cpu.x[21] as u32 as u64))) as u32 as u64;
+// 0x10d54878 mov w3, w20
+cpu.x[3]=(((cpu.x[20] as u32 as u64))) as u32 as u64;
+// 0x10d5487c mov w4, #0x10
+cpu.x[4]=(((0x10u64))) as u32 as u64;
+// 0x10d54880 mov w5, w19
+cpu.x[5]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10d54884 ldp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10d54888 ldr x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x10d5488c ldp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x10d54890 ldp x29, x30, [sp], #0x40
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x40u64)))) as u64;}
+// 0x10d54894 b #0x10d54530
+super::chunk14::f_10d54530(cpu,rt,0x10d54530)?;return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10d54838").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d54a44(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d54a44=>{
+pub(super) unsafe fn f_10d54a44(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d54a44{return f_10d54a44_slow(cpu,rt,pc);}
+
+'b10d54af8: {
+'b10d54a9c: {
 // 0x10d54a44 stp x29, x30, [sp, #-0x40]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d54a48 str x23, [sp, #0x10]
@@ -1112,14 +2149,11 @@ cpu.x[22]=(((cpu.x[1]))) as u64;
 // 0x10d54a68 cmp w8, #1
 {let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d54a6c b.lt #0x10d54a9c
-if cpu.condition(11){pc=0x10d54a9c;continue;}pc=0x10d54a70;continue;
-}
-0x10d54a70=>{
+if cpu.condition(11){break 'b10d54a9c;}{
 // 0x10d54a70 mov x23, xzr
 cpu.x[23]=(((0u64))) as u64;
-pc=0x10d54a74;continue;
-}
-0x10d54a74=>{
+{
+'l10d54a74: loop {
 // 0x10d54a74 ldr x8, [x20, #8]
 {let address=(cpu.x[20]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d54a78 mov x1, x22
@@ -1130,13 +2164,9 @@ cpu.x[1]=(((cpu.x[22]))) as u64;
 {let address=(cpu.x[21]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10d54a84 bl #0x10e0bc20
 cpu.x[30]=0x10d54a88;super::chunk1::f_10e0bc20(cpu,rt,0x10e0bc20)?;
-pc=0x10d54a88;continue;
-}
-0x10d54a88=>{
+{
 // 0x10d54a88 tbnz w0, #0, #0x10d54af8
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10d54af8;continue;}pc=0x10d54a8c;continue;
-}
-0x10d54a8c=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10d54af8;}{
 // 0x10d54a8c ldrsw x8, [x20, #0x14]
 {let address=(cpu.x[20]).wrapping_add(0x14u64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
 // 0x10d54a90 add x23, x23, #1
@@ -1144,27 +2174,28 @@ if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10d54af8;continue;}pc=0x1
 // 0x10d54a94 cmp x23, x8
 {let a=((cpu.x[23]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10d54a98 b.lt #0x10d54a74
-if cpu.condition(11){pc=0x10d54a74;continue;}pc=0x10d54a9c;continue;
+if cpu.condition(11){continue 'l10d54a74;}break 'b10d54a9c;
 }
-0x10d54a9c=>{
+}
+}
+}
+}
+}
 // 0x10d54a9c ldr x23, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
 // 0x10d54aa0 mov w0, #0x100
 cpu.x[0]=(((0x100u64))) as u32 as u64;
 // 0x10d54aa4 bl #0x1187d2b0
 cpu.x[30]=0x10d54aa8;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
-pc=0x10d54aa8;continue;
-}
-0x10d54aa8=>{
+{
 // 0x10d54aa8 mov x1, x23
 cpu.x[1]=(((cpu.x[23]))) as u64;
 // 0x10d54aac mov x21, x0
 cpu.x[21]=(((cpu.x[0]))) as u64;
 // 0x10d54ab0 bl #0x10d56f30
 cpu.x[30]=0x10d54ab4;super::chunk0::f_10d56f30(cpu,rt,0x10d56f30)?;
-pc=0x10d54ab4;continue;
-}
-0x10d54ab4=>{
+{
+'b10d54ae8: {
 // 0x10d54ab4 ldp w9, w8, [x20, #0x10]
 {let address=(cpu.x[20]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[9]=(v0) as u32 as u64;cpu.x[8]=(v1) as u32 as u64;}
 // 0x10d54ab8 str x22, [x21, #8]
@@ -1172,9 +2203,7 @@ pc=0x10d54ab4;continue;
 // 0x10d54abc cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d54ac0 b.ne #0x10d54ae8
-if cpu.condition(1){pc=0x10d54ae8;continue;}pc=0x10d54ac4;continue;
-}
-0x10d54ac4=>{
+if cpu.condition(1){break 'b10d54ae8;}{
 // 0x10d54ac4 lsl w9, w8, #1
 cpu.x[9]=(((((cpu.x[8] as u32 as u64))) as u32).wrapping_shl(((((0x1u64))) & 31) as u32) as u64) as u32 as u64;
 // 0x10d54ac8 mov w10, #5
@@ -1186,18 +2215,17 @@ cpu.x[1]=(if cpu.condition(0){((cpu.x[10] as u32 as u64))}else{((cpu.x[9] as u32
 // 0x10d54ad4 cmp w8, w1
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d54ad8 b.ge #0x10d54ae8
-if cpu.condition(10){pc=0x10d54ae8;continue;}pc=0x10d54adc;continue;
-}
-0x10d54adc=>{
+if cpu.condition(10){break 'b10d54ae8;}{
 // 0x10d54adc add x0, x20, #8
 {let a=((cpu.x[20]));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
 // 0x10d54ae0 bl #0x10d55568
 cpu.x[30]=0x10d54ae4;super::chunk13::f_10d55568(cpu,rt,0x10d55568)?;
 // 0x10d54ae4 ldr w8, [x20, #0x14]
 {let address=(cpu.x[20]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
-pc=0x10d54ae8;continue;
+break 'b10d54ae8;
 }
-0x10d54ae8=>{
+}
+}
 // 0x10d54ae8 ldr x9, [x20, #8]
 {let address=(cpu.x[20]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
 // 0x10d54aec add w10, w8, #1
@@ -1206,9 +2234,10 @@ pc=0x10d54ae8;continue;
 {let address=(cpu.x[20]).wrapping_add(0x14u64);let v0=cpu.x[10] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10d54af4 str x21, [x9, w8, sxtw #3]
 {let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as i32 as i64 as u64)) as u64).wrapping_shl(3) as u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
-pc=0x10d54af8;continue;
+break 'b10d54af8;
 }
-0x10d54af8=>{
+}
+}
 // 0x10d54af8 ldr w8, [x21, #0x98]
 {let address=(cpu.x[21]).wrapping_add(0x98u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10d54afc mov x0, x21
@@ -1234,10 +2263,157 @@ cpu.x[3]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10d54b24 b #0x10d5701c
 super::chunk14::f_10d5701c(cpu,rt,0x10d5701c)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d54a44")),}}}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d54a44_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d54a44{0}else{match pc{0x10d54a44=>0,0x10d54a70=>1,0x10d54a74=>2,0x10d54a88=>3,0x10d54a8c=>4,0x10d54a9c=>5,0x10d54aa8=>6,0x10d54ab4=>7,0x10d54ac4=>8,0x10d54adc=>9,0x10d54ae8=>10,0x10d54af8=>11,_=>return Err(format!("untranslated block {pc:#x} in 0x10d54a44").into()),}};loop{match block{
+0=>{
+// 0x10d54a44 stp x29, x30, [sp, #-0x40]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d54a48 str x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[23];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d54a4c stp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d54a50 stp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d54a54 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d54a58 ldr w8, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10d54a5c mov w19, w2
+cpu.x[19]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
+// 0x10d54a60 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10d54a64 mov x22, x1
+cpu.x[22]=(((cpu.x[1]))) as u64;
+// 0x10d54a68 cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d54a6c b.lt #0x10d54a9c
+if cpu.condition(11){block=5;continue;}block=1;continue;
+}
+1=>{
+// 0x10d54a70 mov x23, xzr
+cpu.x[23]=(((0u64))) as u64;
+block=2;continue;
+}
+2=>{
+// 0x10d54a74 ldr x8, [x20, #8]
+{let address=(cpu.x[20]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d54a78 mov x1, x22
+cpu.x[1]=(((cpu.x[22]))) as u64;
+// 0x10d54a7c ldr x21, [x8, x23, lsl #3]
+{let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[23])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10d54a80 ldr x0, [x21, #8]
+{let address=(cpu.x[21]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10d54a84 bl #0x10e0bc20
+cpu.x[30]=0x10d54a88;super::chunk1::f_10e0bc20(cpu,rt,0x10e0bc20)?;
+block=3;continue;
+}
+3=>{
+// 0x10d54a88 tbnz w0, #0, #0x10d54af8
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {block=11;continue;}block=4;continue;
+}
+4=>{
+// 0x10d54a8c ldrsw x8, [x20, #0x14]
+{let address=(cpu.x[20]).wrapping_add(0x14u64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
+// 0x10d54a90 add x23, x23, #1
+{let a=((cpu.x[23]));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[23]=(result) as u64;}
+// 0x10d54a94 cmp x23, x8
+{let a=((cpu.x[23]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10d54a98 b.lt #0x10d54a74
+if cpu.condition(11){block=2;continue;}block=5;continue;
+}
+5=>{
+// 0x10d54a9c ldr x23, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x10d54aa0 mov w0, #0x100
+cpu.x[0]=(((0x100u64))) as u32 as u64;
+// 0x10d54aa4 bl #0x1187d2b0
+cpu.x[30]=0x10d54aa8;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
+block=6;continue;
+}
+6=>{
+// 0x10d54aa8 mov x1, x23
+cpu.x[1]=(((cpu.x[23]))) as u64;
+// 0x10d54aac mov x21, x0
+cpu.x[21]=(((cpu.x[0]))) as u64;
+// 0x10d54ab0 bl #0x10d56f30
+cpu.x[30]=0x10d54ab4;super::chunk0::f_10d56f30(cpu,rt,0x10d56f30)?;
+block=7;continue;
+}
+7=>{
+// 0x10d54ab4 ldp w9, w8, [x20, #0x10]
+{let address=(cpu.x[20]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[9]=(v0) as u32 as u64;cpu.x[8]=(v1) as u32 as u64;}
+// 0x10d54ab8 str x22, [x21, #8]
+{let address=(cpu.x[21]).wrapping_add(0x8u64);let v0=cpu.x[22];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d54abc cmp w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d54ac0 b.ne #0x10d54ae8
+if cpu.condition(1){block=10;continue;}block=8;continue;
+}
+8=>{
+// 0x10d54ac4 lsl w9, w8, #1
+cpu.x[9]=(((((cpu.x[8] as u32 as u64))) as u32).wrapping_shl(((((0x1u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10d54ac8 mov w10, #5
+cpu.x[10]=(((0x5u64))) as u32 as u64;
+// 0x10d54acc cmp w9, #0
+{let a=((cpu.x[9] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d54ad0 csel w1, w10, w9, eq
+cpu.x[1]=(if cpu.condition(0){((cpu.x[10] as u32 as u64))}else{((cpu.x[9] as u32 as u64))}) as u32 as u64;
+// 0x10d54ad4 cmp w8, w1
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d54ad8 b.ge #0x10d54ae8
+if cpu.condition(10){block=10;continue;}block=9;continue;
+}
+9=>{
+// 0x10d54adc add x0, x20, #8
+{let a=((cpu.x[20]));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10d54ae0 bl #0x10d55568
+cpu.x[30]=0x10d54ae4;super::chunk13::f_10d55568(cpu,rt,0x10d55568)?;
+// 0x10d54ae4 ldr w8, [x20, #0x14]
+{let address=(cpu.x[20]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+block=10;continue;
+}
+10=>{
+// 0x10d54ae8 ldr x9, [x20, #8]
+{let address=(cpu.x[20]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10d54aec add w10, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x10d54af0 str w10, [x20, #0x14]
+{let address=(cpu.x[20]).wrapping_add(0x14u64);let v0=cpu.x[10] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d54af4 str x21, [x9, w8, sxtw #3]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as i32 as i64 as u64)) as u64).wrapping_shl(3) as u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+block=11;continue;
+}
+11=>{
+// 0x10d54af8 ldr w8, [x21, #0x98]
+{let address=(cpu.x[21]).wrapping_add(0x98u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10d54afc mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10d54b00 mov w1, #0x21
+cpu.x[1]=(((0x21u64))) as u32 as u64;
+// 0x10d54b04 mov w2, #1
+cpu.x[2]=(((0x1u64))) as u32 as u64;
+// 0x10d54b08 mov w3, w19
+cpu.x[3]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10d54b0c add w8, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10d54b10 str w8, [x21, #0x98]
+{let address=(cpu.x[21]).wrapping_add(0x98u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d54b14 ldp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10d54b18 ldr x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x10d54b1c ldp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x10d54b20 ldp x29, x30, [sp], #0x40
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x40u64)))) as u64;}
+// 0x10d54b24 b #0x10d5701c
+super::chunk14::f_10d5701c(cpu,rt,0x10d5701c)?;return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10d54a44").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d55a6c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d55a6c=>{
+pub(super) unsafe fn f_10d55a6c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d55a6c{return f_10d55a6c_slow(cpu,rt,pc);}
+
 // 0x10d55a6c stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d55a70 str x19, [sp, #0x10]
@@ -1276,9 +2452,7 @@ cpu.q[0]=(lane_dup(0u128,64,2)) & 0xffffffffffffffffffffffffffffffffu128;
 {let address=(cpu.x[0]).wrapping_add(0x4cu64);let v0=(cpu.q[0] & 0xffffffffffffffffu128) as u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10d55ab4 bl #0x10d55b64
 cpu.x[30]=0x10d55ab8;super::chunk0::f_10d55b64(cpu,rt,0x10d55b64)?;
-pc=0x10d55ab8;continue;
-}
-0x10d55ab8=>{
+{
 // 0x10d55ab8 ldr x8, [x19, #8]
 {let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d55abc ldrsw x9, [x19, #0x20]
@@ -1366,20 +2540,176 @@ cpu.x[10]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x10d55b60 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d55a6c")),}}}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d55a6c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d55a6c{0}else{match pc{0x10d55a6c=>0,0x10d55ab8=>1,_=>return Err(format!("untranslated block {pc:#x} in 0x10d55a6c").into()),}};loop{match block{
+0=>{
+// 0x10d55a6c stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d55a70 str x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d55a74 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d55a78 movi d0, #0x000000ffffffff
+cpu.q[0]=(lane_dup(4294967295u128,64,1)) & 0xffffffffffffffffu128;
+// 0x10d55a7c mov w8, #1
+cpu.x[8]=(((0x1u64))) as u32 as u64;
+// 0x10d55a80 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10d55a84 strb w8, [x0, #0x1a]
+{let address=(cpu.x[0]).wrapping_add(0x1au64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
+// 0x10d55a88 ldr x8, [x1, #0x18]
+{let address=(cpu.x[1]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d55a8c str wzr, [x0, #0x24]
+{let address=(cpu.x[0]).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d55a90 ldr x8, [x8, #0x68]
+{let address=(cpu.x[8]).wrapping_add(0x68u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d55a94 strh wzr, [x0, #0x18]
+{let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=0u64;rt.memory.write::<u16>(address.wrapping_add(0),v0 as u16);}
+// 0x10d55a98 str d0, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=(cpu.q[0] & 0xffffffffffffffffu128) as u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d55a9c movi v0.2d, #0000000000000000
+cpu.q[0]=(lane_dup(0u128,64,2)) & 0xffffffffffffffffffffffffffffffffu128;
+// 0x10d55aa0 str x8, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=cpu.x[8];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d55aa4 str wzr, [x0, #0x60]
+{let address=(cpu.x[0]).wrapping_add(0x60u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d55aa8 stur d0, [x0, #0x1c]
+{let address=(cpu.x[0]).wrapping_add(0x1cu64);let v0=(cpu.q[0] & 0xffffffffffffffffu128) as u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d55aac stur d0, [x0, #0x34]
+{let address=(cpu.x[0]).wrapping_add(0x34u64);let v0=(cpu.q[0] & 0xffffffffffffffffu128) as u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d55ab0 stur d0, [x0, #0x4c]
+{let address=(cpu.x[0]).wrapping_add(0x4cu64);let v0=(cpu.q[0] & 0xffffffffffffffffu128) as u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d55ab4 bl #0x10d55b64
+cpu.x[30]=0x10d55ab8;super::chunk0::f_10d55b64(cpu,rt,0x10d55b64)?;
+block=1;continue;
+}
+1=>{
+// 0x10d55ab8 ldr x8, [x19, #8]
+{let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d55abc ldrsw x9, [x19, #0x20]
+{let address=(cpu.x[19]).wrapping_add(0x20u64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[9]=(v0) as u64;}
+// 0x10d55ac0 mov w11, #0x3e8
+cpu.x[11]=(((0x3e8u64))) as u32 as u64;
+// 0x10d55ac4 ldr x10, [x8, #0x68]
+{let address=(cpu.x[8]).wrapping_add(0x68u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[10]=(v0) as u64;}
+// 0x10d55ac8 lsl x9, x9, #2
+cpu.x[9]=(((((cpu.x[9]))) as u64).wrapping_shl(((((0x2u64))) & 63) as u32) as u64) as u64;
+// 0x10d55acc ldr x12, [x8, #0x78]
+{let address=(cpu.x[8]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;}
+// 0x10d55ad0 ldr x13, [x8, #0xe0]
+{let address=(cpu.x[8]).wrapping_add(0xe0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[13]=(v0) as u64;}
+// 0x10d55ad4 ldr w10, [x10, x9]
+{let address=((cpu.x[10]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[9])));let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10d55ad8 mul w10, w10, w11
+cpu.x[10]=((((cpu.x[10] as u32 as u64))).wrapping_mul(((cpu.x[11] as u32 as u64)))) as u32 as u64;
+// 0x10d55adc str w10, [x19, #0x28]
+{let address=(cpu.x[19]).wrapping_add(0x28u64);let v0=cpu.x[10] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d55ae0 ldr w10, [x12, x9]
+{let address=((cpu.x[12]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[9])));let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10d55ae4 ldr x12, [x8, #0x88]
+{let address=(cpu.x[8]).wrapping_add(0x88u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;}
+// 0x10d55ae8 str w10, [x19, #0x2c]
+{let address=(cpu.x[19]).wrapping_add(0x2cu64);let v0=cpu.x[10] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d55aec ldrsw x10, [x19, #0x34]
+{let address=(cpu.x[19]).wrapping_add(0x34u64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[10]=(v0) as u64;}
+// 0x10d55af0 ldr w9, [x12, x9]
+{let address=((cpu.x[12]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[9])));let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10d55af4 ldr x12, [x8, #0xa0]
+{let address=(cpu.x[8]).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;}
+// 0x10d55af8 lsl x10, x10, #2
+cpu.x[10]=(((((cpu.x[10]))) as u64).wrapping_shl(((((0x2u64))) & 63) as u32) as u64) as u64;
+// 0x10d55afc str w9, [x19, #0x30]
+{let address=(cpu.x[19]).wrapping_add(0x30u64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d55b00 ldr w9, [x12, x10]
+{let address=((cpu.x[12]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[10])));let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10d55b04 ldr x12, [x8, #0xb0]
+{let address=(cpu.x[8]).wrapping_add(0xb0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;}
+// 0x10d55b08 mul w9, w9, w11
+cpu.x[9]=((((cpu.x[9] as u32 as u64))).wrapping_mul(((cpu.x[11] as u32 as u64)))) as u32 as u64;
+// 0x10d55b0c str w9, [x19, #0x3c]
+{let address=(cpu.x[19]).wrapping_add(0x3cu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d55b10 ldr w9, [x12, x10]
+{let address=((cpu.x[12]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[10])));let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10d55b14 ldr x12, [x8, #0xc0]
+{let address=(cpu.x[8]).wrapping_add(0xc0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;}
+// 0x10d55b18 str w9, [x19, #0x40]
+{let address=(cpu.x[19]).wrapping_add(0x40u64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d55b1c ldrsw x9, [x19, #0x4c]
+{let address=(cpu.x[19]).wrapping_add(0x4cu64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[9]=(v0) as u64;}
+// 0x10d55b20 ldr w12, [x12, x10]
+{let address=((cpu.x[12]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[10])));let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[12]=(v0) as u32 as u64;}
+// 0x10d55b24 lsl x9, x9, #2
+cpu.x[9]=(((((cpu.x[9]))) as u64).wrapping_shl(((((0x2u64))) & 63) as u32) as u64) as u64;
+// 0x10d55b28 str w12, [x19, #0x44]
+{let address=(cpu.x[19]).wrapping_add(0x44u64);let v0=cpu.x[12] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d55b2c ldr w12, [x13, x9]
+{let address=((cpu.x[13]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[9])));let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[12]=(v0) as u32 as u64;}
+// 0x10d55b30 ldr x13, [x8, #0xd0]
+{let address=(cpu.x[8]).wrapping_add(0xd0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[13]=(v0) as u64;}
+// 0x10d55b34 ldr x8, [x8, #0xf0]
+{let address=(cpu.x[8]).wrapping_add(0xf0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d55b38 mul w11, w12, w11
+cpu.x[11]=((((cpu.x[12] as u32 as u64))).wrapping_mul(((cpu.x[11] as u32 as u64)))) as u32 as u64;
+// 0x10d55b3c ldr w10, [x13, x10]
+{let address=((cpu.x[13]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[10])));let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10d55b40 cmp w10, #0
+{let a=((cpu.x[10] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d55b44 str w11, [x19, #0x54]
+{let address=(cpu.x[19]).wrapping_add(0x54u64);let v0=cpu.x[11] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d55b48 cset w10, ne
+cpu.x[10]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x10d55b4c ldr w8, [x8, x9]
+{let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[9])));let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10d55b50 strb w10, [x19, #0x48]
+{let address=(cpu.x[19]).wrapping_add(0x48u64);let v0=cpu.x[10] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
+// 0x10d55b54 str w8, [x19, #0x58]
+{let address=(cpu.x[19]).wrapping_add(0x58u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d55b58 ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10d55b5c ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10d55b60 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10d55a6c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d5645c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d5645c=>{
+pub(super) unsafe fn f_10d5645c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d5645c{return f_10d5645c_slow(cpu,rt,pc);}
+
 // 0x10d5645c ldrb w8, [x0, #0x19]
 {let address=(cpu.x[0]).wrapping_add(0x19u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10d56460 cbz w8, #0x10d56468
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10d56468;continue;}pc=0x10d56464;continue;
-}
-0x10d56464=>{
+if (cpu.x[8] as u32 as u64) == 0 {{
+// 0x10d56468 ldr w9, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10d5646c mov w8, #1
+cpu.x[8]=(((0x1u64))) as u32 as u64;
+// 0x10d56470 strb w8, [x0, #0x19]
+{let address=(cpu.x[0]).wrapping_add(0x19u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
+// 0x10d56474 str w9, [x0, #0x5c]
+{let address=(cpu.x[0]).wrapping_add(0x5cu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d56478 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
 // 0x10d56464 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10d56468=>{
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d5645c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d5645c{0}else{match pc{0x10d5645c=>0,0x10d56464=>1,0x10d56468=>2,_=>return Err(format!("untranslated block {pc:#x} in 0x10d5645c").into()),}};loop{match block{
+0=>{
+// 0x10d5645c ldrb w8, [x0, #0x19]
+{let address=(cpu.x[0]).wrapping_add(0x19u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10d56460 cbz w8, #0x10d56468
+if (cpu.x[8] as u32 as u64) == 0 {block=2;continue;}block=1;continue;
+}
+1=>{
+// 0x10d56464 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+2=>{
 // 0x10d56468 ldr w9, [x0, #0x14]
 {let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10d5646c mov w8, #1
@@ -1391,10 +2721,10 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10d56478 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d5645c")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10d5645c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d56e58(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d56e58=>{
+pub(super) unsafe fn f_10d56e58(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d56e58{return f_10d56e58_slow(cpu,rt,pc);}
+
 // 0x10d56e58 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d56e5c str x19, [sp, #0x10]
@@ -1411,9 +2741,7 @@ cpu.x[0]=(((cpu.x[1]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10d56e74 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10d56e78;super::dispatch(cpu,rt,target)?;}
-pc=0x10d56e78;continue;
-}
-0x10d56e78=>{
+{
 // 0x10d56e78 str w0, [x19]
 {let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10d56e7c ldr x19, [sp, #0x10]
@@ -1423,9 +2751,67 @@ pc=0x10d56e78;continue;
 // 0x10d56e84 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d56e58")),}}}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d56e58_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d56e58{0}else{match pc{0x10d56e58=>0,0x10d56e78=>1,_=>return Err(format!("untranslated block {pc:#x} in 0x10d56e58").into()),}};loop{match block{
+0=>{
+// 0x10d56e58 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d56e5c str x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d56e60 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d56e64 ldr x8, [x1]
+{let address=(cpu.x[1]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d56e68 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10d56e6c mov x0, x1
+cpu.x[0]=(((cpu.x[1]))) as u64;
+// 0x10d56e70 ldr x8, [x8, #0x110]
+{let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10d56e74 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10d56e78;super::dispatch(cpu,rt,target)?;}
+block=1;continue;
+}
+1=>{
+// 0x10d56e78 str w0, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d56e7c ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10d56e80 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10d56e84 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10d56e58").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d5a27c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10d5a27c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d5a27c{return f_10d5a27c_slow(cpu,rt,pc);}
+
+// 0x10d5a27c movi v0.2d, #0000000000000000
+cpu.q[0]=(lane_dup(0u128,64,2)) & 0xffffffffffffffffffffffffffffffffu128;
+// 0x10d5a280 mov w8, #0x3f800000
+cpu.x[8]=(((0x3f800000u64))) as u32 as u64;
+// 0x10d5a284 str xzr, [x0, #0x28]
+{let address=(cpu.x[0]).wrapping_add(0x28u64);let v0=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d5a288 str w8, [x0, #0x28]
+{let address=(cpu.x[0]).wrapping_add(0x28u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d5a28c adrp x8, #0x1190e000
+cpu.x[8]=(0x1190e000u64) as u64;
+// 0x10d5a290 add x8, x8, #0xb50
+{let a=((cpu.x[8]));let b=((0xb50u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u64;}
+// 0x10d5a294 str x8, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=cpu.x[8];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d5a298 stur q0, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d5a29c stur q0, [x0, #0x18]
+{let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d5a2a0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d5a27c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10d5a27c=>{
 // 0x10d5a27c movi v0.2d, #0000000000000000
 cpu.q[0]=(lane_dup(0u128,64,2)) & 0xffffffffffffffffffffffffffffffffu128;
@@ -1448,10 +2834,10 @@ cpu.x[8]=(0x1190e000u64) as u64;
 // 0x10d5a2a0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d5a27c")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10d5a27c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d75930(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10d75930=>{
+pub(super) unsafe fn f_10d75930(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d75930{return f_10d75930_slow(cpu,rt,pc);}
+
 // 0x10d75930 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10d75934 stp x20, x19, [sp, #0x10]
@@ -1472,9 +2858,8 @@ cpu.x[19]=(((cpu.x[0]))) as u64;
 cpu.x[0]=(((cpu.x[1]))) as u64;
 // 0x10d75954 bl #0x110cbf10
 cpu.x[30]=0x10d75958;super::chunk14::f_110cbf10(cpu,rt,0x110cbf10)?;
-pc=0x10d75958;continue;
-}
-0x10d75958=>{
+{
+'b10d75974: {
 // 0x10d75958 ldr w8, [x19, #0x10]
 {let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10d7595c str x0, [x19]
@@ -1482,32 +2867,26 @@ pc=0x10d75958;continue;
 // 0x10d75960 cmp w8, #9
 {let a=((cpu.x[8] as u32 as u64));let b=((0x9u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10d75964 b.gt #0x10d75974
-if cpu.condition(12){pc=0x10d75974;continue;}pc=0x10d75968;continue;
-}
-0x10d75968=>{
+if cpu.condition(12){break 'b10d75974;}{
 // 0x10d75968 add x0, x19, #8
 {let a=((cpu.x[19]));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
 // 0x10d7596c mov w1, #0xa
 cpu.x[1]=(((0xau64))) as u32 as u64;
 // 0x10d75970 bl #0x1081b608
 cpu.x[30]=0x10d75974;super::chunk12::f_1081b608(cpu,rt,0x1081b608)?;
-pc=0x10d75974;continue;
+break 'b10d75974;
 }
-0x10d75974=>{
+}
 // 0x10d75974 mov w0, #8
 cpu.x[0]=(((0x8u64))) as u32 as u64;
 // 0x10d75978 bl #0x1187d2b0
 cpu.x[30]=0x10d7597c;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
-pc=0x10d7597c;continue;
-}
-0x10d7597c=>{
+{
 // 0x10d7597c mov x20, x0
 cpu.x[20]=(((cpu.x[0]))) as u64;
 // 0x10d75980 bl #0x10daaeb0
 cpu.x[30]=0x10d75984;super::chunk13::f_10daaeb0(cpu,rt,0x10daaeb0)?;
-pc=0x10d75984;continue;
-}
-0x10d75984=>{
+{
 // 0x10d75984 str x20, [x19, #0x18]
 {let address=(cpu.x[19]).wrapping_add(0x18u64);let v0=cpu.x[20];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10d75988 ldp x20, x19, [sp, #0x10]
@@ -1517,9 +2896,96 @@ pc=0x10d75984;continue;
 // 0x10d75990 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d75930")),}}}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d75930_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10d75930{0}else{match pc{0x10d75930=>0,0x10d75958=>1,0x10d75968=>2,0x10d75974=>3,0x10d7597c=>4,0x10d75984=>5,_=>return Err(format!("untranslated block {pc:#x} in 0x10d75930").into()),}};loop{match block{
+0=>{
+// 0x10d75930 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10d75934 stp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10d75938 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10d7593c movi v0.2d, #0000000000000000
+cpu.q[0]=(lane_dup(0u128,64,2)) & 0xffffffffffffffffffffffffffffffffu128;
+// 0x10d75940 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10d75944 stur q0, [x0, #0x19]
+{let address=(cpu.x[0]).wrapping_add(0x19u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d75948 stp q0, q0, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);let v1=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);rt.memory.write::<u128>(address.wrapping_add(16),v1 as u128);}
+// 0x10d7594c str x1, [x0, #0x20]
+{let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=cpu.x[1];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d75950 mov x0, x1
+cpu.x[0]=(((cpu.x[1]))) as u64;
+// 0x10d75954 bl #0x110cbf10
+cpu.x[30]=0x10d75958;super::chunk14::f_110cbf10(cpu,rt,0x110cbf10)?;
+block=1;continue;
+}
+1=>{
+// 0x10d75958 ldr w8, [x19, #0x10]
+{let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10d7595c str x0, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d75960 cmp w8, #9
+{let a=((cpu.x[8] as u32 as u64));let b=((0x9u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10d75964 b.gt #0x10d75974
+if cpu.condition(12){block=3;continue;}block=2;continue;
+}
+2=>{
+// 0x10d75968 add x0, x19, #8
+{let a=((cpu.x[19]));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10d7596c mov w1, #0xa
+cpu.x[1]=(((0xau64))) as u32 as u64;
+// 0x10d75970 bl #0x1081b608
+cpu.x[30]=0x10d75974;super::chunk12::f_1081b608(cpu,rt,0x1081b608)?;
+block=3;continue;
+}
+3=>{
+// 0x10d75974 mov w0, #8
+cpu.x[0]=(((0x8u64))) as u32 as u64;
+// 0x10d75978 bl #0x1187d2b0
+cpu.x[30]=0x10d7597c;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
+block=4;continue;
+}
+4=>{
+// 0x10d7597c mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10d75980 bl #0x10daaeb0
+cpu.x[30]=0x10d75984;super::chunk13::f_10daaeb0(cpu,rt,0x10daaeb0)?;
+block=5;continue;
+}
+5=>{
+// 0x10d75984 str x20, [x19, #0x18]
+{let address=(cpu.x[19]).wrapping_add(0x18u64);let v0=cpu.x[20];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10d75988 ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10d7598c ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10d75990 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10d75930").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d77c8c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10d77c8c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d77c8c{return f_10d77c8c_slow(cpu,rt,pc);}
+
+// 0x10d77c8c ldr w8, [x1, #0x10]
+{let address=(cpu.x[1]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10d77c90 ldr q0, [x1]
+{let address=(cpu.x[1]).wrapping_add(0x0u64);let v0=rt.memory.read::<u128>(address.wrapping_add(0));cpu.q[0]=(v0) as u128 & 0xffffffffffffffffffffffffffffffffu128;}
+// 0x10d77c94 str w8, [x0, #0x48]
+{let address=(cpu.x[0]).wrapping_add(0x48u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10d77c98 stur q0, [x0, #0x38]
+{let address=(cpu.x[0]).wrapping_add(0x38u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10d77c9c ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d77c8c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10d77c8c=>{
 // 0x10d77c8c ldr w8, [x1, #0x10]
 {let address=(cpu.x[1]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -1532,25 +2998,34 @@ pub(super) unsafe fn f_10d77c8c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result
 // 0x10d77c9c ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d77c8c")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10d77c8c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10d79748(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10d79748(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10d79748{return f_10d79748_slow(cpu,rt,pc);}
+
+// 0x10d79748 mov w0, #0xbd
+cpu.x[0]=(((0xbdu64))) as u32 as u64;
+// 0x10d7974c ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10d79748_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10d79748=>{
 // 0x10d79748 mov w0, #0xbd
 cpu.x[0]=(((0xbdu64))) as u32 as u64;
 // 0x10d7974c ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10d79748")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10d79748").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10dbbd5c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10dbbd5c=>{
+pub(super) unsafe fn f_10dbbd5c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10dbbd5c{return f_10dbbd5c_slow(cpu,rt,pc);}
+
+'b10dbbe2c: {
 // 0x10dbbd5c ldr x9, [x0, #0x10]
 {let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
 // 0x10dbbd60 cbz x9, #0x10dbbe2c
-if (cpu.x[9]) == 0 {pc=0x10dbbe2c;continue;}pc=0x10dbbd64;continue;
-}
-0x10dbbd64=>{
+if (cpu.x[9]) == 0 {break 'b10dbbe2c;}{
+'b10dbbda0: {
 // 0x10dbbd64 fmov d0, x9
 cpu.q[0]=(cpu.x[9]) as u128 & 0xffffffffffffffffu128;
 // 0x10dbbd68 sxtw x8, w1
@@ -1564,166 +3039,334 @@ cpu.x[12]=((cpu.q[0] & 0xffffffffu128) as u64) as u32 as u64;
 // 0x10dbbd78 cmp x12, #1
 {let a=((cpu.x[12]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10dbbd7c b.hi #0x10dbbd8c
-if cpu.condition(8){pc=0x10dbbd8c;continue;}pc=0x10dbbd80;continue;
-}
-0x10dbbd80=>{
-// 0x10dbbd80 sub x10, x9, #1
-{let a=((cpu.x[9]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[10]=(result) as u64;}
-// 0x10dbbd84 and x10, x10, x8
-{let a=((cpu.x[10]));let b=((cpu.x[8]));let result=a & b;cpu.x[10]=(result) as u64;}
-// 0x10dbbd88 b #0x10dbbda0
-pc=0x10dbbda0;continue;
-}
-0x10dbbd8c=>{
+if cpu.condition(8){{
 // 0x10dbbd8c cmp x9, x8
 {let a=((cpu.x[9]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10dbbd90 mov x10, x8
 cpu.x[10]=(((cpu.x[8]))) as u64;
 // 0x10dbbd94 b.hi #0x10dbbda0
-if cpu.condition(8){pc=0x10dbbda0;continue;}pc=0x10dbbd98;continue;
-}
-0x10dbbd98=>{
+if cpu.condition(8){break 'b10dbbda0;}{
 // 0x10dbbd98 udiv x10, x8, x9
 {let a=((cpu.x[8])) as u64;let b=((cpu.x[9])) as u64;cpu.x[10]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
 // 0x10dbbd9c msub x10, x10, x9, x8
 cpu.x[10]=((((cpu.x[8]))).wrapping_sub((((cpu.x[10]))).wrapping_mul(((cpu.x[9]))))) as u64;
-pc=0x10dbbda0;continue;
+break 'b10dbbda0;
 }
-0x10dbbda0=>{
+}}{
+// 0x10dbbd80 sub x10, x9, #1
+{let a=((cpu.x[9]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[10]=(result) as u64;}
+// 0x10dbbd84 and x10, x10, x8
+{let a=((cpu.x[10]));let b=((cpu.x[8]));let result=a & b;cpu.x[10]=(result) as u64;}
+// 0x10dbbd88 b #0x10dbbda0
+break 'b10dbbda0;
+}
+}
 // 0x10dbbda0 ldr x11, [x0, #8]
 {let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
 // 0x10dbbda4 ldr x11, [x11, x10, lsl #3]
 {let address=((cpu.x[11]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[10])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
 // 0x10dbbda8 cbz x11, #0x10dbbe2c
-if (cpu.x[11]) == 0 {pc=0x10dbbe2c;continue;}pc=0x10dbbdac;continue;
-}
-0x10dbbdac=>{
+if (cpu.x[11]) == 0 {break 'b10dbbe2c;}{
 // 0x10dbbdac ldr x11, [x11]
 {let address=(cpu.x[11]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
 // 0x10dbbdb0 cbz x11, #0x10dbbe2c
-if (cpu.x[11]) == 0 {pc=0x10dbbe2c;continue;}pc=0x10dbbdb4;continue;
-}
-0x10dbbdb4=>{
+if (cpu.x[11]) == 0 {break 'b10dbbe2c;}{
+'b10dbbe34: {
 // 0x10dbbdb4 cmp x12, #2
 {let a=((cpu.x[12]));let b=((0x2u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10dbbdb8 b.hs #0x10dbbe08
-if cpu.condition(2){pc=0x10dbbe08;continue;}pc=0x10dbbdbc;continue;
-}
-0x10dbbdbc=>{
-// 0x10dbbdbc sub x9, x9, #1
-{let a=((cpu.x[9]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u64;}
-// 0x10dbbdc0 b #0x10dbbdd8
-pc=0x10dbbdd8;continue;
-}
-0x10dbbdc4=>{
-// 0x10dbbdc4 ldr w12, [x11, #0x10]
-{let address=(cpu.x[11]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[12]=(v0) as u32 as u64;}
-// 0x10dbbdc8 cmp w12, w1
-{let a=((cpu.x[12] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10dbbdcc b.eq #0x10dbbe34
-if cpu.condition(0){pc=0x10dbbe34;continue;}pc=0x10dbbdd0;continue;
-}
-0x10dbbdd0=>{
-// 0x10dbbdd0 ldr x11, [x11]
-{let address=(cpu.x[11]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
-// 0x10dbbdd4 cbz x11, #0x10dbbe2c
-if (cpu.x[11]) == 0 {pc=0x10dbbe2c;continue;}pc=0x10dbbdd8;continue;
-}
-0x10dbbdd8=>{
-// 0x10dbbdd8 ldr x12, [x11, #8]
-{let address=(cpu.x[11]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;}
-// 0x10dbbddc cmp x12, x8
-{let a=((cpu.x[12]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
-// 0x10dbbde0 b.eq #0x10dbbdc4
-if cpu.condition(0){pc=0x10dbbdc4;continue;}pc=0x10dbbde4;continue;
-}
-0x10dbbde4=>{
-// 0x10dbbde4 and x12, x12, x9
-{let a=((cpu.x[12]));let b=((cpu.x[9]));let result=a & b;cpu.x[12]=(result) as u64;}
-// 0x10dbbde8 cmp x12, x10
-{let a=((cpu.x[12]));let b=((cpu.x[10]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
-// 0x10dbbdec b.eq #0x10dbbdd0
-if cpu.condition(0){pc=0x10dbbdd0;continue;}pc=0x10dbbdf0;continue;
-}
-0x10dbbdf0=>{
-// 0x10dbbdf0 b #0x10dbbe2c
-pc=0x10dbbe2c;continue;
-}
-0x10dbbdf4=>{
-// 0x10dbbdf4 ldr w12, [x11, #0x10]
-{let address=(cpu.x[11]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[12]=(v0) as u32 as u64;}
-// 0x10dbbdf8 cmp w12, w1
-{let a=((cpu.x[12] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10dbbdfc b.eq #0x10dbbe34
-if cpu.condition(0){pc=0x10dbbe34;continue;}pc=0x10dbbe00;continue;
-}
-0x10dbbe00=>{
-// 0x10dbbe00 ldr x11, [x11]
-{let address=(cpu.x[11]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
-// 0x10dbbe04 cbz x11, #0x10dbbe2c
-if (cpu.x[11]) == 0 {pc=0x10dbbe2c;continue;}pc=0x10dbbe08;continue;
-}
-0x10dbbe08=>{
+if cpu.condition(2){{
+'l10dbbe08: loop {
+'b10dbbe00: {
 // 0x10dbbe08 ldr x12, [x11, #8]
 {let address=(cpu.x[11]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;}
 // 0x10dbbe0c cmp x12, x8
 {let a=((cpu.x[12]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10dbbe10 b.eq #0x10dbbdf4
-if cpu.condition(0){pc=0x10dbbdf4;continue;}pc=0x10dbbe14;continue;
-}
-0x10dbbe14=>{
+if cpu.condition(0){{
+// 0x10dbbdf4 ldr w12, [x11, #0x10]
+{let address=(cpu.x[11]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[12]=(v0) as u32 as u64;}
+// 0x10dbbdf8 cmp w12, w1
+{let a=((cpu.x[12] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10dbbdfc b.eq #0x10dbbe34
+if cpu.condition(0){break 'b10dbbe34;}break 'b10dbbe00;
+}}{
+'b10dbbe24: {
 // 0x10dbbe14 cmp x12, x9
 {let a=((cpu.x[12]));let b=((cpu.x[9]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10dbbe18 b.lo #0x10dbbe24
-if cpu.condition(3){pc=0x10dbbe24;continue;}pc=0x10dbbe1c;continue;
-}
-0x10dbbe1c=>{
+if cpu.condition(3){break 'b10dbbe24;}{
 // 0x10dbbe1c udiv x13, x12, x9
 {let a=((cpu.x[12])) as u64;let b=((cpu.x[9])) as u64;cpu.x[13]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
 // 0x10dbbe20 msub x12, x13, x9, x12
 cpu.x[12]=((((cpu.x[12]))).wrapping_sub((((cpu.x[13]))).wrapping_mul(((cpu.x[9]))))) as u64;
-pc=0x10dbbe24;continue;
+break 'b10dbbe24;
 }
-0x10dbbe24=>{
+}
 // 0x10dbbe24 cmp x12, x10
 {let a=((cpu.x[12]));let b=((cpu.x[10]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10dbbe28 b.eq #0x10dbbe00
-if cpu.condition(0){pc=0x10dbbe00;continue;}pc=0x10dbbe2c;continue;
+if cpu.condition(0){break 'b10dbbe00;}break 'b10dbbe2c;
 }
-0x10dbbe2c=>{
-// 0x10dbbe2c mov x0, xzr
-cpu.x[0]=(((0u64))) as u64;
-// 0x10dbbe30 ret
-cpu.pc=cpu.x[30];return Ok(());
 }
-0x10dbbe34=>{
+// 0x10dbbe00 ldr x11, [x11]
+{let address=(cpu.x[11]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
+// 0x10dbbe04 cbz x11, #0x10dbbe2c
+if (cpu.x[11]) == 0 {break 'b10dbbe2c;}continue 'l10dbbe08;
+}
+}}{
+// 0x10dbbdbc sub x9, x9, #1
+{let a=((cpu.x[9]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u64;}
+// 0x10dbbdc0 b #0x10dbbdd8
+{
+'l10dbbdd8: loop {
+'b10dbbdd0: {
+// 0x10dbbdd8 ldr x12, [x11, #8]
+{let address=(cpu.x[11]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;}
+// 0x10dbbddc cmp x12, x8
+{let a=((cpu.x[12]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10dbbde0 b.eq #0x10dbbdc4
+if cpu.condition(0){{
+// 0x10dbbdc4 ldr w12, [x11, #0x10]
+{let address=(cpu.x[11]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[12]=(v0) as u32 as u64;}
+// 0x10dbbdc8 cmp w12, w1
+{let a=((cpu.x[12] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10dbbdcc b.eq #0x10dbbe34
+if cpu.condition(0){break 'b10dbbe34;}break 'b10dbbdd0;
+}}{
+// 0x10dbbde4 and x12, x12, x9
+{let a=((cpu.x[12]));let b=((cpu.x[9]));let result=a & b;cpu.x[12]=(result) as u64;}
+// 0x10dbbde8 cmp x12, x10
+{let a=((cpu.x[12]));let b=((cpu.x[10]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10dbbdec b.eq #0x10dbbdd0
+if cpu.condition(0){break 'b10dbbdd0;}{
+// 0x10dbbdf0 b #0x10dbbe2c
+break 'b10dbbe2c;
+}
+}
+}
+// 0x10dbbdd0 ldr x11, [x11]
+{let address=(cpu.x[11]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
+// 0x10dbbdd4 cbz x11, #0x10dbbe2c
+if (cpu.x[11]) == 0 {break 'b10dbbe2c;}continue 'l10dbbdd8;
+}
+}
+}
+}
 // 0x10dbbe34 ldr x0, [x11, #0x18]
 {let address=(cpu.x[11]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10dbbe38 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10dbbd5c")),}}}
+}
+}
+}
+// 0x10dbbe2c mov x0, xzr
+cpu.x[0]=(((0u64))) as u64;
+// 0x10dbbe30 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10dbbd5c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10dbbd5c{0}else{match pc{0x10dbbd5c=>0,0x10dbbd64=>1,0x10dbbd80=>2,0x10dbbd8c=>3,0x10dbbd98=>4,0x10dbbda0=>5,0x10dbbdac=>6,0x10dbbdb4=>7,0x10dbbdbc=>8,0x10dbbdc4=>9,0x10dbbdd0=>10,0x10dbbdd8=>11,0x10dbbde4=>12,0x10dbbdf0=>13,0x10dbbdf4=>14,0x10dbbe00=>15,0x10dbbe08=>16,0x10dbbe14=>17,0x10dbbe1c=>18,0x10dbbe24=>19,0x10dbbe2c=>20,0x10dbbe34=>21,_=>return Err(format!("untranslated block {pc:#x} in 0x10dbbd5c").into()),}};loop{match block{
+0=>{
+// 0x10dbbd5c ldr x9, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10dbbd60 cbz x9, #0x10dbbe2c
+if (cpu.x[9]) == 0 {block=20;continue;}block=1;continue;
+}
+1=>{
+// 0x10dbbd64 fmov d0, x9
+cpu.q[0]=(cpu.x[9]) as u128 & 0xffffffffffffffffu128;
+// 0x10dbbd68 sxtw x8, w1
+cpu.x[8]=((((cpu.x[1] as u32 as u64))) as i32 as i64 as u64) as u64;
+// 0x10dbbd6c cnt v0.8b, v0.8b
+cpu.q[0]=(lane_count((cpu.q[0] & 0xffffffffffffffffu128),8,8)) & 0xffffffffffffffffu128;
+// 0x10dbbd70 uaddlv h0, v0.8b
+cpu.q[0]=(lane_reduce((cpu.q[0] & 0xffffffffffffffffu128),8,8,"uaddlv")) & 0xffffu128;
+// 0x10dbbd74 fmov w12, s0
+cpu.x[12]=((cpu.q[0] & 0xffffffffu128) as u64) as u32 as u64;
+// 0x10dbbd78 cmp x12, #1
+{let a=((cpu.x[12]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10dbbd7c b.hi #0x10dbbd8c
+if cpu.condition(8){block=3;continue;}block=2;continue;
+}
+2=>{
+// 0x10dbbd80 sub x10, x9, #1
+{let a=((cpu.x[9]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[10]=(result) as u64;}
+// 0x10dbbd84 and x10, x10, x8
+{let a=((cpu.x[10]));let b=((cpu.x[8]));let result=a & b;cpu.x[10]=(result) as u64;}
+// 0x10dbbd88 b #0x10dbbda0
+block=5;continue;
+}
+3=>{
+// 0x10dbbd8c cmp x9, x8
+{let a=((cpu.x[9]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10dbbd90 mov x10, x8
+cpu.x[10]=(((cpu.x[8]))) as u64;
+// 0x10dbbd94 b.hi #0x10dbbda0
+if cpu.condition(8){block=5;continue;}block=4;continue;
+}
+4=>{
+// 0x10dbbd98 udiv x10, x8, x9
+{let a=((cpu.x[8])) as u64;let b=((cpu.x[9])) as u64;cpu.x[10]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x10dbbd9c msub x10, x10, x9, x8
+cpu.x[10]=((((cpu.x[8]))).wrapping_sub((((cpu.x[10]))).wrapping_mul(((cpu.x[9]))))) as u64;
+block=5;continue;
+}
+5=>{
+// 0x10dbbda0 ldr x11, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
+// 0x10dbbda4 ldr x11, [x11, x10, lsl #3]
+{let address=((cpu.x[11]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[10])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
+// 0x10dbbda8 cbz x11, #0x10dbbe2c
+if (cpu.x[11]) == 0 {block=20;continue;}block=6;continue;
+}
+6=>{
+// 0x10dbbdac ldr x11, [x11]
+{let address=(cpu.x[11]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
+// 0x10dbbdb0 cbz x11, #0x10dbbe2c
+if (cpu.x[11]) == 0 {block=20;continue;}block=7;continue;
+}
+7=>{
+// 0x10dbbdb4 cmp x12, #2
+{let a=((cpu.x[12]));let b=((0x2u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10dbbdb8 b.hs #0x10dbbe08
+if cpu.condition(2){block=16;continue;}block=8;continue;
+}
+8=>{
+// 0x10dbbdbc sub x9, x9, #1
+{let a=((cpu.x[9]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u64;}
+// 0x10dbbdc0 b #0x10dbbdd8
+block=11;continue;
+}
+9=>{
+// 0x10dbbdc4 ldr w12, [x11, #0x10]
+{let address=(cpu.x[11]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[12]=(v0) as u32 as u64;}
+// 0x10dbbdc8 cmp w12, w1
+{let a=((cpu.x[12] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10dbbdcc b.eq #0x10dbbe34
+if cpu.condition(0){block=21;continue;}block=10;continue;
+}
+10=>{
+// 0x10dbbdd0 ldr x11, [x11]
+{let address=(cpu.x[11]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
+// 0x10dbbdd4 cbz x11, #0x10dbbe2c
+if (cpu.x[11]) == 0 {block=20;continue;}block=11;continue;
+}
+11=>{
+// 0x10dbbdd8 ldr x12, [x11, #8]
+{let address=(cpu.x[11]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;}
+// 0x10dbbddc cmp x12, x8
+{let a=((cpu.x[12]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10dbbde0 b.eq #0x10dbbdc4
+if cpu.condition(0){block=9;continue;}block=12;continue;
+}
+12=>{
+// 0x10dbbde4 and x12, x12, x9
+{let a=((cpu.x[12]));let b=((cpu.x[9]));let result=a & b;cpu.x[12]=(result) as u64;}
+// 0x10dbbde8 cmp x12, x10
+{let a=((cpu.x[12]));let b=((cpu.x[10]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10dbbdec b.eq #0x10dbbdd0
+if cpu.condition(0){block=10;continue;}block=13;continue;
+}
+13=>{
+// 0x10dbbdf0 b #0x10dbbe2c
+block=20;continue;
+}
+14=>{
+// 0x10dbbdf4 ldr w12, [x11, #0x10]
+{let address=(cpu.x[11]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[12]=(v0) as u32 as u64;}
+// 0x10dbbdf8 cmp w12, w1
+{let a=((cpu.x[12] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10dbbdfc b.eq #0x10dbbe34
+if cpu.condition(0){block=21;continue;}block=15;continue;
+}
+15=>{
+// 0x10dbbe00 ldr x11, [x11]
+{let address=(cpu.x[11]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
+// 0x10dbbe04 cbz x11, #0x10dbbe2c
+if (cpu.x[11]) == 0 {block=20;continue;}block=16;continue;
+}
+16=>{
+// 0x10dbbe08 ldr x12, [x11, #8]
+{let address=(cpu.x[11]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;}
+// 0x10dbbe0c cmp x12, x8
+{let a=((cpu.x[12]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10dbbe10 b.eq #0x10dbbdf4
+if cpu.condition(0){block=14;continue;}block=17;continue;
+}
+17=>{
+// 0x10dbbe14 cmp x12, x9
+{let a=((cpu.x[12]));let b=((cpu.x[9]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10dbbe18 b.lo #0x10dbbe24
+if cpu.condition(3){block=19;continue;}block=18;continue;
+}
+18=>{
+// 0x10dbbe1c udiv x13, x12, x9
+{let a=((cpu.x[12])) as u64;let b=((cpu.x[9])) as u64;cpu.x[13]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u64;}
+// 0x10dbbe20 msub x12, x13, x9, x12
+cpu.x[12]=((((cpu.x[12]))).wrapping_sub((((cpu.x[13]))).wrapping_mul(((cpu.x[9]))))) as u64;
+block=19;continue;
+}
+19=>{
+// 0x10dbbe24 cmp x12, x10
+{let a=((cpu.x[12]));let b=((cpu.x[10]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10dbbe28 b.eq #0x10dbbe00
+if cpu.condition(0){block=15;continue;}block=20;continue;
+}
+20=>{
+// 0x10dbbe2c mov x0, xzr
+cpu.x[0]=(((0u64))) as u64;
+// 0x10dbbe30 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+21=>{
+// 0x10dbbe34 ldr x0, [x11, #0x18]
+{let address=(cpu.x[11]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10dbbe38 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10dbbd5c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10dc1170(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10dc1170(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10dc1170{return f_10dc1170_slow(cpu,rt,pc);}
+
+// 0x10dc1170 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10dc1174 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10dc1170_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10dc1170=>{
 // 0x10dc1170 mov w0, wzr
 cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10dc1174 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10dc1170")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10dc1170").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10ddad10(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10ddad10(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10ddad10{return f_10ddad10_slow(cpu,rt,pc);}
+
+// 0x10ddad10 ldr w0, [x0, #0x1d8]
+{let address=(cpu.x[0]).wrapping_add(0x1d8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10ddad14 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10ddad10_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10ddad10=>{
 // 0x10ddad10 ldr w0, [x0, #0x1d8]
 {let address=(cpu.x[0]).wrapping_add(0x1d8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
 // 0x10ddad14 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10ddad10")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10ddad10").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10de01bc(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10de01bc=>{
+pub(super) unsafe fn f_10de01bc(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10de01bc{return f_10de01bc_slow(cpu,rt,pc);}
+
 // 0x10de01bc stp x29, x30, [sp, #-0x30]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10de01c0 str x21, [sp, #0x10]
@@ -1739,16 +3382,102 @@ cpu.x[20]=(((cpu.x[0]))) as u64;
 // 0x10de01d4 mov x19, x1
 cpu.x[19]=(((cpu.x[1]))) as u64;
 // 0x10de01d8 cbz w8, #0x10de0208
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10de0208;continue;}pc=0x10de01dc;continue;
+if (cpu.x[8] as u32 as u64) == 0 {{
+// 0x10de0208 ldrb w21, [x20, #0x571]
+{let address=(cpu.x[20]).wrapping_add(0x571u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[21]=(v0) as u32 as u64;}
+// 0x10de020c mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10de0210 bl #0x10e0b6b4
+cpu.x[30]=0x10de0214;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
+{
+// 0x10de0214 ldr w1, [x20, #0x7b0]
+{let address=(cpu.x[20]).wrapping_add(0x7b0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[1]=(v0) as u32 as u64;}
+// 0x10de0218 ldr x0, [x0, #0x78]
+{let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10de021c ldr x4, [x20, #0x270]
+{let address=(cpu.x[20]).wrapping_add(0x270u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[4]=(v0) as u64;}
+// 0x10de0220 cbz w21, #0x10de023c
+if (cpu.x[21] as u32 as u64) == 0 {{
+// 0x10de023c and x2, x19, #0xffffffff
+{let a=((cpu.x[19]));let b=((0xffffffffu64));let result=a & b;cpu.x[2]=(result) as u64;}
+// 0x10de0240 mov w3, #1
+cpu.x[3]=(((0x1u64))) as u32 as u64;
+// 0x10de0244 bl #0x10e7e418
+cpu.x[30]=0x10de0248;super::chunk9::f_10e7e418(cpu,rt,0x10e7e418)?;
+{
+'b10de0250: {
+// 0x10de0248 cmp w0, #0
+{let a=((cpu.x[0] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10de024c b.le #0x10de0260
+if cpu.condition(13){{
+// 0x10de0260 ldr x8, [x20, #0xc0]
+{let address=(cpu.x[20]).wrapping_add(0xc0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10de0264 cbz x8, #0x10de0250
+if (cpu.x[8]) == 0 {break 'b10de0250;}{
+// 0x10de0268 and x1, x19, #0xffffffff
+{let a=((cpu.x[19]));let b=((0xffffffffu64));let result=a & b;cpu.x[1]=(result) as u64;}
+// 0x10de026c mov w21, w0
+cpu.x[21]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10de0270 mov x0, x8
+cpu.x[0]=(((cpu.x[8]))) as u64;
+// 0x10de0274 bl #0x10e5ae54
+cpu.x[30]=0x10de0278;super::chunk9::f_10e5ae54(cpu,rt,0x10e5ae54)?;
+{
+// 0x10de0278 mov w8, w0
+cpu.x[8]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10de027c mov w0, w21
+cpu.x[0]=(((cpu.x[21] as u32 as u64))) as u32 as u64;
+// 0x10de0280 cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10de0284 b.lt #0x10de0250
+if cpu.condition(11){break 'b10de0250;}{
+// 0x10de0288 ldr x0, [x20, #0xc0]
+{let address=(cpu.x[20]).wrapping_add(0xc0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10de028c and x1, x19, #0xffffffff
+{let a=((cpu.x[19]));let b=((0xffffffffu64));let result=a & b;cpu.x[1]=(result) as u64;}
+// 0x10de0290 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10de0294 ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10de0298 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10de029c b #0x10e5ae54
+super::chunk9::f_10e5ae54(cpu,rt,0x10e5ae54)?;return Ok(());
 }
-0x10de01dc=>{
+}
+}
+}}break 'b10de0250;
+}
+// 0x10de0250 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10de0254 ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10de0258 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10de025c ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+}}{
+// 0x10de0224 and x2, x19, #0xffffffff
+{let a=((cpu.x[19]));let b=((0xffffffffu64));let result=a & b;cpu.x[2]=(result) as u64;}
+// 0x10de0228 mov w3, #5
+cpu.x[3]=(((0x5u64))) as u32 as u64;
+// 0x10de022c ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10de0230 ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10de0234 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10de0238 b #0x10e7e418
+super::chunk9::f_10e7e418(cpu,rt,0x10e7e418)?;return Ok(());
+}
+}
+}}{
 // 0x10de01dc mov x0, x20
 cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10de01e0 bl #0x10e0b6b4
 cpu.x[30]=0x10de01e4;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
-pc=0x10de01e4;continue;
-}
-0x10de01e4=>{
+{
 // 0x10de01e4 ldr x0, [x0, #0x78]
 {let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10de01e8 ldr w1, [x20, #0x7b0]
@@ -1768,16 +3497,66 @@ cpu.x[3]=(((0x3u64))) as u32 as u64;
 // 0x10de0204 b #0x10e7e418
 super::chunk9::f_10e7e418(cpu,rt,0x10e7e418)?;return Ok(());
 }
-0x10de0208=>{
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10de01bc_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10de01bc{0}else{match pc{0x10de01bc=>0,0x10de01dc=>1,0x10de01e4=>2,0x10de0208=>3,0x10de0214=>4,0x10de0224=>5,0x10de023c=>6,0x10de0248=>7,0x10de0250=>8,0x10de0260=>9,0x10de0268=>10,0x10de0278=>11,0x10de0288=>12,_=>return Err(format!("untranslated block {pc:#x} in 0x10de01bc").into()),}};loop{match block{
+0=>{
+// 0x10de01bc stp x29, x30, [sp, #-0x30]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10de01c0 str x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10de01c4 stp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10de01c8 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10de01cc ldrb w8, [x0, #0x572]
+{let address=(cpu.x[0]).wrapping_add(0x572u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10de01d0 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10de01d4 mov x19, x1
+cpu.x[19]=(((cpu.x[1]))) as u64;
+// 0x10de01d8 cbz w8, #0x10de0208
+if (cpu.x[8] as u32 as u64) == 0 {block=3;continue;}block=1;continue;
+}
+1=>{
+// 0x10de01dc mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10de01e0 bl #0x10e0b6b4
+cpu.x[30]=0x10de01e4;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
+block=2;continue;
+}
+2=>{
+// 0x10de01e4 ldr x0, [x0, #0x78]
+{let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10de01e8 ldr w1, [x20, #0x7b0]
+{let address=(cpu.x[20]).wrapping_add(0x7b0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[1]=(v0) as u32 as u64;}
+// 0x10de01ec and x2, x19, #0xffffffff
+{let a=((cpu.x[19]));let b=((0xffffffffu64));let result=a & b;cpu.x[2]=(result) as u64;}
+// 0x10de01f0 ldr x4, [x20, #0x270]
+{let address=(cpu.x[20]).wrapping_add(0x270u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[4]=(v0) as u64;}
+// 0x10de01f4 mov w3, #3
+cpu.x[3]=(((0x3u64))) as u32 as u64;
+// 0x10de01f8 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10de01fc ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10de0200 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10de0204 b #0x10e7e418
+super::chunk9::f_10e7e418(cpu,rt,0x10e7e418)?;return Ok(());
+}
+3=>{
 // 0x10de0208 ldrb w21, [x20, #0x571]
 {let address=(cpu.x[20]).wrapping_add(0x571u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[21]=(v0) as u32 as u64;}
 // 0x10de020c mov x0, x20
 cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10de0210 bl #0x10e0b6b4
 cpu.x[30]=0x10de0214;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
-pc=0x10de0214;continue;
+block=4;continue;
 }
-0x10de0214=>{
+4=>{
 // 0x10de0214 ldr w1, [x20, #0x7b0]
 {let address=(cpu.x[20]).wrapping_add(0x7b0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[1]=(v0) as u32 as u64;}
 // 0x10de0218 ldr x0, [x0, #0x78]
@@ -1785,9 +3564,9 @@ pc=0x10de0214;continue;
 // 0x10de021c ldr x4, [x20, #0x270]
 {let address=(cpu.x[20]).wrapping_add(0x270u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[4]=(v0) as u64;}
 // 0x10de0220 cbz w21, #0x10de023c
-if (cpu.x[21] as u32 as u64) == 0 {pc=0x10de023c;continue;}pc=0x10de0224;continue;
+if (cpu.x[21] as u32 as u64) == 0 {block=6;continue;}block=5;continue;
 }
-0x10de0224=>{
+5=>{
 // 0x10de0224 and x2, x19, #0xffffffff
 {let a=((cpu.x[19]));let b=((0xffffffffu64));let result=a & b;cpu.x[2]=(result) as u64;}
 // 0x10de0228 mov w3, #5
@@ -1801,22 +3580,22 @@ cpu.x[3]=(((0x5u64))) as u32 as u64;
 // 0x10de0238 b #0x10e7e418
 super::chunk9::f_10e7e418(cpu,rt,0x10e7e418)?;return Ok(());
 }
-0x10de023c=>{
+6=>{
 // 0x10de023c and x2, x19, #0xffffffff
 {let a=((cpu.x[19]));let b=((0xffffffffu64));let result=a & b;cpu.x[2]=(result) as u64;}
 // 0x10de0240 mov w3, #1
 cpu.x[3]=(((0x1u64))) as u32 as u64;
 // 0x10de0244 bl #0x10e7e418
 cpu.x[30]=0x10de0248;super::chunk9::f_10e7e418(cpu,rt,0x10e7e418)?;
-pc=0x10de0248;continue;
+block=7;continue;
 }
-0x10de0248=>{
+7=>{
 // 0x10de0248 cmp w0, #0
 {let a=((cpu.x[0] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10de024c b.le #0x10de0260
-if cpu.condition(13){pc=0x10de0260;continue;}pc=0x10de0250;continue;
+if cpu.condition(13){block=9;continue;}block=8;continue;
 }
-0x10de0250=>{
+8=>{
 // 0x10de0250 ldp x20, x19, [sp, #0x20]
 {let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10de0254 ldr x21, [sp, #0x10]
@@ -1826,13 +3605,13 @@ if cpu.condition(13){pc=0x10de0260;continue;}pc=0x10de0250;continue;
 // 0x10de025c ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10de0260=>{
+9=>{
 // 0x10de0260 ldr x8, [x20, #0xc0]
 {let address=(cpu.x[20]).wrapping_add(0xc0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10de0264 cbz x8, #0x10de0250
-if (cpu.x[8]) == 0 {pc=0x10de0250;continue;}pc=0x10de0268;continue;
+if (cpu.x[8]) == 0 {block=8;continue;}block=10;continue;
 }
-0x10de0268=>{
+10=>{
 // 0x10de0268 and x1, x19, #0xffffffff
 {let a=((cpu.x[19]));let b=((0xffffffffu64));let result=a & b;cpu.x[1]=(result) as u64;}
 // 0x10de026c mov w21, w0
@@ -1841,9 +3620,9 @@ cpu.x[21]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 cpu.x[0]=(((cpu.x[8]))) as u64;
 // 0x10de0274 bl #0x10e5ae54
 cpu.x[30]=0x10de0278;super::chunk9::f_10e5ae54(cpu,rt,0x10e5ae54)?;
-pc=0x10de0278;continue;
+block=11;continue;
 }
-0x10de0278=>{
+11=>{
 // 0x10de0278 mov w8, w0
 cpu.x[8]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10de027c mov w0, w21
@@ -1851,9 +3630,9 @@ cpu.x[0]=(((cpu.x[21] as u32 as u64))) as u32 as u64;
 // 0x10de0280 cmp w8, #1
 {let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10de0284 b.lt #0x10de0250
-if cpu.condition(11){pc=0x10de0250;continue;}pc=0x10de0288;continue;
+if cpu.condition(11){block=8;continue;}block=12;continue;
 }
-0x10de0288=>{
+12=>{
 // 0x10de0288 ldr x0, [x20, #0xc0]
 {let address=(cpu.x[20]).wrapping_add(0xc0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10de028c and x1, x19, #0xffffffff
@@ -1867,43 +3646,91 @@ if cpu.condition(11){pc=0x10de0250;continue;}pc=0x10de0288;continue;
 // 0x10de029c b #0x10e5ae54
 super::chunk9::f_10e5ae54(cpu,rt,0x10e5ae54)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10de01bc")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10de01bc").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10de0aec(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10de0aec(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10de0aec{return f_10de0aec_slow(cpu,rt,pc);}
+
+// 0x10de0aec ldr w0, [x0, #0x328]
+{let address=(cpu.x[0]).wrapping_add(0x328u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10de0af0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10de0aec_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10de0aec=>{
 // 0x10de0aec ldr w0, [x0, #0x328]
 {let address=(cpu.x[0]).wrapping_add(0x328u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
 // 0x10de0af0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10de0aec")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10de0aec").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10de0b1c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10de0b0c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10de0b0c{return f_10de0b0c_slow(cpu,rt,pc);}
+
+// 0x10de0b0c ldrb w0, [x0, #0x3a3]
+{let address=(cpu.x[0]).wrapping_add(0x3a3u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10de0b10 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10de0b0c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+0x10de0b0c=>{
+// 0x10de0b0c ldrb w0, [x0, #0x3a3]
+{let address=(cpu.x[0]).wrapping_add(0x3a3u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10de0b10 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10de0b0c").into()),}}}
+#[inline]
+pub(super) unsafe fn f_10de0b1c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10de0b1c{return f_10de0b1c_slow(cpu,rt,pc);}
+
+// 0x10de0b1c ldr w0, [x0, #0x6a4]
+{let address=(cpu.x[0]).wrapping_add(0x6a4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10de0b20 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10de0b1c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10de0b1c=>{
 // 0x10de0b1c ldr w0, [x0, #0x6a4]
 {let address=(cpu.x[0]).wrapping_add(0x6a4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
 // 0x10de0b20 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10de0b1c")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10de0b1c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10de1248(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10de1248(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10de1248{return f_10de1248_slow(cpu,rt,pc);}
+
+// 0x10de1248 ldrb w0, [x0, #0x39a]
+{let address=(cpu.x[0]).wrapping_add(0x39au64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10de124c ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10de1248_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10de1248=>{
 // 0x10de1248 ldrb w0, [x0, #0x39a]
 {let address=(cpu.x[0]).wrapping_add(0x39au64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
 // 0x10de124c ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10de1248")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10de1248").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10de1648(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10de1648=>{
+pub(super) unsafe fn f_10de1648(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10de1648{return f_10de1648_slow(cpu,rt,pc);}
+
 // 0x10de1648 ldr x8, [x0, #0x710]
 {let address=(cpu.x[0]).wrapping_add(0x710u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10de164c cbz x8, #0x10de1660
-if (cpu.x[8]) == 0 {pc=0x10de1660;continue;}pc=0x10de1650;continue;
-}
-0x10de1650=>{
+if (cpu.x[8]) == 0 {{
+// 0x10de1660 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10de1664 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
 // 0x10de1650 ldrb w8, [x8, #0xac]
 {let address=(cpu.x[8]).wrapping_add(0xacu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10de1654 cmp w8, #0
@@ -1913,39 +3740,82 @@ cpu.x[0]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x10de165c ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10de1660=>{
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10de1648_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10de1648{0}else{match pc{0x10de1648=>0,0x10de1650=>1,0x10de1660=>2,_=>return Err(format!("untranslated block {pc:#x} in 0x10de1648").into()),}};loop{match block{
+0=>{
+// 0x10de1648 ldr x8, [x0, #0x710]
+{let address=(cpu.x[0]).wrapping_add(0x710u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10de164c cbz x8, #0x10de1660
+if (cpu.x[8]) == 0 {block=2;continue;}block=1;continue;
+}
+1=>{
+// 0x10de1650 ldrb w8, [x8, #0xac]
+{let address=(cpu.x[8]).wrapping_add(0xacu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10de1654 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10de1658 cset w0, ne
+cpu.x[0]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x10de165c ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+2=>{
 // 0x10de1660 mov w0, wzr
 cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10de1664 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10de1648")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10de1648").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e0b6b4(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10e0b6b4(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e0b6b4{return f_10e0b6b4_slow(cpu,rt,pc);}
+
+// 0x10e0b6b4 ldr x0, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10e0b6b8 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e0b6b4_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10e0b6b4=>{
 // 0x10e0b6b4 ldr x0, [x0, #0x10]
 {let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10e0b6b8 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e0b6b4")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10e0b6b4").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e0bff8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10e0bff8=>{
+pub(super) unsafe fn f_10e0bff8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e0bff8{return f_10e0bff8_slow(cpu,rt,pc);}
+
 // 0x10e0bff8 mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10e0bffc strb w8, [x0, #0x60]
 {let address=(cpu.x[0]).wrapping_add(0x60u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
-pc=0x10e0c000;continue;
-}
-0x10e0c000=>{
+{
 // 0x10e0c000 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e0bff8")),}}}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e0bff8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10e0bff8{0}else{match pc{0x10e0bff8=>0,0x10e0c000=>1,_=>return Err(format!("untranslated block {pc:#x} in 0x10e0bff8").into()),}};loop{match block{
+0=>{
+// 0x10e0bff8 mov w8, #1
+cpu.x[8]=(((0x1u64))) as u32 as u64;
+// 0x10e0bffc strb w8, [x0, #0x60]
+{let address=(cpu.x[0]).wrapping_add(0x60u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
+block=1;continue;
+}
+1=>{
+// 0x10e0c000 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10e0bff8").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e130ec(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10e130ec=>{
+pub(super) unsafe fn f_10e130ec(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e130ec{return f_10e130ec_slow(cpu,rt,pc);}
+
+'b10e13128: {
 // 0x10e130ec stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10e130f0 stp x20, x19, [sp, #0x10]
@@ -1953,9 +3823,7 @@ pub(super) unsafe fn f_10e130ec(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result
 // 0x10e130f4 mov x29, sp
 cpu.x[29]=(((cpu.sp))) as u64;
 // 0x10e130f8 cbz x1, #0x10e13128
-if (cpu.x[1]) == 0 {pc=0x10e13128;continue;}pc=0x10e130fc;continue;
-}
-0x10e130fc=>{
+if (cpu.x[1]) == 0 {break 'b10e13128;}{
 // 0x10e130fc mov x20, x0
 cpu.x[20]=(((cpu.x[0]))) as u64;
 // 0x10e13100 mov x0, x1
@@ -1964,17 +3832,13 @@ cpu.x[0]=(((cpu.x[1]))) as u64;
 cpu.x[19]=(((cpu.x[1]))) as u64;
 // 0x10e13108 bl #0x10e0b614
 cpu.x[30]=0x10e1310c;super::chunk0::f_10e0b614(cpu,rt,0x10e0b614)?;
-pc=0x10e1310c;continue;
-}
-0x10e1310c=>{
+{
 // 0x10e1310c ldr w8, [x20, #0x84]
 {let address=(cpu.x[20]).wrapping_add(0x84u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10e13110 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10e13114 b.ne #0x10e13128
-if cpu.condition(1){pc=0x10e13128;continue;}pc=0x10e13118;continue;
-}
-0x10e13118=>{
+if cpu.condition(1){break 'b10e13128;}{
 // 0x10e13118 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10e1311c ldp x20, x19, [sp, #0x10]
@@ -1984,7 +3848,9 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10e13124 b #0x10e0b668
 super::chunk4::f_10e0b668(cpu,rt,0x10e0b668)?;return Ok(());
 }
-0x10e13128=>{
+}
+}
+}
 // 0x10e13128 mov w0, #-1
 cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
 // 0x10e1312c ldp x20, x19, [sp, #0x10]
@@ -1994,25 +3860,95 @@ cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
 // 0x10e13134 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e130ec")),}}}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e130ec_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10e130ec{0}else{match pc{0x10e130ec=>0,0x10e130fc=>1,0x10e1310c=>2,0x10e13118=>3,0x10e13128=>4,_=>return Err(format!("untranslated block {pc:#x} in 0x10e130ec").into()),}};loop{match block{
+0=>{
+// 0x10e130ec stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10e130f0 stp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10e130f4 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10e130f8 cbz x1, #0x10e13128
+if (cpu.x[1]) == 0 {block=4;continue;}block=1;continue;
+}
+1=>{
+// 0x10e130fc mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10e13100 mov x0, x1
+cpu.x[0]=(((cpu.x[1]))) as u64;
+// 0x10e13104 mov x19, x1
+cpu.x[19]=(((cpu.x[1]))) as u64;
+// 0x10e13108 bl #0x10e0b614
+cpu.x[30]=0x10e1310c;super::chunk0::f_10e0b614(cpu,rt,0x10e0b614)?;
+block=2;continue;
+}
+2=>{
+// 0x10e1310c ldr w8, [x20, #0x84]
+{let address=(cpu.x[20]).wrapping_add(0x84u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10e13110 cmp w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10e13114 b.ne #0x10e13128
+if cpu.condition(1){block=4;continue;}block=3;continue;
+}
+3=>{
+// 0x10e13118 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10e1311c ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10e13120 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10e13124 b #0x10e0b668
+super::chunk4::f_10e0b668(cpu,rt,0x10e0b668)?;return Ok(());
+}
+4=>{
+// 0x10e13128 mov w0, #-1
+cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
+// 0x10e1312c ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10e13130 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10e13134 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10e130ec").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e167b4(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10e167b4(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e167b4{return f_10e167b4_slow(cpu,rt,pc);}
+
+// 0x10e167b4 ldr x0, [x0, #0x800]
+{let address=(cpu.x[0]).wrapping_add(0x800u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10e167b8 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e167b4_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10e167b4=>{
 // 0x10e167b4 ldr x0, [x0, #0x800]
 {let address=(cpu.x[0]).wrapping_add(0x800u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10e167b8 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e167b4")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10e167b4").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e19ce0(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10e19ce0(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e19ce0{return f_10e19ce0_slow(cpu,rt,pc);}
+
+// 0x10e19ce0 ldr x0, [x0, #0xe80]
+{let address=(cpu.x[0]).wrapping_add(0xe80u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10e19ce4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e19ce0_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10e19ce0=>{
 // 0x10e19ce0 ldr x0, [x0, #0xe80]
 {let address=(cpu.x[0]).wrapping_add(0xe80u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10e19ce4 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e19ce0")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10e19ce0").into()),}}}
 #[inline]
 pub(super) unsafe fn f_10e1ad4c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10e1ad4c=>{
@@ -2025,31 +3961,52 @@ pub(super) unsafe fn f_10e1ad4c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result
 // 0x10e1ad58 br x2
 {let target=cpu.x[2];if target>=0x10e1ad4c && target<0x10e1ad5c{pc=target;continue;}super::dispatch(cpu,rt,target)?;return Ok(());}
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e1ad4c")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10e1ad4c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e1affc(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10e1affc=>{
+pub(super) unsafe fn f_10e1affc(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e1affc{return f_10e1affc_slow(cpu,rt,pc);}
+
 // 0x10e1affc ldr x0, [x0, #0x840]
 {let address=(cpu.x[0]).wrapping_add(0x840u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
-pc=0x10e1b000;continue;
-}
-0x10e1b000=>{
+{
 // 0x10e1b000 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e1affc")),}}}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e1affc_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10e1affc{0}else{match pc{0x10e1affc=>0,0x10e1b000=>1,_=>return Err(format!("untranslated block {pc:#x} in 0x10e1affc").into()),}};loop{match block{
+0=>{
+// 0x10e1affc ldr x0, [x0, #0x840]
+{let address=(cpu.x[0]).wrapping_add(0x840u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+block=1;continue;
+}
+1=>{
+// 0x10e1b000 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10e1affc").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e1b00c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10e1b00c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e1b00c{return f_10e1b00c_slow(cpu,rt,pc);}
+
+// 0x10e1b00c ldr x0, [x0, #0x7a8]
+{let address=(cpu.x[0]).wrapping_add(0x7a8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10e1b010 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e1b00c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10e1b00c=>{
 // 0x10e1b00c ldr x0, [x0, #0x7a8]
 {let address=(cpu.x[0]).wrapping_add(0x7a8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10e1b010 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e1b00c")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10e1b00c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e2d870(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10e2d870=>{
+pub(super) unsafe fn f_10e2d870(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e2d870{return f_10e2d870_slow(cpu,rt,pc);}
+
+'b10e2d8b8: {
 // 0x10e2d870 stp x29, x30, [sp, #-0x30]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10e2d874 str x21, [sp, #0x10]
@@ -2063,16 +4020,13 @@ cpu.x[29]=(((cpu.sp))) as u64;
 // 0x10e2d884 mov x19, x0
 cpu.x[19]=(((cpu.x[0]))) as u64;
 // 0x10e2d888 cbz w8, #0x10e2d8b8
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10e2d8b8;continue;}pc=0x10e2d88c;continue;
-}
-0x10e2d88c=>{
+if (cpu.x[8] as u32 as u64) == 0 {break 'b10e2d8b8;}{
 // 0x10e2d88c ldr x20, [x19, #0x160]
 {let address=(cpu.x[19]).wrapping_add(0x160u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
 // 0x10e2d890 lsl x21, x8, #3
 cpu.x[21]=(((((cpu.x[8]))) as u64).wrapping_shl(((((0x3u64))) & 63) as u32) as u64) as u64;
-pc=0x10e2d894;continue;
-}
-0x10e2d894=>{
+{
+'l10e2d894: loop {
 // 0x10e2d894 ldr x0, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10e2d898 ldr x8, [x0]
@@ -2081,38 +4035,61 @@ pc=0x10e2d894;continue;
 {let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10e2d8a0 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10e2d8a4;super::dispatch(cpu,rt,target)?;}
-pc=0x10e2d8a4;continue;
-}
-0x10e2d8a4=>{
+{
 // 0x10e2d8a4 cmp w0, #8
 {let a=((cpu.x[0] as u32 as u64));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10e2d8a8 b.eq #0x10e2d8f8
-if cpu.condition(0){pc=0x10e2d8f8;continue;}pc=0x10e2d8ac;continue;
-}
-0x10e2d8ac=>{
+if cpu.condition(0){{
+// 0x10e2d8f8 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10e2d8fc cmp x8, #0
+{let a=((cpu.x[8]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10e2d900 cset w0, ne
+cpu.x[0]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x10e2d904 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10e2d908 ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10e2d90c ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10e2d910 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
 // 0x10e2d8ac subs x21, x21, #8
 {let a=((cpu.x[21]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[21]=(result) as u64;cpu.flags(a,b,result,64,true);}
 // 0x10e2d8b0 add x20, x20, #8
 {let a=((cpu.x[20]));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[20]=(result) as u64;}
 // 0x10e2d8b4 b.ne #0x10e2d894
-if cpu.condition(1){pc=0x10e2d894;continue;}pc=0x10e2d8b8;continue;
+if cpu.condition(1){continue 'l10e2d894;}break 'b10e2d8b8;
 }
-0x10e2d8b8=>{
+}
+}
+}
+}
+}
 // 0x10e2d8b8 ldrsw x8, [x19, #0x15c]
 {let address=(cpu.x[19]).wrapping_add(0x15cu64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
 // 0x10e2d8bc cbz w8, #0x10e2d914
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10e2d914;continue;}pc=0x10e2d8c0;continue;
-}
-0x10e2d8c0=>{
+if (cpu.x[8] as u32 as u64) == 0 {{
+// 0x10e2d914 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10e2d918 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10e2d91c ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10e2d920 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10e2d924 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
 // 0x10e2d8c0 lsl x9, x8, #3
 cpu.x[9]=(((((cpu.x[8]))) as u64).wrapping_shl(((((0x3u64))) & 63) as u32) as u64) as u64;
 // 0x10e2d8c4 ldr x8, [x19, #0x150]
 {let address=(cpu.x[19]).wrapping_add(0x150u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10e2d8c8 sub x9, x9, #8
 {let a=((cpu.x[9]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u64;}
-pc=0x10e2d8cc;continue;
-}
-0x10e2d8cc=>{
+{
+'l10e2d8cc: loop {
 // 0x10e2d8cc ldr x10, [x8], #8
 {let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[10]=(v0) as u64;cpu.x[8]=((cpu.x[8]).wrapping_add(((0x8u64)))) as u64;}
 // 0x10e2d8d0 ldr w10, [x10, #0x70]
@@ -2126,9 +4103,7 @@ if cpu.condition(1){{let a=((cpu.x[9]));let b=((0x0u64));let result=a.wrapping_s
 // 0x10e2d8e0 sub x9, x9, #8
 {let a=((cpu.x[9]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u64;}
 // 0x10e2d8e4 b.ne #0x10e2d8cc
-if cpu.condition(1){pc=0x10e2d8cc;continue;}pc=0x10e2d8e8;continue;
-}
-0x10e2d8e8=>{
+if cpu.condition(1){continue 'l10e2d8cc;}{
 // 0x10e2d8e8 ldp x20, x19, [sp, #0x20]
 {let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10e2d8ec ldr x21, [sp, #0x10]
@@ -2138,7 +4113,103 @@ if cpu.condition(1){pc=0x10e2d8cc;continue;}pc=0x10e2d8e8;continue;
 // 0x10e2d8f4 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10e2d8f8=>{
+}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e2d870_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10e2d870{0}else{match pc{0x10e2d870=>0,0x10e2d88c=>1,0x10e2d894=>2,0x10e2d8a4=>3,0x10e2d8ac=>4,0x10e2d8b8=>5,0x10e2d8c0=>6,0x10e2d8cc=>7,0x10e2d8e8=>8,0x10e2d8f8=>9,0x10e2d914=>10,_=>return Err(format!("untranslated block {pc:#x} in 0x10e2d870").into()),}};loop{match block{
+0=>{
+// 0x10e2d870 stp x29, x30, [sp, #-0x30]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10e2d874 str x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10e2d878 stp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10e2d87c mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10e2d880 ldrsw x8, [x0, #0x16c]
+{let address=(cpu.x[0]).wrapping_add(0x16cu64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
+// 0x10e2d884 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10e2d888 cbz w8, #0x10e2d8b8
+if (cpu.x[8] as u32 as u64) == 0 {block=5;continue;}block=1;continue;
+}
+1=>{
+// 0x10e2d88c ldr x20, [x19, #0x160]
+{let address=(cpu.x[19]).wrapping_add(0x160u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
+// 0x10e2d890 lsl x21, x8, #3
+cpu.x[21]=(((((cpu.x[8]))) as u64).wrapping_shl(((((0x3u64))) & 63) as u32) as u64) as u64;
+block=2;continue;
+}
+2=>{
+// 0x10e2d894 ldr x0, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10e2d898 ldr x8, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10e2d89c ldr x8, [x8]
+{let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10e2d8a0 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10e2d8a4;super::dispatch(cpu,rt,target)?;}
+block=3;continue;
+}
+3=>{
+// 0x10e2d8a4 cmp w0, #8
+{let a=((cpu.x[0] as u32 as u64));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10e2d8a8 b.eq #0x10e2d8f8
+if cpu.condition(0){block=9;continue;}block=4;continue;
+}
+4=>{
+// 0x10e2d8ac subs x21, x21, #8
+{let a=((cpu.x[21]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[21]=(result) as u64;cpu.flags(a,b,result,64,true);}
+// 0x10e2d8b0 add x20, x20, #8
+{let a=((cpu.x[20]));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[20]=(result) as u64;}
+// 0x10e2d8b4 b.ne #0x10e2d894
+if cpu.condition(1){block=2;continue;}block=5;continue;
+}
+5=>{
+// 0x10e2d8b8 ldrsw x8, [x19, #0x15c]
+{let address=(cpu.x[19]).wrapping_add(0x15cu64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
+// 0x10e2d8bc cbz w8, #0x10e2d914
+if (cpu.x[8] as u32 as u64) == 0 {block=10;continue;}block=6;continue;
+}
+6=>{
+// 0x10e2d8c0 lsl x9, x8, #3
+cpu.x[9]=(((((cpu.x[8]))) as u64).wrapping_shl(((((0x3u64))) & 63) as u32) as u64) as u64;
+// 0x10e2d8c4 ldr x8, [x19, #0x150]
+{let address=(cpu.x[19]).wrapping_add(0x150u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10e2d8c8 sub x9, x9, #8
+{let a=((cpu.x[9]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u64;}
+block=7;continue;
+}
+7=>{
+// 0x10e2d8cc ldr x10, [x8], #8
+{let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[10]=(v0) as u64;cpu.x[8]=((cpu.x[8]).wrapping_add(((0x8u64)))) as u64;}
+// 0x10e2d8d0 ldr w10, [x10, #0x70]
+{let address=(cpu.x[10]).wrapping_add(0x70u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10e2d8d4 cmp w10, #8
+{let a=((cpu.x[10] as u32 as u64));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10e2d8d8 cset w0, eq
+cpu.x[0]=((cpu.condition(0)) as u64) as u32 as u64;
+// 0x10e2d8dc ccmp x9, #0, #4, ne
+if cpu.condition(1){{let a=((cpu.x[9]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}}else{cpu.nzcv=4u64 << 28;}
+// 0x10e2d8e0 sub x9, x9, #8
+{let a=((cpu.x[9]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u64;}
+// 0x10e2d8e4 b.ne #0x10e2d8cc
+if cpu.condition(1){block=7;continue;}block=8;continue;
+}
+8=>{
+// 0x10e2d8e8 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10e2d8ec ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10e2d8f0 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10e2d8f4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+9=>{
 // 0x10e2d8f8 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10e2d8fc cmp x8, #0
@@ -2154,7 +4225,7 @@ cpu.x[0]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x10e2d910 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10e2d914=>{
+10=>{
 // 0x10e2d914 mov w0, wzr
 cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10e2d918 ldp x20, x19, [sp, #0x20]
@@ -2166,27 +4237,56 @@ cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10e2d924 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e2d870")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10e2d870").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e64aec(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10e64aec(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e64aec{return f_10e64aec_slow(cpu,rt,pc);}
+
+// 0x10e64aec ldr w0, [x0, #0x230]
+{let address=(cpu.x[0]).wrapping_add(0x230u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10e64af0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e64aec_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10e64aec=>{
 // 0x10e64aec ldr w0, [x0, #0x230]
 {let address=(cpu.x[0]).wrapping_add(0x230u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
 // 0x10e64af0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e64aec")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10e64aec").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e7e934(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10e7e934(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e7e934{return f_10e7e934_slow(cpu,rt,pc);}
+
+// 0x10e7e934 ldr w0, [x0, #0x13c]
+{let address=(cpu.x[0]).wrapping_add(0x13cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10e7e938 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e7e934_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10e7e934=>{
 // 0x10e7e934 ldr w0, [x0, #0x13c]
 {let address=(cpu.x[0]).wrapping_add(0x13cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
 // 0x10e7e938 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e7e934")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10e7e934").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e8bcc0(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10e8bcc0(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e8bcc0{return f_10e8bcc0_slow(cpu,rt,pc);}
+
+// 0x10e8bcc0 ldr x8, [x0, #0x38]
+{let address=(cpu.x[0]).wrapping_add(0x38u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10e8bcc4 ldr x0, [x8, w1, sxtw #3]
+{let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[1] as u32 as u64) as i32 as i64 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10e8bcc8 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e8bcc0_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10e8bcc0=>{
 // 0x10e8bcc0 ldr x8, [x0, #0x38]
 {let address=(cpu.x[0]).wrapping_add(0x38u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
@@ -2195,10 +4295,10 @@ pub(super) unsafe fn f_10e8bcc0(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result
 // 0x10e8bcc8 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e8bcc0")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10e8bcc0").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10e8bcd8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10e8bcd8=>{
+pub(super) unsafe fn f_10e8bcd8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10e8bcd8{return f_10e8bcd8_slow(cpu,rt,pc);}
+
 // 0x10e8bcd8 sub sp, sp, #0x30
 {let a=((cpu.sp));let b=((0x30u64));let result=a.wrapping_sub(b);cpu.sp=(result) as u64;}
 // 0x10e8bcdc stp x29, x30, [sp, #0x10]
@@ -2217,27 +4317,21 @@ cpu.x[1]=(0x10328000u64) as u64;
 cpu.x[0]=(((cpu.sp))) as u64;
 // 0x10e8bcf8 bl #0x1142fde4
 cpu.x[30]=0x10e8bcfc;super::chunk6::f_1142fde4(cpu,rt,0x1142fde4)?;
-pc=0x10e8bcfc;continue;
-}
-0x10e8bcfc=>{
+{
 // 0x10e8bcfc mov x1, sp
 cpu.x[1]=(((cpu.sp))) as u64;
 // 0x10e8bd00 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10e8bd04 bl #0x11289a0c
 cpu.x[30]=0x10e8bd08;super::chunk3::f_11289a0c(cpu,rt,0x11289a0c)?;
-pc=0x10e8bd08;continue;
-}
-0x10e8bd08=>{
+{
 // 0x10e8bd08 mov x19, x0
 cpu.x[19]=(((cpu.x[0]))) as u64;
 // 0x10e8bd0c mov x0, sp
 cpu.x[0]=(((cpu.sp))) as u64;
 // 0x10e8bd10 bl #0x1142fcc4
 cpu.x[30]=0x10e8bd14;super::chunk4::f_1142fcc4(cpu,rt,0x1142fcc4)?;
-pc=0x10e8bd14;continue;
-}
-0x10e8bd14=>{
+{
 // 0x10e8bd14 ldr w0, [x19, #0x14]
 {let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
 // 0x10e8bd18 ldp x29, x30, [sp, #0x10]
@@ -2249,19 +4343,85 @@ pc=0x10e8bd14;continue;
 // 0x10e8bd24 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10e8bcd8")),}}}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10e8bcd8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10e8bcd8{0}else{match pc{0x10e8bcd8=>0,0x10e8bcfc=>1,0x10e8bd08=>2,0x10e8bd14=>3,_=>return Err(format!("untranslated block {pc:#x} in 0x10e8bcd8").into()),}};loop{match block{
+0=>{
+// 0x10e8bcd8 sub sp, sp, #0x30
+{let a=((cpu.sp));let b=((0x30u64));let result=a.wrapping_sub(b);cpu.sp=(result) as u64;}
+// 0x10e8bcdc stp x29, x30, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10e8bce0 str x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10e8bce4 add x29, sp, #0x10
+{let a=((cpu.sp));let b=((0x10u64));let result=a.wrapping_add(b);cpu.x[29]=(result) as u64;}
+// 0x10e8bce8 ldr x19, [x0, #0x80]
+{let address=(cpu.x[0]).wrapping_add(0x80u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10e8bcec adrp x1, #0x10328000
+cpu.x[1]=(0x10328000u64) as u64;
+// 0x10e8bcf0 add x1, x1, #0xe50
+{let a=((cpu.x[1]));let b=((0xe50u64));let result=a.wrapping_add(b);cpu.x[1]=(result) as u64;}
+// 0x10e8bcf4 mov x0, sp
+cpu.x[0]=(((cpu.sp))) as u64;
+// 0x10e8bcf8 bl #0x1142fde4
+cpu.x[30]=0x10e8bcfc;super::chunk6::f_1142fde4(cpu,rt,0x1142fde4)?;
+block=1;continue;
+}
+1=>{
+// 0x10e8bcfc mov x1, sp
+cpu.x[1]=(((cpu.sp))) as u64;
+// 0x10e8bd00 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10e8bd04 bl #0x11289a0c
+cpu.x[30]=0x10e8bd08;super::chunk3::f_11289a0c(cpu,rt,0x11289a0c)?;
+block=2;continue;
+}
+2=>{
+// 0x10e8bd08 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10e8bd0c mov x0, sp
+cpu.x[0]=(((cpu.sp))) as u64;
+// 0x10e8bd10 bl #0x1142fcc4
+cpu.x[30]=0x10e8bd14;super::chunk4::f_1142fcc4(cpu,rt,0x1142fcc4)?;
+block=3;continue;
+}
+3=>{
+// 0x10e8bd14 ldr w0, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10e8bd18 ldp x29, x30, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;}
+// 0x10e8bd1c ldr x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10e8bd20 add sp, sp, #0x30
+{let a=((cpu.sp));let b=((0x30u64));let result=a.wrapping_add(b);cpu.sp=(result) as u64;}
+// 0x10e8bd24 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10e8bcd8").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10eba79c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10eba79c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10eba79c{return f_10eba79c_slow(cpu,rt,pc);}
+
+// 0x10eba79c mov w0, #1
+cpu.x[0]=(((0x1u64))) as u32 as u64;
+// 0x10eba7a0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10eba79c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10eba79c=>{
 // 0x10eba79c mov w0, #1
 cpu.x[0]=(((0x1u64))) as u32 as u64;
 // 0x10eba7a0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10eba79c")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10eba79c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10eba7a4(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10eba7a4=>{
+pub(super) unsafe fn f_10eba7a4(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10eba7a4{return f_10eba7a4_slow(cpu,rt,pc);}
+
 // 0x10eba7a4 stp x29, x30, [sp, #-0x30]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10eba7a8 str x21, [sp, #0x10]
@@ -2278,9 +4438,7 @@ cpu.x[0]=(((0x68u64))) as u32 as u64;
 cpu.x[19]=(((cpu.x[1]))) as u64;
 // 0x10eba7c0 bl #0x1187d2b0
 cpu.x[30]=0x10eba7c4;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
-pc=0x10eba7c4;continue;
-}
-0x10eba7c4=>{
+{
 // 0x10eba7c4 mov x1, x19
 cpu.x[1]=(((cpu.x[19]))) as u64;
 // 0x10eba7c8 mov x2, x20
@@ -2289,9 +4447,7 @@ cpu.x[2]=(((cpu.x[20]))) as u64;
 cpu.x[21]=(((cpu.x[0]))) as u64;
 // 0x10eba7d0 bl #0x10fb76d0
 cpu.x[30]=0x10eba7d4;super::chunk6::f_10fb76d0(cpu,rt,0x10fb76d0)?;
-pc=0x10eba7d4;continue;
-}
-0x10eba7d4=>{
+{
 // 0x10eba7d4 mov x0, x21
 cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10eba7d8 ldp x20, x19, [sp, #0x20]
@@ -2303,10 +4459,57 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10eba7e4 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10eba7a4")),}}}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10eba7a4_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10eba7a4{0}else{match pc{0x10eba7a4=>0,0x10eba7c4=>1,0x10eba7d4=>2,_=>return Err(format!("untranslated block {pc:#x} in 0x10eba7a4").into()),}};loop{match block{
+0=>{
+// 0x10eba7a4 stp x29, x30, [sp, #-0x30]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10eba7a8 str x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10eba7ac stp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10eba7b0 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10eba7b4 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10eba7b8 mov w0, #0x68
+cpu.x[0]=(((0x68u64))) as u32 as u64;
+// 0x10eba7bc mov x19, x1
+cpu.x[19]=(((cpu.x[1]))) as u64;
+// 0x10eba7c0 bl #0x1187d2b0
+cpu.x[30]=0x10eba7c4;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
+block=1;continue;
+}
+1=>{
+// 0x10eba7c4 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x10eba7c8 mov x2, x20
+cpu.x[2]=(((cpu.x[20]))) as u64;
+// 0x10eba7cc mov x21, x0
+cpu.x[21]=(((cpu.x[0]))) as u64;
+// 0x10eba7d0 bl #0x10fb76d0
+cpu.x[30]=0x10eba7d4;super::chunk6::f_10fb76d0(cpu,rt,0x10fb76d0)?;
+block=2;continue;
+}
+2=>{
+// 0x10eba7d4 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10eba7d8 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10eba7dc ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10eba7e0 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10eba7e4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10eba7a4").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f07b70(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f07b70=>{
+pub(super) unsafe fn f_10f07b70(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f07b70{return f_10f07b70_slow(cpu,rt,pc);}
+
 // 0x10f07b70 sub sp, sp, #0x40
 {let a=((cpu.sp));let b=((0x40u64));let result=a.wrapping_sub(b);cpu.sp=(result) as u64;}
 // 0x10f07b74 stp x29, x30, [sp, #0x10]
@@ -2325,9 +4528,7 @@ cpu.x[0]=(((0x10u64))) as u32 as u64;
 cpu.x[20]=(((cpu.x[8]))) as u64;
 // 0x10f07b90 bl #0x1187d2b0
 cpu.x[30]=0x10f07b94;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
-pc=0x10f07b94;continue;
-}
-0x10f07b94=>{
+{
 // 0x10f07b94 ubfiz x8, x22, #2, #0x20
 cpu.x[8]=(((((cpu.x[22])) & 0xffffffffu64) << 2)) as u64;
 // 0x10f07b98 cmp w22, #0
@@ -2342,35 +4543,24 @@ cpu.x[19]=(((cpu.x[0]))) as u64;
 cpu.x[0]=(if cpu.condition(10){((cpu.x[8]))}else{!(((0u64)))}) as u64;
 // 0x10f07bac bl #0x1187d520
 cpu.x[30]=0x10f07bb0;super::chunk8::f_1187d520(cpu,rt,0x1187d520)?;
-pc=0x10f07bb0;continue;
-}
-0x10f07bb0=>{
+{
+'b10f07c1c: {
 // 0x10f07bb0 str x19, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10f07bb4 str x0, [x19]
 {let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10f07bb8 cbz x21, #0x10f07c18
-if (cpu.x[21]) == 0 {pc=0x10f07c18;continue;}pc=0x10f07bbc;continue;
-}
-0x10f07bbc=>{
+if (cpu.x[21]) == 0 {{
+// 0x10f07c18 mov x8, xzr
+cpu.x[8]=(((0u64))) as u64;
+break 'b10f07c1c;
+}}{
 // 0x10f07bbc mov w20, #5
 cpu.x[20]=(((0x5u64))) as u32 as u64;
 // 0x10f07bc0 b #0x10f07bd8
-pc=0x10f07bd8;continue;
-}
-0x10f07bc4=>{
-// 0x10f07bc4 ldr x21, [x21]
-{let address=(cpu.x[21]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
-// 0x10f07bc8 add w9, w8, #1
-{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[9]=(result) as u32 as u64;}
-// 0x10f07bcc str w9, [x19, #0xc]
-{let address=(cpu.x[19]).wrapping_add(0xcu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-// 0x10f07bd0 str w22, [x0, w8, sxtw #2]
-{let address=((cpu.x[0]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as i32 as i64 as u64)) as u64).wrapping_shl(2) as u64);let v0=cpu.x[22] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-// 0x10f07bd4 cbz x21, #0x10f07c10
-if (cpu.x[21]) == 0 {pc=0x10f07c10;continue;}pc=0x10f07bd8;continue;
-}
-0x10f07bd8=>{
+{
+'l10f07bd8: loop {
+'b10f07bc4: {
 // 0x10f07bd8 ldp w9, w8, [x19, #8]
 {let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[9]=(v0) as u32 as u64;cpu.x[8]=(v1) as u32 as u64;}
 // 0x10f07bdc ldr w22, [x21, #0x10]
@@ -2378,9 +4568,7 @@ if (cpu.x[21]) == 0 {pc=0x10f07c10;continue;}pc=0x10f07bd8;continue;
 // 0x10f07be0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f07be4 b.ne #0x10f07bc4
-if cpu.condition(1){pc=0x10f07bc4;continue;}pc=0x10f07be8;continue;
-}
-0x10f07be8=>{
+if cpu.condition(1){break 'b10f07bc4;}{
 // 0x10f07be8 lsl w9, w8, #1
 cpu.x[9]=(((((cpu.x[8] as u32 as u64))) as u32).wrapping_shl(((((0x1u64))) & 31) as u32) as u64) as u32 as u64;
 // 0x10f07bec cmp w9, #0
@@ -2390,9 +4578,7 @@ cpu.x[1]=(if cpu.condition(0){((cpu.x[20] as u32 as u64))}else{((cpu.x[9] as u32
 // 0x10f07bf4 cmp w8, w1
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f07bf8 b.ge #0x10f07bc4
-if cpu.condition(10){pc=0x10f07bc4;continue;}pc=0x10f07bfc;continue;
-}
-0x10f07bfc=>{
+if cpu.condition(10){break 'b10f07bc4;}{
 // 0x10f07bfc mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10f07c00 bl #0x1078f4d4
@@ -2402,29 +4588,36 @@ cpu.x[30]=0x10f07c04;super::chunk2::f_1078f4d4(cpu,rt,0x1078f4d4)?;
 // 0x10f07c08 ldr x0, [x19]
 {let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10f07c0c b #0x10f07bc4
-pc=0x10f07bc4;continue;
+break 'b10f07bc4;
 }
-0x10f07c10=>{
+}
+}
+// 0x10f07bc4 ldr x21, [x21]
+{let address=(cpu.x[21]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10f07bc8 add w9, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x10f07bcc str w9, [x19, #0xc]
+{let address=(cpu.x[19]).wrapping_add(0xcu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f07bd0 str w22, [x0, w8, sxtw #2]
+{let address=((cpu.x[0]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as i32 as i64 as u64)) as u64).wrapping_shl(2) as u64);let v0=cpu.x[22] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f07bd4 cbz x21, #0x10f07c10
+if (cpu.x[21]) == 0 {{
 // 0x10f07c10 ldrsw x8, [x19, #0xc]
 {let address=(cpu.x[19]).wrapping_add(0xcu64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
 // 0x10f07c14 b #0x10f07c1c
-pc=0x10f07c1c;continue;
+break 'b10f07c1c;
+}}continue 'l10f07bd8;
 }
-0x10f07c18=>{
-// 0x10f07c18 mov x8, xzr
-cpu.x[8]=(((0u64))) as u64;
-pc=0x10f07c1c;continue;
 }
-0x10f07c1c=>{
+}
+}
 // 0x10f07c1c add x1, x0, x8, lsl #2
 {let a=((cpu.x[0]));let b=(((cpu.x[8])) as u64).wrapping_shl(2) as u64;let result=a.wrapping_add(b);cpu.x[1]=(result) as u64;}
 // 0x10f07c20 sub x2, x29, #1
 {let a=((cpu.x[29]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[2]=(result) as u64;}
 // 0x10f07c24 bl #0x1187dc10
 cpu.x[30]=0x10f07c28;super::chunk4::f_1187dc10(cpu,rt,0x1187dc10)?;
-pc=0x10f07c28;continue;
-}
-0x10f07c28=>{
+{
 // 0x10f07c28 ldp x20, x19, [sp, #0x30]
 {let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10f07c2c ldp x22, x21, [sp, #0x20]
@@ -2436,18 +4629,153 @@ pc=0x10f07c28;continue;
 // 0x10f07c38 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f07b70")),}}}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f07b70_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f07b70{0}else{match pc{0x10f07b70=>0,0x10f07b94=>1,0x10f07bb0=>2,0x10f07bbc=>3,0x10f07bc4=>4,0x10f07bd8=>5,0x10f07be8=>6,0x10f07bfc=>7,0x10f07c10=>8,0x10f07c18=>9,0x10f07c1c=>10,0x10f07c28=>11,_=>return Err(format!("untranslated block {pc:#x} in 0x10f07b70").into()),}};loop{match block{
+0=>{
+// 0x10f07b70 sub sp, sp, #0x40
+{let a=((cpu.sp));let b=((0x40u64));let result=a.wrapping_sub(b);cpu.sp=(result) as u64;}
+// 0x10f07b74 stp x29, x30, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f07b78 stp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f07b7c stp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f07b80 add x29, sp, #0x10
+{let a=((cpu.sp));let b=((0x10u64));let result=a.wrapping_add(b);cpu.x[29]=(result) as u64;}
+// 0x10f07b84 ldp x21, x22, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[21]=(v0) as u64;cpu.x[22]=(v1) as u64;}
+// 0x10f07b88 mov w0, #0x10
+cpu.x[0]=(((0x10u64))) as u32 as u64;
+// 0x10f07b8c mov x20, x8
+cpu.x[20]=(((cpu.x[8]))) as u64;
+// 0x10f07b90 bl #0x1187d2b0
+cpu.x[30]=0x10f07b94;super::chunk15::f_1187d2b0(cpu,rt,0x1187d2b0)?;
+block=1;continue;
+}
+1=>{
+// 0x10f07b94 ubfiz x8, x22, #2, #0x20
+cpu.x[8]=(((((cpu.x[22])) & 0xffffffffu64) << 2)) as u64;
+// 0x10f07b98 cmp w22, #0
+{let a=((cpu.x[22] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f07b9c mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10f07ba0 str xzr, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f07ba4 str w22, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=cpu.x[22] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f07ba8 csinv x0, x8, xzr, ge
+cpu.x[0]=(if cpu.condition(10){((cpu.x[8]))}else{!(((0u64)))}) as u64;
+// 0x10f07bac bl #0x1187d520
+cpu.x[30]=0x10f07bb0;super::chunk8::f_1187d520(cpu,rt,0x1187d520)?;
+block=2;continue;
+}
+2=>{
+// 0x10f07bb0 str x19, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f07bb4 str x0, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f07bb8 cbz x21, #0x10f07c18
+if (cpu.x[21]) == 0 {block=9;continue;}block=3;continue;
+}
+3=>{
+// 0x10f07bbc mov w20, #5
+cpu.x[20]=(((0x5u64))) as u32 as u64;
+// 0x10f07bc0 b #0x10f07bd8
+block=5;continue;
+}
+4=>{
+// 0x10f07bc4 ldr x21, [x21]
+{let address=(cpu.x[21]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10f07bc8 add w9, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x10f07bcc str w9, [x19, #0xc]
+{let address=(cpu.x[19]).wrapping_add(0xcu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f07bd0 str w22, [x0, w8, sxtw #2]
+{let address=((cpu.x[0]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as i32 as i64 as u64)) as u64).wrapping_shl(2) as u64);let v0=cpu.x[22] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f07bd4 cbz x21, #0x10f07c10
+if (cpu.x[21]) == 0 {block=8;continue;}block=5;continue;
+}
+5=>{
+// 0x10f07bd8 ldp w9, w8, [x19, #8]
+{let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[9]=(v0) as u32 as u64;cpu.x[8]=(v1) as u32 as u64;}
+// 0x10f07bdc ldr w22, [x21, #0x10]
+{let address=(cpu.x[21]).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[22]=(v0) as u32 as u64;}
+// 0x10f07be0 cmp w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f07be4 b.ne #0x10f07bc4
+if cpu.condition(1){block=4;continue;}block=6;continue;
+}
+6=>{
+// 0x10f07be8 lsl w9, w8, #1
+cpu.x[9]=(((((cpu.x[8] as u32 as u64))) as u32).wrapping_shl(((((0x1u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10f07bec cmp w9, #0
+{let a=((cpu.x[9] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f07bf0 csel w1, w20, w9, eq
+cpu.x[1]=(if cpu.condition(0){((cpu.x[20] as u32 as u64))}else{((cpu.x[9] as u32 as u64))}) as u32 as u64;
+// 0x10f07bf4 cmp w8, w1
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f07bf8 b.ge #0x10f07bc4
+if cpu.condition(10){block=4;continue;}block=7;continue;
+}
+7=>{
+// 0x10f07bfc mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10f07c00 bl #0x1078f4d4
+cpu.x[30]=0x10f07c04;super::chunk2::f_1078f4d4(cpu,rt,0x1078f4d4)?;
+// 0x10f07c04 ldr w8, [x19, #0xc]
+{let address=(cpu.x[19]).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f07c08 ldr x0, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f07c0c b #0x10f07bc4
+block=4;continue;
+}
+8=>{
+// 0x10f07c10 ldrsw x8, [x19, #0xc]
+{let address=(cpu.x[19]).wrapping_add(0xcu64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
+// 0x10f07c14 b #0x10f07c1c
+block=10;continue;
+}
+9=>{
+// 0x10f07c18 mov x8, xzr
+cpu.x[8]=(((0u64))) as u64;
+block=10;continue;
+}
+10=>{
+// 0x10f07c1c add x1, x0, x8, lsl #2
+{let a=((cpu.x[0]));let b=(((cpu.x[8])) as u64).wrapping_shl(2) as u64;let result=a.wrapping_add(b);cpu.x[1]=(result) as u64;}
+// 0x10f07c20 sub x2, x29, #1
+{let a=((cpu.x[29]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[2]=(result) as u64;}
+// 0x10f07c24 bl #0x1187dc10
+cpu.x[30]=0x10f07c28;super::chunk4::f_1187dc10(cpu,rt,0x1187dc10)?;
+block=11;continue;
+}
+11=>{
+// 0x10f07c28 ldp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f07c2c ldp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x10f07c30 ldp x29, x30, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;}
+// 0x10f07c34 add sp, sp, #0x40
+{let a=((cpu.sp));let b=((0x40u64));let result=a.wrapping_add(b);cpu.sp=(result) as u64;}
+// 0x10f07c38 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10f07b70").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f782c8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f782c8=>{
+pub(super) unsafe fn f_10f782c8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f782c8{return f_10f782c8_slow(cpu,rt,pc);}
+
+'b10f7832c: {
 // 0x10f782c8 ldr w8, [x0, #0x5c]
 {let address=(cpu.x[0]).wrapping_add(0x5cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f782cc cmp w8, #1
 {let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f782d0 b.lt #0x10f7832c
-if cpu.condition(11){pc=0x10f7832c;continue;}pc=0x10f782d4;continue;
-}
-0x10f782d4=>{
+if cpu.condition(11){break 'b10f7832c;}{
 // 0x10f782d4 stp x29, x30, [sp, #-0x30]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10f782d8 stp x22, x21, [sp, #0x10]
@@ -2464,9 +4792,8 @@ cpu.x[20]=(((cpu.x[0]))) as u64;
 cpu.x[21]=(((cpu.x[1]))) as u64;
 // 0x10f782f0 sub x22, x8, #1
 {let a=((cpu.x[8]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[22]=(result) as u64;}
-pc=0x10f782f4;continue;
-}
-0x10f782f4=>{
+{
+'l10f782f4: loop {
 // 0x10f782f4 ldr x8, [x20, #0x50]
 {let address=(cpu.x[20]).wrapping_add(0x50u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f782f8 mov x1, x21
@@ -2481,9 +4808,7 @@ cpu.x[2]=(((cpu.x[19]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f7830c blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f78310;super::dispatch(cpu,rt,target)?;}
-pc=0x10f78310;continue;
-}
-0x10f78310=>{
+{
 // 0x10f78310 add x8, x22, #1
 {let a=((cpu.x[22]));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u64;}
 // 0x10f78314 sub x22, x22, #1
@@ -2491,25 +4816,97 @@ pc=0x10f78310;continue;
 // 0x10f78318 cmp x8, #1
 {let a=((cpu.x[8]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10f7831c b.hi #0x10f782f4
-if cpu.condition(8){pc=0x10f782f4;continue;}pc=0x10f78320;continue;
-}
-0x10f78320=>{
+if cpu.condition(8){continue 'l10f782f4;}{
 // 0x10f78320 ldp x20, x19, [sp, #0x20]
 {let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10f78324 ldp x22, x21, [sp, #0x10]
 {let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
 // 0x10f78328 ldp x29, x30, [sp], #0x30
 {let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
-pc=0x10f7832c;continue;
+break 'b10f7832c;
 }
-0x10f7832c=>{
+}
+}
+}
+}
+}
 // 0x10f7832c ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f782c8")),}}}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f782c8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f782c8{0}else{match pc{0x10f782c8=>0,0x10f782d4=>1,0x10f782f4=>2,0x10f78310=>3,0x10f78320=>4,0x10f7832c=>5,_=>return Err(format!("untranslated block {pc:#x} in 0x10f782c8").into()),}};loop{match block{
+0=>{
+// 0x10f782c8 ldr w8, [x0, #0x5c]
+{let address=(cpu.x[0]).wrapping_add(0x5cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f782cc cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f782d0 b.lt #0x10f7832c
+if cpu.condition(11){block=5;continue;}block=1;continue;
+}
+1=>{
+// 0x10f782d4 stp x29, x30, [sp, #-0x30]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10f782d8 stp x22, x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f782dc stp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f782e0 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10f782e4 mov x19, x2
+cpu.x[19]=(((cpu.x[2]))) as u64;
+// 0x10f782e8 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10f782ec mov x21, x1
+cpu.x[21]=(((cpu.x[1]))) as u64;
+// 0x10f782f0 sub x22, x8, #1
+{let a=((cpu.x[8]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[22]=(result) as u64;}
+block=2;continue;
+}
+2=>{
+// 0x10f782f4 ldr x8, [x20, #0x50]
+{let address=(cpu.x[20]).wrapping_add(0x50u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f782f8 mov x1, x21
+cpu.x[1]=(((cpu.x[21]))) as u64;
+// 0x10f782fc mov x2, x19
+cpu.x[2]=(((cpu.x[19]))) as u64;
+// 0x10f78300 ldr x0, [x8, x22, lsl #3]
+{let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[22])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f78304 ldr x8, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f78308 ldr x8, [x8, #0xa0]
+{let address=(cpu.x[8]).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f7830c blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f78310;super::dispatch(cpu,rt,target)?;}
+block=3;continue;
+}
+3=>{
+// 0x10f78310 add x8, x22, #1
+{let a=((cpu.x[22]));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u64;}
+// 0x10f78314 sub x22, x22, #1
+{let a=((cpu.x[22]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[22]=(result) as u64;}
+// 0x10f78318 cmp x8, #1
+{let a=((cpu.x[8]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10f7831c b.hi #0x10f782f4
+if cpu.condition(8){block=2;continue;}block=4;continue;
+}
+4=>{
+// 0x10f78320 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f78324 ldp x22, x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x10f78328 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+block=5;continue;
+}
+5=>{
+// 0x10f7832c ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10f782c8").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f7b3d4(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f7b3d4=>{
+pub(super) unsafe fn f_10f7b3d4(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f7b3d4{return f_10f7b3d4_slow(cpu,rt,pc);}
+
 // 0x10f7b3d4 stp x29, x30, [sp, #-0x30]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10f7b3d8 str x21, [sp, #0x10]
@@ -2532,9 +4929,8 @@ cpu.x[19]=(((cpu.x[2]))) as u64;
 cpu.x[1]=(((cpu.x[8]))) as u64;
 // 0x10f7b3fc bl #0x10fa5c64
 cpu.x[30]=0x10f7b400;super::chunk6::f_10fa5c64(cpu,rt,0x10fa5c64)?;
-pc=0x10f7b400;continue;
-}
-0x10f7b400=>{
+{
+'b10f7b420: {
 // 0x10f7b400 str w0, [x20, #0xfc]
 {let address=(cpu.x[20]).wrapping_add(0xfcu64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10f7b404 ldr w8, [x21, #0x148]
@@ -2542,22 +4938,19 @@ pc=0x10f7b400;continue;
 // 0x10f7b408 str w8, [x20, #0x100]
 {let address=(cpu.x[20]).wrapping_add(0x100u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10f7b40c cbz x19, #0x10f7b420
-if (cpu.x[19]) == 0 {pc=0x10f7b420;continue;}pc=0x10f7b410;continue;
-}
-0x10f7b410=>{
+if (cpu.x[19]) == 0 {break 'b10f7b420;}{
 // 0x10f7b410 ldr w8, [x21, #0x1a0]
 {let address=(cpu.x[21]).wrapping_add(0x1a0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f7b414 cmp w8, #1
 {let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f7b418 b.ne #0x10f7b420
-if cpu.condition(1){pc=0x10f7b420;continue;}pc=0x10f7b41c;continue;
-}
-0x10f7b41c=>{
+if cpu.condition(1){break 'b10f7b420;}{
 // 0x10f7b41c str x19, [x20, #0x138]
 {let address=(cpu.x[20]).wrapping_add(0x138u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
-pc=0x10f7b420;continue;
+break 'b10f7b420;
 }
-0x10f7b420=>{
+}
+}
 // 0x10f7b420 str x19, [x20, #0x130]
 {let address=(cpu.x[20]).wrapping_add(0x130u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10f7b424 ldp x20, x19, [sp, #0x20]
@@ -2569,7 +4962,71 @@ pc=0x10f7b420;continue;
 // 0x10f7b430 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f7b3d4")),}}}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f7b3d4_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f7b3d4{0}else{match pc{0x10f7b3d4=>0,0x10f7b400=>1,0x10f7b410=>2,0x10f7b41c=>3,0x10f7b420=>4,_=>return Err(format!("untranslated block {pc:#x} in 0x10f7b3d4").into()),}};loop{match block{
+0=>{
+// 0x10f7b3d4 stp x29, x30, [sp, #-0x30]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10f7b3d8 str x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f7b3dc stp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f7b3e0 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10f7b3e4 ldr x21, [x0, #0x48]
+{let address=(cpu.x[0]).wrapping_add(0x48u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10f7b3e8 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10f7b3ec and x0, x1, #0xffffffff
+{let a=((cpu.x[1]));let b=((0xffffffffu64));let result=a & b;cpu.x[0]=(result) as u64;}
+// 0x10f7b3f0 mov x19, x2
+cpu.x[19]=(((cpu.x[2]))) as u64;
+// 0x10f7b3f4 ldr x8, [x21, #0x168]
+{let address=(cpu.x[21]).wrapping_add(0x168u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f7b3f8 mov x1, x8
+cpu.x[1]=(((cpu.x[8]))) as u64;
+// 0x10f7b3fc bl #0x10fa5c64
+cpu.x[30]=0x10f7b400;super::chunk6::f_10fa5c64(cpu,rt,0x10fa5c64)?;
+block=1;continue;
+}
+1=>{
+// 0x10f7b400 str w0, [x20, #0xfc]
+{let address=(cpu.x[20]).wrapping_add(0xfcu64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f7b404 ldr w8, [x21, #0x148]
+{let address=(cpu.x[21]).wrapping_add(0x148u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f7b408 str w8, [x20, #0x100]
+{let address=(cpu.x[20]).wrapping_add(0x100u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f7b40c cbz x19, #0x10f7b420
+if (cpu.x[19]) == 0 {block=4;continue;}block=2;continue;
+}
+2=>{
+// 0x10f7b410 ldr w8, [x21, #0x1a0]
+{let address=(cpu.x[21]).wrapping_add(0x1a0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f7b414 cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f7b418 b.ne #0x10f7b420
+if cpu.condition(1){block=4;continue;}block=3;continue;
+}
+3=>{
+// 0x10f7b41c str x19, [x20, #0x138]
+{let address=(cpu.x[20]).wrapping_add(0x138u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+block=4;continue;
+}
+4=>{
+// 0x10f7b420 str x19, [x20, #0x130]
+{let address=(cpu.x[20]).wrapping_add(0x130u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f7b424 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f7b428 ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10f7b42c ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10f7b430 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10f7b3d4").into()),}}}
 #[inline]
 pub(super) unsafe fn f_10f7f2c8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10f7f2c8=>{
@@ -3674,7 +6131,7 @@ cpu.x[4]=(((0x1u64))) as u32 as u64;
 // 0x10f7f9a8 mov w24, #1
 cpu.x[24]=(((0x1u64))) as u32 as u64;
 // 0x10f7f9ac bl #0x10fc7a78
-cpu.x[30]=0x10f7f9b0;super::dispatch(cpu,rt,0x10fc7a78)?;
+cpu.x[30]=0x10f7f9b0;super::chunk7::f_10fc7a78(cpu,rt,0x10fc7a78)?;
 pc=0x10f7f9b0;continue;
 }
 0x10f7f9b0=>{
@@ -3700,7 +6157,7 @@ if (cpu.x[22]) == 0 {pc=0x10f7f9cc;continue;}pc=0x10f7f9c4;continue;
 // 0x10f7f9c4 mov x0, x22
 cpu.x[0]=(((cpu.x[22]))) as u64;
 // 0x10f7f9c8 bl #0x10fc7a1c
-cpu.x[30]=0x10f7f9cc;super::dispatch(cpu,rt,0x10fc7a1c)?;
+cpu.x[30]=0x10f7f9cc;super::chunk9::f_10fc7a1c(cpu,rt,0x10fc7a1c)?;
 pc=0x10f7f9cc;continue;
 }
 0x10f7f9cc=>{
@@ -4043,6 +6500,9 @@ pc=0x10f7fba8;continue;
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10f7fbac bl #0x10f942c8
 cpu.x[30]=0x10f7fbb0;super::chunk1::f_10f942c8(cpu,rt,0x10f942c8)?;
+pc=0x10f7fbb0;continue;
+}
+0x10f7fbb0=>{
 // 0x10f7fbb0 cbz x0, #0x10f7fd9c
 if (cpu.x[0]) == 0 {pc=0x10f7fd9c;continue;}pc=0x10f7fbb4;continue;
 }
@@ -4051,10 +6511,16 @@ if (cpu.x[0]) == 0 {pc=0x10f7fd9c;continue;}pc=0x10f7fbb4;continue;
 cpu.x[20]=(((cpu.x[0]))) as u64;
 // 0x10f7fbb8 bl #0x10fcc464
 cpu.x[30]=0x10f7fbbc;super::chunk2::f_10fcc464(cpu,rt,0x10fcc464)?;
+pc=0x10f7fbbc;continue;
+}
+0x10f7fbbc=>{
 // 0x10f7fbbc mov x0, x20
 cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10f7fbc0 bl #0x10fcf7b0
-cpu.x[30]=0x10f7fbc4;super::dispatch(cpu,rt,0x10fcf7b0)?;
+cpu.x[30]=0x10f7fbc4;super::chunk2::f_10fcf7b0(cpu,rt,0x10fcf7b0)?;
+pc=0x10f7fbc4;continue;
+}
+0x10f7fbc4=>{
 // 0x10f7fbc4 str wzr, [x19, #0x1f0]
 {let address=(cpu.x[19]).wrapping_add(0x1f0u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10f7fbc8 b #0x10f7fd9c
@@ -4375,6 +6841,9 @@ if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10f7fd9c;continue;}pc=0x1
 cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10f7fd78 bl #0x10de06a0
 cpu.x[30]=0x10f7fd7c;super::chunk9::f_10de06a0(cpu,rt,0x10de06a0)?;
+pc=0x10f7fd7c;continue;
+}
+0x10f7fd7c=>{
 // 0x10f7fd7c tbz w0, #0, #0x10f7fd9c
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10f7fd9c;continue;}pc=0x10f7fd80;continue;
 }
@@ -4598,18 +7067,38 @@ cpu.x[30]=0x10f7fed8;super::chunk8::f_10f7f2c8(cpu,rt,0x10f7f2c8)?;
 // 0x10f7fed8 b #0x10f7fdb4
 pc=0x10f7fdb4;continue;
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f7f2c8")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10f7f2c8").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f817a8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10f817a8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f817a8{return f_10f817a8_slow(cpu,rt,pc);}
+
+// 0x10f817a8 ldr w0, [x0, #0x11c]
+{let address=(cpu.x[0]).wrapping_add(0x11cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10f817ac ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f817a8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10f817a8=>{
 // 0x10f817a8 ldr w0, [x0, #0x11c]
 {let address=(cpu.x[0]).wrapping_add(0x11cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
 // 0x10f817ac ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f817a8")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10f817a8").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f8287c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10f8287c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f8287c{return f_10f8287c_slow(cpu,rt,pc);}
+
+// 0x10f8287c ldr x0, [x0, #0x48]
+{let address=(cpu.x[0]).wrapping_add(0x48u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f82880 mov w1, wzr
+cpu.x[1]=(((0u64))) as u32 as u64;
+// 0x10f82884 b #0x10de0450
+super::chunk15::f_10de0450(cpu,rt,0x10de0450)?;return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f8287c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10f8287c=>{
 // 0x10f8287c ldr x0, [x0, #0x48]
 {let address=(cpu.x[0]).wrapping_add(0x48u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
@@ -4618,10 +7107,11 @@ cpu.x[1]=(((0u64))) as u32 as u64;
 // 0x10f82884 b #0x10de0450
 super::chunk15::f_10de0450(cpu,rt,0x10de0450)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f8287c")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10f8287c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f82d14(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f82d14=>{
+pub(super) unsafe fn f_10f82d14(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f82d14{return f_10f82d14_slow(cpu,rt,pc);}
+
+'b10f82d2c: {
 // 0x10f82d14 adrp x8, #0x11a65000
 cpu.x[8]=(0x11a65000u64) as u64;
 // 0x10f82d18 add x8, x8, #0xfe0
@@ -4633,31 +7123,22 @@ cpu.x[8]=(0x11a65000u64) as u64;
 // 0x10f82d24 tst x9, x8
 {let a=((cpu.x[9]));let b=((cpu.x[8]));let result=a & b;cpu.logical_flags(result,64);}
 // 0x10f82d28 b.eq #0x10f82d34
-if cpu.condition(0){pc=0x10f82d34;continue;}pc=0x10f82d2c;continue;
-}
-0x10f82d2c=>{
-// 0x10f82d2c mov w0, wzr
-cpu.x[0]=(((0u64))) as u32 as u64;
-// 0x10f82d30 ret
-cpu.pc=cpu.x[30];return Ok(());
-}
-0x10f82d34=>{
+if cpu.condition(0){{
+'b10f82d4c: {
 // 0x10f82d34 ldr w8, [x0, #0x11c]
 {let address=(cpu.x[0]).wrapping_add(0x11cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f82d38 cmp w8, #0xe
 {let a=((cpu.x[8] as u32 as u64));let b=((0xeu64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f82d3c b.hs #0x10f82d4c
-if cpu.condition(2){pc=0x10f82d4c;continue;}pc=0x10f82d40;continue;
-}
-0x10f82d40=>{
+if cpu.condition(2){break 'b10f82d4c;}{
 // 0x10f82d40 mov w9, #0x35ed
 cpu.x[9]=(((0x35edu64))) as u32 as u64;
 // 0x10f82d44 lsr w8, w9, w8
 cpu.x[8]=(((((cpu.x[9] as u32 as u64))) as u32).wrapping_shr(((((cpu.x[8] as u32 as u64))) & 31) as u32) as u64) as u32 as u64;
 // 0x10f82d48 tbnz w8, #0, #0x10f82d2c
-if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10f82d2c;continue;}pc=0x10f82d4c;continue;
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10f82d2c;}break 'b10f82d4c;
 }
-0x10f82d4c=>{
+}
 // 0x10f82d4c stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10f82d50 str x19, [sp, #0x10]
@@ -4668,38 +7149,19 @@ cpu.x[29]=(((cpu.sp))) as u64;
 cpu.x[19]=(((cpu.x[0]))) as u64;
 // 0x10f82d5c bl #0x10f9433c
 cpu.x[30]=0x10f82d60;super::chunk3::f_10f9433c(cpu,rt,0x10f9433c)?;
-pc=0x10f82d60;continue;
-}
-0x10f82d60=>{
+{
+'b10f82d94: {
 // 0x10f82d60 cbz x0, #0x10f82d94
-if (cpu.x[0]) == 0 {pc=0x10f82d94;continue;}pc=0x10f82d64;continue;
-}
-0x10f82d64=>{
+if (cpu.x[0]) == 0 {break 'b10f82d94;}{
 // 0x10f82d64 ldrb w8, [x0, #0x41]
 {let address=(cpu.x[0]).wrapping_add(0x41u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f82d68 cbz w8, #0x10f82d7c
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10f82d7c;continue;}pc=0x10f82d6c;continue;
-}
-0x10f82d6c=>{
-// 0x10f82d6c mov w0, wzr
-cpu.x[0]=(((0u64))) as u32 as u64;
-// 0x10f82d70 ldr x19, [sp, #0x10]
-{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
-// 0x10f82d74 ldp x29, x30, [sp], #0x20
-{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
-// 0x10f82d78 ret
-cpu.pc=cpu.x[30];return Ok(());
-}
-0x10f82d7c=>{
+if (cpu.x[8] as u32 as u64) == 0 {{
 // 0x10f82d7c bl #0x10fc40ec
 cpu.x[30]=0x10f82d80;super::chunk15::f_10fc40ec(cpu,rt,0x10fc40ec)?;
-pc=0x10f82d80;continue;
-}
-0x10f82d80=>{
+{
 // 0x10f82d80 tbz w0, #0, #0x10f82d94
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10f82d94;continue;}pc=0x10f82d84;continue;
-}
-0x10f82d84=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10f82d94;}{
 // 0x10f82d84 mov w0, wzr
 cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10f82d88 ldr x19, [sp, #0x10]
@@ -4709,7 +7171,19 @@ cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10f82d90 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10f82d94=>{
+}
+}}{
+// 0x10f82d6c mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10f82d70 ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10f82d74 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f82d78 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+}
+}
 // 0x10f82d94 ldr w8, [x19, #0x1f0]
 {let address=(cpu.x[19]).wrapping_add(0x1f0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f82d98 cmp w8, #1
@@ -4723,10 +7197,122 @@ cpu.x[0]=((cpu.condition(11)) as u64) as u32 as u64;
 // 0x10f82da8 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f82d14")),}}}
+}}break 'b10f82d2c;
+}
+// 0x10f82d2c mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10f82d30 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f82d14_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f82d14{0}else{match pc{0x10f82d14=>0,0x10f82d2c=>1,0x10f82d34=>2,0x10f82d40=>3,0x10f82d4c=>4,0x10f82d60=>5,0x10f82d64=>6,0x10f82d6c=>7,0x10f82d7c=>8,0x10f82d80=>9,0x10f82d84=>10,0x10f82d94=>11,_=>return Err(format!("untranslated block {pc:#x} in 0x10f82d14").into()),}};loop{match block{
+0=>{
+// 0x10f82d14 adrp x8, #0x11a65000
+cpu.x[8]=(0x11a65000u64) as u64;
+// 0x10f82d18 add x8, x8, #0xfe0
+{let a=((cpu.x[8]));let b=((0xfe0u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u64;}
+// 0x10f82d1c ldr x9, [x0, #0xb0]
+{let address=(cpu.x[0]).wrapping_add(0xb0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10f82d20 ldr x8, [x8]
+{let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f82d24 tst x9, x8
+{let a=((cpu.x[9]));let b=((cpu.x[8]));let result=a & b;cpu.logical_flags(result,64);}
+// 0x10f82d28 b.eq #0x10f82d34
+if cpu.condition(0){block=2;continue;}block=1;continue;
+}
+1=>{
+// 0x10f82d2c mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10f82d30 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+2=>{
+// 0x10f82d34 ldr w8, [x0, #0x11c]
+{let address=(cpu.x[0]).wrapping_add(0x11cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f82d38 cmp w8, #0xe
+{let a=((cpu.x[8] as u32 as u64));let b=((0xeu64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f82d3c b.hs #0x10f82d4c
+if cpu.condition(2){block=4;continue;}block=3;continue;
+}
+3=>{
+// 0x10f82d40 mov w9, #0x35ed
+cpu.x[9]=(((0x35edu64))) as u32 as u64;
+// 0x10f82d44 lsr w8, w9, w8
+cpu.x[8]=(((((cpu.x[9] as u32 as u64))) as u32).wrapping_shr(((((cpu.x[8] as u32 as u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10f82d48 tbnz w8, #0, #0x10f82d2c
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {block=1;continue;}block=4;continue;
+}
+4=>{
+// 0x10f82d4c stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10f82d50 str x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f82d54 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10f82d58 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10f82d5c bl #0x10f9433c
+cpu.x[30]=0x10f82d60;super::chunk3::f_10f9433c(cpu,rt,0x10f9433c)?;
+block=5;continue;
+}
+5=>{
+// 0x10f82d60 cbz x0, #0x10f82d94
+if (cpu.x[0]) == 0 {block=11;continue;}block=6;continue;
+}
+6=>{
+// 0x10f82d64 ldrb w8, [x0, #0x41]
+{let address=(cpu.x[0]).wrapping_add(0x41u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f82d68 cbz w8, #0x10f82d7c
+if (cpu.x[8] as u32 as u64) == 0 {block=8;continue;}block=7;continue;
+}
+7=>{
+// 0x10f82d6c mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10f82d70 ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10f82d74 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f82d78 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+8=>{
+// 0x10f82d7c bl #0x10fc40ec
+cpu.x[30]=0x10f82d80;super::chunk15::f_10fc40ec(cpu,rt,0x10fc40ec)?;
+block=9;continue;
+}
+9=>{
+// 0x10f82d80 tbz w0, #0, #0x10f82d94
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=11;continue;}block=10;continue;
+}
+10=>{
+// 0x10f82d84 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10f82d88 ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10f82d8c ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f82d90 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+11=>{
+// 0x10f82d94 ldr w8, [x19, #0x1f0]
+{let address=(cpu.x[19]).wrapping_add(0x1f0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f82d98 cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f82d9c cset w0, lt
+cpu.x[0]=((cpu.condition(11)) as u64) as u32 as u64;
+// 0x10f82da0 ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10f82da4 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f82da8 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10f82d14").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f85214(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f85214=>{
+pub(super) unsafe fn f_10f85214(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f85214{return f_10f85214_slow(cpu,rt,pc);}
+
 // 0x10f85214 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10f85218 str x19, [sp, #0x10]
@@ -4737,9 +7323,7 @@ cpu.x[29]=(((cpu.sp))) as u64;
 cpu.x[19]=(((cpu.x[0]))) as u64;
 // 0x10f85224 bl #0x10f95ac4
 cpu.x[30]=0x10f85228;super::chunk12::f_10f95ac4(cpu,rt,0x10f95ac4)?;
-pc=0x10f85228;continue;
-}
-0x10f85228=>{
+{
 // 0x10f85228 ldr w8, [x19, #0x15c]
 {let address=(cpu.x[19]).wrapping_add(0x15cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f8522c ldr w9, [x19, #0x1a8]
@@ -4755,10 +7339,43 @@ pc=0x10f85228;continue;
 // 0x10f85240 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f85214")),}}}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f85214_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f85214{0}else{match pc{0x10f85214=>0,0x10f85228=>1,_=>return Err(format!("untranslated block {pc:#x} in 0x10f85214").into()),}};loop{match block{
+0=>{
+// 0x10f85214 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10f85218 str x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f8521c mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10f85220 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10f85224 bl #0x10f95ac4
+cpu.x[30]=0x10f85228;super::chunk12::f_10f95ac4(cpu,rt,0x10f95ac4)?;
+block=1;continue;
+}
+1=>{
+// 0x10f85228 ldr w8, [x19, #0x15c]
+{let address=(cpu.x[19]).wrapping_add(0x15cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8522c ldr w9, [x19, #0x1a8]
+{let address=(cpu.x[19]).wrapping_add(0x1a8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10f85230 str w8, [x19, #0x160]
+{let address=(cpu.x[19]).wrapping_add(0x160u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f85234 str w9, [x19, #0x1b0]
+{let address=(cpu.x[19]).wrapping_add(0x1b0u64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f85238 ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10f8523c ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f85240 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10f85214").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f865f4(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f865f4=>{
+pub(super) unsafe fn f_10f865f4(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f865f4{return f_10f865f4_slow(cpu,rt,pc);}
+
 // 0x10f865f4 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10f865f8 str x19, [sp, #0x10]
@@ -4777,43 +7394,38 @@ cpu.x[19]=(((cpu.x[0]))) as u64;
 cpu.x[1]=(((cpu.x[0]))) as u64;
 // 0x10f86614 bl #0x10f89954
 cpu.x[30]=0x10f86618;super::chunk11::f_10f89954(cpu,rt,0x10f89954)?;
-pc=0x10f86618;continue;
-}
-0x10f86618=>{
+{
+'b10f86644: {
 // 0x10f86618 ldr w1, [x19, #0x70]
 {let address=(cpu.x[19]).wrapping_add(0x70u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[1]=(v0) as u32 as u64;}
 // 0x10f8661c cmn w1, #1
 {let a=((cpu.x[1] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.flags(a,b,result,32,false);}
 // 0x10f86620 b.eq #0x10f86644
-if cpu.condition(0){pc=0x10f86644;continue;}pc=0x10f86624;continue;
-}
-0x10f86624=>{
+if cpu.condition(0){break 'b10f86644;}{
 // 0x10f86624 ldr x8, [x19, #0x20]
 {let address=(cpu.x[19]).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f86628 cbz x8, #0x10f86644
-if (cpu.x[8]) == 0 {pc=0x10f86644;continue;}pc=0x10f8662c;continue;
-}
-0x10f8662c=>{
+if (cpu.x[8]) == 0 {break 'b10f86644;}{
+'b10f8663c: {
 // 0x10f8662c ldr x0, [x8, #8]
 {let address=(cpu.x[8]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10f86630 cbz x0, #0x10f8663c
-if (cpu.x[0]) == 0 {pc=0x10f8663c;continue;}pc=0x10f86634;continue;
-}
-0x10f86634=>{
+if (cpu.x[0]) == 0 {break 'b10f8663c;}{
 // 0x10f86634 ldr w2, [x19, #0x74]
 {let address=(cpu.x[19]).wrapping_add(0x74u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[2]=(v0) as u32 as u64;}
 // 0x10f86638 bl #0x10f85b94
 cpu.x[30]=0x10f8663c;super::chunk10::f_10f85b94(cpu,rt,0x10f85b94)?;
-pc=0x10f8663c;continue;
+break 'b10f8663c;
 }
-0x10f8663c=>{
+}
 // 0x10f8663c mov w8, #-1
 cpu.x[8]=(((0xffffffffffffffffu64))) as u32 as u64;
 // 0x10f86640 str w8, [x19, #0x70]
 {let address=(cpu.x[19]).wrapping_add(0x70u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-pc=0x10f86644;continue;
+break 'b10f86644;
 }
-0x10f86644=>{
+}
+}
 // 0x10f86644 ldr x19, [sp, #0x10]
 {let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
 // 0x10f86648 ldp x29, x30, [sp], #0x20
@@ -4821,10 +7433,77 @@ pc=0x10f86644;continue;
 // 0x10f8664c ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f865f4")),}}}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f865f4_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f865f4{0}else{match pc{0x10f865f4=>0,0x10f86618=>1,0x10f86624=>2,0x10f8662c=>3,0x10f86634=>4,0x10f8663c=>5,0x10f86644=>6,_=>return Err(format!("untranslated block {pc:#x} in 0x10f865f4").into()),}};loop{match block{
+0=>{
+// 0x10f865f4 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10f865f8 str x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f865fc mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10f86600 ldp x9, x8, [x0, #0x18]
+{let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[9]=(v0) as u64;cpu.x[8]=(v1) as u64;}
+// 0x10f86604 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10f86608 ldr x0, [x8, #8]
+{let address=(cpu.x[8]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f8660c ldr x2, [x9, #0x210]
+{let address=(cpu.x[9]).wrapping_add(0x210u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[2]=(v0) as u64;}
+// 0x10f86610 mov x1, x0
+cpu.x[1]=(((cpu.x[0]))) as u64;
+// 0x10f86614 bl #0x10f89954
+cpu.x[30]=0x10f86618;super::chunk11::f_10f89954(cpu,rt,0x10f89954)?;
+block=1;continue;
+}
+1=>{
+// 0x10f86618 ldr w1, [x19, #0x70]
+{let address=(cpu.x[19]).wrapping_add(0x70u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[1]=(v0) as u32 as u64;}
+// 0x10f8661c cmn w1, #1
+{let a=((cpu.x[1] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.flags(a,b,result,32,false);}
+// 0x10f86620 b.eq #0x10f86644
+if cpu.condition(0){block=6;continue;}block=2;continue;
+}
+2=>{
+// 0x10f86624 ldr x8, [x19, #0x20]
+{let address=(cpu.x[19]).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f86628 cbz x8, #0x10f86644
+if (cpu.x[8]) == 0 {block=6;continue;}block=3;continue;
+}
+3=>{
+// 0x10f8662c ldr x0, [x8, #8]
+{let address=(cpu.x[8]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f86630 cbz x0, #0x10f8663c
+if (cpu.x[0]) == 0 {block=5;continue;}block=4;continue;
+}
+4=>{
+// 0x10f86634 ldr w2, [x19, #0x74]
+{let address=(cpu.x[19]).wrapping_add(0x74u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[2]=(v0) as u32 as u64;}
+// 0x10f86638 bl #0x10f85b94
+cpu.x[30]=0x10f8663c;super::chunk10::f_10f85b94(cpu,rt,0x10f85b94)?;
+block=5;continue;
+}
+5=>{
+// 0x10f8663c mov w8, #-1
+cpu.x[8]=(((0xffffffffffffffffu64))) as u32 as u64;
+// 0x10f86640 str w8, [x19, #0x70]
+{let address=(cpu.x[19]).wrapping_add(0x70u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+block=6;continue;
+}
+6=>{
+// 0x10f86644 ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10f86648 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f8664c ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10f865f4").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f87024(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f87024=>{
+pub(super) unsafe fn f_10f87024(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f87024{return f_10f87024_slow(cpu,rt,pc);}
+
 // 0x10f87024 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10f87028 stp x20, x19, [sp, #0x10]
@@ -4865,9 +7544,7 @@ cpu.x[20]=(((cpu.x[0]))) as u64;
 {let a=((cpu.x[0]));let b=((0x48u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
 // 0x10f87070 bl #0x114302c8
 cpu.x[30]=0x10f87074;super::chunk11::f_114302c8(cpu,rt,0x114302c8)?;
-pc=0x10f87074;continue;
-}
-0x10f87074=>{
+{
 // 0x10f87074 ldr d0, [x19, #0x60]
 {let address=(cpu.x[19]).wrapping_add(0x60u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.q[0]=(v0) as u128 & 0xffffffffffffffffu128;}
 // 0x10f87078 mov x0, x20
@@ -4893,20 +7570,86 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10f870a0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f87024")),}}}
-#[inline]
-pub(super) unsafe fn f_10f87ad8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f87ad8=>{
-// 0x10f87ad8 cbz x1, #0x10f87ae4
-if (cpu.x[1]) == 0 {pc=0x10f87ae4;continue;}pc=0x10f87adc;continue;
 }
-0x10f87adc=>{
-// 0x10f87adc str x1, [x0, #0x20]
-{let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=cpu.x[1];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
-// 0x10f87ae0 ret
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f87024_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f87024{0}else{match pc{0x10f87024=>0,0x10f87074=>1,_=>return Err(format!("untranslated block {pc:#x} in 0x10f87024").into()),}};loop{match block{
+0=>{
+// 0x10f87024 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10f87028 stp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f8702c mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10f87030 ldr q0, [x1, #0x10]
+{let address=(cpu.x[1]).wrapping_add(0x10u64);let v0=rt.memory.read::<u128>(address.wrapping_add(0));cpu.q[0]=(v0) as u128 & 0xffffffffffffffffffffffffffffffffu128;}
+// 0x10f87034 mov x19, x1
+cpu.x[19]=(((cpu.x[1]))) as u64;
+// 0x10f87038 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10f8703c str q0, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10f87040 ldr q0, [x1, #0x20]
+{let address=(cpu.x[1]).wrapping_add(0x20u64);let v0=rt.memory.read::<u128>(address.wrapping_add(0));cpu.q[0]=(v0) as u128 & 0xffffffffffffffffffffffffffffffffu128;}
+// 0x10f87044 str q0, [x0, #0x20]
+{let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10f87048 ldr q0, [x1]
+{let address=(cpu.x[1]).wrapping_add(0x0u64);let v0=rt.memory.read::<u128>(address.wrapping_add(0));cpu.q[0]=(v0) as u128 & 0xffffffffffffffffffffffffffffffffu128;}
+// 0x10f8704c ldr w8, [x1, #0x30]
+{let address=(cpu.x[1]).wrapping_add(0x30u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f87050 str q0, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10f87054 str w8, [x0, #0x30]
+{let address=(cpu.x[0]).wrapping_add(0x30u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f87058 ldur q0, [x1, #0x38]
+{let address=(cpu.x[1]).wrapping_add(0x38u64);let v0=rt.memory.read::<u128>(address.wrapping_add(0));cpu.q[0]=(v0) as u128 & 0xffffffffffffffffffffffffffffffffu128;}
+// 0x10f8705c ldr w8, [x1, #0x34]
+{let address=(cpu.x[1]).wrapping_add(0x34u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f87060 add x1, x1, #0x48
+{let a=((cpu.x[1]));let b=((0x48u64));let result=a.wrapping_add(b);cpu.x[1]=(result) as u64;}
+// 0x10f87064 stur q0, [x0, #0x38]
+{let address=(cpu.x[0]).wrapping_add(0x38u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);}
+// 0x10f87068 str w8, [x0, #0x34]
+{let address=(cpu.x[0]).wrapping_add(0x34u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8706c add x0, x0, #0x48
+{let a=((cpu.x[0]));let b=((0x48u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10f87070 bl #0x114302c8
+cpu.x[30]=0x10f87074;super::chunk11::f_114302c8(cpu,rt,0x114302c8)?;
+block=1;continue;
+}
+1=>{
+// 0x10f87074 ldr d0, [x19, #0x60]
+{let address=(cpu.x[19]).wrapping_add(0x60u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.q[0]=(v0) as u128 & 0xffffffffffffffffu128;}
+// 0x10f87078 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f8707c str d0, [x20, #0x60]
+{let address=(cpu.x[20]).wrapping_add(0x60u64);let v0=(cpu.q[0] & 0xffffffffffffffffu128) as u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f87080 ldrh w8, [x19, #0x68]
+{let address=(cpu.x[19]).wrapping_add(0x68u64);let v0=rt.memory.read::<u16>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f87084 strh w8, [x20, #0x68]
+{let address=(cpu.x[20]).wrapping_add(0x68u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u16>(address.wrapping_add(0),v0 as u16);}
+// 0x10f87088 ldrb w8, [x19, #0x6a]
+{let address=(cpu.x[19]).wrapping_add(0x6au64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8708c ldr x9, [x19, #0x58]
+{let address=(cpu.x[19]).wrapping_add(0x58u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10f87090 strb w8, [x20, #0x6a]
+{let address=(cpu.x[20]).wrapping_add(0x6au64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
+// 0x10f87094 str x9, [x20, #0x58]
+{let address=(cpu.x[20]).wrapping_add(0x58u64);let v0=cpu.x[9];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f87098 ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f8709c ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f870a0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10f87ae4=>{
+_=>return Err(format!("invalid internal block {block} in 0x10f87024").into()),}}}
+#[inline]
+pub(super) unsafe fn f_10f87ad8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f87ad8{return f_10f87ad8_slow(cpu,rt,pc);}
+
+// 0x10f87ad8 cbz x1, #0x10f87ae4
+if (cpu.x[1]) == 0 {{
+'b10f87b50: {
 // 0x10f87ae4 stp x29, x30, [sp, #-0x30]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10f87ae8 str x21, [sp, #0x10]
@@ -4918,15 +7661,11 @@ cpu.x[29]=(((cpu.sp))) as u64;
 // 0x10f87af4 ldr x19, [x0, #0x20]
 {let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
 // 0x10f87af8 cbz x19, #0x10f87b50
-if (cpu.x[19]) == 0 {pc=0x10f87b50;continue;}pc=0x10f87afc;continue;
-}
-0x10f87afc=>{
+if (cpu.x[19]) == 0 {break 'b10f87b50;}{
 // 0x10f87afc ldrb w8, [x0, #0x18]
 {let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f87b00 cbz w8, #0x10f87b50
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10f87b50;continue;}pc=0x10f87b04;continue;
-}
-0x10f87b04=>{
+if (cpu.x[8] as u32 as u64) == 0 {break 'b10f87b50;}{
 // 0x10f87b04 mov x20, x0
 cpu.x[20]=(((cpu.x[0]))) as u64;
 // 0x10f87b08 mov x0, x19
@@ -4935,27 +7674,21 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[21]=(((cpu.x[1]))) as u64;
 // 0x10f87b10 bl #0x10f93d3c
 cpu.x[30]=0x10f87b14;super::chunk3::f_10f93d3c(cpu,rt,0x10f93d3c)?;
-pc=0x10f87b14;continue;
-}
-0x10f87b14=>{
+{
 // 0x10f87b14 str w0, [x20, #0x28]
 {let address=(cpu.x[20]).wrapping_add(0x28u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10f87b18 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10f87b1c bl #0x10f95c00
 cpu.x[30]=0x10f87b20;super::chunk11::f_10f95c00(cpu,rt,0x10f95c00)?;
-pc=0x10f87b20;continue;
-}
-0x10f87b20=>{
+{
 // 0x10f87b20 str w0, [x20, #0x2c]
 {let address=(cpu.x[20]).wrapping_add(0x2cu64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10f87b24 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10f87b28 bl #0x10f95c08
 cpu.x[30]=0x10f87b2c;super::chunk13::f_10f95c08(cpu,rt,0x10f95c08)?;
-pc=0x10f87b2c;continue;
-}
-0x10f87b2c=>{
+{
 // 0x10f87b2c ldr w8, [x19, #0xac]
 {let address=(cpu.x[19]).wrapping_add(0xacu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f87b30 str w0, [x20, #0x34]
@@ -4966,9 +7699,7 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 {let address=(cpu.x[20]).wrapping_add(0x3cu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10f87b3c bl #0x10f95f8c
 cpu.x[30]=0x10f87b40;super::chunk7::f_10f95f8c(cpu,rt,0x10f95f8c)?;
-pc=0x10f87b40;continue;
-}
-0x10f87b40=>{
+{
 // 0x10f87b40 mov x1, x21
 cpu.x[1]=(((cpu.x[21]))) as u64;
 // 0x10f87b44 mov w8, w0
@@ -4977,9 +7708,118 @@ cpu.x[8]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10f87b4c str w8, [x20, #0x40]
 {let address=(cpu.x[20]).wrapping_add(0x40u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-pc=0x10f87b50;continue;
+break 'b10f87b50;
 }
-0x10f87b50=>{
+}
+}
+}
+}
+}
+}
+// 0x10f87b50 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f87b54 ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10f87b58 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x10f87b5c str x1, [x0, #0x20]
+{let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=cpu.x[1];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f87b60 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
+// 0x10f87adc str x1, [x0, #0x20]
+{let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=cpu.x[1];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f87ae0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f87ad8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f87ad8{0}else{match pc{0x10f87ad8=>0,0x10f87adc=>1,0x10f87ae4=>2,0x10f87afc=>3,0x10f87b04=>4,0x10f87b14=>5,0x10f87b20=>6,0x10f87b2c=>7,0x10f87b40=>8,0x10f87b50=>9,_=>return Err(format!("untranslated block {pc:#x} in 0x10f87ad8").into()),}};loop{match block{
+0=>{
+// 0x10f87ad8 cbz x1, #0x10f87ae4
+if (cpu.x[1]) == 0 {block=2;continue;}block=1;continue;
+}
+1=>{
+// 0x10f87adc str x1, [x0, #0x20]
+{let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=cpu.x[1];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f87ae0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+2=>{
+// 0x10f87ae4 stp x29, x30, [sp, #-0x30]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10f87ae8 str x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f87aec stp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f87af0 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10f87af4 ldr x19, [x0, #0x20]
+{let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10f87af8 cbz x19, #0x10f87b50
+if (cpu.x[19]) == 0 {block=9;continue;}block=3;continue;
+}
+3=>{
+// 0x10f87afc ldrb w8, [x0, #0x18]
+{let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f87b00 cbz w8, #0x10f87b50
+if (cpu.x[8] as u32 as u64) == 0 {block=9;continue;}block=4;continue;
+}
+4=>{
+// 0x10f87b04 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10f87b08 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10f87b0c mov x21, x1
+cpu.x[21]=(((cpu.x[1]))) as u64;
+// 0x10f87b10 bl #0x10f93d3c
+cpu.x[30]=0x10f87b14;super::chunk3::f_10f93d3c(cpu,rt,0x10f93d3c)?;
+block=5;continue;
+}
+5=>{
+// 0x10f87b14 str w0, [x20, #0x28]
+{let address=(cpu.x[20]).wrapping_add(0x28u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f87b18 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10f87b1c bl #0x10f95c00
+cpu.x[30]=0x10f87b20;super::chunk11::f_10f95c00(cpu,rt,0x10f95c00)?;
+block=6;continue;
+}
+6=>{
+// 0x10f87b20 str w0, [x20, #0x2c]
+{let address=(cpu.x[20]).wrapping_add(0x2cu64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f87b24 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10f87b28 bl #0x10f95c08
+cpu.x[30]=0x10f87b2c;super::chunk13::f_10f95c08(cpu,rt,0x10f95c08)?;
+block=7;continue;
+}
+7=>{
+// 0x10f87b2c ldr w8, [x19, #0xac]
+{let address=(cpu.x[19]).wrapping_add(0xacu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f87b30 str w0, [x20, #0x34]
+{let address=(cpu.x[20]).wrapping_add(0x34u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f87b34 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10f87b38 str w8, [x20, #0x3c]
+{let address=(cpu.x[20]).wrapping_add(0x3cu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f87b3c bl #0x10f95f8c
+cpu.x[30]=0x10f87b40;super::chunk7::f_10f95f8c(cpu,rt,0x10f95f8c)?;
+block=8;continue;
+}
+8=>{
+// 0x10f87b40 mov x1, x21
+cpu.x[1]=(((cpu.x[21]))) as u64;
+// 0x10f87b44 mov w8, w0
+cpu.x[8]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10f87b48 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f87b4c str w8, [x20, #0x40]
+{let address=(cpu.x[20]).wrapping_add(0x40u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+block=9;continue;
+}
+9=>{
 // 0x10f87b50 ldp x20, x19, [sp, #0x20]
 {let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10f87b54 ldr x21, [sp, #0x10]
@@ -4991,34 +7831,59 @@ pc=0x10f87b50;continue;
 // 0x10f87b60 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f87ad8")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10f87ad8").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f87be8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f87be8=>{
+pub(super) unsafe fn f_10f87be8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f87be8{return f_10f87be8_slow(cpu,rt,pc);}
+
+'b10f87c00: {
 // 0x10f87be8 mov x8, x0
 cpu.x[8]=(((cpu.x[0]))) as u64;
 // 0x10f87bec ldr x0, [x0, #0x20]
 {let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10f87bf0 cbz x0, #0x10f87c00
-if (cpu.x[0]) == 0 {pc=0x10f87c00;continue;}pc=0x10f87bf4;continue;
-}
-0x10f87bf4=>{
+if (cpu.x[0]) == 0 {break 'b10f87c00;}{
 // 0x10f87bf4 ldrb w9, [x8, #0x18]
 {let address=(cpu.x[8]).wrapping_add(0x18u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10f87bf8 cbz w9, #0x10f87c00
-if (cpu.x[9] as u32 as u64) == 0 {pc=0x10f87c00;continue;}pc=0x10f87bfc;continue;
-}
-0x10f87bfc=>{
+if (cpu.x[9] as u32 as u64) == 0 {break 'b10f87c00;}{
 // 0x10f87bfc b #0x10f95f8c
 super::chunk7::f_10f95f8c(cpu,rt,0x10f95f8c)?;return Ok(());
 }
-0x10f87c00=>{
+}
+}
 // 0x10f87c00 ldr w0, [x8, #0x40]
 {let address=(cpu.x[8]).wrapping_add(0x40u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
 // 0x10f87c04 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f87be8")),}}}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f87be8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f87be8{0}else{match pc{0x10f87be8=>0,0x10f87bf4=>1,0x10f87bfc=>2,0x10f87c00=>3,_=>return Err(format!("untranslated block {pc:#x} in 0x10f87be8").into()),}};loop{match block{
+0=>{
+// 0x10f87be8 mov x8, x0
+cpu.x[8]=(((cpu.x[0]))) as u64;
+// 0x10f87bec ldr x0, [x0, #0x20]
+{let address=(cpu.x[0]).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f87bf0 cbz x0, #0x10f87c00
+if (cpu.x[0]) == 0 {block=3;continue;}block=1;continue;
+}
+1=>{
+// 0x10f87bf4 ldrb w9, [x8, #0x18]
+{let address=(cpu.x[8]).wrapping_add(0x18u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10f87bf8 cbz w9, #0x10f87c00
+if (cpu.x[9] as u32 as u64) == 0 {block=3;continue;}block=2;continue;
+}
+2=>{
+// 0x10f87bfc b #0x10f95f8c
+super::chunk7::f_10f95f8c(cpu,rt,0x10f95f8c)?;return Ok(());
+}
+3=>{
+// 0x10f87c00 ldr w0, [x8, #0x40]
+{let address=(cpu.x[8]).wrapping_add(0x40u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10f87c04 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10f87be8").into()),}}}
 #[inline]
 pub(super) unsafe fn f_10f89abc(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10f89abc=>{
@@ -5139,10 +8004,11 @@ cpu.x[5]=(((cpu.x[20]))) as u64;
 // 0x10f89b80 b #0x10f7922c
 super::chunk9::f_10f7922c(cpu,rt,0x10f7922c)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f89abc")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10f89abc").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f8ba98(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f8ba98=>{
+pub(super) unsafe fn f_10f8ba98(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f8ba98{return f_10f8ba98_slow(cpu,rt,pc);}
+
+'b10f8bab4: {
 // 0x10f8ba98 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10f8ba9c stp x20, x19, [sp, #0x10]
@@ -5156,57 +8022,9 @@ cpu.x[19]=(((cpu.x[0]))) as u64;
 // 0x10f8baac cmp w8, #1
 {let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f8bab0 b.ge #0x10f8bb00
-if cpu.condition(10){pc=0x10f8bb00;continue;}pc=0x10f8bab4;continue;
-}
-0x10f8bab4=>{
-// 0x10f8bab4 ldr w8, [x19, #0x14]
-{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
-// 0x10f8bab8 str wzr, [x19, #0x24]
-{let address=(cpu.x[19]).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-// 0x10f8babc cmp w8, #1
-{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10f8bac0 b.ge #0x10f8bb44
-if cpu.condition(10){pc=0x10f8bb44;continue;}pc=0x10f8bac4;continue;
-}
-0x10f8bac4=>{
-// 0x10f8bac4 ldr w8, [x19, #0x34]
-{let address=(cpu.x[19]).wrapping_add(0x34u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
-// 0x10f8bac8 str wzr, [x19, #0x14]
-{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-// 0x10f8bacc cmp w8, #1
-{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10f8bad0 b.ge #0x10f8bb88
-if cpu.condition(10){pc=0x10f8bb88;continue;}pc=0x10f8bad4;continue;
-}
-0x10f8bad4=>{
-// 0x10f8bad4 ldr w8, [x19, #0x44]
-{let address=(cpu.x[19]).wrapping_add(0x44u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
-// 0x10f8bad8 str wzr, [x19, #0x34]
-{let address=(cpu.x[19]).wrapping_add(0x34u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-// 0x10f8badc cmp w8, #1
-{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10f8bae0 b.ge #0x10f8bbcc
-if cpu.condition(10){pc=0x10f8bbcc;continue;}pc=0x10f8bae4;continue;
-}
-0x10f8bae4=>{
-// 0x10f8bae4 str wzr, [x19, #0x44]
-{let address=(cpu.x[19]).wrapping_add(0x44u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-// 0x10f8bae8 str wzr, [x19, #0x54]
-{let address=(cpu.x[19]).wrapping_add(0x54u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-// 0x10f8baec ldp x20, x19, [sp, #0x10]
-{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
-// 0x10f8baf0 ldp x29, x30, [sp], #0x20
-{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
-// 0x10f8baf4 ret
-cpu.pc=cpu.x[30];return Ok(());
-}
-0x10f8baf8=>{
-// 0x10f8baf8 cmp w8, #0
-{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10f8bafc b.le #0x10f8bab4
-if cpu.condition(13){pc=0x10f8bab4;continue;}pc=0x10f8bb00;continue;
-}
-0x10f8bb00=>{
+if cpu.condition(10){{
+'l10f8bb00: loop {
+'b10f8baf8: {
 // 0x10f8bb00 ldr x9, [x19, #0x18]
 {let address=(cpu.x[19]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
 // 0x10f8bb04 sub w8, w8, #1
@@ -5216,9 +8034,7 @@ if cpu.condition(13){pc=0x10f8bab4;continue;}pc=0x10f8bb00;continue;
 // 0x10f8bb0c ldr x20, [x9, w8, uxtw #3]
 {let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
 // 0x10f8bb10 cbz x20, #0x10f8baf8
-if (cpu.x[20]) == 0 {pc=0x10f8baf8;continue;}pc=0x10f8bb14;continue;
-}
-0x10f8bb14=>{
+if (cpu.x[20]) == 0 {break 'b10f8baf8;}{
 // 0x10f8bb14 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f8bb18 mov x0, x20
@@ -5227,9 +8043,7 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x68u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f8bb20 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f8bb24;super::dispatch(cpu,rt,target)?;}
-pc=0x10f8bb24;continue;
-}
-0x10f8bb24=>{
+{
 // 0x10f8bb24 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f8bb28 mov x0, x20
@@ -5238,21 +8052,33 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f8bb30 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f8bb34;super::dispatch(cpu,rt,target)?;}
-pc=0x10f8bb34;continue;
-}
-0x10f8bb34=>{
+{
 // 0x10f8bb34 ldr w8, [x19, #0x24]
 {let address=(cpu.x[19]).wrapping_add(0x24u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f8bb38 b #0x10f8baf8
-pc=0x10f8baf8;continue;
+break 'b10f8baf8;
 }
-0x10f8bb3c=>{
-// 0x10f8bb3c cmp w8, #0
+}
+}
+}
+// 0x10f8baf8 cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10f8bb40 b.le #0x10f8bac4
-if cpu.condition(13){pc=0x10f8bac4;continue;}pc=0x10f8bb44;continue;
+// 0x10f8bafc b.le #0x10f8bab4
+if cpu.condition(13){break 'b10f8bab4;}continue 'l10f8bb00;
 }
-0x10f8bb44=>{
+}}break 'b10f8bab4;
+}
+'b10f8bac4: {
+// 0x10f8bab4 ldr w8, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8bab8 str wzr, [x19, #0x24]
+{let address=(cpu.x[19]).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8babc cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bac0 b.ge #0x10f8bb44
+if cpu.condition(10){{
+'l10f8bb44: loop {
+'b10f8bb3c: {
 // 0x10f8bb44 ldr x9, [x19, #8]
 {let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
 // 0x10f8bb48 sub w8, w8, #1
@@ -5262,9 +8088,7 @@ if cpu.condition(13){pc=0x10f8bac4;continue;}pc=0x10f8bb44;continue;
 // 0x10f8bb50 ldr x20, [x9, w8, uxtw #3]
 {let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
 // 0x10f8bb54 cbz x20, #0x10f8bb3c
-if (cpu.x[20]) == 0 {pc=0x10f8bb3c;continue;}pc=0x10f8bb58;continue;
-}
-0x10f8bb58=>{
+if (cpu.x[20]) == 0 {break 'b10f8bb3c;}{
 // 0x10f8bb58 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f8bb5c mov x0, x20
@@ -5273,9 +8097,7 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x68u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f8bb64 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f8bb68;super::dispatch(cpu,rt,target)?;}
-pc=0x10f8bb68;continue;
-}
-0x10f8bb68=>{
+{
 // 0x10f8bb68 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f8bb6c mov x0, x20
@@ -5284,21 +8106,33 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f8bb74 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f8bb78;super::dispatch(cpu,rt,target)?;}
-pc=0x10f8bb78;continue;
-}
-0x10f8bb78=>{
+{
 // 0x10f8bb78 ldr w8, [x19, #0x14]
 {let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f8bb7c b #0x10f8bb3c
-pc=0x10f8bb3c;continue;
+break 'b10f8bb3c;
 }
-0x10f8bb80=>{
-// 0x10f8bb80 cmp w8, #0
+}
+}
+}
+// 0x10f8bb3c cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10f8bb84 b.le #0x10f8bad4
-if cpu.condition(13){pc=0x10f8bad4;continue;}pc=0x10f8bb88;continue;
+// 0x10f8bb40 b.le #0x10f8bac4
+if cpu.condition(13){break 'b10f8bac4;}continue 'l10f8bb44;
 }
-0x10f8bb88=>{
+}}break 'b10f8bac4;
+}
+'b10f8bad4: {
+// 0x10f8bac4 ldr w8, [x19, #0x34]
+{let address=(cpu.x[19]).wrapping_add(0x34u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8bac8 str wzr, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8bacc cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bad0 b.ge #0x10f8bb88
+if cpu.condition(10){{
+'l10f8bb88: loop {
+'b10f8bb80: {
 // 0x10f8bb88 ldr x9, [x19, #0x28]
 {let address=(cpu.x[19]).wrapping_add(0x28u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
 // 0x10f8bb8c sub w8, w8, #1
@@ -5308,9 +8142,7 @@ if cpu.condition(13){pc=0x10f8bad4;continue;}pc=0x10f8bb88;continue;
 // 0x10f8bb94 ldr x20, [x9, w8, uxtw #3]
 {let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
 // 0x10f8bb98 cbz x20, #0x10f8bb80
-if (cpu.x[20]) == 0 {pc=0x10f8bb80;continue;}pc=0x10f8bb9c;continue;
-}
-0x10f8bb9c=>{
+if (cpu.x[20]) == 0 {break 'b10f8bb80;}{
 // 0x10f8bb9c ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f8bba0 mov x0, x20
@@ -5330,15 +8162,27 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10f8bbbc ldr w8, [x19, #0x34]
 {let address=(cpu.x[19]).wrapping_add(0x34u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f8bbc0 b #0x10f8bb80
-pc=0x10f8bb80;continue;
+break 'b10f8bb80;
 }
-0x10f8bbc4=>{
-// 0x10f8bbc4 cmp w8, #0
+}
+// 0x10f8bb80 cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10f8bbc8 b.le #0x10f8bae4
-if cpu.condition(13){pc=0x10f8bae4;continue;}pc=0x10f8bbcc;continue;
+// 0x10f8bb84 b.le #0x10f8bad4
+if cpu.condition(13){break 'b10f8bad4;}continue 'l10f8bb88;
 }
-0x10f8bbcc=>{
+}}break 'b10f8bad4;
+}
+'b10f8bae4: {
+// 0x10f8bad4 ldr w8, [x19, #0x44]
+{let address=(cpu.x[19]).wrapping_add(0x44u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8bad8 str wzr, [x19, #0x34]
+{let address=(cpu.x[19]).wrapping_add(0x34u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8badc cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bae0 b.ge #0x10f8bbcc
+if cpu.condition(10){{
+'l10f8bbcc: loop {
+'b10f8bbc4: {
 // 0x10f8bbcc ldr x9, [x19, #0x38]
 {let address=(cpu.x[19]).wrapping_add(0x38u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
 // 0x10f8bbd0 sub w8, w8, #1
@@ -5348,9 +8192,7 @@ if cpu.condition(13){pc=0x10f8bae4;continue;}pc=0x10f8bbcc;continue;
 // 0x10f8bbd8 ldr x20, [x9, w8, uxtw #3]
 {let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
 // 0x10f8bbdc cbz x20, #0x10f8bbc4
-if (cpu.x[20]) == 0 {pc=0x10f8bbc4;continue;}pc=0x10f8bbe0;continue;
-}
-0x10f8bbe0=>{
+if (cpu.x[20]) == 0 {break 'b10f8bbc4;}{
 // 0x10f8bbe0 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f8bbe4 mov x0, x20
@@ -5370,11 +8212,274 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10f8bc00 ldr w8, [x19, #0x44]
 {let address=(cpu.x[19]).wrapping_add(0x44u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f8bc04 b #0x10f8bbc4
-pc=0x10f8bbc4;continue;
+break 'b10f8bbc4;
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f8ba98")),}}}
+}
+// 0x10f8bbc4 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bbc8 b.le #0x10f8bae4
+if cpu.condition(13){break 'b10f8bae4;}continue 'l10f8bbcc;
+}
+}}break 'b10f8bae4;
+}
+// 0x10f8bae4 str wzr, [x19, #0x44]
+{let address=(cpu.x[19]).wrapping_add(0x44u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8bae8 str wzr, [x19, #0x54]
+{let address=(cpu.x[19]).wrapping_add(0x54u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8baec ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f8baf0 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f8baf4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f8ba98_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f8ba98{0}else{match pc{0x10f8ba98=>0,0x10f8bab4=>1,0x10f8bac4=>2,0x10f8bad4=>3,0x10f8bae4=>4,0x10f8baf8=>5,0x10f8bb00=>6,0x10f8bb14=>7,0x10f8bb24=>8,0x10f8bb34=>9,0x10f8bb3c=>10,0x10f8bb44=>11,0x10f8bb58=>12,0x10f8bb68=>13,0x10f8bb78=>14,0x10f8bb80=>15,0x10f8bb88=>16,0x10f8bb9c=>17,0x10f8bbc4=>18,0x10f8bbcc=>19,0x10f8bbe0=>20,_=>return Err(format!("untranslated block {pc:#x} in 0x10f8ba98").into()),}};loop{match block{
+0=>{
+// 0x10f8ba98 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10f8ba9c stp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f8baa0 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10f8baa4 ldr w8, [x0, #0x24]
+{let address=(cpu.x[0]).wrapping_add(0x24u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8baa8 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10f8baac cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bab0 b.ge #0x10f8bb00
+if cpu.condition(10){block=6;continue;}block=1;continue;
+}
+1=>{
+// 0x10f8bab4 ldr w8, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8bab8 str wzr, [x19, #0x24]
+{let address=(cpu.x[19]).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8babc cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bac0 b.ge #0x10f8bb44
+if cpu.condition(10){block=11;continue;}block=2;continue;
+}
+2=>{
+// 0x10f8bac4 ldr w8, [x19, #0x34]
+{let address=(cpu.x[19]).wrapping_add(0x34u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8bac8 str wzr, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8bacc cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bad0 b.ge #0x10f8bb88
+if cpu.condition(10){block=16;continue;}block=3;continue;
+}
+3=>{
+// 0x10f8bad4 ldr w8, [x19, #0x44]
+{let address=(cpu.x[19]).wrapping_add(0x44u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8bad8 str wzr, [x19, #0x34]
+{let address=(cpu.x[19]).wrapping_add(0x34u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8badc cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bae0 b.ge #0x10f8bbcc
+if cpu.condition(10){block=19;continue;}block=4;continue;
+}
+4=>{
+// 0x10f8bae4 str wzr, [x19, #0x44]
+{let address=(cpu.x[19]).wrapping_add(0x44u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8bae8 str wzr, [x19, #0x54]
+{let address=(cpu.x[19]).wrapping_add(0x54u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8baec ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f8baf0 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f8baf4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+5=>{
+// 0x10f8baf8 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bafc b.le #0x10f8bab4
+if cpu.condition(13){block=1;continue;}block=6;continue;
+}
+6=>{
+// 0x10f8bb00 ldr x9, [x19, #0x18]
+{let address=(cpu.x[19]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10f8bb04 sub w8, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10f8bb08 str w8, [x19, #0x24]
+{let address=(cpu.x[19]).wrapping_add(0x24u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8bb0c ldr x20, [x9, w8, uxtw #3]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
+// 0x10f8bb10 cbz x20, #0x10f8baf8
+if (cpu.x[20]) == 0 {block=5;continue;}block=7;continue;
+}
+7=>{
+// 0x10f8bb14 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bb18 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f8bb1c ldr x8, [x8, #0x68]
+{let address=(cpu.x[8]).wrapping_add(0x68u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bb20 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f8bb24;super::dispatch(cpu,rt,target)?;}
+block=8;continue;
+}
+8=>{
+// 0x10f8bb24 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bb28 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f8bb2c ldr x8, [x8, #8]
+{let address=(cpu.x[8]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bb30 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f8bb34;super::dispatch(cpu,rt,target)?;}
+block=9;continue;
+}
+9=>{
+// 0x10f8bb34 ldr w8, [x19, #0x24]
+{let address=(cpu.x[19]).wrapping_add(0x24u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8bb38 b #0x10f8baf8
+block=5;continue;
+}
+10=>{
+// 0x10f8bb3c cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bb40 b.le #0x10f8bac4
+if cpu.condition(13){block=2;continue;}block=11;continue;
+}
+11=>{
+// 0x10f8bb44 ldr x9, [x19, #8]
+{let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10f8bb48 sub w8, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10f8bb4c str w8, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8bb50 ldr x20, [x9, w8, uxtw #3]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
+// 0x10f8bb54 cbz x20, #0x10f8bb3c
+if (cpu.x[20]) == 0 {block=10;continue;}block=12;continue;
+}
+12=>{
+// 0x10f8bb58 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bb5c mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f8bb60 ldr x8, [x8, #0x68]
+{let address=(cpu.x[8]).wrapping_add(0x68u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bb64 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f8bb68;super::dispatch(cpu,rt,target)?;}
+block=13;continue;
+}
+13=>{
+// 0x10f8bb68 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bb6c mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f8bb70 ldr x8, [x8, #8]
+{let address=(cpu.x[8]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bb74 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f8bb78;super::dispatch(cpu,rt,target)?;}
+block=14;continue;
+}
+14=>{
+// 0x10f8bb78 ldr w8, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8bb7c b #0x10f8bb3c
+block=10;continue;
+}
+15=>{
+// 0x10f8bb80 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bb84 b.le #0x10f8bad4
+if cpu.condition(13){block=3;continue;}block=16;continue;
+}
+16=>{
+// 0x10f8bb88 ldr x9, [x19, #0x28]
+{let address=(cpu.x[19]).wrapping_add(0x28u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10f8bb8c sub w8, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10f8bb90 str w8, [x19, #0x34]
+{let address=(cpu.x[19]).wrapping_add(0x34u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8bb94 ldr x20, [x9, w8, uxtw #3]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
+// 0x10f8bb98 cbz x20, #0x10f8bb80
+if (cpu.x[20]) == 0 {block=15;continue;}block=17;continue;
+}
+17=>{
+// 0x10f8bb9c ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bba0 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f8bba4 ldr x8, [x8, #0x68]
+{let address=(cpu.x[8]).wrapping_add(0x68u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bba8 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f8bbac;super::dispatch(cpu,rt,target)?;}
+// 0x10f8bbac ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bbb0 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f8bbb4 ldr x8, [x8, #8]
+{let address=(cpu.x[8]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bbb8 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f8bbbc;super::dispatch(cpu,rt,target)?;}
+// 0x10f8bbbc ldr w8, [x19, #0x34]
+{let address=(cpu.x[19]).wrapping_add(0x34u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8bbc0 b #0x10f8bb80
+block=15;continue;
+}
+18=>{
+// 0x10f8bbc4 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f8bbc8 b.le #0x10f8bae4
+if cpu.condition(13){block=4;continue;}block=19;continue;
+}
+19=>{
+// 0x10f8bbcc ldr x9, [x19, #0x38]
+{let address=(cpu.x[19]).wrapping_add(0x38u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10f8bbd0 sub w8, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10f8bbd4 str w8, [x19, #0x44]
+{let address=(cpu.x[19]).wrapping_add(0x44u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f8bbd8 ldr x20, [x9, w8, uxtw #3]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
+// 0x10f8bbdc cbz x20, #0x10f8bbc4
+if (cpu.x[20]) == 0 {block=18;continue;}block=20;continue;
+}
+20=>{
+// 0x10f8bbe0 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bbe4 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f8bbe8 ldr x8, [x8, #0x68]
+{let address=(cpu.x[8]).wrapping_add(0x68u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bbec blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f8bbf0;super::dispatch(cpu,rt,target)?;}
+// 0x10f8bbf0 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bbf4 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f8bbf8 ldr x8, [x8, #8]
+{let address=(cpu.x[8]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f8bbfc blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f8bc00;super::dispatch(cpu,rt,target)?;}
+// 0x10f8bc00 ldr w8, [x19, #0x44]
+{let address=(cpu.x[19]).wrapping_add(0x44u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8bc04 b #0x10f8bbc4
+block=18;continue;
+}
+_=>return Err(format!("invalid internal block {block} in 0x10f8ba98").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f8c1a0(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10f8c1a0(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f8c1a0{return f_10f8c1a0_slow(cpu,rt,pc);}
+
+// 0x10f8c1a0 mov x0, x1
+cpu.x[0]=(((cpu.x[1]))) as u64;
+// 0x10f8c1a4 mov w1, w2
+cpu.x[1]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
+// 0x10f8c1a8 b #0x10f8a138
+super::chunk11::f_10f8a138(cpu,rt,0x10f8a138)?;return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f8c1a0_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10f8c1a0=>{
 // 0x10f8c1a0 mov x0, x1
 cpu.x[0]=(((cpu.x[1]))) as u64;
@@ -5383,48 +8488,85 @@ cpu.x[1]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
 // 0x10f8c1a8 b #0x10f8a138
 super::chunk11::f_10f8a138(cpu,rt,0x10f8a138)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f8c1a0")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10f8c1a0").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f8f498(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f8f498=>{
+pub(super) unsafe fn f_10f8f498(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f8f498{return f_10f8f498_slow(cpu,rt,pc);}
+
 // 0x10f8f498 ldrb w8, [x0, #0x14c]
 {let address=(cpu.x[0]).wrapping_add(0x14cu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f8f49c cbz w8, #0x10f8f4b4
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10f8f4b4;continue;}pc=0x10f8f4a0;continue;
-}
-0x10f8f4a0=>{
+if (cpu.x[8] as u32 as u64) == 0 {{
+// 0x10f8f4b4 mov x0, xzr
+cpu.x[0]=(((0u64))) as u64;
+// 0x10f8f4b8 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
+'l10f8f4a0: loop {
 // 0x10f8f4a0 mov x8, x0
 cpu.x[8]=(((cpu.x[0]))) as u64;
 // 0x10f8f4a4 ldr x0, [x0, #0x150]
 {let address=(cpu.x[0]).wrapping_add(0x150u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10f8f4a8 cbnz x0, #0x10f8f4a0
-if (cpu.x[0]) != 0 {pc=0x10f8f4a0;continue;}pc=0x10f8f4ac;continue;
-}
-0x10f8f4ac=>{
+if (cpu.x[0]) != 0 {continue 'l10f8f4a0;}{
 // 0x10f8f4ac ldr x0, [x8, #0x168]
 {let address=(cpu.x[8]).wrapping_add(0x168u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10f8f4b0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10f8f4b4=>{
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f8f498_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f8f498{0}else{match pc{0x10f8f498=>0,0x10f8f4a0=>1,0x10f8f4ac=>2,0x10f8f4b4=>3,_=>return Err(format!("untranslated block {pc:#x} in 0x10f8f498").into()),}};loop{match block{
+0=>{
+// 0x10f8f498 ldrb w8, [x0, #0x14c]
+{let address=(cpu.x[0]).wrapping_add(0x14cu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f8f49c cbz w8, #0x10f8f4b4
+if (cpu.x[8] as u32 as u64) == 0 {block=3;continue;}block=1;continue;
+}
+1=>{
+// 0x10f8f4a0 mov x8, x0
+cpu.x[8]=(((cpu.x[0]))) as u64;
+// 0x10f8f4a4 ldr x0, [x0, #0x150]
+{let address=(cpu.x[0]).wrapping_add(0x150u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f8f4a8 cbnz x0, #0x10f8f4a0
+if (cpu.x[0]) != 0 {block=1;continue;}block=2;continue;
+}
+2=>{
+// 0x10f8f4ac ldr x0, [x8, #0x168]
+{let address=(cpu.x[8]).wrapping_add(0x168u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f8f4b0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+3=>{
 // 0x10f8f4b4 mov x0, xzr
 cpu.x[0]=(((0u64))) as u64;
 // 0x10f8f4b8 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f8f498")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10f8f498").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f93760(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10f93760(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f93760{return f_10f93760_slow(cpu,rt,pc);}
+
+// 0x10f93760 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10f93764 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f93760_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10f93760=>{
 // 0x10f93760 mov w0, wzr
 cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10f93764 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f93760")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10f93760").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f93d44(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f93d44=>{
+pub(super) unsafe fn f_10f93d44(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f93d44{return f_10f93d44_slow(cpu,rt,pc);}
+
 // 0x10f93d44 stp x29, x30, [sp, #-0x40]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10f93d48 str x23, [sp, #0x10]
@@ -5441,18 +8583,14 @@ cpu.x[20]=(((cpu.x[1]))) as u64;
 cpu.x[19]=(((cpu.x[0]))) as u64;
 // 0x10f93d60 bl #0x10f89cf8
 cpu.x[30]=0x10f93d64;super::chunk3::f_10f89cf8(cpu,rt,0x10f89cf8)?;
-pc=0x10f93d64;continue;
-}
-0x10f93d64=>{
+{
 // 0x10f93d64 add x1, x19, #0x7c
 {let a=((cpu.x[19]));let b=((0x7cu64));let result=a.wrapping_add(b);cpu.x[1]=(result) as u64;}
 // 0x10f93d68 mov x0, x20
 cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10f93d6c bl #0x111dd2e0
 cpu.x[30]=0x10f93d70;super::chunk9::f_111dd2e0(cpu,rt,0x111dd2e0)?;
-pc=0x10f93d70;continue;
-}
-0x10f93d70=>{
+{
 // 0x10f93d70 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93d74 mov x0, x20
@@ -5461,9 +8599,7 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93d7c blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f93d80;super::dispatch(cpu,rt,target)?;}
-pc=0x10f93d80;continue;
-}
-0x10f93d80=>{
+{
 // 0x10f93d80 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93d84 str w0, [x19, #0x8c]
@@ -5476,37 +8612,20 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93d94 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f93d98;super::dispatch(cpu,rt,target)?;}
-pc=0x10f93d98;continue;
-}
-0x10f93d98=>{
+{
+'b10f93e04: {
 // 0x10f93d98 cmp w0, #1
 {let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f93d9c b.lt #0x10f93e04
-if cpu.condition(11){pc=0x10f93e04;continue;}pc=0x10f93da0;continue;
-}
-0x10f93da0=>{
+if cpu.condition(11){break 'b10f93e04;}{
 // 0x10f93da0 mov w21, w0
 cpu.x[21]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10f93da4 mov w22, #5
 cpu.x[22]=(((0x5u64))) as u32 as u64;
 // 0x10f93da8 b #0x10f93dc4
-pc=0x10f93dc4;continue;
-}
-0x10f93dac=>{
-// 0x10f93dac ldr x9, [x19, #0x60]
-{let address=(cpu.x[19]).wrapping_add(0x60u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
-// 0x10f93db0 add w10, w8, #1
-{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
-// 0x10f93db4 subs w21, w21, #1
-{let a=((cpu.x[21] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[21]=(result) as u32 as u64;cpu.flags(a,b,result,32,true);}
-// 0x10f93db8 str w10, [x19, #0x6c]
-{let address=(cpu.x[19]).wrapping_add(0x6cu64);let v0=cpu.x[10] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-// 0x10f93dbc str w0, [x9, w8, sxtw #2]
-{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as i32 as i64 as u64)) as u64).wrapping_shl(2) as u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-// 0x10f93dc0 b.eq #0x10f93e04
-if cpu.condition(0){pc=0x10f93e04;continue;}pc=0x10f93dc4;continue;
-}
-0x10f93dc4=>{
+{
+'l10f93dc4: loop {
+'b10f93dac: {
 // 0x10f93dc4 mov x0, x20
 cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10f93dc8 bl #0x111dd1e0
@@ -5516,9 +8635,7 @@ cpu.x[30]=0x10f93dcc;super::chunk10::f_111dd1e0(cpu,rt,0x111dd1e0)?;
 // 0x10f93dd0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f93dd4 b.ne #0x10f93dac
-if cpu.condition(1){pc=0x10f93dac;continue;}pc=0x10f93dd8;continue;
-}
-0x10f93dd8=>{
+if cpu.condition(1){break 'b10f93dac;}{
 // 0x10f93dd8 lsl w9, w8, #1
 cpu.x[9]=(((((cpu.x[8] as u32 as u64))) as u32).wrapping_shl(((((0x1u64))) & 31) as u32) as u64) as u32 as u64;
 // 0x10f93ddc cmp w9, #0
@@ -5528,9 +8645,7 @@ cpu.x[1]=(if cpu.condition(0){((cpu.x[22] as u32 as u64))}else{((cpu.x[9] as u32
 // 0x10f93de4 cmp w8, w1
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f93de8 b.ge #0x10f93dac
-if cpu.condition(10){pc=0x10f93dac;continue;}pc=0x10f93dec;continue;
-}
-0x10f93dec=>{
+if cpu.condition(10){break 'b10f93dac;}{
 // 0x10f93dec mov w23, w0
 cpu.x[23]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10f93df0 add x0, x19, #0x60
@@ -5542,9 +8657,26 @@ cpu.x[30]=0x10f93df8;super::chunk2::f_1078f4d4(cpu,rt,0x1078f4d4)?;
 // 0x10f93dfc mov w0, w23
 cpu.x[0]=(((cpu.x[23] as u32 as u64))) as u32 as u64;
 // 0x10f93e00 b #0x10f93dac
-pc=0x10f93dac;continue;
+break 'b10f93dac;
 }
-0x10f93e04=>{
+}
+}
+// 0x10f93dac ldr x9, [x19, #0x60]
+{let address=(cpu.x[19]).wrapping_add(0x60u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10f93db0 add w10, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x10f93db4 subs w21, w21, #1
+{let a=((cpu.x[21] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[21]=(result) as u32 as u64;cpu.flags(a,b,result,32,true);}
+// 0x10f93db8 str w10, [x19, #0x6c]
+{let address=(cpu.x[19]).wrapping_add(0x6cu64);let v0=cpu.x[10] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f93dbc str w0, [x9, w8, sxtw #2]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as i32 as i64 as u64)) as u64).wrapping_shl(2) as u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f93dc0 b.eq #0x10f93e04
+if cpu.condition(0){break 'b10f93e04;}continue 'l10f93dc4;
+}
+}
+}
+}
 // 0x10f93e04 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e08 mov x0, x20
@@ -5553,9 +8685,7 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e10 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f93e14;super::dispatch(cpu,rt,target)?;}
-pc=0x10f93e14;continue;
-}
-0x10f93e14=>{
+{
 // 0x10f93e14 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e18 str w0, [x19, #0x94]
@@ -5566,9 +8696,7 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e24 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f93e28;super::dispatch(cpu,rt,target)?;}
-pc=0x10f93e28;continue;
-}
-0x10f93e28=>{
+{
 // 0x10f93e28 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e2c str w0, [x19, #0x98]
@@ -5579,9 +8707,7 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e38 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f93e3c;super::dispatch(cpu,rt,target)?;}
-pc=0x10f93e3c;continue;
-}
-0x10f93e3c=>{
+{
 // 0x10f93e3c ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e40 str w0, [x19, #0xac]
@@ -5592,9 +8718,7 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e4c blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f93e50;super::dispatch(cpu,rt,target)?;}
-pc=0x10f93e50;continue;
-}
-0x10f93e50=>{
+{
 // 0x10f93e50 ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e54 str w0, [x19, #0xc0]
@@ -5605,9 +8729,7 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x120u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e60 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f93e64;super::dispatch(cpu,rt,target)?;}
-pc=0x10f93e64;continue;
-}
-0x10f93e64=>{
+{
 // 0x10f93e64 str x0, [x19, #0xb8]
 {let address=(cpu.x[19]).wrapping_add(0xb8u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10f93e68 mov x0, x20
@@ -5618,9 +8740,7 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x120u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e74 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f93e78;super::dispatch(cpu,rt,target)?;}
-pc=0x10f93e78;continue;
-}
-0x10f93e78=>{
+{
 // 0x10f93e78 str x0, [x19, #0xb0]
 {let address=(cpu.x[19]).wrapping_add(0xb0u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10f93e7c mov x0, x20
@@ -5631,9 +8751,7 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f93e88 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f93e8c;super::dispatch(cpu,rt,target)?;}
-pc=0x10f93e8c;continue;
-}
-0x10f93e8c=>{
+{
 // 0x10f93e8c mov w8, w0
 cpu.x[8]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10f93e90 add x1, x19, #0xc8
@@ -5653,17 +8771,268 @@ cpu.x[0]=(((cpu.x[20]))) as u64;
 // 0x10f93eac b #0x111ddf84
 super::chunk1::f_111ddf84(cpu,rt,0x111ddf84)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f93d44")),}}}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f93d44_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f93d44{0}else{match pc{0x10f93d44=>0,0x10f93d64=>1,0x10f93d70=>2,0x10f93d80=>3,0x10f93d98=>4,0x10f93da0=>5,0x10f93dac=>6,0x10f93dc4=>7,0x10f93dd8=>8,0x10f93dec=>9,0x10f93e04=>10,0x10f93e14=>11,0x10f93e28=>12,0x10f93e3c=>13,0x10f93e50=>14,0x10f93e64=>15,0x10f93e78=>16,0x10f93e8c=>17,_=>return Err(format!("untranslated block {pc:#x} in 0x10f93d44").into()),}};loop{match block{
+0=>{
+// 0x10f93d44 stp x29, x30, [sp, #-0x40]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10f93d48 str x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[23];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f93d4c stp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f93d50 stp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f93d54 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10f93d58 mov x20, x1
+cpu.x[20]=(((cpu.x[1]))) as u64;
+// 0x10f93d5c mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10f93d60 bl #0x10f89cf8
+cpu.x[30]=0x10f93d64;super::chunk3::f_10f89cf8(cpu,rt,0x10f89cf8)?;
+block=1;continue;
+}
+1=>{
+// 0x10f93d64 add x1, x19, #0x7c
+{let a=((cpu.x[19]));let b=((0x7cu64));let result=a.wrapping_add(b);cpu.x[1]=(result) as u64;}
+// 0x10f93d68 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93d6c bl #0x111dd2e0
+cpu.x[30]=0x10f93d70;super::chunk9::f_111dd2e0(cpu,rt,0x111dd2e0)?;
+block=2;continue;
+}
+2=>{
+// 0x10f93d70 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93d74 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93d78 ldr x8, [x8, #0x110]
+{let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93d7c blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f93d80;super::dispatch(cpu,rt,target)?;}
+block=3;continue;
+}
+3=>{
+// 0x10f93d80 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93d84 str w0, [x19, #0x8c]
+{let address=(cpu.x[19]).wrapping_add(0x8cu64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f93d88 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93d8c str wzr, [x19, #0x6c]
+{let address=(cpu.x[19]).wrapping_add(0x6cu64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f93d90 ldr x8, [x8, #0x110]
+{let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93d94 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f93d98;super::dispatch(cpu,rt,target)?;}
+block=4;continue;
+}
+4=>{
+// 0x10f93d98 cmp w0, #1
+{let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f93d9c b.lt #0x10f93e04
+if cpu.condition(11){block=10;continue;}block=5;continue;
+}
+5=>{
+// 0x10f93da0 mov w21, w0
+cpu.x[21]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10f93da4 mov w22, #5
+cpu.x[22]=(((0x5u64))) as u32 as u64;
+// 0x10f93da8 b #0x10f93dc4
+block=7;continue;
+}
+6=>{
+// 0x10f93dac ldr x9, [x19, #0x60]
+{let address=(cpu.x[19]).wrapping_add(0x60u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10f93db0 add w10, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x10f93db4 subs w21, w21, #1
+{let a=((cpu.x[21] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[21]=(result) as u32 as u64;cpu.flags(a,b,result,32,true);}
+// 0x10f93db8 str w10, [x19, #0x6c]
+{let address=(cpu.x[19]).wrapping_add(0x6cu64);let v0=cpu.x[10] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f93dbc str w0, [x9, w8, sxtw #2]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as i32 as i64 as u64)) as u64).wrapping_shl(2) as u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f93dc0 b.eq #0x10f93e04
+if cpu.condition(0){block=10;continue;}block=7;continue;
+}
+7=>{
+// 0x10f93dc4 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93dc8 bl #0x111dd1e0
+cpu.x[30]=0x10f93dcc;super::chunk10::f_111dd1e0(cpu,rt,0x111dd1e0)?;
+// 0x10f93dcc ldp w9, w8, [x19, #0x68]
+{let address=(cpu.x[19]).wrapping_add(0x68u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[9]=(v0) as u32 as u64;cpu.x[8]=(v1) as u32 as u64;}
+// 0x10f93dd0 cmp w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f93dd4 b.ne #0x10f93dac
+if cpu.condition(1){block=6;continue;}block=8;continue;
+}
+8=>{
+// 0x10f93dd8 lsl w9, w8, #1
+cpu.x[9]=(((((cpu.x[8] as u32 as u64))) as u32).wrapping_shl(((((0x1u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10f93ddc cmp w9, #0
+{let a=((cpu.x[9] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f93de0 csel w1, w22, w9, eq
+cpu.x[1]=(if cpu.condition(0){((cpu.x[22] as u32 as u64))}else{((cpu.x[9] as u32 as u64))}) as u32 as u64;
+// 0x10f93de4 cmp w8, w1
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f93de8 b.ge #0x10f93dac
+if cpu.condition(10){block=6;continue;}block=9;continue;
+}
+9=>{
+// 0x10f93dec mov w23, w0
+cpu.x[23]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10f93df0 add x0, x19, #0x60
+{let a=((cpu.x[19]));let b=((0x60u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10f93df4 bl #0x1078f4d4
+cpu.x[30]=0x10f93df8;super::chunk2::f_1078f4d4(cpu,rt,0x1078f4d4)?;
+// 0x10f93df8 ldr w8, [x19, #0x6c]
+{let address=(cpu.x[19]).wrapping_add(0x6cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f93dfc mov w0, w23
+cpu.x[0]=(((cpu.x[23] as u32 as u64))) as u32 as u64;
+// 0x10f93e00 b #0x10f93dac
+block=6;continue;
+}
+10=>{
+// 0x10f93e04 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e08 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93e0c ldr x8, [x8, #0x110]
+{let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e10 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f93e14;super::dispatch(cpu,rt,target)?;}
+block=11;continue;
+}
+11=>{
+// 0x10f93e14 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e18 str w0, [x19, #0x94]
+{let address=(cpu.x[19]).wrapping_add(0x94u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f93e1c mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93e20 ldr x8, [x8, #0x110]
+{let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e24 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f93e28;super::dispatch(cpu,rt,target)?;}
+block=12;continue;
+}
+12=>{
+// 0x10f93e28 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e2c str w0, [x19, #0x98]
+{let address=(cpu.x[19]).wrapping_add(0x98u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f93e30 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93e34 ldr x8, [x8, #0x110]
+{let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e38 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f93e3c;super::dispatch(cpu,rt,target)?;}
+block=13;continue;
+}
+13=>{
+// 0x10f93e3c ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e40 str w0, [x19, #0xac]
+{let address=(cpu.x[19]).wrapping_add(0xacu64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f93e44 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93e48 ldr x8, [x8, #0x110]
+{let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e4c blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f93e50;super::dispatch(cpu,rt,target)?;}
+block=14;continue;
+}
+14=>{
+// 0x10f93e50 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e54 str w0, [x19, #0xc0]
+{let address=(cpu.x[19]).wrapping_add(0xc0u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f93e58 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93e5c ldr x8, [x8, #0x120]
+{let address=(cpu.x[8]).wrapping_add(0x120u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e60 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f93e64;super::dispatch(cpu,rt,target)?;}
+block=15;continue;
+}
+15=>{
+// 0x10f93e64 str x0, [x19, #0xb8]
+{let address=(cpu.x[19]).wrapping_add(0xb8u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f93e68 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93e6c ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e70 ldr x8, [x8, #0x120]
+{let address=(cpu.x[8]).wrapping_add(0x120u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e74 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f93e78;super::dispatch(cpu,rt,target)?;}
+block=16;continue;
+}
+16=>{
+// 0x10f93e78 str x0, [x19, #0xb0]
+{let address=(cpu.x[19]).wrapping_add(0xb0u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10f93e7c mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93e80 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e84 ldr x8, [x8, #0x110]
+{let address=(cpu.x[8]).wrapping_add(0x110u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f93e88 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f93e8c;super::dispatch(cpu,rt,target)?;}
+block=17;continue;
+}
+17=>{
+// 0x10f93e8c mov w8, w0
+cpu.x[8]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10f93e90 add x1, x19, #0xc8
+{let a=((cpu.x[19]));let b=((0xc8u64));let result=a.wrapping_add(b);cpu.x[1]=(result) as u64;}
+// 0x10f93e94 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10f93e98 str w8, [x19, #0x74]
+{let address=(cpu.x[19]).wrapping_add(0x74u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10f93e9c ldp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f93ea0 ldr x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x10f93ea4 ldp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x10f93ea8 ldp x29, x30, [sp], #0x40
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x40u64)))) as u64;}
+// 0x10f93eac b #0x111ddf84
+super::chunk1::f_111ddf84(cpu,rt,0x111ddf84)?;return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10f93d44").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f94078(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10f94078(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f94078{return f_10f94078_slow(cpu,rt,pc);}
+
+// 0x10f94078 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f94078_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10f94078=>{
 // 0x10f94078 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f94078")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10f94078").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f9408c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f9408c=>{
+pub(super) unsafe fn f_10f9408c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f9408c{return f_10f9408c_slow(cpu,rt,pc);}
+
+'b10f940e0: {
 // 0x10f9408c stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10f94090 stp x20, x19, [sp, #0x10]
@@ -5673,43 +9042,33 @@ cpu.x[29]=(((cpu.sp))) as u64;
 // 0x10f94098 ldrb w8, [x0, #0x30]
 {let address=(cpu.x[0]).wrapping_add(0x30u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f9409c tbz w8, #3, #0x10f940e0
-if ((cpu.x[8] as u32 as u64) & (1u64 << 3)) == 0 {pc=0x10f940e0;continue;}pc=0x10f940a0;continue;
-}
-0x10f940a0=>{
+if ((cpu.x[8] as u32 as u64) & (1u64 << 3)) == 0 {break 'b10f940e0;}{
 // 0x10f940a0 ldr w8, [x0, #0x24]
 {let address=(cpu.x[0]).wrapping_add(0x24u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f940a4 cmp w8, #4
 {let a=((cpu.x[8] as u32 as u64));let b=((0x4u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f940a8 b.lt #0x10f940e0
-if cpu.condition(11){pc=0x10f940e0;continue;}pc=0x10f940ac;continue;
-}
-0x10f940ac=>{
+if cpu.condition(11){break 'b10f940e0;}{
 // 0x10f940ac ldr x8, [x0, #0x18]
 {let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f940b0 ldr x8, [x8, #0x18]
 {let address=(cpu.x[8]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f940b4 cbz x8, #0x10f940e0
-if (cpu.x[8]) == 0 {pc=0x10f940e0;continue;}pc=0x10f940b8;continue;
-}
-0x10f940b8=>{
+if (cpu.x[8]) == 0 {break 'b10f940e0;}{
 // 0x10f940b8 mov x20, x0
 cpu.x[20]=(((cpu.x[0]))) as u64;
 // 0x10f940bc mov x0, x8
 cpu.x[0]=(((cpu.x[8]))) as u64;
 // 0x10f940c0 bl #0x10fc0db4
 cpu.x[30]=0x10f940c4;super::chunk13::f_10fc0db4(cpu,rt,0x10fc0db4)?;
-pc=0x10f940c4;continue;
-}
-0x10f940c4=>{
+{
 // 0x10f940c4 mov w19, w0
 cpu.x[19]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10f940c8 ldr x0, [x20, #0x10]
 {let address=(cpu.x[20]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10f940cc bl #0x10f966a8
 cpu.x[30]=0x10f940d0;super::chunk2::f_10f966a8(cpu,rt,0x10f966a8)?;
-pc=0x10f940d0;continue;
-}
-0x10f940d0=>{
+{
 // 0x10f940d0 mov w1, w19
 cpu.x[1]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10f940d4 ldp x20, x19, [sp, #0x10]
@@ -5719,7 +9078,11 @@ cpu.x[1]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10f940dc b #0x10d39264
 super::chunk4::f_10d39264(cpu,rt,0x10d39264)?;return Ok(());
 }
-0x10f940e0=>{
+}
+}
+}
+}
+}
 // 0x10f940e0 ldr w19, [x0, #0x78]
 {let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[19]=(v0) as u32 as u64;}
 // 0x10f940e4 ldr x0, [x0, #0x10]
@@ -5735,9 +9098,95 @@ cpu.x[1]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10f940f8 b #0x10d39264
 super::chunk4::f_10d39264(cpu,rt,0x10d39264)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f9408c")),}}}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f9408c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f9408c{0}else{match pc{0x10f9408c=>0,0x10f940a0=>1,0x10f940ac=>2,0x10f940b8=>3,0x10f940c4=>4,0x10f940d0=>5,0x10f940e0=>6,_=>return Err(format!("untranslated block {pc:#x} in 0x10f9408c").into()),}};loop{match block{
+0=>{
+// 0x10f9408c stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10f94090 stp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f94094 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10f94098 ldrb w8, [x0, #0x30]
+{let address=(cpu.x[0]).wrapping_add(0x30u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f9409c tbz w8, #3, #0x10f940e0
+if ((cpu.x[8] as u32 as u64) & (1u64 << 3)) == 0 {block=6;continue;}block=1;continue;
+}
+1=>{
+// 0x10f940a0 ldr w8, [x0, #0x24]
+{let address=(cpu.x[0]).wrapping_add(0x24u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f940a4 cmp w8, #4
+{let a=((cpu.x[8] as u32 as u64));let b=((0x4u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f940a8 b.lt #0x10f940e0
+if cpu.condition(11){block=6;continue;}block=2;continue;
+}
+2=>{
+// 0x10f940ac ldr x8, [x0, #0x18]
+{let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f940b0 ldr x8, [x8, #0x18]
+{let address=(cpu.x[8]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f940b4 cbz x8, #0x10f940e0
+if (cpu.x[8]) == 0 {block=6;continue;}block=3;continue;
+}
+3=>{
+// 0x10f940b8 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10f940bc mov x0, x8
+cpu.x[0]=(((cpu.x[8]))) as u64;
+// 0x10f940c0 bl #0x10fc0db4
+cpu.x[30]=0x10f940c4;super::chunk13::f_10fc0db4(cpu,rt,0x10fc0db4)?;
+block=4;continue;
+}
+4=>{
+// 0x10f940c4 mov w19, w0
+cpu.x[19]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10f940c8 ldr x0, [x20, #0x10]
+{let address=(cpu.x[20]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f940cc bl #0x10f966a8
+cpu.x[30]=0x10f940d0;super::chunk2::f_10f966a8(cpu,rt,0x10f966a8)?;
+block=5;continue;
+}
+5=>{
+// 0x10f940d0 mov w1, w19
+cpu.x[1]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10f940d4 ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f940d8 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f940dc b #0x10d39264
+super::chunk4::f_10d39264(cpu,rt,0x10d39264)?;return Ok(());
+}
+6=>{
+// 0x10f940e0 ldr w19, [x0, #0x78]
+{let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[19]=(v0) as u32 as u64;}
+// 0x10f940e4 ldr x0, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f940e8 bl #0x10f966a8
+cpu.x[30]=0x10f940ec;super::chunk2::f_10f966a8(cpu,rt,0x10f966a8)?;
+// 0x10f940ec mov w1, w19
+cpu.x[1]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10f940f0 ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f940f4 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f940f8 b #0x10d39264
+super::chunk4::f_10d39264(cpu,rt,0x10d39264)?;return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10f9408c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f94f34(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10f94f34(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f94f34{return f_10f94f34_slow(cpu,rt,pc);}
+
+// 0x10f94f34 add x0, x0, #0x7c
+{let a=((cpu.x[0]));let b=((0x7cu64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10f94f38 add x1, x1, #0x7c
+{let a=((cpu.x[1]));let b=((0x7cu64));let result=a.wrapping_add(b);cpu.x[1]=(result) as u64;}
+// 0x10f94f3c b #0x11294e74
+super::chunk8::f_11294e74(cpu,rt,0x11294e74)?;return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f94f34_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10f94f34=>{
 // 0x10f94f34 add x0, x0, #0x7c
 {let a=((cpu.x[0]));let b=((0x7cu64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
@@ -5746,16 +9195,25 @@ pub(super) unsafe fn f_10f94f34(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result
 // 0x10f94f3c b #0x11294e74
 super::chunk8::f_11294e74(cpu,rt,0x11294e74)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f94f34")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10f94f34").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f95c18(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10f95c18(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f95c18{return f_10f95c18_slow(cpu,rt,pc);}
+
+// 0x10f95c18 ldrb w0, [x0, #0x9c]
+{let address=(cpu.x[0]).wrapping_add(0x9cu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
+// 0x10f95c1c ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f95c18_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10f95c18=>{
 // 0x10f95c18 ldrb w0, [x0, #0x9c]
 {let address=(cpu.x[0]).wrapping_add(0x9cu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[0]=(v0) as u32 as u64;}
 // 0x10f95c1c ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f95c18")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10f95c18").into()),}}}
 #[inline]
 pub(super) unsafe fn f_10f960fc(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10f960fc=>{
@@ -5928,10 +9386,11 @@ pc=0x10f961d4;continue;
 // 0x10f961e8 br x1
 {let target=cpu.x[1];if target>=0x10f960fc && target<0x10f961ec{pc=target;continue;}super::dispatch(cpu,rt,target)?;return Ok(());}
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f960fc")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10f960fc").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f96828(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f96828=>{
+pub(super) unsafe fn f_10f96828(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f96828{return f_10f96828_slow(cpu,rt,pc);}
+
+'b10f9686c: {
 // 0x10f96828 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10f9682c stp x20, x19, [sp, #0x10]
@@ -5945,14 +9404,11 @@ cpu.x[19]=(((cpu.x[0]))) as u64;
 // 0x10f9683c cmp w8, #1
 {let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f96840 b.lt #0x10f9686c
-if cpu.condition(11){pc=0x10f9686c;continue;}pc=0x10f96844;continue;
-}
-0x10f96844=>{
+if cpu.condition(11){break 'b10f9686c;}{
 // 0x10f96844 mov x20, xzr
 cpu.x[20]=(((0u64))) as u64;
-pc=0x10f96848;continue;
-}
-0x10f96848=>{
+{
+'l10f96848: loop {
 // 0x10f96848 ldr x8, [x19, #0xd0]
 {let address=(cpu.x[19]).wrapping_add(0xd0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f9684c ldr x0, [x8, x20, lsl #3]
@@ -5963,9 +9419,7 @@ pc=0x10f96848;continue;
 {let address=(cpu.x[8]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f96858 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10f9685c;super::dispatch(cpu,rt,target)?;}
-pc=0x10f9685c;continue;
-}
-0x10f9685c=>{
+{
 // 0x10f9685c ldrsw x8, [x19, #0xdc]
 {let address=(cpu.x[19]).wrapping_add(0xdcu64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
 // 0x10f96860 add x20, x20, #1
@@ -5973,35 +9427,40 @@ pc=0x10f9685c;continue;
 // 0x10f96864 cmp x20, x8
 {let a=((cpu.x[20]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10f96868 b.lt #0x10f96848
-if cpu.condition(11){pc=0x10f96848;continue;}pc=0x10f9686c;continue;
+if cpu.condition(11){continue 'l10f96848;}break 'b10f9686c;
 }
-0x10f9686c=>{
+}
+}
+}
+}
 // 0x10f9686c ldr x8, [x19, #0x98]
 {let address=(cpu.x[19]).wrapping_add(0x98u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10f96870 ldr x0, [x8, #0x10]
 {let address=(cpu.x[8]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10f96874 bl #0x111d9130
 cpu.x[30]=0x10f96878;super::chunk1::f_111d9130(cpu,rt,0x111d9130)?;
-pc=0x10f96878;continue;
-}
-0x10f96878=>{
+{
+'b10f96884: {
 // 0x10f96878 ldr x0, [x19, #0xa0]
 {let address=(cpu.x[19]).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10f9687c cbz x0, #0x10f96884
-if (cpu.x[0]) == 0 {pc=0x10f96884;continue;}pc=0x10f96880;continue;
-}
-0x10f96880=>{
+if (cpu.x[0]) == 0 {break 'b10f96884;}{
 // 0x10f96880 bl #0x10f9ad30
 cpu.x[30]=0x10f96884;super::chunk13::f_10f9ad30(cpu,rt,0x10f9ad30)?;
-pc=0x10f96884;continue;
+break 'b10f96884;
 }
-0x10f96884=>{
+}
 // 0x10f96884 ldr x0, [x19, #0xb8]
 {let address=(cpu.x[19]).wrapping_add(0xb8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10f96888 cbz x0, #0x10f96898
-if (cpu.x[0]) == 0 {pc=0x10f96898;continue;}pc=0x10f9688c;continue;
-}
-0x10f9688c=>{
+if (cpu.x[0]) == 0 {{
+// 0x10f96898 ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f9689c ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f968a0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
 // 0x10f9688c ldp x20, x19, [sp, #0x10]
 {let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10f96890 ldp x29, x30, [sp], #0x20
@@ -6009,7 +9468,90 @@ if (cpu.x[0]) == 0 {pc=0x10f96898;continue;}pc=0x10f9688c;continue;
 // 0x10f96894 b #0x10f74760
 super::chunk0::f_10f74760(cpu,rt,0x10f74760)?;return Ok(());
 }
-0x10f96898=>{
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f96828_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f96828{0}else{match pc{0x10f96828=>0,0x10f96844=>1,0x10f96848=>2,0x10f9685c=>3,0x10f9686c=>4,0x10f96878=>5,0x10f96880=>6,0x10f96884=>7,0x10f9688c=>8,0x10f96898=>9,_=>return Err(format!("untranslated block {pc:#x} in 0x10f96828").into()),}};loop{match block{
+0=>{
+// 0x10f96828 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10f9682c stp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10f96830 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10f96834 ldr w8, [x0, #0xdc]
+{let address=(cpu.x[0]).wrapping_add(0xdcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f96838 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10f9683c cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f96840 b.lt #0x10f9686c
+if cpu.condition(11){block=4;continue;}block=1;continue;
+}
+1=>{
+// 0x10f96844 mov x20, xzr
+cpu.x[20]=(((0u64))) as u64;
+block=2;continue;
+}
+2=>{
+// 0x10f96848 ldr x8, [x19, #0xd0]
+{let address=(cpu.x[19]).wrapping_add(0xd0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f9684c ldr x0, [x8, x20, lsl #3]
+{let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[20])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f96850 ldr x8, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f96854 ldr x8, [x8, #0x18]
+{let address=(cpu.x[8]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f96858 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10f9685c;super::dispatch(cpu,rt,target)?;}
+block=3;continue;
+}
+3=>{
+// 0x10f9685c ldrsw x8, [x19, #0xdc]
+{let address=(cpu.x[19]).wrapping_add(0xdcu64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
+// 0x10f96860 add x20, x20, #1
+{let a=((cpu.x[20]));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[20]=(result) as u64;}
+// 0x10f96864 cmp x20, x8
+{let a=((cpu.x[20]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10f96868 b.lt #0x10f96848
+if cpu.condition(11){block=2;continue;}block=4;continue;
+}
+4=>{
+// 0x10f9686c ldr x8, [x19, #0x98]
+{let address=(cpu.x[19]).wrapping_add(0x98u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10f96870 ldr x0, [x8, #0x10]
+{let address=(cpu.x[8]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f96874 bl #0x111d9130
+cpu.x[30]=0x10f96878;super::chunk1::f_111d9130(cpu,rt,0x111d9130)?;
+block=5;continue;
+}
+5=>{
+// 0x10f96878 ldr x0, [x19, #0xa0]
+{let address=(cpu.x[19]).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f9687c cbz x0, #0x10f96884
+if (cpu.x[0]) == 0 {block=7;continue;}block=6;continue;
+}
+6=>{
+// 0x10f96880 bl #0x10f9ad30
+cpu.x[30]=0x10f96884;super::chunk13::f_10f9ad30(cpu,rt,0x10f9ad30)?;
+block=7;continue;
+}
+7=>{
+// 0x10f96884 ldr x0, [x19, #0xb8]
+{let address=(cpu.x[19]).wrapping_add(0xb8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10f96888 cbz x0, #0x10f96898
+if (cpu.x[0]) == 0 {block=9;continue;}block=8;continue;
+}
+8=>{
+// 0x10f9688c ldp x20, x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10f96890 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10f96894 b #0x10f74760
+super::chunk0::f_10f74760(cpu,rt,0x10f74760)?;return Ok(());
+}
+9=>{
 // 0x10f96898 ldp x20, x19, [sp, #0x10]
 {let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10f9689c ldp x29, x30, [sp], #0x20
@@ -6017,32 +9559,48 @@ super::chunk0::f_10f74760(cpu,rt,0x10f74760)?;return Ok(());
 // 0x10f968a0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f96828")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10f96828").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10f99780(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10f99780=>{
+pub(super) unsafe fn f_10f99780(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10f99780{return f_10f99780_slow(cpu,rt,pc);}
+
+'b10f997d0: {
 // 0x10f99780 cmn w1, #1
 {let a=((cpu.x[1] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.flags(a,b,result,32,false);}
 // 0x10f99784 b.eq #0x10f997d0
-if cpu.condition(0){pc=0x10f997d0;continue;}pc=0x10f99788;continue;
-}
-0x10f99788=>{
+if cpu.condition(0){break 'b10f997d0;}{
 // 0x10f99788 ldr w8, [x0, #0x1c]
 {let address=(cpu.x[0]).wrapping_add(0x1cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10f9978c cmp w8, #1
 {let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10f99790 b.lt #0x10f997d0
-if cpu.condition(11){pc=0x10f997d0;continue;}pc=0x10f99794;continue;
-}
-0x10f99794=>{
+if cpu.condition(11){break 'b10f997d0;}{
 // 0x10f99794 ldr x9, [x0, #0x10]
 {let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
 // 0x10f99798 sub x9, x9, #8
 {let a=((cpu.x[9]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u64;}
 // 0x10f9979c b #0x10f997b0
-pc=0x10f997b0;continue;
+{
+'l10f997b0: loop {
+'b10f997a0: {
+// 0x10f997b0 ldr x10, [x9, x8, lsl #3]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[8])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[10]=(v0) as u64;}
+// 0x10f997b4 ldr x11, [x10, #8]
+{let address=(cpu.x[10]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
+// 0x10f997b8 cbz x11, #0x10f997a0
+if (cpu.x[11]) == 0 {break 'b10f997a0;}{
+// 0x10f997bc ldr w10, [x10, #4]
+{let address=(cpu.x[10]).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10f997c0 cmp w10, w1
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f997c4 b.ne #0x10f997a0
+if cpu.condition(1){break 'b10f997a0;}{
+// 0x10f997c8 mov w0, #1
+cpu.x[0]=(((0x1u64))) as u32 as u64;
+// 0x10f997cc ret
+cpu.pc=cpu.x[30];return Ok(());
 }
-0x10f997a0=>{
+}
+}
 // 0x10f997a0 sub x8, x8, #1
 {let a=((cpu.x[8]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u64;}
 // 0x10f997a4 add x10, x8, #1
@@ -6050,47 +9608,98 @@ pc=0x10f997b0;continue;
 // 0x10f997a8 cmp x10, #1
 {let a=((cpu.x[10]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x10f997ac b.ls #0x10f997d0
-if cpu.condition(9){pc=0x10f997d0;continue;}pc=0x10f997b0;continue;
+if cpu.condition(9){break 'b10f997d0;}continue 'l10f997b0;
 }
-0x10f997b0=>{
-// 0x10f997b0 ldr x10, [x9, x8, lsl #3]
-{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[8])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[10]=(v0) as u64;}
-// 0x10f997b4 ldr x11, [x10, #8]
-{let address=(cpu.x[10]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
-// 0x10f997b8 cbz x11, #0x10f997a0
-if (cpu.x[11]) == 0 {pc=0x10f997a0;continue;}pc=0x10f997bc;continue;
 }
-0x10f997bc=>{
-// 0x10f997bc ldr w10, [x10, #4]
-{let address=(cpu.x[10]).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
-// 0x10f997c0 cmp w10, w1
-{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10f997c4 b.ne #0x10f997a0
-if cpu.condition(1){pc=0x10f997a0;continue;}pc=0x10f997c8;continue;
 }
-0x10f997c8=>{
-// 0x10f997c8 mov w0, #1
-cpu.x[0]=(((0x1u64))) as u32 as u64;
-// 0x10f997cc ret
-cpu.pc=cpu.x[30];return Ok(());
 }
-0x10f997d0=>{
+}
 // 0x10f997d0 mov w0, wzr
 cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x10f997d4 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10f99780")),}}}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10f99780_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10f99780{0}else{match pc{0x10f99780=>0,0x10f99788=>1,0x10f99794=>2,0x10f997a0=>3,0x10f997b0=>4,0x10f997bc=>5,0x10f997c8=>6,0x10f997d0=>7,_=>return Err(format!("untranslated block {pc:#x} in 0x10f99780").into()),}};loop{match block{
+0=>{
+// 0x10f99780 cmn w1, #1
+{let a=((cpu.x[1] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.flags(a,b,result,32,false);}
+// 0x10f99784 b.eq #0x10f997d0
+if cpu.condition(0){block=7;continue;}block=1;continue;
+}
+1=>{
+// 0x10f99788 ldr w8, [x0, #0x1c]
+{let address=(cpu.x[0]).wrapping_add(0x1cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10f9978c cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f99790 b.lt #0x10f997d0
+if cpu.condition(11){block=7;continue;}block=2;continue;
+}
+2=>{
+// 0x10f99794 ldr x9, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10f99798 sub x9, x9, #8
+{let a=((cpu.x[9]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u64;}
+// 0x10f9979c b #0x10f997b0
+block=4;continue;
+}
+3=>{
+// 0x10f997a0 sub x8, x8, #1
+{let a=((cpu.x[8]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u64;}
+// 0x10f997a4 add x10, x8, #1
+{let a=((cpu.x[8]));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u64;}
+// 0x10f997a8 cmp x10, #1
+{let a=((cpu.x[10]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10f997ac b.ls #0x10f997d0
+if cpu.condition(9){block=7;continue;}block=4;continue;
+}
+4=>{
+// 0x10f997b0 ldr x10, [x9, x8, lsl #3]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[8])) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[10]=(v0) as u64;}
+// 0x10f997b4 ldr x11, [x10, #8]
+{let address=(cpu.x[10]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[11]=(v0) as u64;}
+// 0x10f997b8 cbz x11, #0x10f997a0
+if (cpu.x[11]) == 0 {block=3;continue;}block=5;continue;
+}
+5=>{
+// 0x10f997bc ldr w10, [x10, #4]
+{let address=(cpu.x[10]).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10f997c0 cmp w10, w1
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10f997c4 b.ne #0x10f997a0
+if cpu.condition(1){block=3;continue;}block=6;continue;
+}
+6=>{
+// 0x10f997c8 mov w0, #1
+cpu.x[0]=(((0x1u64))) as u32 as u64;
+// 0x10f997cc ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+7=>{
+// 0x10f997d0 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x10f997d4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10f99780").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10fa0238(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10fa0238(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10fa0238{return f_10fa0238_slow(cpu,rt,pc);}
+
+// 0x10fa0238 b #0x10f81da4
+super::chunk5::f_10f81da4(cpu,rt,0x10f81da4)?;return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10fa0238_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10fa0238=>{
 // 0x10fa0238 b #0x10f81da4
 super::chunk5::f_10f81da4(cpu,rt,0x10f81da4)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10fa0238")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10fa0238").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10fbace8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10fbace8=>{
+pub(super) unsafe fn f_10fbace8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10fbace8{return f_10fbace8_slow(cpu,rt,pc);}
+
 // 0x10fbace8 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10fbacec str x19, [sp, #0x10]
@@ -6101,9 +9710,7 @@ cpu.x[29]=(((cpu.sp))) as u64;
 cpu.x[19]=(((cpu.x[0]))) as u64;
 // 0x10fbacf8 bl #0x10f74060
 cpu.x[30]=0x10fbacfc;super::chunk2::f_10f74060(cpu,rt,0x10f74060)?;
-pc=0x10fbacfc;continue;
-}
-0x10fbacfc=>{
+{
 // 0x10fbacfc mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fbad00 ldr x19, [sp, #0x10]
@@ -6113,10 +9720,37 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fbad08 b #0x1187d2c0
 super::dispatch(cpu,rt,0x1187d2c0)?;return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10fbace8")),}}}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10fbace8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10fbace8{0}else{match pc{0x10fbace8=>0,0x10fbacfc=>1,_=>return Err(format!("untranslated block {pc:#x} in 0x10fbace8").into()),}};loop{match block{
+0=>{
+// 0x10fbace8 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10fbacec str x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fbacf0 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10fbacf4 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10fbacf8 bl #0x10f74060
+cpu.x[30]=0x10fbacfc;super::chunk2::f_10f74060(cpu,rt,0x10f74060)?;
+block=1;continue;
+}
+1=>{
+// 0x10fbacfc mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fbad00 ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10fbad04 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10fbad08 b #0x1187d2c0
+super::dispatch(cpu,rt,0x1187d2c0)?;return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10fbace8").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10fc4c38(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10fc4c38=>{
+pub(super) unsafe fn f_10fc4c38(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10fc4c38{return f_10fc4c38_slow(cpu,rt,pc);}
+
 // 0x10fc4c38 sub sp, sp, #0xc0
 {let a=((cpu.sp));let b=((0xc0u64));let result=a.wrapping_sub(b);cpu.sp=(result) as u64;}
 // 0x10fc4c3c stp x29, x30, [sp, #0x60]
@@ -6145,27 +9779,21 @@ cpu.x[24]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
 cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fc4c6c bl #0x10f7e050
 cpu.x[30]=0x10fc4c70;super::chunk10::f_10f7e050(cpu,rt,0x10f7e050)?;
-pc=0x10fc4c70;continue;
-}
-0x10fc4c70=>{
+{
 // 0x10fc4c70 mov x28, x0
 cpu.x[28]=(((cpu.x[0]))) as u64;
 // 0x10fc4c74 mov x0, x21
 cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fc4c78 bl #0x10f93d2c
 cpu.x[30]=0x10fc4c7c;super::chunk11::f_10f93d2c(cpu,rt,0x10f93d2c)?;
-pc=0x10fc4c7c;continue;
-}
-0x10fc4c7c=>{
+{
 // 0x10fc4c7c mov x22, x0
 cpu.x[22]=(((cpu.x[0]))) as u64;
 // 0x10fc4c80 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fc4c84 bl #0x10fd049c
 cpu.x[30]=0x10fc4c88;super::chunk6::f_10fd049c(cpu,rt,0x10fd049c)?;
-pc=0x10fc4c88;continue;
-}
-0x10fc4c88=>{
+{
 // 0x10fc4c88 ldr x8, [x19, #8]
 {let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4c8c mov x25, x0
@@ -6174,89 +9802,76 @@ cpu.x[25]=(((cpu.x[0]))) as u64;
 cpu.x[0]=(((cpu.x[8]))) as u64;
 // 0x10fc4c94 bl #0x10f940fc
 cpu.x[30]=0x10fc4c98;super::chunk9::f_10f940fc(cpu,rt,0x10f940fc)?;
-pc=0x10fc4c98;continue;
-}
-0x10fc4c98=>{
+{
 // 0x10fc4c98 mov x26, x0
 cpu.x[26]=(((cpu.x[0]))) as u64;
 // 0x10fc4c9c bl #0x10fc22f0
 cpu.x[30]=0x10fc4ca0;super::chunk3::f_10fc22f0(cpu,rt,0x10fc22f0)?;
-pc=0x10fc4ca0;continue;
-}
-0x10fc4ca0=>{
+{
+'b10fc52e8: {
+'b10fc4ce8: {
 // 0x10fc4ca0 cmp w0, #1
 {let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fc4ca4 b.lt #0x10fc4ce8
-if cpu.condition(11){pc=0x10fc4ce8;continue;}pc=0x10fc4ca8;continue;
-}
-0x10fc4ca8=>{
+if cpu.condition(11){break 'b10fc4ce8;}{
 // 0x10fc4ca8 mov w27, wzr
 cpu.x[27]=(((0u64))) as u32 as u64;
 // 0x10fc4cac b #0x10fc4cc4
-pc=0x10fc4cc4;continue;
-}
-0x10fc4cb0=>{
-// 0x10fc4cb0 mov x0, x26
-cpu.x[0]=(((cpu.x[26]))) as u64;
-// 0x10fc4cb4 add w27, w27, #1
-{let a=((cpu.x[27] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[27]=(result) as u32 as u64;}
-// 0x10fc4cb8 bl #0x10fc22f0
-cpu.x[30]=0x10fc4cbc;super::chunk3::f_10fc22f0(cpu,rt,0x10fc22f0)?;
-pc=0x10fc4cbc;continue;
-}
-0x10fc4cbc=>{
-// 0x10fc4cbc cmp w27, w0
-{let a=((cpu.x[27] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10fc4cc0 b.ge #0x10fc4ce8
-if cpu.condition(10){pc=0x10fc4ce8;continue;}pc=0x10fc4cc4;continue;
-}
-0x10fc4cc4=>{
+{
+'l10fc4cc4: loop {
+'b10fc4cb0: {
 // 0x10fc4cc4 ldr x8, [x19, #0x10]
 {let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4cc8 cbz x8, #0x10fc4cb0
-if (cpu.x[8]) == 0 {pc=0x10fc4cb0;continue;}pc=0x10fc4ccc;continue;
-}
-0x10fc4ccc=>{
+if (cpu.x[8]) == 0 {break 'b10fc4cb0;}{
 // 0x10fc4ccc mov x0, x26
 cpu.x[0]=(((cpu.x[26]))) as u64;
 // 0x10fc4cd0 mov w1, w27
 cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
 // 0x10fc4cd4 bl #0x10fc23e4
 cpu.x[30]=0x10fc4cd8;super::chunk11::f_10fc23e4(cpu,rt,0x10fc23e4)?;
-pc=0x10fc4cd8;continue;
-}
-0x10fc4cd8=>{
+{
 // 0x10fc4cd8 ldr x8, [x0, #0x18]
 {let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4cdc ldrb w8, [x8, #0x200]
 {let address=(cpu.x[8]).wrapping_add(0x200u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc4ce0 cbz w8, #0x10fc4cb0
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10fc4cb0;continue;}pc=0x10fc4ce4;continue;
-}
-0x10fc4ce4=>{
+if (cpu.x[8] as u32 as u64) == 0 {break 'b10fc4cb0;}{
 // 0x10fc4ce4 b #0x10fc52e8
-pc=0x10fc52e8;continue;
+break 'b10fc52e8;
 }
-0x10fc4ce8=>{
+}
+}
+}
+// 0x10fc4cb0 mov x0, x26
+cpu.x[0]=(((cpu.x[26]))) as u64;
+// 0x10fc4cb4 add w27, w27, #1
+{let a=((cpu.x[27] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[27]=(result) as u32 as u64;}
+// 0x10fc4cb8 bl #0x10fc22f0
+cpu.x[30]=0x10fc4cbc;super::chunk3::f_10fc22f0(cpu,rt,0x10fc22f0)?;
+{
+// 0x10fc4cbc cmp w27, w0
+{let a=((cpu.x[27] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4cc0 b.ge #0x10fc4ce8
+if cpu.condition(10){break 'b10fc4ce8;}continue 'l10fc4cc4;
+}
+}
+}
+}
+}
 // 0x10fc4ce8 mov x0, x21
 cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fc4cec bl #0x10f817a8
 cpu.x[30]=0x10fc4cf0;super::chunk8::f_10f817a8(cpu,rt,0x10f817a8)?;
-pc=0x10fc4cf0;continue;
-}
-0x10fc4cf0=>{
+{
 // 0x10fc4cf0 cmp w0, #3
 {let a=((cpu.x[0] as u32 as u64));let b=((0x3u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fc4cf4 b.eq #0x10fc52e8
-if cpu.condition(0){pc=0x10fc52e8;continue;}pc=0x10fc4cf8;continue;
-}
-0x10fc4cf8=>{
+if cpu.condition(0){break 'b10fc52e8;}{
 // 0x10fc4cf8 cmp w0, #5
 {let a=((cpu.x[0] as u32 as u64));let b=((0x5u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fc4cfc b.eq #0x10fc52e8
-if cpu.condition(0){pc=0x10fc52e8;continue;}pc=0x10fc4d00;continue;
-}
-0x10fc4d00=>{
+if cpu.condition(0){break 'b10fc52e8;}{
 // 0x10fc4d00 adrp x8, #0x11a65000
 cpu.x[8]=(0x11a65000u64) as u64;
 // 0x10fc4d04 add x8, x8, #0xfc8
@@ -6268,16 +9883,12 @@ cpu.x[8]=(0x11a65000u64) as u64;
 // 0x10fc4d10 tst x9, x8
 {let a=((cpu.x[9]));let b=((cpu.x[8]));let result=a & b;cpu.logical_flags(result,64);}
 // 0x10fc4d14 b.ne #0x10fc52e8
-if cpu.condition(1){pc=0x10fc52e8;continue;}pc=0x10fc4d18;continue;
-}
-0x10fc4d18=>{
+if cpu.condition(1){break 'b10fc52e8;}{
 // 0x10fc4d18 mov x0, x21
 cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fc4d1c bl #0x10f7e050
 cpu.x[30]=0x10fc4d20;super::chunk10::f_10f7e050(cpu,rt,0x10f7e050)?;
-pc=0x10fc4d20;continue;
-}
-0x10fc4d20=>{
+{
 // 0x10fc4d20 ldr x27, [x19, #8]
 {let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[27]=(v0) as u64;}
 // 0x10fc4d24 stur x0, [x29, #-0x18]
@@ -6286,106 +9897,84 @@ pc=0x10fc4d20;continue;
 cpu.x[0]=(((cpu.x[27]))) as u64;
 // 0x10fc4d2c bl #0x10f7e050
 cpu.x[30]=0x10fc4d30;super::chunk10::f_10f7e050(cpu,rt,0x10f7e050)?;
-pc=0x10fc4d30;continue;
-}
-0x10fc4d30=>{
+{
 // 0x10fc4d30 mov x26, x0
 cpu.x[26]=(((cpu.x[0]))) as u64;
 // 0x10fc4d34 mov x0, x27
 cpu.x[0]=(((cpu.x[27]))) as u64;
 // 0x10fc4d38 bl #0x10f85d10
 cpu.x[30]=0x10fc4d3c;super::chunk1::f_10f85d10(cpu,rt,0x10f85d10)?;
-pc=0x10fc4d3c;continue;
-}
-0x10fc4d3c=>{
+{
 // 0x10fc4d3c mov w20, w0
 cpu.x[20]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10fc4d40 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fc4d44 bl #0x10fd04a8
 cpu.x[30]=0x10fc4d48;super::chunk2::f_10fd04a8(cpu,rt,0x10fd04a8)?;
-pc=0x10fc4d48;continue;
-}
-0x10fc4d48=>{
+{
 // 0x10fc4d48 bl #0x10e0b6b4
 cpu.x[30]=0x10fc4d4c;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
-pc=0x10fc4d4c;continue;
-}
-0x10fc4d4c=>{
+{
 // 0x10fc4d4c ldr x0, [x0, #0x78]
 {let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fc4d50 bl #0x10e16208
 cpu.x[30]=0x10fc4d54;super::chunk7::f_10e16208(cpu,rt,0x10e16208)?;
-pc=0x10fc4d54;continue;
-}
-0x10fc4d54=>{
+{
+'b10fc4d68: {
 // 0x10fc4d54 ldrb w8, [x0, #0x360]
 {let address=(cpu.x[0]).wrapping_add(0x360u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc4d58 cbz w8, #0x10fc4d68
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10fc4d68;continue;}pc=0x10fc4d5c;continue;
-}
-0x10fc4d5c=>{
+if (cpu.x[8] as u32 as u64) == 0 {break 'b10fc4d68;}{
 // 0x10fc4d5c mov x0, x26
 cpu.x[0]=(((cpu.x[26]))) as u64;
 // 0x10fc4d60 bl #0x10de0430
 cpu.x[30]=0x10fc4d64;super::chunk11::f_10de0430(cpu,rt,0x10de0430)?;
-pc=0x10fc4d64;continue;
-}
-0x10fc4d64=>{
+{
 // 0x10fc4d64 add w20, w0, w20
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[20] as u32 as u64));let result=a.wrapping_add(b);cpu.x[20]=(result) as u32 as u64;}
-pc=0x10fc4d68;continue;
+break 'b10fc4d68;
 }
-0x10fc4d68=>{
+}
+}
 // 0x10fc4d68 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fc4d6c bl #0x10fc4a68
 cpu.x[30]=0x10fc4d70;super::chunk12::f_10fc4a68(cpu,rt,0x10fc4a68)?;
-pc=0x10fc4d70;continue;
-}
-0x10fc4d70=>{
+{
 // 0x10fc4d70 mov w26, w0
 cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10fc4d74 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fc4d78 bl #0x10fd04a8
 cpu.x[30]=0x10fc4d7c;super::chunk2::f_10fd04a8(cpu,rt,0x10fd04a8)?;
-pc=0x10fc4d7c;continue;
-}
-0x10fc4d7c=>{
+{
 // 0x10fc4d7c bl #0x10e0b6b4
 cpu.x[30]=0x10fc4d80;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
-pc=0x10fc4d80;continue;
-}
-0x10fc4d80=>{
+{
 // 0x10fc4d80 ldr x0, [x0, #0x78]
 {let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fc4d84 bl #0x10e16208
 cpu.x[30]=0x10fc4d88;super::chunk7::f_10e16208(cpu,rt,0x10e16208)?;
-pc=0x10fc4d88;continue;
-}
-0x10fc4d88=>{
+{
 // 0x10fc4d88 ldr w27, [x0, #0xd0]
 {let address=(cpu.x[0]).wrapping_add(0xd0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[27]=(v0) as u32 as u64;}
 // 0x10fc4d8c mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fc4d90 bl #0x10fd04a8
 cpu.x[30]=0x10fc4d94;super::chunk2::f_10fd04a8(cpu,rt,0x10fd04a8)?;
-pc=0x10fc4d94;continue;
-}
-0x10fc4d94=>{
+{
 // 0x10fc4d94 bl #0x10e0b6b4
 cpu.x[30]=0x10fc4d98;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
-pc=0x10fc4d98;continue;
-}
-0x10fc4d98=>{
+{
 // 0x10fc4d98 ldr x0, [x0, #0x78]
 {let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fc4d9c bl #0x10e16208
 cpu.x[30]=0x10fc4da0;super::chunk7::f_10e16208(cpu,rt,0x10e16208)?;
-pc=0x10fc4da0;continue;
-}
-0x10fc4da0=>{
+{
+'b10fc52d8: {
+'b10fc5238: {
+'b10fc4dd8: {
+'b10fc4e48: {
 // 0x10fc4da0 ldr x8, [x25, #0xa0]
 {let address=(cpu.x[25]).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4da4 ldr w9, [x0, #0xd4]
@@ -6397,37 +9986,7 @@ pc=0x10fc4da0;continue;
 // 0x10fc4db0 stur w9, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fc4db4 tbz w24, #0, #0x10fc4de8
-if ((cpu.x[24] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc4de8;continue;}pc=0x10fc4db8;continue;
-}
-0x10fc4db8=>{
-// 0x10fc4db8 mov x0, x8
-cpu.x[0]=(((cpu.x[8]))) as u64;
-// 0x10fc4dbc mov w1, #1
-cpu.x[1]=(((0x1u64))) as u32 as u64;
-// 0x10fc4dc0 bl #0x10f9bf98
-cpu.x[30]=0x10fc4dc4;super::dispatch(cpu,rt,0x10f9bf98)?;
-// 0x10fc4dc4 ldr w8, [x0, #0xc]
-{let address=(cpu.x[0]).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
-// 0x10fc4dc8 mov x25, x0
-cpu.x[25]=(((cpu.x[0]))) as u64;
-// 0x10fc4dcc stur x0, [x29, #-8]
-{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
-// 0x10fc4dd0 cmp w8, #0
-{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10fc4dd4 b.gt #0x10fc4e48
-if cpu.condition(12){pc=0x10fc4e48;continue;}pc=0x10fc4dd8;continue;
-}
-0x10fc4dd8=>{
-// 0x10fc4dd8 ldr x0, [sp, #0x28]
-{let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
-// 0x10fc4ddc sub x1, x29, #8
-{let a=((cpu.x[29]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[1]=(result) as u64;}
-// 0x10fc4de0 bl #0x10f9abb8
-cpu.x[30]=0x10fc4de4;super::chunk9::f_10f9abb8(cpu,rt,0x10f9abb8)?;
-// 0x10fc4de4 b #0x10fc5238
-pc=0x10fc5238;continue;
-}
-0x10fc4de8=>{
+if ((cpu.x[24] as u32 as u64) & (1u64 << 0)) == 0 {{
 // 0x10fc4de8 cmp w9, w27
 {let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[27] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fc4dec mov x0, x21
@@ -6444,9 +10003,7 @@ cpu.x[27]=(((cpu.x[8]))) as u64;
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff4u64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fc4e04 bl #0x10f942c0
 cpu.x[30]=0x10fc4e08;super::chunk2::f_10f942c0(cpu,rt,0x10f942c0)?;
-pc=0x10fc4e08;continue;
-}
-0x10fc4e08=>{
+{
 // 0x10fc4e08 ldur w8, [x29, #-0xc]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc4e0c mov x1, x0
@@ -6469,9 +10026,7 @@ cpu.x[7]=(((0xffffffffffffffffu64))) as u32 as u64;
 cpu.x[27]=(((cpu.x[20] as u32 as u64))) as u32 as u64;
 // 0x10fc4e30 bl #0x10f9afc8
 cpu.x[30]=0x10fc4e34;super::chunk2::f_10f9afc8(cpu,rt,0x10f9afc8)?;
-pc=0x10fc4e34;continue;
-}
-0x10fc4e34=>{
+{
 // 0x10fc4e34 ldr w8, [x0, #0xc]
 {let address=(cpu.x[0]).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc4e38 mov x25, x0
@@ -6481,9 +10036,28 @@ cpu.x[25]=(((cpu.x[0]))) as u64;
 // 0x10fc4e40 cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fc4e44 b.le #0x10fc4dd8
-if cpu.condition(13){pc=0x10fc4dd8;continue;}pc=0x10fc4e48;continue;
+if cpu.condition(13){break 'b10fc4dd8;}break 'b10fc4e48;
 }
-0x10fc4e48=>{
+}
+}}{
+// 0x10fc4db8 mov x0, x8
+cpu.x[0]=(((cpu.x[8]))) as u64;
+// 0x10fc4dbc mov w1, #1
+cpu.x[1]=(((0x1u64))) as u32 as u64;
+// 0x10fc4dc0 bl #0x10f9bf98
+cpu.x[30]=0x10fc4dc4;super::dispatch(cpu,rt,0x10f9bf98)?;
+// 0x10fc4dc4 ldr w8, [x0, #0xc]
+{let address=(cpu.x[0]).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc4dc8 mov x25, x0
+cpu.x[25]=(((cpu.x[0]))) as u64;
+// 0x10fc4dcc stur x0, [x29, #-8]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc4dd0 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4dd4 b.gt #0x10fc4e48
+if cpu.condition(12){break 'b10fc4e48;}break 'b10fc4dd8;
+}
+}
 // 0x10fc4e48 stur w24, [x29, #-0xc]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff4u64);let v0=cpu.x[24] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fc4e4c lsl x24, x8, #3
@@ -6509,27 +10083,8 @@ cpu.x[8]=(((0x7fffffffu64))) as u32 as u64;
 // 0x10fc4e74 str w27, [sp, #0x1c]
 {let address=(cpu.sp).wrapping_add(0x1cu64);let v0=cpu.x[27] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fc4e78 b #0x10fc4e90
-pc=0x10fc4e90;continue;
-}
-0x10fc4e7c=>{
-// 0x10fc4e7c ldur w23, [x29, #-0x2c]
-{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[23]=(v0) as u32 as u64;}
-pc=0x10fc4e80;continue;
-}
-0x10fc4e80=>{
-// 0x10fc4e80 ldr w26, [sp, #0x30]
-{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[26]=(v0) as u32 as u64;}
-pc=0x10fc4e84;continue;
-}
-0x10fc4e84=>{
-// 0x10fc4e84 add x20, x20, #8
-{let a=((cpu.x[20]));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[20]=(result) as u64;}
-// 0x10fc4e88 cmp x24, x20
-{let a=((cpu.x[24]));let b=((cpu.x[20]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
-// 0x10fc4e8c b.eq #0x10fc5218
-if cpu.condition(0){pc=0x10fc5218;continue;}pc=0x10fc4e90;continue;
-}
-0x10fc4e90=>{
+{
+'l10fc4e90: loop {
 // 0x10fc4e90 ldr x8, [x25]
 {let address=(cpu.x[25]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4e94 mov x0, x19
@@ -6542,13 +10097,10 @@ cpu.x[2]=(((0x1u64))) as u32 as u64;
 cpu.x[1]=(((cpu.x[28]))) as u64;
 // 0x10fc4ea4 bl #0x10fc4008
 cpu.x[30]=0x10fc4ea8;super::chunk5::f_10fc4008(cpu,rt,0x10fc4008)?;
-pc=0x10fc4ea8;continue;
-}
-0x10fc4ea8=>{
+{
+'b10fc4e84: {
 // 0x10fc4ea8 tbz w0, #0, #0x10fc4e84
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc4e84;continue;}pc=0x10fc4eac;continue;
-}
-0x10fc4eac=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fc4e84;}{
 // 0x10fc4eac ldr x8, [x28]
 {let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4eb0 mov x0, x28
@@ -6557,17 +10109,12 @@ cpu.x[0]=(((cpu.x[28]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x138u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4eb8 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fc4ebc;super::dispatch(cpu,rt,target)?;}
-pc=0x10fc4ebc;continue;
-}
-0x10fc4ebc=>{
+{
 // 0x10fc4ebc tbz w0, #0, #0x10fc4e84
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc4e84;continue;}pc=0x10fc4ec0;continue;
-}
-0x10fc4ec0=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fc4e84;}{
+'b10fc4ed8: {
 // 0x10fc4ec0 tbz w23, #0, #0x10fc4ed8
-if ((cpu.x[23] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc4ed8;continue;}pc=0x10fc4ec4;continue;
-}
-0x10fc4ec4=>{
+if ((cpu.x[23] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fc4ed8;}{
 // 0x10fc4ec4 ldr x8, [x28]
 {let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4ec8 mov x0, x28
@@ -6577,48 +10124,41 @@ cpu.x[0]=(((cpu.x[28]))) as u64;
 // 0x10fc4ed0 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fc4ed4;super::dispatch(cpu,rt,target)?;}
 // 0x10fc4ed4 tbz w0, #0, #0x10fc4e84
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc4e84;continue;}pc=0x10fc4ed8;continue;
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fc4e84;}break 'b10fc4ed8;
 }
-0x10fc4ed8=>{
+}
 // 0x10fc4ed8 mov x0, x28
 cpu.x[0]=(((cpu.x[28]))) as u64;
 // 0x10fc4edc bl #0x10f940fc
 cpu.x[30]=0x10fc4ee0;super::chunk9::f_10f940fc(cpu,rt,0x10f940fc)?;
-pc=0x10fc4ee0;continue;
-}
-0x10fc4ee0=>{
+{
+'b10fc4ef8: {
 // 0x10fc4ee0 cbz x0, #0x10fc4ef8
-if (cpu.x[0]) == 0 {pc=0x10fc4ef8;continue;}pc=0x10fc4ee4;continue;
-}
-0x10fc4ee4=>{
+if (cpu.x[0]) == 0 {break 'b10fc4ef8;}{
 // 0x10fc4ee4 mov x0, x28
 cpu.x[0]=(((cpu.x[28]))) as u64;
 // 0x10fc4ee8 bl #0x10f940fc
 cpu.x[30]=0x10fc4eec;super::chunk9::f_10f940fc(cpu,rt,0x10f940fc)?;
-pc=0x10fc4eec;continue;
-}
-0x10fc4eec=>{
+{
 // 0x10fc4eec ldr w8, [x0, #0x34]
 {let address=(cpu.x[0]).wrapping_add(0x34u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc4ef0 cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fc4ef4 b.gt #0x10fc4e84
-if cpu.condition(12){pc=0x10fc4e84;continue;}pc=0x10fc4ef8;continue;
+if cpu.condition(12){break 'b10fc4e84;}break 'b10fc4ef8;
 }
-0x10fc4ef8=>{
+}
+}
+'b10fc4f24: {
 // 0x10fc4ef8 cmp w26, #1
 {let a=((cpu.x[26] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fc4efc b.lt #0x10fc4f24
-if cpu.condition(11){pc=0x10fc4f24;continue;}pc=0x10fc4f00;continue;
-}
-0x10fc4f00=>{
+if cpu.condition(11){break 'b10fc4f24;}{
 // 0x10fc4f00 ldr x0, [x19, #8]
 {let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fc4f04 bl #0x10f942c0
 cpu.x[30]=0x10fc4f08;super::chunk2::f_10f942c0(cpu,rt,0x10f942c0)?;
-pc=0x10fc4f08;continue;
-}
-0x10fc4f08=>{
+{
 // 0x10fc4f08 mov x1, x0
 cpu.x[1]=(((cpu.x[0]))) as u64;
 // 0x10fc4f0c mov x0, x28
@@ -6631,22 +10171,20 @@ cpu.x[3]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
 cpu.x[4]=(((0x1u64))) as u32 as u64;
 // 0x10fc4f1c bl #0x10f958e0
 cpu.x[30]=0x10fc4f20;super::chunk6::f_10f958e0(cpu,rt,0x10f958e0)?;
-pc=0x10fc4f20;continue;
-}
-0x10fc4f20=>{
+{
 // 0x10fc4f20 tbz w0, #0, #0x10fc4e84
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc4e84;continue;}pc=0x10fc4f24;continue;
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fc4e84;}break 'b10fc4f24;
 }
-0x10fc4f24=>{
+}
+}
+}
 // 0x10fc4f24 mov x0, x21
 cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fc4f28 mov x1, x28
 cpu.x[1]=(((cpu.x[28]))) as u64;
 // 0x10fc4f2c bl #0x10f94f34
 cpu.x[30]=0x10fc4f30;super::chunk8::f_10f94f34(cpu,rt,0x10f94f34)?;
-pc=0x10fc4f30;continue;
-}
-0x10fc4f30=>{
+{
 // 0x10fc4f30 ldr x8, [x28]
 {let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4f34 mov w22, w0
@@ -6657,9 +10195,7 @@ cpu.x[0]=(((cpu.x[28]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x1d8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4f40 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fc4f44;super::dispatch(cpu,rt,target)?;}
-pc=0x10fc4f44;continue;
-}
-0x10fc4f44=>{
+{
 // 0x10fc4f44 ldr x8, [x28]
 {let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4f48 mov w27, w0
@@ -6670,9 +10206,7 @@ cpu.x[0]=(((cpu.x[28]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4f54 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fc4f58;super::dispatch(cpu,rt,target)?;}
-pc=0x10fc4f58;continue;
-}
-0x10fc4f58=>{
+{
 // 0x10fc4f58 ldur w8, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc4f5c add w26, w0, w8
@@ -6681,15 +10215,14 @@ pc=0x10fc4f58;continue;
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fc4f64 bl #0x10ddff74
 cpu.x[30]=0x10fc4f68;super::chunk11::f_10ddff74(cpu,rt,0x10ddff74)?;
-pc=0x10fc4f68;continue;
-}
-0x10fc4f68=>{
+{
+'b10fc504c: {
+'b10fc5030: {
+'b10fc5014: {
 // 0x10fc4f68 stur w22, [x29, #-0x10]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=cpu.x[22] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fc4f6c tbnz w0, #0, #0x10fc5014
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10fc5014;continue;}pc=0x10fc4f70;continue;
-}
-0x10fc4f70=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10fc5014;}{
 // 0x10fc4f70 ldr x8, [x28]
 {let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4f74 mov x0, x28
@@ -6698,31 +10231,21 @@ cpu.x[0]=(((cpu.x[28]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x190u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc4f7c blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fc4f80;super::dispatch(cpu,rt,target)?;}
-pc=0x10fc4f80;continue;
-}
-0x10fc4f80=>{
+{
 // 0x10fc4f80 tbz w0, #0, #0x10fc5014
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc5014;continue;}pc=0x10fc4f84;continue;
-}
-0x10fc4f84=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fc5014;}{
 // 0x10fc4f84 mov x0, x28
 cpu.x[0]=(((cpu.x[28]))) as u64;
 // 0x10fc4f88 bl #0x10f7e050
 cpu.x[30]=0x10fc4f8c;super::chunk10::f_10f7e050(cpu,rt,0x10f7e050)?;
-pc=0x10fc4f8c;continue;
-}
-0x10fc4f8c=>{
+{
 // 0x10fc4f8c bl #0x10de05cc
 cpu.x[30]=0x10fc4f90;super::chunk1::f_10de05cc(cpu,rt,0x10de05cc)?;
-pc=0x10fc4f90;continue;
-}
-0x10fc4f90=>{
+{
 // 0x10fc4f90 cmp w0, #1
 {let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fc4f94 b.lt #0x10fc5014
-if cpu.condition(11){pc=0x10fc5014;continue;}pc=0x10fc4f98;continue;
-}
-0x10fc4f98=>{
+if cpu.condition(11){break 'b10fc5014;}{
 // 0x10fc4f98 mov x0, x28
 cpu.x[0]=(((cpu.x[28]))) as u64;
 // 0x10fc4f9c bl #0x10f7e050
@@ -6752,9 +10275,25 @@ cpu.x[0]=(((cpu.x[22]))) as u64;
 // 0x10fc4fcc bl #0x10de05ec
 cpu.x[30]=0x10fc4fd0;super::chunk5::f_10de05ec(cpu,rt,0x10de05ec)?;
 // 0x10fc4fd0 tbz w0, #0, #0x10fc51a8
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc51a8;continue;}pc=0x10fc4fd4;continue;
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {{
+// 0x10fc51a8 mov w23, #1
+cpu.x[23]=(((0x1u64))) as u32 as u64;
+// 0x10fc51ac ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc51b0 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc51b4 ldr x8, [x8, #0x178]
+{let address=(cpu.x[8]).wrapping_add(0x178u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc51b8 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc51bc;super::dispatch(cpu,rt,target)?;}
+// 0x10fc51bc ldur w8, [x29, #-0x20]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc51c0 tbnz w0, #0, #0x10fc504c
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10fc504c;}{
+// 0x10fc51c4 b #0x10fc5030
+break 'b10fc5030;
 }
-0x10fc4fd4=>{
+}}{
 // 0x10fc4fd4 ldr x9, [x28]
 {let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
 // 0x10fc4fd8 ldr w8, [x22, #0x484]
@@ -6784,13 +10323,18 @@ cpu.x[0]=(((cpu.x[28]))) as u64;
 // 0x10fc5008 ldur w8, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc500c tbnz w0, #0, #0x10fc504c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10fc504c;continue;}pc=0x10fc5010;continue;
-}
-0x10fc5010=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10fc504c;}{
 // 0x10fc5010 b #0x10fc5030
-pc=0x10fc5030;continue;
+break 'b10fc5030;
 }
-0x10fc5014=>{
+}
+}
+}
+}
+}
+}
+}
+}
 // 0x10fc5014 mov w23, wzr
 cpu.x[23]=(((0u64))) as u32 as u64;
 // 0x10fc5018 ldr x8, [x28]
@@ -6801,15 +10345,13 @@ cpu.x[0]=(((cpu.x[28]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x178u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc5024 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fc5028;super::dispatch(cpu,rt,target)?;}
-pc=0x10fc5028;continue;
-}
-0x10fc5028=>{
+{
 // 0x10fc5028 ldur w8, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc502c tbnz w0, #0, #0x10fc504c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10fc504c;continue;}pc=0x10fc5030;continue;
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10fc504c;}break 'b10fc5030;
 }
-0x10fc5030=>{
+}
 // 0x10fc5030 ldr x8, [x28]
 {let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc5034 mov x0, x28
@@ -6818,18 +10360,19 @@ cpu.x[0]=(((cpu.x[28]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x180u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc503c blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fc5040;super::dispatch(cpu,rt,target)?;}
-pc=0x10fc5040;continue;
-}
-0x10fc5040=>{
+{
 // 0x10fc5040 ldr w8, [sp, #0x1c]
 {let address=(cpu.sp).wrapping_add(0x1cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc5044 tst w0, #1
 {let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.logical_flags(result,32);}
 // 0x10fc5048 csel w8, w8, wzr, ne
 cpu.x[8]=(if cpu.condition(1){((cpu.x[8] as u32 as u64))}else{((0u64))}) as u32 as u64;
-pc=0x10fc504c;continue;
+break 'b10fc504c;
 }
-0x10fc504c=>{
+}
+'b10fc4e80: {
+'b10fc4e7c: {
+'b10fc5070: {
 // 0x10fc504c add w22, w8, w26
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[26] as u32 as u64));let result=a.wrapping_add(b);cpu.x[22]=(result) as u32 as u64;}
 // 0x10fc5050 ldur w8, [x29, #-0x10]
@@ -6843,22 +10386,18 @@ cpu.x[9]=((((cpu.x[22] as u32 as u64))).wrapping_mul(((cpu.x[22] as u32 as u64))
 // 0x10fc5060 cmp w27, w9
 {let a=((cpu.x[27] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fc5064 b.ls #0x10fc5070
-if cpu.condition(9){pc=0x10fc5070;continue;}pc=0x10fc5068;continue;
-}
-0x10fc5068=>{
+if cpu.condition(9){break 'b10fc5070;}{
 // 0x10fc5068 ldur w8, [x29, #-0xc]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc506c tbz w8, #0, #0x10fc4e7c
-if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc4e7c;continue;}pc=0x10fc5070;continue;
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fc4e7c;}break 'b10fc5070;
 }
-0x10fc5070=>{
+}
 // 0x10fc5070 ldur x0, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fc5074 bl #0x10de1230
 cpu.x[30]=0x10fc5078;super::chunk15::f_10de1230(cpu,rt,0x10de1230)?;
-pc=0x10fc5078;continue;
-}
-0x10fc5078=>{
+{
 // 0x10fc5078 ldr x8, [x21]
 {let address=(cpu.x[21]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc507c mov w26, w0
@@ -6869,9 +10408,8 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x180u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc5088 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fc508c;super::dispatch(cpu,rt,target)?;}
-pc=0x10fc508c;continue;
-}
-0x10fc508c=>{
+{
+'b10fc50a8: {
 // 0x10fc508c cmp w26, #1
 {let a=((cpu.x[26] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fc5090 ldur w9, [x29, #-0xc]
@@ -6885,16 +10423,67 @@ cpu.x[8]=((cpu.condition(11)) as u64) as u32 as u64;
 // 0x10fc50a0 orr w8, w8, w0
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fc50a4 tbz w8, #0, #0x10fc5138
-if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc5138;continue;}pc=0x10fc50a8;continue;
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) == 0 {{
+// 0x10fc5138 sub w8, w22, w26
+{let a=((cpu.x[22] as u32 as u64));let b=((cpu.x[26] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10fc513c mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc5140 bic w8, w8, w8, asr #31
+{let a=((cpu.x[8] as u32 as u64));let b=(((cpu.x[8] as u32 as u64)) as i32).wrapping_shr(31) as u64;let result=a & !b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fc5144 stur w8, [x29, #-0x10]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc5148 bl #0x10f942a0
+cpu.x[30]=0x10fc514c;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
+{
+// 0x10fc514c mov w26, w0
+cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fc5150 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc5154 bl #0x10f942a0
+cpu.x[30]=0x10fc5158;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
+{
+// 0x10fc5158 sub w26, w26, w0
+{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[26]=(result) as u32 as u64;}
+// 0x10fc515c mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc5160 bl #0x10f9414c
+cpu.x[30]=0x10fc5164;super::chunk3::f_10f9414c(cpu,rt,0x10f9414c)?;
+{
+// 0x10fc5164 tbz w0, #0, #0x10fc517c
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {{
+// 0x10fc517c ldur w8, [x29, #-0x10]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc5180 cmp w26, w8
+{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5184 b.le #0x10fc50a8
+if cpu.condition(13){break 'b10fc50a8;}{
+// 0x10fc5188 b #0x10fc4e7c
+break 'b10fc4e7c;
 }
-0x10fc50a8=>{
+}}{
+// 0x10fc5168 ldur w8, [x29, #-0x10]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc516c neg w8, w8
+cpu.x[8]=(0u64.wrapping_sub(((cpu.x[8] as u32 as u64)))) as u32 as u64;
+// 0x10fc5170 cmp w26, w8
+{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5174 b.lt #0x10fc4e7c
+if cpu.condition(11){break 'b10fc4e7c;}{
+// 0x10fc5178 b #0x10fc50a8
+break 'b10fc50a8;
+}
+}
+}
+}
+}
+}}break 'b10fc50a8;
+}
 // 0x10fc50a8 ldur x0, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fc50ac bl #0x10de1238
 cpu.x[30]=0x10fc50b0;super::chunk14::f_10de1238(cpu,rt,0x10de1238)?;
-pc=0x10fc50b0;continue;
-}
-0x10fc50b0=>{
+{
+'b10fc50f4: {
 // 0x10fc50b0 ldur w8, [x29, #-0xc]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc50b4 cmp w0, #1
@@ -6906,9 +10495,7 @@ cpu.x[9]=((cpu.condition(11)) as u64) as u32 as u64;
 // 0x10fc50c0 orr w8, w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fc50c4 tbnz w8, #0, #0x10fc50f4
-if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10fc50f4;continue;}pc=0x10fc50c8;continue;
-}
-0x10fc50c8=>{
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10fc50f4;}{
 // 0x10fc50c8 sub w8, w22, w0
 {let a=((cpu.x[22] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
 // 0x10fc50cc mov x0, x28
@@ -6917,18 +10504,14 @@ cpu.x[0]=(((cpu.x[28]))) as u64;
 {let a=((cpu.x[8] as u32 as u64));let b=(((cpu.x[8] as u32 as u64)) as i32).wrapping_shr(31) as u64;let result=a & !b;cpu.x[22]=(result) as u32 as u64;}
 // 0x10fc50d4 bl #0x10f94298
 cpu.x[30]=0x10fc50d8;super::chunk2::f_10f94298(cpu,rt,0x10f94298)?;
-pc=0x10fc50d8;continue;
-}
-0x10fc50d8=>{
+{
 // 0x10fc50d8 mov w26, w0
 cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10fc50dc mov x0, x21
 cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fc50e0 bl #0x10f94298
 cpu.x[30]=0x10fc50e4;super::chunk2::f_10f94298(cpu,rt,0x10f94298)?;
-pc=0x10fc50e4;continue;
-}
-0x10fc50e4=>{
+{
 // 0x10fc50e4 subs w8, w26, w0
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;cpu.flags(a,b,result,32,true);}
 // 0x10fc50e8 cneg w8, w8, mi
@@ -6936,26 +10519,62 @@ cpu.x[8]=(if cpu.condition(4){0u64.wrapping_sub(((cpu.x[8] as u32 as u64)))}else
 // 0x10fc50ec cmp w8, w22
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[22] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fc50f0 b.hi #0x10fc4e7c
-if cpu.condition(8){pc=0x10fc4e7c;continue;}pc=0x10fc50f4;continue;
+if cpu.condition(8){break 'b10fc4e7c;}break 'b10fc50f4;
 }
-0x10fc50f4=>{
+}
+}
+}
 // 0x10fc50f4 mov x0, x21
 cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fc50f8 mov x1, x28
 cpu.x[1]=(((cpu.x[28]))) as u64;
 // 0x10fc50fc bl #0x10f9469c
 cpu.x[30]=0x10fc5100;super::chunk14::f_10f9469c(cpu,rt,0x10f9469c)?;
-pc=0x10fc5100;continue;
-}
-0x10fc5100=>{
+{
 // 0x10fc5100 ldur x8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc5104 ldrb w8, [x8, #0x6fc]
 {let address=(cpu.x[8]).wrapping_add(0x6fcu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc5108 cbz w8, #0x10fc518c
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10fc518c;continue;}pc=0x10fc510c;continue;
+if (cpu.x[8] as u32 as u64) == 0 {{
+// 0x10fc518c ldr w8, [sp, #8]
+{let address=(cpu.sp).wrapping_add(0x8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc5190 cmp w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5194 b.le #0x10fc51f4
+if cpu.condition(13){{
+// 0x10fc51f4 ldr w9, [sp, #4]
+{let address=(cpu.sp).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fc51f8 ldur w23, [x29, #-0x2c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[23]=(v0) as u32 as u64;}
+// 0x10fc51fc cmp w27, w9
+{let a=((cpu.x[27] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5200 b.ge #0x10fc4e80
+if cpu.condition(10){break 'b10fc4e80;}{
+// 0x10fc5204 cmp w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5208 b.lt #0x10fc4e80
+if cpu.condition(11){break 'b10fc4e80;}{
+// 0x10fc520c stp w27, w0, [sp, #4]
+{let address=(cpu.sp).wrapping_add(0x4u64);let v0=cpu.x[27] as u32 as u64;let v1=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
+// 0x10fc5210 str x28, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[28];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc5214 b #0x10fc4e80
+break 'b10fc4e80;
 }
-0x10fc510c=>{
+}
+}}{
+// 0x10fc5198 ldur w23, [x29, #-0x2c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[23]=(v0) as u32 as u64;}
+// 0x10fc519c stp w27, w0, [sp, #4]
+{let address=(cpu.sp).wrapping_add(0x4u64);let v0=cpu.x[27] as u32 as u64;let v1=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
+// 0x10fc51a0 str x28, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[28];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc51a4 b #0x10fc4e80
+break 'b10fc4e80;
+}
+}}{
+'b10fc51cc: {
 // 0x10fc510c ldr x8, [x28]
 {let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc5110 mov x0, x28
@@ -6965,9 +10584,11 @@ cpu.x[0]=(((cpu.x[28]))) as u64;
 // 0x10fc5118 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fc511c;super::dispatch(cpu,rt,target)?;}
 // 0x10fc511c cbz x0, #0x10fc51c8
-if (cpu.x[0]) == 0 {pc=0x10fc51c8;continue;}pc=0x10fc5120;continue;
-}
-0x10fc5120=>{
+if (cpu.x[0]) == 0 {{
+// 0x10fc51c8 mov w0, #0x7fffffff
+cpu.x[0]=(((0x7fffffffu64))) as u32 as u64;
+break 'b10fc51cc;
+}}{
 // 0x10fc5120 ldr x8, [x28]
 {let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc5124 mov x0, x28
@@ -6979,113 +10600,9 @@ cpu.x[0]=(((cpu.x[28]))) as u64;
 // 0x10fc5130 bl #0x10fca234
 cpu.x[30]=0x10fc5134;super::chunk2::f_10fca234(cpu,rt,0x10fca234)?;
 // 0x10fc5134 b #0x10fc51cc
-pc=0x10fc51cc;continue;
+break 'b10fc51cc;
 }
-0x10fc5138=>{
-// 0x10fc5138 sub w8, w22, w26
-{let a=((cpu.x[22] as u32 as u64));let b=((cpu.x[26] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
-// 0x10fc513c mov x0, x28
-cpu.x[0]=(((cpu.x[28]))) as u64;
-// 0x10fc5140 bic w8, w8, w8, asr #31
-{let a=((cpu.x[8] as u32 as u64));let b=(((cpu.x[8] as u32 as u64)) as i32).wrapping_shr(31) as u64;let result=a & !b;cpu.x[8]=(result) as u32 as u64;}
-// 0x10fc5144 stur w8, [x29, #-0x10]
-{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
-// 0x10fc5148 bl #0x10f942a0
-cpu.x[30]=0x10fc514c;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
-pc=0x10fc514c;continue;
 }
-0x10fc514c=>{
-// 0x10fc514c mov w26, w0
-cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
-// 0x10fc5150 mov x0, x21
-cpu.x[0]=(((cpu.x[21]))) as u64;
-// 0x10fc5154 bl #0x10f942a0
-cpu.x[30]=0x10fc5158;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
-pc=0x10fc5158;continue;
-}
-0x10fc5158=>{
-// 0x10fc5158 sub w26, w26, w0
-{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[26]=(result) as u32 as u64;}
-// 0x10fc515c mov x0, x21
-cpu.x[0]=(((cpu.x[21]))) as u64;
-// 0x10fc5160 bl #0x10f9414c
-cpu.x[30]=0x10fc5164;super::chunk3::f_10f9414c(cpu,rt,0x10f9414c)?;
-pc=0x10fc5164;continue;
-}
-0x10fc5164=>{
-// 0x10fc5164 tbz w0, #0, #0x10fc517c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc517c;continue;}pc=0x10fc5168;continue;
-}
-0x10fc5168=>{
-// 0x10fc5168 ldur w8, [x29, #-0x10]
-{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
-// 0x10fc516c neg w8, w8
-cpu.x[8]=(0u64.wrapping_sub(((cpu.x[8] as u32 as u64)))) as u32 as u64;
-// 0x10fc5170 cmp w26, w8
-{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10fc5174 b.lt #0x10fc4e7c
-if cpu.condition(11){pc=0x10fc4e7c;continue;}pc=0x10fc5178;continue;
-}
-0x10fc5178=>{
-// 0x10fc5178 b #0x10fc50a8
-pc=0x10fc50a8;continue;
-}
-0x10fc517c=>{
-// 0x10fc517c ldur w8, [x29, #-0x10]
-{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
-// 0x10fc5180 cmp w26, w8
-{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10fc5184 b.le #0x10fc50a8
-if cpu.condition(13){pc=0x10fc50a8;continue;}pc=0x10fc5188;continue;
-}
-0x10fc5188=>{
-// 0x10fc5188 b #0x10fc4e7c
-pc=0x10fc4e7c;continue;
-}
-0x10fc518c=>{
-// 0x10fc518c ldr w8, [sp, #8]
-{let address=(cpu.sp).wrapping_add(0x8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
-// 0x10fc5190 cmp w0, w8
-{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10fc5194 b.le #0x10fc51f4
-if cpu.condition(13){pc=0x10fc51f4;continue;}pc=0x10fc5198;continue;
-}
-0x10fc5198=>{
-// 0x10fc5198 ldur w23, [x29, #-0x2c]
-{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[23]=(v0) as u32 as u64;}
-// 0x10fc519c stp w27, w0, [sp, #4]
-{let address=(cpu.sp).wrapping_add(0x4u64);let v0=cpu.x[27] as u32 as u64;let v1=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
-// 0x10fc51a0 str x28, [sp, #0x20]
-{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[28];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
-// 0x10fc51a4 b #0x10fc4e80
-pc=0x10fc4e80;continue;
-}
-0x10fc51a8=>{
-// 0x10fc51a8 mov w23, #1
-cpu.x[23]=(((0x1u64))) as u32 as u64;
-// 0x10fc51ac ldr x8, [x28]
-{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
-// 0x10fc51b0 mov x0, x28
-cpu.x[0]=(((cpu.x[28]))) as u64;
-// 0x10fc51b4 ldr x8, [x8, #0x178]
-{let address=(cpu.x[8]).wrapping_add(0x178u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
-// 0x10fc51b8 blr x8
-{let target=cpu.x[8];cpu.x[30]=0x10fc51bc;super::dispatch(cpu,rt,target)?;}
-// 0x10fc51bc ldur w8, [x29, #-0x20]
-{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
-// 0x10fc51c0 tbnz w0, #0, #0x10fc504c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10fc504c;continue;}pc=0x10fc51c4;continue;
-}
-0x10fc51c4=>{
-// 0x10fc51c4 b #0x10fc5030
-pc=0x10fc5030;continue;
-}
-0x10fc51c8=>{
-// 0x10fc51c8 mov w0, #0x7fffffff
-cpu.x[0]=(((0x7fffffffu64))) as u32 as u64;
-pc=0x10fc51cc;continue;
-}
-0x10fc51cc=>{
 // 0x10fc51cc ldr w8, [sp, #0xc]
 {let address=(cpu.sp).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc51d0 ldur w23, [x29, #-0x2c]
@@ -7105,116 +10622,112 @@ cpu.x[8]=(if cpu.condition(11){((cpu.x[28]))}else{((cpu.x[8]))}) as u64;
 // 0x10fc51ec str x8, [sp, #0x20]
 {let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[8];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10fc51f0 b #0x10fc4e84
-pc=0x10fc4e84;continue;
+break 'b10fc4e84;
 }
-0x10fc51f4=>{
-// 0x10fc51f4 ldr w9, [sp, #4]
-{let address=(cpu.sp).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
-// 0x10fc51f8 ldur w23, [x29, #-0x2c]
+}
+}
+}
+}
+}
+// 0x10fc4e7c ldur w23, [x29, #-0x2c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[23]=(v0) as u32 as u64;}
-// 0x10fc51fc cmp w27, w9
-{let a=((cpu.x[27] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10fc5200 b.ge #0x10fc4e80
-if cpu.condition(10){pc=0x10fc4e80;continue;}pc=0x10fc5204;continue;
+break 'b10fc4e80;
 }
-0x10fc5204=>{
-// 0x10fc5204 cmp w0, w8
-{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10fc5208 b.lt #0x10fc4e80
-if cpu.condition(11){pc=0x10fc4e80;continue;}pc=0x10fc520c;continue;
+// 0x10fc4e80 ldr w26, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[26]=(v0) as u32 as u64;}
+break 'b10fc4e84;
 }
-0x10fc520c=>{
-// 0x10fc520c stp w27, w0, [sp, #4]
-{let address=(cpu.sp).wrapping_add(0x4u64);let v0=cpu.x[27] as u32 as u64;let v1=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
-// 0x10fc5210 str x28, [sp, #0x20]
-{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[28];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
-// 0x10fc5214 b #0x10fc4e80
-pc=0x10fc4e80;continue;
 }
-0x10fc5218=>{
+}
+}
+}
+}
+}
+}
+}
+// 0x10fc4e84 add x20, x20, #8
+{let a=((cpu.x[20]));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[20]=(result) as u64;}
+// 0x10fc4e88 cmp x24, x20
+{let a=((cpu.x[24]));let b=((cpu.x[20]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10fc4e8c b.eq #0x10fc5218
+if cpu.condition(0){{
 // 0x10fc5218 ldr x0, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fc521c sub x1, x29, #8
 {let a=((cpu.x[29]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[1]=(result) as u64;}
 // 0x10fc5220 bl #0x10f9abb8
 cpu.x[30]=0x10fc5224;super::chunk9::f_10f9abb8(cpu,rt,0x10f9abb8)?;
-pc=0x10fc5224;continue;
-}
-0x10fc5224=>{
+{
 // 0x10fc5224 ldr x22, [sp, #0x10]
 {let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[22]=(v0) as u64;}
 // 0x10fc5228 ldr x1, [sp, #0x20]
 {let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[1]=(v0) as u64;}
 // 0x10fc522c cbz x1, #0x10fc5238
-if (cpu.x[1]) == 0 {pc=0x10fc5238;continue;}pc=0x10fc5230;continue;
-}
-0x10fc5230=>{
+if (cpu.x[1]) == 0 {break 'b10fc5238;}{
 // 0x10fc5230 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fc5234 b #0x10fc52d8
-pc=0x10fc52d8;continue;
+break 'b10fc52d8;
 }
-0x10fc5238=>{
+}
+}}continue 'l10fc4e90;
+}
+}
+}
+}
+// 0x10fc4dd8 ldr x0, [sp, #0x28]
+{let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fc4ddc sub x1, x29, #8
+{let a=((cpu.x[29]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[1]=(result) as u64;}
+// 0x10fc4de0 bl #0x10f9abb8
+cpu.x[30]=0x10fc4de4;super::chunk9::f_10f9abb8(cpu,rt,0x10f9abb8)?;
+{
+// 0x10fc4de4 b #0x10fc5238
+break 'b10fc5238;
+}
+}
+'b10fc52a4: {
+'b10fc5298: {
 // 0x10fc5238 ldr x8, [x19, #0x10]
 {let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fc523c cbz x8, #0x10fc5298
-if (cpu.x[8]) == 0 {pc=0x10fc5298;continue;}pc=0x10fc5240;continue;
-}
-0x10fc5240=>{
+if (cpu.x[8]) == 0 {break 'b10fc5298;}{
 // 0x10fc5240 mov x0, x21
 cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fc5244 bl #0x10f942c8
 cpu.x[30]=0x10fc5248;super::chunk1::f_10f942c8(cpu,rt,0x10f942c8)?;
-pc=0x10fc5248;continue;
-}
-0x10fc5248=>{
+{
 // 0x10fc5248 cbz x0, #0x10fc5298
-if (cpu.x[0]) == 0 {pc=0x10fc5298;continue;}pc=0x10fc524c;continue;
-}
-0x10fc524c=>{
+if (cpu.x[0]) == 0 {break 'b10fc5298;}{
 // 0x10fc524c mov x0, x21
 cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fc5250 bl #0x10f942c8
 cpu.x[30]=0x10fc5254;super::chunk1::f_10f942c8(cpu,rt,0x10f942c8)?;
-pc=0x10fc5254;continue;
-}
-0x10fc5254=>{
+{
 // 0x10fc5254 ldr x1, [x19, #0x10]
 {let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[1]=(v0) as u64;}
 // 0x10fc5258 bl #0x10fd00c8
 cpu.x[30]=0x10fc525c;super::chunk4::f_10fd00c8(cpu,rt,0x10fd00c8)?;
-pc=0x10fc525c;continue;
-}
-0x10fc525c=>{
+{
 // 0x10fc525c tbz w0, #0, #0x10fc5298
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc5298;continue;}pc=0x10fc5260;continue;
-}
-0x10fc5260=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fc5298;}{
 // 0x10fc5260 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fc5264 bl #0x10fd04a8
 cpu.x[30]=0x10fc5268;super::chunk2::f_10fd04a8(cpu,rt,0x10fd04a8)?;
-pc=0x10fc5268;continue;
-}
-0x10fc5268=>{
+{
 // 0x10fc5268 bl #0x10e0b6b4
 cpu.x[30]=0x10fc526c;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
-pc=0x10fc526c;continue;
-}
-0x10fc526c=>{
+{
 // 0x10fc526c ldr x0, [x0, #0x78]
 {let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fc5270 bl #0x10e16208
 cpu.x[30]=0x10fc5274;super::chunk7::f_10e16208(cpu,rt,0x10e16208)?;
-pc=0x10fc5274;continue;
-}
-0x10fc5274=>{
+{
 // 0x10fc5274 ldrb w8, [x0, #0x3bf]
 {let address=(cpu.x[0]).wrapping_add(0x3bfu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fc5278 cbz w8, #0x10fc5298
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10fc5298;continue;}pc=0x10fc527c;continue;
-}
-0x10fc527c=>{
+if (cpu.x[8] as u32 as u64) == 0 {break 'b10fc5298;}{
 // 0x10fc527c ldr x1, [x19, #0x10]
 {let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[1]=(v0) as u64;}
 // 0x10fc5280 mov x0, x19
@@ -7223,31 +10736,36 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[2]=(((0x1u64))) as u32 as u64;
 // 0x10fc5288 bl #0x10fc4008
 cpu.x[30]=0x10fc528c;super::chunk5::f_10fc4008(cpu,rt,0x10fc4008)?;
-pc=0x10fc528c;continue;
-}
-0x10fc528c=>{
+{
 // 0x10fc528c tbz w0, #0, #0x10fc5298
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc5298;continue;}pc=0x10fc5290;continue;
-}
-0x10fc5290=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fc5298;}{
 // 0x10fc5290 ldr x21, [x19, #0x10]
 {let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
 // 0x10fc5294 cbnz x21, #0x10fc52a4
-if (cpu.x[21]) != 0 {pc=0x10fc52a4;continue;}pc=0x10fc5298;continue;
+if (cpu.x[21]) != 0 {break 'b10fc52a4;}break 'b10fc5298;
 }
-0x10fc5298=>{
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
 // 0x10fc5298 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fc529c bl #0x10fc5398
 cpu.x[30]=0x10fc52a0;super::chunk0::f_10fc5398(cpu,rt,0x10fc5398)?;
-pc=0x10fc52a0;continue;
-}
-0x10fc52a0=>{
+{
 // 0x10fc52a0 mov x21, x0
 cpu.x[21]=(((cpu.x[0]))) as u64;
-pc=0x10fc52a4;continue;
+break 'b10fc52a4;
 }
-0x10fc52a4=>{
+}
 // 0x10fc52a4 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fc52a8 mov x1, x21
@@ -7256,39 +10774,33 @@ cpu.x[1]=(((cpu.x[21]))) as u64;
 cpu.x[2]=(((0x1u64))) as u32 as u64;
 // 0x10fc52b0 bl #0x10fc4008
 cpu.x[30]=0x10fc52b4;super::chunk5::f_10fc4008(cpu,rt,0x10fc4008)?;
-pc=0x10fc52b4;continue;
-}
-0x10fc52b4=>{
+{
 // 0x10fc52b4 tbz w0, #0, #0x10fc52c4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc52c4;continue;}pc=0x10fc52b8;continue;
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {{
+// 0x10fc52c4 mov x0, x22
+cpu.x[0]=(((cpu.x[22]))) as u64;
+// 0x10fc52c8 bl #0x10d36084
+cpu.x[30]=0x10fc52cc;super::chunk6::f_10d36084(cpu,rt,0x10d36084)?;
+{
+// 0x10fc52cc tbz w0, #0, #0x10fc52e8
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fc52e8;}{
+// 0x10fc52d0 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc52d4 mov x1, xzr
+cpu.x[1]=(((0u64))) as u64;
+break 'b10fc52d8;
 }
-0x10fc52b8=>{
+}
+}}{
 // 0x10fc52b8 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x10fc52bc mov x1, x21
 cpu.x[1]=(((cpu.x[21]))) as u64;
 // 0x10fc52c0 b #0x10fc52d8
-pc=0x10fc52d8;continue;
+break 'b10fc52d8;
 }
-0x10fc52c4=>{
-// 0x10fc52c4 mov x0, x22
-cpu.x[0]=(((cpu.x[22]))) as u64;
-// 0x10fc52c8 bl #0x10d36084
-cpu.x[30]=0x10fc52cc;super::chunk6::f_10d36084(cpu,rt,0x10d36084)?;
-pc=0x10fc52cc;continue;
 }
-0x10fc52cc=>{
-// 0x10fc52cc tbz w0, #0, #0x10fc52e8
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fc52e8;continue;}pc=0x10fc52d0;continue;
 }
-0x10fc52d0=>{
-// 0x10fc52d0 mov x0, x19
-cpu.x[0]=(((cpu.x[19]))) as u64;
-// 0x10fc52d4 mov x1, xzr
-cpu.x[1]=(((0u64))) as u64;
-pc=0x10fc52d8;continue;
-}
-0x10fc52d8=>{
 // 0x10fc52d8 mov w2, wzr
 cpu.x[2]=(((0u64))) as u32 as u64;
 // 0x10fc52dc mov w3, #1
@@ -7297,9 +10809,25 @@ cpu.x[3]=(((0x1u64))) as u32 as u64;
 cpu.x[4]=(((0u64))) as u32 as u64;
 // 0x10fc52e4 bl #0x10fc3cb4
 cpu.x[30]=0x10fc52e8;super::chunk12::f_10fc3cb4(cpu,rt,0x10fc3cb4)?;
-pc=0x10fc52e8;continue;
+break 'b10fc52e8;
 }
-0x10fc52e8=>{
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
 // 0x10fc52e8 ldp x20, x19, [sp, #0xb0]
 {let address=(cpu.sp).wrapping_add(0xb0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10fc52ec ldp x22, x21, [sp, #0xa0]
@@ -7317,10 +10845,1222 @@ pc=0x10fc52e8;continue;
 // 0x10fc5304 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10fc4c38")),}}}
+}
+}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10fc4c38_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10fc4c38{0}else{match pc{0x10fc4c38=>0,0x10fc4c70=>1,0x10fc4c7c=>2,0x10fc4c88=>3,0x10fc4c98=>4,0x10fc4ca0=>5,0x10fc4ca8=>6,0x10fc4cb0=>7,0x10fc4cbc=>8,0x10fc4cc4=>9,0x10fc4ccc=>10,0x10fc4cd8=>11,0x10fc4ce4=>12,0x10fc4ce8=>13,0x10fc4cf0=>14,0x10fc4cf8=>15,0x10fc4d00=>16,0x10fc4d18=>17,0x10fc4d20=>18,0x10fc4d30=>19,0x10fc4d3c=>20,0x10fc4d48=>21,0x10fc4d4c=>22,0x10fc4d54=>23,0x10fc4d5c=>24,0x10fc4d64=>25,0x10fc4d68=>26,0x10fc4d70=>27,0x10fc4d7c=>28,0x10fc4d80=>29,0x10fc4d88=>30,0x10fc4d94=>31,0x10fc4d98=>32,0x10fc4da0=>33,0x10fc4db8=>34,0x10fc4dd8=>35,0x10fc4de4=>36,0x10fc4de8=>37,0x10fc4e08=>38,0x10fc4e34=>39,0x10fc4e48=>40,0x10fc4e7c=>41,0x10fc4e80=>42,0x10fc4e84=>43,0x10fc4e90=>44,0x10fc4ea8=>45,0x10fc4eac=>46,0x10fc4ebc=>47,0x10fc4ec0=>48,0x10fc4ec4=>49,0x10fc4ed8=>50,0x10fc4ee0=>51,0x10fc4ee4=>52,0x10fc4eec=>53,0x10fc4ef8=>54,0x10fc4f00=>55,0x10fc4f08=>56,0x10fc4f20=>57,0x10fc4f24=>58,0x10fc4f30=>59,0x10fc4f44=>60,0x10fc4f58=>61,0x10fc4f68=>62,0x10fc4f70=>63,0x10fc4f80=>64,0x10fc4f84=>65,0x10fc4f8c=>66,0x10fc4f90=>67,0x10fc4f98=>68,0x10fc4fd4=>69,0x10fc5010=>70,0x10fc5014=>71,0x10fc5028=>72,0x10fc5030=>73,0x10fc5040=>74,0x10fc504c=>75,0x10fc5068=>76,0x10fc5070=>77,0x10fc5078=>78,0x10fc508c=>79,0x10fc50a8=>80,0x10fc50b0=>81,0x10fc50c8=>82,0x10fc50d8=>83,0x10fc50e4=>84,0x10fc50f4=>85,0x10fc5100=>86,0x10fc510c=>87,0x10fc5120=>88,0x10fc5138=>89,0x10fc514c=>90,0x10fc5158=>91,0x10fc5164=>92,0x10fc5168=>93,0x10fc5178=>94,0x10fc517c=>95,0x10fc5188=>96,0x10fc518c=>97,0x10fc5198=>98,0x10fc51a8=>99,0x10fc51c4=>100,0x10fc51c8=>101,0x10fc51cc=>102,0x10fc51f4=>103,0x10fc5204=>104,0x10fc520c=>105,0x10fc5218=>106,0x10fc5224=>107,0x10fc5230=>108,0x10fc5238=>109,0x10fc5240=>110,0x10fc5248=>111,0x10fc524c=>112,0x10fc5254=>113,0x10fc525c=>114,0x10fc5260=>115,0x10fc5268=>116,0x10fc526c=>117,0x10fc5274=>118,0x10fc527c=>119,0x10fc528c=>120,0x10fc5290=>121,0x10fc5298=>122,0x10fc52a0=>123,0x10fc52a4=>124,0x10fc52b4=>125,0x10fc52b8=>126,0x10fc52c4=>127,0x10fc52cc=>128,0x10fc52d0=>129,0x10fc52d8=>130,0x10fc52e8=>131,_=>return Err(format!("untranslated block {pc:#x} in 0x10fc4c38").into()),}};loop{match block{
+0=>{
+// 0x10fc4c38 sub sp, sp, #0xc0
+{let a=((cpu.sp));let b=((0xc0u64));let result=a.wrapping_sub(b);cpu.sp=(result) as u64;}
+// 0x10fc4c3c stp x29, x30, [sp, #0x60]
+{let address=(cpu.sp).wrapping_add(0x60u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fc4c40 stp x28, x27, [sp, #0x70]
+{let address=(cpu.sp).wrapping_add(0x70u64);let v0=cpu.x[28];let v1=cpu.x[27];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fc4c44 stp x26, x25, [sp, #0x80]
+{let address=(cpu.sp).wrapping_add(0x80u64);let v0=cpu.x[26];let v1=cpu.x[25];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fc4c48 stp x24, x23, [sp, #0x90]
+{let address=(cpu.sp).wrapping_add(0x90u64);let v0=cpu.x[24];let v1=cpu.x[23];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fc4c4c stp x22, x21, [sp, #0xa0]
+{let address=(cpu.sp).wrapping_add(0xa0u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fc4c50 stp x20, x19, [sp, #0xb0]
+{let address=(cpu.sp).wrapping_add(0xb0u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fc4c54 add x29, sp, #0x60
+{let a=((cpu.sp));let b=((0x60u64));let result=a.wrapping_add(b);cpu.x[29]=(result) as u64;}
+// 0x10fc4c58 ldr x21, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10fc4c5c mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10fc4c60 mov w23, w2
+cpu.x[23]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
+// 0x10fc4c64 mov w24, w1
+cpu.x[24]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
+// 0x10fc4c68 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc4c6c bl #0x10f7e050
+cpu.x[30]=0x10fc4c70;super::chunk10::f_10f7e050(cpu,rt,0x10f7e050)?;
+block=1;continue;
+}
+1=>{
+// 0x10fc4c70 mov x28, x0
+cpu.x[28]=(((cpu.x[0]))) as u64;
+// 0x10fc4c74 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc4c78 bl #0x10f93d2c
+cpu.x[30]=0x10fc4c7c;super::chunk11::f_10f93d2c(cpu,rt,0x10f93d2c)?;
+block=2;continue;
+}
+2=>{
+// 0x10fc4c7c mov x22, x0
+cpu.x[22]=(((cpu.x[0]))) as u64;
+// 0x10fc4c80 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc4c84 bl #0x10fd049c
+cpu.x[30]=0x10fc4c88;super::chunk6::f_10fd049c(cpu,rt,0x10fd049c)?;
+block=3;continue;
+}
+3=>{
+// 0x10fc4c88 ldr x8, [x19, #8]
+{let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4c8c mov x25, x0
+cpu.x[25]=(((cpu.x[0]))) as u64;
+// 0x10fc4c90 mov x0, x8
+cpu.x[0]=(((cpu.x[8]))) as u64;
+// 0x10fc4c94 bl #0x10f940fc
+cpu.x[30]=0x10fc4c98;super::chunk9::f_10f940fc(cpu,rt,0x10f940fc)?;
+block=4;continue;
+}
+4=>{
+// 0x10fc4c98 mov x26, x0
+cpu.x[26]=(((cpu.x[0]))) as u64;
+// 0x10fc4c9c bl #0x10fc22f0
+cpu.x[30]=0x10fc4ca0;super::chunk3::f_10fc22f0(cpu,rt,0x10fc22f0)?;
+block=5;continue;
+}
+5=>{
+// 0x10fc4ca0 cmp w0, #1
+{let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4ca4 b.lt #0x10fc4ce8
+if cpu.condition(11){block=13;continue;}block=6;continue;
+}
+6=>{
+// 0x10fc4ca8 mov w27, wzr
+cpu.x[27]=(((0u64))) as u32 as u64;
+// 0x10fc4cac b #0x10fc4cc4
+block=9;continue;
+}
+7=>{
+// 0x10fc4cb0 mov x0, x26
+cpu.x[0]=(((cpu.x[26]))) as u64;
+// 0x10fc4cb4 add w27, w27, #1
+{let a=((cpu.x[27] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[27]=(result) as u32 as u64;}
+// 0x10fc4cb8 bl #0x10fc22f0
+cpu.x[30]=0x10fc4cbc;super::chunk3::f_10fc22f0(cpu,rt,0x10fc22f0)?;
+block=8;continue;
+}
+8=>{
+// 0x10fc4cbc cmp w27, w0
+{let a=((cpu.x[27] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4cc0 b.ge #0x10fc4ce8
+if cpu.condition(10){block=13;continue;}block=9;continue;
+}
+9=>{
+// 0x10fc4cc4 ldr x8, [x19, #0x10]
+{let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4cc8 cbz x8, #0x10fc4cb0
+if (cpu.x[8]) == 0 {block=7;continue;}block=10;continue;
+}
+10=>{
+// 0x10fc4ccc mov x0, x26
+cpu.x[0]=(((cpu.x[26]))) as u64;
+// 0x10fc4cd0 mov w1, w27
+cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
+// 0x10fc4cd4 bl #0x10fc23e4
+cpu.x[30]=0x10fc4cd8;super::chunk11::f_10fc23e4(cpu,rt,0x10fc23e4)?;
+block=11;continue;
+}
+11=>{
+// 0x10fc4cd8 ldr x8, [x0, #0x18]
+{let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4cdc ldrb w8, [x8, #0x200]
+{let address=(cpu.x[8]).wrapping_add(0x200u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc4ce0 cbz w8, #0x10fc4cb0
+if (cpu.x[8] as u32 as u64) == 0 {block=7;continue;}block=12;continue;
+}
+12=>{
+// 0x10fc4ce4 b #0x10fc52e8
+block=131;continue;
+}
+13=>{
+// 0x10fc4ce8 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc4cec bl #0x10f817a8
+cpu.x[30]=0x10fc4cf0;super::chunk8::f_10f817a8(cpu,rt,0x10f817a8)?;
+block=14;continue;
+}
+14=>{
+// 0x10fc4cf0 cmp w0, #3
+{let a=((cpu.x[0] as u32 as u64));let b=((0x3u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4cf4 b.eq #0x10fc52e8
+if cpu.condition(0){block=131;continue;}block=15;continue;
+}
+15=>{
+// 0x10fc4cf8 cmp w0, #5
+{let a=((cpu.x[0] as u32 as u64));let b=((0x5u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4cfc b.eq #0x10fc52e8
+if cpu.condition(0){block=131;continue;}block=16;continue;
+}
+16=>{
+// 0x10fc4d00 adrp x8, #0x11a65000
+cpu.x[8]=(0x11a65000u64) as u64;
+// 0x10fc4d04 add x8, x8, #0xfc8
+{let a=((cpu.x[8]));let b=((0xfc8u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u64;}
+// 0x10fc4d08 ldr x9, [x21, #0xb0]
+{let address=(cpu.x[21]).wrapping_add(0xb0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10fc4d0c ldr x8, [x8]
+{let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4d10 tst x9, x8
+{let a=((cpu.x[9]));let b=((cpu.x[8]));let result=a & b;cpu.logical_flags(result,64);}
+// 0x10fc4d14 b.ne #0x10fc52e8
+if cpu.condition(1){block=131;continue;}block=17;continue;
+}
+17=>{
+// 0x10fc4d18 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc4d1c bl #0x10f7e050
+cpu.x[30]=0x10fc4d20;super::chunk10::f_10f7e050(cpu,rt,0x10f7e050)?;
+block=18;continue;
+}
+18=>{
+// 0x10fc4d20 ldr x27, [x19, #8]
+{let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[27]=(v0) as u64;}
+// 0x10fc4d24 stur x0, [x29, #-0x18]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc4d28 mov x0, x27
+cpu.x[0]=(((cpu.x[27]))) as u64;
+// 0x10fc4d2c bl #0x10f7e050
+cpu.x[30]=0x10fc4d30;super::chunk10::f_10f7e050(cpu,rt,0x10f7e050)?;
+block=19;continue;
+}
+19=>{
+// 0x10fc4d30 mov x26, x0
+cpu.x[26]=(((cpu.x[0]))) as u64;
+// 0x10fc4d34 mov x0, x27
+cpu.x[0]=(((cpu.x[27]))) as u64;
+// 0x10fc4d38 bl #0x10f85d10
+cpu.x[30]=0x10fc4d3c;super::chunk1::f_10f85d10(cpu,rt,0x10f85d10)?;
+block=20;continue;
+}
+20=>{
+// 0x10fc4d3c mov w20, w0
+cpu.x[20]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fc4d40 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc4d44 bl #0x10fd04a8
+cpu.x[30]=0x10fc4d48;super::chunk2::f_10fd04a8(cpu,rt,0x10fd04a8)?;
+block=21;continue;
+}
+21=>{
+// 0x10fc4d48 bl #0x10e0b6b4
+cpu.x[30]=0x10fc4d4c;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
+block=22;continue;
+}
+22=>{
+// 0x10fc4d4c ldr x0, [x0, #0x78]
+{let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fc4d50 bl #0x10e16208
+cpu.x[30]=0x10fc4d54;super::chunk7::f_10e16208(cpu,rt,0x10e16208)?;
+block=23;continue;
+}
+23=>{
+// 0x10fc4d54 ldrb w8, [x0, #0x360]
+{let address=(cpu.x[0]).wrapping_add(0x360u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc4d58 cbz w8, #0x10fc4d68
+if (cpu.x[8] as u32 as u64) == 0 {block=26;continue;}block=24;continue;
+}
+24=>{
+// 0x10fc4d5c mov x0, x26
+cpu.x[0]=(((cpu.x[26]))) as u64;
+// 0x10fc4d60 bl #0x10de0430
+cpu.x[30]=0x10fc4d64;super::chunk11::f_10de0430(cpu,rt,0x10de0430)?;
+block=25;continue;
+}
+25=>{
+// 0x10fc4d64 add w20, w0, w20
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[20] as u32 as u64));let result=a.wrapping_add(b);cpu.x[20]=(result) as u32 as u64;}
+block=26;continue;
+}
+26=>{
+// 0x10fc4d68 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc4d6c bl #0x10fc4a68
+cpu.x[30]=0x10fc4d70;super::chunk12::f_10fc4a68(cpu,rt,0x10fc4a68)?;
+block=27;continue;
+}
+27=>{
+// 0x10fc4d70 mov w26, w0
+cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fc4d74 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc4d78 bl #0x10fd04a8
+cpu.x[30]=0x10fc4d7c;super::chunk2::f_10fd04a8(cpu,rt,0x10fd04a8)?;
+block=28;continue;
+}
+28=>{
+// 0x10fc4d7c bl #0x10e0b6b4
+cpu.x[30]=0x10fc4d80;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
+block=29;continue;
+}
+29=>{
+// 0x10fc4d80 ldr x0, [x0, #0x78]
+{let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fc4d84 bl #0x10e16208
+cpu.x[30]=0x10fc4d88;super::chunk7::f_10e16208(cpu,rt,0x10e16208)?;
+block=30;continue;
+}
+30=>{
+// 0x10fc4d88 ldr w27, [x0, #0xd0]
+{let address=(cpu.x[0]).wrapping_add(0xd0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[27]=(v0) as u32 as u64;}
+// 0x10fc4d8c mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc4d90 bl #0x10fd04a8
+cpu.x[30]=0x10fc4d94;super::chunk2::f_10fd04a8(cpu,rt,0x10fd04a8)?;
+block=31;continue;
+}
+31=>{
+// 0x10fc4d94 bl #0x10e0b6b4
+cpu.x[30]=0x10fc4d98;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
+block=32;continue;
+}
+32=>{
+// 0x10fc4d98 ldr x0, [x0, #0x78]
+{let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fc4d9c bl #0x10e16208
+cpu.x[30]=0x10fc4da0;super::chunk7::f_10e16208(cpu,rt,0x10e16208)?;
+block=33;continue;
+}
+33=>{
+// 0x10fc4da0 ldr x8, [x25, #0xa0]
+{let address=(cpu.x[25]).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4da4 ldr w9, [x0, #0xd4]
+{let address=(cpu.x[0]).wrapping_add(0xd4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fc4da8 stur w20, [x29, #-0x1c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=cpu.x[20] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc4dac str x8, [sp, #0x28]
+{let address=(cpu.sp).wrapping_add(0x28u64);let v0=cpu.x[8];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc4db0 stur w9, [x29, #-0x20]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc4db4 tbz w24, #0, #0x10fc4de8
+if ((cpu.x[24] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}block=34;continue;
+}
+34=>{
+// 0x10fc4db8 mov x0, x8
+cpu.x[0]=(((cpu.x[8]))) as u64;
+// 0x10fc4dbc mov w1, #1
+cpu.x[1]=(((0x1u64))) as u32 as u64;
+// 0x10fc4dc0 bl #0x10f9bf98
+cpu.x[30]=0x10fc4dc4;super::dispatch(cpu,rt,0x10f9bf98)?;
+// 0x10fc4dc4 ldr w8, [x0, #0xc]
+{let address=(cpu.x[0]).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc4dc8 mov x25, x0
+cpu.x[25]=(((cpu.x[0]))) as u64;
+// 0x10fc4dcc stur x0, [x29, #-8]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc4dd0 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4dd4 b.gt #0x10fc4e48
+if cpu.condition(12){block=40;continue;}block=35;continue;
+}
+35=>{
+// 0x10fc4dd8 ldr x0, [sp, #0x28]
+{let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fc4ddc sub x1, x29, #8
+{let a=((cpu.x[29]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[1]=(result) as u64;}
+// 0x10fc4de0 bl #0x10f9abb8
+cpu.x[30]=0x10fc4de4;super::chunk9::f_10f9abb8(cpu,rt,0x10f9abb8)?;
+block=36;continue;
+}
+36=>{
+// 0x10fc4de4 b #0x10fc5238
+block=109;continue;
+}
+37=>{
+// 0x10fc4de8 cmp w9, w27
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[27] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4dec mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc4df0 mov w25, w20
+cpu.x[25]=(((cpu.x[20] as u32 as u64))) as u32 as u64;
+// 0x10fc4df4 csel w9, w9, w27, gt
+cpu.x[9]=(if cpu.condition(12){((cpu.x[9] as u32 as u64))}else{((cpu.x[27] as u32 as u64))}) as u32 as u64;
+// 0x10fc4df8 mov w20, w27
+cpu.x[20]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
+// 0x10fc4dfc mov x27, x8
+cpu.x[27]=(((cpu.x[8]))) as u64;
+// 0x10fc4e00 stur w9, [x29, #-0xc]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff4u64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc4e04 bl #0x10f942c0
+cpu.x[30]=0x10fc4e08;super::chunk2::f_10f942c0(cpu,rt,0x10f942c0)?;
+block=38;continue;
+}
+38=>{
+// 0x10fc4e08 ldur w8, [x29, #-0xc]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc4e0c mov x1, x0
+cpu.x[1]=(((cpu.x[0]))) as u64;
+// 0x10fc4e10 mov x0, x27
+cpu.x[0]=(((cpu.x[27]))) as u64;
+// 0x10fc4e14 mov w3, wzr
+cpu.x[3]=(((0u64))) as u32 as u64;
+// 0x10fc4e18 mov w4, #1
+cpu.x[4]=(((0x1u64))) as u32 as u64;
+// 0x10fc4e1c mov w5, wzr
+cpu.x[5]=(((0u64))) as u32 as u64;
+// 0x10fc4e20 add w2, w8, w25
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[25] as u32 as u64));let result=a.wrapping_add(b);cpu.x[2]=(result) as u32 as u64;}
+// 0x10fc4e24 mov w6, wzr
+cpu.x[6]=(((0u64))) as u32 as u64;
+// 0x10fc4e28 mov w7, #-1
+cpu.x[7]=(((0xffffffffffffffffu64))) as u32 as u64;
+// 0x10fc4e2c mov w27, w20
+cpu.x[27]=(((cpu.x[20] as u32 as u64))) as u32 as u64;
+// 0x10fc4e30 bl #0x10f9afc8
+cpu.x[30]=0x10fc4e34;super::chunk2::f_10f9afc8(cpu,rt,0x10f9afc8)?;
+block=39;continue;
+}
+39=>{
+// 0x10fc4e34 ldr w8, [x0, #0xc]
+{let address=(cpu.x[0]).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc4e38 mov x25, x0
+cpu.x[25]=(((cpu.x[0]))) as u64;
+// 0x10fc4e3c stur x0, [x29, #-8]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc4e40 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4e44 b.le #0x10fc4dd8
+if cpu.condition(13){block=35;continue;}block=40;continue;
+}
+40=>{
+// 0x10fc4e48 stur w24, [x29, #-0xc]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff4u64);let v0=cpu.x[24] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc4e4c lsl x24, x8, #3
+cpu.x[24]=(((((cpu.x[8]))) as u64).wrapping_shl(((((0x3u64))) & 63) as u32) as u64) as u64;
+// 0x10fc4e50 mov x20, xzr
+cpu.x[20]=(((0u64))) as u64;
+// 0x10fc4e54 mov w8, #0x7fffffff
+cpu.x[8]=(((0x7fffffffu64))) as u32 as u64;
+// 0x10fc4e58 stur x28, [x29, #-0x28]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd8u64);let v0=cpu.x[28];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc4e5c str x22, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[22];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc4e60 str xzr, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc4e64 stp w8, wzr, [sp, #4]
+{let address=(cpu.sp).wrapping_add(0x4u64);let v0=cpu.x[8] as u32 as u64;let v1=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
+// 0x10fc4e68 str w8, [sp, #0xc]
+{let address=(cpu.sp).wrapping_add(0xcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc4e6c stur w23, [x29, #-0x2c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd4u64);let v0=cpu.x[23] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc4e70 str w26, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=cpu.x[26] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc4e74 str w27, [sp, #0x1c]
+{let address=(cpu.sp).wrapping_add(0x1cu64);let v0=cpu.x[27] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc4e78 b #0x10fc4e90
+block=44;continue;
+}
+41=>{
+// 0x10fc4e7c ldur w23, [x29, #-0x2c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[23]=(v0) as u32 as u64;}
+block=42;continue;
+}
+42=>{
+// 0x10fc4e80 ldr w26, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[26]=(v0) as u32 as u64;}
+block=43;continue;
+}
+43=>{
+// 0x10fc4e84 add x20, x20, #8
+{let a=((cpu.x[20]));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[20]=(result) as u64;}
+// 0x10fc4e88 cmp x24, x20
+{let a=((cpu.x[24]));let b=((cpu.x[20]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x10fc4e8c b.eq #0x10fc5218
+if cpu.condition(0){block=106;continue;}block=44;continue;
+}
+44=>{
+// 0x10fc4e90 ldr x8, [x25]
+{let address=(cpu.x[25]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4e94 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc4e98 mov w2, #1
+cpu.x[2]=(((0x1u64))) as u32 as u64;
+// 0x10fc4e9c ldr x28, [x8, x20]
+{let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[20])));let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[28]=(v0) as u64;}
+// 0x10fc4ea0 mov x1, x28
+cpu.x[1]=(((cpu.x[28]))) as u64;
+// 0x10fc4ea4 bl #0x10fc4008
+cpu.x[30]=0x10fc4ea8;super::chunk5::f_10fc4008(cpu,rt,0x10fc4008)?;
+block=45;continue;
+}
+45=>{
+// 0x10fc4ea8 tbz w0, #0, #0x10fc4e84
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=43;continue;}block=46;continue;
+}
+46=>{
+// 0x10fc4eac ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4eb0 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4eb4 ldr x8, [x8, #0x138]
+{let address=(cpu.x[8]).wrapping_add(0x138u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4eb8 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc4ebc;super::dispatch(cpu,rt,target)?;}
+block=47;continue;
+}
+47=>{
+// 0x10fc4ebc tbz w0, #0, #0x10fc4e84
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=43;continue;}block=48;continue;
+}
+48=>{
+// 0x10fc4ec0 tbz w23, #0, #0x10fc4ed8
+if ((cpu.x[23] as u32 as u64) & (1u64 << 0)) == 0 {block=50;continue;}block=49;continue;
+}
+49=>{
+// 0x10fc4ec4 ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4ec8 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4ecc ldr x8, [x8, #0x180]
+{let address=(cpu.x[8]).wrapping_add(0x180u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4ed0 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc4ed4;super::dispatch(cpu,rt,target)?;}
+// 0x10fc4ed4 tbz w0, #0, #0x10fc4e84
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=43;continue;}block=50;continue;
+}
+50=>{
+// 0x10fc4ed8 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4edc bl #0x10f940fc
+cpu.x[30]=0x10fc4ee0;super::chunk9::f_10f940fc(cpu,rt,0x10f940fc)?;
+block=51;continue;
+}
+51=>{
+// 0x10fc4ee0 cbz x0, #0x10fc4ef8
+if (cpu.x[0]) == 0 {block=54;continue;}block=52;continue;
+}
+52=>{
+// 0x10fc4ee4 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4ee8 bl #0x10f940fc
+cpu.x[30]=0x10fc4eec;super::chunk9::f_10f940fc(cpu,rt,0x10f940fc)?;
+block=53;continue;
+}
+53=>{
+// 0x10fc4eec ldr w8, [x0, #0x34]
+{let address=(cpu.x[0]).wrapping_add(0x34u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc4ef0 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4ef4 b.gt #0x10fc4e84
+if cpu.condition(12){block=43;continue;}block=54;continue;
+}
+54=>{
+// 0x10fc4ef8 cmp w26, #1
+{let a=((cpu.x[26] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4efc b.lt #0x10fc4f24
+if cpu.condition(11){block=58;continue;}block=55;continue;
+}
+55=>{
+// 0x10fc4f00 ldr x0, [x19, #8]
+{let address=(cpu.x[19]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fc4f04 bl #0x10f942c0
+cpu.x[30]=0x10fc4f08;super::chunk2::f_10f942c0(cpu,rt,0x10f942c0)?;
+block=56;continue;
+}
+56=>{
+// 0x10fc4f08 mov x1, x0
+cpu.x[1]=(((cpu.x[0]))) as u64;
+// 0x10fc4f0c mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4f10 mov w2, wzr
+cpu.x[2]=(((0u64))) as u32 as u64;
+// 0x10fc4f14 mov w3, w26
+cpu.x[3]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
+// 0x10fc4f18 mov w4, #1
+cpu.x[4]=(((0x1u64))) as u32 as u64;
+// 0x10fc4f1c bl #0x10f958e0
+cpu.x[30]=0x10fc4f20;super::chunk6::f_10f958e0(cpu,rt,0x10f958e0)?;
+block=57;continue;
+}
+57=>{
+// 0x10fc4f20 tbz w0, #0, #0x10fc4e84
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=43;continue;}block=58;continue;
+}
+58=>{
+// 0x10fc4f24 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc4f28 mov x1, x28
+cpu.x[1]=(((cpu.x[28]))) as u64;
+// 0x10fc4f2c bl #0x10f94f34
+cpu.x[30]=0x10fc4f30;super::chunk8::f_10f94f34(cpu,rt,0x10f94f34)?;
+block=59;continue;
+}
+59=>{
+// 0x10fc4f30 ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4f34 mov w22, w0
+cpu.x[22]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fc4f38 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4f3c ldr x8, [x8, #0x1d8]
+{let address=(cpu.x[8]).wrapping_add(0x1d8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4f40 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc4f44;super::dispatch(cpu,rt,target)?;}
+block=60;continue;
+}
+60=>{
+// 0x10fc4f44 ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4f48 mov w27, w0
+cpu.x[27]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fc4f4c mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4f50 ldr x8, [x8, #0xa0]
+{let address=(cpu.x[8]).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4f54 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc4f58;super::dispatch(cpu,rt,target)?;}
+block=61;continue;
+}
+61=>{
+// 0x10fc4f58 ldur w8, [x29, #-0x1c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc4f5c add w26, w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_add(b);cpu.x[26]=(result) as u32 as u64;}
+// 0x10fc4f60 ldur x0, [x29, #-0x28]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fc4f64 bl #0x10ddff74
+cpu.x[30]=0x10fc4f68;super::chunk11::f_10ddff74(cpu,rt,0x10ddff74)?;
+block=62;continue;
+}
+62=>{
+// 0x10fc4f68 stur w22, [x29, #-0x10]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=cpu.x[22] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc4f6c tbnz w0, #0, #0x10fc5014
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {block=71;continue;}block=63;continue;
+}
+63=>{
+// 0x10fc4f70 ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4f74 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4f78 ldr x8, [x8, #0x190]
+{let address=(cpu.x[8]).wrapping_add(0x190u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4f7c blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc4f80;super::dispatch(cpu,rt,target)?;}
+block=64;continue;
+}
+64=>{
+// 0x10fc4f80 tbz w0, #0, #0x10fc5014
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=71;continue;}block=65;continue;
+}
+65=>{
+// 0x10fc4f84 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4f88 bl #0x10f7e050
+cpu.x[30]=0x10fc4f8c;super::chunk10::f_10f7e050(cpu,rt,0x10f7e050)?;
+block=66;continue;
+}
+66=>{
+// 0x10fc4f8c bl #0x10de05cc
+cpu.x[30]=0x10fc4f90;super::chunk1::f_10de05cc(cpu,rt,0x10de05cc)?;
+block=67;continue;
+}
+67=>{
+// 0x10fc4f90 cmp w0, #1
+{let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4f94 b.lt #0x10fc5014
+if cpu.condition(11){block=71;continue;}block=68;continue;
+}
+68=>{
+// 0x10fc4f98 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4f9c bl #0x10f7e050
+cpu.x[30]=0x10fc4fa0;super::chunk10::f_10f7e050(cpu,rt,0x10f7e050)?;
+// 0x10fc4fa0 bl #0x10de05cc
+cpu.x[30]=0x10fc4fa4;super::chunk1::f_10de05cc(cpu,rt,0x10de05cc)?;
+// 0x10fc4fa4 ldur x22, [x29, #-0x28]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[22]=(v0) as u64;}
+// 0x10fc4fa8 ldr x9, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10fc4fac ldr w8, [x22, #0x420]
+{let address=(cpu.x[22]).wrapping_add(0x420u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc4fb0 ldr x9, [x9, #0xa0]
+{let address=(cpu.x[9]).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10fc4fb4 cmp w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4fb8 csel w26, w0, w8, gt
+cpu.x[26]=(if cpu.condition(12){((cpu.x[0] as u32 as u64))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x10fc4fbc mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4fc0 blr x9
+{let target=cpu.x[9];cpu.x[30]=0x10fc4fc4;super::dispatch(cpu,rt,target)?;}
+// 0x10fc4fc4 add w26, w0, w26
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[26] as u32 as u64));let result=a.wrapping_add(b);cpu.x[26]=(result) as u32 as u64;}
+// 0x10fc4fc8 mov x0, x22
+cpu.x[0]=(((cpu.x[22]))) as u64;
+// 0x10fc4fcc bl #0x10de05ec
+cpu.x[30]=0x10fc4fd0;super::chunk5::f_10de05ec(cpu,rt,0x10de05ec)?;
+// 0x10fc4fd0 tbz w0, #0, #0x10fc51a8
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=99;continue;}block=69;continue;
+}
+69=>{
+// 0x10fc4fd4 ldr x9, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10fc4fd8 ldr w8, [x22, #0x484]
+{let address=(cpu.x[22]).wrapping_add(0x484u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc4fdc mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc4fe0 ldr x9, [x9, #0xa0]
+{let address=(cpu.x[9]).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x10fc4fe4 cmp w26, w8
+{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc4fe8 csel w22, w26, w8, gt
+cpu.x[22]=(if cpu.condition(12){((cpu.x[26] as u32 as u64))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x10fc4fec blr x9
+{let target=cpu.x[9];cpu.x[30]=0x10fc4ff0;super::dispatch(cpu,rt,target)?;}
+// 0x10fc4ff0 mov w23, #1
+cpu.x[23]=(((0x1u64))) as u32 as u64;
+// 0x10fc4ff4 add w26, w0, w22
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[22] as u32 as u64));let result=a.wrapping_add(b);cpu.x[26]=(result) as u32 as u64;}
+// 0x10fc4ff8 ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc4ffc mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc5000 ldr x8, [x8, #0x178]
+{let address=(cpu.x[8]).wrapping_add(0x178u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc5004 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc5008;super::dispatch(cpu,rt,target)?;}
+// 0x10fc5008 ldur w8, [x29, #-0x20]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc500c tbnz w0, #0, #0x10fc504c
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {block=75;continue;}block=70;continue;
+}
+70=>{
+// 0x10fc5010 b #0x10fc5030
+block=73;continue;
+}
+71=>{
+// 0x10fc5014 mov w23, wzr
+cpu.x[23]=(((0u64))) as u32 as u64;
+// 0x10fc5018 ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc501c mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc5020 ldr x8, [x8, #0x178]
+{let address=(cpu.x[8]).wrapping_add(0x178u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc5024 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc5028;super::dispatch(cpu,rt,target)?;}
+block=72;continue;
+}
+72=>{
+// 0x10fc5028 ldur w8, [x29, #-0x20]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc502c tbnz w0, #0, #0x10fc504c
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {block=75;continue;}block=73;continue;
+}
+73=>{
+// 0x10fc5030 ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc5034 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc5038 ldr x8, [x8, #0x180]
+{let address=(cpu.x[8]).wrapping_add(0x180u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc503c blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc5040;super::dispatch(cpu,rt,target)?;}
+block=74;continue;
+}
+74=>{
+// 0x10fc5040 ldr w8, [sp, #0x1c]
+{let address=(cpu.sp).wrapping_add(0x1cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc5044 tst w0, #1
+{let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.logical_flags(result,32);}
+// 0x10fc5048 csel w8, w8, wzr, ne
+cpu.x[8]=(if cpu.condition(1){((cpu.x[8] as u32 as u64))}else{((0u64))}) as u32 as u64;
+block=75;continue;
+}
+75=>{
+// 0x10fc504c add w22, w8, w26
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[26] as u32 as u64));let result=a.wrapping_add(b);cpu.x[22]=(result) as u32 as u64;}
+// 0x10fc5050 ldur w8, [x29, #-0x10]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc5054 mul w9, w22, w22
+cpu.x[9]=((((cpu.x[22] as u32 as u64))).wrapping_mul(((cpu.x[22] as u32 as u64)))) as u32 as u64;
+// 0x10fc5058 sub w8, w8, w27
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[27] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10fc505c bic w27, w8, w8, asr #31
+{let a=((cpu.x[8] as u32 as u64));let b=(((cpu.x[8] as u32 as u64)) as i32).wrapping_shr(31) as u64;let result=a & !b;cpu.x[27]=(result) as u32 as u64;}
+// 0x10fc5060 cmp w27, w9
+{let a=((cpu.x[27] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5064 b.ls #0x10fc5070
+if cpu.condition(9){block=77;continue;}block=76;continue;
+}
+76=>{
+// 0x10fc5068 ldur w8, [x29, #-0xc]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc506c tbz w8, #0, #0x10fc4e7c
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) == 0 {block=41;continue;}block=77;continue;
+}
+77=>{
+// 0x10fc5070 ldur x0, [x29, #-0x18]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fc5074 bl #0x10de1230
+cpu.x[30]=0x10fc5078;super::chunk15::f_10de1230(cpu,rt,0x10de1230)?;
+block=78;continue;
+}
+78=>{
+// 0x10fc5078 ldr x8, [x21]
+{let address=(cpu.x[21]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc507c mov w26, w0
+cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fc5080 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc5084 ldr x8, [x8, #0x180]
+{let address=(cpu.x[8]).wrapping_add(0x180u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc5088 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc508c;super::dispatch(cpu,rt,target)?;}
+block=79;continue;
+}
+79=>{
+// 0x10fc508c cmp w26, #1
+{let a=((cpu.x[26] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5090 ldur w9, [x29, #-0xc]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fc5094 cset w8, lt
+cpu.x[8]=((cpu.condition(11)) as u64) as u32 as u64;
+// 0x10fc5098 orr w8, w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fc509c orr w8, w23, w8
+{let a=((cpu.x[23] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fc50a0 orr w8, w8, w0
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fc50a4 tbz w8, #0, #0x10fc5138
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) == 0 {block=89;continue;}block=80;continue;
+}
+80=>{
+// 0x10fc50a8 ldur x0, [x29, #-0x18]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fc50ac bl #0x10de1238
+cpu.x[30]=0x10fc50b0;super::chunk14::f_10de1238(cpu,rt,0x10de1238)?;
+block=81;continue;
+}
+81=>{
+// 0x10fc50b0 ldur w8, [x29, #-0xc]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc50b4 cmp w0, #1
+{let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc50b8 cset w9, lt
+cpu.x[9]=((cpu.condition(11)) as u64) as u32 as u64;
+// 0x10fc50bc orr w8, w23, w8
+{let a=((cpu.x[23] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fc50c0 orr w8, w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fc50c4 tbnz w8, #0, #0x10fc50f4
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {block=85;continue;}block=82;continue;
+}
+82=>{
+// 0x10fc50c8 sub w8, w22, w0
+{let a=((cpu.x[22] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10fc50cc mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc50d0 bic w22, w8, w8, asr #31
+{let a=((cpu.x[8] as u32 as u64));let b=(((cpu.x[8] as u32 as u64)) as i32).wrapping_shr(31) as u64;let result=a & !b;cpu.x[22]=(result) as u32 as u64;}
+// 0x10fc50d4 bl #0x10f94298
+cpu.x[30]=0x10fc50d8;super::chunk2::f_10f94298(cpu,rt,0x10f94298)?;
+block=83;continue;
+}
+83=>{
+// 0x10fc50d8 mov w26, w0
+cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fc50dc mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc50e0 bl #0x10f94298
+cpu.x[30]=0x10fc50e4;super::chunk2::f_10f94298(cpu,rt,0x10f94298)?;
+block=84;continue;
+}
+84=>{
+// 0x10fc50e4 subs w8, w26, w0
+{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;cpu.flags(a,b,result,32,true);}
+// 0x10fc50e8 cneg w8, w8, mi
+cpu.x[8]=(if cpu.condition(4){0u64.wrapping_sub(((cpu.x[8] as u32 as u64)))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x10fc50ec cmp w8, w22
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[22] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc50f0 b.hi #0x10fc4e7c
+if cpu.condition(8){block=41;continue;}block=85;continue;
+}
+85=>{
+// 0x10fc50f4 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc50f8 mov x1, x28
+cpu.x[1]=(((cpu.x[28]))) as u64;
+// 0x10fc50fc bl #0x10f9469c
+cpu.x[30]=0x10fc5100;super::chunk14::f_10f9469c(cpu,rt,0x10f9469c)?;
+block=86;continue;
+}
+86=>{
+// 0x10fc5100 ldur x8, [x29, #-0x18]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc5104 ldrb w8, [x8, #0x6fc]
+{let address=(cpu.x[8]).wrapping_add(0x6fcu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc5108 cbz w8, #0x10fc518c
+if (cpu.x[8] as u32 as u64) == 0 {block=97;continue;}block=87;continue;
+}
+87=>{
+// 0x10fc510c ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc5110 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc5114 ldr x8, [x8, #0x120]
+{let address=(cpu.x[8]).wrapping_add(0x120u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc5118 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc511c;super::dispatch(cpu,rt,target)?;}
+// 0x10fc511c cbz x0, #0x10fc51c8
+if (cpu.x[0]) == 0 {block=101;continue;}block=88;continue;
+}
+88=>{
+// 0x10fc5120 ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc5124 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc5128 ldr x8, [x8, #0x120]
+{let address=(cpu.x[8]).wrapping_add(0x120u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc512c blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc5130;super::dispatch(cpu,rt,target)?;}
+// 0x10fc5130 bl #0x10fca234
+cpu.x[30]=0x10fc5134;super::chunk2::f_10fca234(cpu,rt,0x10fca234)?;
+// 0x10fc5134 b #0x10fc51cc
+block=102;continue;
+}
+89=>{
+// 0x10fc5138 sub w8, w22, w26
+{let a=((cpu.x[22] as u32 as u64));let b=((cpu.x[26] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10fc513c mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc5140 bic w8, w8, w8, asr #31
+{let a=((cpu.x[8] as u32 as u64));let b=(((cpu.x[8] as u32 as u64)) as i32).wrapping_shr(31) as u64;let result=a & !b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fc5144 stur w8, [x29, #-0x10]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc5148 bl #0x10f942a0
+cpu.x[30]=0x10fc514c;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
+block=90;continue;
+}
+90=>{
+// 0x10fc514c mov w26, w0
+cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fc5150 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc5154 bl #0x10f942a0
+cpu.x[30]=0x10fc5158;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
+block=91;continue;
+}
+91=>{
+// 0x10fc5158 sub w26, w26, w0
+{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[26]=(result) as u32 as u64;}
+// 0x10fc515c mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc5160 bl #0x10f9414c
+cpu.x[30]=0x10fc5164;super::chunk3::f_10f9414c(cpu,rt,0x10f9414c)?;
+block=92;continue;
+}
+92=>{
+// 0x10fc5164 tbz w0, #0, #0x10fc517c
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=95;continue;}block=93;continue;
+}
+93=>{
+// 0x10fc5168 ldur w8, [x29, #-0x10]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc516c neg w8, w8
+cpu.x[8]=(0u64.wrapping_sub(((cpu.x[8] as u32 as u64)))) as u32 as u64;
+// 0x10fc5170 cmp w26, w8
+{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5174 b.lt #0x10fc4e7c
+if cpu.condition(11){block=41;continue;}block=94;continue;
+}
+94=>{
+// 0x10fc5178 b #0x10fc50a8
+block=80;continue;
+}
+95=>{
+// 0x10fc517c ldur w8, [x29, #-0x10]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc5180 cmp w26, w8
+{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5184 b.le #0x10fc50a8
+if cpu.condition(13){block=80;continue;}block=96;continue;
+}
+96=>{
+// 0x10fc5188 b #0x10fc4e7c
+block=41;continue;
+}
+97=>{
+// 0x10fc518c ldr w8, [sp, #8]
+{let address=(cpu.sp).wrapping_add(0x8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc5190 cmp w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5194 b.le #0x10fc51f4
+if cpu.condition(13){block=103;continue;}block=98;continue;
+}
+98=>{
+// 0x10fc5198 ldur w23, [x29, #-0x2c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[23]=(v0) as u32 as u64;}
+// 0x10fc519c stp w27, w0, [sp, #4]
+{let address=(cpu.sp).wrapping_add(0x4u64);let v0=cpu.x[27] as u32 as u64;let v1=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
+// 0x10fc51a0 str x28, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[28];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc51a4 b #0x10fc4e80
+block=42;continue;
+}
+99=>{
+// 0x10fc51a8 mov w23, #1
+cpu.x[23]=(((0x1u64))) as u32 as u64;
+// 0x10fc51ac ldr x8, [x28]
+{let address=(cpu.x[28]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc51b0 mov x0, x28
+cpu.x[0]=(((cpu.x[28]))) as u64;
+// 0x10fc51b4 ldr x8, [x8, #0x178]
+{let address=(cpu.x[8]).wrapping_add(0x178u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc51b8 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fc51bc;super::dispatch(cpu,rt,target)?;}
+// 0x10fc51bc ldur w8, [x29, #-0x20]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc51c0 tbnz w0, #0, #0x10fc504c
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {block=75;continue;}block=100;continue;
+}
+100=>{
+// 0x10fc51c4 b #0x10fc5030
+block=73;continue;
+}
+101=>{
+// 0x10fc51c8 mov w0, #0x7fffffff
+cpu.x[0]=(((0x7fffffffu64))) as u32 as u64;
+block=102;continue;
+}
+102=>{
+// 0x10fc51cc ldr w8, [sp, #0xc]
+{let address=(cpu.sp).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc51d0 ldur w23, [x29, #-0x2c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[23]=(v0) as u32 as u64;}
+// 0x10fc51d4 ldr w26, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[26]=(v0) as u32 as u64;}
+// 0x10fc51d8 cmp w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc51dc csel w8, w0, w8, lt
+cpu.x[8]=(if cpu.condition(11){((cpu.x[0] as u32 as u64))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x10fc51e0 str w8, [sp, #0xc]
+{let address=(cpu.sp).wrapping_add(0xcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fc51e4 ldr x8, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc51e8 csel x8, x28, x8, lt
+cpu.x[8]=(if cpu.condition(11){((cpu.x[28]))}else{((cpu.x[8]))}) as u64;
+// 0x10fc51ec str x8, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[8];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc51f0 b #0x10fc4e84
+block=43;continue;
+}
+103=>{
+// 0x10fc51f4 ldr w9, [sp, #4]
+{let address=(cpu.sp).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fc51f8 ldur w23, [x29, #-0x2c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffd4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[23]=(v0) as u32 as u64;}
+// 0x10fc51fc cmp w27, w9
+{let a=((cpu.x[27] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5200 b.ge #0x10fc4e80
+if cpu.condition(10){block=42;continue;}block=104;continue;
+}
+104=>{
+// 0x10fc5204 cmp w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fc5208 b.lt #0x10fc4e80
+if cpu.condition(11){block=42;continue;}block=105;continue;
+}
+105=>{
+// 0x10fc520c stp w27, w0, [sp, #4]
+{let address=(cpu.sp).wrapping_add(0x4u64);let v0=cpu.x[27] as u32 as u64;let v1=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
+// 0x10fc5210 str x28, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[28];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fc5214 b #0x10fc4e80
+block=42;continue;
+}
+106=>{
+// 0x10fc5218 ldr x0, [sp, #0x28]
+{let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fc521c sub x1, x29, #8
+{let a=((cpu.x[29]));let b=((0x8u64));let result=a.wrapping_sub(b);cpu.x[1]=(result) as u64;}
+// 0x10fc5220 bl #0x10f9abb8
+cpu.x[30]=0x10fc5224;super::chunk9::f_10f9abb8(cpu,rt,0x10f9abb8)?;
+block=107;continue;
+}
+107=>{
+// 0x10fc5224 ldr x22, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[22]=(v0) as u64;}
+// 0x10fc5228 ldr x1, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[1]=(v0) as u64;}
+// 0x10fc522c cbz x1, #0x10fc5238
+if (cpu.x[1]) == 0 {block=109;continue;}block=108;continue;
+}
+108=>{
+// 0x10fc5230 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc5234 b #0x10fc52d8
+block=130;continue;
+}
+109=>{
+// 0x10fc5238 ldr x8, [x19, #0x10]
+{let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fc523c cbz x8, #0x10fc5298
+if (cpu.x[8]) == 0 {block=122;continue;}block=110;continue;
+}
+110=>{
+// 0x10fc5240 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc5244 bl #0x10f942c8
+cpu.x[30]=0x10fc5248;super::chunk1::f_10f942c8(cpu,rt,0x10f942c8)?;
+block=111;continue;
+}
+111=>{
+// 0x10fc5248 cbz x0, #0x10fc5298
+if (cpu.x[0]) == 0 {block=122;continue;}block=112;continue;
+}
+112=>{
+// 0x10fc524c mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fc5250 bl #0x10f942c8
+cpu.x[30]=0x10fc5254;super::chunk1::f_10f942c8(cpu,rt,0x10f942c8)?;
+block=113;continue;
+}
+113=>{
+// 0x10fc5254 ldr x1, [x19, #0x10]
+{let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[1]=(v0) as u64;}
+// 0x10fc5258 bl #0x10fd00c8
+cpu.x[30]=0x10fc525c;super::chunk4::f_10fd00c8(cpu,rt,0x10fd00c8)?;
+block=114;continue;
+}
+114=>{
+// 0x10fc525c tbz w0, #0, #0x10fc5298
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=122;continue;}block=115;continue;
+}
+115=>{
+// 0x10fc5260 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc5264 bl #0x10fd04a8
+cpu.x[30]=0x10fc5268;super::chunk2::f_10fd04a8(cpu,rt,0x10fd04a8)?;
+block=116;continue;
+}
+116=>{
+// 0x10fc5268 bl #0x10e0b6b4
+cpu.x[30]=0x10fc526c;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
+block=117;continue;
+}
+117=>{
+// 0x10fc526c ldr x0, [x0, #0x78]
+{let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fc5270 bl #0x10e16208
+cpu.x[30]=0x10fc5274;super::chunk7::f_10e16208(cpu,rt,0x10e16208)?;
+block=118;continue;
+}
+118=>{
+// 0x10fc5274 ldrb w8, [x0, #0x3bf]
+{let address=(cpu.x[0]).wrapping_add(0x3bfu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fc5278 cbz w8, #0x10fc5298
+if (cpu.x[8] as u32 as u64) == 0 {block=122;continue;}block=119;continue;
+}
+119=>{
+// 0x10fc527c ldr x1, [x19, #0x10]
+{let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[1]=(v0) as u64;}
+// 0x10fc5280 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc5284 mov w2, #1
+cpu.x[2]=(((0x1u64))) as u32 as u64;
+// 0x10fc5288 bl #0x10fc4008
+cpu.x[30]=0x10fc528c;super::chunk5::f_10fc4008(cpu,rt,0x10fc4008)?;
+block=120;continue;
+}
+120=>{
+// 0x10fc528c tbz w0, #0, #0x10fc5298
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=122;continue;}block=121;continue;
+}
+121=>{
+// 0x10fc5290 ldr x21, [x19, #0x10]
+{let address=(cpu.x[19]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x10fc5294 cbnz x21, #0x10fc52a4
+if (cpu.x[21]) != 0 {block=124;continue;}block=122;continue;
+}
+122=>{
+// 0x10fc5298 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc529c bl #0x10fc5398
+cpu.x[30]=0x10fc52a0;super::chunk0::f_10fc5398(cpu,rt,0x10fc5398)?;
+block=123;continue;
+}
+123=>{
+// 0x10fc52a0 mov x21, x0
+cpu.x[21]=(((cpu.x[0]))) as u64;
+block=124;continue;
+}
+124=>{
+// 0x10fc52a4 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc52a8 mov x1, x21
+cpu.x[1]=(((cpu.x[21]))) as u64;
+// 0x10fc52ac mov w2, #1
+cpu.x[2]=(((0x1u64))) as u32 as u64;
+// 0x10fc52b0 bl #0x10fc4008
+cpu.x[30]=0x10fc52b4;super::chunk5::f_10fc4008(cpu,rt,0x10fc4008)?;
+block=125;continue;
+}
+125=>{
+// 0x10fc52b4 tbz w0, #0, #0x10fc52c4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=127;continue;}block=126;continue;
+}
+126=>{
+// 0x10fc52b8 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc52bc mov x1, x21
+cpu.x[1]=(((cpu.x[21]))) as u64;
+// 0x10fc52c0 b #0x10fc52d8
+block=130;continue;
+}
+127=>{
+// 0x10fc52c4 mov x0, x22
+cpu.x[0]=(((cpu.x[22]))) as u64;
+// 0x10fc52c8 bl #0x10d36084
+cpu.x[30]=0x10fc52cc;super::chunk6::f_10d36084(cpu,rt,0x10d36084)?;
+block=128;continue;
+}
+128=>{
+// 0x10fc52cc tbz w0, #0, #0x10fc52e8
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=131;continue;}block=129;continue;
+}
+129=>{
+// 0x10fc52d0 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fc52d4 mov x1, xzr
+cpu.x[1]=(((0u64))) as u64;
+block=130;continue;
+}
+130=>{
+// 0x10fc52d8 mov w2, wzr
+cpu.x[2]=(((0u64))) as u32 as u64;
+// 0x10fc52dc mov w3, #1
+cpu.x[3]=(((0x1u64))) as u32 as u64;
+// 0x10fc52e0 mov w4, wzr
+cpu.x[4]=(((0u64))) as u32 as u64;
+// 0x10fc52e4 bl #0x10fc3cb4
+cpu.x[30]=0x10fc52e8;super::chunk12::f_10fc3cb4(cpu,rt,0x10fc3cb4)?;
+block=131;continue;
+}
+131=>{
+// 0x10fc52e8 ldp x20, x19, [sp, #0xb0]
+{let address=(cpu.sp).wrapping_add(0xb0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10fc52ec ldp x22, x21, [sp, #0xa0]
+{let address=(cpu.sp).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x10fc52f0 ldp x24, x23, [sp, #0x90]
+{let address=(cpu.sp).wrapping_add(0x90u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[24]=(v0) as u64;cpu.x[23]=(v1) as u64;}
+// 0x10fc52f4 ldp x26, x25, [sp, #0x80]
+{let address=(cpu.sp).wrapping_add(0x80u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[26]=(v0) as u64;cpu.x[25]=(v1) as u64;}
+// 0x10fc52f8 ldp x28, x27, [sp, #0x70]
+{let address=(cpu.sp).wrapping_add(0x70u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[28]=(v0) as u64;cpu.x[27]=(v1) as u64;}
+// 0x10fc52fc ldp x29, x30, [sp, #0x60]
+{let address=(cpu.sp).wrapping_add(0x60u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;}
+// 0x10fc5300 add sp, sp, #0xc0
+{let a=((cpu.sp));let b=((0xc0u64));let result=a.wrapping_add(b);cpu.sp=(result) as u64;}
+// 0x10fc5304 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10fc4c38").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10fcbf74(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10fcbf74=>{
+pub(super) unsafe fn f_10fcbf74(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10fcbf74{return f_10fcbf74_slow(cpu,rt,pc);}
+
 // 0x10fcbf74 stp x29, x30, [sp, #-0x20]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x10fcbf78 str x19, [sp, #0x10]
@@ -7337,9 +12077,7 @@ cpu.x[19]=(((cpu.x[0]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0xf0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fcbf90 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fcbf94;super::dispatch(cpu,rt,target)?;}
-pc=0x10fcbf94;continue;
-}
-0x10fcbf94=>{
+{
 // 0x10fcbf94 ldr w8, [x19, #0x14]
 {let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcbf98 mov w9, #0x851f
@@ -7363,10 +12101,766 @@ cpu.x[8]=(((((cpu.x[8]))) as i64).wrapping_shr(((((0x25u64))) & 63) as u32) as u
 // 0x10fcbfbc ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10fcbf74")),}}}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10fcbf74_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10fcbf74{0}else{match pc{0x10fcbf74=>0,0x10fcbf94=>1,_=>return Err(format!("untranslated block {pc:#x} in 0x10fcbf74").into()),}};loop{match block{
+0=>{
+// 0x10fcbf74 stp x29, x30, [sp, #-0x20]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x10fcbf78 str x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fcbf7c mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x10fcbf80 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x10fcbf84 ldr x0, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fcbf88 ldr x8, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fcbf8c ldr x8, [x8, #0xf0]
+{let address=(cpu.x[8]).wrapping_add(0xf0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fcbf90 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fcbf94;super::dispatch(cpu,rt,target)?;}
+block=1;continue;
+}
+1=>{
+// 0x10fcbf94 ldr w8, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcbf98 mov w9, #0x851f
+cpu.x[9]=(((0x851fu64))) as u32 as u64;
+// 0x10fcbf9c movk w9, #0x51eb, lsl #16
+cpu.x[9]=((cpu.x[9] as u32 as u64 & !(0xffff0000u64)) | 0x51eb0000u64) as u32 as u64;
+// 0x10fcbfa0 mul w8, w8, w0
+cpu.x[8]=((((cpu.x[8] as u32 as u64))).wrapping_mul(((cpu.x[0] as u32 as u64)))) as u32 as u64;
+// 0x10fcbfa4 smull x8, w8, w9
+cpu.x[8]=(((((cpu.x[8] as u32 as u64))) as i32 as i64).wrapping_mul((((cpu.x[9] as u32 as u64))) as i32 as i64) as u64) as u64;
+// 0x10fcbfa8 lsr x9, x8, #0x3f
+cpu.x[9]=(((((cpu.x[8]))) as u64).wrapping_shr(((((0x3fu64))) & 63) as u32) as u64) as u64;
+// 0x10fcbfac asr x8, x8, #0x25
+cpu.x[8]=(((((cpu.x[8]))) as i64).wrapping_shr(((((0x25u64))) & 63) as u32) as u64) as u64;
+// 0x10fcbfb0 add w0, w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u32 as u64;}
+// 0x10fcbfb4 ldr x19, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10fcbfb8 ldp x29, x30, [sp], #0x20
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x20u64)))) as u64;}
+// 0x10fcbfbc ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x10fcbf74").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10fcdefc(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10fcdefc=>{
+pub(super) unsafe fn f_10fcdefc(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10fcdefc{return f_10fcdefc_slow(cpu,rt,pc);}
+
+// 0x10fcdefc sub sp, sp, #0xb0
+{let a=((cpu.sp));let b=((0xb0u64));let result=a.wrapping_sub(b);cpu.sp=(result) as u64;}
+// 0x10fcdf00 stp x29, x30, [sp, #0x50]
+{let address=(cpu.sp).wrapping_add(0x50u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcdf04 stp x28, x27, [sp, #0x60]
+{let address=(cpu.sp).wrapping_add(0x60u64);let v0=cpu.x[28];let v1=cpu.x[27];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcdf08 stp x26, x25, [sp, #0x70]
+{let address=(cpu.sp).wrapping_add(0x70u64);let v0=cpu.x[26];let v1=cpu.x[25];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcdf0c stp x24, x23, [sp, #0x80]
+{let address=(cpu.sp).wrapping_add(0x80u64);let v0=cpu.x[24];let v1=cpu.x[23];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcdf10 stp x22, x21, [sp, #0x90]
+{let address=(cpu.sp).wrapping_add(0x90u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcdf14 stp x20, x19, [sp, #0xa0]
+{let address=(cpu.sp).wrapping_add(0xa0u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcdf18 add x29, sp, #0x50
+{let a=((cpu.sp));let b=((0x50u64));let result=a.wrapping_add(b);cpu.x[29]=(result) as u64;}
+// 0x10fcdf1c ldr x20, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[20]=(v0) as u64;}
+// 0x10fcdf20 mov x25, x0
+cpu.x[25]=(((cpu.x[0]))) as u64;
+// 0x10fcdf24 mov w26, w2
+cpu.x[26]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
+// 0x10fcdf28 mov x19, x1
+cpu.x[19]=(((cpu.x[1]))) as u64;
+// 0x10fcdf2c mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10fcdf30 bl #0x10f93d2c
+cpu.x[30]=0x10fcdf34;super::chunk11::f_10f93d2c(cpu,rt,0x10f93d2c)?;
+{
+// 0x10fcdf34 mov x21, x0
+cpu.x[21]=(((cpu.x[0]))) as u64;
+// 0x10fcdf38 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10fcdf3c bl #0x10f94298
+cpu.x[30]=0x10fcdf40;super::chunk2::f_10f94298(cpu,rt,0x10f94298)?;
+{
+// 0x10fcdf40 mov w22, w0
+cpu.x[22]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fcdf44 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10fcdf48 bl #0x10f942a0
+cpu.x[30]=0x10fcdf4c;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
+{
+// 0x10fcdf4c stur w0, [x29, #-0x20]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fcdf50 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fcdf54 bl #0x10f94010
+cpu.x[30]=0x10fcdf58;super::chunk6::f_10f94010(cpu,rt,0x10f94010)?;
+{
+// 0x10fcdf58 mov w28, w0
+cpu.x[28]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fcdf5c mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fcdf60 stur x19, [x29, #-0x10]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fcdf64 bl #0x10f94030
+cpu.x[30]=0x10fcdf68;super::chunk14::f_10f94030(cpu,rt,0x10f94030)?;
+{
+// 0x10fcdf68 ldr x23, [x21, #0x10]
+{let address=(cpu.x[21]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x10fcdf6c mov w27, w0
+cpu.x[27]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fcdf70 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fcdf74 stur x21, [x29, #-8]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fcdf78 bl #0x10d37e08
+cpu.x[30]=0x10fcdf7c;super::chunk15::f_10d37e08(cpu,rt,0x10d37e08)?;
+{
+// 0x10fcdf7c mov w8, #0x4dd3
+cpu.x[8]=(((0x4dd3u64))) as u32 as u64;
+// 0x10fcdf80 str x0, [sp, #0x18]
+{let address=(cpu.sp).wrapping_add(0x18u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fcdf84 mov x0, x25
+cpu.x[0]=(((cpu.x[25]))) as u64;
+// 0x10fcdf88 movk w8, #0x1062, lsl #16
+cpu.x[8]=((cpu.x[8] as u32 as u64 & !(0xffff0000u64)) | 0x10620000u64) as u32 as u64;
+// 0x10fcdf8c smull x8, w26, w8
+cpu.x[8]=(((((cpu.x[26] as u32 as u64))) as i32 as i64).wrapping_mul((((cpu.x[8] as u32 as u64))) as i32 as i64) as u64) as u64;
+// 0x10fcdf90 lsr x9, x8, #0x3f
+cpu.x[9]=(((((cpu.x[8]))) as u64).wrapping_shr(((((0x3fu64))) & 63) as u32) as u64) as u64;
+// 0x10fcdf94 asr x8, x8, #0x25
+cpu.x[8]=(((((cpu.x[8]))) as i64).wrapping_shr(((((0x25u64))) & 63) as u32) as u64) as u64;
+// 0x10fcdf98 add w8, w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10fcdf9c add w19, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[19]=(result) as u32 as u64;}
+// 0x10fcdfa0 ldp w9, w8, [x23]
+{let address=(cpu.x[23]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[9]=(v0) as u32 as u64;cpu.x[8]=(v1) as u32 as u64;}
+// 0x10fcdfa4 add w10, w28, w19
+{let a=((cpu.x[28] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x10fcdfa8 add w11, w27, w19
+{let a=((cpu.x[27] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_add(b);cpu.x[11]=(result) as u32 as u64;}
+// 0x10fcdfac sub w24, w27, w19
+{let a=((cpu.x[27] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[24]=(result) as u32 as u64;}
+// 0x10fcdfb0 sub w9, w9, #1
+{let a=((cpu.x[9] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x10fcdfb4 sub w8, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10fcdfb8 cmp w10, w9
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcdfbc csel w9, w10, w9, lt
+cpu.x[9]=(if cpu.condition(11){((cpu.x[10] as u32 as u64))}else{((cpu.x[9] as u32 as u64))}) as u32 as u64;
+// 0x10fcdfc0 cmp w11, w8
+{let a=((cpu.x[11] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcdfc4 csel w8, w11, w8, lt
+cpu.x[8]=(if cpu.condition(11){((cpu.x[11] as u32 as u64))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x10fcdfc8 stp w9, w8, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[9] as u32 as u64;let v1=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
+// 0x10fcdfcc bl #0x10fd04a8
+cpu.x[30]=0x10fcdfd0;super::chunk2::f_10fd04a8(cpu,rt,0x10fd04a8)?;
+{
+// 0x10fcdfd0 bl #0x10e0b6b4
+cpu.x[30]=0x10fcdfd4;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
+{
+// 0x10fcdfd4 ldr x0, [x0, #0x78]
+{let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fcdfd8 bl #0x10e16208
+cpu.x[30]=0x10fcdfdc;super::chunk7::f_10e16208(cpu,rt,0x10e16208)?;
+{
+// 0x10fcdfdc ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fcdfe0 mov x27, x0
+cpu.x[27]=(((cpu.x[0]))) as u64;
+// 0x10fcdfe4 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10fcdfe8 mov x21, x20
+cpu.x[21]=(((cpu.x[20]))) as u64;
+// 0x10fcdfec ldr x8, [x8, #0x108]
+{let address=(cpu.x[8]).wrapping_add(0x108u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fcdff0 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fcdff4;super::dispatch(cpu,rt,target)?;}
+{
+'b10fce33c: {
+'b10fce338: {
+'b10fce068: {
+'b10fce01c: {
+'b10fce058: {
+// 0x10fcdff4 tbz w0, #0, #0x10fce03c
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {{
+// 0x10fce03c mov w20, #1
+cpu.x[20]=(((0x1u64))) as u32 as u64;
+// 0x10fce040 ldr x8, [x21]
+{let address=(cpu.x[21]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fce044 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fce048 bic w25, w24, w24, asr #31
+{let a=((cpu.x[24] as u32 as u64));let b=(((cpu.x[24] as u32 as u64)) as i32).wrapping_shr(31) as u64;let result=a & !b;cpu.x[25]=(result) as u32 as u64;}
+// 0x10fce04c ldr x8, [x8, #0x108]
+{let address=(cpu.x[8]).wrapping_add(0x108u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fce050 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
+{
+// 0x10fce054 tbz w0, #0, #0x10fce01c
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fce01c;}break 'b10fce058;
+}
+}}{
+// 0x10fcdff8 ldrb w8, [x27, #0x80a]
+{let address=(cpu.x[27]).wrapping_add(0x80au64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcdffc cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+{
+// 0x10fce000 cset w20, eq
+cpu.x[20]=((cpu.condition(0)) as u64) as u32 as u64;
+// 0x10fce004 ldr x8, [x21]
+{let address=(cpu.x[21]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fce008 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x10fce00c bic w25, w24, w24, asr #31
+{let a=((cpu.x[24] as u32 as u64));let b=(((cpu.x[24] as u32 as u64)) as i32).wrapping_shr(31) as u64;let result=a & !b;cpu.x[25]=(result) as u32 as u64;}
+// 0x10fce010 ldr x8, [x8, #0x108]
+{let address=(cpu.x[8]).wrapping_add(0x108u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fce014 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fce018;super::dispatch(cpu,rt,target)?;}
+{
+// 0x10fce018 tbnz w0, #0, #0x10fce058
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10fce058;}break 'b10fce01c;
+}
+}
+}
+}
+// 0x10fce058 str wzr, [sp, #0x24]
+{let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fce05c ldr w8, [sp, #0x14]
+{let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce060 cmp w25, w8
+{let a=((cpu.x[25] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce064 b.gt #0x10fce338
+if cpu.condition(12){break 'b10fce338;}break 'b10fce068;
+}
+// 0x10fce01c ldrb w8, [x27, #0x80b]
+{let address=(cpu.x[27]).wrapping_add(0x80bu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce020 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce024 cset w8, ne
+cpu.x[8]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x10fce028 str w8, [sp, #0x24]
+{let address=(cpu.sp).wrapping_add(0x24u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fce02c ldr w8, [sp, #0x14]
+{let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce030 cmp w25, w8
+{let a=((cpu.x[25] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce034 b.gt #0x10fce338
+if cpu.condition(12){break 'b10fce338;}{
+// 0x10fce038 b #0x10fce068
+break 'b10fce068;
+}
+}
+// 0x10fce068 sub w8, w28, w19
+{let a=((cpu.x[28] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10fce06c bic w9, w8, w8, asr #31
+{let a=((cpu.x[8] as u32 as u64));let b=(((cpu.x[8] as u32 as u64)) as i32).wrapping_shr(31) as u64;let result=a & !b;cpu.x[9]=(result) as u32 as u64;}
+// 0x10fce070 ldr w8, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce074 cmp w9, w8
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce078 str w9, [sp, #0xc]
+{let address=(cpu.sp).wrapping_add(0xcu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fce07c b.gt #0x10fce338
+if cpu.condition(12){break 'b10fce338;}{
+'b10fce328: {
+// 0x10fce080 mul w8, w26, w26
+cpu.x[8]=((((cpu.x[26] as u32 as u64))).wrapping_mul(((cpu.x[26] as u32 as u64)))) as u32 as u64;
+// 0x10fce084 stur w8, [x29, #-0x14]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffecu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fce088 tbz w20, #0, #0x10fce1e8
+if ((cpu.x[20] as u32 as u64) & (1u64 << 0)) == 0 {{
+// 0x10fce1e8 ldr w8, [sp, #0xc]
+{let address=(cpu.sp).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce1ec mov w9, #0x7fffffff
+cpu.x[9]=(((0x7fffffffu64))) as u32 as u64;
+// 0x10fce1f0 mov w26, #0xfa
+cpu.x[26]=(((0xfau64))) as u32 as u64;
+// 0x10fce1f4 str wzr, [sp, #0x28]
+{let address=(cpu.sp).wrapping_add(0x28u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fce1f8 sub w20, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[20]=(result) as u32 as u64;}
+// 0x10fce1fc mov w8, #-1
+cpu.x[8]=(((0xffffffffffffffffu64))) as u32 as u64;
+// 0x10fce200 stur w8, [x29, #-0x24]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fce204 mov w8, #0xfa
+cpu.x[8]=(((0xfau64))) as u32 as u64;
+// 0x10fce208 stp w8, w9, [x29, #-0x1c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=cpu.x[8] as u32 as u64;let v1=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
+// 0x10fce20c b #0x10fce220
+{
+'l10fce220: loop {
+// 0x10fce220 mov w8, #0x1f4
+cpu.x[8]=(((0x1f4u64))) as u32 as u64;
+// 0x10fce224 ldur w9, [x29, #-0x1c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fce228 madd w27, w25, w8, w9
+cpu.x[27]=((((cpu.x[9] as u32 as u64))).wrapping_add((((cpu.x[25] as u32 as u64))).wrapping_mul(((cpu.x[8] as u32 as u64))))) as u32 as u64;
+// 0x10fce22c ldp w24, w19, [sp, #0xc]
+{let address=(cpu.sp).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[24]=(v0) as u32 as u64;cpu.x[19]=(v1) as u32 as u64;}
+// 0x10fce230 b #0x10fce258
+{
+'l10fce258: loop {
+// 0x10fce258 ldur x0, [x29, #-8]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fce25c bl #0x10d358a0
+cpu.x[30]=0x10fce260;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
+{
+// 0x10fce260 mul w8, w0, w26
+cpu.x[8]=((((cpu.x[0] as u32 as u64))).wrapping_mul(((cpu.x[26] as u32 as u64)))) as u32 as u64;
+// 0x10fce264 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fce268 mov w2, w25
+cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
+// 0x10fce26c mov w3, wzr
+cpu.x[3]=(((0u64))) as u32 as u64;
+// 0x10fce270 mov x4, x21
+cpu.x[4]=(((cpu.x[21]))) as u64;
+// 0x10fce274 cmp w22, w8
+{let a=((cpu.x[22] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce278 csel w28, w24, w19, lt
+cpu.x[28]=(if cpu.condition(11){((cpu.x[24] as u32 as u64))}else{((cpu.x[19] as u32 as u64))}) as u32 as u64;
+// 0x10fce27c mov w1, w28
+cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
+// 0x10fce280 bl #0x111d9240
+cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
+{
+'b10fce248: {
+// 0x10fce284 tbz w0, #0, #0x10fce248
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fce248;}{
+// 0x10fce288 mov w8, #0x1f4
+cpu.x[8]=(((0x1f4u64))) as u32 as u64;
+// 0x10fce28c ldur w9, [x29, #-0x1c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fce290 ldur x0, [x29, #-0x10]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fce294 madd w26, w28, w8, w9
+cpu.x[26]=((((cpu.x[9] as u32 as u64))).wrapping_add((((cpu.x[28] as u32 as u64))).wrapping_mul(((cpu.x[8] as u32 as u64))))) as u32 as u64;
+// 0x10fce298 mov w2, w27
+cpu.x[2]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
+// 0x10fce29c mov w1, w26
+cpu.x[1]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
+// 0x10fce2a0 bl #0x10f94f40
+cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
+{
+'b10fce244: {
+// 0x10fce2a4 ldur w8, [x29, #-0x14]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffecu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce2a8 cmp w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce2ac b.gt #0x10fce244
+if cpu.condition(12){break 'b10fce244;}{
+// 0x10fce2b0 ldur w3, [x29, #-0x20]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
+// 0x10fce2b4 mov w0, w26
+cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
+// 0x10fce2b8 mov w1, w27
+cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
+// 0x10fce2bc mov w2, w22
+cpu.x[2]=(((cpu.x[22] as u32 as u64))) as u32 as u64;
+// 0x10fce2c0 bl #0x11295120
+cpu.x[30]=0x10fce2c4;super::chunk6::f_11295120(cpu,rt,0x11295120)?;
+{
+'b10fce240: {
+'b10fce234: {
+'b10fce30c: {
+// 0x10fce2c4 ldr w8, [sp, #0x24]
+{let address=(cpu.sp).wrapping_add(0x24u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce2c8 mov w26, w0
+cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fce2cc cbz w8, #0x10fce2fc
+if (cpu.x[8] as u32 as u64) == 0 {{
+// 0x10fce2fc mov w8, #2
+cpu.x[8]=(((0x2u64))) as u32 as u64;
+// 0x10fce300 ldr w9, [sp, #0x28]
+{let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fce304 cmp w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce308 b.gt #0x10fce234
+if cpu.condition(12){break 'b10fce234;}break 'b10fce30c;
+}}{
+// 0x10fce2d0 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fce2d4 mov w1, w28
+cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
+// 0x10fce2d8 mov w2, w25
+cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
+// 0x10fce2dc bl #0x111d9674
+cpu.x[30]=0x10fce2e0;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
+// 0x10fce2e0 tst w0, #1
+{let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.logical_flags(result,32);}
+// 0x10fce2e4 mov w8, #1
+cpu.x[8]=(((0x1u64))) as u32 as u64;
+// 0x10fce2e8 cinc w8, w8, eq
+cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x10fce2ec ldr w9, [sp, #0x28]
+{let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fce2f0 cmp w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce2f4 b.gt #0x10fce234
+if cpu.condition(12){break 'b10fce234;}{
+// 0x10fce2f8 b #0x10fce30c
+break 'b10fce30c;
+}
+}
+}
+// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){break 'b10fce244;}{
+// 0x10fce310 ldur w8, [x29, #-0x18]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce314 cmp w26, w8
+{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce318 b.ge #0x10fce244
+if cpu.condition(10){break 'b10fce244;}{
+// 0x10fce31c orr w8, w25, w28, lsl #16
+{let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fce320 stur w8, [x29, #-0x24]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fce324 b #0x10fce240
+break 'b10fce240;
+}
+}
+}
+// 0x10fce234 orr w9, w25, w28, lsl #16
+{let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[9]=(result) as u32 as u64;}
+// 0x10fce238 str w8, [sp, #0x28]
+{let address=(cpu.sp).wrapping_add(0x28u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fce23c stur w9, [x29, #-0x24]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+break 'b10fce240;
+}
+// 0x10fce240 stur w26, [x29, #-0x18]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=cpu.x[26] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+break 'b10fce244;
+}
+}
+}
+// 0x10fce244 mov w26, #0xfa
+cpu.x[26]=(((0xfau64))) as u32 as u64;
+break 'b10fce248;
+}
+}
+}
+// 0x10fce248 sub w19, w19, #1
+{let a=((cpu.x[19] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[19]=(result) as u32 as u64;}
+// 0x10fce24c add w24, w24, #1
+{let a=((cpu.x[24] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[24]=(result) as u32 as u64;}
+// 0x10fce250 cmp w20, w19
+{let a=((cpu.x[20] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce254 b.eq #0x10fce210
+if cpu.condition(0){{
+// 0x10fce210 ldr w8, [sp, #0x14]
+{let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce214 cmp w25, w8
+{let a=((cpu.x[25] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce218 add w25, w25, #1
+{let a=((cpu.x[25] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[25]=(result) as u32 as u64;}
+// 0x10fce21c b.eq #0x10fce328
+if cpu.condition(0){break 'b10fce328;}continue 'l10fce220;
+}}continue 'l10fce258;
+}
+}
+}
+}
+}
+}
+}}{
+// 0x10fce08c ldr w8, [sp, #0x24]
+{let address=(cpu.sp).wrapping_add(0x24u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce090 mov w9, #0x7fffffff
+cpu.x[9]=(((0x7fffffffu64))) as u32 as u64;
+// 0x10fce094 mov w26, #0xfa
+cpu.x[26]=(((0xfau64))) as u32 as u64;
+// 0x10fce098 eor w8, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a ^ b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fce09c stp w8, wzr, [sp, #0x24]
+{let address=(cpu.sp).wrapping_add(0x24u64);let v0=cpu.x[8] as u32 as u64;let v1=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
+// 0x10fce0a0 ldr w8, [sp, #0xc]
+{let address=(cpu.sp).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce0a4 sub w20, w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[20]=(result) as u32 as u64;}
+// 0x10fce0a8 mov w8, #-1
+cpu.x[8]=(((0xffffffffffffffffu64))) as u32 as u64;
+// 0x10fce0ac stur w8, [x29, #-0x24]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fce0b0 mov w8, #0xfa
+cpu.x[8]=(((0xfau64))) as u32 as u64;
+// 0x10fce0b4 stp w8, w9, [x29, #-0x1c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=cpu.x[8] as u32 as u64;let v1=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
+// 0x10fce0b8 b #0x10fce0cc
+{
+'l10fce0cc: loop {
+// 0x10fce0cc mov w8, #0x1f4
+cpu.x[8]=(((0x1f4u64))) as u32 as u64;
+// 0x10fce0d0 ldur w9, [x29, #-0x1c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fce0d4 madd w28, w25, w8, w9
+cpu.x[28]=((((cpu.x[9] as u32 as u64))).wrapping_add((((cpu.x[25] as u32 as u64))).wrapping_mul(((cpu.x[8] as u32 as u64))))) as u32 as u64;
+// 0x10fce0d8 ldp w19, w24, [sp, #0xc]
+{let address=(cpu.sp).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[19]=(v0) as u32 as u64;cpu.x[24]=(v1) as u32 as u64;}
+// 0x10fce0dc b #0x10fce104
+{
+'l10fce104: loop {
+// 0x10fce104 ldur x0, [x29, #-8]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fce108 bl #0x10d358a0
+cpu.x[30]=0x10fce10c;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
+{
+// 0x10fce10c mul w8, w0, w26
+cpu.x[8]=((((cpu.x[0] as u32 as u64))).wrapping_mul(((cpu.x[26] as u32 as u64)))) as u32 as u64;
+// 0x10fce110 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fce114 mov w2, w25
+cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
+// 0x10fce118 mov w3, wzr
+cpu.x[3]=(((0u64))) as u32 as u64;
+// 0x10fce11c mov x4, x21
+cpu.x[4]=(((cpu.x[21]))) as u64;
+// 0x10fce120 cmp w22, w8
+{let a=((cpu.x[22] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce124 csel w27, w19, w24, lt
+cpu.x[27]=(if cpu.condition(11){((cpu.x[19] as u32 as u64))}else{((cpu.x[24] as u32 as u64))}) as u32 as u64;
+// 0x10fce128 mov w1, w27
+cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
+// 0x10fce12c bl #0x111d9240
+cpu.x[30]=0x10fce130;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
+{
+'b10fce0f4: {
+// 0x10fce130 tbz w0, #0, #0x10fce0f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fce0f4;}{
+// 0x10fce134 mov w8, #0x1f4
+cpu.x[8]=(((0x1f4u64))) as u32 as u64;
+// 0x10fce138 ldur w9, [x29, #-0x1c]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fce13c ldur x0, [x29, #-0x10]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fce140 madd w26, w27, w8, w9
+cpu.x[26]=((((cpu.x[9] as u32 as u64))).wrapping_add((((cpu.x[27] as u32 as u64))).wrapping_mul(((cpu.x[8] as u32 as u64))))) as u32 as u64;
+// 0x10fce144 mov w2, w28
+cpu.x[2]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
+// 0x10fce148 mov w1, w26
+cpu.x[1]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
+// 0x10fce14c bl #0x10f94f40
+cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
+{
+'b10fce0f0: {
+// 0x10fce150 ldur w8, [x29, #-0x14]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffecu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce154 cmp w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce158 b.gt #0x10fce0f0
+if cpu.condition(12){break 'b10fce0f0;}{
+// 0x10fce15c ldur w3, [x29, #-0x20]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
+// 0x10fce160 mov w0, w26
+cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
+// 0x10fce164 mov w1, w28
+cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
+// 0x10fce168 mov w2, w22
+cpu.x[2]=(((cpu.x[22] as u32 as u64))) as u32 as u64;
+// 0x10fce16c bl #0x11295120
+cpu.x[30]=0x10fce170;super::chunk6::f_11295120(cpu,rt,0x11295120)?;
+{
+// 0x10fce170 mov w26, w0
+cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fce174 ldr x0, [sp, #0x18]
+{let address=(cpu.sp).wrapping_add(0x18u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fce178 mov w1, w27
+cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
+// 0x10fce17c mov w2, w25
+cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
+// 0x10fce180 bl #0x10e8b6e0
+cpu.x[30]=0x10fce184;super::chunk0::f_10e8b6e0(cpu,rt,0x10e8b6e0)?;
+{
+'b10fce0ec: {
+'b10fce0e0: {
+'b10fce1cc: {
+'b10fce194: {
+'b10fce1bc: {
+// 0x10fce184 ldr w8, [sp, #0x24]
+{let address=(cpu.sp).wrapping_add(0x24u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce188 orr w8, w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fce18c tbz w8, #0, #0x10fce1a8
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) == 0 {{
+// 0x10fce1a8 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fce1ac mov w1, w27
+cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
+// 0x10fce1b0 mov w2, w25
+cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
+// 0x10fce1b4 bl #0x111d9674
+cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
+{
+// 0x10fce1b8 tbz w0, #0, #0x10fce194
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fce194;}break 'b10fce1bc;
+}
+}}{
+// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10fce1bc;}break 'b10fce194;
+}
+}
+// 0x10fce1bc mov w8, #1
+cpu.x[8]=(((0x1u64))) as u32 as u64;
+// 0x10fce1c0 ldr w9, [sp, #0x28]
+{let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fce1c4 cmp w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce1c8 b.gt #0x10fce0e0
+if cpu.condition(12){break 'b10fce0e0;}break 'b10fce1cc;
+}
+// 0x10fce194 mov w8, #2
+cpu.x[8]=(((0x2u64))) as u32 as u64;
+// 0x10fce198 ldr w9, [sp, #0x28]
+{let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fce19c cmp w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce1a0 b.gt #0x10fce0e0
+if cpu.condition(12){break 'b10fce0e0;}{
+// 0x10fce1a4 b #0x10fce1cc
+break 'b10fce1cc;
+}
+}
+// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){break 'b10fce0f0;}{
+// 0x10fce1d0 ldur w8, [x29, #-0x18]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce1d4 cmp w26, w8
+{let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce1d8 b.ge #0x10fce0f0
+if cpu.condition(10){break 'b10fce0f0;}{
+// 0x10fce1dc orr w8, w25, w27, lsl #16
+{let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fce1e0 stur w8, [x29, #-0x24]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fce1e4 b #0x10fce0ec
+break 'b10fce0ec;
+}
+}
+}
+// 0x10fce0e0 orr w9, w25, w27, lsl #16
+{let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[9]=(result) as u32 as u64;}
+// 0x10fce0e4 str w8, [sp, #0x28]
+{let address=(cpu.sp).wrapping_add(0x28u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fce0e8 stur w9, [x29, #-0x24]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+break 'b10fce0ec;
+}
+// 0x10fce0ec stur w26, [x29, #-0x18]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=cpu.x[26] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+break 'b10fce0f0;
+}
+}
+}
+}
+// 0x10fce0f0 mov w26, #0xfa
+cpu.x[26]=(((0xfau64))) as u32 as u64;
+break 'b10fce0f4;
+}
+}
+}
+// 0x10fce0f4 sub w24, w24, #1
+{let a=((cpu.x[24] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[24]=(result) as u32 as u64;}
+// 0x10fce0f8 add w19, w19, #1
+{let a=((cpu.x[19] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[19]=(result) as u32 as u64;}
+// 0x10fce0fc cmp w20, w24
+{let a=((cpu.x[20] as u32 as u64));let b=((cpu.x[24] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce100 b.eq #0x10fce0bc
+if cpu.condition(0){{
+// 0x10fce0bc ldr w8, [sp, #0x14]
+{let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fce0c0 cmp w25, w8
+{let a=((cpu.x[25] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce0c4 add w25, w25, #1
+{let a=((cpu.x[25] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[25]=(result) as u32 as u64;}
+// 0x10fce0c8 b.eq #0x10fce328
+if cpu.condition(0){break 'b10fce328;}continue 'l10fce0cc;
+}}continue 'l10fce104;
+}
+}
+}
+}
+}
+}
+}
+}
+// 0x10fce328 ldur w9, [x29, #-0x18]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fce32c mov w8, #0x7fffffff
+cpu.x[8]=(((0x7fffffffu64))) as u32 as u64;
+// 0x10fce330 cmp w9, w8
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fce334 b.ne #0x10fce35c
+if cpu.condition(1){{
+// 0x10fce35c ldur w19, [x29, #-0x24]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[19]=(v0) as u32 as u64;}
+// 0x10fce360 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fce364 mov w3, wzr
+cpu.x[3]=(((0u64))) as u32 as u64;
+// 0x10fce368 mov x4, x21
+cpu.x[4]=(((cpu.x[21]))) as u64;
+// 0x10fce36c asr w1, w19, #0x10
+cpu.x[1]=(((((cpu.x[19] as u32 as u64))) as i32).wrapping_shr(((((0x10u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fce370 and w2, w19, #0xffff
+{let a=((cpu.x[19] as u32 as u64));let b=((0xffffu64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
+// 0x10fce374 bl #0x111d9240
+cpu.x[30]=0x10fce378;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
+{
+// 0x10fce378 mov w0, w19
+cpu.x[0]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10fce37c b #0x10fce33c
+break 'b10fce33c;
+}
+}}break 'b10fce338;
+}
+}
+// 0x10fce338 mov w0, #-1
+cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
+break 'b10fce33c;
+}
+// 0x10fce33c ldp x20, x19, [sp, #0xa0]
+{let address=(cpu.sp).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10fce340 ldp x22, x21, [sp, #0x90]
+{let address=(cpu.sp).wrapping_add(0x90u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x10fce344 ldp x24, x23, [sp, #0x80]
+{let address=(cpu.sp).wrapping_add(0x80u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[24]=(v0) as u64;cpu.x[23]=(v1) as u64;}
+// 0x10fce348 ldp x26, x25, [sp, #0x70]
+{let address=(cpu.sp).wrapping_add(0x70u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[26]=(v0) as u64;cpu.x[25]=(v1) as u64;}
+// 0x10fce34c ldp x28, x27, [sp, #0x60]
+{let address=(cpu.sp).wrapping_add(0x60u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[28]=(v0) as u64;cpu.x[27]=(v1) as u64;}
+// 0x10fce350 ldp x29, x30, [sp, #0x50]
+{let address=(cpu.sp).wrapping_add(0x50u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;}
+// 0x10fce354 add sp, sp, #0xb0
+{let a=((cpu.sp));let b=((0xb0u64));let result=a.wrapping_add(b);cpu.sp=(result) as u64;}
+// 0x10fce358 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10fcdefc_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10fcdefc{0}else{match pc{0x10fcdefc=>0,0x10fcdf34=>1,0x10fcdf40=>2,0x10fcdf4c=>3,0x10fcdf58=>4,0x10fcdf68=>5,0x10fcdf7c=>6,0x10fcdfd0=>7,0x10fcdfd4=>8,0x10fcdfdc=>9,0x10fcdff4=>10,0x10fcdff8=>11,0x10fce000=>12,0x10fce018=>13,0x10fce01c=>14,0x10fce038=>15,0x10fce03c=>16,0x10fce054=>17,0x10fce058=>18,0x10fce068=>19,0x10fce080=>20,0x10fce08c=>21,0x10fce0bc=>22,0x10fce0cc=>23,0x10fce0e0=>24,0x10fce0ec=>25,0x10fce0f0=>26,0x10fce0f4=>27,0x10fce104=>28,0x10fce10c=>29,0x10fce130=>30,0x10fce134=>31,0x10fce150=>32,0x10fce15c=>33,0x10fce170=>34,0x10fce184=>35,0x10fce190=>36,0x10fce194=>37,0x10fce1a4=>38,0x10fce1a8=>39,0x10fce1b8=>40,0x10fce1bc=>41,0x10fce1cc=>42,0x10fce1d0=>43,0x10fce1dc=>44,0x10fce1e8=>45,0x10fce210=>46,0x10fce220=>47,0x10fce234=>48,0x10fce240=>49,0x10fce244=>50,0x10fce248=>51,0x10fce258=>52,0x10fce260=>53,0x10fce284=>54,0x10fce288=>55,0x10fce2a4=>56,0x10fce2b0=>57,0x10fce2c4=>58,0x10fce2d0=>59,0x10fce2f8=>60,0x10fce2fc=>61,0x10fce30c=>62,0x10fce310=>63,0x10fce31c=>64,0x10fce328=>65,0x10fce338=>66,0x10fce33c=>67,0x10fce35c=>68,0x10fce378=>69,_=>return Err(format!("untranslated block {pc:#x} in 0x10fcdefc").into()),}};loop{match block{
+0=>{
 // 0x10fcdefc sub sp, sp, #0xb0
 {let a=((cpu.sp));let b=((0xb0u64));let result=a.wrapping_sub(b);cpu.sp=(result) as u64;}
 // 0x10fcdf00 stp x29, x30, [sp, #0x50]
@@ -7505,7 +12999,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -7514,13 +13008,13 @@ if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x
 // 0x10fce064 b.gt #0x10fce338
 if cpu.condition(12){{// 0x10fce338 mov w0, #-1
 cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
-pc=0x10fce33c;continue;}}pc=0x10fce068;continue;}}}}{// 0x10fcdff8 ldrb w8, [x27, #0x80a]
+block=67;continue;}}block=19;continue;}}}}{// 0x10fcdff8 ldrb w8, [x27, #0x80a]
 {let address=(cpu.x[27]).wrapping_add(0x80au64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcdffc cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-pc=0x10fce000;continue;}}}}}}}}}}}
+block=12;continue;}}}}}}}}}}}
 }
-0x10fcdf34=>{
+1=>{
 // 0x10fcdf34 mov x21, x0
 cpu.x[21]=(((cpu.x[0]))) as u64;
 // 0x10fcdf38 mov x0, x20
@@ -7631,7 +13125,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -7640,7 +13134,7 @@ if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x
 // 0x10fce064 b.gt #0x10fce338
 if cpu.condition(12){{// 0x10fce338 mov w0, #-1
 cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
-pc=0x10fce33c;continue;}}{// 0x10fce068 sub w8, w28, w19
+block=67;continue;}}{// 0x10fce068 sub w8, w28, w19
 {let a=((cpu.x[28] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce06c bic w9, w8, w8, asr #31
 {let a=((cpu.x[8] as u32 as u64));let b=(((cpu.x[8] as u32 as u64)) as i32).wrapping_shr(31) as u64;let result=a & !b;cpu.x[9]=(result) as u32 as u64;}
@@ -7651,9 +13145,9 @@ pc=0x10fce33c;continue;}}{// 0x10fce068 sub w8, w28, w19
 // 0x10fce078 str w9, [sp, #0xc]
 {let address=(cpu.sp).wrapping_add(0xcu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce07c b.gt #0x10fce338
-if cpu.condition(12){pc=0x10fce338;continue;}pc=0x10fce080;continue;}}}}}pc=0x10fcdff8;continue;}}}}}}}}}
+if cpu.condition(12){block=66;continue;}block=20;continue;}}}}}block=11;continue;}}}}}}}}}
 }
-0x10fcdf40=>{
+2=>{
 // 0x10fcdf40 mov w22, w0
 cpu.x[22]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10fcdf44 mov x0, x20
@@ -7758,7 +13252,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -7782,9 +13276,9 @@ cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
 // 0x10fce354 add sp, sp, #0xb0
 {let a=((cpu.sp));let b=((0xb0u64));let result=a.wrapping_add(b);cpu.sp=(result) as u64;}
 // 0x10fce358 ret
-cpu.pc=cpu.x[30];return Ok(());}}}pc=0x10fce068;continue;}}}}pc=0x10fcdff8;continue;}}}}}}}}
+cpu.pc=cpu.x[30];return Ok(());}}}block=19;continue;}}}}block=11;continue;}}}}}}}}
 }
-0x10fcdf4c=>{
+3=>{
 // 0x10fcdf4c stur w0, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=cpu.x[0] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fcdf50 mov x0, x19
@@ -7883,7 +13377,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -7907,13 +13401,13 @@ cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
 // 0x10fce354 add sp, sp, #0xb0
 {let a=((cpu.sp));let b=((0xb0u64));let result=a.wrapping_add(b);cpu.sp=(result) as u64;}
 // 0x10fce358 ret
-cpu.pc=cpu.x[30];return Ok(());}}}pc=0x10fce068;continue;}}}}{// 0x10fcdff8 ldrb w8, [x27, #0x80a]
+cpu.pc=cpu.x[30];return Ok(());}}}block=19;continue;}}}}{// 0x10fcdff8 ldrb w8, [x27, #0x80a]
 {let address=(cpu.x[27]).wrapping_add(0x80au64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcdffc cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-pc=0x10fce000;continue;}}}}}}}}
+block=12;continue;}}}}}}}}
 }
-0x10fcdf58=>{
+4=>{
 // 0x10fcdf58 mov w28, w0
 cpu.x[28]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10fcdf5c mov x0, x19
@@ -8006,7 +13500,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -8043,9 +13537,9 @@ cpu.pc=cpu.x[30];return Ok(());}}}{// 0x10fce068 sub w8, w28, w19
 // 0x10fce07c b.gt #0x10fce338
 if cpu.condition(12){{// 0x10fce338 mov w0, #-1
 cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
-pc=0x10fce33c;continue;}}pc=0x10fce080;continue;}}}}}pc=0x10fcdff8;continue;}}}}}}
+block=67;continue;}}block=20;continue;}}}}}block=11;continue;}}}}}}
 }
-0x10fcdf68=>{
+5=>{
 // 0x10fcdf68 ldr x23, [x21, #0x10]
 {let address=(cpu.x[21]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
 // 0x10fcdf6c mov w27, w0
@@ -8130,7 +13624,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -8167,18 +13661,18 @@ cpu.pc=cpu.x[30];return Ok(());}}}{// 0x10fce068 sub w8, w28, w19
 // 0x10fce07c b.gt #0x10fce338
 if cpu.condition(12){{// 0x10fce338 mov w0, #-1
 cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
-pc=0x10fce33c;continue;}}{// 0x10fce080 mul w8, w26, w26
+block=67;continue;}}{// 0x10fce080 mul w8, w26, w26
 cpu.x[8]=((((cpu.x[26] as u32 as u64))).wrapping_mul(((cpu.x[26] as u32 as u64)))) as u32 as u64;
 // 0x10fce084 stur w8, [x29, #-0x14]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffecu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce088 tbz w20, #0, #0x10fce1e8
-if ((cpu.x[20] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce1e8;continue;}pc=0x10fce08c;continue;}}}}}}{// 0x10fcdff8 ldrb w8, [x27, #0x80a]
+if ((cpu.x[20] as u32 as u64) & (1u64 << 0)) == 0 {block=45;continue;}block=21;continue;}}}}}}{// 0x10fcdff8 ldrb w8, [x27, #0x80a]
 {let address=(cpu.x[27]).wrapping_add(0x80au64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcdffc cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-pc=0x10fce000;continue;}}}}}}
+block=12;continue;}}}}}}
 }
-0x10fcdf7c=>{
+6=>{
 // 0x10fcdf7c mov w8, #0x4dd3
 cpu.x[8]=(((0x4dd3u64))) as u32 as u64;
 // 0x10fcdf80 str x0, [sp, #0x18]
@@ -8253,7 +13747,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -8338,9 +13832,9 @@ cpu.x[27]=((((cpu.x[9] as u32 as u64))).wrapping_add((((cpu.x[25] as u32 as u64)
 // 0x10fce22c ldp w24, w19, [sp, #0xc]
 {let address=(cpu.sp).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[24]=(v0) as u32 as u64;cpu.x[19]=(v1) as u32 as u64;}
 // 0x10fce230 b #0x10fce258
-pc=0x10fce258;continue;}}}pc=0x10fce08c;continue;}}}}}}pc=0x10fcdff8;continue;}}}}
+block=52;continue;}}}block=21;continue;}}}}}}block=11;continue;}}}}
 }
-0x10fcdfd0=>{
+7=>{
 // 0x10fcdfd0 bl #0x10e0b6b4
 cpu.x[30]=0x10fcdfd4;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
 {// 0x10fcdfd4 ldr x0, [x0, #0x78]
@@ -8373,7 +13867,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -8462,9 +13956,9 @@ cpu.x[27]=((((cpu.x[9] as u32 as u64))).wrapping_add((((cpu.x[25] as u32 as u64)
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce25c bl #0x10d358a0
 cpu.x[30]=0x10fce260;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
-pc=0x10fce260;continue;}}}}pc=0x10fce08c;continue;}}}}}}pc=0x10fcdff8;continue;}}}
+block=53;continue;}}}}block=21;continue;}}}}}}block=11;continue;}}}
 }
-0x10fcdfd4=>{
+8=>{
 // 0x10fcdfd4 ldr x0, [x0, #0x78]
 {let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fcdfd8 bl #0x10e16208
@@ -8495,7 +13989,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -8584,13 +14078,13 @@ cpu.x[27]=((((cpu.x[9] as u32 as u64))).wrapping_add((((cpu.x[25] as u32 as u64)
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce25c bl #0x10d358a0
 cpu.x[30]=0x10fce260;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
-pc=0x10fce260;continue;}}}}pc=0x10fce08c;continue;}}}}}}{// 0x10fcdff8 ldrb w8, [x27, #0x80a]
+block=53;continue;}}}}block=21;continue;}}}}}}{// 0x10fcdff8 ldrb w8, [x27, #0x80a]
 {let address=(cpu.x[27]).wrapping_add(0x80au64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcdffc cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-pc=0x10fce000;continue;}}}
+block=12;continue;}}}
 }
-0x10fcdfdc=>{
+9=>{
 // 0x10fcdfdc ldr x8, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fcdfe0 mov x27, x0
@@ -8617,7 +14111,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -8706,7 +14200,7 @@ cpu.x[27]=((((cpu.x[9] as u32 as u64))).wrapping_add((((cpu.x[25] as u32 as u64)
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce25c bl #0x10d358a0
 cpu.x[30]=0x10fce260;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
-pc=0x10fce260;continue;}}}}pc=0x10fce08c;continue;}}}}}}{// 0x10fcdff8 ldrb w8, [x27, #0x80a]
+block=53;continue;}}}}block=21;continue;}}}}}}{// 0x10fcdff8 ldrb w8, [x27, #0x80a]
 {let address=(cpu.x[27]).wrapping_add(0x80au64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcdffc cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
@@ -8722,9 +14216,9 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x108u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fce014 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce018;super::dispatch(cpu,rt,target)?;}
-pc=0x10fce018;continue;}}}
+block=13;continue;}}}
 }
-0x10fcdff4=>{
+10=>{
 // 0x10fcdff4 tbz w0, #0, #0x10fce03c
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {{// 0x10fce03c mov w20, #1
 cpu.x[20]=(((0x1u64))) as u32 as u64;
@@ -8739,7 +14233,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -8846,9 +14340,9 @@ cpu.x[28]=(if cpu.condition(11){((cpu.x[24] as u32 as u64))}else{((cpu.x[19] as 
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
-pc=0x10fce284;continue;}}}}}pc=0x10fce08c;continue;}}}}}}pc=0x10fcdff8;continue;
+block=54;continue;}}}}}block=21;continue;}}}}}}block=11;continue;
 }
-0x10fcdff8=>{
+11=>{
 // 0x10fcdff8 ldrb w8, [x27, #0x80a]
 {let address=(cpu.x[27]).wrapping_add(0x80au64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcdffc cmp w8, #0
@@ -8973,9 +14467,9 @@ cpu.x[28]=(if cpu.condition(11){((cpu.x[24] as u32 as u64))}else{((cpu.x[19] as 
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
-pc=0x10fce284;continue;}}}}}pc=0x10fce08c;continue;}}}}pc=0x10fce01c;continue;}}
+block=54;continue;}}}}}block=21;continue;}}}}block=14;continue;}}
 }
-0x10fce000=>{
+12=>{
 // 0x10fce000 cset w20, eq
 cpu.x[20]=((cpu.condition(0)) as u64) as u32 as u64;
 // 0x10fce004 ldr x8, [x21]
@@ -9097,9 +14591,9 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}pc=0x10fce288;continue;}}}}}}pc=0x10fce08c;continue;}}}}pc=0x10fce01c;continue;}
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}block=55;continue;}}}}}}block=21;continue;}}}}block=14;continue;}
 }
-0x10fce018=>{
+13=>{
 // 0x10fce018 tbnz w0, #0, #0x10fce058
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
@@ -9209,9 +14703,9 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}pc=0x10fce288;continue;}}}}}}pc=0x10fce08c;continue;}}}}pc=0x10fce01c;continue;
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}block=55;continue;}}}}}}block=21;continue;}}}}block=14;continue;
 }
-0x10fce01c=>{
+14=>{
 // 0x10fce01c ldrb w8, [x27, #0x80b]
 {let address=(cpu.x[27]).wrapping_add(0x80bu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce020 cmp w8, #0
@@ -9327,7 +14821,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -9341,9 +14835,9 @@ cpu.x[2]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
 cpu.x[1]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
 // 0x10fce2a0 bl #0x10f94f40
 cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
-pc=0x10fce2a4;continue;}}}}}}}pc=0x10fce08c;continue;}}}
+block=56;continue;}}}}}}}block=21;continue;}}}
 }
-0x10fce038=>{
+15=>{
 // 0x10fce038 b #0x10fce068
 {// 0x10fce068 sub w8, w28, w19
 {let a=((cpu.x[28] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
@@ -9429,7 +14923,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -9448,7 +14942,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -9463,9 +14957,9 @@ cpu.x[30]=0x10fce2c4;super::chunk6::f_11295120(cpu,rt,0x11295120)?;
 // 0x10fce2c8 mov w26, w0
 cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10fce2cc cbz w8, #0x10fce2fc
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10fce2fc;continue;}pc=0x10fce2d0;continue;}}}}}}}}}}pc=0x10fce08c;continue;}}
+if (cpu.x[8] as u32 as u64) == 0 {block=61;continue;}block=59;continue;}}}}}}}}}}block=21;continue;}}
 }
-0x10fce03c=>{
+16=>{
 // 0x10fce03c mov w20, #1
 cpu.x[20]=(((0x1u64))) as u32 as u64;
 // 0x10fce040 ldr x8, [x21]
@@ -9479,7 +14973,7 @@ cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x10fce050 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fce054;super::dispatch(cpu,rt,target)?;}
 {// 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -9587,11 +15081,11 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}pc=0x10fce288;continue;}}}}}}pc=0x10fce08c;continue;}}}}
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}block=55;continue;}}}}}}block=21;continue;}}}}
 }
-0x10fce054=>{
+17=>{
 // 0x10fce054 tbz w0, #0, #0x10fce01c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce01c;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=14;continue;}{// 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
@@ -9699,9 +15193,9 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}pc=0x10fce288;continue;}}}}}}pc=0x10fce08c;continue;}}}
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}block=55;continue;}}}}}}block=21;continue;}}}
 }
-0x10fce058=>{
+18=>{
 // 0x10fce058 str wzr, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce05c ldr w8, [sp, #0x14]
@@ -9810,7 +15304,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -9829,9 +15323,9 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}pc=0x10fce2b0;continue;}}}}}}}}pc=0x10fce08c;continue;}}
+if cpu.condition(12){block=50;continue;}block=57;continue;}}}}}}}}block=21;continue;}}
 }
-0x10fce068=>{
+19=>{
 // 0x10fce068 sub w8, w28, w19
 {let a=((cpu.x[28] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce06c bic w9, w8, w8, asr #31
@@ -9916,7 +15410,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -9935,7 +15429,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -9957,10 +15451,10 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}pc=0x10fce310;continue;}}}pc=0x10fce2d0;continue;}}}}}}}}}}pc=0x10fce08c;continue;}
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}block=63;continue;}}}block=59;continue;}}}}}}}}}}block=21;continue;}
 }
-0x10fce080=>{
+20=>{
 // 0x10fce080 mul w8, w26, w26
 cpu.x[8]=((((cpu.x[26] as u32 as u64))).wrapping_mul(((cpu.x[26] as u32 as u64)))) as u32 as u64;
 // 0x10fce084 stur w8, [x29, #-0x14]
@@ -10017,7 +15511,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -10036,7 +15530,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -10058,20 +15552,20 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}pc=0x10fce2d0;continue;}}}}}}}}}}pc=0x10fce08c;continue;
+block=49;continue;}}}}}block=59;continue;}}}}}}}}}}block=21;continue;
 }
-0x10fce08c=>{
+21=>{
 // 0x10fce08c ldr w8, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce090 mov w9, #0x7fffffff
@@ -10127,7 +15621,7 @@ cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
 // 0x10fce12c bl #0x111d9240
 cpu.x[30]=0x10fce130;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce130 tbz w0, #0, #0x10fce0f4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce0f4;continue;}{// 0x10fce134 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=27;continue;}{// 0x10fce134 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce138 ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -10146,7 +15640,7 @@ cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -10180,25 +15674,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -10206,10 +15700,10 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}pc=0x10fce1d0;continue;}}}pc=0x10fce194;continue;}}}}}}}}}}
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}block=43;continue;}}}block=37;continue;}}}}}}}}}}
 }
-0x10fce0bc=>{
+22=>{
 // 0x10fce0bc ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce0c0 cmp w25, w8
@@ -10241,7 +15735,7 @@ cpu.x[30]=0x10fce378;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce378 mov w0, w19
 cpu.x[0]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10fce37c b #0x10fce33c
-pc=0x10fce33c;continue;}}}{// 0x10fce338 mov w0, #-1
+block=67;continue;}}}{// 0x10fce338 mov w0, #-1
 cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
 {// 0x10fce33c ldp x20, x19, [sp, #0xa0]
 {let address=(cpu.sp).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
@@ -10290,7 +15784,7 @@ cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
 // 0x10fce12c bl #0x111d9240
 cpu.x[30]=0x10fce130;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce130 tbz w0, #0, #0x10fce0f4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce0f4;continue;}{// 0x10fce134 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=27;continue;}{// 0x10fce134 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce138 ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -10309,7 +15803,7 @@ cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -10334,10 +15828,10 @@ cpu.x[30]=0x10fce184;super::chunk0::f_10e8b6e0(cpu,rt,0x10e8b6e0)?;
 // 0x10fce188 orr w8, w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce18c tbz w8, #0, #0x10fce1a8
-if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce1a8;continue;}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10fce1bc;continue;}pc=0x10fce194;continue;}}}}}}}}}}
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) == 0 {block=39;continue;}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {block=41;continue;}block=37;continue;}}}}}}}}}}
 }
-0x10fce0cc=>{
+23=>{
 // 0x10fce0cc mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce0d0 ldur w9, [x29, #-0x1c]
@@ -10370,7 +15864,7 @@ cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
 // 0x10fce12c bl #0x111d9240
 cpu.x[30]=0x10fce130;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce130 tbz w0, #0, #0x10fce0f4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce0f4;continue;}{// 0x10fce134 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=27;continue;}{// 0x10fce134 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce138 ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -10389,7 +15883,7 @@ cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -10423,25 +15917,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -10449,20 +15943,20 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}pc=0x10fce194;continue;}}}}}}}}}
+block=25;continue;}}}}}block=37;continue;}}}}}}}}}
 }
-0x10fce0e0=>{
+24=>{
 // 0x10fce0e0 orr w9, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[9]=(result) as u32 as u64;}
 // 0x10fce0e4 str w8, [sp, #0x28]
@@ -10480,7 +15974,7 @@ cpu.x[26]=(((0xfau64))) as u32 as u64;
 // 0x10fce0fc cmp w20, w24
 {let a=((cpu.x[20] as u32 as u64));let b=((cpu.x[24] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce100 b.eq #0x10fce0bc
-if cpu.condition(0){pc=0x10fce0bc;continue;}{// 0x10fce104 ldur x0, [x29, #-8]
+if cpu.condition(0){block=22;continue;}{// 0x10fce104 ldur x0, [x29, #-8]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce108 bl #0x10d358a0
 cpu.x[30]=0x10fce10c;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
@@ -10503,7 +15997,7 @@ cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
 // 0x10fce12c bl #0x111d9240
 cpu.x[30]=0x10fce130;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce130 tbz w0, #0, #0x10fce0f4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce0f4;continue;}{// 0x10fce134 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=27;continue;}{// 0x10fce134 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce138 ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -10522,7 +16016,7 @@ cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -10556,25 +16050,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -10582,10 +16076,10 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}pc=0x10fce1d0;continue;}}}pc=0x10fce194;continue;}}}}}}}}}}}}
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}block=43;continue;}}}block=37;continue;}}}}}}}}}}}}
 }
-0x10fce0ec=>{
+25=>{
 // 0x10fce0ec stur w26, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=cpu.x[26] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 {// 0x10fce0f0 mov w26, #0xfa
@@ -10597,7 +16091,7 @@ cpu.x[26]=(((0xfau64))) as u32 as u64;
 // 0x10fce0fc cmp w20, w24
 {let a=((cpu.x[20] as u32 as u64));let b=((cpu.x[24] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce100 b.eq #0x10fce0bc
-if cpu.condition(0){pc=0x10fce0bc;continue;}{// 0x10fce104 ldur x0, [x29, #-8]
+if cpu.condition(0){block=22;continue;}{// 0x10fce104 ldur x0, [x29, #-8]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce108 bl #0x10d358a0
 cpu.x[30]=0x10fce10c;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
@@ -10620,7 +16114,7 @@ cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
 // 0x10fce12c bl #0x111d9240
 cpu.x[30]=0x10fce130;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce130 tbz w0, #0, #0x10fce0f4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce0f4;continue;}{// 0x10fce134 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=27;continue;}{// 0x10fce134 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce138 ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -10639,7 +16133,7 @@ cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -10673,25 +16167,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -10699,10 +16193,10 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}pc=0x10fce1d0;continue;}}}pc=0x10fce194;continue;}}}}}}}}}}}
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}block=43;continue;}}}block=37;continue;}}}}}}}}}}}
 }
-0x10fce0f0=>{
+26=>{
 // 0x10fce0f0 mov w26, #0xfa
 cpu.x[26]=(((0xfau64))) as u32 as u64;
 {// 0x10fce0f4 sub w24, w24, #1
@@ -10712,7 +16206,7 @@ cpu.x[26]=(((0xfau64))) as u32 as u64;
 // 0x10fce0fc cmp w20, w24
 {let a=((cpu.x[20] as u32 as u64));let b=((cpu.x[24] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce100 b.eq #0x10fce0bc
-if cpu.condition(0){pc=0x10fce0bc;continue;}{// 0x10fce104 ldur x0, [x29, #-8]
+if cpu.condition(0){block=22;continue;}{// 0x10fce104 ldur x0, [x29, #-8]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce108 bl #0x10d358a0
 cpu.x[30]=0x10fce10c;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
@@ -10735,7 +16229,7 @@ cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
 // 0x10fce12c bl #0x111d9240
 cpu.x[30]=0x10fce130;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce130 tbz w0, #0, #0x10fce0f4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce0f4;continue;}{// 0x10fce134 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=27;continue;}{// 0x10fce134 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce138 ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -10754,7 +16248,7 @@ cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -10788,25 +16282,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -10814,15 +16308,15 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}pc=0x10fce1dc;continue;}}}}pc=0x10fce194;continue;}}}}}}}}}}
+if cpu.condition(10){block=26;continue;}block=44;continue;}}}}block=37;continue;}}}}}}}}}}
 }
-0x10fce0f4=>{
+27=>{
 // 0x10fce0f4 sub w24, w24, #1
 {let a=((cpu.x[24] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[24]=(result) as u32 as u64;}
 // 0x10fce0f8 add w19, w19, #1
@@ -10830,7 +16324,7 @@ if cpu.condition(10){pc=0x10fce0f0;continue;}pc=0x10fce1dc;continue;}}}}pc=0x10f
 // 0x10fce0fc cmp w20, w24
 {let a=((cpu.x[20] as u32 as u64));let b=((cpu.x[24] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce100 b.eq #0x10fce0bc
-if cpu.condition(0){pc=0x10fce0bc;continue;}{// 0x10fce104 ldur x0, [x29, #-8]
+if cpu.condition(0){block=22;continue;}{// 0x10fce104 ldur x0, [x29, #-8]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce108 bl #0x10d358a0
 cpu.x[30]=0x10fce10c;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
@@ -10853,7 +16347,7 @@ cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
 // 0x10fce12c bl #0x111d9240
 cpu.x[30]=0x10fce130;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce130 tbz w0, #0, #0x10fce0f4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce0f4;continue;}{// 0x10fce134 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=27;continue;}{// 0x10fce134 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce138 ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -10872,7 +16366,7 @@ cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -10906,25 +16400,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -10932,20 +16426,20 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}pc=0x10fce194;continue;}}}}}}}}}
+block=25;continue;}}}}}block=37;continue;}}}}}}}}}
 }
-0x10fce104=>{
+28=>{
 // 0x10fce104 ldur x0, [x29, #-8]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce108 bl #0x10d358a0
@@ -10969,7 +16463,7 @@ cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
 // 0x10fce12c bl #0x111d9240
 cpu.x[30]=0x10fce130;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce130 tbz w0, #0, #0x10fce0f4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce0f4;continue;}{// 0x10fce134 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=27;continue;}{// 0x10fce134 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce138 ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -10988,7 +16482,7 @@ cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -11022,25 +16516,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -11048,20 +16542,20 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}pc=0x10fce194;continue;}}}}}}}}
+block=25;continue;}}}}}block=37;continue;}}}}}}}}
 }
-0x10fce10c=>{
+29=>{
 // 0x10fce10c mul w8, w0, w26
 cpu.x[8]=((((cpu.x[0] as u32 as u64))).wrapping_mul(((cpu.x[26] as u32 as u64)))) as u32 as u64;
 // 0x10fce110 mov x0, x23
@@ -11081,7 +16575,7 @@ cpu.x[1]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
 // 0x10fce12c bl #0x111d9240
 cpu.x[30]=0x10fce130;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce130 tbz w0, #0, #0x10fce0f4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce0f4;continue;}{// 0x10fce134 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=27;continue;}{// 0x10fce134 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce138 ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -11100,7 +16594,7 @@ cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -11134,25 +16628,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -11160,41 +16654,41 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}{// 0x10fce194 mov w8, #2
+block=25;continue;}}}}}{// 0x10fce194 mov w8, #2
 cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce198 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce19c cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1a0 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1a4 b #0x10fce1cc
+if cpu.condition(12){block=24;continue;}{// 0x10fce1a4 b #0x10fce1cc
 {// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}}}}}}
+block=25;continue;}}}}}}}}}}}}
 }
-0x10fce130=>{
+30=>{
 // 0x10fce130 tbz w0, #0, #0x10fce0f4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce0f4;continue;}{// 0x10fce134 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=27;continue;}{// 0x10fce134 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce138 ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -11213,7 +16707,7 @@ cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -11247,25 +16741,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -11273,39 +16767,39 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}{// 0x10fce194 mov w8, #2
+block=25;continue;}}}}}{// 0x10fce194 mov w8, #2
 cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce198 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce19c cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1a0 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1a4 b #0x10fce1cc
+if cpu.condition(12){block=24;continue;}{// 0x10fce1a4 b #0x10fce1cc
 {// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}}}}}
+block=25;continue;}}}}}}}}}}}
 }
-0x10fce134=>{
+31=>{
 // 0x10fce134 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce138 ldur w9, [x29, #-0x1c]
@@ -11325,7 +16819,7 @@ cpu.x[30]=0x10fce150;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -11359,25 +16853,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -11385,45 +16879,45 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}{// 0x10fce194 mov w8, #2
+block=25;continue;}}}}}{// 0x10fce194 mov w8, #2
 cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce198 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce19c cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1a0 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1a4 b #0x10fce1cc
+if cpu.condition(12){block=24;continue;}{// 0x10fce1a4 b #0x10fce1cc
 {// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}}}}
+block=25;continue;}}}}}}}}}}
 }
-0x10fce150=>{
+32=>{
 // 0x10fce150 ldur w8, [x29, #-0x14]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffecu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce154 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce158 b.gt #0x10fce0f0
-if cpu.condition(12){pc=0x10fce0f0;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=26;continue;}{// 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -11457,25 +16951,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -11483,39 +16977,39 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}{// 0x10fce194 mov w8, #2
+block=25;continue;}}}}}{// 0x10fce194 mov w8, #2
 cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce198 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce19c cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1a0 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1a4 b #0x10fce1cc
+if cpu.condition(12){block=24;continue;}{// 0x10fce1a4 b #0x10fce1cc
 {// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}}}
+block=25;continue;}}}}}}}}}
 }
-0x10fce15c=>{
+33=>{
 // 0x10fce15c ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce160 mov w0, w26
@@ -11550,25 +17044,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -11576,39 +17070,39 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}{// 0x10fce194 mov w8, #2
+block=25;continue;}}}}}{// 0x10fce194 mov w8, #2
 cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce198 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce19c cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1a0 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1a4 b #0x10fce1cc
+if cpu.condition(12){block=24;continue;}{// 0x10fce1a4 b #0x10fce1cc
 {// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}}
+block=25;continue;}}}}}}}}
 }
-0x10fce170=>{
+34=>{
 // 0x10fce170 mov w26, w0
 cpu.x[26]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10fce174 ldr x0, [sp, #0x18]
@@ -11633,25 +17127,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -11659,39 +17153,39 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}{// 0x10fce194 mov w8, #2
+block=25;continue;}}}}}{// 0x10fce194 mov w8, #2
 cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce198 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce19c cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1a0 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1a4 b #0x10fce1cc
+if cpu.condition(12){block=24;continue;}{// 0x10fce1a4 b #0x10fce1cc
 {// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}
+block=25;continue;}}}}}}}
 }
-0x10fce184=>{
+35=>{
 // 0x10fce184 ldr w8, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce188 orr w8, w0, w8
@@ -11706,25 +17200,25 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
+block=25;continue;}}}}}}}{// 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -11732,39 +17226,39 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}{// 0x10fce194 mov w8, #2
+block=25;continue;}}}}}{// 0x10fce194 mov w8, #2
 cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce198 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce19c cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1a0 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1a4 b #0x10fce1cc
+if cpu.condition(12){block=24;continue;}{// 0x10fce1a4 b #0x10fce1cc
 {// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}}
+block=25;continue;}}}}}}
 }
-0x10fce190=>{
+36=>{
 // 0x10fce190 tbnz w0, #0, #0x10fce1bc
 if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
@@ -11773,39 +17267,39 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}{// 0x10fce194 mov w8, #2
+block=25;continue;}}}}}{// 0x10fce194 mov w8, #2
 cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce198 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce19c cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1a0 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1a4 b #0x10fce1cc
+if cpu.condition(12){block=24;continue;}{// 0x10fce1a4 b #0x10fce1cc
 {// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}
+block=25;continue;}}}}}
 }
-0x10fce194=>{
+37=>{
 // 0x10fce194 mov w8, #2
 cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce198 ldr w9, [sp, #0x28]
@@ -11813,36 +17307,36 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce19c cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1a0 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1a4 b #0x10fce1cc
+if cpu.condition(12){block=24;continue;}{// 0x10fce1a4 b #0x10fce1cc
 {// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}
+block=25;continue;}}}}
 }
-0x10fce1a4=>{
+38=>{
 // 0x10fce1a4 b #0x10fce1cc
 {// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}
+block=25;continue;}}}
 }
-0x10fce1a8=>{
+39=>{
 // 0x10fce1a8 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce1ac mov w1, w27
@@ -11852,49 +17346,49 @@ cpu.x[2]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
 // 0x10fce1b4 bl #0x111d9674
 cpu.x[30]=0x10fce1b8;super::chunk8::f_111d9674(cpu,rt,0x111d9674)?;
 {// 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}}
+block=25;continue;}}}}}
 }
-0x10fce1b8=>{
+40=>{
 // 0x10fce1b8 tbz w0, #0, #0x10fce194
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce194;continue;}{// 0x10fce1bc mov w8, #1
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}{// 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
 {let address=(cpu.sp).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}}
+block=25;continue;}}}}
 }
-0x10fce1bc=>{
+41=>{
 // 0x10fce1bc mov w8, #1
 cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c0 ldr w9, [sp, #0x28]
@@ -11902,55 +17396,55 @@ cpu.x[8]=(((0x1u64))) as u32 as u64;
 // 0x10fce1c4 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1c8 b.gt #0x10fce0e0
-if cpu.condition(12){pc=0x10fce0e0;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=24;continue;}{// 0x10fce1cc b.ne #0x10fce0f0
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}}
+block=25;continue;}}}
 }
-0x10fce1cc=>{
+42=>{
 // 0x10fce1cc b.ne #0x10fce0f0
-if cpu.condition(1){pc=0x10fce0f0;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=26;continue;}{// 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}}
+block=25;continue;}}
 }
-0x10fce1d0=>{
+43=>{
 // 0x10fce1d0 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1d4 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce1d8 b.ge #0x10fce0f0
-if cpu.condition(10){pc=0x10fce0f0;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
+if cpu.condition(10){block=26;continue;}{// 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;}
+block=25;continue;}
 }
-0x10fce1dc=>{
+44=>{
 // 0x10fce1dc orr w8, w25, w27, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[27] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce1e0 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce1e4 b #0x10fce0ec
-pc=0x10fce0ec;continue;
+block=25;continue;
 }
-0x10fce1e8=>{
+45=>{
 // 0x10fce1e8 ldr w8, [sp, #0xc]
 {let address=(cpu.sp).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce1ec mov w9, #0x7fffffff
@@ -12002,7 +17496,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -12021,7 +17515,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -12043,18 +17537,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -12073,21 +17567,21 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}}}}}}}}}
+block=49;continue;}}}}}}}}}}}}}
 }
-0x10fce210=>{
+46=>{
 // 0x10fce210 ldr w8, [sp, #0x14]
 {let address=(cpu.sp).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce214 cmp w25, w8
@@ -12119,7 +17613,7 @@ cpu.x[30]=0x10fce378;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce378 mov w0, w19
 cpu.x[0]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10fce37c b #0x10fce33c
-pc=0x10fce33c;continue;}}}{// 0x10fce338 mov w0, #-1
+block=67;continue;}}}{// 0x10fce338 mov w0, #-1
 cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
 {// 0x10fce33c ldp x20, x19, [sp, #0xa0]
 {let address=(cpu.sp).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
@@ -12168,7 +17662,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -12187,7 +17681,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -12209,10 +17703,10 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}pc=0x10fce310;continue;}}}pc=0x10fce2d0;continue;}}}}}}}}
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}block=63;continue;}}}block=59;continue;}}}}}}}}
 }
-0x10fce220=>{
+47=>{
 // 0x10fce220 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce224 ldur w9, [x29, #-0x1c]
@@ -12245,7 +17739,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -12264,7 +17758,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -12286,18 +17780,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -12316,21 +17810,21 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}}}}}}}}
+block=49;continue;}}}}}}}}}}}}
 }
-0x10fce234=>{
+48=>{
 // 0x10fce234 orr w9, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[9]=(result) as u32 as u64;}
 // 0x10fce238 str w8, [sp, #0x28]
@@ -12348,7 +17842,7 @@ cpu.x[26]=(((0xfau64))) as u32 as u64;
 // 0x10fce250 cmp w20, w19
 {let a=((cpu.x[20] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce254 b.eq #0x10fce210
-if cpu.condition(0){pc=0x10fce210;continue;}{// 0x10fce258 ldur x0, [x29, #-8]
+if cpu.condition(0){block=46;continue;}{// 0x10fce258 ldur x0, [x29, #-8]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce25c bl #0x10d358a0
 cpu.x[30]=0x10fce260;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
@@ -12371,7 +17865,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -12390,7 +17884,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -12412,18 +17906,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -12442,16 +17936,16 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}pc=0x10fce31c;continue;}}}}}}}}}}}}}}
+if cpu.condition(10){block=50;continue;}block=64;continue;}}}}}}}}}}}}}}
 }
-0x10fce240=>{
+49=>{
 // 0x10fce240 stur w26, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=cpu.x[26] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 {// 0x10fce244 mov w26, #0xfa
@@ -12463,7 +17957,7 @@ cpu.x[26]=(((0xfau64))) as u32 as u64;
 // 0x10fce250 cmp w20, w19
 {let a=((cpu.x[20] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce254 b.eq #0x10fce210
-if cpu.condition(0){pc=0x10fce210;continue;}{// 0x10fce258 ldur x0, [x29, #-8]
+if cpu.condition(0){block=46;continue;}{// 0x10fce258 ldur x0, [x29, #-8]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce25c bl #0x10d358a0
 cpu.x[30]=0x10fce260;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
@@ -12486,7 +17980,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -12505,7 +17999,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -12527,18 +18021,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -12557,21 +18051,21 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}}}}}}}}}}
+block=49;continue;}}}}}}}}}}}}}}
 }
-0x10fce244=>{
+50=>{
 // 0x10fce244 mov w26, #0xfa
 cpu.x[26]=(((0xfau64))) as u32 as u64;
 {// 0x10fce248 sub w19, w19, #1
@@ -12581,7 +18075,7 @@ cpu.x[26]=(((0xfau64))) as u32 as u64;
 // 0x10fce250 cmp w20, w19
 {let a=((cpu.x[20] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce254 b.eq #0x10fce210
-if cpu.condition(0){pc=0x10fce210;continue;}{// 0x10fce258 ldur x0, [x29, #-8]
+if cpu.condition(0){block=46;continue;}{// 0x10fce258 ldur x0, [x29, #-8]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce25c bl #0x10d358a0
 cpu.x[30]=0x10fce260;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
@@ -12604,7 +18098,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -12623,7 +18117,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -12645,18 +18139,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -12675,21 +18169,21 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}}}}}}}}}
+block=49;continue;}}}}}}}}}}}}}
 }
-0x10fce248=>{
+51=>{
 // 0x10fce248 sub w19, w19, #1
 {let a=((cpu.x[19] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[19]=(result) as u32 as u64;}
 // 0x10fce24c add w24, w24, #1
@@ -12697,7 +18191,7 @@ pc=0x10fce240;continue;}}}}}}}}}}}}}
 // 0x10fce250 cmp w20, w19
 {let a=((cpu.x[20] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce254 b.eq #0x10fce210
-if cpu.condition(0){pc=0x10fce210;continue;}{// 0x10fce258 ldur x0, [x29, #-8]
+if cpu.condition(0){block=46;continue;}{// 0x10fce258 ldur x0, [x29, #-8]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce25c bl #0x10d358a0
 cpu.x[30]=0x10fce260;super::chunk0::f_10d358a0(cpu,rt,0x10d358a0)?;
@@ -12720,7 +18214,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -12739,7 +18233,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -12761,18 +18255,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -12791,21 +18285,21 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}}}}}}}}
+block=49;continue;}}}}}}}}}}}}
 }
-0x10fce258=>{
+52=>{
 // 0x10fce258 ldur x0, [x29, #-8]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fce25c bl #0x10d358a0
@@ -12829,7 +18323,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -12848,7 +18342,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -12870,18 +18364,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -12900,21 +18394,21 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}}}}}}}
+block=49;continue;}}}}}}}}}}}
 }
-0x10fce260=>{
+53=>{
 // 0x10fce260 mul w8, w0, w26
 cpu.x[8]=((((cpu.x[0] as u32 as u64))).wrapping_mul(((cpu.x[26] as u32 as u64)))) as u32 as u64;
 // 0x10fce264 mov x0, x23
@@ -12934,7 +18428,7 @@ cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 // 0x10fce280 bl #0x111d9240
 cpu.x[30]=0x10fce284;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -12953,7 +18447,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -12975,18 +18469,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -13005,23 +18499,23 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}}}}}}
+block=49;continue;}}}}}}}}}}
 }
-0x10fce284=>{
+54=>{
 // 0x10fce284 tbz w0, #0, #0x10fce248
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fce248;continue;}{// 0x10fce288 mov w8, #0x1f4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=51;continue;}{// 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
@@ -13040,7 +18534,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -13062,18 +18556,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -13092,21 +18586,21 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}}}}}
+block=49;continue;}}}}}}}}}
 }
-0x10fce288=>{
+55=>{
 // 0x10fce288 mov w8, #0x1f4
 cpu.x[8]=(((0x1f4u64))) as u32 as u64;
 // 0x10fce28c ldur w9, [x29, #-0x1c]
@@ -13126,7 +18620,7 @@ cpu.x[30]=0x10fce2a4;super::chunk12::f_10f94f40(cpu,rt,0x10f94f40)?;
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -13148,18 +18642,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -13178,27 +18672,27 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}}}}
+block=49;continue;}}}}}}}}
 }
-0x10fce2a4=>{
+56=>{
 // 0x10fce2a4 ldur w8, [x29, #-0x14]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffecu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce2a8 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2ac b.gt #0x10fce244
-if cpu.condition(12){pc=0x10fce244;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
+if cpu.condition(12){block=50;continue;}{// 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
 cpu.x[0]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
@@ -13220,18 +18714,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -13250,21 +18744,21 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}}}
+block=49;continue;}}}}}}}
 }
-0x10fce2b0=>{
+57=>{
 // 0x10fce2b0 ldur w3, [x29, #-0x20]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[3]=(v0) as u32 as u64;}
 // 0x10fce2b4 mov w0, w26
@@ -13287,18 +18781,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -13317,21 +18811,21 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}}
+block=49;continue;}}}}}}
 }
-0x10fce2c4=>{
+58=>{
 // 0x10fce2c4 ldr w8, [sp, #0x24]
 {let address=(cpu.sp).wrapping_add(0x24u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce2c8 mov w26, w0
@@ -13344,18 +18838,18 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}{// 0x10fce2d0 mov x0, x23
+block=49;continue;}}}}}{// 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
 cpu.x[1]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
@@ -13374,21 +18868,21 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}}
+block=49;continue;}}}}}
 }
-0x10fce2d0=>{
+59=>{
 // 0x10fce2d0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fce2d4 mov w1, w28
@@ -13408,36 +18902,36 @@ cpu.x[8]=(if cpu.condition(0){(((cpu.x[8] as u32 as u64))).wrapping_add(1)}else{
 // 0x10fce2f0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce2f4 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce2f8 b #0x10fce30c
+if cpu.condition(12){block=48;continue;}{// 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}}
+block=49;continue;}}}}
 }
-0x10fce2f8=>{
+60=>{
 // 0x10fce2f8 b #0x10fce30c
 {// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}
+block=49;continue;}}}
 }
-0x10fce2fc=>{
+61=>{
 // 0x10fce2fc mov w8, #2
 cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce300 ldr w9, [sp, #0x28]
@@ -13445,55 +18939,55 @@ cpu.x[8]=(((0x2u64))) as u32 as u64;
 // 0x10fce304 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce308 b.gt #0x10fce234
-if cpu.condition(12){pc=0x10fce234;continue;}{// 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(12){block=48;continue;}{// 0x10fce30c b.ne #0x10fce244
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}}
+block=49;continue;}}}
 }
-0x10fce30c=>{
+62=>{
 // 0x10fce30c b.ne #0x10fce244
-if cpu.condition(1){pc=0x10fce244;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
+if cpu.condition(1){block=50;continue;}{// 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}}
+block=49;continue;}}
 }
-0x10fce310=>{
+63=>{
 // 0x10fce310 ldur w8, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fce314 cmp w26, w8
 {let a=((cpu.x[26] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fce318 b.ge #0x10fce244
-if cpu.condition(10){pc=0x10fce244;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
+if cpu.condition(10){block=50;continue;}{// 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;}
+block=49;continue;}
 }
-0x10fce31c=>{
+64=>{
 // 0x10fce31c orr w8, w25, w28, lsl #16
 {let a=((cpu.x[25] as u32 as u64));let b=(((cpu.x[28] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fce320 stur w8, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fce324 b #0x10fce240
-pc=0x10fce240;continue;
+block=49;continue;
 }
-0x10fce328=>{
+65=>{
 // 0x10fce328 ldur w9, [x29, #-0x18]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffe8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fce32c mov w8, #0x7fffffff
@@ -13518,7 +19012,7 @@ cpu.x[30]=0x10fce378;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce378 mov w0, w19
 cpu.x[0]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10fce37c b #0x10fce33c
-pc=0x10fce33c;continue;}}}{// 0x10fce338 mov w0, #-1
+block=67;continue;}}}{// 0x10fce338 mov w0, #-1
 cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
 {// 0x10fce33c ldp x20, x19, [sp, #0xa0]
 {let address=(cpu.sp).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
@@ -13537,7 +19031,7 @@ cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
 // 0x10fce358 ret
 cpu.pc=cpu.x[30];return Ok(());}}
 }
-0x10fce338=>{
+66=>{
 // 0x10fce338 mov w0, #-1
 cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
 {// 0x10fce33c ldp x20, x19, [sp, #0xa0]
@@ -13557,7 +19051,7 @@ cpu.x[0]=(((0xffffffffffffffffu64))) as u32 as u64;
 // 0x10fce358 ret
 cpu.pc=cpu.x[30];return Ok(());}
 }
-0x10fce33c=>{
+67=>{
 // 0x10fce33c ldp x20, x19, [sp, #0xa0]
 {let address=(cpu.sp).wrapping_add(0xa0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10fce340 ldp x22, x21, [sp, #0x90]
@@ -13575,7 +19069,7 @@ cpu.pc=cpu.x[30];return Ok(());}
 // 0x10fce358 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10fce35c=>{
+68=>{
 // 0x10fce35c ldur w19, [x29, #-0x24]
 {let address=(cpu.x[29]).wrapping_add(0xffffffffffffffdcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[19]=(v0) as u32 as u64;}
 // 0x10fce360 mov x0, x23
@@ -13593,18 +19087,18 @@ cpu.x[30]=0x10fce378;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 {// 0x10fce378 mov w0, w19
 cpu.x[0]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10fce37c b #0x10fce33c
-pc=0x10fce33c;continue;}
+block=67;continue;}
 }
-0x10fce378=>{
+69=>{
 // 0x10fce378 mov w0, w19
 cpu.x[0]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10fce37c b #0x10fce33c
-pc=0x10fce33c;continue;
+block=67;continue;
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10fcdefc")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10fcdefc").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10fcef48(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10fcef48=>{
+pub(super) unsafe fn f_10fcef48(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10fcef48{return f_10fcef48_slow(cpu,rt,pc);}
+
 // 0x10fcef48 sub sp, sp, #0x90
 {let a=((cpu.sp));let b=((0x90u64));let result=a.wrapping_sub(b);cpu.sp=(result) as u64;}
 // 0x10fcef4c str d8, [sp, #0x20]
@@ -13641,36 +19135,28 @@ cpu.x[0]=(((cpu.x[23]))) as u64;
 cpu.x[19]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
 // 0x10fcef8c bl #0x10f7e050
 cpu.x[30]=0x10fcef90;super::chunk10::f_10f7e050(cpu,rt,0x10f7e050)?;
-pc=0x10fcef90;continue;
-}
-0x10fcef90=>{
+{
 // 0x10fcef90 str x0, [sp, #0x10]
 {let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10fcef94 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fcef98 bl #0x10f93d2c
 cpu.x[30]=0x10fcef9c;super::chunk11::f_10f93d2c(cpu,rt,0x10f93d2c)?;
-pc=0x10fcef9c;continue;
-}
-0x10fcef9c=>{
+{
 // 0x10fcef9c stur x0, [x29, #-8]
 {let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10fcefa0 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fcefa4 bl #0x10f942c0
 cpu.x[30]=0x10fcefa8;super::chunk2::f_10f942c0(cpu,rt,0x10f942c0)?;
-pc=0x10fcefa8;continue;
-}
-0x10fcefa8=>{
+{
 // 0x10fcefa8 mov w1, w19
 cpu.x[1]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10fcefac mov w2, w24
 cpu.x[2]=(((cpu.x[24] as u32 as u64))) as u32 as u64;
 // 0x10fcefb0 bl #0x11294ed8
 cpu.x[30]=0x10fcefb4;super::chunk15::f_11294ed8(cpu,rt,0x11294ed8)?;
-pc=0x10fcefb4;continue;
-}
-0x10fcefb4=>{
+{
 // 0x10fcefb4 cmp w0, #1
 {let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fcefb8 mov w8, #0xfa
@@ -13689,18 +19175,17 @@ cpu.x[9]=(if cpu.condition(11){((cpu.x[21] as u32 as u64))}else{((cpu.x[22] as u
 cpu.x[26]=(if cpu.condition(11){((cpu.x[9] as u32 as u64))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
 // 0x10fcefd4 bl #0x10f94298
 cpu.x[30]=0x10fcefd8;super::chunk2::f_10f94298(cpu,rt,0x10f94298)?;
-pc=0x10fcefd8;continue;
-}
-0x10fcefd8=>{
+{
 // 0x10fcefd8 mov w28, w0
 cpu.x[28]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x10fcefdc mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fcefe0 bl #0x10f942a0
 cpu.x[30]=0x10fcefe4;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
-pc=0x10fcefe4;continue;
-}
-0x10fcefe4=>{
+{
+'b10fcf05c: {
+'b10fcf01c: {
+'b10fcf010: {
 // 0x10fcefe4 str w19, [sp, #0x18]
 {let address=(cpu.sp).wrapping_add(0x18u64);let v0=cpu.x[19] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fcefe8 sub w19, w19, w28
@@ -13714,53 +19199,18 @@ cpu.x[28]=(((((cpu.x[19] as u32 as u64))) as u32).wrapping_shl(((((0x8u64))) & 3
 // 0x10fceff8 orr w8, w28, w19
 {let a=((cpu.x[28] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fceffc tbz w8, #0x1f, #0x10fcf010
-if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) == 0 {pc=0x10fcf010;continue;}pc=0x10fcf000;continue;
-}
-0x10fcf000=>{
+if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) == 0 {break 'b10fcf010;}{
+'b10fcf040: {
 // 0x10fcf000 cmp w19, #0
 {let a=((cpu.x[19] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fcf004 b.gt #0x10fcf040
-if cpu.condition(12){pc=0x10fcf040;continue;}pc=0x10fcf008;continue;
-}
-0x10fcf008=>{
+if cpu.condition(12){break 'b10fcf040;}{
 // 0x10fcf008 cmp w28, #1
 {let a=((cpu.x[28] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fcf00c b.ge #0x10fcf040
-if cpu.condition(10){pc=0x10fcf040;continue;}pc=0x10fcf010;continue;
+if cpu.condition(10){break 'b10fcf040;}break 'b10fcf010;
 }
-0x10fcf010=>{
-// 0x10fcf010 lsl w24, w21, #8
-cpu.x[24]=(((((cpu.x[21] as u32 as u64))) as u32).wrapping_shl(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
-// 0x10fcf014 orr w8, w24, w21
-{let a=((cpu.x[24] as u32 as u64));let b=((cpu.x[21] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
-// 0x10fcf018 tbz w8, #0x1f, #0x10fcf05c
-if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) == 0 {pc=0x10fcf05c;continue;}pc=0x10fcf01c;continue;
 }
-0x10fcf01c=>{
-// 0x10fcf01c cmp w21, #0
-{let a=((cpu.x[21] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10fcf020 b.gt #0x10fcf02c
-if cpu.condition(12){pc=0x10fcf02c;continue;}pc=0x10fcf024;continue;
-}
-0x10fcf024=>{
-// 0x10fcf024 cmp w24, #1
-{let a=((cpu.x[24] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
-// 0x10fcf028 b.lt #0x10fcf05c
-if cpu.condition(11){pc=0x10fcf05c;continue;}pc=0x10fcf02c;continue;
-}
-0x10fcf02c=>{
-// 0x10fcf02c adrp x0, #0x102d1000
-cpu.x[0]=(0x102d1000u64) as u64;
-// 0x10fcf030 add x0, x0, #0xfd6
-{let a=((cpu.x[0]));let b=((0xfd6u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
-// 0x10fcf034 mov w1, #1
-cpu.x[1]=(((0x1u64))) as u32 as u64;
-// 0x10fcf038 bl #0x1128df18
-cpu.x[30]=0x10fcf03c;super::dispatch(cpu,rt,0x1128df18)?;
-// 0x10fcf03c b #0x10fcf05c
-pc=0x10fcf05c;continue;
-}
-0x10fcf040=>{
 // 0x10fcf040 adrp x0, #0x102d1000
 cpu.x[0]=(0x102d1000u64) as u64;
 // 0x10fcf044 add x0, x0, #0xfd6
@@ -13774,9 +19224,38 @@ cpu.x[24]=(((((cpu.x[21] as u32 as u64))) as u32).wrapping_shl(((((0x8u64))) & 3
 // 0x10fcf054 orr w8, w24, w21
 {let a=((cpu.x[24] as u32 as u64));let b=((cpu.x[21] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fcf058 tbnz w8, #0x1f, #0x10fcf01c
-if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) != 0 {pc=0x10fcf01c;continue;}pc=0x10fcf05c;continue;
+if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) != 0 {break 'b10fcf01c;}break 'b10fcf05c;
 }
-0x10fcf05c=>{
+}
+// 0x10fcf010 lsl w24, w21, #8
+cpu.x[24]=(((((cpu.x[21] as u32 as u64))) as u32).wrapping_shl(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf014 orr w8, w24, w21
+{let a=((cpu.x[24] as u32 as u64));let b=((cpu.x[21] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fcf018 tbz w8, #0x1f, #0x10fcf05c
+if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) == 0 {break 'b10fcf05c;}break 'b10fcf01c;
+}
+'b10fcf02c: {
+// 0x10fcf01c cmp w21, #0
+{let a=((cpu.x[21] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf020 b.gt #0x10fcf02c
+if cpu.condition(12){break 'b10fcf02c;}{
+// 0x10fcf024 cmp w24, #1
+{let a=((cpu.x[24] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf028 b.lt #0x10fcf05c
+if cpu.condition(11){break 'b10fcf05c;}break 'b10fcf02c;
+}
+}
+// 0x10fcf02c adrp x0, #0x102d1000
+cpu.x[0]=(0x102d1000u64) as u64;
+// 0x10fcf030 add x0, x0, #0xfd6
+{let a=((cpu.x[0]));let b=((0xfd6u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10fcf034 mov w1, #1
+cpu.x[1]=(((0x1u64))) as u32 as u64;
+// 0x10fcf038 bl #0x1128df18
+cpu.x[30]=0x10fcf03c;super::dispatch(cpu,rt,0x1128df18)?;
+// 0x10fcf03c b #0x10fcf05c
+break 'b10fcf05c;
+}
 // 0x10fcf05c sdiv w8, w28, w22
 {let a=((cpu.x[28] as u32 as u64)) as i32;let b=((cpu.x[22] as u32 as u64)) as i32;cpu.x[8]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u32 as u64;}
 // 0x10fcf060 mov x0, x23
@@ -13801,46 +19280,40 @@ cpu.x[9]=((((cpu.x[9] as u32 as u64))).wrapping_mul(((cpu.x[26] as u32 as u64)))
 cpu.x[28]=(if cpu.condition(11){((cpu.x[8] as u32 as u64))}else{((cpu.x[9] as u32 as u64))}) as u32 as u64;
 // 0x10fcf088 bl #0x10f940fc
 cpu.x[30]=0x10fcf08c;super::chunk9::f_10f940fc(cpu,rt,0x10f940fc)?;
-pc=0x10fcf08c;continue;
-}
-0x10fcf08c=>{
+{
+'b10fcf158: {
+'b10fcf0f8: {
+'b10fcf42c: {
+'b10fcf0dc: {
+'b10fcf0cc: {
+'b10fcf0a0: {
 // 0x10fcf08c cbz x0, #0x10fcf0a0
-if (cpu.x[0]) == 0 {pc=0x10fcf0a0;continue;}pc=0x10fcf090;continue;
-}
-0x10fcf090=>{
+if (cpu.x[0]) == 0 {break 'b10fcf0a0;}{
 // 0x10fcf090 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fcf094 bl #0x10f940fc
 cpu.x[30]=0x10fcf098;super::chunk9::f_10f940fc(cpu,rt,0x10f940fc)?;
-pc=0x10fcf098;continue;
-}
-0x10fcf098=>{
+{
 // 0x10fcf098 bl #0x10fc21d8
 cpu.x[30]=0x10fcf09c;super::chunk12::f_10fc21d8(cpu,rt,0x10fc21d8)?;
-pc=0x10fcf09c;continue;
-}
-0x10fcf09c=>{
+{
 // 0x10fcf09c tbnz w0, #0, #0x10fcf0cc
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10fcf0cc;continue;}pc=0x10fcf0a0;continue;
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10fcf0cc;}break 'b10fcf0a0;
 }
-0x10fcf0a0=>{
+}
+}
+}
 // 0x10fcf0a0 ldrb w8, [x20, #0x1fc]
 {let address=(cpu.x[20]).wrapping_add(0x1fcu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcf0a4 cbnz w8, #0x10fcf0cc
-if (cpu.x[8] as u32 as u64) != 0 {pc=0x10fcf0cc;continue;}pc=0x10fcf0a8;continue;
-}
-0x10fcf0a8=>{
+if (cpu.x[8] as u32 as u64) != 0 {break 'b10fcf0cc;}{
 // 0x10fcf0a8 tbz w27, #0, #0x10fcf0cc
-if ((cpu.x[27] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fcf0cc;continue;}pc=0x10fcf0ac;continue;
-}
-0x10fcf0ac=>{
+if ((cpu.x[27] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fcf0cc;}{
 // 0x10fcf0ac ldr x0, [x20, #8]
 {let address=(cpu.x[20]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fcf0b0 bl #0x10f81b34
 cpu.x[30]=0x10fcf0b4;super::chunk11::f_10f81b34(cpu,rt,0x10f81b34)?;
-pc=0x10fcf0b4;continue;
-}
-0x10fcf0b4=>{
+{
 // 0x10fcf0b4 ldr d8, [x0]
 {let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.q[8]=(v0) as u128 & 0xffffffffffffffffu128;}
 // 0x10fcf0b8 mov w1, #0x100
@@ -13851,13 +19324,25 @@ cpu.x[27]=(((cpu.x[0]))) as u64;
 {let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=cpu.x[19] as u32 as u64;let v1=cpu.x[21] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
 // 0x10fcf0c4 bl #0x11294d74
 cpu.x[30]=0x10fcf0c8;super::chunk2::f_11294d74(cpu,rt,0x11294d74)?;
-pc=0x10fcf0c8;continue;
-}
-0x10fcf0c8=>{
+{
 // 0x10fcf0c8 cbz w0, #0x10fcf418
-if (cpu.x[0] as u32 as u64) == 0 {pc=0x10fcf418;continue;}pc=0x10fcf0cc;continue;
+if (cpu.x[0] as u32 as u64) == 0 {{
+// 0x10fcf418 str d8, [x27]
+{let address=(cpu.x[27]).wrapping_add(0x0u64);let v0=(cpu.q[8] & 0xffffffffffffffffu128) as u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fcf41c ldr w8, [x20, #0x1dc]
+{let address=(cpu.x[20]).wrapping_add(0x1dcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf420 ldur x24, [x29, #-8]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[24]=(v0) as u64;}
+// 0x10fcf424 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf428 b.le #0x10fcf0dc
+if cpu.condition(13){break 'b10fcf0dc;}break 'b10fcf42c;
+}}break 'b10fcf0cc;
 }
-0x10fcf0cc=>{
+}
+}
+}
+}
 // 0x10fcf0cc ldr w8, [x20, #0x1dc]
 {let address=(cpu.x[20]).wrapping_add(0x1dcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcf0d0 ldur x24, [x29, #-8]
@@ -13865,17 +19350,14 @@ if (cpu.x[0] as u32 as u64) == 0 {pc=0x10fcf418;continue;}pc=0x10fcf0cc;continue
 // 0x10fcf0d4 cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fcf0d8 b.gt #0x10fcf42c
-if cpu.condition(12){pc=0x10fcf42c;continue;}pc=0x10fcf0dc;continue;
+if cpu.condition(12){break 'b10fcf42c;}break 'b10fcf0dc;
 }
-0x10fcf0dc=>{
 // 0x10fcf0dc ldr w8, [x20, #0x1f4]
 {let address=(cpu.x[20]).wrapping_add(0x1f4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcf0e0 cmp w8, #1
 {let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fcf0e4 b.ge #0x10fcf42c
-if cpu.condition(10){pc=0x10fcf42c;continue;}pc=0x10fcf0e8;continue;
-}
-0x10fcf0e8=>{
+if cpu.condition(10){break 'b10fcf42c;}{
 // 0x10fcf0e8 mov w19, wzr
 cpu.x[19]=(((0u64))) as u32 as u64;
 // 0x10fcf0ec asr w27, w22, #8
@@ -13883,9 +19365,66 @@ cpu.x[27]=(((((cpu.x[22] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 3
 // 0x10fcf0f0 asr w28, w28, #8
 cpu.x[28]=(((((cpu.x[28] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
 // 0x10fcf0f4 cbz w8, #0x10fcf158
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10fcf158;continue;}pc=0x10fcf0f8;continue;
+if (cpu.x[8] as u32 as u64) == 0 {break 'b10fcf158;}break 'b10fcf0f8;
 }
-0x10fcf0f8=>{
+}
+// 0x10fcf42c mov x0, x24
+cpu.x[0]=(((cpu.x[24]))) as u64;
+// 0x10fcf430 bl #0x10d43a9c
+cpu.x[30]=0x10fcf434;super::chunk11::f_10d43a9c(cpu,rt,0x10d43a9c)?;
+{
+'b10fcf44c: {
+// 0x10fcf434 tbz w0, #0, #0x10fcf44c
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fcf44c;}{
+// 0x10fcf438 ldr x8, [x23]
+{let address=(cpu.x[23]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fcf43c mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf440 ldr x8, [x8, #0x108]
+{let address=(cpu.x[8]).wrapping_add(0x108u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fcf444 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fcf448;super::dispatch(cpu,rt,target)?;}
+// 0x10fcf448 tbz w0, #0, #0x10fcf464
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {{
+// 0x10fcf464 ldr x8, [x23]
+{let address=(cpu.x[23]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fcf468 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf46c ldr x8, [x8, #0x118]
+{let address=(cpu.x[8]).wrapping_add(0x118u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fcf470 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x10fcf474;super::dispatch(cpu,rt,target)?;}
+// 0x10fcf474 eor w19, w0, #1
+{let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a ^ b;cpu.x[19]=(result) as u32 as u64;}
+// 0x10fcf478 ldr w8, [x20, #0x1f4]
+{let address=(cpu.x[20]).wrapping_add(0x1f4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf47c asr w27, w22, #8
+cpu.x[27]=(((((cpu.x[22] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf480 asr w28, w28, #8
+cpu.x[28]=(((((cpu.x[28] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf484 cbnz w8, #0x10fcf0f8
+if (cpu.x[8] as u32 as u64) != 0 {break 'b10fcf0f8;}{
+// 0x10fcf488 b #0x10fcf158
+break 'b10fcf158;
+}
+}}break 'b10fcf44c;
+}
+}
+// 0x10fcf44c mov w19, wzr
+cpu.x[19]=(((0u64))) as u32 as u64;
+// 0x10fcf450 ldr w8, [x20, #0x1f4]
+{let address=(cpu.x[20]).wrapping_add(0x1f4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf454 asr w27, w22, #8
+cpu.x[27]=(((((cpu.x[22] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf458 asr w28, w28, #8
+cpu.x[28]=(((((cpu.x[28] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf45c cbnz w8, #0x10fcf0f8
+if (cpu.x[8] as u32 as u64) != 0 {break 'b10fcf0f8;}{
+// 0x10fcf460 b #0x10fcf158
+break 'b10fcf158;
+}
+}
+}
 // 0x10fcf0f8 cmp w8, #0x100
 {let a=((cpu.x[8] as u32 as u64));let b=((0x100u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fcf0fc mov w9, #0x100
@@ -13930,24 +19469,28 @@ cpu.x[9]=(((((cpu.x[9] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31)
 {let address=(cpu.x[20]).wrapping_add(0x20cu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fcf14c bl #0x11294d74
 cpu.x[30]=0x10fcf150;super::chunk2::f_11294d74(cpu,rt,0x11294d74)?;
-pc=0x10fcf150;continue;
-}
-0x10fcf150=>{
+{
 // 0x10fcf150 ldr w27, [x20, #0x208]
 {let address=(cpu.x[20]).wrapping_add(0x208u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[27]=(v0) as u32 as u64;}
 // 0x10fcf154 ldr w28, [x20, #0x20c]
 {let address=(cpu.x[20]).wrapping_add(0x20cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[28]=(v0) as u32 as u64;}
-pc=0x10fcf158;continue;
+break 'b10fcf158;
 }
-0x10fcf158=>{
+}
+'b10fcf258: {
+'b10fcf1e0: {
 // 0x10fcf158 ldr w8, [x20, #0x1dc]
 {let address=(cpu.x[20]).wrapping_add(0x1dcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcf15c cmp w8, #1
 {let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fcf160 b.lt #0x10fcf1d8
-if cpu.condition(11){pc=0x10fcf1d8;continue;}pc=0x10fcf164;continue;
-}
-0x10fcf164=>{
+if cpu.condition(11){{
+// 0x10fcf1d8 mov w21, wzr
+cpu.x[21]=(((0u64))) as u32 as u64;
+// 0x10fcf1dc tbnz wzr, #0, #0x10fcf258
+if ((0u64) & (1u64 << 0)) != 0 {break 'b10fcf258;}break 'b10fcf1e0;
+}}{
+'b10fcf1a8: {
 // 0x10fcf164 ldr w9, [x20, #0x1d4]
 {let address=(cpu.x[20]).wrapping_add(0x1d4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x10fcf168 ldr w10, [x20, #0x1d8]
@@ -13965,33 +19508,29 @@ if cpu.condition(11){pc=0x10fcf1d8;continue;}pc=0x10fcf164;continue;
 // 0x10fcf180 str w8, [x20, #0x20c]
 {let address=(cpu.x[20]).wrapping_add(0x20cu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
 // 0x10fcf184 cbnz w10, #0x10fcf1a8
-if (cpu.x[10] as u32 as u64) != 0 {pc=0x10fcf1a8;continue;}pc=0x10fcf188;continue;
-}
-0x10fcf188=>{
+if (cpu.x[10] as u32 as u64) != 0 {break 'b10fcf1a8;}{
 // 0x10fcf188 add x0, x20, #0x208
 {let a=((cpu.x[20]));let b=((0x208u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
 // 0x10fcf18c bl #0x11294cc4
 cpu.x[30]=0x10fcf190;super::chunk4::f_11294cc4(cpu,rt,0x11294cc4)?;
-pc=0x10fcf190;continue;
-}
-0x10fcf190=>{
+{
 // 0x10fcf190 mov w8, #0x57e5
 cpu.x[8]=(((0x57e5u64))) as u32 as u64;
 // 0x10fcf194 cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fcf198 b.lt #0x10fcf1a8
-if cpu.condition(11){pc=0x10fcf1a8;continue;}pc=0x10fcf19c;continue;
-}
-0x10fcf19c=>{
+if cpu.condition(11){break 'b10fcf1a8;}{
 // 0x10fcf19c add x0, x20, #0x208
 {let a=((cpu.x[20]));let b=((0x208u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
 // 0x10fcf1a0 mov w1, #0x96
 cpu.x[1]=(((0x96u64))) as u32 as u64;
 // 0x10fcf1a4 bl #0x11294d74
 cpu.x[30]=0x10fcf1a8;super::chunk2::f_11294d74(cpu,rt,0x11294d74)?;
-pc=0x10fcf1a8;continue;
+break 'b10fcf1a8;
 }
-0x10fcf1a8=>{
+}
+}
+}
 // 0x10fcf1a8 ldrb w8, [x20, #0x216]
 {let address=(cpu.x[20]).wrapping_add(0x216u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcf1ac ldr w9, [x20, #0x208]
@@ -14013,25 +19552,16 @@ cpu.x[21]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x10fcf1cc strh wzr, [x20, #0x216]
 {let address=(cpu.x[20]).wrapping_add(0x216u64);let v0=0u64;rt.memory.write::<u16>(address.wrapping_add(0),v0 as u16);}
 // 0x10fcf1d0 tbz w21, #0, #0x10fcf1e0
-if ((cpu.x[21] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fcf1e0;continue;}pc=0x10fcf1d4;continue;
-}
-0x10fcf1d4=>{
+if ((cpu.x[21] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fcf1e0;}{
 // 0x10fcf1d4 b #0x10fcf258
-pc=0x10fcf258;continue;
+break 'b10fcf258;
 }
-0x10fcf1d8=>{
-// 0x10fcf1d8 mov w21, wzr
-cpu.x[21]=(((0u64))) as u32 as u64;
-// 0x10fcf1dc tbnz wzr, #0, #0x10fcf258
-if ((0u64) & (1u64 << 0)) != 0 {pc=0x10fcf258;continue;}pc=0x10fcf1e0;continue;
 }
-0x10fcf1e0=>{
+}
 // 0x10fcf1e0 eor w8, w19, #1
 {let a=((cpu.x[19] as u32 as u64));let b=((0x1u64));let result=a ^ b;cpu.x[8]=(result) as u32 as u64;}
 // 0x10fcf1e4 tbnz w8, #0, #0x10fcf258
-if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x10fcf258;continue;}pc=0x10fcf1e8;continue;
-}
-0x10fcf1e8=>{
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {break 'b10fcf258;}{
 // 0x10fcf1e8 ldr x8, [x24, #0x10]
 {let address=(cpu.x[24]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fcf1ec mov x0, x23
@@ -14088,13 +19618,12 @@ cpu.x[8]=(((((cpu.x[8]))) as i64).wrapping_shr(((((0x25u64))) & 63) as u32) as u
 cpu.x[30]=0x10fcf254;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
 // 0x10fcf254 eor w21, w0, #1
 {let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a ^ b;cpu.x[21]=(result) as u32 as u64;}
-pc=0x10fcf258;continue;
+break 'b10fcf258;
 }
-0x10fcf258=>{
+}
+'b10fcf2b4: {
 // 0x10fcf258 tbz w19, #0, #0x10fcf2b4
-if ((cpu.x[19] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fcf2b4;continue;}pc=0x10fcf25c;continue;
-}
-0x10fcf25c=>{
+if ((cpu.x[19] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fcf2b4;}{
 // 0x10fcf25c ldr x22, [x24, #0x10]
 {let address=(cpu.x[24]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[22]=(v0) as u64;}
 // 0x10fcf260 mov x0, x23
@@ -14114,11 +19643,9 @@ cpu.x[0]=(((cpu.x[22]))) as u64;
 // 0x10fcf27c mov w1, w19
 cpu.x[1]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
 // 0x10fcf280 bl #0x111d9838
-cpu.x[30]=0x10fcf284;super::dispatch(cpu,rt,0x111d9838)?;
+cpu.x[30]=0x10fcf284;super::chunk13::f_111d9838(cpu,rt,0x111d9838)?;
 // 0x10fcf284 tbz w0, #0, #0x10fcf2b4
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fcf2b4;continue;}pc=0x10fcf288;continue;
-}
-0x10fcf288=>{
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {break 'b10fcf2b4;}{
 // 0x10fcf288 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fcf28c bl #0x10f942a0
@@ -14141,18 +19668,17 @@ cpu.x[8]=(((0xffffffffffffff00u64))) as u32 as u64;
 cpu.x[8]=(if cpu.condition(10){0u64.wrapping_sub(((cpu.x[8] as u32 as u64)))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
 // 0x10fcf2b0 add w28, w8, w28
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[28] as u32 as u64));let result=a.wrapping_add(b);cpu.x[28]=(result) as u32 as u64;}
-pc=0x10fcf2b4;continue;
+break 'b10fcf2b4;
 }
-0x10fcf2b4=>{
+}
+}
 // 0x10fcf2b4 ldr x19, [x24, #0x10]
 {let address=(cpu.x[24]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
 // 0x10fcf2b8 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fcf2bc bl #0x10f942c0
 cpu.x[30]=0x10fcf2c0;super::chunk2::f_10f942c0(cpu,rt,0x10f942c0)?;
-pc=0x10fcf2c0;continue;
-}
-0x10fcf2c0=>{
+{
 // 0x10fcf2c0 mov x1, x0
 cpu.x[1]=(((cpu.x[0]))) as u64;
 // 0x10fcf2c4 and w5, w21, #1
@@ -14167,16 +19693,12 @@ cpu.x[3]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
 cpu.x[4]=(((cpu.x[23]))) as u64;
 // 0x10fcf2d8 bl #0x111d988c
 cpu.x[30]=0x10fcf2dc;super::chunk1::f_111d988c(cpu,rt,0x111d988c)?;
-pc=0x10fcf2dc;continue;
-}
-0x10fcf2dc=>{
+{
 // 0x10fcf2dc mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fcf2e0 bl #0x10f94298
 cpu.x[30]=0x10fcf2e4;super::chunk2::f_10f94298(cpu,rt,0x10f94298)?;
-pc=0x10fcf2e4;continue;
-}
-0x10fcf2e4=>{
+{
 // 0x10fcf2e4 ldr w8, [sp, #0x18]
 {let address=(cpu.sp).wrapping_add(0x18u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcf2e8 sub w19, w8, w0
@@ -14185,9 +19707,7 @@ pc=0x10fcf2e4;continue;
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fcf2f0 bl #0x10f942a0
 cpu.x[30]=0x10fcf2f4;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
-pc=0x10fcf2f4;continue;
-}
-0x10fcf2f4=>{
+{
 // 0x10fcf2f4 ldp w8, w9, [x20, #0x30]
 {let address=(cpu.x[20]).wrapping_add(0x30u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[8]=(v0) as u32 as u64;cpu.x[9]=(v1) as u32 as u64;}
 // 0x10fcf2f8 ldur w10, [x29, #-0x14]
@@ -14218,40 +19738,62 @@ cpu.x[9]=(((((cpu.x[9] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31)
 {let a=((cpu.x[9] as u32 as u64));let b=(((cpu.x[8] as u32 as u64)) as i32).wrapping_shr(8) as u64;let result=a.wrapping_add(b);cpu.x[19]=(result) as u32 as u64;}
 // 0x10fcf32c bl #0x10fd04a8
 cpu.x[30]=0x10fcf330;super::chunk2::f_10fd04a8(cpu,rt,0x10fd04a8)?;
-pc=0x10fcf330;continue;
-}
-0x10fcf330=>{
+{
 // 0x10fcf330 bl #0x10e0b6b4
 cpu.x[30]=0x10fcf334;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
-pc=0x10fcf334;continue;
-}
-0x10fcf334=>{
+{
 // 0x10fcf334 ldr x0, [x0, #0x78]
 {let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fcf338 bl #0x10e16208
 cpu.x[30]=0x10fcf33c;super::chunk7::f_10e16208(cpu,rt,0x10e16208)?;
-pc=0x10fcf33c;continue;
-}
-0x10fcf33c=>{
+{
+'b10fcf374: {
+'b10fcf3e8: {
+'b10fcf3cc: {
 // 0x10fcf33c ldrb w8, [x0, #0x3bd]
 {let address=(cpu.x[0]).wrapping_add(0x3bdu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x10fcf340 cbz w8, #0x10fcf3cc
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x10fcf3cc;continue;}pc=0x10fcf344;continue;
-}
-0x10fcf344=>{
+if (cpu.x[8] as u32 as u64) == 0 {break 'b10fcf3cc;}{
 // 0x10fcf344 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fcf348 bl #0x10f817a8
 cpu.x[30]=0x10fcf34c;super::chunk8::f_10f817a8(cpu,rt,0x10f817a8)?;
-pc=0x10fcf34c;continue;
-}
-0x10fcf34c=>{
+{
 // 0x10fcf34c cmp w0, #6
 {let a=((cpu.x[0] as u32 as u64));let b=((0x6u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fcf350 b.ne #0x10fcf398
-if cpu.condition(1){pc=0x10fcf398;continue;}pc=0x10fcf354;continue;
+if cpu.condition(1){{
+// 0x10fcf398 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf39c bl #0x10f817a8
+cpu.x[30]=0x10fcf3a0;super::chunk8::f_10f817a8(cpu,rt,0x10f817a8)?;
+{
+// 0x10fcf3a0 cmp w0, #7
+{let a=((cpu.x[0] as u32 as u64));let b=((0x7u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf3a4 b.ne #0x10fcf3cc
+if cpu.condition(1){break 'b10fcf3cc;}{
+// 0x10fcf3a8 ldr x0, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fcf3ac bl #0x10de07ac
+cpu.x[30]=0x10fcf3b0;super::dispatch(cpu,rt,0x10de07ac)?;
+// 0x10fcf3b0 ldr w8, [x20, #0x1e0]
+{let address=(cpu.x[20]).wrapping_add(0x1e0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf3b4 cmp w19, w0
+{let a=((cpu.x[19] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf3b8 cset w9, le
+cpu.x[9]=((cpu.condition(13)) as u64) as u32 as u64;
+// 0x10fcf3bc cmn w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.flags(a,b,result,32,false);}
+// 0x10fcf3c0 strb w9, [x20, #0x1ff]
+{let address=(cpu.x[20]).wrapping_add(0x1ffu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
+// 0x10fcf3c4 b.ne #0x10fcf3e8
+if cpu.condition(1){break 'b10fcf3e8;}{
+// 0x10fcf3c8 b #0x10fcf374
+break 'b10fcf374;
 }
-0x10fcf354=>{
+}
+}
+}}{
 // 0x10fcf354 ldr x0, [sp, #0x10]
 {let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fcf358 bl #0x10de06b0
@@ -14267,9 +19809,53 @@ cpu.x[9]=((cpu.condition(13)) as u64) as u32 as u64;
 // 0x10fcf36c strb w9, [x20, #0x1ff]
 {let address=(cpu.x[20]).wrapping_add(0x1ffu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
 // 0x10fcf370 b.ne #0x10fcf3e8
-if cpu.condition(1){pc=0x10fcf3e8;continue;}pc=0x10fcf374;continue;
+if cpu.condition(1){break 'b10fcf3e8;}break 'b10fcf374;
 }
-0x10fcf374=>{
+}
+}
+}
+// 0x10fcf3cc mov w0, #0x3e8
+cpu.x[0]=(((0x3e8u64))) as u32 as u64;
+// 0x10fcf3d0 ldr w8, [x20, #0x1e0]
+{let address=(cpu.x[20]).wrapping_add(0x1e0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf3d4 cmp w19, w0
+{let a=((cpu.x[19] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf3d8 cset w9, le
+cpu.x[9]=((cpu.condition(13)) as u64) as u32 as u64;
+// 0x10fcf3dc cmn w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.flags(a,b,result,32,false);}
+// 0x10fcf3e0 strb w9, [x20, #0x1ff]
+{let address=(cpu.x[20]).wrapping_add(0x1ffu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
+// 0x10fcf3e4 b.eq #0x10fcf374
+if cpu.condition(0){break 'b10fcf374;}break 'b10fcf3e8;
+}
+// 0x10fcf3e8 and w2, w25, #1
+{let a=((cpu.x[25] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
+// 0x10fcf3ec mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10fcf3f0 mov w1, w26
+cpu.x[1]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
+// 0x10fcf3f4 ldp x20, x19, [sp, #0x80]
+{let address=(cpu.sp).wrapping_add(0x80u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10fcf3f8 ldr d8, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.q[8]=(v0) as u128 & 0xffffffffffffffffu128;}
+// 0x10fcf3fc ldp x22, x21, [sp, #0x70]
+{let address=(cpu.sp).wrapping_add(0x70u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+{
+// 0x10fcf400 ldp x24, x23, [sp, #0x60]
+{let address=(cpu.sp).wrapping_add(0x60u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[24]=(v0) as u64;cpu.x[23]=(v1) as u64;}
+// 0x10fcf404 ldp x26, x25, [sp, #0x50]
+{let address=(cpu.sp).wrapping_add(0x50u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[26]=(v0) as u64;cpu.x[25]=(v1) as u64;}
+// 0x10fcf408 ldp x28, x27, [sp, #0x40]
+{let address=(cpu.sp).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[28]=(v0) as u64;cpu.x[27]=(v1) as u64;}
+// 0x10fcf40c ldp x29, x30, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;}
+// 0x10fcf410 add sp, sp, #0x90
+{let a=((cpu.sp));let b=((0x90u64));let result=a.wrapping_add(b);cpu.sp=(result) as u64;}
+// 0x10fcf414 b #0x10fcf8d4
+super::chunk3::f_10fcf8d4(cpu,rt,0x10fcf8d4)?;return Ok(());
+}
+}
 // 0x10fcf374 ldp x20, x19, [sp, #0x80]
 {let address=(cpu.sp).wrapping_add(0x80u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
 // 0x10fcf378 ldr d8, [sp, #0x20]
@@ -14289,20 +19875,722 @@ if cpu.condition(1){pc=0x10fcf3e8;continue;}pc=0x10fcf374;continue;
 // 0x10fcf394 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x10fcf398=>{
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10fcef48_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10fcef48{0}else{match pc{0x10fcef48=>0,0x10fcef90=>1,0x10fcef9c=>2,0x10fcefa8=>3,0x10fcefb4=>4,0x10fcefd8=>5,0x10fcefe4=>6,0x10fcf000=>7,0x10fcf008=>8,0x10fcf010=>9,0x10fcf01c=>10,0x10fcf024=>11,0x10fcf02c=>12,0x10fcf040=>13,0x10fcf05c=>14,0x10fcf08c=>15,0x10fcf090=>16,0x10fcf098=>17,0x10fcf09c=>18,0x10fcf0a0=>19,0x10fcf0a8=>20,0x10fcf0ac=>21,0x10fcf0b4=>22,0x10fcf0c8=>23,0x10fcf0cc=>24,0x10fcf0dc=>25,0x10fcf0e8=>26,0x10fcf0f8=>27,0x10fcf150=>28,0x10fcf158=>29,0x10fcf164=>30,0x10fcf188=>31,0x10fcf190=>32,0x10fcf19c=>33,0x10fcf1a8=>34,0x10fcf1d4=>35,0x10fcf1d8=>36,0x10fcf1e0=>37,0x10fcf1e8=>38,0x10fcf258=>39,0x10fcf25c=>40,0x10fcf288=>41,0x10fcf2b4=>42,0x10fcf2c0=>43,0x10fcf2dc=>44,0x10fcf2e4=>45,0x10fcf2f4=>46,0x10fcf330=>47,0x10fcf334=>48,0x10fcf33c=>49,0x10fcf344=>50,0x10fcf34c=>51,0x10fcf354=>52,0x10fcf374=>53,0x10fcf398=>54,0x10fcf3a0=>55,0x10fcf3a8=>56,0x10fcf3c8=>57,0x10fcf3cc=>58,0x10fcf3e8=>59,0x10fcf400=>60,0x10fcf418=>61,0x10fcf42c=>62,0x10fcf434=>63,0x10fcf438=>64,0x10fcf44c=>65,0x10fcf460=>66,0x10fcf464=>67,0x10fcf488=>68,_=>return Err(format!("untranslated block {pc:#x} in 0x10fcef48").into()),}};loop{match block{
+0=>{
+// 0x10fcef48 sub sp, sp, #0x90
+{let a=((cpu.sp));let b=((0x90u64));let result=a.wrapping_sub(b);cpu.sp=(result) as u64;}
+// 0x10fcef4c str d8, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=(cpu.q[8] & 0xffffffffffffffffu128) as u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fcef50 stp x29, x30, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcef54 stp x28, x27, [sp, #0x40]
+{let address=(cpu.sp).wrapping_add(0x40u64);let v0=cpu.x[28];let v1=cpu.x[27];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcef58 stp x26, x25, [sp, #0x50]
+{let address=(cpu.sp).wrapping_add(0x50u64);let v0=cpu.x[26];let v1=cpu.x[25];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcef5c stp x24, x23, [sp, #0x60]
+{let address=(cpu.sp).wrapping_add(0x60u64);let v0=cpu.x[24];let v1=cpu.x[23];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcef60 stp x22, x21, [sp, #0x70]
+{let address=(cpu.sp).wrapping_add(0x70u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcef64 stp x20, x19, [sp, #0x80]
+{let address=(cpu.sp).wrapping_add(0x80u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x10fcef68 add x29, sp, #0x30
+{let a=((cpu.sp));let b=((0x30u64));let result=a.wrapping_add(b);cpu.x[29]=(result) as u64;}
+// 0x10fcef6c ldr x23, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x10fcef70 mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x10fcef74 mov w25, w5
+cpu.x[25]=(((cpu.x[5] as u32 as u64))) as u32 as u64;
+// 0x10fcef78 mov w27, w4
+cpu.x[27]=(((cpu.x[4] as u32 as u64))) as u32 as u64;
+// 0x10fcef7c mov w21, w3
+cpu.x[21]=(((cpu.x[3] as u32 as u64))) as u32 as u64;
+// 0x10fcef80 mov w24, w2
+cpu.x[24]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
+// 0x10fcef84 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcef88 mov w19, w1
+cpu.x[19]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
+// 0x10fcef8c bl #0x10f7e050
+cpu.x[30]=0x10fcef90;super::chunk10::f_10f7e050(cpu,rt,0x10f7e050)?;
+block=1;continue;
+}
+1=>{
+// 0x10fcef90 str x0, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fcef94 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcef98 bl #0x10f93d2c
+cpu.x[30]=0x10fcef9c;super::chunk11::f_10f93d2c(cpu,rt,0x10f93d2c)?;
+block=2;continue;
+}
+2=>{
+// 0x10fcef9c stur x0, [x29, #-8]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fcefa0 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcefa4 bl #0x10f942c0
+cpu.x[30]=0x10fcefa8;super::chunk2::f_10f942c0(cpu,rt,0x10f942c0)?;
+block=3;continue;
+}
+3=>{
+// 0x10fcefa8 mov w1, w19
+cpu.x[1]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10fcefac mov w2, w24
+cpu.x[2]=(((cpu.x[24] as u32 as u64))) as u32 as u64;
+// 0x10fcefb0 bl #0x11294ed8
+cpu.x[30]=0x10fcefb4;super::chunk15::f_11294ed8(cpu,rt,0x11294ed8)?;
+block=4;continue;
+}
+4=>{
+// 0x10fcefb4 cmp w0, #1
+{let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcefb8 mov w8, #0xfa
+cpu.x[8]=(((0xfau64))) as u32 as u64;
+// 0x10fcefbc csinc w22, w0, wzr, hi
+cpu.x[22]=(if cpu.condition(8){((cpu.x[0] as u32 as u64))}else{(((0u64))).wrapping_add(1)}) as u32 as u64;
+// 0x10fcefc0 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcefc4 cmp w21, w22
+{let a=((cpu.x[21] as u32 as u64));let b=((cpu.x[22] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcefc8 csel w9, w21, w22, lt
+cpu.x[9]=(if cpu.condition(11){((cpu.x[21] as u32 as u64))}else{((cpu.x[22] as u32 as u64))}) as u32 as u64;
+// 0x10fcefcc cmp w9, #0xfa
+{let a=((cpu.x[9] as u32 as u64));let b=((0xfau64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcefd0 csel w26, w9, w8, lt
+cpu.x[26]=(if cpu.condition(11){((cpu.x[9] as u32 as u64))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x10fcefd4 bl #0x10f94298
+cpu.x[30]=0x10fcefd8;super::chunk2::f_10f94298(cpu,rt,0x10f94298)?;
+block=5;continue;
+}
+5=>{
+// 0x10fcefd8 mov w28, w0
+cpu.x[28]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fcefdc mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcefe0 bl #0x10f942a0
+cpu.x[30]=0x10fcefe4;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
+block=6;continue;
+}
+6=>{
+// 0x10fcefe4 str w19, [sp, #0x18]
+{let address=(cpu.sp).wrapping_add(0x18u64);let v0=cpu.x[19] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fcefe8 sub w19, w19, w28
+{let a=((cpu.x[19] as u32 as u64));let b=((cpu.x[28] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[19]=(result) as u32 as u64;}
+// 0x10fcefec sub w21, w24, w0
+{let a=((cpu.x[24] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[21]=(result) as u32 as u64;}
+// 0x10fceff0 lsl w28, w19, #8
+cpu.x[28]=(((((cpu.x[19] as u32 as u64))) as u32).wrapping_shl(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fceff4 stur w24, [x29, #-0x14]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffecu64);let v0=cpu.x[24] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fceff8 orr w8, w28, w19
+{let a=((cpu.x[28] as u32 as u64));let b=((cpu.x[19] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fceffc tbz w8, #0x1f, #0x10fcf010
+if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) == 0 {block=9;continue;}block=7;continue;
+}
+7=>{
+// 0x10fcf000 cmp w19, #0
+{let a=((cpu.x[19] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf004 b.gt #0x10fcf040
+if cpu.condition(12){block=13;continue;}block=8;continue;
+}
+8=>{
+// 0x10fcf008 cmp w28, #1
+{let a=((cpu.x[28] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf00c b.ge #0x10fcf040
+if cpu.condition(10){block=13;continue;}block=9;continue;
+}
+9=>{
+// 0x10fcf010 lsl w24, w21, #8
+cpu.x[24]=(((((cpu.x[21] as u32 as u64))) as u32).wrapping_shl(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf014 orr w8, w24, w21
+{let a=((cpu.x[24] as u32 as u64));let b=((cpu.x[21] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fcf018 tbz w8, #0x1f, #0x10fcf05c
+if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) == 0 {block=14;continue;}block=10;continue;
+}
+10=>{
+// 0x10fcf01c cmp w21, #0
+{let a=((cpu.x[21] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf020 b.gt #0x10fcf02c
+if cpu.condition(12){block=12;continue;}block=11;continue;
+}
+11=>{
+// 0x10fcf024 cmp w24, #1
+{let a=((cpu.x[24] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf028 b.lt #0x10fcf05c
+if cpu.condition(11){block=14;continue;}block=12;continue;
+}
+12=>{
+// 0x10fcf02c adrp x0, #0x102d1000
+cpu.x[0]=(0x102d1000u64) as u64;
+// 0x10fcf030 add x0, x0, #0xfd6
+{let a=((cpu.x[0]));let b=((0xfd6u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10fcf034 mov w1, #1
+cpu.x[1]=(((0x1u64))) as u32 as u64;
+// 0x10fcf038 bl #0x1128df18
+cpu.x[30]=0x10fcf03c;super::dispatch(cpu,rt,0x1128df18)?;
+// 0x10fcf03c b #0x10fcf05c
+block=14;continue;
+}
+13=>{
+// 0x10fcf040 adrp x0, #0x102d1000
+cpu.x[0]=(0x102d1000u64) as u64;
+// 0x10fcf044 add x0, x0, #0xfd6
+{let a=((cpu.x[0]));let b=((0xfd6u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10fcf048 mov w1, #1
+cpu.x[1]=(((0x1u64))) as u32 as u64;
+// 0x10fcf04c bl #0x1128df18
+cpu.x[30]=0x10fcf050;super::dispatch(cpu,rt,0x1128df18)?;
+// 0x10fcf050 lsl w24, w21, #8
+cpu.x[24]=(((((cpu.x[21] as u32 as u64))) as u32).wrapping_shl(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf054 orr w8, w24, w21
+{let a=((cpu.x[24] as u32 as u64));let b=((cpu.x[21] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fcf058 tbnz w8, #0x1f, #0x10fcf01c
+if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) != 0 {block=10;continue;}block=14;continue;
+}
+14=>{
+// 0x10fcf05c sdiv w8, w28, w22
+{let a=((cpu.x[28] as u32 as u64)) as i32;let b=((cpu.x[22] as u32 as u64)) as i32;cpu.x[8]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u32 as u64;}
+// 0x10fcf060 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf064 sdiv w9, w24, w22
+{let a=((cpu.x[24] as u32 as u64)) as i32;let b=((cpu.x[22] as u32 as u64)) as i32;cpu.x[9]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u32 as u64;}
+// 0x10fcf068 mul w8, w8, w26
+cpu.x[8]=((((cpu.x[8] as u32 as u64))).wrapping_mul(((cpu.x[26] as u32 as u64)))) as u32 as u64;
+// 0x10fcf06c add w10, w8, #0xff
+{let a=((cpu.x[8] as u32 as u64));let b=((0xffu64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x10fcf070 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf074 csel w22, w10, w8, lt
+cpu.x[22]=(if cpu.condition(11){((cpu.x[10] as u32 as u64))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x10fcf078 mul w9, w9, w26
+cpu.x[9]=((((cpu.x[9] as u32 as u64))).wrapping_mul(((cpu.x[26] as u32 as u64)))) as u32 as u64;
+// 0x10fcf07c add w8, w9, #0xff
+{let a=((cpu.x[9] as u32 as u64));let b=((0xffu64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10fcf080 cmp w9, #0
+{let a=((cpu.x[9] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf084 csel w28, w8, w9, lt
+cpu.x[28]=(if cpu.condition(11){((cpu.x[8] as u32 as u64))}else{((cpu.x[9] as u32 as u64))}) as u32 as u64;
+// 0x10fcf088 bl #0x10f940fc
+cpu.x[30]=0x10fcf08c;super::chunk9::f_10f940fc(cpu,rt,0x10f940fc)?;
+block=15;continue;
+}
+15=>{
+// 0x10fcf08c cbz x0, #0x10fcf0a0
+if (cpu.x[0]) == 0 {block=19;continue;}block=16;continue;
+}
+16=>{
+// 0x10fcf090 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf094 bl #0x10f940fc
+cpu.x[30]=0x10fcf098;super::chunk9::f_10f940fc(cpu,rt,0x10f940fc)?;
+block=17;continue;
+}
+17=>{
+// 0x10fcf098 bl #0x10fc21d8
+cpu.x[30]=0x10fcf09c;super::chunk12::f_10fc21d8(cpu,rt,0x10fc21d8)?;
+block=18;continue;
+}
+18=>{
+// 0x10fcf09c tbnz w0, #0, #0x10fcf0cc
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) != 0 {block=24;continue;}block=19;continue;
+}
+19=>{
+// 0x10fcf0a0 ldrb w8, [x20, #0x1fc]
+{let address=(cpu.x[20]).wrapping_add(0x1fcu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf0a4 cbnz w8, #0x10fcf0cc
+if (cpu.x[8] as u32 as u64) != 0 {block=24;continue;}block=20;continue;
+}
+20=>{
+// 0x10fcf0a8 tbz w27, #0, #0x10fcf0cc
+if ((cpu.x[27] as u32 as u64) & (1u64 << 0)) == 0 {block=24;continue;}block=21;continue;
+}
+21=>{
+// 0x10fcf0ac ldr x0, [x20, #8]
+{let address=(cpu.x[20]).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fcf0b0 bl #0x10f81b34
+cpu.x[30]=0x10fcf0b4;super::chunk11::f_10f81b34(cpu,rt,0x10f81b34)?;
+block=22;continue;
+}
+22=>{
+// 0x10fcf0b4 ldr d8, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.q[8]=(v0) as u128 & 0xffffffffffffffffu128;}
+// 0x10fcf0b8 mov w1, #0x100
+cpu.x[1]=(((0x100u64))) as u32 as u64;
+// 0x10fcf0bc mov x27, x0
+cpu.x[27]=(((cpu.x[0]))) as u64;
+// 0x10fcf0c0 stp w19, w21, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=cpu.x[19] as u32 as u64;let v1=cpu.x[21] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
+// 0x10fcf0c4 bl #0x11294d74
+cpu.x[30]=0x10fcf0c8;super::chunk2::f_11294d74(cpu,rt,0x11294d74)?;
+block=23;continue;
+}
+23=>{
+// 0x10fcf0c8 cbz w0, #0x10fcf418
+if (cpu.x[0] as u32 as u64) == 0 {block=61;continue;}block=24;continue;
+}
+24=>{
+// 0x10fcf0cc ldr w8, [x20, #0x1dc]
+{let address=(cpu.x[20]).wrapping_add(0x1dcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf0d0 ldur x24, [x29, #-8]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[24]=(v0) as u64;}
+// 0x10fcf0d4 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf0d8 b.gt #0x10fcf42c
+if cpu.condition(12){block=62;continue;}block=25;continue;
+}
+25=>{
+// 0x10fcf0dc ldr w8, [x20, #0x1f4]
+{let address=(cpu.x[20]).wrapping_add(0x1f4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf0e0 cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf0e4 b.ge #0x10fcf42c
+if cpu.condition(10){block=62;continue;}block=26;continue;
+}
+26=>{
+// 0x10fcf0e8 mov w19, wzr
+cpu.x[19]=(((0u64))) as u32 as u64;
+// 0x10fcf0ec asr w27, w22, #8
+cpu.x[27]=(((((cpu.x[22] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf0f0 asr w28, w28, #8
+cpu.x[28]=(((((cpu.x[28] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf0f4 cbz w8, #0x10fcf158
+if (cpu.x[8] as u32 as u64) == 0 {block=29;continue;}block=27;continue;
+}
+27=>{
+// 0x10fcf0f8 cmp w8, #0x100
+{let a=((cpu.x[8] as u32 as u64));let b=((0x100u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf0fc mov w9, #0x100
+cpu.x[9]=(((0x100u64))) as u32 as u64;
+// 0x10fcf100 mov w10, #-0x100
+cpu.x[10]=(((0xffffffffffffff00u64))) as u32 as u64;
+// 0x10fcf104 csel w8, w8, w9, lt
+cpu.x[8]=(if cpu.condition(11){((cpu.x[8] as u32 as u64))}else{((cpu.x[9] as u32 as u64))}) as u32 as u64;
+// 0x10fcf108 add x0, x20, #0x208
+{let a=((cpu.x[20]));let b=((0x208u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10fcf10c mov w1, w26
+cpu.x[1]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
+// 0x10fcf110 cmn w8, #0x100
+{let a=((cpu.x[8] as u32 as u64));let b=((0x100u64));let result=a.wrapping_add(b);cpu.flags(a,b,result,32,false);}
+// 0x10fcf114 csel w8, w8, w10, gt
+cpu.x[8]=(if cpu.condition(12){((cpu.x[8] as u32 as u64))}else{((cpu.x[10] as u32 as u64))}) as u32 as u64;
+// 0x10fcf118 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf11c mul w11, w8, w28
+cpu.x[11]=((((cpu.x[8] as u32 as u64))).wrapping_mul(((cpu.x[28] as u32 as u64)))) as u32 as u64;
+// 0x10fcf120 cneg w10, w8, mi
+cpu.x[10]=(if cpu.condition(4){0u64.wrapping_sub(((cpu.x[8] as u32 as u64)))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x10fcf124 mneg w8, w27, w8
+cpu.x[8]=(0u64.wrapping_sub((((cpu.x[27] as u32 as u64))).wrapping_mul(((cpu.x[8] as u32 as u64))))) as u32 as u64;
+// 0x10fcf128 sub w9, w9, w10
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x10fcf12c mul w10, w9, w27
+cpu.x[10]=((((cpu.x[9] as u32 as u64))).wrapping_mul(((cpu.x[27] as u32 as u64)))) as u32 as u64;
+// 0x10fcf130 mul w9, w9, w28
+cpu.x[9]=((((cpu.x[9] as u32 as u64))).wrapping_mul(((cpu.x[28] as u32 as u64)))) as u32 as u64;
+// 0x10fcf134 asr w10, w10, #8
+cpu.x[10]=(((((cpu.x[10] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf138 asr w9, w9, #8
+cpu.x[9]=(((((cpu.x[9] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf13c add w10, w10, w11, asr #8
+{let a=((cpu.x[10] as u32 as u64));let b=(((cpu.x[11] as u32 as u64)) as i32).wrapping_shr(8) as u64;let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x10fcf140 add w8, w9, w8, asr #8
+{let a=((cpu.x[9] as u32 as u64));let b=(((cpu.x[8] as u32 as u64)) as i32).wrapping_shr(8) as u64;let result=a.wrapping_add(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x10fcf144 str w10, [x20, #0x208]
+{let address=(cpu.x[20]).wrapping_add(0x208u64);let v0=cpu.x[10] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fcf148 str w8, [x20, #0x20c]
+{let address=(cpu.x[20]).wrapping_add(0x20cu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fcf14c bl #0x11294d74
+cpu.x[30]=0x10fcf150;super::chunk2::f_11294d74(cpu,rt,0x11294d74)?;
+block=28;continue;
+}
+28=>{
+// 0x10fcf150 ldr w27, [x20, #0x208]
+{let address=(cpu.x[20]).wrapping_add(0x208u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[27]=(v0) as u32 as u64;}
+// 0x10fcf154 ldr w28, [x20, #0x20c]
+{let address=(cpu.x[20]).wrapping_add(0x20cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[28]=(v0) as u32 as u64;}
+block=29;continue;
+}
+29=>{
+// 0x10fcf158 ldr w8, [x20, #0x1dc]
+{let address=(cpu.x[20]).wrapping_add(0x1dcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf15c cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf160 b.lt #0x10fcf1d8
+if cpu.condition(11){block=36;continue;}block=30;continue;
+}
+30=>{
+// 0x10fcf164 ldr w9, [x20, #0x1d4]
+{let address=(cpu.x[20]).wrapping_add(0x1d4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fcf168 ldr w10, [x20, #0x1d8]
+{let address=(cpu.x[20]).wrapping_add(0x1d8u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10fcf16c add x21, x20, #0x1d4
+{let a=((cpu.x[20]));let b=((0x1d4u64));let result=a.wrapping_add(b);cpu.x[21]=(result) as u64;}
+// 0x10fcf170 sdiv w9, w9, w8
+{let a=((cpu.x[9] as u32 as u64)) as i32;let b=((cpu.x[8] as u32 as u64)) as i32;cpu.x[9]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u32 as u64;}
+// 0x10fcf174 sdiv w8, w10, w8
+{let a=((cpu.x[10] as u32 as u64)) as i32;let b=((cpu.x[8] as u32 as u64)) as i32;cpu.x[8]=(if b==0{0}else{a.wrapping_div(b) as u64}) as u32 as u64;}
+// 0x10fcf178 ldrb w10, [x20, #0x217]
+{let address=(cpu.x[20]).wrapping_add(0x217u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10fcf17c str w9, [x20, #0x208]
+{let address=(cpu.x[20]).wrapping_add(0x208u64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fcf180 str w8, [x20, #0x20c]
+{let address=(cpu.x[20]).wrapping_add(0x20cu64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fcf184 cbnz w10, #0x10fcf1a8
+if (cpu.x[10] as u32 as u64) != 0 {block=34;continue;}block=31;continue;
+}
+31=>{
+// 0x10fcf188 add x0, x20, #0x208
+{let a=((cpu.x[20]));let b=((0x208u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10fcf18c bl #0x11294cc4
+cpu.x[30]=0x10fcf190;super::chunk4::f_11294cc4(cpu,rt,0x11294cc4)?;
+block=32;continue;
+}
+32=>{
+// 0x10fcf190 mov w8, #0x57e5
+cpu.x[8]=(((0x57e5u64))) as u32 as u64;
+// 0x10fcf194 cmp w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf198 b.lt #0x10fcf1a8
+if cpu.condition(11){block=34;continue;}block=33;continue;
+}
+33=>{
+// 0x10fcf19c add x0, x20, #0x208
+{let a=((cpu.x[20]));let b=((0x208u64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u64;}
+// 0x10fcf1a0 mov w1, #0x96
+cpu.x[1]=(((0x96u64))) as u32 as u64;
+// 0x10fcf1a4 bl #0x11294d74
+cpu.x[30]=0x10fcf1a8;super::chunk2::f_11294d74(cpu,rt,0x11294d74)?;
+block=34;continue;
+}
+34=>{
+// 0x10fcf1a8 ldrb w8, [x20, #0x216]
+{let address=(cpu.x[20]).wrapping_add(0x216u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf1ac ldr w9, [x20, #0x208]
+{let address=(cpu.x[20]).wrapping_add(0x208u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x10fcf1b0 ldr w10, [x20, #0x20c]
+{let address=(cpu.x[20]).wrapping_add(0x20cu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10fcf1b4 str xzr, [x21]
+{let address=(cpu.x[21]).wrapping_add(0x0u64);let v0=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fcf1b8 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf1bc add w27, w9, w27
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[27] as u32 as u64));let result=a.wrapping_add(b);cpu.x[27]=(result) as u32 as u64;}
+// 0x10fcf1c0 add w28, w10, w28
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[28] as u32 as u64));let result=a.wrapping_add(b);cpu.x[28]=(result) as u32 as u64;}
+// 0x10fcf1c4 cset w21, ne
+cpu.x[21]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x10fcf1c8 str wzr, [x20, #0x1dc]
+{let address=(cpu.x[20]).wrapping_add(0x1dcu64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x10fcf1cc strh wzr, [x20, #0x216]
+{let address=(cpu.x[20]).wrapping_add(0x216u64);let v0=0u64;rt.memory.write::<u16>(address.wrapping_add(0),v0 as u16);}
+// 0x10fcf1d0 tbz w21, #0, #0x10fcf1e0
+if ((cpu.x[21] as u32 as u64) & (1u64 << 0)) == 0 {block=37;continue;}block=35;continue;
+}
+35=>{
+// 0x10fcf1d4 b #0x10fcf258
+block=39;continue;
+}
+36=>{
+// 0x10fcf1d8 mov w21, wzr
+cpu.x[21]=(((0u64))) as u32 as u64;
+// 0x10fcf1dc tbnz wzr, #0, #0x10fcf258
+if ((0u64) & (1u64 << 0)) != 0 {block=39;continue;}block=37;continue;
+}
+37=>{
+// 0x10fcf1e0 eor w8, w19, #1
+{let a=((cpu.x[19] as u32 as u64));let b=((0x1u64));let result=a ^ b;cpu.x[8]=(result) as u32 as u64;}
+// 0x10fcf1e4 tbnz w8, #0, #0x10fcf258
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {block=39;continue;}block=38;continue;
+}
+38=>{
+// 0x10fcf1e8 ldr x8, [x24, #0x10]
+{let address=(cpu.x[24]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x10fcf1ec mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf1f0 str x8, [sp, #8]
+{let address=(cpu.sp).wrapping_add(0x8u64);let v0=cpu.x[8];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fcf1f4 bl #0x10f94298
+cpu.x[30]=0x10fcf1f8;super::chunk2::f_10f94298(cpu,rt,0x10f94298)?;
+// 0x10fcf1f8 mov w21, #0x4dd3
+cpu.x[21]=(((0x4dd3u64))) as u32 as u64;
+// 0x10fcf1fc mov w22, w19
+cpu.x[22]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10fcf200 mov w19, w26
+cpu.x[19]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
+// 0x10fcf204 movk w21, #0x1062, lsl #16
+cpu.x[21]=((cpu.x[21] as u32 as u64 & !(0xffff0000u64)) | 0x10620000u64) as u32 as u64;
+// 0x10fcf208 mov w26, w25
+cpu.x[26]=(((cpu.x[25] as u32 as u64))) as u32 as u64;
+// 0x10fcf20c smull x8, w0, w21
+cpu.x[8]=(((((cpu.x[0] as u32 as u64))) as i32 as i64).wrapping_mul((((cpu.x[21] as u32 as u64))) as i32 as i64) as u64) as u64;
+// 0x10fcf210 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf214 lsr x24, x8, #0x3f
+cpu.x[24]=(((((cpu.x[8]))) as u64).wrapping_shr(((((0x3fu64))) & 63) as u32) as u64) as u64;
+// 0x10fcf218 asr x25, x8, #0x25
+cpu.x[25]=(((((cpu.x[8]))) as i64).wrapping_shr(((((0x25u64))) & 63) as u32) as u64) as u64;
+// 0x10fcf21c bl #0x10f942a0
+cpu.x[30]=0x10fcf220;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
+// 0x10fcf220 smull x8, w0, w21
+cpu.x[8]=(((((cpu.x[0] as u32 as u64))) as i32 as i64).wrapping_mul((((cpu.x[21] as u32 as u64))) as i32 as i64) as u64) as u64;
+// 0x10fcf224 ldr x0, [sp, #8]
+{let address=(cpu.sp).wrapping_add(0x8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fcf228 add w1, w25, w24
+{let a=((cpu.x[25] as u32 as u64));let b=((cpu.x[24] as u32 as u64));let result=a.wrapping_add(b);cpu.x[1]=(result) as u32 as u64;}
+// 0x10fcf22c ldur x24, [x29, #-8]
+{let address=(cpu.x[29]).wrapping_add(0xfffffffffffffff8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[24]=(v0) as u64;}
+// 0x10fcf230 mov w3, #1
+cpu.x[3]=(((0x1u64))) as u32 as u64;
+// 0x10fcf234 mov x4, xzr
+cpu.x[4]=(((0u64))) as u64;
+// 0x10fcf238 mov w25, w26
+cpu.x[25]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
+// 0x10fcf23c mov w26, w19
+cpu.x[26]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10fcf240 mov w19, w22
+cpu.x[19]=(((cpu.x[22] as u32 as u64))) as u32 as u64;
+// 0x10fcf244 lsr x9, x8, #0x3f
+cpu.x[9]=(((((cpu.x[8]))) as u64).wrapping_shr(((((0x3fu64))) & 63) as u32) as u64) as u64;
+// 0x10fcf248 asr x8, x8, #0x25
+cpu.x[8]=(((((cpu.x[8]))) as i64).wrapping_shr(((((0x25u64))) & 63) as u32) as u64) as u64;
+// 0x10fcf24c add w2, w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_add(b);cpu.x[2]=(result) as u32 as u64;}
+// 0x10fcf250 bl #0x111d9240
+cpu.x[30]=0x10fcf254;super::chunk1::f_111d9240(cpu,rt,0x111d9240)?;
+// 0x10fcf254 eor w21, w0, #1
+{let a=((cpu.x[0] as u32 as u64));let b=((0x1u64));let result=a ^ b;cpu.x[21]=(result) as u32 as u64;}
+block=39;continue;
+}
+39=>{
+// 0x10fcf258 tbz w19, #0, #0x10fcf2b4
+if ((cpu.x[19] as u32 as u64) & (1u64 << 0)) == 0 {block=42;continue;}block=40;continue;
+}
+40=>{
+// 0x10fcf25c ldr x22, [x24, #0x10]
+{let address=(cpu.x[24]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[22]=(v0) as u64;}
+// 0x10fcf260 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf264 bl #0x10f94298
+cpu.x[30]=0x10fcf268;super::chunk2::f_10f94298(cpu,rt,0x10f94298)?;
+// 0x10fcf268 mov w19, w0
+cpu.x[19]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fcf26c mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf270 bl #0x10f942a0
+cpu.x[30]=0x10fcf274;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
+// 0x10fcf274 mov w2, w0
+cpu.x[2]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fcf278 mov x0, x22
+cpu.x[0]=(((cpu.x[22]))) as u64;
+// 0x10fcf27c mov w1, w19
+cpu.x[1]=(((cpu.x[19] as u32 as u64))) as u32 as u64;
+// 0x10fcf280 bl #0x111d9838
+cpu.x[30]=0x10fcf284;super::chunk13::f_111d9838(cpu,rt,0x111d9838)?;
+// 0x10fcf284 tbz w0, #0, #0x10fcf2b4
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=42;continue;}block=41;continue;
+}
+41=>{
+// 0x10fcf288 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf28c bl #0x10f942a0
+cpu.x[30]=0x10fcf290;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
+// 0x10fcf290 mov w19, w0
+cpu.x[19]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x10fcf294 mov x0, x24
+cpu.x[0]=(((cpu.x[24]))) as u64;
+// 0x10fcf298 bl #0x10d358a8
+cpu.x[30]=0x10fcf29c;super::chunk13::f_10d358a8(cpu,rt,0x10d358a8)?;
+// 0x10fcf29c mov w8, #0xfa
+cpu.x[8]=(((0xfau64))) as u32 as u64;
+// 0x10fcf2a0 mul w8, w0, w8
+cpu.x[8]=((((cpu.x[0] as u32 as u64))).wrapping_mul(((cpu.x[8] as u32 as u64)))) as u32 as u64;
+// 0x10fcf2a4 cmp w19, w8
+{let a=((cpu.x[19] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf2a8 mov w8, #-0x100
+cpu.x[8]=(((0xffffffffffffff00u64))) as u32 as u64;
+// 0x10fcf2ac cneg w8, w8, ge
+cpu.x[8]=(if cpu.condition(10){0u64.wrapping_sub(((cpu.x[8] as u32 as u64)))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x10fcf2b0 add w28, w8, w28
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[28] as u32 as u64));let result=a.wrapping_add(b);cpu.x[28]=(result) as u32 as u64;}
+block=42;continue;
+}
+42=>{
+// 0x10fcf2b4 ldr x19, [x24, #0x10]
+{let address=(cpu.x[24]).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[19]=(v0) as u64;}
+// 0x10fcf2b8 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf2bc bl #0x10f942c0
+cpu.x[30]=0x10fcf2c0;super::chunk2::f_10f942c0(cpu,rt,0x10f942c0)?;
+block=43;continue;
+}
+43=>{
+// 0x10fcf2c0 mov x1, x0
+cpu.x[1]=(((cpu.x[0]))) as u64;
+// 0x10fcf2c4 and w5, w21, #1
+{let a=((cpu.x[21] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[5]=(result) as u32 as u64;}
+// 0x10fcf2c8 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x10fcf2cc mov w2, w27
+cpu.x[2]=(((cpu.x[27] as u32 as u64))) as u32 as u64;
+// 0x10fcf2d0 mov w3, w28
+cpu.x[3]=(((cpu.x[28] as u32 as u64))) as u32 as u64;
+// 0x10fcf2d4 mov x4, x23
+cpu.x[4]=(((cpu.x[23]))) as u64;
+// 0x10fcf2d8 bl #0x111d988c
+cpu.x[30]=0x10fcf2dc;super::chunk1::f_111d988c(cpu,rt,0x111d988c)?;
+block=44;continue;
+}
+44=>{
+// 0x10fcf2dc mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf2e0 bl #0x10f94298
+cpu.x[30]=0x10fcf2e4;super::chunk2::f_10f94298(cpu,rt,0x10f94298)?;
+block=45;continue;
+}
+45=>{
+// 0x10fcf2e4 ldr w8, [sp, #0x18]
+{let address=(cpu.sp).wrapping_add(0x18u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf2e8 sub w19, w8, w0
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[19]=(result) as u32 as u64;}
+// 0x10fcf2ec mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf2f0 bl #0x10f942a0
+cpu.x[30]=0x10fcf2f4;super::chunk6::f_10f942a0(cpu,rt,0x10f942a0)?;
+block=46;continue;
+}
+46=>{
+// 0x10fcf2f4 ldp w8, w9, [x20, #0x30]
+{let address=(cpu.x[20]).wrapping_add(0x30u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[8]=(v0) as u32 as u64;cpu.x[9]=(v1) as u32 as u64;}
+// 0x10fcf2f8 ldur w10, [x29, #-0x14]
+{let address=(cpu.x[29]).wrapping_add(0xffffffffffffffecu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x10fcf2fc sub w10, w10, w0
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x10fcf300 mul w8, w8, w19
+cpu.x[8]=((((cpu.x[8] as u32 as u64))).wrapping_mul(((cpu.x[19] as u32 as u64)))) as u32 as u64;
+// 0x10fcf304 mov x0, x20
+cpu.x[0]=(((cpu.x[20]))) as u64;
+// 0x10fcf308 mul w9, w9, w10
+cpu.x[9]=((((cpu.x[9] as u32 as u64))).wrapping_mul(((cpu.x[10] as u32 as u64)))) as u32 as u64;
+// 0x10fcf30c add w10, w8, #0xff
+{let a=((cpu.x[8] as u32 as u64));let b=((0xffu64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x10fcf310 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf314 csel w8, w10, w8, lt
+cpu.x[8]=(if cpu.condition(11){((cpu.x[10] as u32 as u64))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x10fcf318 add w10, w9, #0xff
+{let a=((cpu.x[9] as u32 as u64));let b=((0xffu64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x10fcf31c cmp w9, #0
+{let a=((cpu.x[9] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf320 csel w9, w10, w9, lt
+cpu.x[9]=(if cpu.condition(11){((cpu.x[10] as u32 as u64))}else{((cpu.x[9] as u32 as u64))}) as u32 as u64;
+// 0x10fcf324 asr w9, w9, #8
+cpu.x[9]=(((((cpu.x[9] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x10fcf328 add w19, w9, w8, asr #8
+{let a=((cpu.x[9] as u32 as u64));let b=(((cpu.x[8] as u32 as u64)) as i32).wrapping_shr(8) as u64;let result=a.wrapping_add(b);cpu.x[19]=(result) as u32 as u64;}
+// 0x10fcf32c bl #0x10fd04a8
+cpu.x[30]=0x10fcf330;super::chunk2::f_10fd04a8(cpu,rt,0x10fd04a8)?;
+block=47;continue;
+}
+47=>{
+// 0x10fcf330 bl #0x10e0b6b4
+cpu.x[30]=0x10fcf334;super::chunk8::f_10e0b6b4(cpu,rt,0x10e0b6b4)?;
+block=48;continue;
+}
+48=>{
+// 0x10fcf334 ldr x0, [x0, #0x78]
+{let address=(cpu.x[0]).wrapping_add(0x78u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fcf338 bl #0x10e16208
+cpu.x[30]=0x10fcf33c;super::chunk7::f_10e16208(cpu,rt,0x10e16208)?;
+block=49;continue;
+}
+49=>{
+// 0x10fcf33c ldrb w8, [x0, #0x3bd]
+{let address=(cpu.x[0]).wrapping_add(0x3bdu64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf340 cbz w8, #0x10fcf3cc
+if (cpu.x[8] as u32 as u64) == 0 {block=58;continue;}block=50;continue;
+}
+50=>{
+// 0x10fcf344 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x10fcf348 bl #0x10f817a8
+cpu.x[30]=0x10fcf34c;super::chunk8::f_10f817a8(cpu,rt,0x10f817a8)?;
+block=51;continue;
+}
+51=>{
+// 0x10fcf34c cmp w0, #6
+{let a=((cpu.x[0] as u32 as u64));let b=((0x6u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf350 b.ne #0x10fcf398
+if cpu.condition(1){block=54;continue;}block=52;continue;
+}
+52=>{
+// 0x10fcf354 ldr x0, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fcf358 bl #0x10de06b0
+cpu.x[30]=0x10fcf35c;super::chunk2::f_10de06b0(cpu,rt,0x10de06b0)?;
+// 0x10fcf35c ldr w8, [x20, #0x1e0]
+{let address=(cpu.x[20]).wrapping_add(0x1e0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x10fcf360 cmp w19, w0
+{let a=((cpu.x[19] as u32 as u64));let b=((cpu.x[0] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x10fcf364 cset w9, le
+cpu.x[9]=((cpu.condition(13)) as u64) as u32 as u64;
+// 0x10fcf368 cmn w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.flags(a,b,result,32,false);}
+// 0x10fcf36c strb w9, [x20, #0x1ff]
+{let address=(cpu.x[20]).wrapping_add(0x1ffu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
+// 0x10fcf370 b.ne #0x10fcf3e8
+if cpu.condition(1){block=59;continue;}block=53;continue;
+}
+53=>{
+// 0x10fcf374 ldp x20, x19, [sp, #0x80]
+{let address=(cpu.sp).wrapping_add(0x80u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x10fcf378 ldr d8, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.q[8]=(v0) as u128 & 0xffffffffffffffffu128;}
+// 0x10fcf37c ldp x22, x21, [sp, #0x70]
+{let address=(cpu.sp).wrapping_add(0x70u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x10fcf380 ldp x24, x23, [sp, #0x60]
+{let address=(cpu.sp).wrapping_add(0x60u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[24]=(v0) as u64;cpu.x[23]=(v1) as u64;}
+// 0x10fcf384 ldp x26, x25, [sp, #0x50]
+{let address=(cpu.sp).wrapping_add(0x50u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[26]=(v0) as u64;cpu.x[25]=(v1) as u64;}
+// 0x10fcf388 ldp x28, x27, [sp, #0x40]
+{let address=(cpu.sp).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[28]=(v0) as u64;cpu.x[27]=(v1) as u64;}
+// 0x10fcf38c ldp x29, x30, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;}
+// 0x10fcf390 add sp, sp, #0x90
+{let a=((cpu.sp));let b=((0x90u64));let result=a.wrapping_add(b);cpu.sp=(result) as u64;}
+// 0x10fcf394 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+54=>{
 // 0x10fcf398 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fcf39c bl #0x10f817a8
 cpu.x[30]=0x10fcf3a0;super::chunk8::f_10f817a8(cpu,rt,0x10f817a8)?;
-pc=0x10fcf3a0;continue;
+block=55;continue;
 }
-0x10fcf3a0=>{
+55=>{
 // 0x10fcf3a0 cmp w0, #7
 {let a=((cpu.x[0] as u32 as u64));let b=((0x7u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fcf3a4 b.ne #0x10fcf3cc
-if cpu.condition(1){pc=0x10fcf3cc;continue;}pc=0x10fcf3a8;continue;
+if cpu.condition(1){block=58;continue;}block=56;continue;
 }
-0x10fcf3a8=>{
+56=>{
 // 0x10fcf3a8 ldr x0, [sp, #0x10]
 {let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fcf3ac bl #0x10de07ac
@@ -14318,13 +20606,13 @@ cpu.x[9]=((cpu.condition(13)) as u64) as u32 as u64;
 // 0x10fcf3c0 strb w9, [x20, #0x1ff]
 {let address=(cpu.x[20]).wrapping_add(0x1ffu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
 // 0x10fcf3c4 b.ne #0x10fcf3e8
-if cpu.condition(1){pc=0x10fcf3e8;continue;}pc=0x10fcf3c8;continue;
+if cpu.condition(1){block=59;continue;}block=57;continue;
 }
-0x10fcf3c8=>{
+57=>{
 // 0x10fcf3c8 b #0x10fcf374
-pc=0x10fcf374;continue;
+block=53;continue;
 }
-0x10fcf3cc=>{
+58=>{
 // 0x10fcf3cc mov w0, #0x3e8
 cpu.x[0]=(((0x3e8u64))) as u32 as u64;
 // 0x10fcf3d0 ldr w8, [x20, #0x1e0]
@@ -14338,9 +20626,9 @@ cpu.x[9]=((cpu.condition(13)) as u64) as u32 as u64;
 // 0x10fcf3e0 strb w9, [x20, #0x1ff]
 {let address=(cpu.x[20]).wrapping_add(0x1ffu64);let v0=cpu.x[9] as u32 as u64;rt.memory.write::<u8>(address.wrapping_add(0),v0 as u8);}
 // 0x10fcf3e4 b.eq #0x10fcf374
-if cpu.condition(0){pc=0x10fcf374;continue;}pc=0x10fcf3e8;continue;
+if cpu.condition(0){block=53;continue;}block=59;continue;
 }
-0x10fcf3e8=>{
+59=>{
 // 0x10fcf3e8 and w2, w25, #1
 {let a=((cpu.x[25] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
 // 0x10fcf3ec mov x0, x20
@@ -14353,9 +20641,9 @@ cpu.x[1]=(((cpu.x[26] as u32 as u64))) as u32 as u64;
 {let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.q[8]=(v0) as u128 & 0xffffffffffffffffu128;}
 // 0x10fcf3fc ldp x22, x21, [sp, #0x70]
 {let address=(cpu.sp).wrapping_add(0x70u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
-pc=0x10fcf400;continue;
+block=60;continue;
 }
-0x10fcf400=>{
+60=>{
 // 0x10fcf400 ldp x24, x23, [sp, #0x60]
 {let address=(cpu.sp).wrapping_add(0x60u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[24]=(v0) as u64;cpu.x[23]=(v1) as u64;}
 // 0x10fcf404 ldp x26, x25, [sp, #0x50]
@@ -14369,7 +20657,7 @@ pc=0x10fcf400;continue;
 // 0x10fcf414 b #0x10fcf8d4
 super::chunk3::f_10fcf8d4(cpu,rt,0x10fcf8d4)?;return Ok(());
 }
-0x10fcf418=>{
+61=>{
 // 0x10fcf418 str d8, [x27]
 {let address=(cpu.x[27]).wrapping_add(0x0u64);let v0=(cpu.q[8] & 0xffffffffffffffffu128) as u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10fcf41c ldr w8, [x20, #0x1dc]
@@ -14379,20 +20667,20 @@ super::chunk3::f_10fcf8d4(cpu,rt,0x10fcf8d4)?;return Ok(());
 // 0x10fcf424 cmp w8, #0
 {let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x10fcf428 b.le #0x10fcf0dc
-if cpu.condition(13){pc=0x10fcf0dc;continue;}pc=0x10fcf42c;continue;
+if cpu.condition(13){block=25;continue;}block=62;continue;
 }
-0x10fcf42c=>{
+62=>{
 // 0x10fcf42c mov x0, x24
 cpu.x[0]=(((cpu.x[24]))) as u64;
 // 0x10fcf430 bl #0x10d43a9c
 cpu.x[30]=0x10fcf434;super::chunk11::f_10d43a9c(cpu,rt,0x10d43a9c)?;
-pc=0x10fcf434;continue;
+block=63;continue;
 }
-0x10fcf434=>{
+63=>{
 // 0x10fcf434 tbz w0, #0, #0x10fcf44c
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fcf44c;continue;}pc=0x10fcf438;continue;
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=65;continue;}block=64;continue;
 }
-0x10fcf438=>{
+64=>{
 // 0x10fcf438 ldr x8, [x23]
 {let address=(cpu.x[23]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fcf43c mov x0, x23
@@ -14402,9 +20690,9 @@ cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x10fcf444 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x10fcf448;super::dispatch(cpu,rt,target)?;}
 // 0x10fcf448 tbz w0, #0, #0x10fcf464
-if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {pc=0x10fcf464;continue;}pc=0x10fcf44c;continue;
+if ((cpu.x[0] as u32 as u64) & (1u64 << 0)) == 0 {block=67;continue;}block=65;continue;
 }
-0x10fcf44c=>{
+65=>{
 // 0x10fcf44c mov w19, wzr
 cpu.x[19]=(((0u64))) as u32 as u64;
 // 0x10fcf450 ldr w8, [x20, #0x1f4]
@@ -14414,13 +20702,13 @@ cpu.x[27]=(((((cpu.x[22] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 3
 // 0x10fcf458 asr w28, w28, #8
 cpu.x[28]=(((((cpu.x[28] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
 // 0x10fcf45c cbnz w8, #0x10fcf0f8
-if (cpu.x[8] as u32 as u64) != 0 {pc=0x10fcf0f8;continue;}pc=0x10fcf460;continue;
+if (cpu.x[8] as u32 as u64) != 0 {block=27;continue;}block=66;continue;
 }
-0x10fcf460=>{
+66=>{
 // 0x10fcf460 b #0x10fcf158
-pc=0x10fcf158;continue;
+block=29;continue;
 }
-0x10fcf464=>{
+67=>{
 // 0x10fcf464 ldr x8, [x23]
 {let address=(cpu.x[23]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x10fcf468 mov x0, x23
@@ -14438,41 +20726,78 @@ cpu.x[27]=(((((cpu.x[22] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 3
 // 0x10fcf480 asr w28, w28, #8
 cpu.x[28]=(((((cpu.x[28] as u32 as u64))) as i32).wrapping_shr(((((0x8u64))) & 31) as u32) as u64) as u32 as u64;
 // 0x10fcf484 cbnz w8, #0x10fcf0f8
-if (cpu.x[8] as u32 as u64) != 0 {pc=0x10fcf0f8;continue;}pc=0x10fcf488;continue;
+if (cpu.x[8] as u32 as u64) != 0 {block=27;continue;}block=68;continue;
 }
-0x10fcf488=>{
+68=>{
 // 0x10fcf488 b #0x10fcf158
-pc=0x10fcf158;continue;
+block=29;continue;
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10fcef48")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10fcef48").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10fd04c8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_10fd04c8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10fd04c8{return f_10fd04c8_slow(cpu,rt,pc);}
+
+// 0x10fd04c8 str x1, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=cpu.x[1];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x10fd04cc ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10fd04c8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x10fd04c8=>{
 // 0x10fd04c8 str x1, [x0, #8]
 {let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=cpu.x[1];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x10fd04cc ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10fd04c8")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x10fd04c8").into()),}}}
 #[inline]
-pub(super) unsafe fn f_10fd1184(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x10fd1184=>{
+pub(super) unsafe fn f_10fd1184(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x10fd1184{return f_10fd1184_slow(cpu,rt,pc);}
+
 // 0x10fd1184 ldr x0, [x0, #0x30]
 {let address=(cpu.x[0]).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x10fd1188 cbz x0, #0x10fd1190
-if (cpu.x[0]) == 0 {pc=0x10fd1190;continue;}pc=0x10fd118c;continue;
-}
-0x10fd118c=>{
+if (cpu.x[0]) == 0 {{
+// 0x10fd1190 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
 // 0x10fd118c b #0x10f87f00
 super::chunk12::f_10f87f00(cpu,rt,0x10f87f00)?;return Ok(());
 }
-0x10fd1190=>{
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_10fd1184_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x10fd1184{0}else{match pc{0x10fd1184=>0,0x10fd118c=>1,0x10fd1190=>2,_=>return Err(format!("untranslated block {pc:#x} in 0x10fd1184").into()),}};loop{match block{
+0=>{
+// 0x10fd1184 ldr x0, [x0, #0x30]
+{let address=(cpu.x[0]).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x10fd1188 cbz x0, #0x10fd1190
+if (cpu.x[0]) == 0 {block=2;continue;}block=1;continue;
+}
+1=>{
+// 0x10fd118c b #0x10f87f00
+super::chunk12::f_10f87f00(cpu,rt,0x10f87f00)?;return Ok(());
+}
+2=>{
 // 0x10fd1190 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x10fd1184")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x10fd1184").into()),}}}
 #[inline]
-pub(super) unsafe fn f_110c94f8(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_110c94f8(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x110c94f8{return f_110c94f8_slow(cpu,rt,pc);}
+
+// 0x110c94f8 adrp x8, #0x11944000
+cpu.x[8]=(0x11944000u64) as u64;
+// 0x110c94fc add x8, x8, #0x720
+{let a=((cpu.x[8]));let b=((0x720u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u64;}
+// 0x110c9500 str x8, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=cpu.x[8];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x110c9504 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_110c94f8_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x110c94f8=>{
 // 0x110c94f8 adrp x8, #0x11944000
 cpu.x[8]=(0x11944000u64) as u64;
@@ -14483,7 +20808,7 @@ cpu.x[8]=(0x11944000u64) as u64;
 // 0x110c9504 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x110c94f8")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x110c94f8").into()),}}}
 #[inline]
 pub(super) unsafe fn f_110c9904(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x110c9904=>{
@@ -14550,10 +20875,10 @@ if (cpu.x[0]) == 0 {pc=0x110c9958;continue;}pc=0x110c993c;continue;
 // 0x110c9964 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x110c9904")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x110c9904").into()),}}}
 #[inline]
-pub(super) unsafe fn f_110cba24(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x110cba24=>{
+pub(super) unsafe fn f_110cba24(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x110cba24{return f_110cba24_slow(cpu,rt,pc);}
+
 // 0x110cba24 stp x29, x30, [sp, #-0x40]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x110cba28 str x23, [sp, #0x10]
@@ -14584,9 +20909,7 @@ cpu.x[22]=(((cpu.x[3]))) as u64;
 cpu.x[23]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
 // 0x110cba5c blr x8
 {let target=cpu.x[8];cpu.x[30]=0x110cba60;super::dispatch(cpu,rt,target)?;}
-pc=0x110cba60;continue;
-}
-0x110cba60=>{
+{
 // 0x110cba60 ldr x8, [x19]
 {let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cba64 mov x0, x19
@@ -14597,9 +20920,7 @@ cpu.x[1]=(((cpu.x[20] as u32 as u64))) as u32 as u64;
 {let address=(cpu.x[8]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cba70 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x110cba74;super::dispatch(cpu,rt,target)?;}
-pc=0x110cba74;continue;
-}
-0x110cba74=>{
+{
 // 0x110cba74 ldr x8, [x19]
 {let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cba78 ldrb w1, [x21, #0x1d0]
@@ -14610,15 +20931,12 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 {let address=(cpu.x[8]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cba84 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x110cba88;super::dispatch(cpu,rt,target)?;}
-pc=0x110cba88;continue;
-}
-0x110cba88=>{
+{
+'b110cbaa0: {
 // 0x110cba88 ldr x0, [x21, #0xa8]
 {let address=(cpu.x[21]).wrapping_add(0xa8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x110cba8c cbz x0, #0x110cbaa0
-if (cpu.x[0]) == 0 {pc=0x110cbaa0;continue;}pc=0x110cba90;continue;
-}
-0x110cba90=>{
+if (cpu.x[0]) == 0 {break 'b110cbaa0;}{
 // 0x110cba90 and w2, w23, #1
 {let a=((cpu.x[23] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
 // 0x110cba94 mov x1, x19
@@ -14627,15 +20945,23 @@ cpu.x[1]=(((cpu.x[19]))) as u64;
 cpu.x[3]=(((cpu.x[22]))) as u64;
 // 0x110cba9c bl #0x10d398e8
 cpu.x[30]=0x110cbaa0;super::chunk8::f_10d398e8(cpu,rt,0x10d398e8)?;
-pc=0x110cbaa0;continue;
+break 'b110cbaa0;
 }
-0x110cbaa0=>{
+}
+'b110cbc08: {
+'b110cbae8: {
+'b110cbae4: {
 // 0x110cbaa0 ldr x0, [x21, #0x218]
 {let address=(cpu.x[21]).wrapping_add(0x218u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x110cbaa4 cbz x0, #0x110cbad8
-if (cpu.x[0]) == 0 {pc=0x110cbad8;continue;}pc=0x110cbaa8;continue;
-}
-0x110cbaa8=>{
+if (cpu.x[0]) == 0 {{
+// 0x110cbad8 mov w8, #1
+cpu.x[8]=(((0x1u64))) as u32 as u64;
+// 0x110cbadc ldr x9, [x21, #0xa8]
+{let address=(cpu.x[21]).wrapping_add(0xa8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x110cbae0 cbnz x9, #0x110cbae8
+if (cpu.x[9]) != 0 {break 'b110cbae8;}break 'b110cbae4;
+}}{
 // 0x110cbaa8 ldr x8, [x0]
 {let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cbaac and w2, w23, #1
@@ -14657,25 +20983,15 @@ cpu.x[8]=((cpu.condition(0)) as u64) as u32 as u64;
 // 0x110cbacc ldr x9, [x21, #0xa8]
 {let address=(cpu.x[21]).wrapping_add(0xa8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
 // 0x110cbad0 cbz x9, #0x110cbae4
-if (cpu.x[9]) == 0 {pc=0x110cbae4;continue;}pc=0x110cbad4;continue;
-}
-0x110cbad4=>{
+if (cpu.x[9]) == 0 {break 'b110cbae4;}{
 // 0x110cbad4 b #0x110cbae8
-pc=0x110cbae8;continue;
+break 'b110cbae8;
 }
-0x110cbad8=>{
-// 0x110cbad8 mov w8, #1
-cpu.x[8]=(((0x1u64))) as u32 as u64;
-// 0x110cbadc ldr x9, [x21, #0xa8]
-{let address=(cpu.x[21]).wrapping_add(0xa8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
-// 0x110cbae0 cbnz x9, #0x110cbae8
-if (cpu.x[9]) != 0 {pc=0x110cbae8;continue;}pc=0x110cbae4;continue;
 }
-0x110cbae4=>{
+}
 // 0x110cbae4 tbnz w8, #0, #0x110cbc08
-if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {pc=0x110cbc08;continue;}pc=0x110cbae8;continue;
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {break 'b110cbc08;}break 'b110cbae8;
 }
-0x110cbae8=>{
 // 0x110cbae8 ldr x8, [x21, #0xd8]
 {let address=(cpu.x[21]).wrapping_add(0xd8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cbaec ldr x9, [x19]
@@ -14690,24 +21006,21 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x110cbb00 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x110cbb04;super::dispatch(cpu,rt,target)?;}
-pc=0x110cbb04;continue;
-}
-0x110cbb04=>{
+{
+'b110cbb18: {
 // 0x110cbb04 ldr x0, [x21, #0xd8]
 {let address=(cpu.x[21]).wrapping_add(0xd8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x110cbb08 cbz x0, #0x110cbb18
-if (cpu.x[0]) == 0 {pc=0x110cbb18;continue;}pc=0x110cbb0c;continue;
-}
-0x110cbb0c=>{
+if (cpu.x[0]) == 0 {break 'b110cbb18;}{
 // 0x110cbb0c and w2, w20, #1
 {let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
 // 0x110cbb10 mov x1, x19
 cpu.x[1]=(((cpu.x[19]))) as u64;
 // 0x110cbb14 bl #0x10d245d8
 cpu.x[30]=0x110cbb18;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
-pc=0x110cbb18;continue;
+break 'b110cbb18;
 }
-0x110cbb18=>{
+}
 // 0x110cbb18 ldr x8, [x21, #0xe0]
 {let address=(cpu.x[21]).wrapping_add(0xe0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cbb1c ldr x9, [x19]
@@ -14722,24 +21035,21 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x110cbb30 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x110cbb34;super::dispatch(cpu,rt,target)?;}
-pc=0x110cbb34;continue;
-}
-0x110cbb34=>{
+{
+'b110cbb48: {
 // 0x110cbb34 ldr x0, [x21, #0xe0]
 {let address=(cpu.x[21]).wrapping_add(0xe0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x110cbb38 cbz x0, #0x110cbb48
-if (cpu.x[0]) == 0 {pc=0x110cbb48;continue;}pc=0x110cbb3c;continue;
-}
-0x110cbb3c=>{
+if (cpu.x[0]) == 0 {break 'b110cbb48;}{
 // 0x110cbb3c and w2, w20, #1
 {let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
 // 0x110cbb40 mov x1, x19
 cpu.x[1]=(((cpu.x[19]))) as u64;
 // 0x110cbb44 bl #0x10d245d8
 cpu.x[30]=0x110cbb48;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
-pc=0x110cbb48;continue;
+break 'b110cbb48;
 }
-0x110cbb48=>{
+}
 // 0x110cbb48 ldr x8, [x21, #0xe8]
 {let address=(cpu.x[21]).wrapping_add(0xe8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cbb4c ldr x9, [x19]
@@ -14754,24 +21064,21 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x110cbb60 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x110cbb64;super::dispatch(cpu,rt,target)?;}
-pc=0x110cbb64;continue;
-}
-0x110cbb64=>{
+{
+'b110cbb78: {
 // 0x110cbb64 ldr x0, [x21, #0xe8]
 {let address=(cpu.x[21]).wrapping_add(0xe8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x110cbb68 cbz x0, #0x110cbb78
-if (cpu.x[0]) == 0 {pc=0x110cbb78;continue;}pc=0x110cbb6c;continue;
-}
-0x110cbb6c=>{
+if (cpu.x[0]) == 0 {break 'b110cbb78;}{
 // 0x110cbb6c and w2, w20, #1
 {let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
 // 0x110cbb70 mov x1, x19
 cpu.x[1]=(((cpu.x[19]))) as u64;
 // 0x110cbb74 bl #0x10d245d8
 cpu.x[30]=0x110cbb78;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
-pc=0x110cbb78;continue;
+break 'b110cbb78;
 }
-0x110cbb78=>{
+}
 // 0x110cbb78 ldr x8, [x21, #0xf0]
 {let address=(cpu.x[21]).wrapping_add(0xf0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cbb7c ldr x9, [x19]
@@ -14786,24 +21093,21 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x110cbb90 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x110cbb94;super::dispatch(cpu,rt,target)?;}
-pc=0x110cbb94;continue;
-}
-0x110cbb94=>{
+{
+'b110cbba8: {
 // 0x110cbb94 ldr x0, [x21, #0xf0]
 {let address=(cpu.x[21]).wrapping_add(0xf0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x110cbb98 cbz x0, #0x110cbba8
-if (cpu.x[0]) == 0 {pc=0x110cbba8;continue;}pc=0x110cbb9c;continue;
-}
-0x110cbb9c=>{
+if (cpu.x[0]) == 0 {break 'b110cbba8;}{
 // 0x110cbb9c and w2, w20, #1
 {let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
 // 0x110cbba0 mov x1, x19
 cpu.x[1]=(((cpu.x[19]))) as u64;
 // 0x110cbba4 bl #0x10d245d8
 cpu.x[30]=0x110cbba8;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
-pc=0x110cbba8;continue;
+break 'b110cbba8;
 }
-0x110cbba8=>{
+}
 // 0x110cbba8 ldr x8, [x21, #0xf8]
 {let address=(cpu.x[21]).wrapping_add(0xf8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cbbac ldr x9, [x19]
@@ -14818,24 +21122,21 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x110cbbc0 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x110cbbc4;super::dispatch(cpu,rt,target)?;}
-pc=0x110cbbc4;continue;
-}
-0x110cbbc4=>{
+{
+'b110cbbd8: {
 // 0x110cbbc4 ldr x0, [x21, #0xf8]
 {let address=(cpu.x[21]).wrapping_add(0xf8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x110cbbc8 cbz x0, #0x110cbbd8
-if (cpu.x[0]) == 0 {pc=0x110cbbd8;continue;}pc=0x110cbbcc;continue;
-}
-0x110cbbcc=>{
+if (cpu.x[0]) == 0 {break 'b110cbbd8;}{
 // 0x110cbbcc and w2, w20, #1
 {let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
 // 0x110cbbd0 mov x1, x19
 cpu.x[1]=(((cpu.x[19]))) as u64;
 // 0x110cbbd4 bl #0x10d245d8
 cpu.x[30]=0x110cbbd8;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
-pc=0x110cbbd8;continue;
+break 'b110cbbd8;
 }
-0x110cbbd8=>{
+}
 // 0x110cbbd8 ldr x8, [x21, #0x100]
 {let address=(cpu.x[21]).wrapping_add(0x100u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cbbdc ldr x9, [x19]
@@ -14850,24 +21151,26 @@ cpu.x[0]=(((cpu.x[19]))) as u64;
 cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
 // 0x110cbbf0 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x110cbbf4;super::dispatch(cpu,rt,target)?;}
-pc=0x110cbbf4;continue;
-}
-0x110cbbf4=>{
+{
 // 0x110cbbf4 ldr x0, [x21, #0x100]
 {let address=(cpu.x[21]).wrapping_add(0x100u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
 // 0x110cbbf8 cbz x0, #0x110cbc08
-if (cpu.x[0]) == 0 {pc=0x110cbc08;continue;}pc=0x110cbbfc;continue;
-}
-0x110cbbfc=>{
+if (cpu.x[0]) == 0 {break 'b110cbc08;}{
 // 0x110cbbfc and w2, w20, #1
 {let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
 // 0x110cbc00 mov x1, x19
 cpu.x[1]=(((cpu.x[19]))) as u64;
 // 0x110cbc04 bl #0x10d245d8
 cpu.x[30]=0x110cbc08;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
-pc=0x110cbc08;continue;
+break 'b110cbc08;
 }
-0x110cbc08=>{
+}
+}
+}
+}
+}
+}
+}
 // 0x110cbc08 ldr x8, [x19]
 {let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cbc0c mov x0, x19
@@ -14878,9 +21181,7 @@ cpu.x[1]=(((0x2bu64))) as u32 as u64;
 {let address=(cpu.x[8]).wrapping_add(0x88u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x110cbc18 blr x8
 {let target=cpu.x[8];cpu.x[30]=0x110cbc1c;super::dispatch(cpu,rt,target)?;}
-pc=0x110cbc1c;continue;
-}
-0x110cbc1c=>{
+{
 // 0x110cbc1c mov w0, wzr
 cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x110cbc20 ldp x20, x19, [sp, #0x30]
@@ -14894,10 +21195,358 @@ cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x110cbc30 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x110cba24")),}}}
+}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_110cba24_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x110cba24{0}else{match pc{0x110cba24=>0,0x110cba60=>1,0x110cba74=>2,0x110cba88=>3,0x110cba90=>4,0x110cbaa0=>5,0x110cbaa8=>6,0x110cbad4=>7,0x110cbad8=>8,0x110cbae4=>9,0x110cbae8=>10,0x110cbb04=>11,0x110cbb0c=>12,0x110cbb18=>13,0x110cbb34=>14,0x110cbb3c=>15,0x110cbb48=>16,0x110cbb64=>17,0x110cbb6c=>18,0x110cbb78=>19,0x110cbb94=>20,0x110cbb9c=>21,0x110cbba8=>22,0x110cbbc4=>23,0x110cbbcc=>24,0x110cbbd8=>25,0x110cbbf4=>26,0x110cbbfc=>27,0x110cbc08=>28,0x110cbc1c=>29,_=>return Err(format!("untranslated block {pc:#x} in 0x110cba24").into()),}};loop{match block{
+0=>{
+// 0x110cba24 stp x29, x30, [sp, #-0x40]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x110cba28 str x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[23];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x110cba2c stp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x110cba30 stp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x110cba34 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x110cba38 ldr x8, [x1]
+{let address=(cpu.x[1]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cba3c mov x19, x1
+cpu.x[19]=(((cpu.x[1]))) as u64;
+// 0x110cba40 mov x21, x0
+cpu.x[21]=(((cpu.x[0]))) as u64;
+// 0x110cba44 mov x0, x1
+cpu.x[0]=(((cpu.x[1]))) as u64;
+// 0x110cba48 mov w1, #0x2a
+cpu.x[1]=(((0x2au64))) as u32 as u64;
+// 0x110cba4c mov w20, w4
+cpu.x[20]=(((cpu.x[4] as u32 as u64))) as u32 as u64;
+// 0x110cba50 ldr x8, [x8, #0x88]
+{let address=(cpu.x[8]).wrapping_add(0x88u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cba54 mov x22, x3
+cpu.x[22]=(((cpu.x[3]))) as u64;
+// 0x110cba58 mov w23, w2
+cpu.x[23]=(((cpu.x[2] as u32 as u64))) as u32 as u64;
+// 0x110cba5c blr x8
+{let target=cpu.x[8];cpu.x[30]=0x110cba60;super::dispatch(cpu,rt,target)?;}
+block=1;continue;
+}
+1=>{
+// 0x110cba60 ldr x8, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cba64 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x110cba68 mov w1, w20
+cpu.x[1]=(((cpu.x[20] as u32 as u64))) as u32 as u64;
+// 0x110cba6c ldr x8, [x8, #0x40]
+{let address=(cpu.x[8]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cba70 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x110cba74;super::dispatch(cpu,rt,target)?;}
+block=2;continue;
+}
+2=>{
+// 0x110cba74 ldr x8, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cba78 ldrb w1, [x21, #0x1d0]
+{let address=(cpu.x[21]).wrapping_add(0x1d0u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[1]=(v0) as u32 as u64;}
+// 0x110cba7c mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x110cba80 ldr x8, [x8, #0x40]
+{let address=(cpu.x[8]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cba84 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x110cba88;super::dispatch(cpu,rt,target)?;}
+block=3;continue;
+}
+3=>{
+// 0x110cba88 ldr x0, [x21, #0xa8]
+{let address=(cpu.x[21]).wrapping_add(0xa8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x110cba8c cbz x0, #0x110cbaa0
+if (cpu.x[0]) == 0 {block=5;continue;}block=4;continue;
+}
+4=>{
+// 0x110cba90 and w2, w23, #1
+{let a=((cpu.x[23] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
+// 0x110cba94 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x110cba98 mov x3, x22
+cpu.x[3]=(((cpu.x[22]))) as u64;
+// 0x110cba9c bl #0x10d398e8
+cpu.x[30]=0x110cbaa0;super::chunk8::f_10d398e8(cpu,rt,0x10d398e8)?;
+block=5;continue;
+}
+5=>{
+// 0x110cbaa0 ldr x0, [x21, #0x218]
+{let address=(cpu.x[21]).wrapping_add(0x218u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x110cbaa4 cbz x0, #0x110cbad8
+if (cpu.x[0]) == 0 {block=8;continue;}block=6;continue;
+}
+6=>{
+// 0x110cbaa8 ldr x8, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbaac and w2, w23, #1
+{let a=((cpu.x[23] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
+// 0x110cbab0 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x110cbab4 mov x3, x22
+cpu.x[3]=(((cpu.x[22]))) as u64;
+// 0x110cbab8 ldr x8, [x8, #0x88]
+{let address=(cpu.x[8]).wrapping_add(0x88u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbabc blr x8
+{let target=cpu.x[8];cpu.x[30]=0x110cbac0;super::dispatch(cpu,rt,target)?;}
+// 0x110cbac0 ldr x8, [x21, #0x218]
+{let address=(cpu.x[21]).wrapping_add(0x218u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbac4 cmp x8, #0
+{let a=((cpu.x[8]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x110cbac8 cset w8, eq
+cpu.x[8]=((cpu.condition(0)) as u64) as u32 as u64;
+// 0x110cbacc ldr x9, [x21, #0xa8]
+{let address=(cpu.x[21]).wrapping_add(0xa8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x110cbad0 cbz x9, #0x110cbae4
+if (cpu.x[9]) == 0 {block=9;continue;}block=7;continue;
+}
+7=>{
+// 0x110cbad4 b #0x110cbae8
+block=10;continue;
+}
+8=>{
+// 0x110cbad8 mov w8, #1
+cpu.x[8]=(((0x1u64))) as u32 as u64;
+// 0x110cbadc ldr x9, [x21, #0xa8]
+{let address=(cpu.x[21]).wrapping_add(0xa8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x110cbae0 cbnz x9, #0x110cbae8
+if (cpu.x[9]) != 0 {block=10;continue;}block=9;continue;
+}
+9=>{
+// 0x110cbae4 tbnz w8, #0, #0x110cbc08
+if ((cpu.x[8] as u32 as u64) & (1u64 << 0)) != 0 {block=28;continue;}block=10;continue;
+}
+10=>{
+// 0x110cbae8 ldr x8, [x21, #0xd8]
+{let address=(cpu.x[21]).wrapping_add(0xd8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbaec ldr x9, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x110cbaf0 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x110cbaf4 cmp x8, #0
+{let a=((cpu.x[8]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x110cbaf8 ldr x8, [x9, #0x40]
+{let address=(cpu.x[9]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbafc cset w1, ne
+cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x110cbb00 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x110cbb04;super::dispatch(cpu,rt,target)?;}
+block=11;continue;
+}
+11=>{
+// 0x110cbb04 ldr x0, [x21, #0xd8]
+{let address=(cpu.x[21]).wrapping_add(0xd8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x110cbb08 cbz x0, #0x110cbb18
+if (cpu.x[0]) == 0 {block=13;continue;}block=12;continue;
+}
+12=>{
+// 0x110cbb0c and w2, w20, #1
+{let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
+// 0x110cbb10 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x110cbb14 bl #0x10d245d8
+cpu.x[30]=0x110cbb18;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
+block=13;continue;
+}
+13=>{
+// 0x110cbb18 ldr x8, [x21, #0xe0]
+{let address=(cpu.x[21]).wrapping_add(0xe0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbb1c ldr x9, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x110cbb20 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x110cbb24 cmp x8, #0
+{let a=((cpu.x[8]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x110cbb28 ldr x8, [x9, #0x40]
+{let address=(cpu.x[9]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbb2c cset w1, ne
+cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x110cbb30 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x110cbb34;super::dispatch(cpu,rt,target)?;}
+block=14;continue;
+}
+14=>{
+// 0x110cbb34 ldr x0, [x21, #0xe0]
+{let address=(cpu.x[21]).wrapping_add(0xe0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x110cbb38 cbz x0, #0x110cbb48
+if (cpu.x[0]) == 0 {block=16;continue;}block=15;continue;
+}
+15=>{
+// 0x110cbb3c and w2, w20, #1
+{let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
+// 0x110cbb40 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x110cbb44 bl #0x10d245d8
+cpu.x[30]=0x110cbb48;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
+block=16;continue;
+}
+16=>{
+// 0x110cbb48 ldr x8, [x21, #0xe8]
+{let address=(cpu.x[21]).wrapping_add(0xe8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbb4c ldr x9, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x110cbb50 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x110cbb54 cmp x8, #0
+{let a=((cpu.x[8]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x110cbb58 ldr x8, [x9, #0x40]
+{let address=(cpu.x[9]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbb5c cset w1, ne
+cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x110cbb60 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x110cbb64;super::dispatch(cpu,rt,target)?;}
+block=17;continue;
+}
+17=>{
+// 0x110cbb64 ldr x0, [x21, #0xe8]
+{let address=(cpu.x[21]).wrapping_add(0xe8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x110cbb68 cbz x0, #0x110cbb78
+if (cpu.x[0]) == 0 {block=19;continue;}block=18;continue;
+}
+18=>{
+// 0x110cbb6c and w2, w20, #1
+{let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
+// 0x110cbb70 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x110cbb74 bl #0x10d245d8
+cpu.x[30]=0x110cbb78;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
+block=19;continue;
+}
+19=>{
+// 0x110cbb78 ldr x8, [x21, #0xf0]
+{let address=(cpu.x[21]).wrapping_add(0xf0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbb7c ldr x9, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x110cbb80 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x110cbb84 cmp x8, #0
+{let a=((cpu.x[8]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x110cbb88 ldr x8, [x9, #0x40]
+{let address=(cpu.x[9]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbb8c cset w1, ne
+cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x110cbb90 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x110cbb94;super::dispatch(cpu,rt,target)?;}
+block=20;continue;
+}
+20=>{
+// 0x110cbb94 ldr x0, [x21, #0xf0]
+{let address=(cpu.x[21]).wrapping_add(0xf0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x110cbb98 cbz x0, #0x110cbba8
+if (cpu.x[0]) == 0 {block=22;continue;}block=21;continue;
+}
+21=>{
+// 0x110cbb9c and w2, w20, #1
+{let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
+// 0x110cbba0 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x110cbba4 bl #0x10d245d8
+cpu.x[30]=0x110cbba8;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
+block=22;continue;
+}
+22=>{
+// 0x110cbba8 ldr x8, [x21, #0xf8]
+{let address=(cpu.x[21]).wrapping_add(0xf8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbbac ldr x9, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x110cbbb0 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x110cbbb4 cmp x8, #0
+{let a=((cpu.x[8]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x110cbbb8 ldr x8, [x9, #0x40]
+{let address=(cpu.x[9]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbbbc cset w1, ne
+cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x110cbbc0 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x110cbbc4;super::dispatch(cpu,rt,target)?;}
+block=23;continue;
+}
+23=>{
+// 0x110cbbc4 ldr x0, [x21, #0xf8]
+{let address=(cpu.x[21]).wrapping_add(0xf8u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x110cbbc8 cbz x0, #0x110cbbd8
+if (cpu.x[0]) == 0 {block=25;continue;}block=24;continue;
+}
+24=>{
+// 0x110cbbcc and w2, w20, #1
+{let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
+// 0x110cbbd0 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x110cbbd4 bl #0x10d245d8
+cpu.x[30]=0x110cbbd8;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
+block=25;continue;
+}
+25=>{
+// 0x110cbbd8 ldr x8, [x21, #0x100]
+{let address=(cpu.x[21]).wrapping_add(0x100u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbbdc ldr x9, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x110cbbe0 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x110cbbe4 cmp x8, #0
+{let a=((cpu.x[8]));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x110cbbe8 ldr x8, [x9, #0x40]
+{let address=(cpu.x[9]).wrapping_add(0x40u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbbec cset w1, ne
+cpu.x[1]=((cpu.condition(1)) as u64) as u32 as u64;
+// 0x110cbbf0 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x110cbbf4;super::dispatch(cpu,rt,target)?;}
+block=26;continue;
+}
+26=>{
+// 0x110cbbf4 ldr x0, [x21, #0x100]
+{let address=(cpu.x[21]).wrapping_add(0x100u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x110cbbf8 cbz x0, #0x110cbc08
+if (cpu.x[0]) == 0 {block=28;continue;}block=27;continue;
+}
+27=>{
+// 0x110cbbfc and w2, w20, #1
+{let a=((cpu.x[20] as u32 as u64));let b=((0x1u64));let result=a & b;cpu.x[2]=(result) as u32 as u64;}
+// 0x110cbc00 mov x1, x19
+cpu.x[1]=(((cpu.x[19]))) as u64;
+// 0x110cbc04 bl #0x10d245d8
+cpu.x[30]=0x110cbc08;super::chunk12::f_10d245d8(cpu,rt,0x10d245d8)?;
+block=28;continue;
+}
+28=>{
+// 0x110cbc08 ldr x8, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbc0c mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x110cbc10 mov w1, #0x2b
+cpu.x[1]=(((0x2bu64))) as u32 as u64;
+// 0x110cbc14 ldr x8, [x8, #0x88]
+{let address=(cpu.x[8]).wrapping_add(0x88u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110cbc18 blr x8
+{let target=cpu.x[8];cpu.x[30]=0x110cbc1c;super::dispatch(cpu,rt,target)?;}
+block=29;continue;
+}
+29=>{
+// 0x110cbc1c mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x110cbc20 ldp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x110cbc24 ldr x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x110cbc28 ldp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x110cbc2c ldp x29, x30, [sp], #0x40
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x40u64)))) as u64;}
+// 0x110cbc30 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x110cba24").into()),}}}
 #[inline]
-pub(super) unsafe fn f_110ce314(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x110ce314=>{
+pub(super) unsafe fn f_110ce314(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x110ce314{return f_110ce314_slow(cpu,rt,pc);}
+
 // 0x110ce314 stp x29, x30, [sp, #-0x30]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x110ce318 str x21, [sp, #0x10]
@@ -14918,9 +21567,8 @@ cpu.x[8]=(((((cpu.x[19])) & 0xffffffffu64) << 3)) as u64;
 cpu.x[0]=(if cpu.condition(10){((cpu.x[8]))}else{!(((0u64)))}) as u64;
 // 0x110ce338 bl #0x1187d520
 cpu.x[30]=0x110ce33c;super::chunk8::f_1187d520(cpu,rt,0x1187d520)?;
-pc=0x110ce33c;continue;
-}
-0x110ce33c=>{
+{
+'b110ce3d4: {
 // 0x110ce33c ldr w9, [x20, #0xc]
 {let address=(cpu.x[20]).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x110ce340 ldr x8, [x20]
@@ -14930,15 +21578,18 @@ cpu.x[21]=(((cpu.x[0]))) as u64;
 // 0x110ce348 cmp w9, #1
 {let a=((cpu.x[9] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x110ce34c b.lt #0x110ce3d4
-if cpu.condition(11){pc=0x110ce3d4;continue;}pc=0x110ce350;continue;
-}
-0x110ce350=>{
+if cpu.condition(11){break 'b110ce3d4;}{
+'b110ce3bc: {
 // 0x110ce350 cmp w9, #4
 {let a=((cpu.x[9] as u32 as u64));let b=((0x4u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x110ce354 b.lo #0x110ce3b4
-if cpu.condition(3){pc=0x110ce3b4;continue;}pc=0x110ce358;continue;
-}
-0x110ce358=>{
+if cpu.condition(3){{
+// 0x110ce3b4 mov x10, x8
+cpu.x[10]=(((cpu.x[8]))) as u64;
+// 0x110ce3b8 mov x11, x21
+cpu.x[11]=(((cpu.x[21]))) as u64;
+break 'b110ce3bc;
+}}{
 // 0x110ce358 sub x10, x21, x8
 {let a=((cpu.x[21]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.x[10]=(result) as u64;}
 // 0x110ce35c mov x11, x21
@@ -14948,9 +21599,7 @@ cpu.x[11]=(((cpu.x[21]))) as u64;
 // 0x110ce364 mov x10, x8
 cpu.x[10]=(((cpu.x[8]))) as u64;
 // 0x110ce368 b.lo #0x110ce3bc
-if cpu.condition(3){pc=0x110ce3bc;continue;}pc=0x110ce36c;continue;
-}
-0x110ce36c=>{
+if cpu.condition(3){break 'b110ce3bc;}{
 // 0x110ce36c mov w12, w9
 cpu.x[12]=(((cpu.x[9] as u32 as u64))) as u32 as u64;
 // 0x110ce370 add x14, x21, #0x10
@@ -14969,9 +21618,8 @@ cpu.x[16]=(((cpu.x[13]))) as u64;
 {let a=((cpu.x[8]));let b=((cpu.x[11]));let result=a.wrapping_add(b);cpu.x[10]=(result) as u64;}
 // 0x110ce38c add x11, x21, x11
 {let a=((cpu.x[21]));let b=((cpu.x[11]));let result=a.wrapping_add(b);cpu.x[11]=(result) as u64;}
-pc=0x110ce390;continue;
-}
-0x110ce390=>{
+{
+'l110ce390: loop {
 // 0x110ce390 ldp q0, q1, [x15, #-0x10]
 {let address=(cpu.x[15]).wrapping_add(0xfffffffffffffff0u64);let v0=rt.memory.read::<u128>(address.wrapping_add(0));let v1=rt.memory.read::<u128>(address.wrapping_add(16));cpu.q[0]=(v0) as u128 & 0xffffffffffffffffffffffffffffffffu128;cpu.q[1]=(v1) as u128 & 0xffffffffffffffffffffffffffffffffu128;}
 // 0x110ce394 subs x16, x16, #4
@@ -14983,31 +21631,24 @@ pc=0x110ce390;continue;
 // 0x110ce3a0 add x14, x14, #0x20
 {let a=((cpu.x[14]));let b=((0x20u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
 // 0x110ce3a4 b.ne #0x110ce390
-if cpu.condition(1){pc=0x110ce390;continue;}pc=0x110ce3a8;continue;
-}
-0x110ce3a8=>{
+if cpu.condition(1){continue 'l110ce390;}{
 // 0x110ce3a8 cmp x13, x12
 {let a=((cpu.x[13]));let b=((cpu.x[12]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
 // 0x110ce3ac b.ne #0x110ce3bc
-if cpu.condition(1){pc=0x110ce3bc;continue;}pc=0x110ce3b0;continue;
-}
-0x110ce3b0=>{
+if cpu.condition(1){break 'b110ce3bc;}{
 // 0x110ce3b0 b #0x110ce3d4
-pc=0x110ce3d4;continue;
+break 'b110ce3d4;
 }
-0x110ce3b4=>{
-// 0x110ce3b4 mov x10, x8
-cpu.x[10]=(((cpu.x[8]))) as u64;
-// 0x110ce3b8 mov x11, x21
-cpu.x[11]=(((cpu.x[21]))) as u64;
-pc=0x110ce3bc;continue;
 }
-0x110ce3bc=>{
+}
+}
+}
+}
+}
 // 0x110ce3bc add w9, w9, #1
 {let a=((cpu.x[9] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[9]=(result) as u32 as u64;}
-pc=0x110ce3c0;continue;
-}
-0x110ce3c0=>{
+{
+'l110ce3c0: loop {
 // 0x110ce3c0 ldr x12, [x10], #8
 {let address=(cpu.x[10]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;cpu.x[10]=((cpu.x[10]).wrapping_add(((0x8u64)))) as u64;}
 // 0x110ce3c4 sub w9, w9, #1
@@ -15017,20 +21658,21 @@ pc=0x110ce3c0;continue;
 // 0x110ce3cc str x12, [x11], #8
 {let address=(cpu.x[11]).wrapping_add(0x0u64);let v0=cpu.x[12];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);cpu.x[11]=((cpu.x[11]).wrapping_add(((0x8u64)))) as u64;}
 // 0x110ce3d0 b.hi #0x110ce3c0
-if cpu.condition(8){pc=0x110ce3c0;continue;}pc=0x110ce3d4;continue;
+if cpu.condition(8){continue 'l110ce3c0;}break 'b110ce3d4;
 }
-0x110ce3d4=>{
+}
+}
+}
+'b110ce3e0: {
 // 0x110ce3d4 cbz x8, #0x110ce3e0
-if (cpu.x[8]) == 0 {pc=0x110ce3e0;continue;}pc=0x110ce3d8;continue;
-}
-0x110ce3d8=>{
+if (cpu.x[8]) == 0 {break 'b110ce3e0;}{
 // 0x110ce3d8 mov x0, x8
 cpu.x[0]=(((cpu.x[8]))) as u64;
 // 0x110ce3dc bl #0x1187d360
 cpu.x[30]=0x110ce3e0;super::chunk12::f_1187d360(cpu,rt,0x1187d360)?;
-pc=0x110ce3e0;continue;
+break 'b110ce3e0;
 }
-0x110ce3e0=>{
+}
 // 0x110ce3e0 str x21, [x20]
 {let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
 // 0x110ce3e4 str w19, [x20, #8]
@@ -15044,38 +21686,182 @@ pc=0x110ce3e0;continue;
 // 0x110ce3f4 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x110ce314")),}}}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_110ce314_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x110ce314{0}else{match pc{0x110ce314=>0,0x110ce33c=>1,0x110ce350=>2,0x110ce358=>3,0x110ce36c=>4,0x110ce390=>5,0x110ce3a8=>6,0x110ce3b0=>7,0x110ce3b4=>8,0x110ce3bc=>9,0x110ce3c0=>10,0x110ce3d4=>11,0x110ce3d8=>12,0x110ce3e0=>13,_=>return Err(format!("untranslated block {pc:#x} in 0x110ce314").into()),}};loop{match block{
+0=>{
+// 0x110ce314 stp x29, x30, [sp, #-0x30]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffd0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x110ce318 str x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x110ce31c stp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x110ce320 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x110ce324 mov w19, w1
+cpu.x[19]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
+// 0x110ce328 cmp w1, #0
+{let a=((cpu.x[1] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x110ce32c mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x110ce330 ubfiz x8, x19, #3, #0x20
+cpu.x[8]=(((((cpu.x[19])) & 0xffffffffu64) << 3)) as u64;
+// 0x110ce334 csinv x0, x8, xzr, ge
+cpu.x[0]=(if cpu.condition(10){((cpu.x[8]))}else{!(((0u64)))}) as u64;
+// 0x110ce338 bl #0x1187d520
+cpu.x[30]=0x110ce33c;super::chunk8::f_1187d520(cpu,rt,0x1187d520)?;
+block=1;continue;
+}
+1=>{
+// 0x110ce33c ldr w9, [x20, #0xc]
+{let address=(cpu.x[20]).wrapping_add(0xcu64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x110ce340 ldr x8, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x110ce344 mov x21, x0
+cpu.x[21]=(((cpu.x[0]))) as u64;
+// 0x110ce348 cmp w9, #1
+{let a=((cpu.x[9] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x110ce34c b.lt #0x110ce3d4
+if cpu.condition(11){block=11;continue;}block=2;continue;
+}
+2=>{
+// 0x110ce350 cmp w9, #4
+{let a=((cpu.x[9] as u32 as u64));let b=((0x4u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x110ce354 b.lo #0x110ce3b4
+if cpu.condition(3){block=8;continue;}block=3;continue;
+}
+3=>{
+// 0x110ce358 sub x10, x21, x8
+{let a=((cpu.x[21]));let b=((cpu.x[8]));let result=a.wrapping_sub(b);cpu.x[10]=(result) as u64;}
+// 0x110ce35c mov x11, x21
+cpu.x[11]=(((cpu.x[21]))) as u64;
+// 0x110ce360 cmp x10, #0x20
+{let a=((cpu.x[10]));let b=((0x20u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x110ce364 mov x10, x8
+cpu.x[10]=(((cpu.x[8]))) as u64;
+// 0x110ce368 b.lo #0x110ce3bc
+if cpu.condition(3){block=9;continue;}block=4;continue;
+}
+4=>{
+// 0x110ce36c mov w12, w9
+cpu.x[12]=(((cpu.x[9] as u32 as u64))) as u32 as u64;
+// 0x110ce370 add x14, x21, #0x10
+{let a=((cpu.x[21]));let b=((0x10u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x110ce374 add x15, x8, #0x10
+{let a=((cpu.x[8]));let b=((0x10u64));let result=a.wrapping_add(b);cpu.x[15]=(result) as u64;}
+// 0x110ce378 and x13, x12, #0x7ffffffc
+{let a=((cpu.x[12]));let b=((0x7ffffffcu64));let result=a & b;cpu.x[13]=(result) as u64;}
+// 0x110ce37c lsl x11, x13, #3
+cpu.x[11]=(((((cpu.x[13]))) as u64).wrapping_shl(((((0x3u64))) & 63) as u32) as u64) as u64;
+// 0x110ce380 sub w9, w9, w13
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[13] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x110ce384 mov x16, x13
+cpu.x[16]=(((cpu.x[13]))) as u64;
+// 0x110ce388 add x10, x8, x11
+{let a=((cpu.x[8]));let b=((cpu.x[11]));let result=a.wrapping_add(b);cpu.x[10]=(result) as u64;}
+// 0x110ce38c add x11, x21, x11
+{let a=((cpu.x[21]));let b=((cpu.x[11]));let result=a.wrapping_add(b);cpu.x[11]=(result) as u64;}
+block=5;continue;
+}
+5=>{
+// 0x110ce390 ldp q0, q1, [x15, #-0x10]
+{let address=(cpu.x[15]).wrapping_add(0xfffffffffffffff0u64);let v0=rt.memory.read::<u128>(address.wrapping_add(0));let v1=rt.memory.read::<u128>(address.wrapping_add(16));cpu.q[0]=(v0) as u128 & 0xffffffffffffffffffffffffffffffffu128;cpu.q[1]=(v1) as u128 & 0xffffffffffffffffffffffffffffffffu128;}
+// 0x110ce394 subs x16, x16, #4
+{let a=((cpu.x[16]));let b=((0x4u64));let result=a.wrapping_sub(b);cpu.x[16]=(result) as u64;cpu.flags(a,b,result,64,true);}
+// 0x110ce398 add x15, x15, #0x20
+{let a=((cpu.x[15]));let b=((0x20u64));let result=a.wrapping_add(b);cpu.x[15]=(result) as u64;}
+// 0x110ce39c stp q0, q1, [x14, #-0x10]
+{let address=(cpu.x[14]).wrapping_add(0xfffffffffffffff0u64);let v0=(cpu.q[0] & 0xffffffffffffffffffffffffffffffffu128);let v1=(cpu.q[1] & 0xffffffffffffffffffffffffffffffffu128);rt.memory.write::<u128>(address.wrapping_add(0),v0 as u128);rt.memory.write::<u128>(address.wrapping_add(16),v1 as u128);}
+// 0x110ce3a0 add x14, x14, #0x20
+{let a=((cpu.x[14]));let b=((0x20u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x110ce3a4 b.ne #0x110ce390
+if cpu.condition(1){block=5;continue;}block=6;continue;
+}
+6=>{
+// 0x110ce3a8 cmp x13, x12
+{let a=((cpu.x[13]));let b=((cpu.x[12]));let result=a.wrapping_sub(b);cpu.flags(a,b,result,64,true);}
+// 0x110ce3ac b.ne #0x110ce3bc
+if cpu.condition(1){block=9;continue;}block=7;continue;
+}
+7=>{
+// 0x110ce3b0 b #0x110ce3d4
+block=11;continue;
+}
+8=>{
+// 0x110ce3b4 mov x10, x8
+cpu.x[10]=(((cpu.x[8]))) as u64;
+// 0x110ce3b8 mov x11, x21
+cpu.x[11]=(((cpu.x[21]))) as u64;
+block=9;continue;
+}
+9=>{
+// 0x110ce3bc add w9, w9, #1
+{let a=((cpu.x[9] as u32 as u64));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[9]=(result) as u32 as u64;}
+block=10;continue;
+}
+10=>{
+// 0x110ce3c0 ldr x12, [x10], #8
+{let address=(cpu.x[10]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[12]=(v0) as u64;cpu.x[10]=((cpu.x[10]).wrapping_add(((0x8u64)))) as u64;}
+// 0x110ce3c4 sub w9, w9, #1
+{let a=((cpu.x[9] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x110ce3c8 cmp w9, #1
+{let a=((cpu.x[9] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x110ce3cc str x12, [x11], #8
+{let address=(cpu.x[11]).wrapping_add(0x0u64);let v0=cpu.x[12];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);cpu.x[11]=((cpu.x[11]).wrapping_add(((0x8u64)))) as u64;}
+// 0x110ce3d0 b.hi #0x110ce3c0
+if cpu.condition(8){block=10;continue;}block=11;continue;
+}
+11=>{
+// 0x110ce3d4 cbz x8, #0x110ce3e0
+if (cpu.x[8]) == 0 {block=13;continue;}block=12;continue;
+}
+12=>{
+// 0x110ce3d8 mov x0, x8
+cpu.x[0]=(((cpu.x[8]))) as u64;
+// 0x110ce3dc bl #0x1187d360
+cpu.x[30]=0x110ce3e0;super::chunk12::f_1187d360(cpu,rt,0x1187d360)?;
+block=13;continue;
+}
+13=>{
+// 0x110ce3e0 str x21, [x20]
+{let address=(cpu.x[20]).wrapping_add(0x0u64);let v0=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x110ce3e4 str w19, [x20, #8]
+{let address=(cpu.x[20]).wrapping_add(0x8u64);let v0=cpu.x[19] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x110ce3e8 ldp x20, x19, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x110ce3ec ldr x21, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[21]=(v0) as u64;}
+// 0x110ce3f0 ldp x29, x30, [sp], #0x30
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x30u64)))) as u64;}
+// 0x110ce3f4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x110ce314").into()),}}}
 #[inline]
-pub(super) unsafe fn f_111d9674(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x111d9674=>{
+pub(super) unsafe fn f_111d9674(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x111d9674{return f_111d9674_slow(cpu,rt,pc);}
+
+'b111d96b8: {
 // 0x111d9674 orr w8, w2, w1
 {let a=((cpu.x[2] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
 // 0x111d9678 tbnz w8, #0x1f, #0x111d96b8
-if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) != 0 {pc=0x111d96b8;continue;}pc=0x111d967c;continue;
-}
-0x111d967c=>{
+if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) != 0 {break 'b111d96b8;}{
 // 0x111d967c ldrb w8, [x0, #0x70]
 {let address=(cpu.x[0]).wrapping_add(0x70u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x111d9680 cbz w8, #0x111d96b8
-if (cpu.x[8] as u32 as u64) == 0 {pc=0x111d96b8;continue;}pc=0x111d9684;continue;
-}
-0x111d9684=>{
+if (cpu.x[8] as u32 as u64) == 0 {break 'b111d96b8;}{
 // 0x111d9684 ldr w8, [x0]
 {let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x111d9688 cmp w8, w1
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x111d968c b.le #0x111d96b8
-if cpu.condition(13){pc=0x111d96b8;continue;}pc=0x111d9690;continue;
-}
-0x111d9690=>{
+if cpu.condition(13){break 'b111d96b8;}{
 // 0x111d9690 ldr w9, [x0, #4]
 {let address=(cpu.x[0]).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
 // 0x111d9694 cmp w9, w2
 {let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[2] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x111d9698 b.le #0x111d96b8
-if cpu.condition(13){pc=0x111d96b8;continue;}pc=0x111d969c;continue;
-}
-0x111d969c=>{
+if cpu.condition(13){break 'b111d96b8;}{
 // 0x111d969c ldr x9, [x0, #0x28]
 {let address=(cpu.x[0]).wrapping_add(0x28u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
 // 0x111d96a0 madd w8, w8, w2, w1
@@ -15089,23 +21875,97 @@ cpu.x[8]=((((cpu.x[1] as u32 as u64))).wrapping_add((((cpu.x[8] as u32 as u64)))
 // 0x111d96b0 cmp w8, w9
 {let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x111d96b4 b.ge #0x111d96c0
-if cpu.condition(10){pc=0x111d96c0;continue;}pc=0x111d96b8;continue;
+if cpu.condition(10){{
+// 0x111d96c0 mov w0, #1
+cpu.x[0]=(((0x1u64))) as u32 as u64;
+// 0x111d96c4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}break 'b111d96b8;
 }
-0x111d96b8=>{
+}
+}
+}
+}
 // 0x111d96b8 mov w0, wzr
 cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x111d96bc ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x111d96c0=>{
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_111d9674_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x111d9674{0}else{match pc{0x111d9674=>0,0x111d967c=>1,0x111d9684=>2,0x111d9690=>3,0x111d969c=>4,0x111d96b8=>5,0x111d96c0=>6,_=>return Err(format!("untranslated block {pc:#x} in 0x111d9674").into()),}};loop{match block{
+0=>{
+// 0x111d9674 orr w8, w2, w1
+{let a=((cpu.x[2] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x111d9678 tbnz w8, #0x1f, #0x111d96b8
+if ((cpu.x[8] as u32 as u64) & (1u64 << 31)) != 0 {block=5;continue;}block=1;continue;
+}
+1=>{
+// 0x111d967c ldrb w8, [x0, #0x70]
+{let address=(cpu.x[0]).wrapping_add(0x70u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x111d9680 cbz w8, #0x111d96b8
+if (cpu.x[8] as u32 as u64) == 0 {block=5;continue;}block=2;continue;
+}
+2=>{
+// 0x111d9684 ldr w8, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x111d9688 cmp w8, w1
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[1] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x111d968c b.le #0x111d96b8
+if cpu.condition(13){block=5;continue;}block=3;continue;
+}
+3=>{
+// 0x111d9690 ldr w9, [x0, #4]
+{let address=(cpu.x[0]).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x111d9694 cmp w9, w2
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[2] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x111d9698 b.le #0x111d96b8
+if cpu.condition(13){block=5;continue;}block=4;continue;
+}
+4=>{
+// 0x111d969c ldr x9, [x0, #0x28]
+{let address=(cpu.x[0]).wrapping_add(0x28u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x111d96a0 madd w8, w8, w2, w1
+cpu.x[8]=((((cpu.x[1] as u32 as u64))).wrapping_add((((cpu.x[8] as u32 as u64))).wrapping_mul(((cpu.x[2] as u32 as u64))))) as u32 as u64;
+// 0x111d96a4 ldr x9, [x9]
+{let address=(cpu.x[9]).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x111d96a8 ldr w8, [x9, w8, sxtw #2]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[8] as u32 as u64) as i32 as i64 as u64)) as u64).wrapping_shl(2) as u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x111d96ac ldr w9, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x111d96b0 cmp w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x111d96b4 b.ge #0x111d96c0
+if cpu.condition(10){block=6;continue;}block=5;continue;
+}
+5=>{
+// 0x111d96b8 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x111d96bc ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+6=>{
 // 0x111d96c0 mov w0, #1
 cpu.x[0]=(((0x1u64))) as u32 as u64;
 // 0x111d96c4 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x111d9674")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x111d9674").into()),}}}
 #[inline]
-pub(super) unsafe fn f_111db894(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_111db894(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x111db894{return f_111db894_slow(cpu,rt,pc);}
+
+// 0x111db894 str xzr, [x0, #0x18]
+{let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x111db898 stp xzr, xzr, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=0u64;let v1=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x111db89c str wzr, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x111db8a0 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_111db894_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x111db894=>{
 // 0x111db894 str xzr, [x0, #0x18]
 {let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
@@ -15116,9 +21976,22 @@ pub(super) unsafe fn f_111db894(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result
 // 0x111db8a0 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x111db894")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x111db894").into()),}}}
 #[inline]
-pub(super) unsafe fn f_111e4f3c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_111e4f3c(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x111e4f3c{return f_111e4f3c_slow(cpu,rt,pc);}
+
+// 0x111e4f3c str xzr, [x0, #0x18]
+{let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x111e4f40 str xzr, [x0, #8]
+{let address=(cpu.x[0]).wrapping_add(0x8u64);let v0=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x111e4f44 str wzr, [x0, #0x10]
+{let address=(cpu.x[0]).wrapping_add(0x10u64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x111e4f48 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_111e4f3c_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x111e4f3c=>{
 // 0x111e4f3c str xzr, [x0, #0x18]
 {let address=(cpu.x[0]).wrapping_add(0x18u64);let v0=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
@@ -15129,23 +22002,35 @@ pub(super) unsafe fn f_111e4f3c(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result
 // 0x111e4f48 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x111e4f3c")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x111e4f3c").into()),}}}
 #[inline]
-pub(super) unsafe fn f_111fc0c4(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_111fc0c4(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x111fc0c4{return f_111fc0c4_slow(cpu,rt,pc);}
+
+// 0x111fc0c4 stp xzr, xzr, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=0u64;let v1=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x111fc0c8 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_111fc0c4_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x111fc0c4=>{
 // 0x111fc0c4 stp xzr, xzr, [x0]
 {let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=0u64;let v1=0u64;rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
 // 0x111fc0c8 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x111fc0c4")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x111fc0c4").into()),}}}
 #[inline]
-pub(super) unsafe fn f_1128a854(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x1128a854=>{
+pub(super) unsafe fn f_1128a854(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x1128a854{return f_1128a854_slow(cpu,rt,pc);}
+
 // 0x1128a854 tbnz w1, #0x1f, #0x1128a874
-if ((cpu.x[1] as u32 as u64) & (1u64 << 31)) != 0 {pc=0x1128a874;continue;}pc=0x1128a858;continue;
-}
-0x1128a858=>{
+if ((cpu.x[1] as u32 as u64) & (1u64 << 31)) != 0 {{
+// 0x1128a874 mov w0, wzr
+cpu.x[0]=(((0u64))) as u32 as u64;
+// 0x1128a878 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
 // 0x1128a858 ldr x8, [x0, #0x38]
 {let address=(cpu.x[0]).wrapping_add(0x38u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
 // 0x1128a85c ldr x8, [x8, w1, uxtw #3]
@@ -15161,16 +22046,40 @@ cpu.x[0]=((cpu.condition(0)) as u64) as u32 as u64;
 // 0x1128a870 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-0x1128a874=>{
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_1128a854_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x1128a854{0}else{match pc{0x1128a854=>0,0x1128a858=>1,0x1128a874=>2,_=>return Err(format!("untranslated block {pc:#x} in 0x1128a854").into()),}};loop{match block{
+0=>{
+// 0x1128a854 tbnz w1, #0x1f, #0x1128a874
+if ((cpu.x[1] as u32 as u64) & (1u64 << 31)) != 0 {block=2;continue;}block=1;continue;
+}
+1=>{
+// 0x1128a858 ldr x8, [x0, #0x38]
+{let address=(cpu.x[0]).wrapping_add(0x38u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x1128a85c ldr x8, [x8, w1, uxtw #3]
+{let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add(((((cpu.x[1] as u32 as u64) as u32 as u64)) as u64).wrapping_shl(3) as u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x1128a860 ldr x8, [x8, #0x28]
+{let address=(cpu.x[8]).wrapping_add(0x28u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[8]=(v0) as u64;}
+// 0x1128a864 ldrb w8, [x8, w2, sxtw]
+{let address=((cpu.x[8]).wrapping_add(0x0u64)).wrapping_add((((cpu.x[2] as u32 as u64) as i32 as i64 as u64)));let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x1128a868 cmp w8, #1
+{let a=((cpu.x[8] as u32 as u64));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x1128a86c cset w0, eq
+cpu.x[0]=((cpu.condition(0)) as u64) as u32 as u64;
+// 0x1128a870 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+2=>{
 // 0x1128a874 mov w0, wzr
 cpu.x[0]=(((0u64))) as u32 as u64;
 // 0x1128a878 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x1128a854")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x1128a854").into()),}}}
 #[inline]
-pub(super) unsafe fn f_1128beac(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x1128beac=>{
+pub(super) unsafe fn f_1128beac(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x1128beac{return f_1128beac_slow(cpu,rt,pc);}
+
 // 0x1128beac stp x29, x30, [sp, #-0x40]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x1128beb0 str x23, [sp, #0x10]
@@ -15187,13 +22096,10 @@ cpu.x[21]=(((cpu.x[1]))) as u64;
 cpu.x[19]=(((cpu.x[0]))) as u64;
 // 0x1128bec8 bl #0x1128db60
 cpu.x[30]=0x1128becc;super::chunk11::f_1128db60(cpu,rt,0x1128db60)?;
-pc=0x1128becc;continue;
-}
-0x1128becc=>{
+{
+'b1128bef4: {
 // 0x1128becc cbz x21, #0x1128bef4
-if (cpu.x[21]) == 0 {pc=0x1128bef4;continue;}pc=0x1128bed0;continue;
-}
-0x1128bed0=>{
+if (cpu.x[21]) == 0 {break 'b1128bef4;}{
 // 0x1128bed0 mov x0, x21
 cpu.x[0]=(((cpu.x[21]))) as u64;
 // 0x1128bed4 bl #0x112ada18
@@ -15211,25 +22117,8 @@ cpu.x[8]=((cpu.x[8] as u32 as u64 & !(0xffff0000u64)) | 0xd0000u64) as u32 as u6
 // 0x1128beec cmp w0, w8
 {let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x1128bef0 b.lt #0x1128bf10
-if cpu.condition(11){pc=0x1128bf10;continue;}pc=0x1128bef4;continue;
-}
-0x1128bef4=>{
-// 0x1128bef4 mov x0, x19
-cpu.x[0]=(((cpu.x[19]))) as u64;
-// 0x1128bef8 mov w1, #-1
-cpu.x[1]=(((0xffffffffffffffffu64))) as u32 as u64;
-// 0x1128befc ldp x20, x19, [sp, #0x30]
-{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
-// 0x1128bf00 ldr x23, [sp, #0x10]
-{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
-// 0x1128bf04 ldp x22, x21, [sp, #0x20]
-{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
-// 0x1128bf08 ldp x29, x30, [sp], #0x40
-{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x40u64)))) as u64;}
-// 0x1128bf0c b #0x1128bd30
-super::chunk10::f_1128bd30(cpu,rt,0x1128bd30)?;return Ok(());
-}
-0x1128bf10=>{
+if cpu.condition(11){{
+'b1128bf78: {
 // 0x1128bf10 ldr w22, [x19, #0x14]
 {let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[22]=(v0) as u32 as u64;}
 // 0x1128bf14 add w8, w0, #4
@@ -15243,9 +22132,7 @@ cpu.x[21]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x1128bf24 cmp w10, w9
 {let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x1128bf28 b.le #0x1128bf78
-if cpu.condition(13){pc=0x1128bf78;continue;}pc=0x1128bf2c;continue;
-}
-0x1128bf2c=>{
+if cpu.condition(13){break 'b1128bf78;}{
 // 0x1128bf2c add w10, w9, w9, lsr #1
 {let a=((cpu.x[9] as u32 as u64));let b=(((cpu.x[9] as u32 as u64)) as u32).wrapping_shr(1) as u64;let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
 // 0x1128bf30 cmp w9, #0x100
@@ -15279,16 +22166,190 @@ cpu.x[4]=(((cpu.x[22] as u32 as u64))) as u32 as u64;
 // 0x1128bf68 bl #0x112aef80
 cpu.x[30]=0x1128bf6c;super::chunk11::f_112aef80(cpu,rt,0x112aef80)?;
 // 0x1128bf6c cbz x23, #0x1128bf78
-if (cpu.x[23]) == 0 {pc=0x1128bf78;continue;}pc=0x1128bf70;continue;
-}
-0x1128bf70=>{
+if (cpu.x[23]) == 0 {break 'b1128bf78;}{
 // 0x1128bf70 mov x0, x23
 cpu.x[0]=(((cpu.x[23]))) as u64;
 // 0x1128bf74 bl #0x1187d360
 cpu.x[30]=0x1128bf78;super::chunk12::f_1187d360(cpu,rt,0x1187d360)?;
-pc=0x1128bf78;continue;
+break 'b1128bf78;
 }
-0x1128bf78=>{
+}
+}
+// 0x1128bf78 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x1128bf7c mov w1, w21
+cpu.x[1]=(((cpu.x[21] as u32 as u64))) as u32 as u64;
+// 0x1128bf80 bl #0x1128bd30
+cpu.x[30]=0x1128bf84;super::chunk10::f_1128bd30(cpu,rt,0x1128bd30)?;
+// 0x1128bf84 ldr x0, [x19, #0x38]
+{let address=(cpu.x[19]).wrapping_add(0x38u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[0]=(v0) as u64;}
+// 0x1128bf88 ldr w1, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[1]=(v0) as u32 as u64;}
+// 0x1128bf8c mov x2, x20
+cpu.x[2]=(((cpu.x[20]))) as u64;
+// 0x1128bf90 mov w3, wzr
+cpu.x[3]=(((0u64))) as u32 as u64;
+// 0x1128bf94 mov w4, w21
+cpu.x[4]=(((cpu.x[21] as u32 as u64))) as u32 as u64;
+// 0x1128bf98 bl #0x112aef80
+cpu.x[30]=0x1128bf9c;super::chunk11::f_112aef80(cpu,rt,0x112aef80)?;
+// 0x1128bf9c ldr w8, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x1128bfa0 add w8, w8, w21
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[21] as u32 as u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x1128bfa4 str w8, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128bfa8 ldp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x1128bfac ldr x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x1128bfb0 ldp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x1128bfb4 ldp x29, x30, [sp], #0x40
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x40u64)))) as u64;}
+// 0x1128bfb8 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}break 'b1128bef4;
+}
+}
+// 0x1128bef4 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x1128bef8 mov w1, #-1
+cpu.x[1]=(((0xffffffffffffffffu64))) as u32 as u64;
+// 0x1128befc ldp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x1128bf00 ldr x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x1128bf04 ldp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x1128bf08 ldp x29, x30, [sp], #0x40
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x40u64)))) as u64;}
+// 0x1128bf0c b #0x1128bd30
+super::chunk10::f_1128bd30(cpu,rt,0x1128bd30)?;return Ok(());
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_1128beac_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x1128beac{0}else{match pc{0x1128beac=>0,0x1128becc=>1,0x1128bed0=>2,0x1128bef4=>3,0x1128bf10=>4,0x1128bf2c=>5,0x1128bf70=>6,0x1128bf78=>7,_=>return Err(format!("untranslated block {pc:#x} in 0x1128beac").into()),}};loop{match block{
+0=>{
+// 0x1128beac stp x29, x30, [sp, #-0x40]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x1128beb0 str x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[23];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);}
+// 0x1128beb4 stp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x1128beb8 stp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x1128bebc mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x1128bec0 mov x21, x1
+cpu.x[21]=(((cpu.x[1]))) as u64;
+// 0x1128bec4 mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x1128bec8 bl #0x1128db60
+cpu.x[30]=0x1128becc;super::chunk11::f_1128db60(cpu,rt,0x1128db60)?;
+block=1;continue;
+}
+1=>{
+// 0x1128becc cbz x21, #0x1128bef4
+if (cpu.x[21]) == 0 {block=3;continue;}block=2;continue;
+}
+2=>{
+// 0x1128bed0 mov x0, x21
+cpu.x[0]=(((cpu.x[21]))) as u64;
+// 0x1128bed4 bl #0x112ada18
+cpu.x[30]=0x1128bed8;super::chunk7::f_112ada18(cpu,rt,0x112ada18)?;
+// 0x1128bed8 mov x1, x21
+cpu.x[1]=(((cpu.x[21]))) as u64;
+// 0x1128bedc mov x20, x0
+cpu.x[20]=(((cpu.x[0]))) as u64;
+// 0x1128bee0 bl #0x112aef98
+cpu.x[30]=0x1128bee4;super::chunk15::f_112aef98(cpu,rt,0x112aef98)?;
+// 0x1128bee4 mov w8, #0xbba1
+cpu.x[8]=(((0xbba1u64))) as u32 as u64;
+// 0x1128bee8 movk w8, #0xd, lsl #16
+cpu.x[8]=((cpu.x[8] as u32 as u64 & !(0xffff0000u64)) | 0xd0000u64) as u32 as u64;
+// 0x1128beec cmp w0, w8
+{let a=((cpu.x[0] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x1128bef0 b.lt #0x1128bf10
+if cpu.condition(11){block=4;continue;}block=3;continue;
+}
+3=>{
+// 0x1128bef4 mov x0, x19
+cpu.x[0]=(((cpu.x[19]))) as u64;
+// 0x1128bef8 mov w1, #-1
+cpu.x[1]=(((0xffffffffffffffffu64))) as u32 as u64;
+// 0x1128befc ldp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x1128bf00 ldr x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x1128bf04 ldp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x1128bf08 ldp x29, x30, [sp], #0x40
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x40u64)))) as u64;}
+// 0x1128bf0c b #0x1128bd30
+super::chunk10::f_1128bd30(cpu,rt,0x1128bd30)?;return Ok(());
+}
+4=>{
+// 0x1128bf10 ldr w22, [x19, #0x14]
+{let address=(cpu.x[19]).wrapping_add(0x14u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[22]=(v0) as u32 as u64;}
+// 0x1128bf14 add w8, w0, #4
+{let a=((cpu.x[0] as u32 as u64));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x1128bf18 ldr w9, [x19, #0x28]
+{let address=(cpu.x[19]).wrapping_add(0x28u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x1128bf1c mov w21, w0
+cpu.x[21]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x1128bf20 add w10, w22, w8
+{let a=((cpu.x[22] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x1128bf24 cmp w10, w9
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x1128bf28 b.le #0x1128bf78
+if cpu.condition(13){block=7;continue;}block=5;continue;
+}
+5=>{
+// 0x1128bf2c add w10, w9, w9, lsr #1
+{let a=((cpu.x[9] as u32 as u64));let b=(((cpu.x[9] as u32 as u64)) as u32).wrapping_shr(1) as u64;let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x1128bf30 cmp w9, #0x100
+{let a=((cpu.x[9] as u32 as u64));let b=((0x100u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x1128bf34 mov w11, #0x64
+cpu.x[11]=(((0x64u64))) as u32 as u64;
+// 0x1128bf38 add w8, w9, w8
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x1128bf3c ldr x23, [x19, #0x30]
+{let address=(cpu.x[19]).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[23]=(v0) as u64;}
+// 0x1128bf40 csel w10, w11, w10, lt
+cpu.x[10]=(if cpu.condition(11){((cpu.x[11] as u32 as u64))}else{((cpu.x[10] as u32 as u64))}) as u32 as u64;
+// 0x1128bf44 add w8, w8, w10
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x1128bf48 sxtw x0, w8
+cpu.x[0]=((((cpu.x[8] as u32 as u64))) as i32 as i64 as u64) as u64;
+// 0x1128bf4c str w8, [x19, #0x28]
+{let address=(cpu.x[19]).wrapping_add(0x28u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128bf50 bl #0x1187d520
+cpu.x[30]=0x1128bf54;super::chunk8::f_1187d520(cpu,rt,0x1187d520)?;
+// 0x1128bf54 mov w1, wzr
+cpu.x[1]=(((0u64))) as u32 as u64;
+// 0x1128bf58 mov x2, x23
+cpu.x[2]=(((cpu.x[23]))) as u64;
+// 0x1128bf5c mov w3, wzr
+cpu.x[3]=(((0u64))) as u32 as u64;
+// 0x1128bf60 mov w4, w22
+cpu.x[4]=(((cpu.x[22] as u32 as u64))) as u32 as u64;
+// 0x1128bf64 stp x0, x0, [x19, #0x30]
+{let address=(cpu.x[19]).wrapping_add(0x30u64);let v0=cpu.x[0];let v1=cpu.x[0];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x1128bf68 bl #0x112aef80
+cpu.x[30]=0x1128bf6c;super::chunk11::f_112aef80(cpu,rt,0x112aef80)?;
+// 0x1128bf6c cbz x23, #0x1128bf78
+if (cpu.x[23]) == 0 {block=7;continue;}block=6;continue;
+}
+6=>{
+// 0x1128bf70 mov x0, x23
+cpu.x[0]=(((cpu.x[23]))) as u64;
+// 0x1128bf74 bl #0x1187d360
+cpu.x[30]=0x1128bf78;super::chunk12::f_1187d360(cpu,rt,0x1187d360)?;
+block=7;continue;
+}
+7=>{
 // 0x1128bf78 mov x0, x19
 cpu.x[0]=(((cpu.x[19]))) as u64;
 // 0x1128bf7c mov w1, w21
@@ -15324,9 +22385,90 @@ cpu.x[30]=0x1128bf9c;super::chunk11::f_112aef80(cpu,rt,0x112aef80)?;
 // 0x1128bfb8 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x1128beac")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x1128beac").into()),}}}
 #[inline]
-pub(super) unsafe fn f_1128ca70(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
+pub(super) unsafe fn f_1128ca70(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x1128ca70{return f_1128ca70_slow(cpu,rt,pc);}
+
+// 0x1128ca70 ldrsw x8, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
+// 0x1128ca74 ldr x9, [x0, #0x38]
+{let address=(cpu.x[0]).wrapping_add(0x38u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));cpu.x[9]=(v0) as u64;}
+// 0x1128ca78 str wzr, [x0, #0x1c]
+{let address=(cpu.x[0]).wrapping_add(0x1cu64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128ca7c add x10, x8, #1
+{let a=((cpu.x[8]));let b=((0x1u64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u64;}
+// 0x1128ca80 add x11, x8, #2
+{let a=((cpu.x[8]));let b=((0x2u64));let result=a.wrapping_add(b);cpu.x[11]=(result) as u64;}
+// 0x1128ca84 add x12, x8, #3
+{let a=((cpu.x[8]));let b=((0x3u64));let result=a.wrapping_add(b);cpu.x[12]=(result) as u64;}
+// 0x1128ca88 str w10, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=cpu.x[10] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128ca8c add x14, x8, #4
+{let a=((cpu.x[8]));let b=((0x4u64));let result=a.wrapping_add(b);cpu.x[14]=(result) as u64;}
+// 0x1128ca90 add x15, x8, #5
+{let a=((cpu.x[8]));let b=((0x5u64));let result=a.wrapping_add(b);cpu.x[15]=(result) as u64;}
+// 0x1128ca94 ldrb w13, [x9, x8]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[8])));let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[13]=(v0) as u32 as u64;}
+// 0x1128ca98 str w11, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=cpu.x[11] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128ca9c add x16, x8, #6
+{let a=((cpu.x[8]));let b=((0x6u64));let result=a.wrapping_add(b);cpu.x[16]=(result) as u64;}
+// 0x1128caa0 ldrb w10, [x9, x10]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[10])));let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x1128caa4 str w12, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=cpu.x[12] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128caa8 add x17, x8, #7
+{let a=((cpu.x[8]));let b=((0x7u64));let result=a.wrapping_add(b);cpu.x[17]=(result) as u64;}
+// 0x1128caac ldrb w11, [x9, x11]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[11])));let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[11]=(v0) as u32 as u64;}
+// 0x1128cab0 str w14, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=cpu.x[14] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128cab4 lsl w13, w13, #0x18
+cpu.x[13]=(((((cpu.x[13] as u32 as u64))) as u32).wrapping_shl(((((0x18u64))) & 31) as u32) as u64) as u32 as u64;
+// 0x1128cab8 ldrb w12, [x9, x12]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[12])));let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[12]=(v0) as u32 as u64;}
+// 0x1128cabc str wzr, [x0, #0x1c]
+{let address=(cpu.x[0]).wrapping_add(0x1cu64);let v0=0u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128cac0 add w8, w8, #8
+{let a=((cpu.x[8] as u32 as u64));let b=((0x8u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x1128cac4 str w15, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=cpu.x[15] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128cac8 orr w10, w13, w10, lsl #16
+{let a=((cpu.x[13] as u32 as u64));let b=(((cpu.x[10] as u32 as u64)) as u32).wrapping_shl(16) as u64;let result=a | b;cpu.x[10]=(result) as u32 as u64;}
+// 0x1128cacc ldrb w14, [x9, x14]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[14])));let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[14]=(v0) as u32 as u64;}
+// 0x1128cad0 str w16, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=cpu.x[16] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128cad4 ldrb w15, [x9, x15]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[15])));let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[15]=(v0) as u32 as u64;}
+// 0x1128cad8 str w17, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=cpu.x[17] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128cadc lsl x14, x14, #0x18
+cpu.x[14]=(((((cpu.x[14]))) as u64).wrapping_shl(((((0x18u64))) & 63) as u32) as u64) as u64;
+// 0x1128cae0 orr x13, x14, x15, lsl #16
+{let a=((cpu.x[14]));let b=(((cpu.x[15])) as u64).wrapping_shl(16) as u64;let result=a | b;cpu.x[13]=(result) as u64;}
+// 0x1128cae4 ldrb w14, [x9, x16]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[16])));let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[14]=(v0) as u32 as u64;}
+// 0x1128cae8 str w8, [x0, #0x14]
+{let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);}
+// 0x1128caec orr w8, w10, w11, lsl #8
+{let a=((cpu.x[10] as u32 as u64));let b=(((cpu.x[11] as u32 as u64)) as u32).wrapping_shl(8) as u64;let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x1128caf0 ldrb w9, [x9, x17]
+{let address=((cpu.x[9]).wrapping_add(0x0u64)).wrapping_add(((cpu.x[17])));let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[9]=(v0) as u32 as u64;}
+// 0x1128caf4 orr x10, x13, x14, lsl #8
+{let a=((cpu.x[13]));let b=(((cpu.x[14])) as u64).wrapping_shl(8) as u64;let result=a | b;cpu.x[10]=(result) as u64;}
+// 0x1128caf8 orr w8, w8, w12
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[12] as u32 as u64));let result=a | b;cpu.x[8]=(result) as u32 as u64;}
+// 0x1128cafc orr x9, x10, x9
+{let a=((cpu.x[10]));let b=((cpu.x[9]));let result=a | b;cpu.x[9]=(result) as u64;}
+// 0x1128cb00 orr x0, x9, x8, lsl #32
+{let a=((cpu.x[9]));let b=(((cpu.x[8])) as u64).wrapping_shl(32) as u64;let result=a | b;cpu.x[0]=(result) as u64;}
+// 0x1128cb04 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_1128ca70_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x1128ca70=>{
 // 0x1128ca70 ldrsw x8, [x0, #0x14]
 {let address=(cpu.x[0]).wrapping_add(0x14u64);let v0=rt.memory.read::<i32>(address.wrapping_add(0)) as i64 as u64;cpu.x[8]=(v0) as u64;}
@@ -15405,10 +22547,10 @@ cpu.x[14]=(((((cpu.x[14]))) as u64).wrapping_shl(((((0x18u64))) & 63) as u32) as
 // 0x1128cb04 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x1128ca70")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x1128ca70").into()),}}}
 #[inline]
-pub(super) unsafe fn f_11294e74(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x11294e74=>{
+pub(super) unsafe fn f_11294e74(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x11294e74{return f_11294e74_slow(cpu,rt,pc);}
+
 // 0x11294e74 ldr w8, [x1]
 {let address=(cpu.x[1]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
 // 0x11294e78 ldr w10, [x0]
@@ -15426,15 +22568,8 @@ cpu.x[11]=((cpu.x[11] as u32 as u64 & !(0xffff0000u64)) | 0xfffe0000u64) as u32 
 // 0x11294e90 cmp w10, w11
 {let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[11] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x11294e94 b.hs #0x11294ea0
-if cpu.condition(2){pc=0x11294ea0;continue;}pc=0x11294e98;continue;
-}
-0x11294e98=>{
-// 0x11294e98 mov w0, #0x7fffffff
-cpu.x[0]=(((0x7fffffffu64))) as u32 as u64;
-// 0x11294e9c ret
-cpu.pc=cpu.x[30];return Ok(());
-}
-0x11294ea0=>{
+if cpu.condition(2){{
+'b11294ed4: {
 // 0x11294ea0 ldr w10, [x1, #4]
 {let address=(cpu.x[1]).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
 // 0x11294ea4 ldr w12, [x0, #4]
@@ -15448,9 +22583,7 @@ cpu.x[0]=(((0x7fffffffu64))) as u32 as u64;
 // 0x11294eb4 cmp w9, w11
 {let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[11] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x11294eb8 b.lo #0x11294ed4
-if cpu.condition(3){pc=0x11294ed4;continue;}pc=0x11294ebc;continue;
-}
-0x11294ebc=>{
+if cpu.condition(3){break 'b11294ed4;}{
 // 0x11294ebc mul w8, w8, w8
 cpu.x[8]=((((cpu.x[8] as u32 as u64))).wrapping_mul(((cpu.x[8] as u32 as u64)))) as u32 as u64;
 // 0x11294ec0 mul w9, w10, w10
@@ -15463,16 +22596,86 @@ cpu.x[9]=((((cpu.x[10] as u32 as u64))).wrapping_mul(((cpu.x[10] as u32 as u64))
 {let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
 // 0x11294ed0 csel w0, w8, w0, lo
 cpu.x[0]=(if cpu.condition(3){((cpu.x[8] as u32 as u64))}else{((cpu.x[0] as u32 as u64))}) as u32 as u64;
-pc=0x11294ed4;continue;
+break 'b11294ed4;
 }
-0x11294ed4=>{
+}
+// 0x11294ed4 ret
+cpu.pc=cpu.x[30];return Ok(());
+}}{
+// 0x11294e98 mov w0, #0x7fffffff
+cpu.x[0]=(((0x7fffffffu64))) as u32 as u64;
+// 0x11294e9c ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_11294e74_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x11294e74{0}else{match pc{0x11294e74=>0,0x11294e98=>1,0x11294ea0=>2,0x11294ebc=>3,0x11294ed4=>4,_=>return Err(format!("untranslated block {pc:#x} in 0x11294e74").into()),}};loop{match block{
+0=>{
+// 0x11294e74 ldr w8, [x1]
+{let address=(cpu.x[1]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[8]=(v0) as u32 as u64;}
+// 0x11294e78 ldr w10, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x11294e7c mov w9, #-0xb505
+cpu.x[9]=(((0xffffffffffff4afbu64))) as u32 as u64;
+// 0x11294e80 mov w11, #0x95f7
+cpu.x[11]=(((0x95f7u64))) as u32 as u64;
+// 0x11294e84 sub w8, w8, w10
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x11294e88 movk w11, #0xfffe, lsl #16
+cpu.x[11]=((cpu.x[11] as u32 as u64 & !(0xffff0000u64)) | 0xfffe0000u64) as u32 as u64;
+// 0x11294e8c add w10, w8, w9
+{let a=((cpu.x[8] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_add(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x11294e90 cmp w10, w11
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[11] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294e94 b.hs #0x11294ea0
+if cpu.condition(2){block=2;continue;}block=1;continue;
+}
+1=>{
+// 0x11294e98 mov w0, #0x7fffffff
+cpu.x[0]=(((0x7fffffffu64))) as u32 as u64;
+// 0x11294e9c ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+2=>{
+// 0x11294ea0 ldr w10, [x1, #4]
+{let address=(cpu.x[1]).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;}
+// 0x11294ea4 ldr w12, [x0, #4]
+{let address=(cpu.x[0]).wrapping_add(0x4u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));cpu.x[12]=(v0) as u32 as u64;}
+// 0x11294ea8 mov w0, #0x7fffffff
+cpu.x[0]=(((0x7fffffffu64))) as u32 as u64;
+// 0x11294eac sub w10, w10, w12
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[12] as u32 as u64));let result=a.wrapping_sub(b);cpu.x[10]=(result) as u32 as u64;}
+// 0x11294eb0 add w9, w10, w9
+{let a=((cpu.x[10] as u32 as u64));let b=((cpu.x[9] as u32 as u64));let result=a.wrapping_add(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x11294eb4 cmp w9, w11
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[11] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294eb8 b.lo #0x11294ed4
+if cpu.condition(3){block=4;continue;}block=3;continue;
+}
+3=>{
+// 0x11294ebc mul w8, w8, w8
+cpu.x[8]=((((cpu.x[8] as u32 as u64))).wrapping_mul(((cpu.x[8] as u32 as u64)))) as u32 as u64;
+// 0x11294ec0 mul w9, w10, w10
+cpu.x[9]=((((cpu.x[10] as u32 as u64))).wrapping_mul(((cpu.x[10] as u32 as u64)))) as u32 as u64;
+// 0x11294ec4 eor w10, w8, #0x7fffffff
+{let a=((cpu.x[8] as u32 as u64));let b=((0x7fffffffu64));let result=a ^ b;cpu.x[10]=(result) as u32 as u64;}
+// 0x11294ec8 add w8, w9, w8
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[8] as u32 as u64));let result=a.wrapping_add(b);cpu.x[8]=(result) as u32 as u64;}
+// 0x11294ecc cmp w9, w10
+{let a=((cpu.x[9] as u32 as u64));let b=((cpu.x[10] as u32 as u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x11294ed0 csel w0, w8, w0, lo
+cpu.x[0]=(if cpu.condition(3){((cpu.x[8] as u32 as u64))}else{((cpu.x[0] as u32 as u64))}) as u32 as u64;
+block=4;continue;
+}
+4=>{
 // 0x11294ed4 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x11294e74")),}}}
+_=>return Err(format!("invalid internal block {block} in 0x11294e74").into()),}}}
 #[inline]
-pub(super) unsafe fn f_11295174(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x11295174=>{
+pub(super) unsafe fn f_11295174(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x11295174{return f_11295174_slow(cpu,rt,pc);}
+
 // 0x11295174 stp x29, x30, [sp, #-0x40]!
 {let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
 // 0x11295178 stp x24, x23, [sp, #0x10]
@@ -15493,18 +22696,14 @@ cpu.x[19]=(((cpu.x[0]))) as u64;
 cpu.x[20]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
 // 0x11295198 bl #0x11294440
 cpu.x[30]=0x1129519c;super::chunk0::f_11294440(cpu,rt,0x11294440)?;
-pc=0x1129519c;continue;
-}
-0x1129519c=>{
+{
 // 0x1129519c mov w21, w0
 cpu.x[21]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
 // 0x112951a0 mov w0, w20
 cpu.x[0]=(((cpu.x[20] as u32 as u64))) as u32 as u64;
 // 0x112951a4 bl #0x11294440
 cpu.x[30]=0x112951a8;super::chunk0::f_11294440(cpu,rt,0x11294440)?;
-pc=0x112951a8;continue;
-}
-0x112951a8=>{
+{
 // 0x112951a8 mul w8, w0, w23
 cpu.x[8]=((((cpu.x[0] as u32 as u64))).wrapping_mul(((cpu.x[23] as u32 as u64)))) as u32 as u64;
 // 0x112951ac mov w0, w20
@@ -15525,18 +22724,14 @@ cpu.x[8]=(if cpu.condition(11){((cpu.x[9] as u32 as u64))}else{((cpu.x[8] as u32
 cpu.x[21]=(((((cpu.x[8] as u32 as u64))) as i32).wrapping_shr(((((0xau64))) & 31) as u32) as u64) as u32 as u64;
 // 0x112951cc bl #0x11294440
 cpu.x[30]=0x112951d0;super::chunk0::f_11294440(cpu,rt,0x11294440)?;
-pc=0x112951d0;continue;
-}
-0x112951d0=>{
+{
 // 0x112951d0 mul w23, w0, w24
 cpu.x[23]=((((cpu.x[0] as u32 as u64))).wrapping_mul(((cpu.x[24] as u32 as u64)))) as u32 as u64;
 // 0x112951d4 add w0, w20, #0x5a
 {let a=((cpu.x[20] as u32 as u64));let b=((0x5au64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u32 as u64;}
 // 0x112951d8 bl #0x11294440
 cpu.x[30]=0x112951dc;super::chunk0::f_11294440(cpu,rt,0x11294440)?;
-pc=0x112951dc;continue;
-}
-0x112951dc=>{
+{
 // 0x112951dc madd w8, w0, w22, w23
 cpu.x[8]=((((cpu.x[23] as u32 as u64))).wrapping_add((((cpu.x[0] as u32 as u64))).wrapping_mul(((cpu.x[22] as u32 as u64))))) as u32 as u64;
 // 0x112951e0 add w9, w8, #0x3ff
@@ -15560,10 +22755,106 @@ cpu.x[8]=(((((cpu.x[8] as u32 as u64))) as i32).wrapping_shr(((((0xau64))) & 31)
 // 0x11295204 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x11295174")),}}}
+}
+}
+}
+}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_11295174_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x11295174{0}else{match pc{0x11295174=>0,0x1129519c=>1,0x112951a8=>2,0x112951d0=>3,0x112951dc=>4,_=>return Err(format!("untranslated block {pc:#x} in 0x11295174").into()),}};loop{match block{
+0=>{
+// 0x11295174 stp x29, x30, [sp, #-0x40]!
+{let address=(cpu.sp).wrapping_add(0xffffffffffffffc0u64);let v0=cpu.x[29];let v1=cpu.x[30];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);cpu.sp=(address) as u64;}
+// 0x11295178 stp x24, x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=cpu.x[24];let v1=cpu.x[23];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x1129517c stp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=cpu.x[22];let v1=cpu.x[21];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x11295180 stp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=cpu.x[20];let v1=cpu.x[19];rt.memory.write::<u64>(address.wrapping_add(0),v0 as u64);rt.memory.write::<u64>(address.wrapping_add(8),v1 as u64);}
+// 0x11295184 mov x29, sp
+cpu.x[29]=(((cpu.sp))) as u64;
+// 0x11295188 ldp w22, w23, [x0]
+{let address=(cpu.x[0]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[22]=(v0) as u32 as u64;cpu.x[23]=(v1) as u32 as u64;}
+// 0x1129518c mov x19, x0
+cpu.x[19]=(((cpu.x[0]))) as u64;
+// 0x11295190 add w0, w1, #0x5a
+{let a=((cpu.x[1] as u32 as u64));let b=((0x5au64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u32 as u64;}
+// 0x11295194 mov w20, w1
+cpu.x[20]=(((cpu.x[1] as u32 as u64))) as u32 as u64;
+// 0x11295198 bl #0x11294440
+cpu.x[30]=0x1129519c;super::chunk0::f_11294440(cpu,rt,0x11294440)?;
+block=1;continue;
+}
+1=>{
+// 0x1129519c mov w21, w0
+cpu.x[21]=(((cpu.x[0] as u32 as u64))) as u32 as u64;
+// 0x112951a0 mov w0, w20
+cpu.x[0]=(((cpu.x[20] as u32 as u64))) as u32 as u64;
+// 0x112951a4 bl #0x11294440
+cpu.x[30]=0x112951a8;super::chunk0::f_11294440(cpu,rt,0x11294440)?;
+block=2;continue;
+}
+2=>{
+// 0x112951a8 mul w8, w0, w23
+cpu.x[8]=((((cpu.x[0] as u32 as u64))).wrapping_mul(((cpu.x[23] as u32 as u64)))) as u32 as u64;
+// 0x112951ac mov w0, w20
+cpu.x[0]=(((cpu.x[20] as u32 as u64))) as u32 as u64;
+// 0x112951b0 neg w8, w8
+cpu.x[8]=(0u64.wrapping_sub(((cpu.x[8] as u32 as u64)))) as u32 as u64;
+// 0x112951b4 madd w8, w21, w22, w8
+cpu.x[8]=((((cpu.x[8] as u32 as u64))).wrapping_add((((cpu.x[21] as u32 as u64))).wrapping_mul(((cpu.x[22] as u32 as u64))))) as u32 as u64;
+// 0x112951b8 ldp w24, w22, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=rt.memory.read::<u32>(address.wrapping_add(0));let v1=rt.memory.read::<u32>(address.wrapping_add(4));cpu.x[24]=(v0) as u32 as u64;cpu.x[22]=(v1) as u32 as u64;}
+// 0x112951bc add w9, w8, #0x3ff
+{let a=((cpu.x[8] as u32 as u64));let b=((0x3ffu64));let result=a.wrapping_add(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x112951c0 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x112951c4 csel w8, w9, w8, lt
+cpu.x[8]=(if cpu.condition(11){((cpu.x[9] as u32 as u64))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x112951c8 asr w21, w8, #0xa
+cpu.x[21]=(((((cpu.x[8] as u32 as u64))) as i32).wrapping_shr(((((0xau64))) & 31) as u32) as u64) as u32 as u64;
+// 0x112951cc bl #0x11294440
+cpu.x[30]=0x112951d0;super::chunk0::f_11294440(cpu,rt,0x11294440)?;
+block=3;continue;
+}
+3=>{
+// 0x112951d0 mul w23, w0, w24
+cpu.x[23]=((((cpu.x[0] as u32 as u64))).wrapping_mul(((cpu.x[24] as u32 as u64)))) as u32 as u64;
+// 0x112951d4 add w0, w20, #0x5a
+{let a=((cpu.x[20] as u32 as u64));let b=((0x5au64));let result=a.wrapping_add(b);cpu.x[0]=(result) as u32 as u64;}
+// 0x112951d8 bl #0x11294440
+cpu.x[30]=0x112951dc;super::chunk0::f_11294440(cpu,rt,0x11294440)?;
+block=4;continue;
+}
+4=>{
+// 0x112951dc madd w8, w0, w22, w23
+cpu.x[8]=((((cpu.x[23] as u32 as u64))).wrapping_add((((cpu.x[0] as u32 as u64))).wrapping_mul(((cpu.x[22] as u32 as u64))))) as u32 as u64;
+// 0x112951e0 add w9, w8, #0x3ff
+{let a=((cpu.x[8] as u32 as u64));let b=((0x3ffu64));let result=a.wrapping_add(b);cpu.x[9]=(result) as u32 as u64;}
+// 0x112951e4 cmp w8, #0
+{let a=((cpu.x[8] as u32 as u64));let b=((0x0u64));let result=a.wrapping_sub(b);cpu.flags(a,b,result,32,true);}
+// 0x112951e8 csel w8, w9, w8, lt
+cpu.x[8]=(if cpu.condition(11){((cpu.x[9] as u32 as u64))}else{((cpu.x[8] as u32 as u64))}) as u32 as u64;
+// 0x112951ec asr w8, w8, #0xa
+cpu.x[8]=(((((cpu.x[8] as u32 as u64))) as i32).wrapping_shr(((((0xau64))) & 31) as u32) as u64) as u32 as u64;
+// 0x112951f0 stp w21, w8, [x19]
+{let address=(cpu.x[19]).wrapping_add(0x0u64);let v0=cpu.x[21] as u32 as u64;let v1=cpu.x[8] as u32 as u64;rt.memory.write::<u32>(address.wrapping_add(0),v0 as u32);rt.memory.write::<u32>(address.wrapping_add(4),v1 as u32);}
+// 0x112951f4 ldp x20, x19, [sp, #0x30]
+{let address=(cpu.sp).wrapping_add(0x30u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[20]=(v0) as u64;cpu.x[19]=(v1) as u64;}
+// 0x112951f8 ldp x22, x21, [sp, #0x20]
+{let address=(cpu.sp).wrapping_add(0x20u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[22]=(v0) as u64;cpu.x[21]=(v1) as u64;}
+// 0x112951fc ldp x24, x23, [sp, #0x10]
+{let address=(cpu.sp).wrapping_add(0x10u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[24]=(v0) as u64;cpu.x[23]=(v1) as u64;}
+// 0x11295200 ldp x29, x30, [sp], #0x40
+{let address=(cpu.sp).wrapping_add(0x0u64);let v0=rt.memory.read::<u64>(address.wrapping_add(0));let v1=rt.memory.read::<u64>(address.wrapping_add(8));cpu.x[29]=(v0) as u64;cpu.x[30]=(v1) as u64;cpu.sp=((cpu.sp).wrapping_add(((0x40u64)))) as u64;}
+// 0x11295204 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x11295174").into()),}}}
 #[inline]
-pub(super) unsafe fn f_11379154(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
-0x11379154=>{
+pub(super) unsafe fn f_11379154(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{if pc!=0x11379154{return f_11379154_slow(cpu,rt,pc);}
+
+'b11379188: {
 // 0x11379154 mov x8, x0
 cpu.x[8]=(((cpu.x[0]))) as u64;
 // 0x11379158 mov x0, #0x2325
@@ -15575,16 +22866,13 @@ cpu.x[0]=((cpu.x[0] & !(0xffff00000000u64)) | 0x9ce400000000u64) as u64;
 // 0x11379164 movk x0, #0xcbf2, lsl #48
 cpu.x[0]=((cpu.x[0] & !(0xffff000000000000u64)) | 0xcbf2000000000000u64) as u64;
 // 0x11379168 cbz x1, #0x11379188
-if (cpu.x[1]) == 0 {pc=0x11379188;continue;}pc=0x1137916c;continue;
-}
-0x1137916c=>{
+if (cpu.x[1]) == 0 {break 'b11379188;}{
 // 0x1137916c mov x9, #0x1b3
 cpu.x[9]=(((0x1b3u64))) as u64;
 // 0x11379170 movk x9, #0x100, lsl #32
 cpu.x[9]=((cpu.x[9] & !(0xffff00000000u64)) | 0x10000000000u64) as u64;
-pc=0x11379174;continue;
-}
-0x11379174=>{
+{
+'l11379174: loop {
 // 0x11379174 ldrb w10, [x8], #1
 {let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;cpu.x[8]=((cpu.x[8]).wrapping_add(((0x1u64)))) as u64;}
 // 0x11379178 subs x1, x1, #1
@@ -15594,13 +22882,55 @@ pc=0x11379174;continue;
 // 0x11379180 mul x0, x10, x9
 cpu.x[0]=((((cpu.x[10]))).wrapping_mul(((cpu.x[9])))) as u64;
 // 0x11379184 b.ne #0x11379174
-if cpu.condition(1){pc=0x11379174;continue;}pc=0x11379188;continue;
+if cpu.condition(1){continue 'l11379174;}break 'b11379188;
 }
-0x11379188=>{
+}
+}
+}
 // 0x11379188 ret
 cpu.pc=cpu.x[30];return Ok(());
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x11379154")),}}}
+#[cold]
+#[inline(never)]
+pub(super) unsafe fn f_11379154_slow(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{let mut block:u32=if pc==0x11379154{0}else{match pc{0x11379154=>0,0x1137916c=>1,0x11379174=>2,0x11379188=>3,_=>return Err(format!("untranslated block {pc:#x} in 0x11379154").into()),}};loop{match block{
+0=>{
+// 0x11379154 mov x8, x0
+cpu.x[8]=(((cpu.x[0]))) as u64;
+// 0x11379158 mov x0, #0x2325
+cpu.x[0]=(((0x2325u64))) as u64;
+// 0x1137915c movk x0, #0x8422, lsl #16
+cpu.x[0]=((cpu.x[0] & !(0xffff0000u64)) | 0x84220000u64) as u64;
+// 0x11379160 movk x0, #0x9ce4, lsl #32
+cpu.x[0]=((cpu.x[0] & !(0xffff00000000u64)) | 0x9ce400000000u64) as u64;
+// 0x11379164 movk x0, #0xcbf2, lsl #48
+cpu.x[0]=((cpu.x[0] & !(0xffff000000000000u64)) | 0xcbf2000000000000u64) as u64;
+// 0x11379168 cbz x1, #0x11379188
+if (cpu.x[1]) == 0 {block=3;continue;}block=1;continue;
+}
+1=>{
+// 0x1137916c mov x9, #0x1b3
+cpu.x[9]=(((0x1b3u64))) as u64;
+// 0x11379170 movk x9, #0x100, lsl #32
+cpu.x[9]=((cpu.x[9] & !(0xffff00000000u64)) | 0x10000000000u64) as u64;
+block=2;continue;
+}
+2=>{
+// 0x11379174 ldrb w10, [x8], #1
+{let address=(cpu.x[8]).wrapping_add(0x0u64);let v0=rt.memory.read::<u8>(address.wrapping_add(0));cpu.x[10]=(v0) as u32 as u64;cpu.x[8]=((cpu.x[8]).wrapping_add(((0x1u64)))) as u64;}
+// 0x11379178 subs x1, x1, #1
+{let a=((cpu.x[1]));let b=((0x1u64));let result=a.wrapping_sub(b);cpu.x[1]=(result) as u64;cpu.flags(a,b,result,64,true);}
+// 0x1137917c eor x10, x0, x10
+{let a=((cpu.x[0]));let b=((cpu.x[10]));let result=a ^ b;cpu.x[10]=(result) as u64;}
+// 0x11379180 mul x0, x10, x9
+cpu.x[0]=((((cpu.x[10]))).wrapping_mul(((cpu.x[9])))) as u64;
+// 0x11379184 b.ne #0x11379174
+if cpu.condition(1){block=2;continue;}block=3;continue;
+}
+3=>{
+// 0x11379188 ret
+cpu.pc=cpu.x[30];return Ok(());
+}
+_=>return Err(format!("invalid internal block {block} in 0x11379154").into()),}}}
 #[inline]
 pub(super) unsafe fn f_1187d520(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x1187d520=>{
@@ -15613,7 +22943,7 @@ cpu.x[16]=(0x11981000u64) as u64;
 // 0x1187d52c br x17
 {let target=cpu.x[17];if target>=0x1187d520 && target<0x1187d530{pc=target;continue;}super::dispatch(cpu,rt,target)?;return Ok(());}
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x1187d520")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x1187d520").into()),}}}
 #[inline]
 pub(super) unsafe fn f_30132dd0(cpu:&mut Cpu,rt:&mut Runtime,mut pc:u64)->Result<(),String>{loop{match pc{
 0x30132dd0=>{
@@ -15626,4 +22956,4 @@ cpu.x[16]=(0x30142000u64) as u64;
 // 0x30132ddc br x17
 {let target=cpu.x[17];if target>=0x30132dd0 && target<0x30132de0{pc=target;continue;}super::dispatch(cpu,rt,target)?;return Ok(());}
 }
-_=>return Err(format!("untranslated block {pc:#x} in 0x30132dd0")),}}}
+_=>return Err(format!("untranslated block {pc:#x} in 0x30132dd0").into()),}}}

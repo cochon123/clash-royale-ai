@@ -126,6 +126,7 @@ impl Session {
                 .unwrap_or(0),
             clock_calls: 0,
             calls: BTreeMap::new(),
+            deck_swap: None,
         };
         let values = &checkpoint["call_plan"]["values"];
         let (world, battle, harness) = (
@@ -150,6 +151,7 @@ impl Session {
         self.runtime.heap.reset();
         self.runtime.clock_calls = 0;
         self.runtime.calls.clear();
+        self.runtime.deck_swap = None;
         let values = &self.checkpoint["call_plan"]["values"];
         self.world = num(&values["battle_world"])?;
         self.battle = num(&values["battle_state"])?;

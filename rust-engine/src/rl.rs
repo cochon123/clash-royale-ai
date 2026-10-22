@@ -66,18 +66,32 @@ impl RlSession {
         cards: &[&str],
         seed: u32,
     ) -> Result<Value, String> {
-        if cards.len() != 8 {
+        self.configure_normal_decks_and_rebuild(cards, cards, seed)
+    }
+
+    /// Reproduce the reference's per-side source-vector hooks, preserving all
+    /// original constructor instructions, allocation order and native seed.
+    pub fn configure_normal_decks_and_rebuild(
+        &mut self,
+        cards: &[&str],
+        cards_side1: &[&str],
+        seed: u32,
+    ) -> Result<Value, String> {
+        if cards.len() != 8 || cards_side1.len() != 8 {
             return Err(format!(
-                "a configured deck must contain exactly 8 cards, got {}",
-                cards.len()
+                "configured decks must each contain exactly 8 cards, got {} and {}",
+                cards.len(),
+                cards_side1.len()
             ));
         }
-        let mut unique = std::collections::BTreeSet::new();
-        if cards
-            .iter()
-            .any(|card| card.is_empty() || !unique.insert(*card))
-        {
-            return Err("deck names must be nonempty and unique".into());
+        for deck in [cards, cards_side1] {
+            let mut unique = std::collections::BTreeSet::new();
+            if deck
+                .iter()
+                .any(|card| card.is_empty() || !unique.insert(*card))
+            {
+                return Err("deck names must be nonempty and unique".into());
+            }
         }
 
         let values = &self.engine.checkpoint["call_plan"]["values"];
@@ -94,12 +108,15 @@ impl RlSession {
                 return Err(format!("native card row {index} is null"));
             }
             let name = self.native_string(row + 0x28)?;
-            if cards.contains(&name.as_str()) && source_rows.insert(name.clone(), row).is_some() {
+            if (cards.contains(&name.as_str()) || cards_side1.contains(&name.as_str()))
+                && source_rows.insert(name.clone(), row).is_some()
+            {
                 return Err(format!("duplicate native source row name {name}"));
             }
         }
         let missing: Vec<_> = cards
             .iter()
+            .chain(cards_side1)
             .filter(|name| !source_rows.contains_key(**name))
             .copied()
             .collect();
@@ -131,6 +148,25 @@ impl RlSession {
             normal_test_row + 0x78,
             &(row_ptrs.len() as u32).to_le_bytes(),
         )?;
+
+        let second_vector = if cards_side1 != cards {
+            let pointers: Vec<u64> = cards_side1.iter().map(|name| source_rows[*name]).collect();
+            let data = self.engine.runtime.heap.alloc(
+                8 * pointers.len() as u64,
+                8,
+                &mut self.engine.runtime.memory,
+            )?;
+            self.engine.runtime.memory.write_bytes(
+                data,
+                &pointers
+                    .iter()
+                    .flat_map(|p| p.to_le_bytes())
+                    .collect::<Vec<_>>(),
+            )?;
+            Some((data, pointers.len() as u32))
+        } else {
+            None
+        };
         self.engine.runtime.memory.write_bytes(
             normal_test_row + 0x7c,
             &(row_ptrs.len() as u32).to_le_bytes(),
@@ -188,8 +224,28 @@ impl RlSession {
             .runtime
             .memory
             .write_bytes(new_harness, &[0; 0x78])?;
-        self.engine
-            .call(0x11d58e0, &[new_harness, context, input_sret], 0)?;
+        self.engine.runtime.deck_swap =
+            second_vector.map(|(data, count)| crate::runtime::DeckSwap {
+                slot: normal_test_row + 0x70,
+                second_ptr: data,
+                second_count: count,
+                original_ptr: vector_data,
+                original_count: row_ptrs.len() as u32,
+                calls: 0,
+            });
+        let constructed = self
+            .engine
+            .call(0x11d58e0, &[new_harness, context, input_sret], 0);
+        let swap = self.engine.runtime.deck_swap.take();
+        constructed?;
+        if let Some(swap) = swap {
+            if swap.calls != 2 {
+                return Err(format!(
+                    "expected two native 11d6f18 deck builds, observed {}",
+                    swap.calls
+                ));
+            }
+        }
         let new_world = read_u64(&self.engine, new_harness + 0x20)?;
         if new_world == 0 {
             return Err("original harness constructor returned a null world".into());
@@ -241,7 +297,8 @@ impl RlSession {
                 names.push(self.native_string(row + 0x28)?);
             }
             let mut sorted_actual = names.clone();
-            let mut sorted_expected = cards
+            let expected = if side == 0 { cards } else { cards_side1 };
+            let mut sorted_expected = expected
                 .iter()
                 .map(|name| name.to_string())
                 .collect::<Vec<_>>();
@@ -253,8 +310,13 @@ impl RlSession {
             actual_decks.push(json!({"side":side,"cards":names}));
         }
         let observation = self.observe()?;
+        let deck_source_rows = if cards == cards_side1 {
+            json!(cards)
+        } else {
+            json!([cards, cards_side1])
+        };
         Ok(
-            json!({"scenario":"Normal","seed":seed,"deck_source_rows":cards,"actual_native_decks":actual_decks,"observation":observation,"construction":"Original 11d7968 input and 11d58e0 fresh-harness constructors after setting the loaded Normal row's AlwaysSpells vector; no engine-code patches."}),
+            json!({"scenario":"Normal","seed":seed,"deck_source_rows":deck_source_rows,"actual_native_decks":actual_decks,"observation":observation,"construction":"Original 11d7968 input and 11d58e0 fresh-harness constructors with source-bound per-side deck vector hooks; no engine-code patches."}),
         )
     }
 
@@ -291,6 +353,94 @@ impl RlSession {
 
     pub fn is_terminal(&self) -> bool {
         self.engine.is_terminal()
+    }
+
+    /// Read the same source-proven entity identity and health component fields
+    /// as NativeSession::presentation_snapshot, without presentation work for
+    /// unrelated troops/projectiles. Removed towers are filled as zero by the
+    /// protocol server using their verified initial identities.
+    pub fn tower_snapshot(&self) -> Result<Value, String> {
+        let manager = read_u64(&self.engine, self.engine.world + 0x40)?;
+        let count = read_i32(&self.engine, manager + 0x14)?;
+        if !(0..=8192).contains(&count) {
+            return Err(format!("invalid native entity count {count}"));
+        }
+        let array = read_u64(&self.engine, manager + 8)?;
+        let mut towers = Vec::new();
+        for index in 0..count as u64 {
+            let address = read_u64(&self.engine, array + index * 8)?;
+            let row = read_u64(&self.engine, address + 0x48)?;
+            let name = self.native_string(row + 0x28)?;
+            if name != "KingTower" && name != "PrincessTower" {
+                continue;
+            }
+            let component_count = read_i32(&self.engine, address + 0x24)?;
+            if !(3..=32).contains(&component_count) {
+                return Err("unrecognized native tower component layout".into());
+            }
+            let table = read_u64(&self.engine, address + 0x18)?;
+            let health = read_u64(&self.engine, table + 16)?;
+            if health == 0 || read_u64(&self.engine, health)? != 0x1193b660 {
+                return Err("unrecognized native tower health component".into());
+            }
+            towers.push(json!({
+                "native_entity_id":read_i32(&self.engine, address + 8)?,
+                "row":name,
+                "side":read_i32(&self.engine, address + 0x78)?,
+                "x":read_i32(&self.engine, address + 0x7c)?,
+                "y":read_i32(&self.engine, address + 0x80)?,
+                "hp":read_i32(&self.engine, health + 0x10)?,
+                "max_hp":read_i32(&self.engine, health + 0x14)?,
+            }));
+        }
+        Ok(json!({"tick":self.engine.ticks()[0],"entities":towers}))
+    }
+
+    /// Query the original target validator at every policy heatmap center.
+    /// The same descriptor/validator calls as the reference preserve legality.
+    pub fn placement_mask(&mut self, side: u32, slot: u32) -> Result<Value, String> {
+        if side > 1 || slot > 3 {
+            return Err("placement_mask needs side 0..1 and slot 0..3".into());
+        }
+        let object = self.side_object(side)?;
+        if object == 0 {
+            return Err("null native battle side".into());
+        }
+        let ticks = self.engine.ticks();
+        let commands = read_u64(&self.engine, self.engine.world + 0x38)?;
+        let queue = read_u32(&self.engine, commands + 0x14)?;
+        let wrapper = self.engine.call(0xf9dd98, &[object, slot as u64], 0)?;
+        if wrapper == 0 {
+            return Err("placement_mask requested an empty hand slot".into());
+        }
+        self.engine
+            .runtime
+            .memory
+            .write_bytes(self.descriptor_scratch, &[0; 24])?;
+        self.engine
+            .call(0xe80bbc, &[wrapper, object, 1], self.descriptor_scratch)?;
+        let proxy = self.engine.call(0xe80680, &[self.descriptor_scratch], 0)?;
+        if proxy == 0 {
+            return Err("null native card selection proxy".into());
+        }
+        let start = Instant::now();
+        let mut mask = Vec::with_capacity(576);
+        for tile in 0..576 {
+            let x = (((tile % 32) as f64 + 0.5) * 18000.0 / 32.0).round() as u64;
+            let y = ((tile / 32) as f64 + 0.5) / 18.0;
+            let y = ((if side == 1 { 1.0 - y } else { y }) * 32000.0).round() as u64;
+            let code = self
+                .engine
+                .call(0xd42214, &[self.engine.battle, x, y, proxy, 0], 0)?
+                as u32;
+            mask.push(code == 0);
+        }
+        if ticks != self.engine.ticks() || queue != read_u32(&self.engine, commands + 0x14)? {
+            return Err("placement_mask changed native tick or queue".into());
+        }
+        Ok(
+            json!({"side":side,"slot":slot,"mask":mask,"tick":ticks[0],"query_seconds":start.elapsed().as_secs_f64()}),
+        )
     }
 
     fn side_object(&mut self, side: u32) -> Result<u64, String> {

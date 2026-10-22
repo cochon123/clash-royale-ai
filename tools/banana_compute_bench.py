@@ -120,6 +120,7 @@ def main() -> int:
     parser.add_argument("--trace-dir", type=Path)
     parser.add_argument("--fallback-bin", type=Path, help="optional original engine with exact-prefix recovery")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--engine-bin", type=Path, help="compiled runner (default: the trainer's default)")
     args = parser.parse_args()
     run_dir = args.run_dir if args.run_dir.is_absolute() else ROOT / args.run_dir
     output = args.output or ROOT / "analysis/cpu-gpu-tuning" / f"{run_dir.name}-compute.json"
@@ -137,6 +138,8 @@ def main() -> int:
         command.extend(["--trace-dir", str(args.trace_dir)])
     if args.fallback_bin:
         command.extend(["--fallback-bin", str(args.fallback_bin)])
+    if args.engine_bin:
+        command.extend(["--engine-bin", str(args.engine_bin.resolve())])
 
     started = time.monotonic()
     child = subprocess.Popen(command, cwd=ROOT, start_new_session=True)

@@ -305,6 +305,194 @@ def thread_forward_edges(lines,budget):
  for address in blocks:result += [f'{address:#x}=>{{',expand(address,[budget]),'}']
  return result+[lines[-1]],stats
 
+def dense_dispatch(lines):
+ """Use compact internal block IDs, preserving the public ARM entry address.
+
+ Only constant local transfers are eligible. Functions with indirect local
+ branches retain their original dispatcher. Every original entry is checked
+ once on entry; all internal IDs are produced by this verified mapping.
+ """
+ addresses=[int(m[1],0) for line in lines if (m:=re.fullmatch(r'(0x[0-9a-f]+)=>\{',line))]
+ if len(addresses)<2:return lines,{'blocks':len(addresses),'applied':False}
+ transfer=re.compile(r'(?<![\w.])pc=(0x[0-9a-f]+);continue;')
+ if re.search(r'(?<![\w.])pc\s*=',transfer.sub('', '\n'.join(lines))):
+  return lines,{'blocks':len(addresses),'applied':False,'reason':'indirect local transfer'}
+ ids={address:index for index,address in enumerate(addresses)}
+ if any(int(m[1],0) not in ids for line in lines for m in transfer.finditer(line)):
+  return lines,{'blocks':len(addresses),'applied':False,'reason':'transfer outside translated blocks'}
+ entry=(f'let mut block:u32=if pc=={addresses[0]:#x}{{0}}else{{match pc{{'+
+        ''.join(f'{address:#x}=>{index},' for address,index in ids.items())+
+        '_=>return Err(format!("untranslated block {pc:#x} in '+hex(addresses[0])+'").into()),}};')
+ result=[lines[0].replace('>{loop{match pc{','>{'+entry+'loop{match block{')]
+ assert result[0]!=lines[0],'unexpected generated function header'
+ for line in lines[1:-1]:
+  if m:=re.fullmatch(r'(0x[0-9a-f]+)=>\{',line):line=f'{ids[int(m[1],0)]}=>{{'
+  line=transfer.sub(lambda m:f'block={ids[int(m[1],0)]};continue;',line)
+  result.append(line)
+ result.append(lines[-1].replace('untranslated block {pc:#x}','invalid internal block {block}'))
+ return result,{'blocks':len(addresses),'applied':True}
+
+PROMOTE_EVENT=re.compile(
+ r'(?P<call>super::(?:chunk\d+::f_[0-9a-f]+|dispatch)\(cpu,rt,[^;]*?\)\?;)(?P<tail>return Ok\(\(\)\);)?'
+ r'|(?P<ret>return Ok\(\(\)\);)'
+ r'|(?P<transfer>(?<![\w.])pc=0x[0-9a-f]+;continue;)'
+ r'|cpu\.x\[(?P<x>\d+)\](?P<xw>=(?!=))?'
+ r'|cpu\.q\[(?P<q>\d+)\](?P<qw>=(?!=))?'
+ r'|cpu\.sp(?![\w])(?P<spw>=(?!=))?'
+ r'|cpu\.nzcv(?![\w])(?P<nw>=(?!=))?'
+ r'|cpu\.(?P<flags>flags|logical_flags)\('
+ r'|cpu\.condition\(')
+
+def promote_registers(text,rpo,sites,limit=None):
+ """Keep guest registers in Rust locals within one structured function.
+
+ Locals are loaded on entry and after every non-tail call. Before each call
+ and each normal return, every register that may have been written since the
+ last synchronization is stored back, so callees, callers and host code see
+ exactly the architectural values the memory-resident translation stores.
+ May-dirty sets are a forward union dataflow over the function's local CFG.
+ """
+ used=set()
+ for a in rpo:
+  for m in PROMOTE_EVENT.finditer(text[a]):
+   if m['x'] is not None:used.add(('x',int(m['x'])))
+   elif m['q'] is not None:used.add(('q',int(m['q'])))
+   elif m[0].startswith('cpu.sp'):used.add(('sp',0))
+   elif m[0].startswith(('cpu.nzcv','cpu.flags','cpu.logical_flags','cpu.condition')):used.add(('nzcv',0))
+ if limit is not None and len(used)>limit:return None,None  # host register pressure would force spills
+ local=lambda r:{'x':f'gx{r[1]}','q':f'gq{r[1]}','sp':'gsp','nzcv':'gnzcv'}[r[0]]
+ field=lambda r:{'x':f'cpu.x[{r[1]}]','q':f'cpu.q[{r[1]}]','sp':'cpu.sp','nzcv':'cpu.nzcv'}[r[0]]
+ order=sorted(used)
+ store=lambda dirty:''.join(f'{field(r)}={local(r)};' for r in sorted(dirty))
+ reload=''.join(f'{local(r)}={field(r)};' for r in order)
+ def scan(a,dirty,emit):
+  dirty=set(dirty);out=[];pos=0;s=text[a];at_transfer=[]
+  for m in PROMOTE_EVENT.finditer(s):
+   out.append(s[pos:m.start()]);pos=m.end()
+   if m['call']:
+    out.append(store(dirty)+m['call'])
+    if m['tail']:out.append(m['tail'])  # path ends: callee results stay in cpu
+    else:out.append(reload);dirty=set()
+   elif m['ret']:out.append(store(dirty)+m['ret'])
+   elif m['transfer']:out.append(m[0]);at_transfer.append(frozenset(dirty))
+   elif m['x'] is not None:
+    r=('x',int(m['x']));out.append(local(r)+('=' if m['xw'] else ''))
+    if m['xw']:dirty.add(r)
+   elif m['q'] is not None:
+    r=('q',int(m['q']));out.append(local(r)+('=' if m['qw'] else ''))
+    if m['qw']:dirty.add(r)
+   elif m[0].startswith('cpu.sp'):
+    out.append('gsp'+('=' if m['spw'] else ''))
+    if m['spw']:dirty.add(('sp',0))
+   elif m[0].startswith('cpu.nzcv'):
+    out.append('gnzcv'+('=' if m['nw'] else ''))
+    if m['nw']:dirty.add(('nzcv',0))
+   elif m['flags']:
+    out.append('gnzcv=nzcv_'+m['flags']+'(');dirty.add(('nzcv',0))
+   else:out.append('nzcv_condition(gnzcv,')
+  out.append(s[pos:])
+  return ''.join(out),at_transfer
+ # Transfer sites in a block appear in the same order as `sites[a]`.
+ dirty_in={a:frozenset() for a in rpo};changed=True
+ while changed:
+  changed=False
+  for a in rpo:
+   _,outs=scan(a,dirty_in[a],False)
+   assert len(outs)==len(sites[a]),f'transfer scan mismatch in {a:#x}'
+   for t,d in zip(sites[a],outs):
+    if not d<=dirty_in[t]:dirty_in[t]=dirty_in[t]|d;changed=True
+ rewritten={a:scan(a,dirty_in[a],True)[0] for a in rpo}
+ prologue=''.join(f'let mut {local(r)}={field(r)};' for r in order)
+ return rewritten,prologue
+
+def structured_cfg(lines,lo,promote=False,promote_limit=None):
+ """Lower the PC-loop body of one function into structured Rust control flow.
+
+ Uses Ramsey's dominator-tree algorithm ("Beyond Relooper", 2022): forward
+ edges to merge nodes become `break` out of labeled blocks, back edges become
+ `continue` of labeled loops, and single-predecessor successors are emitted in
+ place. Every reachable block is emitted exactly once with its instruction text
+ unchanged; only `pc=constant;continue;` transfers are rewritten. Returns None
+ for indirect local branches or irreducible control flow.
+ """
+ blocks={};order=[];address=None
+ for line in lines[1:-1]:
+  match=re.fullmatch(r'(0x[0-9a-f]+)=>\{',line)
+  if match:address=int(match[1],0);blocks[address]=[];order.append(address)
+  elif line=='}':address=None
+  else:blocks[address].append(line)
+ if not order or order[0]!=lo:return None,'entry is not the first block'
+ transfer=re.compile(r'(?<![\w.])pc=(0x[0-9a-f]+);continue;')
+ text={a:'\n'.join(body) for a,body in blocks.items()}
+ for a,body in text.items():
+  if re.search(r'(?<![\w.])pc\s*=',transfer.sub('',body)) or re.search(r'\b(continue|break)\b',transfer.sub('',body)):
+   return None,'indirect or unstructured local transfer'
+ sites={a:[int(m[1],0) for m in transfer.finditer(body)] for a,body in text.items()}
+ if any(t not in blocks for ts in sites.values() for t in ts):return None,'transfer outside translated blocks'
+ # Reverse postorder from the function entry; other blocks are mid-entries only.
+ seen=set();post=[];stack=[(lo,iter(dict.fromkeys(sites[lo])))];seen.add(lo)
+ while stack:
+  node,it=stack[-1]
+  for t in it:
+   if t not in seen:seen.add(t);stack.append((t,iter(dict.fromkeys(sites[t]))));break
+  else:post.append(node);stack.pop()
+ rpo=post[::-1];index={a:i for i,a in enumerate(rpo)}
+ preds=collections.defaultdict(list)
+ for a in rpo:
+  for t in sites[a]:preds[t].append(a)
+ idom={lo:lo}
+ def intersect(a,b):
+  while a!=b:
+   while index[a]>index[b]:a=idom[a]
+   while index[b]>index[a]:b=idom[b]
+  return a
+ changed=True
+ while changed:
+  changed=False
+  for a in rpo[1:]:
+   ps=[p for p in preds[a] if p in idom]
+   new=ps[0]
+   for p in ps[1:]:new=intersect(p,new)
+   if idom.get(a)!=new:idom[a]=new;changed=True
+ def dominates(a,b):
+  while True:
+   if a==b:return True
+   if b==lo:return False
+   b=idom[b]
+ headers=set();forward=collections.Counter()
+ for a in rpo:
+  for t in sites[a]:
+   if index[t]<=index[a]:
+    if not dominates(t,a):return None,'irreducible control flow'
+    headers.add(t)
+   else:forward[t]+=1
+ merges={a for a in rpo if forward[a]>=2}
+ children=collections.defaultdict(list)
+ for a in rpo[1:]:children[idom[a]].append(a)
+ def do_tree(x):
+  ys=sorted((c for c in children[x] if c in merges),key=index.get)
+  inner=node_within(x,ys)
+  return f"'l{x:x}: loop {{\n{inner}\n}}" if x in headers else inner
+ def node_within(x,ys):
+  if not ys:return transfer.sub(lambda m:branch(x,int(m[1],0)),text[x])
+  y=ys[-1]
+  return f"'b{y:x}: {{\n{node_within(x,ys[:-1])}\n}}\n{do_tree(y)}"
+ def branch(source,target):
+  if index[target]<=index[source]:return f"continue 'l{target:x};"
+  if target in merges:return f"break 'b{target:x};"
+  return '{\n'+do_tree(target)+'\n}'
+ prologue=''
+ if promote:
+  rewritten,prologue=promote_registers(text,rpo,sites,promote_limit)
+  if rewritten is None:prologue=''
+  else:text.update(rewritten)
+ body=prologue+'\n'+do_tree(lo)
+ # Structural audit: each reachable block's instruction text appears exactly once.
+ instructions=lambda s:re.findall(r'^// 0x[0-9a-f]+ .*$',s,re.M)
+ if collections.Counter(instructions(body))!=collections.Counter(i for a in rpo for i in instructions(text[a])):
+  raise AssertionError(f'structured lowering changed instruction multiset in {lo:#x}')
+ return body,{'blocks':len(order),'reachable':len(rpo),'loops':len(headers),'merges':len(merges),'promoted':bool(prologue)}
+
 def generate(profile,out,extra):
  source=SOURCE.read_bytes();assert hashlib.sha256(source).hexdigest()==EXPECTED
  cpdir=ROOT/'analysis/native-pipeline/oracle-export-01/stage01-attempt001/state';cp=json.loads((cpdir/'checkpoint.json').read_text())
@@ -371,7 +559,7 @@ def generate(profile,out,extra):
  ranges=merged
  out.mkdir(parents=True,exist_ok=True)
  functions={start:(int.from_bytes(hashlib.sha256(str(start).encode()).digest()[:2],'little')%16,f'f_{start:x}') for start in sorted(ranges)}
- compiler=Compiler(functions);chunks=[[]for _ in range(16)];unsupported=collections.Counter();total=0;exports=[];threaded={}
+ compiler=Compiler(functions);chunks=[[]for _ in range(16)];unsupported=collections.Counter();total=0;exports=[];threaded={};dense={};structured={}
  for start,(lo,hi) in sorted(ranges.items()):
   ins=list(md.disasm(read(lo,hi-lo),lo));total+=len(ins)
   boundaries={lo}|{int(block['rva'],0)+BASE for block in x['blocks'] if lo<=int(block['rva'],0)+BASE<hi}
@@ -406,23 +594,40 @@ def generate(profile,out,extra):
 
    except (ValueError,KeyError,IndexError) as e:
     unsupported[str(e)]+=1;code='return Err('+json.dumps(f'unsupported {i.address:#x}: {i.mnemonic} {i.op_str}')+'.into());';terminated=True
+   if i.address in (0x111d6f18,0x111d6068):
+    code=f'rt.deck_swap_hook({i.address:#x})?;'+code
    lines.append(f'// {i.address:#x} {i.mnemonic} {i.op_str}'.rstrip()+'\n'+code)
   if opened:
    if not terminated:lines.append(f'return Err("fell through function {lo:#x}".into());')
    lines.append('}')
-  lines.append(f'_=>return Err(format!("untranslated block {{pc:#x}} in {lo:#x}")),}}}}}}')
+  lines.append(f'_=>return Err(format!("untranslated block {{pc:#x}} in {lo:#x}").into()),}}}}}}')
+  fast=None
+  if settings.get('structured_cfg',False):
+   fast,stats=structured_cfg(lines,lo,settings.get('promote_registers',False),settings.get('promote_register_limit'));structured[hex(start-BASE)]=stats if fast is not None else {'applied':False,'reason':stats}
   if start in thread_targets:
    lines,stats=thread_forward_edges(lines,thread_budget);threaded[hex(start-BASE)]=stats
+  if settings.get('dense_dispatch',False):
+   lines,stats=dense_dispatch(lines);dense[hex(start-BASE)]=stats
+  if fast is not None:
+   # Entry at the function start runs the structured body; any other block
+   # entry (e.g. a computed branch into the middle) keeps the PC dispatcher.
+   slow=name+'_slow'
+   lines[0]=lines[0].replace('#[inline]','#[cold]\n#[inline(never)]').replace(f'fn {name}(',f'fn {slow}(')
+   # Measured: limiting #[inline] to small bodies cuts .text 45->17 MB but costs
+   # 26% throughput (lost cross-CGU inlining), so the default keeps the hint.
+   limit=settings.get('structured_inline_instructions')
+   attribute='#[inline]\n' if limit is None or len(ins)<=limit else ''
+   chunks[group].append(f'{attribute}pub(super) unsafe fn {name}(cpu:&mut Cpu,rt:&mut Runtime,pc:u64)->Result<(),String>{{if pc!={lo:#x}{{return {slow}(cpu,rt,pc);}}\n{fast}\n}}')
   chunks[group].append('\n'.join(lines));exports.append((lo,hi,group,name))
  for j,chunk in enumerate(chunks):
-  (out/f'chunk{j}.rs').write_text('#![allow(unused_parens,unreachable_code,unused_variables,unused_mut)]\nuse crate::{cpu::Cpu,runtime::Runtime};\nuse super::helpers::*;\n'+'\n'.join(chunk)+'\n')
+  (out/f'chunk{j}.rs').write_text('#![allow(unused_parens,unreachable_code,unused_variables,unused_mut,unused_labels,unused_assignments,unused_imports)]\nuse crate::{cpu::{Cpu,nzcv_flags,nzcv_logical_flags,nzcv_condition},runtime::Runtime};\nuse super::helpers::*;\n'+'\n'.join(chunk)+'\n')
  mod='//! Generated source-bound original routine translations. Do not edit by hand.\n'
  mod+='#![allow(unreachable_patterns)]\nmod helpers;\n'+''.join(f'mod chunk{j};\n' for j in range(16))
  mod+='use crate::{cpu::Cpu,runtime::Runtime};\n#[inline]\npub unsafe fn dispatch(cpu:&mut Cpu,rt:&mut Runtime,target:u64)->Result<(),String>{cpu.pc=target;match target{\n'
  mod+=''.join(f'{a:#x}..={b-1:#x}=>chunk{j}::{name}(cpu,rt,target),\n'for a,b,j,name in exports)
- mod+='address=>{if rt.imported(cpu,address)? {Ok(())}else{Err(format!("untranslated function {address:#x}"))}}}}\n'
+ mod+='address=>{if rt.imported(cpu,address)? {Ok(())}else{Err(format!("untranslated function {address:#x}").into())}}}}\n'
  (out/'mod.rs').write_text(mod)
- report={'source_sha256':EXPECTED,'checkpoint_sha256':hashlib.sha256((cpdir/'checkpoint.json').read_bytes()).hexdigest(),'profile_sha256':hashlib.sha256(profile.read_bytes()).hexdigest(),'runtime_functions':runtime_functions,'function_count':len(ranges),'instruction_count':total,'unsupported_encodings':dict(unsupported),'forward_threading':threaded,'method':'Original FDE bodies and profiled external runtime blocks compiled into Rust scalar/vector operations; no emulator fallback. Unsupported code stops explicitly.','generated_files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest()for p in sorted(out.glob('*.rs'))}}
+ report={'source_sha256':EXPECTED,'checkpoint_sha256':hashlib.sha256((cpdir/'checkpoint.json').read_bytes()).hexdigest(),'profile_sha256':hashlib.sha256(profile.read_bytes()).hexdigest(),'runtime_functions':runtime_functions,'function_count':len(ranges),'instruction_count':total,'unsupported_encodings':dict(unsupported),'forward_threading':threaded,'dense_dispatch':dense,'structured_cfg':structured,'method':'Original FDE bodies and profiled external runtime blocks compiled into Rust scalar/vector operations; no emulator fallback. Unsupported code stops explicitly.','generated_files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest()for p in sorted(out.glob('*.rs'))}}
  (ROOT/'analysis/native-port/rust-generation.json').write_text(json.dumps(report,indent=2)+'\n')
  (out/'manifest.json').write_text(json.dumps(report,indent=2)+'\n')
  print(json.dumps({k:v for k,v in report.items() if k!='generated_files'},indent=2))
