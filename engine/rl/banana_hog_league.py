@@ -682,14 +682,25 @@ class League:
             sampled[game.worker].append((policy, action))
             if collecting:
                 game.decisions.append(action)
+        opponents = {}
+        # Keep controller/row ordering stable while sharing each policy's
+        # forward pass across its greedy and sampled controllers.
         for controller in CONTROLLERS:
-            subset = [game for game in games if game.job["controller"] == controller]
-            if not subset:
-                continue
             opponent = self.parent_policy if controller == "hog1-greedy" else self.base
+            for game in games:
+                if game.job["controller"] == controller:
+                    opponents.setdefault(id(opponent), (opponent, []))[1].append(game)
+        for opponent, subset in opponents.values():
+            controllers = [game.job["controller"] for game in subset]
+            controller = controllers[0] if len(set(controllers)) == 1 else controllers
             requests = [(game.episode, game.obs, 1 - game.job["seat"], (int(game.obs["tick"]) - game.start_tick) / 20.)
                         for game in subset]
-            actions = self.opponent_actions(opponent, requests, subset, controller)
+            if isinstance(controller, list) and getattr(self.opponent_actions, "__func__", None) is League.opponent_actions:
+                # The base hook predates per-row modes; its only decode option
+                # is deterministic. AdaptiveLeague's hook also supplies masks.
+                actions = opponent.act_batch(requests, deterministic=[name != "bc-sampled" for name in controllers])
+            else:
+                actions = self.opponent_actions(opponent, requests, subset, controller)
             for game, action in zip(subset, actions):
                 sampled[game.worker].append((opponent, action))
         pace = self._pace()

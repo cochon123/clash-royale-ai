@@ -12,6 +12,7 @@ import json
 import random
 import time
 from collections import deque
+from concurrent import futures
 
 import torch
 
@@ -163,13 +164,39 @@ class AdaptiveLeague(StableLeague):
         def query(request, native_slot):
             return self.clients[workers[id(request[0])]].request(
                 {"op": "placement_mask", "side": request[2], "slot": native_slot})["mask"]
+        def query_batch(pairs):
+            # One queue per client, including the unusual case of two sides of
+            # one game in a call. Never overlap requests on the same pipe.
+            groups = {}
+            for i, (request, slot) in enumerate(pairs):
+                client = self.clients[workers[id(request[0])]]
+                groups.setdefault(id(client), []).append((i, request, slot))
+            def query_group(rows):
+                return [(i, query(request, slot)) for i, request, slot in rows]
+            if len(groups) <= 1:
+                replies = [query_group(rows) for rows in groups.values()]
+            else:
+                # Other groups may already be stepping in this executor. Only
+                # these ready games' masks are submitted, and only our own
+                # futures are awaited (at most one request per ready client).
+                own = [self.executor.submit(query_group, rows) for rows in groups.values()]
+                futures.wait(own)
+                replies = [future.result() for future in own]
+            masks = [None] * len(pairs)
+            for rows in replies:
+                for i, mask in rows:
+                    masks[i] = mask
+            return masks
+        query.batch = query_batch
         return query
 
     def opponent_actions(self, policy, requests, games, controller):
         kwargs = {}
         if getattr(self.args, "native_placement_masks", False):
             kwargs["placement_mask_provider"] = self.mask_provider(games)
-        return policy.act_batch(requests, deterministic=controller != "bc-sampled", **kwargs)
+        deterministic = (controller != "bc-sampled" if isinstance(controller, str) else
+                         [name != "bc-sampled" for name in controller])
+        return policy.act_batch(requests, deterministic=deterministic, **kwargs)
 
     def eval_jobs(self, bank):
         mode = "greedy" if bank.endswith("-greedy") else "sampled"
