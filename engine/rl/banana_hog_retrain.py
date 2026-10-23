@@ -34,7 +34,8 @@ def validate_resume_config(saved, args):
         raise ValueError("resume cannot change experiment setting tower_hp")
     fields = ("seed", "workers", "eval_seeds", "match_ticks", "duration_seconds", "learning_rate",
               "critic_learning_rate", "shaping_coefficient", "gae_lambda", "card_anchor", "wait_anchor",
-              "target_kl", "max_parent_kl", "entropy_coef", "regression_threshold", "epochs", "minibatch_size")
+              "target_kl", "max_parent_kl", "entropy_coef", "regression_threshold", "epochs", "minibatch_size",
+              "async_collection", "max_policy_lag", "async_ready_games", "engine_pool", "step_groups")
     for key in fields:
         if key in saved.get("args", {}) and saved["args"][key] != getattr(args, key):
             raise ValueError(f"resume cannot change experiment setting {key}")
@@ -206,10 +207,10 @@ class StableLeague(core.League):
         if job["seat"] == 1:
             native.reverse()
             slugs.reverse()
-        reset = self.clients[worker].request({"op": "reset", "deck0": native[0], "deck1": native[1],
+        reset = self.native_request(worker, {"op": "reset", "deck0": native[0], "deck1": native[1],
             "seed": job["seed"], "max_ticks": self.args.match_ticks + 100, "reward_state": True})
         self.verify_decks(reset, slugs)
-        warm = self.clients[worker].request({"op": "step", "actions": [], "ticks": 100})
+        warm = self.native_request(worker, {"op": "step", "actions": [], "ticks": 100})
         if warm["ticks_advanced"] != 100:
             raise RuntimeError("native_warmup_failed")
         potential = tower_potential(warm["reward_state"], job["seat"])
@@ -217,6 +218,7 @@ class StableLeague(core.League):
         game = core.Game(worker, job, BananaEpisode(tuple(slugs), battle_id=uuid.uuid4().hex),
                          warm["observation"], int(warm["observation"]["tick"]))
         game.potentials = [potential]
+        game.behavior_version = self.version
         return game
 
     def learner_actions(self, policy, requests, games, collecting):
@@ -447,8 +449,7 @@ class StableLeague(core.League):
                 if "selection" in self.evaluation["baseline"] and self.deadline - time.time() <= reserve:
                     break
                 self.status, self.phase = "running", f"training · stable heads · wave {self.version}"
-                jobs = [self.sampler.draw() for _ in range(self.args.workers)]
-                rows, transitions = self.play(jobs, self.learner, "train", collecting=True)
+                rows, transitions = self.collect_training()
                 if not any(r["result"] != "VOID" for r in rows) and not self.stopping():
                     raise RuntimeError("whole native training wave VOID")
                 self.update(transitions)
@@ -501,8 +502,7 @@ class StableLeague(core.League):
             elif self.status in ("completed", "stopped"):
                 self.save_selected_final()
             self.publish(force=True)
-            for client in self.clients:
-                client.close()
+            self.close_engines()
             self.executor.shutdown(wait=True, cancel_futures=True)
 
 
@@ -520,6 +520,10 @@ def main(league_class=StableLeague, configure_parser=None):
     parser.add_argument("--workers", type=int, default=10)
     parser.add_argument("--step-groups", type=int, default=2,
                         help="Overlap inference with engine steps in N groups; 1 uses historical lockstep")
+    from .async_collection import add_async_args
+    from .engine_pool import add_engine_pool_args
+    add_async_args(parser)
+    add_engine_pool_args(parser)
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--torch-threads", type=int, default=2)
     parser.add_argument("--learning-rate", type=float, default=3e-5)
@@ -556,6 +560,8 @@ def main(league_class=StableLeague, configure_parser=None):
         return
     if args.workers < 1 or args.eval_seeds < 1 or args.duration_seconds <= 0 or args.step_groups < 1:
         parser.error("workers, eval seeds, duration, and step-groups must be positive")
+    if args.max_policy_lag < 0 or args.async_ready_games < 0:
+        parser.error("max-policy-lag and async-ready-games must be non-negative")
     def stop(_signal, _frame):
         core.STOPPING = True
     signal.signal(signal.SIGINT, stop)
