@@ -79,13 +79,17 @@ class FastBananaPolicy(BananaPolicy):
         return {"tile_logits": model.tile_head(torch.cat((place_in, zone_probs), dim=-1))}
 
     def _tile_batch(self, logits, caches):
-        """One categorical per row, including variable masks/support sizes."""
+        """Rank fresh supports by score then tile ID; retain stored PPO order."""
         # The common unmasked rollout needs no CPU candidate tensors, padding,
         # host-to-device copies, or gather of the entire 576-tile grid.
         if all(c.get("tile_candidates") is None and c["tile_mask"] is None for c in caches):
             sizes = [max(1, min(int(c["placement_top_k"]), logits.shape[1])) for c in caches]
             temperatures = logits.new_tensor([max(float(c["placement_temperature"]), 1e-4) for c in caches])
-            scores, indices = torch.topk(logits / temperatures[:, None], max(sizes), dim=1)
+            scaled = logits / temperatures[:, None]
+            # Stable descending sorting breaks ties by ascending tile ID. In
+            # contrast, topk's tie order changes when other rows widen padding.
+            indices = torch.argsort(scaled, dim=1, descending=True, stable=True)[:, :max(sizes)]
+            scores = scaled.gather(1, indices)
             if min(sizes) != max(sizes):
                 valid = torch.arange(max(sizes), device=self.device)[None, :] < torch.tensor(sizes, device=self.device)[:, None]
                 scores = scores.masked_fill(~valid, torch.finfo(scores.dtype).min)
@@ -112,7 +116,9 @@ class FastBananaPolicy(BananaPolicy):
             if any(fixed_rows):
                 raise ValueError("cannot mix fresh and fixed placement supports")
             sizes = [max(1, min(int(c["placement_top_k"]), n)) for c, n in zip(caches, counts)]
-            scores, local = torch.topk(scores, max(sizes), dim=1)
+            # Fresh candidate rows come from nonzero/arange in tile ID order.
+            local = torch.argsort(scores, dim=1, descending=True, stable=True)[:, :max(sizes)]
+            scores = scores.gather(1, local)
             indices = indices.gather(1, local)
             valid = torch.arange(max(sizes), device=self.device)[None, :] < torch.tensor(sizes, device=self.device)[:, None]
             scores = scores.masked_fill(~valid, torch.finfo(scores.dtype).min)
@@ -120,6 +126,13 @@ class FastBananaPolicy(BananaPolicy):
         # Inputs/supports were validated above. Distribution validation would
         # otherwise synchronize CUDA for each tiny categorical.
         return Categorical(logits=scores, validate_args=False), indices, counts
+
+    def _tile_distribution(self, logits: Tensor, cached: Mapping[str, Any]):
+        # Legacy single-action PPO recomputation must use the same canonical
+        # fresh support as batched rollout; fixed supports remain untouched.
+        distribution, indices, counts = self._tile_batch(logits.unsqueeze(0), [cached])
+        return (Categorical(logits=distribution.logits[0, :counts[0]], validate_args=False),
+                indices[0, :counts[0]])
 
     @staticmethod
     def _cache_request(
@@ -223,7 +236,7 @@ class FastBananaPolicy(BananaPolicy):
         cutoff = uniform.clamp_max(1 - torch.finfo(probs.dtype).eps) * cdf[:, -1]
         return (cutoff[:, None] >= cdf).sum(-1).clamp_max(probs.shape[-1] - 1)
 
-    def _select_batch(self, distribution, caches, component, deterministic):
+    def _select_batch(self, distribution, caches, component, deterministic, support_counts=None):
         """Select independently per row without drawing RNG for greedy rows."""
         if deterministic is False or (not isinstance(deterministic, bool) and not any(deterministic)):
             return self._sample_with_uniform(distribution, caches, component)
@@ -234,15 +247,21 @@ class FastBananaPolicy(BananaPolicy):
         if all(deterministic):
             return greedy
         if all("sample_uniforms" in cache for cache in caches):
+            # Per-game uniforms consume no global RNG. Keep the vectorized
+            # path; zero-probability padding cannot change the sampled support.
             sampled = self._sample_with_uniform(distribution, caches, component)
             return torch.where(torch.tensor(deterministic, device=self.device), greedy, sampled)
         # The original FastBananaPolicy uses torch's global RNG. Restrict draws
-        # to sampled rows so adding greedy rows never consumes extra samples.
+        # to sampled rows AND their support width: multinomial's RNG use also
+        # depends on category count, even for zero-probability padded entries.
         rows = [i for i, flag in enumerate(deterministic) if not flag]
         ix = torch.tensor(rows, device=self.device)
-        selected = (Bernoulli(logits=distribution.logits[ix], validate_args=False)
-                    if isinstance(distribution, Bernoulli) else
-                    Categorical(logits=distribution.logits[ix], validate_args=False))
+        if isinstance(distribution, Bernoulli):
+            selected = Bernoulli(logits=distribution.logits[ix], validate_args=False)
+        else:
+            width = (max(support_counts[i] for i in rows) if support_counts is not None
+                     else distribution.logits.shape[-1])
+            selected = Categorical(logits=distribution.logits[ix, :width], validate_args=False)
         result = greedy.to(distribution.probs.dtype) if isinstance(distribution, Bernoulli) else greedy.clone()
         result[ix] = self._sample_with_uniform(selected, [caches[i] for i in rows], component)
         return result
@@ -365,7 +384,7 @@ class FastBananaPolicy(BananaPolicy):
                         caches[i]["tile_mask"] = mask if supplied is None else mask & supplied
                 second = self._placement_from_context(first, caches, pending, slots)
                 tile_dist, indices, counts = self._tile_batch(second["tile_logits"], subset)
-                choices = self._select_batch(tile_dist, subset, 2, row_modes)
+                choices = self._select_batch(tile_dist, subset, 2, row_modes, counts)
                 tiles = indices.gather(1, choices[:, None]).squeeze(1)
                 xy = torch.stack(((tiles % 32 + .5) / 32, (tiles // 32 + .5) / 18), dim=1)
                 if second.get("offset") is not None:

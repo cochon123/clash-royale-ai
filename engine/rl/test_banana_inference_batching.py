@@ -15,12 +15,148 @@ from .banana_hog_league import League
 from .test_banana_fast_policy import episode_with_prefix, observation
 
 
+class PlacementSamplingTests(unittest.TestCase):
+    """Small CPU regressions independent of checkpoints or native engines."""
+
+    @classmethod
+    def setUpClass(cls):
+        torch.set_num_threads(1)
+        cls.policy = object.__new__(FastBananaPolicy)
+        torch.nn.Module.__init__(cls.policy)
+        cls.policy.device = torch.device("cpu")
+
+    def cache(self, locations, top_k, uniform=None):
+        mask = None
+        if locations is not None:
+            mask = torch.zeros(576, dtype=torch.bool)
+            mask[locations] = True
+        cache = {"tile_mask": mask, "placement_top_k": top_k, "placement_temperature": .8}
+        if uniform is not None:
+            cache["sample_uniforms"] = (uniform, uniform, uniform)
+        return cache
+
+    def select(self, logits, caches, flags):
+        dist, support, counts = self.policy._tile_batch(logits, caches)
+        choices = self.policy._select_batch(dist, caches, 2, flags, counts)
+        return (support.gather(1, choices[:, None]).squeeze(1),
+                [row[:count].tolist() for row, count in zip(support, counts)],
+                dist.log_prob(choices), dist.entropy())
+
+    def assert_selection_equal(self, expected, actual):
+        self.assertEqual(expected[1], actual[1])
+        for index in (0, 2, 3):
+            torch.testing.assert_close(expected[index], actual[index], rtol=1e-6, atol=1e-6)
+
+    def test_canonical_ties_and_uniforms_survive_heterogeneous_partitions(self):
+        locations = ([0, 1], [5, 10, 17, 300, 575], None,
+                     [1, 17, 19, 301], [80], list(range(576)))
+        flags = [False, True, False, True, False, False]
+        # Equal scores also straddle the top-k boundary. Score is primary;
+        # ascending tile ID is the explicit secondary ranking criterion.
+        logits = (torch.arange(576) % 4).float().repeat(len(flags), 1)
+        for top_k in (1, 2, 3, 5, 576):
+            caches = [self.cache(ids, top_k, uniform) for ids, uniform in
+                      zip(locations, (.1, .7, .31, .99, .5, .83))]
+            expected = self.select(logits, caches, flags)
+            for row, ids, support in zip(logits, locations, expected[1]):
+                legal = range(576) if ids is None else ids
+                canonical = sorted(legal, key=lambda tile: (-float(row[tile]), tile))[:top_k]
+                self.assertEqual(support, canonical)
+            partitions = ([[0, 1, 2, 3, 4, 5]], [[0, 2, 4, 5], [1, 3]],
+                          [[i] for i in range(6)], [[5, 1], [3, 0, 4], [2]])
+            for groups in partitions:
+                with self.subTest(top_k=top_k, groups=groups):
+                    actual = [None] * 6
+                    for ids in groups:
+                        result = self.select(logits[ids], [caches[i] for i in ids], [flags[i] for i in ids])
+                        for row, index in enumerate(ids):
+                            actual[index] = (result[0][row], result[1][row], result[2][row], result[3][row])
+                    merged = (torch.stack([row[0] for row in actual]), [row[1] for row in actual],
+                              torch.stack([row[2] for row in actual]), torch.stack([row[3] for row in actual]))
+                    self.assert_selection_equal(expected, merged)
+
+    def test_unmasked_and_single_paths_use_same_canonical_support(self):
+        logits = (torch.arange(576) % 3).float().repeat(3, 1)
+        for sizes in ((1, 2, 576), (3, 5, 17)):
+            fresh = [self.cache(None, k, .1) for k in sizes]
+            masked = [self.cache(list(range(576)), k, .1) for k in sizes]
+            expected = self.select(logits, fresh, False)
+            self.assert_selection_equal(expected, self.select(logits, masked, False))
+            for i, cache in enumerate(fresh):
+                dist, support = self.policy._tile_distribution(logits[i], cache)
+                self.assertEqual(support.tolist(), expected[1][i])
+                torch.testing.assert_close(dist.entropy(), expected[3][i])
+
+    def test_two_equal_tiles_keep_order_when_greedy_mask_widens_batch(self):
+        logits = torch.zeros(2, 576)
+        caches = [self.cache([0, 1], 576, .1), self.cache([0, 1, 2, 3, 4], 576, .1)]
+        actual = self.select(logits, caches, [False, True])
+        self.assertEqual(actual[0].tolist(), [0, 0])
+        self.assertEqual(actual[1], [[0, 1], [0, 1, 2, 3, 4]])
+        self.assert_selection_equal(self.select(logits[:1], caches[:1], False),
+                                    (actual[0][:1], actual[1][:1], actual[2][:1], actual[3][:1]))
+
+    def test_global_rng_matches_sampled_only_width_after_top_k(self):
+        for top_k in (1, 2, 3, 5, 576):
+            for locations, flags in (([list(range(2)), list(range(5))], [False, True]),
+                                     ([[1, 575], None, [0, 100, 400], list(range(5))],
+                                      [False, True, False, True])):
+                caches = [self.cache(ids, top_k) for ids in locations]
+                logits = torch.zeros(len(caches), 576)
+                sampled_ids = [i for i, flag in enumerate(flags) if not flag]
+                torch.manual_seed(0)
+                expected = self.select(logits[sampled_ids], [caches[i] for i in sampled_ids], False)
+                expected_state = torch.get_rng_state()
+                expected_next = torch.rand(8)
+                torch.manual_seed(0)
+                actual = self.select(logits, caches, flags)
+                actual_state = torch.get_rng_state()
+                actual_next = torch.rand(8)
+                with self.subTest(top_k=top_k, flags=flags):
+                    sampled_actual = (actual[0][sampled_ids], [actual[1][i] for i in sampled_ids],
+                                      actual[2][sampled_ids], actual[3][sampled_ids])
+                    self.assert_selection_equal(expected, sampled_actual)
+                    self.assertTrue(torch.equal(expected_state, actual_state))
+                    torch.testing.assert_close(expected_next, actual_next, rtol=0, atol=0)
+                # Pure greedy partitions cannot advance the global stream.
+                before = torch.get_rng_state()
+                greedy_ids = [i for i, flag in enumerate(flags) if flag]
+                self.select(logits[greedy_ids], [caches[i] for i in greedy_ids], True)
+                self.assertTrue(torch.equal(before, torch.get_rng_state()))
+
+    def test_fixed_ppo_support_keeps_order_likelihood_entropy_and_gradients(self):
+        caches = [self.cache([0, 1], 576, .1), self.cache([5, 10, 17, 300, 575], 3, .7)]
+        rollout = self.select(torch.zeros(2, 576), caches, [False, True])
+        for cache, support in zip(caches, rollout[1]):
+            cache["tile_candidates"] = torch.tensor(support)
+        # PPO must retain the rollout support after scores change. Include a
+        # deliberately noncanonical legacy support to catch accidental sorting.
+        caches[1]["tile_candidates"] = torch.tensor([17, 5, 10])
+        logits = torch.linspace(-2., 2., 576).repeat(2, 1).requires_grad_()
+        dist, support, counts = self.policy._tile_batch(logits, caches)
+        choices = torch.tensor([0, 2])
+        expected_logp, expected_entropy = [], []
+        for i, cache in enumerate(caches):
+            ids = cache["tile_candidates"]
+            self.assertEqual(support[i, :counts[i]].tolist(), ids.tolist())
+            reference = Categorical(logits=logits[i, ids] / .8)
+            expected_logp.append(reference.log_prob(choices[i]))
+            expected_entropy.append(reference.entropy())
+        expected = torch.stack(expected_logp), torch.stack(expected_entropy)
+        actual = dist.log_prob(choices), dist.entropy()
+        for a, b in zip(actual, expected):
+            torch.testing.assert_close(a, b)
+        actual_grad, = torch.autograd.grad(sum(t.sum() for t in actual), logits, retain_graph=True)
+        expected_grad, = torch.autograd.grad(sum(t.sum() for t in expected), logits)
+        torch.testing.assert_close(actual_grad, expected_grad)
+
+
 class PerRowInferenceTests(unittest.TestCase):
     device = "cpu"
 
     @classmethod
     def setUpClass(cls):
-        torch.set_num_threads(2)
+        torch.set_num_threads(1)
         weights = Path(__file__).resolve().parents[1] / "runs/banana-1/base.pt"
         cls.policy = SamplingPolicy(device=cls.device, weights=weights)
         cls.policy.eval()
@@ -155,29 +291,58 @@ class PerRowInferenceTests(unittest.TestCase):
                 self.assertTrue(torch.equal(cuda_after, torch.cuda.get_rng_state()))
 
     def test_global_rng_merged_call_matches_controller_order_and_rng_state(self):
-        requests = self.requests()
-        flags = [i % 3 == 0 for i in range(len(requests))]
+        requests = self.requests()[1:5]
+        flags = [False, True, True, False]
+        masks = []
+        for locations in ([0, 1], list(range(5)), list(range(576)), [10, 100, 575]):
+            mask = torch.zeros(576, dtype=torch.bool)
+            mask[locations] = True
+            masks.append(mask)
         original = self.policy._cache_request
         def without_uniforms(*args, **kwargs):
             cache = original(*args, **kwargs)
             cache.pop("sample_uniforms")
             return cache
-        with patch.object(self.policy, "_cache_request", side_effect=without_uniforms):
-            torch.manual_seed(941)
-            expected = [None]*len(requests)
-            for mode in (True, False):
-                ids = [i for i, flag in enumerate(flags) if flag == mode]
-                rows = self.policy.act_batch([requests[i] for i in ids], deterministic=mode)
-                for i, row in zip(ids, rows):
-                    expected[i] = row
-            cpu_after = torch.get_rng_state()
-            cuda_after = torch.cuda.get_rng_state() if self.policy.device.type == "cuda" else None
-            torch.manual_seed(941)
-            actual = self.policy.act_batch(requests, deterministic=flags)
-            self.assert_actions_equal(expected, actual)
-            self.assertTrue(torch.equal(cpu_after, torch.get_rng_state()))
-            if cuda_after is not None:
-                self.assertTrue(torch.equal(cuda_after, torch.cuda.get_rng_state()))
+        def tied_placement(first, caches, indices, slots):
+            return {"tile_logits": first["fused"].new_zeros((len(indices), 576))}
+        # Isolate sampling/support behavior from CUDA critic roundoff when
+        # GRU batches change shape. The ordinary parity test checks the critic.
+        with patch.object(self.policy, "_placement_from_context", side_effect=tied_placement), \
+             patch.object(self.policy.wait_head, "forward", side_effect=lambda fused: fused.new_full((len(fused), 1), -100.)), \
+             patch.object(self.policy.critic, "forward", side_effect=lambda fused: fused.new_zeros((len(fused), 1))):
+            for uniforms in (True, False):
+                cache_method = original if uniforms else without_uniforms
+                with patch.object(self.policy, "_cache_request", side_effect=cache_method):
+                    for top_k in (3, 576):
+                        with self.subTest(uniforms=uniforms, top_k=top_k):
+                            torch.manual_seed(0)
+                            expected = [None]*len(requests)
+                            for mode in (True, False):
+                                ids = [i for i, flag in enumerate(flags) if flag == mode]
+                                rows = self.policy.act_batch([requests[i] for i in ids], deterministic=mode,
+                                                             legal_tile_masks=[masks[i] for i in ids], placement_top_k=top_k)
+                                for i, row in zip(ids, rows):
+                                    expected[i] = row
+                            cpu_after = torch.get_rng_state()
+                            cuda_after = torch.cuda.get_rng_state() if self.policy.device.type == "cuda" else None
+                            expected_next = torch.rand(4, device=self.policy.device)
+                            torch.manual_seed(0)
+                            actual = self.policy.act_batch(requests, deterministic=flags,
+                                                           legal_tile_masks=masks, placement_top_k=top_k)
+                            self.assert_actions_equal(expected, actual)
+                            self.assertTrue(torch.equal(cpu_after, torch.get_rng_state()))
+                            if cuda_after is not None:
+                                self.assertTrue(torch.equal(cuda_after, torch.cuda.get_rng_state()))
+                            torch.testing.assert_close(expected_next, torch.rand(4, device=self.policy.device), rtol=0, atol=0)
+                            logp, entropy, value = self.policy.evaluate_actions(actual)
+                            for name, recomputed in (("log_prob", logp), ("entropy", entropy), ("value", value)):
+                                torch.testing.assert_close(torch.stack([getattr(a, name) for a in actual]).to(self.policy.device),
+                                                           recomputed, rtol=1e-4, atol=1e-5)
+                            if uniforms:
+                                singles = [self.policy.act_batch([request], deterministic=flag,
+                                                                 legal_tile_masks=[mask], placement_top_k=top_k)[0]
+                                           for request, flag, mask in zip(requests, flags, masks)]
+                                self.assert_actions_equal(actual, singles)
 
 
 @unittest.skipUnless(torch.cuda.is_available(), "CUDA unavailable")
