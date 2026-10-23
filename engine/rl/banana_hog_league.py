@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import concurrent.futures as futures
 import datetime as dt
+import inspect
 import json
 import math
 import os
@@ -25,14 +26,27 @@ from pathlib import Path
 import torch
 from torch.nn import functional as F
 
-from .banana_fast_policy import FastBananaPolicy
+from .banana_fast_policy import FastBananaPolicy, fused_act_round
 from .banana_policy import BananaEpisode, _native_card
 from .banana_train import ROOT, atomic_json, sha256, utc_now
+from .engine_pool import MultiSessionEngine, ThreadPoolEngine
 
 HOLDOUTS = {"miner-wallbreakers", "giant-princes"}
 CONTROLLERS = ("bc-greedy", "bc-sampled", "hog1-greedy")
 EVAL_CONTROLLERS = ("bc-greedy", "hog1-greedy")
 STOPPING = False
+
+
+def _call_client(client, request, timeout):
+    """Pass timeout only when the client accepts it. Test doubles often do not."""
+    try:
+        params = inspect.signature(client.request).parameters
+    except (TypeError, ValueError):
+        params = None
+    if params is not None and "timeout" not in params and not any(
+            p.kind == inspect.Parameter.VAR_POSITIONAL for p in params.values()):
+        return client.request(request)
+    return client.request(request, timeout)
 # After the first engine in a wave returns, wait this long for others that are
 # already finishing so the GPU still sees a batch. Games still inside the
 # engine are not held for this window.
@@ -176,6 +190,9 @@ class NativeClient:
         return value["result"]
 
     def close(self):
+        if getattr(self, "_closed", False):
+            return
+        self._closed = True
         if self.proc.poll() is None:
             self.proc.terminate()
             try:
@@ -269,9 +286,17 @@ class League:
             self.save("initial")
             self.save("best")
             self.save("latest")
-        self.clients = [NativeClient(args.engine, args.checkpoint, self.run_dir / f"native-worker-{i}.log")
-                        for i in range(args.workers)]
-        self.executor = futures.ThreadPoolExecutor(max_workers=args.workers)
+        self.executor = futures.ThreadPoolExecutor(max_workers=max(args.workers, 1))
+        pool_mode = getattr(args, "engine_pool", "thread")
+        if pool_mode == "session":
+            self.clients = [None] * args.workers
+            self.engine_pool = MultiSessionEngine(
+                args.engine, args.checkpoint, args.workers, self.run_dir / "native-session.log", cwd=ROOT)
+        else:
+            self.clients = [NativeClient(args.engine, args.checkpoint, self.run_dir / f"native-worker-{i}.log")
+                            for i in range(args.workers)]
+            self.engine_pool = ThreadPoolEngine(self.clients, self.executor)
+        self._collector = None
         self.last_eval = time.time()
         self.eval_seconds = 120.
         manifest = {"format": "banana-hog-league-v1", "name": getattr(args, "name", "banana-hog-2"), "parent": self.parent,
@@ -473,14 +498,33 @@ class League:
         if job["seat"] == 1:
             native.reverse()
             slugs.reverse()
-        response = self.clients[worker].request({"op": "reset", "deck0": native[0], "deck1": native[1],
-                                                 "seed": job["seed"], "max_ticks": self.args.match_ticks + 100})
+        response = self.native_request(worker, {"op": "reset", "deck0": native[0], "deck1": native[1],
+                                                "seed": job["seed"], "max_ticks": self.args.match_ticks + 100})
         self.verify_decks(response, slugs)
-        response = self.clients[worker].request({"op": "step", "actions": [], "ticks": 100})
+        response = self.native_request(worker, {"op": "step", "actions": [], "ticks": 100})
         if response["ticks_advanced"] != 100:
             raise RuntimeError("native_warmup_failed")
-        return Game(worker, job, BananaEpisode(tuple(slugs), battle_id=uuid.uuid4().hex),
+        game = Game(worker, job, BananaEpisode(tuple(slugs), battle_id=uuid.uuid4().hex),
                     response["observation"], int(response["observation"]["tick"]))
+        game.behavior_version = self.version
+        return game
+
+    def native_request(self, worker, request, timeout=90):
+        pool = getattr(self, "engine_pool", None)
+        if pool is None:
+            return _call_client(self.clients[worker], request, timeout)
+        return pool.call(worker, request, timeout)
+
+    def _submit_steps(self, items, timeout=45):
+        pool = getattr(self, "engine_pool", None)
+        if pool is None:
+            return [self.executor.submit(self.clients[slot].request, request, timeout) for slot, request in items]
+        return pool.submit_many(items, timeout=timeout)
+
+    @staticmethod
+    def _concrete(action):
+        unwrap = getattr(action, "unwrap", None)
+        return unwrap() if callable(unwrap) else action
 
     def record(self, game, kind, result, error=None):
         job = game.job
@@ -488,7 +532,8 @@ class League:
         row = {"id": game.episode.battle_id, "at": utc_now(), "kind": kind,
                "deck_id": job["deck_id"], "deck_name": self.decks[job["deck_id"]]["name"],
                "controller": job["controller"], "seat": job["seat"], "seed": job["seed"],
-               "result": result, "seconds": seconds, "policy_version": self.version,
+               "result": result, "seconds": seconds,
+               "policy_version": getattr(game, "behavior_version", self.version),
                "error": error}
         self.recent.appendleft(row)
         with (self.run_dir / "matches.jsonl").open("a") as stream:
@@ -677,36 +722,50 @@ class League:
         requests = [(game.episode, game.obs, game.job["seat"], (int(game.obs["tick"]) - game.start_tick) / 20.)
                     for game in games]
         started = time.perf_counter()
-        actions = self.learner_actions(policy, requests, games, collecting)
-        for game, action in zip(games, actions):
-            sampled[game.worker].append((policy, action))
+        # One inference_mode round: learner trunk and every opponent trunk run
+        # before the first host sync. Hooks that do not call act_batch still
+        # return concrete actions immediately.
+        with fused_act_round():
+            actions = self.learner_actions(policy, requests, games, collecting)
+            learner_pairs = list(zip(games, actions))
+            opponent_pairs = []
+            opponents = {}
+            # Keep controller/row ordering stable while sharing each policy's
+            # forward pass across its greedy and sampled controllers.
+            for controller in CONTROLLERS:
+                opponent = self.parent_policy if controller == "hog1-greedy" else self.base
+                for game in games:
+                    if game.job["controller"] == controller:
+                        opponents.setdefault(id(opponent), (opponent, []))[1].append(game)
+            for opponent, subset in opponents.values():
+                controllers = [game.job["controller"] for game in subset]
+                controller = controllers[0] if len(set(controllers)) == 1 else controllers
+                opponent_requests = [(game.episode, game.obs, 1 - game.job["seat"],
+                                      (int(game.obs["tick"]) - game.start_tick) / 20.) for game in subset]
+                if isinstance(controller, list) and getattr(self.opponent_actions, "__func__", None) is League.opponent_actions:
+                    # The base hook predates per-row modes; its only decode option
+                    # is deterministic. AdaptiveLeague's hook also supplies masks.
+                    opponent_actions = opponent.act_batch(
+                        opponent_requests, deterministic=[name != "bc-sampled" for name in controllers])
+                else:
+                    opponent_actions = self.opponent_actions(opponent, opponent_requests, subset, controller)
+                opponent_pairs.append((opponent, subset, opponent_actions))
+        version = getattr(self, "version", 0)
+        for game, action in learner_pairs:
+            action = self._concrete(action)
             if collecting:
+                action.behavior_version = version
                 game.decisions.append(action)
-        opponents = {}
-        # Keep controller/row ordering stable while sharing each policy's
-        # forward pass across its greedy and sampled controllers.
-        for controller in CONTROLLERS:
-            opponent = self.parent_policy if controller == "hog1-greedy" else self.base
-            for game in games:
-                if game.job["controller"] == controller:
-                    opponents.setdefault(id(opponent), (opponent, []))[1].append(game)
-        for opponent, subset in opponents.values():
-            controllers = [game.job["controller"] for game in subset]
-            controller = controllers[0] if len(set(controllers)) == 1 else controllers
-            requests = [(game.episode, game.obs, 1 - game.job["seat"], (int(game.obs["tick"]) - game.start_tick) / 20.)
-                        for game in subset]
-            if isinstance(controller, list) and getattr(self.opponent_actions, "__func__", None) is League.opponent_actions:
-                # The base hook predates per-row modes; its only decode option
-                # is deterministic. AdaptiveLeague's hook also supplies masks.
-                actions = opponent.act_batch(requests, deterministic=[name != "bc-sampled" for name in controllers])
-            else:
-                actions = self.opponent_actions(opponent, requests, subset, controller)
-            for game, action in zip(subset, actions):
-                sampled[game.worker].append((opponent, action))
+            sampled[game.worker].append((policy, action))
+        for opponent, subset, opponent_actions in opponent_pairs:
+            for game, action in zip(subset, opponent_actions):
+                sampled[game.worker].append((opponent, self._concrete(action)))
         pace = self._pace()
         pace["infer_s"] += time.perf_counter() - started
         pace["infer_batches"] += 1
         pace["infer_games"] += len(games)
+        payloads = []
+        ordered = []
         for game in games:
             rows = sampled[game.worker]
             # Physical side order keeps event history deterministic and
@@ -715,8 +774,10 @@ class League:
             game.pending_rows = rows
             native = [action.native_request() for _, action in rows if not action.wait]
             game.step_sent = time.perf_counter()
-            step_jobs[self.executor.submit(self.clients[game.worker].request,
-                                           {"op": "step", "actions": native, "ticks": 20}, 45)] = game
+            payloads.append((game.worker, {"op": "step", "actions": native, "ticks": 20}))
+            ordered.append(game)
+        for game, future in zip(ordered, self._submit_steps(payloads, timeout=45)):
+            step_jobs[future] = game
 
     def _completed_steps(self, step_jobs, pipeline):
         # Callers can pass just one group's futures: other groups keep running
@@ -801,10 +862,45 @@ class League:
         return [(action, outcome) for action in game.decisions]
 
     def restart_worker(self, worker):
-        self.clients[worker].close()
+        pool = getattr(self, "engine_pool", None)
+        if pool is not None and getattr(pool, "shared_process", False):
+            if not pool.alive():
+                pool.close()
+                self.engine_pool = MultiSessionEngine(
+                    self.args.engine, self.args.checkpoint, self.args.workers,
+                    self.run_dir / "native-session.log", cwd=ROOT)
+            self.worker_states[worker]["status"] = "restarting"
+            return
+        if self.clients[worker] is not None:
+            self.clients[worker].close()
         self.clients[worker] = NativeClient(self.args.engine, self.args.checkpoint,
                                            self.run_dir / f"native-worker-{worker}.log")
+        if isinstance(pool, ThreadPoolEngine):
+            pool.clients[worker] = self.clients[worker]
         self.worker_states[worker]["status"] = "restarting"
+
+    def close_engines(self):
+        collector = getattr(self, "_collector", None)
+        if collector is not None:
+            collector.close()
+        pool = getattr(self, "engine_pool", None)
+        if pool is not None and getattr(pool, "shared_process", False):
+            pool.close()
+            return
+        for client in getattr(self, "clients", []):
+            if client is not None:
+                client.close()
+
+    def collect_training(self):
+        if not getattr(self.args, "async_collection", False):
+            jobs = [self.sampler.draw() for _ in range(self.args.workers)]
+            return self.play(jobs, self.learner, "train", collecting=True)
+        if getattr(self, "_collector", None) is None:
+            from .async_collection import ContinuousCollector
+            self._collector = ContinuousCollector(self)
+        target = getattr(self.args, "async_ready_games", 0) or self.args.workers
+        self.phase = f"training · async collection v{self.version} · {target} games"
+        return self._collector.collect(target)
 
     def update(self, transitions):
         if len(transitions) < 8 or self.stopping():
@@ -921,8 +1017,7 @@ class League:
                 if self.evaluation["baseline_complete"] and self.deadline - time.time() <= reserve:
                     break
                 self.status, self.phase = "running", f"training · on-policy wave v{self.version}"
-                jobs = [self.sampler.draw() for _ in range(self.args.workers)]
-                rows, transitions = self.play(jobs, self.learner, "train", collecting=True)
+                rows, transitions = self.collect_training()
                 if not any(r["result"] != "VOID" for r in rows) and not self.stopping():
                     raise RuntimeError("whole_native_wave_void; inspect native worker errors")
                 self.update(transitions)
@@ -977,8 +1072,7 @@ class League:
             if not (self.run_dir / "models/final.pt").exists() and self.status in ("completed", "stopped"):
                 self.save("final")
             self.publish(force=True)
-            for client in self.clients:
-                client.close()
+            self.close_engines()
             self.executor.shutdown(wait=True, cancel_futures=True)
 
 
@@ -993,6 +1087,10 @@ def main():
     parser.add_argument("--workers", type=int, default=10)
     parser.add_argument("--step-groups", type=int, default=2,
                         help="Overlap inference with engine steps in N groups; 1 uses historical lockstep")
+    from .async_collection import add_async_args
+    from .engine_pool import add_engine_pool_args
+    add_async_args(parser)
+    add_engine_pool_args(parser)
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--torch-threads", type=int, default=2)
     parser.add_argument("--learning-rate", type=float, default=1e-5)
@@ -1008,6 +1106,8 @@ def main():
     args = parser.parse_args()
     if args.workers < 1 or args.eval_seeds < 1 or args.step_groups < 1:
         parser.error("workers, eval-seeds and step-groups must be positive")
+    if args.max_policy_lag < 0 or args.async_ready_games < 0:
+        parser.error("max-policy-lag and async-ready-games must be non-negative")
     if deadline_epoch(args.deadline) <= time.time():
         # A restarted overnight service must not begin another run after 05:00.
         if (args.run_dir / "state.json").exists():

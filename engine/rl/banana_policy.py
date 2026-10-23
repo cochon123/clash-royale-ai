@@ -105,6 +105,9 @@ class SampledAction:
     legal_deck_slots: tuple[int, ...]
     wait: bool = False
     input_cache: dict[str, Any] = field(default_factory=dict, repr=False)
+    # Policy version that sampled this action. PPO keeps ``log_prob`` as the
+    # behavior log-prob and does not recompute it from a newer learner.
+    behavior_version: int | None = None
 
     def native_request(self) -> dict[str, int]:
         if self.wait:

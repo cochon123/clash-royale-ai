@@ -1,6 +1,7 @@
 """Batched inference/PPO adapter for the unchanged original BananaPolicy."""
 from __future__ import annotations
 
+import contextvars
 from collections.abc import Mapping, Sequence
 from contextlib import contextmanager
 from typing import Any
@@ -17,6 +18,92 @@ try:
 except ImportError:
     from banana_policy import BananaEpisode, BananaPolicy, SampledAction
     from banana_fast_features import encode_online_sample
+
+# Set by fused_act_round. act_batch queues there so one scheduling round can
+# run every policy's trunk before the first host sync. None means run now.
+_ACT_ROUND = contextvars.ContextVar("banana_act_round", default=None)
+
+
+def _cpu_fresh(tensor):
+    """Bit-exact CPU copy that is not an inference-mode tensor."""
+    array = tensor.detach().cpu().contiguous().numpy().copy()
+    return torch.from_numpy(array)
+
+
+class _DeferredAction:
+    """Placeholder returned while a fused round is still open."""
+
+    def __init__(self):
+        self.action = None
+
+    def unwrap(self):
+        if self.action is None:
+            raise RuntimeError("deferred action was read before the fused round finished")
+        return self.action
+
+    def __getattr__(self, name):
+        return getattr(self.unwrap(), name)
+
+
+@contextmanager
+def fused_act_round():
+    """Run every ``act_batch`` in this block as one GPU round.
+
+    Trunk forwards are issued back to back. Sampling order stays the order
+    the batches were queued, which is the learner and then each opponent.
+    """
+    bucket = []
+    token = _ACT_ROUND.set(bucket)
+    ok = False
+    try:
+        yield bucket
+        ok = True
+    finally:
+        _ACT_ROUND.reset(token)
+        if ok:
+            _flush_act_round(bucket)
+
+
+def _flush_act_round(bucket):
+    if not bucket:
+        return
+    if len(bucket) == 1:
+        policy, requests, kwargs, slots = bucket[0]
+        actions = policy._act_batch_now(requests, **kwargs)
+        for slot, action in zip(slots, actions):
+            slot.action = action
+        return
+    prepared = [(policy, policy._prepare_act(requests, **kwargs), slots)
+                for policy, requests, kwargs, slots in bucket]
+    with torch.inference_mode():
+        primed = [(policy, spec, policy._forward_batch(spec["caches"]), slots)
+                  for policy, spec, slots in prepared]
+        raw = [(policy._finish_act(spec, first), slots) for policy, spec, first, slots in primed]
+    for raw_rows, slots in raw:
+        for slot, action in zip(slots, policy_actions_from_raw(raw_rows)):
+            slot.action = action
+
+
+def policy_actions_from_raw(raw):
+    actions = []
+    for row in raw:
+        cache = row["cache"]
+        mask = cache.get("tile_mask")
+        if mask is not None and getattr(mask, "is_inference", lambda: False)():
+            cache["tile_mask"] = torch.tensor(mask.detach().cpu().tolist(), dtype=torch.bool)
+        if row["candidates"] is not None:
+            cache["tile_candidates"] = _cpu_fresh(row["candidates"])
+        stats = _cpu_fresh(row["stats"])
+        log_prob, entropy, value = stats[0], stats[1], stats[2]
+        if row["wait"]:
+            actions.append(SampledAction(
+                row["side"], -1, -1, "", 0, 0, -1, log_prob, entropy, value,
+                row["legal_slots"], True, cache))
+        else:
+            actions.append(SampledAction(
+                row["side"], row["native_slot"], row["slot"], row["card"], row["x"], row["y"],
+                row["tile"], log_prob, entropy, value, row["legal_slots"], False, cache))
+    return actions
 
 
 class FastBananaPolicy(BananaPolicy):
@@ -207,21 +294,33 @@ class FastBananaPolicy(BananaPolicy):
         ]
         hand_mask = torch.stack([row[7] for row in inputs])
         kwargs: dict[str, Any] = {
-            "hand_mask": hand_mask.to(self.device, non_blocking=True),
+            "hand_mask": self._stage(hand_mask),
             "think_steps": int(caches[0]["think_steps"]),
         }
         if any(int(cache["think_steps"]) != kwargs["think_steps"] for cache in caches):
             raise ValueError("batch rows use different think_steps")
         if placement_slots is not None:
-            kwargs["placement_slots"] = placement_slots.to(self.device, dtype=torch.long, non_blocking=True)
-        # Queue all tiny input copies on the current stream before inference;
-        # blocking .to() synchronizes once per input even for pageable tensors.
-        batched = [tensor.to(self.device, non_blocking=True) for tensor in batched]
+            kwargs["placement_slots"] = self._stage(placement_slots.to(dtype=torch.long))
+        # Pinned host memory lets the HtoD copies stay on the current stream.
+        # Pageable .to() synchronizes once per input.
+        batched = [self._stage(tensor) for tensor in batched]
         result = self.model(*batched, **kwargs)
         # Placement and slot decoding reuse tensors already sent to the model.
         result["_deck_ids"] = batched[2]
         result["_hand_mask"] = kwargs["hand_mask"]
         return result
+
+    def _stage(self, tensor):
+        if tensor.device == self.device:
+            return tensor
+        if self.device.type == "cuda" and tensor.device.type == "cpu":
+            if not tensor.is_pinned():
+                try:
+                    tensor = tensor.pin_memory()
+                except RuntimeError:
+                    pass
+            return tensor.to(self.device, non_blocking=True)
+        return tensor.to(self.device)
 
     @staticmethod
     def _sample_with_uniform(distribution, caches, component):
@@ -295,9 +394,38 @@ class FastBananaPolicy(BananaPolicy):
         may expose ``batch([(request, native_slot), ...])``; otherwise it is
         called once per playing row as ``provider(request, native_slot)``.
         Returned actions preserve request order and PPO's existing cache layout.
+        Inside :func:`fused_act_round` the call is queued and the returned
+        objects fill in when the round closes.
         """
+        bucket = _ACT_ROUND.get()
+        if bucket is not None:
+            if not requests:
+                return []
+            slots = [_DeferredAction() for _ in requests]
+            bucket.append((self, requests, {
+                "temperature": temperature,
+                "placement_temperature": placement_temperature,
+                "placement_top_k": placement_top_k,
+                "deterministic": deterministic,
+                "legal_tile_masks": legal_tile_masks,
+                "placement_mask_provider": placement_mask_provider,
+            }, slots))
+            return slots
+        return self._act_batch_now(
+            requests, temperature=temperature, placement_temperature=placement_temperature,
+            placement_top_k=placement_top_k, deterministic=deterministic,
+            legal_tile_masks=legal_tile_masks, placement_mask_provider=placement_mask_provider)
+
+    def _act_batch_now(self, requests, **kwargs):
         if not requests:
             return []
+        spec = self._prepare_act(requests, **kwargs)
+        with torch.inference_mode():
+            raw = self._finish_act(spec, self._forward_batch(spec["caches"]))
+        return policy_actions_from_raw(raw)
+
+    def _prepare_act(self, requests, *, temperature=1.0, placement_temperature=0.8, placement_top_k=5,
+                     deterministic=False, legal_tile_masks=None, placement_mask_provider=None):
         if not isinstance(deterministic, bool):
             deterministic = tuple(bool(flag) for flag in deterministic)
             if len(deterministic) != len(requests):
@@ -310,110 +438,108 @@ class FastBananaPolicy(BananaPolicy):
             raise ValueError("legal_tile_masks must match requests length")
         caches = [
             self._cache_request(
-                self,
-                episode,
-                observation,
-                side,
-                now_seconds,
-                temperature,
-                placement_temperature,
-                placement_top_k,
-                legal_tile_masks[i],
+                self, episode, observation, side, now_seconds, temperature,
+                placement_temperature, placement_top_k, legal_tile_masks[i],
             )
             for i, (episode, observation, side, now_seconds) in enumerate(requests)
         ]
-        sides = [int(request[2]) for request in requests]
-        with torch.no_grad():
-            first = self._forward_batch(caches)
-            wait_dist = Bernoulli(logits=self.wait_head(first["fused"]).squeeze(-1), validate_args=False)
-            values = self.critic(first["fused"]).squeeze(-1)
-            can_play = torch.tensor([c["can_play"] for c in caches], device=self.device)
-            waits = self._select_batch(wait_dist, caches, 0, deterministic).bool()
-            waits = waits | ~can_play
-            logp = torch.where(can_play, wait_dist.log_prob(waits.float()), 0.)
-            entropy = torch.where(can_play, wait_dist.entropy(), 0.)
-            # Native masks need both wait decisions and chosen native slots on
-            # the host. With per-game uniforms (or greedy selection), decoding
-            # slots for every row is independent of which rows wait: transfer
-            # the two decision vectors together instead of synchronizing twice.
-            joint_slots = (placement_mask_provider is not None
-                           and any(c["can_play"] for c in caches)
-                           and (deterministic is True or all("sample_uniforms" in c for c in caches)))
+        return {"requests": requests, "caches": caches, "temperature": temperature,
+                "deterministic": deterministic, "placement_mask_provider": placement_mask_provider,
+                "sides": [int(request[2]) for request in requests]}
+
+    def _finish_act(self, spec, first):
+        """Sample from a trunk forward. Caller owns inference mode and host copies."""
+        requests, caches = spec["requests"], spec["caches"]
+        deterministic, temperature = spec["deterministic"], spec["temperature"]
+        placement_mask_provider, sides = spec["placement_mask_provider"], spec["sides"]
+        wait_dist = Bernoulli(logits=self.wait_head(first["fused"]).squeeze(-1), validate_args=False)
+        values = self.critic(first["fused"]).squeeze(-1)
+        can_play = torch.tensor([c["can_play"] for c in caches], device=self.device)
+        waits = self._select_batch(wait_dist, caches, 0, deterministic).bool()
+        waits = waits | ~can_play
+        logp = torch.where(can_play, wait_dist.log_prob(waits.float()), 0.)
+        entropy = torch.where(can_play, wait_dist.entropy(), 0.)
+        # Native masks need both wait decisions and chosen native slots on
+        # the host. With per-game uniforms (or greedy selection), decoding
+        # slots for every row is independent of which rows wait: transfer
+        # the two decision vectors together instead of synchronizing twice.
+        joint_slots = (placement_mask_provider is not None
+                       and any(c["can_play"] for c in caches)
+                       and (deterministic is True or all("sample_uniforms" in c for c in caches)))
+        if joint_slots:
+            slot_logits = first["slot_logits"] / max(float(temperature), 1e-4)
+            slot_dist = Categorical(logits=slot_logits.masked_fill(
+                ~first["_hand_mask"], torch.finfo(slot_logits.dtype).min), validate_args=False)
+            all_slots = self._select_batch(slot_dist, caches, 1, deterministic)
+            decisions = torch.stack((waits.long(), all_slots), dim=1).cpu().tolist()
+            wait_rows = [bool(row[0]) for row in decisions]
+        else:
+            wait_rows = waits.cpu().tolist()
+        pending = [i for i, wait in enumerate(wait_rows) if not wait]
+        placements = {}
+        candidate_rows = {}
+        if pending:
+            subset = [caches[i] for i in pending]
+            ix = torch.tensor(pending, device=self.device)
+            row_modes = deterministic if isinstance(deterministic, bool) else tuple(deterministic[i] for i in pending)
             if joint_slots:
-                slot_logits = first["slot_logits"] / max(float(temperature), 1e-4)
-                slot_dist = Categorical(logits=slot_logits.masked_fill(
-                    ~first["_hand_mask"], torch.finfo(slot_logits.dtype).min), validate_args=False)
-                all_slots = self._select_batch(slot_dist, caches, 1, deterministic)
-                decisions = torch.stack((waits.long(), all_slots), dim=1).cpu().tolist()
-                wait_rows = [bool(row[0]) for row in decisions]
+                slots = all_slots[ix]
+                slot_logp = slot_dist.log_prob(all_slots)[ix]
+                slot_entropy = slot_dist.entropy()[ix]
             else:
-                wait_rows = waits.cpu().tolist()
-            # Transfer each decision vector once, rather than synchronizing for
-            # every action's wait/slot/tile/x/y scalar.
-            pending = [i for i, wait in enumerate(wait_rows) if not wait]
-            placements = {}
-            if pending:
-                subset = [caches[i] for i in pending]
-                ix = torch.tensor(pending, device=self.device)
-                row_modes = deterministic if isinstance(deterministic, bool) else tuple(deterministic[i] for i in pending)
-                if joint_slots:
-                    slots = all_slots[ix]
-                    slot_logp = slot_dist.log_prob(all_slots)[ix]
-                    slot_entropy = slot_dist.entropy()[ix]
-                else:
-                    mask = first["_hand_mask"][ix]
-                    slot_logits = first["slot_logits"][ix] / max(float(temperature), 1e-4)
-                    slot_dist = Categorical(logits=slot_logits.masked_fill(~mask, torch.finfo(slot_logits.dtype).min),
-                                            validate_args=False)
-                    slots = self._select_batch(slot_dist, subset, 1, row_modes)
-                    slot_logp, slot_entropy = slot_dist.log_prob(slots), slot_dist.entropy()
-                if placement_mask_provider is not None:
-                    host_slots = [decisions[i][1] for i in pending] if joint_slots else slots.cpu().tolist()
-                    pairs = [(requests[i], next(row[0] for row in caches[i]["legal"] if row[1] == slot))
-                             for i, slot in zip(pending, host_slots)]
-                    batch_provider = getattr(placement_mask_provider, "batch", None)
-                    masks = (batch_provider(pairs) if batch_provider is not None else
-                             [placement_mask_provider(request, slot) for request, slot in pairs])
-                    if len(masks) != len(pending):
-                        raise ValueError("native placement masks must match playing rows")
-                    for i, native_mask in zip(pending, masks):
-                        mask = torch.as_tensor(native_mask, dtype=torch.bool).flatten().cpu()
-                        if mask.numel() != 576 or not mask.any():
-                            raise ValueError("native placement mask must contain 576 tiles and a legal target")
-                        supplied = caches[i]["tile_mask"]
-                        caches[i]["tile_mask"] = mask if supplied is None else mask & supplied
-                second = self._placement_from_context(first, caches, pending, slots)
-                tile_dist, indices, counts = self._tile_batch(second["tile_logits"], subset)
-                choices = self._select_batch(tile_dist, subset, 2, row_modes, counts)
-                tiles = indices.gather(1, choices[:, None]).squeeze(1)
-                xy = torch.stack(((tiles % 32 + .5) / 32, (tiles // 32 + .5) / 18), dim=1)
-                if second.get("offset") is not None:
-                    xy = (xy + second["offset"].detach() * xy.new_tensor([.5 / 32, .5 / 18])).clamp(0., 1.)
-                red = torch.tensor([sides[i] == 1 for i in pending], device=self.device)
-                xy[:, 1] = torch.where(red, 1. - xy[:, 1], xy[:, 1])
-                coords = torch.round(xy * xy.new_tensor([18000., 32000.])).clamp_min(0)
-                coords = torch.minimum(coords, coords.new_tensor([18000., 32000.])).long()
-                logp[ix] += slot_logp + tile_dist.log_prob(choices)
-                entropy[ix] += slot_entropy + tile_dist.entropy()
-                decoded = torch.cat((slots[:, None], tiles[:, None], coords, indices), dim=1).cpu()
-                for row, i, count in zip(decoded, pending, counts):
-                    slot, tile, x, y = row[:4].tolist()
-                    caches[i]["tile_candidates"] = row[4:4 + count].clone()
-                    placements[i] = slot, tile, x, y
-            statistics = torch.stack((logp, entropy, values), dim=1).cpu()
-        results = []
+                mask = first["_hand_mask"][ix]
+                slot_logits = first["slot_logits"][ix] / max(float(temperature), 1e-4)
+                slot_dist = Categorical(logits=slot_logits.masked_fill(~mask, torch.finfo(slot_logits.dtype).min),
+                                        validate_args=False)
+                slots = self._select_batch(slot_dist, subset, 1, row_modes)
+                slot_logp, slot_entropy = slot_dist.log_prob(slots), slot_dist.entropy()
+            if placement_mask_provider is not None:
+                host_slots = [decisions[i][1] for i in pending] if joint_slots else slots.cpu().tolist()
+                pairs = [(requests[i], next(row[0] for row in caches[i]["legal"] if row[1] == slot))
+                         for i, slot in zip(pending, host_slots)]
+                batch_provider = getattr(placement_mask_provider, "batch", None)
+                masks = (batch_provider(pairs) if batch_provider is not None else
+                         [placement_mask_provider(request, slot) for request, slot in pairs])
+                if len(masks) != len(pending):
+                    raise ValueError("native placement masks must match playing rows")
+                for i, native_mask in zip(pending, masks):
+                    mask = torch.as_tensor(native_mask, dtype=torch.bool).flatten().cpu()
+                    if mask.numel() != 576 or not mask.any():
+                        raise ValueError("native placement mask must contain 576 tiles and a legal target")
+                    supplied = caches[i]["tile_mask"]
+                    caches[i]["tile_mask"] = mask if supplied is None else mask & supplied
+            second = self._placement_from_context(first, caches, pending, slots)
+            tile_dist, indices, counts = self._tile_batch(second["tile_logits"], subset)
+            choices = self._select_batch(tile_dist, subset, 2, row_modes, counts)
+            tiles = indices.gather(1, choices[:, None]).squeeze(1)
+            xy = torch.stack(((tiles % 32 + .5) / 32, (tiles // 32 + .5) / 18), dim=1)
+            if second.get("offset") is not None:
+                xy = (xy + second["offset"].detach() * xy.new_tensor([.5 / 32, .5 / 18])).clamp(0., 1.)
+            red = torch.tensor([sides[i] == 1 for i in pending], device=self.device)
+            xy[:, 1] = torch.where(red, 1. - xy[:, 1], xy[:, 1])
+            coords = torch.round(xy * xy.new_tensor([18000., 32000.])).clamp_min(0)
+            coords = torch.minimum(coords, coords.new_tensor([18000., 32000.])).long()
+            logp[ix] += slot_logp + tile_dist.log_prob(choices)
+            entropy[ix] += slot_entropy + tile_dist.entropy()
+            decoded = torch.cat((slots[:, None], tiles[:, None], coords, indices), dim=1).cpu()
+            for row, i, count in zip(decoded, pending, counts):
+                slot, tile, x, y = (int(v) for v in row[:4].tolist())
+                candidate_rows[i] = row[4:4 + count]
+                placements[i] = slot, tile, x, y
+        statistics = torch.stack((logp, entropy, values), dim=1).cpu()
+        raw = []
         for i, cache in enumerate(caches):
             legal_slots = tuple(sorted({row[1] for row in cache["legal"]}))
-            lp, ent, val = statistics[i]
             if wait_rows[i]:
-                results.append(SampledAction(sides[i], -1, -1, "", 0, 0, -1, lp, ent, val,
-                                             legal_slots, True, cache))
+                raw.append({"cache": cache, "stats": statistics[i], "wait": True, "side": sides[i],
+                            "legal_slots": legal_slots, "candidates": None})
             else:
                 slot, tile, x, y = placements[i]
                 native_slot, _, card = next(row for row in cache["legal"] if row[1] == slot)
-                results.append(SampledAction(sides[i], native_slot, slot, card, x, y, tile,
-                                             lp, ent, val, legal_slots, False, cache))
-        return results
+                raw.append({"cache": cache, "stats": statistics[i], "wait": False, "side": sides[i],
+                            "legal_slots": legal_slots, "candidates": candidate_rows[i],
+                            "native_slot": native_slot, "slot": slot, "card": card, "x": x, "y": y, "tile": tile})
+        return raw
 
     def evaluate_actions(self, actions: Sequence[SampledAction]) -> tuple[Tensor, Tensor, Tensor]:
         """Vectorized PPO likelihoods; placement reuses the differentiable trunk."""

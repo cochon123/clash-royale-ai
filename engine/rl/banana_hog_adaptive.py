@@ -162,7 +162,8 @@ class AdaptiveLeague(StableLeague):
     def mask_provider(self, games):
         workers = {id(game.episode): game.worker for game in games}
         def query(request, native_slot):
-            return self.clients[workers[id(request[0])]].request(
+            return self.native_request(
+                workers[id(request[0])],
                 {"op": "placement_mask", "side": request[2], "slot": native_slot})["mask"]
         def query_batch(pairs):
             # One queue per client, including the unusual case of two sides of
