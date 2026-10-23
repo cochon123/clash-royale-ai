@@ -1,0 +1,40 @@
+[2026-10-22T23:27:44.647881+00:00] Exact parent tensor parity verified; CUDA policies loaded; starting native games.
+[2026-10-22T23:27:49.944038+00:00] train LavaLoon / bc-greedy seat0 L · 53.8s native
+[2026-10-22T23:27:51.889239+00:00] train PEKKA Bridge Spam / hog1-greedy seat0 L · 101.5s native
+[2026-10-22T23:27:55.381383+00:00] train PEKKA Bridge Spam / bc-greedy seat0 L · 170.1s native
+[2026-10-22T23:27:55.601867+00:00] train LavaLoon / bc-sampled seat0 L · 175.1s native
+[2026-10-22T23:27:59.400581+00:00] train Golem Night Witch / hog1-greedy seat0 L · 251.7s native
+[2026-10-22T23:28:00.095879+00:00] train Classic Log Bait / hog1-greedy seat0 W · 264.2s native
+[2026-10-22T23:28:01.810420+00:00] train Custom Mortar / bc-sampled seat0 L · 299.6s native
+[2026-10-22T23:28:01.855174+00:00] train Golem Night Witch / bc-greedy seat0 L · 301.4s native
+[2026-10-22T23:28:01.874277+00:00] train Custom Mortar / hog1-greedy seat0 L · 302.1s native
+[2026-10-22T23:28:01.874978+00:00] train Hog 2.6 / bc-sampled seat0 L · 302.1s native
+[2026-10-22T23:28:01.875562+00:00] train Hog 2.6 / bc-greedy seat0 L · 302.6s native
+[2026-10-22T23:28:01.876148+00:00] train LavaLoon / hog1-greedy seat0 L · 302.3s native
+[2026-10-22T23:28:04.050424+00:00] Stable PPO 1: 2834 decisions · parent KL 0.00015 · trainability verified
+[2026-10-22T23:28:09.532569+00:00] train Classic Log Bait / bc-sampled seat0 W · 122.2s native
+[2026-10-22T23:28:11.495118+00:00] train Golem Night Witch / hog1-greedy seat1 L · 161.5s native
+[2026-10-22T23:28:12.336031+00:00] train Golem Night Witch / bc-sampled seat0 W · 176.1s native
+[2026-10-22T23:28:13.044072+00:00] train PEKKA Bridge Spam / bc-sampled seat0 L · 190.1s native
+[2026-10-22T23:28:14.875713+00:00] train Classic Log Bait / bc-greedy seat0 L · 227.4s native
+[2026-10-22T23:28:18.541738+00:00] train Hog 2.6 / hog1-greedy seat0 W · 299.6s native
+[2026-10-22T23:28:18.590506+00:00] train Custom Mortar / bc-sampled seat1 L · 302.0s native
+[2026-10-22T23:28:18.591349+00:00] train Custom Mortar / hog1-greedy seat1 W · 301.4s native
+[2026-10-22T23:28:18.591876+00:00] train Custom Mortar / bc-greedy seat1 L · 301.5s native
+[2026-10-22T23:28:18.592368+00:00] train Custom Mortar / bc-greedy seat0 W · 301.8s native
+[2026-10-22T23:28:18.606673+00:00] train Hog 2.6 / bc-sampled seat1 L · 302.5s native
+[2026-10-22T23:28:18.607329+00:00] train LavaLoon / bc-sampled seat1 L · 302.4s native
+[2026-10-22T23:28:20.786738+00:00] Stable PPO 2: 2995 decisions · parent KL 0.00048 · trainability verified
+[2026-10-22T23:28:24.536865+00:00] train PEKKA Bridge Spam / bc-greedy seat1 L · 86.4s native
+[2026-10-22T23:28:24.537752+00:00] train PEKKA Bridge Spam / hog1-greedy seat1 L · 86.0s native
+[2026-10-22T23:28:27.945335+00:00] train LavaLoon / bc-sampled seat0 L · 156.9s native
+[2026-10-22T23:28:28.666936+00:00] train PEKKA Bridge Spam / bc-sampled seat1 L · 168.1s native
+[2026-10-22T23:28:29.033723+00:00] train Classic Log Bait / bc-greedy seat1 L · 175.1s native
+[2026-10-22T23:28:29.034274+00:00] train Golem Night Witch / bc-sampled seat0 L · 175.1s native
+[2026-10-22T23:28:29.034638+00:00] train LavaLoon / bc-greedy seat1 L · 175.1s native
+[2026-10-22T23:28:33.627752+00:00] train Golem Night Witch / bc-sampled seat1 L · 280.6s native
+[2026-10-22T23:28:34.477273+00:00] train Custom Mortar / bc-sampled seat0 L · 301.4s native
+[2026-10-22T23:28:34.478003+00:00] train LavaLoon / hog1-greedy seat1 L · 301.1s native
+[2026-10-22T23:28:34.478567+00:00] train Custom Mortar / hog1-greedy seat0 L · 301.5s native
+[2026-10-22T23:28:34.486826+00:00] train LavaLoon / bc-sampled seat1 W · 302.1s native
+[2026-10-22T23:28:36.318459+00:00] Stable PPO 3: 2518 decisions · parent KL 0.00059 · trainability verified

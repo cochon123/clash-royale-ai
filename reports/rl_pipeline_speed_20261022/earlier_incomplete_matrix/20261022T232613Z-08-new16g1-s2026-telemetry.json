@@ -1,0 +1,42 @@
+[
+  {
+    "elapsed_s": 0.0006492459942819551,
+    "gpu": "2026/10/22 17:34:28.902, 60, 0 %, 2022 MiB, 11.59 W, 1177 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          15           9           2           8          15\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 10.031046945005073,
+    "gpu": "2026/10/22 17:34:38.932, 60, 11 %, 2165 MiB, 9.94 W, 1177 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          24           1           2           8           6\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 20.05936486700375,
+    "gpu": "2026/10/22 17:34:48.969, 59, 10 %, 2185 MiB, 9.81 W, 1177 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          24           1           2           8           6\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 30.096282590006012,
+    "gpu": "2026/10/22 17:34:59.024, 61, 5 %, 2989 MiB, 9.82 W, 1177 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          27           0           2           5           3\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 40.16422154099564,
+    "gpu": "2026/10/22 17:35:09.076, 62, 8 %, 2989 MiB, 10.04 W, 1177 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          26           0           2           6           3\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 50.21030437000445,
+    "gpu": "2026/10/22 17:35:19.113, 66, 72 %, 2995 MiB, 35.40 W, 1725 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          26           0           2           5           3\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 60.24312107100559,
+    "gpu": "2026/10/22 17:35:29.149, 63, 11 %, 2995 MiB, 9.96 W, 1177 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          26           1           2           5           3\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 70.28305628499947,
+    "gpu": "2026/10/22 17:35:39.195, 63, 17 %, 2995 MiB, 10.20 W, 1177 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          27           1           2           5           3\nSwap:              7           7           0\n"
+  }
+]

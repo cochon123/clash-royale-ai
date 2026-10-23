@@ -1,0 +1,179 @@
+[2026-10-22T23:26:15.325213+00:00] Exact parent tensor parity verified; CUDA policies loaded; starting native games.
+[2026-10-22T23:26:21.430537+00:00] train LavaLoon / bc-greedy seat0 L · 53.8s native
+[2026-10-22T23:26:24.748784+00:00] train PEKKA Bridge Spam / hog1-greedy seat0 L · 101.5s native
+[2026-10-22T23:26:30.530853+00:00] train PEKKA Bridge Spam / bc-greedy seat0 L · 170.1s native
+[2026-10-22T23:26:30.980171+00:00] train LavaLoon / bc-sampled seat0 L · 175.1s native
+[2026-10-22T23:26:39.074125+00:00] train Golem Night Witch / hog1-greedy seat0 L · 251.7s native
+[2026-10-22T23:26:40.661230+00:00] train Classic Log Bait / hog1-greedy seat0 W · 264.2s native
+[2026-10-22T23:26:44.666212+00:00] train Custom Mortar / bc-sampled seat0 L · 299.6s native
+[2026-10-22T23:26:44.845413+00:00] train Golem Night Witch / bc-greedy seat0 L · 301.4s native
+[2026-10-22T23:26:44.920403+00:00] train LavaLoon / hog1-greedy seat0 L · 302.3s native
+[2026-10-22T23:26:44.921120+00:00] train Custom Mortar / hog1-greedy seat0 L · 302.1s native
+[2026-10-22T23:26:44.921734+00:00] train Hog 2.6 / bc-sampled seat0 L · 302.1s native
+[2026-10-22T23:26:44.922314+00:00] train Hog 2.6 / bc-greedy seat0 L · 302.6s native
+[2026-10-22T23:26:47.321279+00:00] Stable PPO 1: 2834 decisions · parent KL 0.00018 · trainability verified
+[2026-10-22T23:26:53.694019+00:00] train PEKKA Bridge Spam / bc-sampled seat0 L · 101.0s native
+[2026-10-22T23:27:00.672159+00:00] train Classic Log Bait / bc-sampled seat0 L · 175.1s native
+[2026-10-22T23:27:03.605675+00:00] train Golem Night Witch / hog1-greedy seat1 L · 201.6s native
+[2026-10-22T23:27:04.551028+00:00] train Classic Log Bait / bc-greedy seat0 L · 209.3s native
+[2026-10-22T23:27:14.216149+00:00] train Golem Night Witch / bc-sampled seat0 W · 286.1s native
+[2026-10-22T23:27:14.935937+00:00] train Hog 2.6 / hog1-greedy seat0 W · 291.9s native
+[2026-10-22T23:27:16.023372+00:00] train LavaLoon / bc-sampled seat1 L · 301.4s native
+[2026-10-22T23:27:16.024424+00:00] train Custom Mortar / hog1-greedy seat1 W · 301.4s native
+[2026-10-22T23:27:16.102386+00:00] train Custom Mortar / bc-greedy seat1 L · 302.1s native
+[2026-10-22T23:27:16.103145+00:00] train Custom Mortar / bc-greedy seat0 W · 302.1s native
+[2026-10-22T23:27:16.103744+00:00] train Hog 2.6 / bc-sampled seat1 L · 302.5s native
+[2026-10-22T23:27:16.104315+00:00] train Custom Mortar / bc-sampled seat1 L · 302.2s native
+[2026-10-22T23:27:18.509342+00:00] Stable PPO 2: 3085 decisions · parent KL 0.00020 · trainability verified
+[2026-10-22T23:27:20.615206+00:00] train Classic Log Bait / bc-sampled seat1 W · 36.8s native
+[2026-10-22T23:27:23.556118+00:00] train PEKKA Bridge Spam / hog1-greedy seat1 L · 86.2s native
+[2026-10-22T23:27:24.042103+00:00] train PEKKA Bridge Spam / bc-greedy seat1 L · 94.7s native
+[2026-10-22T23:27:30.363206+00:00] train LavaLoon / bc-sampled seat0 L · 172.6s native
+[2026-10-22T23:27:30.697316+00:00] train Custom Mortar / bc-sampled seat0 L · 175.1s native
+[2026-10-22T23:27:30.698382+00:00] train PEKKA Bridge Spam / bc-sampled seat1 L · 175.1s native
+[2026-10-22T23:27:30.699354+00:00] train LavaLoon / bc-greedy seat1 L · 175.1s native
+[2026-10-22T23:27:30.700384+00:00] train Golem Night Witch / bc-sampled seat0 L · 175.1s native
+[2026-10-22T23:27:38.526946+00:00] train Golem Night Witch / bc-sampled seat1 L · 287.1s native
+[2026-10-22T23:27:39.371840+00:00] train LavaLoon / hog1-greedy seat1 L · 300.8s native
+[2026-10-22T23:27:39.410520+00:00] train Custom Mortar / hog1-greedy seat0 W · 301.9s native
+[2026-10-22T23:27:39.411270+00:00] train LavaLoon / bc-sampled seat1 L · 301.9s native
+[2026-10-22T23:27:41.137292+00:00] Stable PPO 3: 2289 decisions · parent KL 0.00047 · trainability verified
+{
+ "code_root": "/home/cochon/Documents/mini-project/clash-royale-ai/engine",
+ "workers": 12,
+ "waves": 3,
+ "seed": 777,
+ "extra": "",
+ "constructor_s": 1.0660833440051647,
+ "wave_records": [
+  {
+   "wave": 1,
+   "elapsed_s": 32.040954387994134,
+   "wave_s": 32.040954387994134,
+   "games": 12,
+   "decisions": 5668,
+   "phases": {
+    "cache_request_s": 14.222609269840177,
+    "act_batch_s": 19.927138798026135,
+    "act_batch_calls": 1212,
+    "act_rows": 5668,
+    "launch_s": 20.14565693010809,
+    "rounds": 303,
+    "wait_steps_s": 6.591698772957898,
+    "consume_s": 0.07888927104067989,
+    "publish_s": 0.10241957685502712,
+    "update_s": 2.422975248991861,
+    "play_s": 29.593077497003833
+   },
+   "engine": {
+    "step_s": 38.111038525006734,
+    "step_n": 2846,
+    "reset_s": 28.891754800017225,
+    "reset_n": 12,
+    "mask_s": 0.5895536412863294,
+    "mask_n": 2059
+   }
+  },
+  {
+   "wave": 2,
+   "elapsed_s": 63.22991736298718,
+   "wave_s": 31.188962974993046,
+   "games": 12,
+   "decisions": 6170,
+   "phases": {
+    "cache_request_s": 15.855402147572022,
+    "act_batch_s": 21.564873635725235,
+    "act_batch_calls": 1211,
+    "act_rows": 6170,
+    "launch_s": 21.83597943089262,
+    "rounds": 303,
+    "wait_steps_s": 6.67429902216827,
+    "consume_s": 0.09081646298000123,
+    "publish_s": 0.10546591605816502,
+    "update_s": 2.4092819490033435,
+    "play_s": 28.73392770899227
+   },
+   "engine": {
+    "step_s": 44.52500809612684,
+    "step_n": 3097,
+    "reset_s": 0.12102305896405596,
+    "reset_n": 12,
+    "mask_s": 0.6732381171314046,
+    "mask_n": 2276
+   }
+  },
+  {
+   "wave": 3,
+   "elapsed_s": 85.8581757209904,
+   "wave_s": 22.628258358003222,
+   "games": 12,
+   "decisions": 4578,
+   "phases": {
+    "cache_request_s": 9.50812299696554,
+    "act_batch_s": 14.116366319256485,
+    "act_batch_calls": 1082,
+    "act_rows": 4578,
+    "launch_s": 14.297144507028861,
+    "rounds": 302,
+    "wait_steps_s": 6.3576678231183905,
+    "consume_s": 0.070863787579583,
+    "publish_s": 0.07437690795632079,
+    "update_s": 1.726248259001295,
+    "play_s": 20.851907253003446
+   },
+   "engine": {
+    "step_s": 31.077495682999142,
+    "step_n": 2301,
+    "reset_s": 0.10994332704285625,
+    "reset_n": 12,
+    "mask_s": 0.4039235158270458,
+    "mask_n": 1396
+   }
+  }
+ ],
+ "cleanup_s": 0.7027660220046528,
+ "counters": {
+  "accepted_plays": 5614,
+  "decisions": 16416,
+  "simulated_seconds": 8184.800000000003,
+  "games": 36,
+  "losses": 29,
+  "training_games": 36,
+  "wins": 7,
+  "rejected_plays": 117,
+  "updates": 3
+ },
+ "errors": {},
+ "total_s": 86.56094174299506,
+ "games": 36,
+ "decisions": 16416,
+ "updates": 3,
+ "games_per_min": 24.95351779343133,
+ "decisions_per_s": 189.64673523007812,
+ "cache_request_s": 39.58613441437774,
+ "act_batch_s": 55.608378753007855,
+ "act_batch_calls": 3505,
+ "act_rows": 16416,
+ "launch_s": 56.27878086802957,
+ "rounds": 908,
+ "wait_steps_s": 19.62366561824456,
+ "consume_s": 0.24056952160026412,
+ "publish_s": 0.283490146859549,
+ "update_s": 6.5585054569965,
+ "play_s": 79.17891245899955,
+ "engine": {
+  "step_s": 113.71354230413272,
+  "step_n": 8244,
+  "reset_s": 29.122721186024137,
+  "reset_n": 36,
+  "mask_s": 1.6667152742447797,
+  "mask_n": 5731
+ },
+ "pace": {
+  "infer_s": 55.681036479145405,
+  "infer_batches": 908,
+  "infer_games": 8208,
+  "engine_s": 183.35406292034895,
+  "engine_steps": 8208
+ }
+}

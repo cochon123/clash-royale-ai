@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-23T00:10:00.198997+00:00",
+  "memory_bytes": {
+    "MemTotal": 32718692352,
+    "MemAvailable": 17655947264,
+    "SwapTotal": 8589930496,
+    "SwapFree": 469078016
+  },
+  "gpu": "48, 0 %, 2020 MiB, 4.26 W",
+  "repos": {
+    "baseline": {
+      "head": {
+        "command": "git rev-parse HEAD",
+        "returncode": 0,
+        "output": "8b623650017a22b546d69c8f1a6eed21eddd462a\n"
+      },
+      "status": {
+        "command": "git status --short",
+        "returncode": 0,
+        "output": " M native-engine/README.md\n M rl/README.md\n M rl/banana_watch.py\n M ../webapps/README.md\n"
+      }
+    },
+    "new": {
+      "head": {
+        "command": "git rev-parse HEAD",
+        "returncode": 0,
+        "output": "fc4d9ebe6d7330aa3d4e261a5cb848890765a623\n"
+      },
+      "status": {
+        "command": "git status --short",
+        "returncode": 0,
+        "output": "?? ../reports/rl_pipeline_speed_20261022/\n"
+      }
+    }
+  },
+  "inputs": {
+    "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-2/bin/rust_league_rl": "afc5cdea352a140c1645621098e76d83a901e6ff6077e2fd42c4338110542a80",
+    "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-2/pool.json": "96879fac68bae6f69cbe6802c51944867e1239d1a344f09e9e57cd2fbf8dd70b",
+    "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-1/models/final.pt": "eb569d0629774b04280fb218e414df61aa6542730506646e7c7eda1f3695a149"
+  },
+  "limits": {
+    "memory_max_bytes": 8589934592,
+    "swap_max_bytes": 0,
+    "abort_mem_available_bytes": 6442450944,
+    "required_launch_available_bytes": 12884901888,
+    "workers": 8
+  }
+}

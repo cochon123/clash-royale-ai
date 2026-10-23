@@ -1,0 +1,146 @@
+{
+  "code_root": "/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine",
+  "workers": 8,
+  "waves": 3,
+  "seed": 2026,
+  "extra": "--step-groups 1",
+  "constructor_s": 0.9601457870012382,
+  "wave_records": [
+    {
+      "wave": 1,
+      "elapsed_s": 16.601638313004514,
+      "wave_s": 16.601638313004514,
+      "games": 8,
+      "decisions": 4438,
+      "phases": {
+        "cache_request_s": 1.5995876670640428,
+        "act_batch_s": 5.768569456937257,
+        "act_batch_calls": 909,
+        "act_rows": 4438,
+        "launch_s": 5.900299680055468,
+        "rounds": 303,
+        "wait_steps_s": 6.125414832975366,
+        "consume_s": 0.06019326756359078,
+        "publish_s": 0.03248488006647676,
+        "update_s": 1.847004162002122,
+        "play_s": 14.729864155990072
+      },
+      "engine": {
+        "step_s": 28.86065682696062,
+        "step_n": 2227,
+        "reset_s": 17.58236540199141,
+        "reset_n": 8,
+        "mask_s": 0.6536362987244502,
+        "mask_n": 1795
+      }
+    },
+    {
+      "wave": 2,
+      "elapsed_s": 26.476986712004873,
+      "wave_s": 9.875348399000359,
+      "games": 8,
+      "decisions": 2610,
+      "phases": {
+        "cache_request_s": 0.8648382454994135,
+        "act_batch_s": 3.587693644076353,
+        "act_batch_calls": 668,
+        "act_rows": 2610,
+        "launch_s": 3.6488087088655448,
+        "rounds": 303,
+        "wait_steps_s": 5.0029242960736156,
+        "consume_s": 0.03755361273942981,
+        "publish_s": 0.03322894668963272,
+        "update_s": 1.0661217869928805,
+        "play_s": 8.765223476002575
+      },
+      "engine": {
+        "step_s": 12.898537998626125,
+        "step_n": 1313,
+        "reset_s": 0.06569727099849842,
+        "reset_n": 8,
+        "mask_s": 0.2750364319217624,
+        "mask_n": 814
+      }
+    },
+    {
+      "wave": 3,
+      "elapsed_s": 39.16660442799912,
+      "wave_s": 12.689617715994245,
+      "games": 8,
+      "decisions": 3372,
+      "phases": {
+        "cache_request_s": 1.3033855529210996,
+        "act_batch_s": 5.024439602653729,
+        "act_batch_calls": 894,
+        "act_rows": 3372,
+        "launch_s": 5.122659728964209,
+        "rounds": 303,
+        "wait_steps_s": 6.091911285824608,
+        "consume_s": 0.05267299014667515,
+        "publish_s": 0.03495374204067048,
+        "update_s": 1.306766873007291,
+        "play_s": 11.348223338995012
+      },
+      "engine": {
+        "step_s": 20.39688190506422,
+        "step_n": 1694,
+        "reset_s": 0.06045792403165251,
+        "reset_n": 8,
+        "mask_s": 0.3920134716609027,
+        "mask_n": 1138
+      }
+    }
+  ],
+  "cleanup_s": 0.3161921290011378,
+  "counters": {
+    "accepted_plays": 3660,
+    "decisions": 10420,
+    "simulated_seconds": 5194.750000000001,
+    "games": 24,
+    "losses": 16,
+    "training_games": 24,
+    "rejected_plays": 87,
+    "wins": 8,
+    "updates": 3
+  },
+  "errors": {},
+  "total_s": 39.482796557000256,
+  "games": 24,
+  "decisions": 10420,
+  "updates": 3,
+  "games_per_min": 36.47158067745051,
+  "decisions_per_s": 263.91241017988494,
+  "cache_request_s": 3.767811465484556,
+  "act_batch_s": 14.380702703667339,
+  "act_batch_calls": 2471,
+  "act_rows": 10420,
+  "launch_s": 14.671768117885222,
+  "rounds": 909,
+  "wait_steps_s": 17.22025041487359,
+  "consume_s": 0.15041987044969574,
+  "publish_s": 0.10222894778416958,
+  "update_s": 4.2198928220022935,
+  "play_s": 34.84331097098766,
+  "engine": {
+    "step_s": 62.156076730650966,
+    "step_n": 5234,
+    "reset_s": 17.70852059702156,
+    "reset_n": 24,
+    "mask_s": 1.3206862023071153,
+    "mask_n": 3747
+  },
+  "pace": {
+    "infer_s": 14.431435419857735,
+    "infer_batches": 909,
+    "infer_games": 5210,
+    "engine_s": 99.60194764469634,
+    "engine_steps": 5210
+  },
+  "label": "20261023T001000Z-05-NEW8g1-s2026",
+  "configuration": "NEW8g1",
+  "groups": 1,
+  "subprocess_wall_s": 42.28624942000897,
+  "command": "systemd-run --user --unit=cr-bench-safe-20261023t001000z-5.service --remain-after-exit --working-directory=/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --property=MemoryMax=8G --property=MemorySwapMax=0 --property=OOMPolicy=kill --property=KillMode=control-group --property=TimeoutStopSec=10 --property=RuntimeMaxSec=1200 --property=StandardOutput=append:/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026.stdout.log --property=StandardError=append:/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026.stdout.log --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONUNBUFFERED=1 /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python /tmp/cr-prof/bench-safe/bench_wave_measured.py --code-root /home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --workers 8 --waves 3 --seed 2026 --run-dir /tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch --extra '--step-groups 1'",
+  "memory_peak_bytes": 5711572992,
+  "unit": "cr-bench-safe-20261023t001000z-5.service"
+}

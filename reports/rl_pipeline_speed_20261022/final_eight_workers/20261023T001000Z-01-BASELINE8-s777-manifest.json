@@ -1,0 +1,266 @@
+{
+  "format": "banana-hog-overnight-v1",
+  "name": "banana-hog-overnight-20261022",
+  "parent": {
+    "name": "banana-hog-1-selected-v65",
+    "path": "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-1/models/final.pt",
+    "sha256": "eb569d0629774b04280fb218e414df61aa6542730506646e7c7eda1f3695a149",
+    "initial_tensor_parity": true
+  },
+  "engine": {
+    "name": "Original native engine \u00b7 asymmetric reference runner",
+    "sha256": "afc5cdea352a140c1645621098e76d83a901e6ff6077e2fd42c4338110542a80",
+    "path": "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-2/bin/rust_league_rl"
+  },
+  "deadline": "2026-10-23T01:10:02.343012+00:00",
+  "timezone": "America/Edmonton",
+  "pool_sha256": "96879fac68bae6f69cbe6802c51944867e1239d1a344f09e9e57cd2fbf8dd70b",
+  "decks": [
+    {
+      "id": "hog-mirror",
+      "name": "Hog 2.6",
+      "archetype": "Cycle",
+      "cards": [
+        "hog-rider",
+        "musketeer",
+        "ice-golem",
+        "skeletons",
+        "ice-spirit",
+        "cannon",
+        "fireball",
+        "the-log"
+      ],
+      "native_cards": [
+        "HogRider",
+        "Musketeer",
+        "IceGolemite",
+        "Skeletons",
+        "IceSpirits",
+        "Cannon",
+        "Fireball",
+        "Log"
+      ],
+      "holdout": false
+    },
+    {
+      "id": "log-bait",
+      "name": "Classic Log Bait",
+      "archetype": "Bait",
+      "cards": [
+        "goblin-barrel",
+        "princess",
+        "knight",
+        "goblin-gang",
+        "inferno-tower",
+        "rocket",
+        "the-log",
+        "ice-spirit"
+      ],
+      "native_cards": [
+        "GoblinBarrel",
+        "Princess",
+        "Knight",
+        "GoblinGang",
+        "InfernoTower",
+        "Rocket",
+        "Log",
+        "IceSpirits"
+      ],
+      "holdout": false
+    },
+    {
+      "id": "pekka-bridge",
+      "name": "PEKKA Bridge Spam",
+      "archetype": "Bridge spam",
+      "cards": [
+        "pekka",
+        "battle-ram",
+        "bandit",
+        "royal-ghost",
+        "electro-wizard",
+        "magic-archer",
+        "poison",
+        "zap"
+      ],
+      "native_cards": [
+        "Pekka",
+        "BattleRam",
+        "Assassin",
+        "Ghost",
+        "ElectroWizard",
+        "EliteArcher",
+        "Poison",
+        "Zap"
+      ],
+      "holdout": false
+    },
+    {
+      "id": "lava-loon",
+      "name": "LavaLoon",
+      "archetype": "Air beatdown",
+      "cards": [
+        "lava-hound",
+        "balloon",
+        "tombstone",
+        "mega-minion",
+        "minions",
+        "guards",
+        "fireball",
+        "zap"
+      ],
+      "native_cards": [
+        "LavaHound",
+        "Balloon",
+        "Tombstone",
+        "MegaMinion",
+        "Minions",
+        "SkeletonWarriors",
+        "Fireball",
+        "Zap"
+      ],
+      "holdout": false
+    },
+    {
+      "id": "golem",
+      "name": "Golem Night Witch",
+      "archetype": "Beatdown",
+      "cards": [
+        "golem",
+        "night-witch",
+        "baby-dragon",
+        "mega-minion",
+        "lumberjack",
+        "tornado",
+        "lightning",
+        "barbarian-barrel"
+      ],
+      "native_cards": [
+        "Golem",
+        "DarkWitch",
+        "BabyDragon",
+        "MegaMinion",
+        "RageBarbarian",
+        "Tornado",
+        "Lightning",
+        "BarbLog"
+      ],
+      "holdout": false
+    },
+    {
+      "id": "custom-mortar",
+      "name": "Custom Mortar",
+      "archetype": "Siege",
+      "cards": [
+        "mortar",
+        "knight",
+        "archers",
+        "skeletons",
+        "barbarian-barrel",
+        "arrows",
+        "mini-pekka",
+        "rocket"
+      ],
+      "native_cards": [
+        "Mortar",
+        "Knight",
+        "Archer",
+        "Skeletons",
+        "BarbLog",
+        "Arrows",
+        "MiniPekka",
+        "Rocket"
+      ],
+      "holdout": false
+    }
+  ],
+  "trainer_sha256": "cced4981ac956f2b8b46b427c682056111060ad759b0b0856d49afe7fdefb50c",
+  "native_checkpoint_metadata_sha256": "66f9bf75bfde9b5e0c1f4056573079016d41576020018b9e57fca538fd1b840e",
+  "card_aliases_sha256": "487973ac7ba361240ef6d9743db284f410f3a630c99bd8e8f37a8c16f9e4f78f",
+  "train_seed_range": [
+    1,
+    999999999
+  ],
+  "selection_seed_range": [
+    2200000000,
+    2200000001
+  ],
+  "confirmation_seed_range": [
+    3300000000,
+    3300000003
+  ],
+  "controllers": [
+    "bc-greedy",
+    "bc-sampled",
+    "hog1-greedy"
+  ],
+  "args": {
+    "run_dir": "/tmp/cr-prof/bench-safe/20261023T001000Z-01-BASELINE8-s777-scratch",
+    "tower_hp": true,
+    "name": "banana-hog-overnight-20261022",
+    "parent": "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-1/models/final.pt",
+    "pool": "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-2/pool.json",
+    "engine": "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-2/bin/rust_league_rl",
+    "checkpoint": "/home/cochon/Documents/mini-project/clash-royale-ai/engine/analysis/native-pipeline/oracle-export-01/stage01-attempt001/state",
+    "duration_seconds": 3600.0,
+    "deadline": "2026-10-23T01:10:02.343012+00:00",
+    "workers": 8,
+    "device": "cuda",
+    "torch_threads": 2,
+    "learning_rate": 3e-05,
+    "critic_learning_rate": 0.0003,
+    "target_kl": 0.01,
+    "max_parent_kl": 0.2,
+    "card_anchor": 0.1,
+    "wait_anchor": 0.02,
+    "shaping_coefficient": 0.5,
+    "gae_lambda": 0.97,
+    "entropy_coef": 0.002,
+    "regression_threshold": 0.08,
+    "minibatch_size": 128,
+    "epochs": 2,
+    "match_ticks": 7300,
+    "eval_every": 3600,
+    "eval_seeds": 2,
+    "seed": 777,
+    "resume": false,
+    "max_waves": 3,
+    "native_placement_masks": true,
+    "confirmation_seeds": 4,
+    "parent_name": "banana-hog-1-selected-v65",
+    "opponents": "original",
+    "trainable": "all",
+    "backbone_learning_rate": 3e-06
+  },
+  "observation_contract": "Existing causal inputs plus own/enemy king, weaker princess, stronger princess HP fractions; no unit positions or lane identity.",
+  "reward": "Native W/L/D \u00b11/0 plus terminal-zero tower-HP potential differences (gamma=1); shaped episode return is exactly outcome minus its constant starting potential. GAE lambda=.97. No card-specific bonuses.",
+  "evaluation_contract": "Sampled primary selection and confirmation, with greedy diagnostics/guard; identical full-grid placement support and reproducible per-game action RNG in training/testing.",
+  "duration_seconds": 3600.0,
+  "retrain_trainer_sha256": "0cd605867c023f8e5a134829004d110c83fbac44d8c7d0206898ea10881c89fb",
+  "experiment": {
+    "description": "Overnight Hog 2.6 from the saved Hog specialist against eleven classic archetypes and three frozen bot controllers",
+    "observation_unchanged": false,
+    "training_changes": [
+      "Trainable actor layers: all; body uses separate lower LR",
+      "Tower health residuals feed card selection, wait/value context and placement",
+      "Full-grid placement support in rollout, PPO and evaluation; native engine validates legality",
+      "Sampled selection/confirmation match training; greedy performance also checked",
+      "Full-model/optimizer rollback against selected best if either mode drops by the tolerance",
+      "Native potential rewards, GAE and parent card/wait KL retained"
+    ],
+    "notes": [
+      "No live game, phone, account, external AI API, or paid compute is used.",
+      "Recovered base cards exclude modern evolutions, heroes and balance changes.",
+      "The actor sees deck lists, accepted play history, hands, elixir and tower HP, but no troop positions or unit HP.",
+      "Frozen bots are not expert deck pilots; strength must be measured.",
+      "The exact saved parent remains the fallback if no candidate passes selection."
+    ]
+  },
+  "tower_hp_source_sha256": "ada258ca05fd02da28ced7ab9c5de0725a6f661caddfe17f6b9fb180a04bdd94",
+  "adaptive_source_sha256": "d9d7277301afd3243af63b4748a9b2f27273ad982ababfd2fecec0a5f77ca1f6",
+  "fast_policy_sha256": "e3bbd5265d13c47d5b5db85545d4cc9e0df9fc7356e1a202bf4825b24b49a693",
+  "native_placement_masks": true,
+  "overnight_source_sha256": "ade5aee01e58f7c0a891dc6a3771956bba60f7f7295e6f6c2129f4a3a37a2f42",
+  "engine_contract": "Original recovered ARM engine through Unicorn for all eleven archetypes; no approximate simulator or uncovered compiled paths.",
+  "inference_contract": "PPO Bernoulli wait controller with full-grid native legal masks. Use --legacy-wait-head when watching; learned phone-delay scheduling is a different policy.",
+  "holdout_contract": "All eleven archetypes train; final confirmation uses disjoint native seeds and never feeds back into learning."
+}

@@ -1,0 +1,1046 @@
+{
+  "name": "banana-hog-overnight-20261022",
+  "status": "completed",
+  "phase": "three-hour experiment finished \u00b7 checkpoints saved",
+  "updated_at": "2026-10-23T00:14:16.844667+00:00",
+  "started_at": "2026-10-23T00:13:36.670073+00:00",
+  "deadline": "2026-10-23T01:13:36.669959+00:00",
+  "timezone": "America/Edmonton",
+  "parent": {
+    "name": "banana-hog-1-selected-v65",
+    "path": "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-1/models/final.pt",
+    "sha256": "eb569d0629774b04280fb218e414df61aa6542730506646e7c7eda1f3695a149",
+    "initial_tensor_parity": true
+  },
+  "engine": {
+    "name": "Original native engine \u00b7 asymmetric reference runner",
+    "sha256": "afc5cdea352a140c1645621098e76d83a901e6ff6077e2fd42c4338110542a80",
+    "path": "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-2/bin/rust_league_rl"
+  },
+  "device": "cuda",
+  "workers": [
+    {
+      "id": 0,
+      "status": "finished",
+      "deck": "PEKKA Bridge Spam",
+      "controller": "bc-greedy",
+      "seat": 0,
+      "tick": 1142,
+      "entity_count": 12
+    },
+    {
+      "id": 1,
+      "status": "finished",
+      "deck": "Golem Night Witch",
+      "controller": "bc-sampled",
+      "seat": 0,
+      "tick": 3601,
+      "entity_count": 18
+    },
+    {
+      "id": 2,
+      "status": "finished",
+      "deck": "Classic Log Bait",
+      "controller": "hog1-greedy",
+      "seat": 1,
+      "tick": 4346,
+      "entity_count": 15
+    },
+    {
+      "id": 3,
+      "status": "finished",
+      "deck": "LavaLoon",
+      "controller": "bc-greedy",
+      "seat": 1,
+      "tick": 6121,
+      "entity_count": 5
+    },
+    {
+      "id": 4,
+      "status": "finished",
+      "deck": "Custom Mortar",
+      "controller": "bc-sampled",
+      "seat": 1,
+      "tick": 6127,
+      "entity_count": 5
+    },
+    {
+      "id": 5,
+      "status": "finished",
+      "deck": "PEKKA Bridge Spam",
+      "controller": "bc-sampled",
+      "seat": 1,
+      "tick": 1064,
+      "entity_count": 11
+    },
+    {
+      "id": 6,
+      "status": "finished",
+      "deck": "LavaLoon",
+      "controller": "bc-greedy",
+      "seat": 0,
+      "tick": 6145,
+      "entity_count": 5
+    },
+    {
+      "id": 7,
+      "status": "finished",
+      "deck": "Classic Log Bait",
+      "controller": "hog1-greedy",
+      "seat": 0,
+      "tick": 5857,
+      "entity_count": 12
+    }
+  ],
+  "decks": [
+    {
+      "id": "hog-mirror",
+      "name": "Hog 2.6",
+      "archetype": "Cycle",
+      "cards": [
+        "hog-rider",
+        "musketeer",
+        "ice-golem",
+        "skeletons",
+        "ice-spirit",
+        "cannon",
+        "fireball",
+        "the-log"
+      ],
+      "native_cards": [
+        "HogRider",
+        "Musketeer",
+        "IceGolemite",
+        "Skeletons",
+        "IceSpirits",
+        "Cannon",
+        "Fireball",
+        "Log"
+      ],
+      "holdout": false
+    },
+    {
+      "id": "log-bait",
+      "name": "Classic Log Bait",
+      "archetype": "Bait",
+      "cards": [
+        "goblin-barrel",
+        "princess",
+        "knight",
+        "goblin-gang",
+        "inferno-tower",
+        "rocket",
+        "the-log",
+        "ice-spirit"
+      ],
+      "native_cards": [
+        "GoblinBarrel",
+        "Princess",
+        "Knight",
+        "GoblinGang",
+        "InfernoTower",
+        "Rocket",
+        "Log",
+        "IceSpirits"
+      ],
+      "holdout": false
+    },
+    {
+      "id": "pekka-bridge",
+      "name": "PEKKA Bridge Spam",
+      "archetype": "Bridge spam",
+      "cards": [
+        "pekka",
+        "battle-ram",
+        "bandit",
+        "royal-ghost",
+        "electro-wizard",
+        "magic-archer",
+        "poison",
+        "zap"
+      ],
+      "native_cards": [
+        "Pekka",
+        "BattleRam",
+        "Assassin",
+        "Ghost",
+        "ElectroWizard",
+        "EliteArcher",
+        "Poison",
+        "Zap"
+      ],
+      "holdout": false
+    },
+    {
+      "id": "lava-loon",
+      "name": "LavaLoon",
+      "archetype": "Air beatdown",
+      "cards": [
+        "lava-hound",
+        "balloon",
+        "tombstone",
+        "mega-minion",
+        "minions",
+        "guards",
+        "fireball",
+        "zap"
+      ],
+      "native_cards": [
+        "LavaHound",
+        "Balloon",
+        "Tombstone",
+        "MegaMinion",
+        "Minions",
+        "SkeletonWarriors",
+        "Fireball",
+        "Zap"
+      ],
+      "holdout": false
+    },
+    {
+      "id": "golem",
+      "name": "Golem Night Witch",
+      "archetype": "Beatdown",
+      "cards": [
+        "golem",
+        "night-witch",
+        "baby-dragon",
+        "mega-minion",
+        "lumberjack",
+        "tornado",
+        "lightning",
+        "barbarian-barrel"
+      ],
+      "native_cards": [
+        "Golem",
+        "DarkWitch",
+        "BabyDragon",
+        "MegaMinion",
+        "RageBarbarian",
+        "Tornado",
+        "Lightning",
+        "BarbLog"
+      ],
+      "holdout": false
+    },
+    {
+      "id": "custom-mortar",
+      "name": "Custom Mortar",
+      "archetype": "Siege",
+      "cards": [
+        "mortar",
+        "knight",
+        "archers",
+        "skeletons",
+        "barbarian-barrel",
+        "arrows",
+        "mini-pekka",
+        "rocket"
+      ],
+      "native_cards": [
+        "Mortar",
+        "Knight",
+        "Archer",
+        "Skeletons",
+        "BarbLog",
+        "Arrows",
+        "MiniPekka",
+        "Rocket"
+      ],
+      "holdout": false
+    }
+  ],
+  "counters": {
+    "accepted_plays": 3660,
+    "decisions": 10420,
+    "simulated_seconds": 5194.750000000001,
+    "games": 24,
+    "losses": 16,
+    "training_games": 24,
+    "rejected_plays": 87,
+    "wins": 8,
+    "updates": 3
+  },
+  "rates": {
+    "games_per_minute": 35.84355133276424,
+    "decisions_per_second": 259.3679200606968
+  },
+  "resources": {
+    "cpu_percent": 31.9,
+    "ram_gb": 19.206653594970703,
+    "gpu_util_percent": 12.0,
+    "gpu_memory_mb": 2925.0
+  },
+  "ppo": {
+    "loss": -0.0026128920036609525,
+    "policy_loss": -0.008779866905469034,
+    "value_loss": 0.024138634058612364,
+    "entropy": 2.961439750812672,
+    "approx_kl": 0.0005739354944551936,
+    "parent_card_kl": 0.00020180075322665894,
+    "parent_wait_kl": 1.7905634026478595e-05,
+    "clip_fraction": 0.02351294568291417,
+    "grad_norm": 4.508403610300134,
+    "samples": 1686,
+    "minibatches": 27,
+    "learning_rate": 3e-05,
+    "kl_early_stop": true,
+    "advantage_std": 0.2106240838766098,
+    "parent_kl": 0.0002143635501852259
+  },
+  "recent_matches": [
+    {
+      "id": "2070224ab79e4b8c836a22075de0ac7d",
+      "at": "2026-10-23T00:14:15.454802+00:00",
+      "kind": "train",
+      "deck_id": "lava-loon",
+      "deck_name": "LavaLoon",
+      "controller": "bc-greedy",
+      "seat": 0,
+      "seed": 508890233,
+      "result": "W",
+      "seconds": 302.25,
+      "policy_version": 2,
+      "error": null
+    },
+    {
+      "id": "331f114bcdea4c869698835266d7aa69",
+      "at": "2026-10-23T00:14:15.442712+00:00",
+      "kind": "train",
+      "deck_id": "lava-loon",
+      "deck_name": "LavaLoon",
+      "controller": "bc-greedy",
+      "seat": 1,
+      "seed": 644012012,
+      "result": "L",
+      "seconds": 301.05,
+      "policy_version": 2,
+      "error": null
+    },
+    {
+      "id": "bf6f8c5cea58420ba0dd65726d5e092f",
+      "at": "2026-10-23T00:14:15.441941+00:00",
+      "kind": "train",
+      "deck_id": "custom-mortar",
+      "deck_name": "Custom Mortar",
+      "controller": "bc-sampled",
+      "seat": 1,
+      "seed": 93905407,
+      "result": "L",
+      "seconds": 301.35,
+      "policy_version": 2,
+      "error": null
+    },
+    {
+      "id": "b131cbfa4dcb4c2ab4f2e653889af803",
+      "at": "2026-10-23T00:14:15.023172+00:00",
+      "kind": "train",
+      "deck_id": "log-bait",
+      "deck_name": "Classic Log Bait",
+      "controller": "hog1-greedy",
+      "seat": 0,
+      "seed": 597258183,
+      "result": "W",
+      "seconds": 287.85,
+      "policy_version": 2,
+      "error": null
+    },
+    {
+      "id": "4f23b60299c64029bb9fcc32ea0712a5",
+      "at": "2026-10-23T00:14:11.683933+00:00",
+      "kind": "train",
+      "deck_id": "log-bait",
+      "deck_name": "Classic Log Bait",
+      "controller": "hog1-greedy",
+      "seat": 1,
+      "seed": 355127010,
+      "result": "L",
+      "seconds": 212.3,
+      "policy_version": 2,
+      "error": null
+    },
+    {
+      "id": "b98e1dd5fcbf4b6d8dfa0b2c54d5dd15",
+      "at": "2026-10-23T00:14:10.261907+00:00",
+      "kind": "train",
+      "deck_id": "golem",
+      "deck_name": "Golem Night Witch",
+      "controller": "bc-sampled",
+      "seat": 0,
+      "seed": 383410855,
+      "result": "L",
+      "seconds": 175.05,
+      "policy_version": 2,
+      "error": null
+    },
+    {
+      "id": "9eec946c27db448393116c7d8b192718",
+      "at": "2026-10-23T00:14:05.956579+00:00",
+      "kind": "train",
+      "deck_id": "pekka-bridge",
+      "deck_name": "PEKKA Bridge Spam",
+      "controller": "bc-greedy",
+      "seat": 0,
+      "seed": 548800919,
+      "result": "L",
+      "seconds": 52.1,
+      "policy_version": 2,
+      "error": null
+    },
+    {
+      "id": "09e9e5b5aab74055be9163b225920128",
+      "at": "2026-10-23T00:14:05.810026+00:00",
+      "kind": "train",
+      "deck_id": "pekka-bridge",
+      "deck_name": "PEKKA Bridge Spam",
+      "controller": "bc-sampled",
+      "seat": 1,
+      "seed": 1465833,
+      "result": "L",
+      "seconds": 48.2,
+      "policy_version": 2,
+      "error": null
+    },
+    {
+      "id": "86d0029619d0415896b1538fac0a05ca",
+      "at": "2026-10-23T00:14:02.996488+00:00",
+      "kind": "train",
+      "deck_id": "lava-loon",
+      "deck_name": "LavaLoon",
+      "controller": "bc-greedy",
+      "seat": 0,
+      "seed": 876822164,
+      "result": "W",
+      "seconds": 302.05,
+      "policy_version": 1,
+      "error": null
+    },
+    {
+      "id": "23238f0a9d044d6eb767433420de2b18",
+      "at": "2026-10-23T00:14:02.985794+00:00",
+      "kind": "train",
+      "deck_id": "hog-mirror",
+      "deck_name": "Hog 2.6",
+      "controller": "bc-sampled",
+      "seat": 0,
+      "seed": 178755235,
+      "result": "L",
+      "seconds": 301.3,
+      "policy_version": 1,
+      "error": null
+    },
+    {
+      "id": "34416c753eab4b4cbd0f0192724c87de",
+      "at": "2026-10-23T00:13:59.225817+00:00",
+      "kind": "train",
+      "deck_id": "log-bait",
+      "deck_name": "Classic Log Bait",
+      "controller": "bc-greedy",
+      "seat": 0,
+      "seed": 448156877,
+      "result": "W",
+      "seconds": 175.05,
+      "policy_version": 1,
+      "error": null
+    },
+    {
+      "id": "ef4b3aba9fc4456ba228557ff9c947f6",
+      "at": "2026-10-23T00:13:59.225295+00:00",
+      "kind": "train",
+      "deck_id": "lava-loon",
+      "deck_name": "LavaLoon",
+      "controller": "bc-sampled",
+      "seat": 0,
+      "seed": 693361549,
+      "result": "L",
+      "seconds": 175.05,
+      "policy_version": 1,
+      "error": null
+    },
+    {
+      "id": "05ca36f653e348bfa6e0acbcbb2c3fff",
+      "at": "2026-10-23T00:13:57.754008+00:00",
+      "kind": "train",
+      "deck_id": "log-bait",
+      "deck_name": "Classic Log Bait",
+      "controller": "bc-sampled",
+      "seat": 0,
+      "seed": 93780898,
+      "result": "L",
+      "seconds": 126.7,
+      "policy_version": 1,
+      "error": null
+    },
+    {
+      "id": "bd66343e1ae34e5b9f3d4a7ca088810e",
+      "at": "2026-10-23T00:13:57.245538+00:00",
+      "kind": "train",
+      "deck_id": "pekka-bridge",
+      "deck_name": "PEKKA Bridge Spam",
+      "controller": "bc-sampled",
+      "seat": 0,
+      "seed": 898528755,
+      "result": "L",
+      "seconds": 107.75,
+      "policy_version": 1,
+      "error": null
+    },
+    {
+      "id": "c9313f9ec66543bab6fc9e7787e35403",
+      "at": "2026-10-23T00:13:56.131889+00:00",
+      "kind": "train",
+      "deck_id": "golem",
+      "deck_name": "Golem Night Witch",
+      "controller": "hog1-greedy",
+      "seat": 0,
+      "seed": 933362516,
+      "result": "L",
+      "seconds": 61.85,
+      "policy_version": 1,
+      "error": null
+    },
+    {
+      "id": "6de4507bee464872811cdbdf3ae69751",
+      "at": "2026-10-23T00:13:55.804154+00:00",
+      "kind": "train",
+      "deck_id": "pekka-bridge",
+      "deck_name": "PEKKA Bridge Spam",
+      "controller": "hog1-greedy",
+      "seat": 0,
+      "seed": 62739630,
+      "result": "L",
+      "seconds": 50.35,
+      "policy_version": 1,
+      "error": null
+    },
+    {
+      "id": "f8379448bbb74d55a5cd0df7e63a6e1c",
+      "at": "2026-10-23T00:13:52.359584+00:00",
+      "kind": "train",
+      "deck_id": "custom-mortar",
+      "deck_name": "Custom Mortar",
+      "controller": "bc-greedy",
+      "seat": 0,
+      "seed": 309016024,
+      "result": "L",
+      "seconds": 302.35,
+      "policy_version": 0,
+      "error": null
+    },
+    {
+      "id": "e9f24375250842f5bf067470636fa4a6",
+      "at": "2026-10-23T00:13:52.359050+00:00",
+      "kind": "train",
+      "deck_id": "hog-mirror",
+      "deck_name": "Hog 2.6",
+      "controller": "hog1-greedy",
+      "seat": 0,
+      "seed": 962224247,
+      "result": "W",
+      "seconds": 302.6,
+      "policy_version": 0,
+      "error": null
+    },
+    {
+      "id": "947282779fd644bd9b5642711c2f9f06",
+      "at": "2026-10-23T00:13:52.358325+00:00",
+      "kind": "train",
+      "deck_id": "hog-mirror",
+      "deck_name": "Hog 2.6",
+      "controller": "bc-greedy",
+      "seat": 0,
+      "seed": 630397844,
+      "result": "W",
+      "seconds": 302.2,
+      "policy_version": 0,
+      "error": null
+    },
+    {
+      "id": "87021156fa1f43f6804c5ac791a05426",
+      "at": "2026-10-23T00:13:52.335099+00:00",
+      "kind": "train",
+      "deck_id": "lava-loon",
+      "deck_name": "LavaLoon",
+      "controller": "hog1-greedy",
+      "seat": 0,
+      "seed": 979654818,
+      "result": "W",
+      "seconds": 301.05,
+      "policy_version": 0,
+      "error": null
+    },
+    {
+      "id": "6dc6989d872c479da8bb10673f602cd1",
+      "at": "2026-10-23T00:13:52.334401+00:00",
+      "kind": "train",
+      "deck_id": "custom-mortar",
+      "deck_name": "Custom Mortar",
+      "controller": "hog1-greedy",
+      "seat": 0,
+      "seed": 180020976,
+      "result": "L",
+      "seconds": 301.85,
+      "policy_version": 0,
+      "error": null
+    },
+    {
+      "id": "5d91e38d4fec498fb2b0a0a8fe630160",
+      "at": "2026-10-23T00:13:52.315001+00:00",
+      "kind": "train",
+      "deck_id": "log-bait",
+      "deck_name": "Classic Log Bait",
+      "controller": "hog1-greedy",
+      "seat": 0,
+      "seed": 659761806,
+      "result": "W",
+      "seconds": 300.6,
+      "policy_version": 0,
+      "error": null
+    },
+    {
+      "id": "6a8fc06b415a47479601ae7c5bdcb605",
+      "at": "2026-10-23T00:13:52.294302+00:00",
+      "kind": "train",
+      "deck_id": "custom-mortar",
+      "deck_name": "Custom Mortar",
+      "controller": "bc-sampled",
+      "seat": 0,
+      "seed": 875254125,
+      "result": "L",
+      "seconds": 299.25,
+      "policy_version": 0,
+      "error": null
+    },
+    {
+      "id": "f3082992c920432dbc6efe1cd08739d2",
+      "at": "2026-10-23T00:13:43.862660+00:00",
+      "kind": "train",
+      "deck_id": "golem",
+      "deck_name": "Golem Night Witch",
+      "controller": "bc-greedy",
+      "seat": 0,
+      "seed": 265359414,
+      "result": "L",
+      "seconds": 104.6,
+      "policy_version": 0,
+      "error": null
+    }
+  ],
+  "matchups": [
+    {
+      "deck_id": "hog-mirror",
+      "deck_name": "Hog 2.6",
+      "holdout": false,
+      "train": {
+        "n": 3,
+        "w": 2,
+        "l": 1,
+        "d": 0,
+        "score": 0.6666666666666666,
+        "low": 0,
+        "high": 1,
+        "voids": 0
+      },
+      "evaluation": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "parent": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "delta": null
+    },
+    {
+      "deck_id": "log-bait",
+      "deck_name": "Classic Log Bait",
+      "holdout": false,
+      "train": {
+        "n": 5,
+        "w": 3,
+        "l": 2,
+        "d": 0,
+        "score": 0.6,
+        "low": 0,
+        "high": 1,
+        "voids": 0
+      },
+      "evaluation": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "parent": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "delta": null
+    },
+    {
+      "deck_id": "pekka-bridge",
+      "deck_name": "PEKKA Bridge Spam",
+      "holdout": false,
+      "train": {
+        "n": 4,
+        "w": 0,
+        "l": 4,
+        "d": 0,
+        "score": 0.0,
+        "low": 0,
+        "high": 0.6790507578703098,
+        "voids": 0
+      },
+      "evaluation": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "parent": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "delta": null
+    },
+    {
+      "deck_id": "lava-loon",
+      "deck_name": "LavaLoon",
+      "holdout": false,
+      "train": {
+        "n": 5,
+        "w": 3,
+        "l": 2,
+        "d": 0,
+        "score": 0.6,
+        "low": 0,
+        "high": 1,
+        "voids": 0
+      },
+      "evaluation": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "parent": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "delta": null
+    },
+    {
+      "deck_id": "golem",
+      "deck_name": "Golem Night Witch",
+      "holdout": false,
+      "train": {
+        "n": 3,
+        "w": 0,
+        "l": 3,
+        "d": 0,
+        "score": 0.0,
+        "low": 0,
+        "high": 0.7841002756996854,
+        "voids": 0
+      },
+      "evaluation": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "parent": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "delta": null
+    },
+    {
+      "deck_id": "custom-mortar",
+      "deck_name": "Custom Mortar",
+      "holdout": false,
+      "train": {
+        "n": 4,
+        "w": 0,
+        "l": 4,
+        "d": 0,
+        "score": 0.0,
+        "low": 0,
+        "high": 0.6790507578703098,
+        "voids": 0
+      },
+      "evaluation": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "parent": {
+        "n": 0,
+        "w": 0,
+        "l": 0,
+        "d": 0,
+        "score": null,
+        "low": null,
+        "high": null,
+        "voids": 0
+      },
+      "delta": null
+    }
+  ],
+  "evaluation": {
+    "history": [],
+    "best": null,
+    "baseline_complete": false,
+    "selection_seed_count": 2,
+    "confirmation": null,
+    "baseline": {}
+  },
+  "sampler": [
+    {
+      "deck_id": "hog-mirror",
+      "probability": 0.15736245954692557,
+      "actual_games": 3
+    },
+    {
+      "deck_id": "log-bait",
+      "probability": 0.15898058252427183,
+      "actual_games": 5
+    },
+    {
+      "deck_id": "pekka-bridge",
+      "probability": 0.1755663430420712,
+      "actual_games": 4
+    },
+    {
+      "deck_id": "lava-loon",
+      "probability": 0.15898058252427183,
+      "actual_games": 5
+    },
+    {
+      "deck_id": "golem",
+      "probability": 0.17354368932038836,
+      "actual_games": 3
+    },
+    {
+      "deck_id": "custom-mortar",
+      "probability": 0.1755663430420712,
+      "actual_games": 4
+    }
+  ],
+  "fun": {
+    "card_plays": {
+      "musketeer": 92,
+      "ice-spirit": 496,
+      "hog-rider": 25,
+      "ice-golem": 387,
+      "fireball": 11,
+      "skeletons": 474,
+      "cannon": 274,
+      "the-log": 367
+    },
+    "quickest_win": {
+      "id": "34416c753eab4b4cbd0f0192724c87de",
+      "at": "2026-10-23T00:13:59.225817+00:00",
+      "kind": "train",
+      "deck_id": "log-bait",
+      "deck_name": "Classic Log Bait",
+      "controller": "bc-greedy",
+      "seat": 0,
+      "seed": 448156877,
+      "result": "W",
+      "seconds": 175.05,
+      "policy_version": 1,
+      "error": null
+    },
+    "longest_game": {
+      "id": "e9f24375250842f5bf067470636fa4a6",
+      "at": "2026-10-23T00:13:52.359050+00:00",
+      "kind": "train",
+      "deck_id": "hog-mirror",
+      "deck_name": "Hog 2.6",
+      "controller": "hog1-greedy",
+      "seat": 0,
+      "seed": 962224247,
+      "result": "W",
+      "seconds": 302.6,
+      "policy_version": 0,
+      "error": null
+    },
+    "streak": 1,
+    "max_streak": 3,
+    "arena_hours": 1.4429861111111113
+  },
+  "checkpoints": [
+    {
+      "at": "2026-10-23T00:13:37.561191+00:00",
+      "stage": "initial",
+      "path": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch/models/initial.pt",
+      "updates": 0
+    },
+    {
+      "at": "2026-10-23T00:13:37.569724+00:00",
+      "stage": "best",
+      "path": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch/models/best.pt",
+      "updates": 0
+    },
+    {
+      "at": "2026-10-23T00:13:37.578211+00:00",
+      "stage": "latest",
+      "path": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch/models/latest.pt",
+      "updates": 0
+    },
+    {
+      "at": "2026-10-23T00:13:54.206617+00:00",
+      "stage": "latest",
+      "path": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch/models/latest.pt",
+      "updates": 1
+    },
+    {
+      "at": "2026-10-23T00:13:54.230729+00:00",
+      "stage": "latest",
+      "path": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch/models/latest.pt",
+      "updates": 1
+    },
+    {
+      "at": "2026-10-23T00:14:04.079995+00:00",
+      "stage": "latest",
+      "path": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch/models/latest.pt",
+      "updates": 2
+    },
+    {
+      "at": "2026-10-23T00:14:04.105880+00:00",
+      "stage": "latest",
+      "path": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch/models/latest.pt",
+      "updates": 2
+    },
+    {
+      "at": "2026-10-23T00:14:16.769888+00:00",
+      "stage": "latest",
+      "path": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch/models/latest.pt",
+      "updates": 3
+    },
+    {
+      "at": "2026-10-23T00:14:16.795016+00:00",
+      "stage": "latest",
+      "path": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch/models/latest.pt",
+      "updates": 3
+    },
+    {
+      "at": "2026-10-23T00:14:16.820805+00:00",
+      "stage": "latest",
+      "path": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch/models/latest.pt",
+      "updates": 3
+    },
+    {
+      "at": "2026-10-23T00:14:16.844413+00:00",
+      "stage": "pilot",
+      "path": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch/models/pilot.pt",
+      "updates": 3
+    }
+  ],
+  "errors": {},
+  "policy_version": 3,
+  "notes": [
+    "No live game, phone, account, external AI API, or paid compute is used.",
+    "Recovered base cards exclude modern evolutions, heroes and balance changes.",
+    "The actor sees deck lists, accepted play history, hands, elixir and tower HP, but no troop positions or unit HP.",
+    "Frozen bots are not expert deck pilots; strength must be measured.",
+    "The exact saved parent remains the fallback if no candidate passes selection.",
+    "All eleven archetypes participate in training. Final holdout is by native seed.",
+    "Sampled PPO performance selects the model; greedy play is also checked."
+  ],
+  "duration_seconds": 3600.0,
+  "learning_guard": {
+    "frozen_backbone": false,
+    "frozen_placement": false,
+    "anchor_kl": 0.0002143635501852259,
+    "rollback_count": 0,
+    "evaluation_rollbacks": 0,
+    "anchor_rollbacks": 0,
+    "actor_parameters": 973371,
+    "critic_parameters": 13281
+  },
+  "experiment": {
+    "description": "Overnight Hog 2.6 from the saved Hog specialist against eleven classic archetypes and three frozen bot controllers",
+    "observation_unchanged": false,
+    "training_changes": [
+      "Trainable actor layers: all; body uses separate lower LR",
+      "Tower health residuals feed card selection, wait/value context and placement",
+      "Full-grid placement support in rollout, PPO and evaluation; native engine validates legality",
+      "Sampled selection/confirmation match training; greedy performance also checked",
+      "Full-model/optimizer rollback against selected best if either mode drops by the tolerance",
+      "Native potential rewards, GAE and parent card/wait KL retained"
+    ],
+    "notes": [
+      "No live game, phone, account, external AI API, or paid compute is used.",
+      "Recovered base cards exclude modern evolutions, heroes and balance changes.",
+      "The actor sees deck lists, accepted play history, hands, elixir and tower HP, but no troop positions or unit HP.",
+      "Frozen bots are not expert deck pilots; strength must be measured.",
+      "The exact saved parent remains the fallback if no candidate passes selection."
+    ]
+  },
+  "training_diagnostics": {
+    "terminal_return_checks": 24,
+    "shaping_steps": 849,
+    "wait_decisions": 3035,
+    "voluntary_waits": 300,
+    "controllable_decisions": 2475
+  }
+}

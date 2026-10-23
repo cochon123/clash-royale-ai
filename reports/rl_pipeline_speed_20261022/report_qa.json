@@ -1,0 +1,5 @@
+{
+  "data_validation": "Six raw runs verified: 24 games and three PPO updates each; throughput recomputed from counts and elapsed time.",
+  "javascript_validation": "Report generator JavaScript syntax check passed.",
+  "visual_validation": "Unavailable: T3 html_preview blocked by host AppArmor; collaborative browser snapshot timed out then automation host unavailable; fallback browser unavailable. No system security settings changed."
+}

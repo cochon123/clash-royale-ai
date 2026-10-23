@@ -1,0 +1,2978 @@
+{
+  "runs": [
+    {
+      "configuration": "baseline12",
+      "seed": 777,
+      "total_s": 86.56094174299506,
+      "games": 36,
+      "decisions": 16416,
+      "games_per_min": 24.95351779343133,
+      "decisions_per_s": 189.64673523007812,
+      "cache_request_s": 39.58613441437774,
+      "act_batch_s": 55.608378753007855,
+      "act_batch_calls": 3505,
+      "wait_steps_s": 19.62366561824456,
+      "update_s": 6.5585054569965,
+      "launch_s": 56.27878086802957,
+      "consume_s": 0.24056952160026412,
+      "publish_s": 0.283490146859549,
+      "constructor_s": 1.0660833440051647,
+      "cleanup_s": 0.7027660220046528,
+      "s_per_wave": 28.85364724766502,
+      "steady_wave_s": 26.908610666498134,
+      "steady_games_per_min": 26.75723428918674,
+      "steady_decisions_per_s": 199.7130237084577,
+      "act_excluding_encoding_s": 16.022244338630117,
+      "engine_reset_sum_s": 29.122721186024137,
+      "engine_reset_n": 36,
+      "engine_step_sum_s": 113.71354230413272,
+      "engine_mask_sum_s": 1.6667152742447797,
+      "engine_mask_n": 5731,
+      "wall_residual_s": 3.575930131264613
+    },
+    {
+      "configuration": "new12g1",
+      "seed": 777,
+      "total_s": 52.369444832002046,
+      "games": 36,
+      "decisions": 16694,
+      "games_per_min": 41.24542482604402,
+      "decisions_per_s": 318.7736676138791,
+      "cache_request_s": 5.804847111692652,
+      "act_batch_s": 18.818703956203535,
+      "act_batch_calls": 2725,
+      "wait_steps_s": 22.648129899054766,
+      "update_s": 6.208594583993545,
+      "launch_s": 19.525007771109813,
+      "consume_s": 0.23297839511360507,
+      "publish_s": 0.14807163391378708,
+      "constructor_s": 1.0189140500006033,
+      "cleanup_s": 0.65405733899388,
+      "s_per_wave": 17.45648161066735,
+      "steady_wave_s": 16.134752634505276,
+      "steady_games_per_min": 44.62417344163248,
+      "steady_decisions_per_s": 341.68481692183315,
+      "act_excluding_encoding_s": 13.013856844510883,
+      "engine_reset_sum_s": 29.60393557100906,
+      "engine_reset_n": 36,
+      "engine_step_sum_s": 138.4152060526394,
+      "engine_mask_sum_s": 2.3640473753766855,
+      "engine_mask_n": 5851,
+      "wall_residual_s": 3.60666254881653
+    },
+    {
+      "configuration": "new12g2",
+      "seed": 777,
+      "total_s": 51.169248381993384,
+      "games": 36,
+      "decisions": 16592,
+      "games_per_min": 42.21285378035982,
+      "decisions_per_s": 324.2572545943195,
+      "cache_request_s": 8.82568662695121,
+      "act_batch_s": 35.51004703089711,
+      "act_batch_calls": 5117,
+      "wait_steps_s": 4.548887057273532,
+      "update_s": 6.308393373998115,
+      "launch_s": 36.01053283132205,
+      "consume_s": 0.2871367396292044,
+      "publish_s": 0.1630868872452993,
+      "constructor_s": 1.02268798899604,
+      "cleanup_s": 0.7666987279953901,
+      "s_per_wave": 17.05641612733113,
+      "steady_wave_s": 15.864125612504722,
+      "steady_games_per_min": 45.385419756917955,
+      "steady_decisions_per_s": 344.29883710039707,
+      "act_excluding_encoding_s": 26.684360403945902,
+      "engine_reset_sum_s": 29.16901290396345,
+      "engine_reset_n": 36,
+      "engine_step_sum_s": 114.99895557419222,
+      "engine_mask_sum_s": 2.1107251114444807,
+      "engine_mask_n": 5743,
+      "wall_residual_s": 3.851211492525181
+    },
+    {
+      "configuration": "baseline16",
+      "seed": 777,
+      "total_s": 102.80108951299917,
+      "games": 48,
+      "decisions": 20734,
+      "games_per_min": 28.015267286012808,
+      "decisions_per_s": 201.69046941256582,
+      "cache_request_s": 49.202088214384275,
+      "act_batch_s": 66.40153677582566,
+      "act_batch_calls": 3591,
+      "wait_steps_s": 22.38976588405785,
+      "update_s": 7.918407534001744,
+      "launch_s": 67.31577565681073,
+      "consume_s": 0.2880979131150525,
+      "publish_s": 0.32139392601675354,
+      "constructor_s": 1.0720513950072927,
+      "cleanup_s": 0.8691999599977862,
+      "s_per_wave": 34.26702983766639,
+      "steady_wave_s": 31.746602905499458,
+      "steady_games_per_min": 30.239455946125794,
+      "steady_decisions_per_s": 208.0222573627237,
+      "act_excluding_encoding_s": 17.199448561441386,
+      "engine_reset_sum_s": 49.97530473691586,
+      "engine_reset_n": 48,
+      "engine_step_sum_s": 159.7416816266632,
+      "engine_mask_sum_s": 2.138617981399875,
+      "engine_mask_n": 7223,
+      "wall_residual_s": 4.567648598997039
+    },
+    {
+      "configuration": "new16g1",
+      "seed": 777,
+      "total_s": 61.65304921999632,
+      "games": 48,
+      "decisions": 21158,
+      "games_per_min": 46.71301803294932,
+      "decisions_per_s": 343.1784845628964,
+      "cache_request_s": 7.671126152781653,
+      "act_batch_s": 22.06783526626532,
+      "act_batch_calls": 2722,
+      "wait_steps_s": 25.677626186981797,
+      "update_s": 7.961911575024715,
+      "launch_s": 23.03285993899044,
+      "consume_s": 0.29574678126664367,
+      "publish_s": 0.19466330387513153,
+      "constructor_s": 1.0489926040027058,
+      "cleanup_s": 0.7652560970018385,
+      "s_per_wave": 20.55101640666544,
+      "steady_wave_s": 19.05062322849699,
+      "steady_games_per_min": 50.39205219092141,
+      "steady_decisions_per_s": 357.78357055554204,
+      "act_excluding_encoding_s": 14.396709113483666,
+      "engine_reset_sum_s": 49.87218637499609,
+      "engine_reset_n": 48,
+      "engine_step_sum_s": 194.62852614410804,
+      "engine_mask_sum_s": 3.0913572206627578,
+      "engine_mask_n": 7341,
+      "wall_residual_s": 4.490241433857591
+    },
+    {
+      "configuration": "new16g2",
+      "seed": 777,
+      "total_s": 58.711419173007016,
+      "games": 48,
+      "decisions": 20684,
+      "games_per_min": 49.05348977365718,
+      "decisions_per_s": 352.29943836052956,
+      "cache_request_s": 11.326767398481024,
+      "act_batch_s": 40.637424532935256,
+      "act_batch_calls": 5256,
+      "wait_steps_s": 4.398635074248887,
+      "update_s": 7.395702430992969,
+      "launch_s": 41.32316136008012,
+      "consume_s": 0.3617764781956794,
+      "publish_s": 0.2109728516661562,
+      "constructor_s": 1.0869695200090064,
+      "cleanup_s": 0.819584652010235,
+      "s_per_wave": 19.570473057669005,
+      "steady_wave_s": 18.17438810349995,
+      "steady_games_per_min": 52.82158576855345,
+      "steady_decisions_per_s": 361.057547722133,
+      "act_excluding_encoding_s": 29.31065713445423,
+      "engine_reset_sum_s": 53.551213419035776,
+      "engine_reset_n": 48,
+      "engine_step_sum_s": 148.89841381566657,
+      "engine_mask_sum_s": 2.633272011546069,
+      "engine_mask_n": 6957,
+      "wall_residual_s": 5.021170977823203
+    },
+    {
+      "configuration": "new16g2",
+      "seed": 2026,
+      "total_s": 58.43827283899009,
+      "games": 48,
+      "decisions": 20404,
+      "games_per_min": 49.282770692676266,
+      "decisions_per_s": 349.1547406990856,
+      "cache_request_s": 11.122171149545466,
+      "act_batch_s": 40.30492186154879,
+      "act_batch_calls": 5184,
+      "wait_steps_s": 4.116924016867415,
+      "update_s": 7.716919363985653,
+      "launch_s": 40.99794177644071,
+      "consume_s": 0.36361135620973073,
+      "publish_s": 0.206334540140233,
+      "constructor_s": 1.064159417990595,
+      "cleanup_s": 0.8847035090002464,
+      "s_per_wave": 19.479424279663363,
+      "steady_wave_s": 17.80955177449505,
+      "steady_games_per_min": 53.90365867460012,
+      "steady_decisions_per_s": 380.80688867826876,
+      "act_excluding_encoding_s": 29.182750712003326,
+      "engine_reset_sum_s": 52.62920565098466,
+      "engine_reset_n": 48,
+      "engine_step_sum_s": 144.06087011600903,
+      "engine_mask_sum_s": 2.6643591971951537,
+      "engine_mask_n": 7167,
+      "wall_residual_s": 5.036541785346344
+    },
+    {
+      "configuration": "new16g1",
+      "seed": 2026,
+      "total_s": 71.56588342999748,
+      "games": 48,
+      "decisions": 20678,
+      "games_per_min": 40.242638838058724,
+      "decisions_per_s": 288.93655760186743,
+      "cache_request_s": 9.853412410288001,
+      "act_batch_s": 28.73912007366016,
+      "act_batch_calls": 2726,
+      "wait_steps_s": 27.299605682113906,
+      "update_s": 8.861461110995151,
+      "launch_s": 29.921502978992066,
+      "consume_s": 0.3353627338219667,
+      "publish_s": 0.24355920615198556,
+      "constructor_s": 1.0603140110033564,
+      "cleanup_s": 0.9240949939994607,
+      "s_per_wave": 23.85529447666583,
+      "steady_wave_s": 23.875848438001412,
+      "steady_games_per_min": 40.20799522550325,
+      "steady_decisions_per_s": 289.7907489221427,
+      "act_excluding_encoding_s": 18.88570766337216,
+      "engine_reset_sum_s": 49.87490667405655,
+      "engine_reset_n": 48,
+      "engine_step_sum_s": 194.77527398859093,
+      "engine_mask_sum_s": 3.0305613084783545,
+      "engine_mask_n": 7119,
+      "wall_residual_s": 4.904391717922408
+    }
+  ],
+  "medians": {
+    "baseline12": {
+      "total_s": 86.56094174299506,
+      "games": 36,
+      "decisions": 16416,
+      "games_per_min": 24.95351779343133,
+      "decisions_per_s": 189.64673523007812,
+      "cache_request_s": 39.58613441437774,
+      "act_batch_s": 55.608378753007855,
+      "act_batch_calls": 3505,
+      "wait_steps_s": 19.62366561824456,
+      "update_s": 6.5585054569965,
+      "launch_s": 56.27878086802957,
+      "consume_s": 0.24056952160026412,
+      "publish_s": 0.283490146859549,
+      "constructor_s": 1.0660833440051647,
+      "cleanup_s": 0.7027660220046528,
+      "s_per_wave": 28.85364724766502,
+      "steady_wave_s": 26.908610666498134,
+      "steady_games_per_min": 26.75723428918674,
+      "steady_decisions_per_s": 199.7130237084577,
+      "act_excluding_encoding_s": 16.022244338630117,
+      "engine_reset_sum_s": 29.122721186024137,
+      "engine_reset_n": 36,
+      "engine_step_sum_s": 113.71354230413272,
+      "engine_mask_sum_s": 1.6667152742447797,
+      "engine_mask_n": 5731,
+      "wall_residual_s": 3.575930131264613
+    },
+    "new12g1": {
+      "total_s": 52.369444832002046,
+      "games": 36,
+      "decisions": 16694,
+      "games_per_min": 41.24542482604402,
+      "decisions_per_s": 318.7736676138791,
+      "cache_request_s": 5.804847111692652,
+      "act_batch_s": 18.818703956203535,
+      "act_batch_calls": 2725,
+      "wait_steps_s": 22.648129899054766,
+      "update_s": 6.208594583993545,
+      "launch_s": 19.525007771109813,
+      "consume_s": 0.23297839511360507,
+      "publish_s": 0.14807163391378708,
+      "constructor_s": 1.0189140500006033,
+      "cleanup_s": 0.65405733899388,
+      "s_per_wave": 17.45648161066735,
+      "steady_wave_s": 16.134752634505276,
+      "steady_games_per_min": 44.62417344163248,
+      "steady_decisions_per_s": 341.68481692183315,
+      "act_excluding_encoding_s": 13.013856844510883,
+      "engine_reset_sum_s": 29.60393557100906,
+      "engine_reset_n": 36,
+      "engine_step_sum_s": 138.4152060526394,
+      "engine_mask_sum_s": 2.3640473753766855,
+      "engine_mask_n": 5851,
+      "wall_residual_s": 3.60666254881653
+    },
+    "new12g2": {
+      "total_s": 51.169248381993384,
+      "games": 36,
+      "decisions": 16592,
+      "games_per_min": 42.21285378035982,
+      "decisions_per_s": 324.2572545943195,
+      "cache_request_s": 8.82568662695121,
+      "act_batch_s": 35.51004703089711,
+      "act_batch_calls": 5117,
+      "wait_steps_s": 4.548887057273532,
+      "update_s": 6.308393373998115,
+      "launch_s": 36.01053283132205,
+      "consume_s": 0.2871367396292044,
+      "publish_s": 0.1630868872452993,
+      "constructor_s": 1.02268798899604,
+      "cleanup_s": 0.7666987279953901,
+      "s_per_wave": 17.05641612733113,
+      "steady_wave_s": 15.864125612504722,
+      "steady_games_per_min": 45.385419756917955,
+      "steady_decisions_per_s": 344.29883710039707,
+      "act_excluding_encoding_s": 26.684360403945902,
+      "engine_reset_sum_s": 29.16901290396345,
+      "engine_reset_n": 36,
+      "engine_step_sum_s": 114.99895557419222,
+      "engine_mask_sum_s": 2.1107251114444807,
+      "engine_mask_n": 5743,
+      "wall_residual_s": 3.851211492525181
+    },
+    "baseline16": {
+      "total_s": 102.80108951299917,
+      "games": 48,
+      "decisions": 20734,
+      "games_per_min": 28.015267286012808,
+      "decisions_per_s": 201.69046941256582,
+      "cache_request_s": 49.202088214384275,
+      "act_batch_s": 66.40153677582566,
+      "act_batch_calls": 3591,
+      "wait_steps_s": 22.38976588405785,
+      "update_s": 7.918407534001744,
+      "launch_s": 67.31577565681073,
+      "consume_s": 0.2880979131150525,
+      "publish_s": 0.32139392601675354,
+      "constructor_s": 1.0720513950072927,
+      "cleanup_s": 0.8691999599977862,
+      "s_per_wave": 34.26702983766639,
+      "steady_wave_s": 31.746602905499458,
+      "steady_games_per_min": 30.239455946125794,
+      "steady_decisions_per_s": 208.0222573627237,
+      "act_excluding_encoding_s": 17.199448561441386,
+      "engine_reset_sum_s": 49.97530473691586,
+      "engine_reset_n": 48,
+      "engine_step_sum_s": 159.7416816266632,
+      "engine_mask_sum_s": 2.138617981399875,
+      "engine_mask_n": 7223,
+      "wall_residual_s": 4.567648598997039
+    },
+    "new16g1": {
+      "total_s": 66.6094663249969,
+      "games": 48.0,
+      "decisions": 20918.0,
+      "games_per_min": 43.47782843550402,
+      "decisions_per_s": 316.0575210823819,
+      "cache_request_s": 8.762269281534827,
+      "act_batch_s": 25.40347766996274,
+      "act_batch_calls": 2724.0,
+      "wait_steps_s": 26.488615934547852,
+      "update_s": 8.411686343009933,
+      "launch_s": 26.477181458991254,
+      "consume_s": 0.3155547575443052,
+      "publish_s": 0.21911125501355855,
+      "constructor_s": 1.054653307503031,
+      "cleanup_s": 0.8446755455006496,
+      "s_per_wave": 22.203155441665636,
+      "steady_wave_s": 21.4632358332492,
+      "steady_games_per_min": 45.30002370821233,
+      "steady_decisions_per_s": 323.7871597388424,
+      "act_excluding_encoding_s": 16.641208388427913,
+      "engine_reset_sum_s": 49.87354652452632,
+      "engine_reset_n": 48.0,
+      "engine_step_sum_s": 194.70190006634948,
+      "engine_mask_sum_s": 3.060959264570556,
+      "engine_mask_n": 7230.0,
+      "wall_residual_s": 4.6973165758899995
+    },
+    "new16g2": {
+      "total_s": 58.57484600599855,
+      "games": 48.0,
+      "decisions": 20544.0,
+      "games_per_min": 49.16813023316672,
+      "decisions_per_s": 350.7270895298076,
+      "cache_request_s": 11.224469274013245,
+      "act_batch_s": 40.471173197242024,
+      "act_batch_calls": 5220.0,
+      "wait_steps_s": 4.257779545558151,
+      "update_s": 7.556310897489311,
+      "launch_s": 41.160551568260416,
+      "consume_s": 0.36269391720270505,
+      "publish_s": 0.2086536959031946,
+      "constructor_s": 1.0755644689998007,
+      "cleanup_s": 0.8521440805052407,
+      "s_per_wave": 19.524948668666184,
+      "steady_wave_s": 17.9919699389975,
+      "steady_games_per_min": 53.362622221576785,
+      "steady_decisions_per_s": 370.93221820020085,
+      "act_excluding_encoding_s": 29.24670392322878,
+      "engine_reset_sum_s": 53.09020953501022,
+      "engine_reset_n": 48.0,
+      "engine_step_sum_s": 146.4796419658378,
+      "engine_mask_sum_s": 2.6488156043706113,
+      "engine_mask_n": 7062.0,
+      "wall_residual_s": 5.028856381584774
+    }
+  },
+  "speedups": [
+    {
+      "configuration": "new12g1",
+      "games_ratio_of_medians": 1.6528901923760548,
+      "decisions_ratio_of_medians": 1.6808813883726768,
+      "paired": [
+        {
+          "seed": 777,
+          "games_speedup": 1.6528901923760548,
+          "decisions_speedup": 1.6808813883726768
+        }
+      ]
+    },
+    {
+      "configuration": "new12g2",
+      "games_ratio_of_medians": 1.6916594337441182,
+      "decisions_ratio_of_medians": 1.7097961333261698,
+      "paired": [
+        {
+          "seed": 777,
+          "games_speedup": 1.6916594337441182,
+          "decisions_speedup": 1.7097961333261698
+        }
+      ]
+    },
+    {
+      "configuration": "new16g1",
+      "games_ratio_of_medians": 1.551933379454538,
+      "decisions_ratio_of_medians": 1.5670424190241423,
+      "paired": [
+        {
+          "seed": 777,
+          "games_speedup": 1.6674128986901278,
+          "decisions_speedup": 1.7015106641499815
+        }
+      ]
+    },
+    {
+      "configuration": "new16g2",
+      "games_ratio_of_medians": 1.7550476935022823,
+      "decisions_ratio_of_medians": 1.738937345682812,
+      "paired": [
+        {
+          "seed": 777,
+          "games_speedup": 1.7509556226203895,
+          "decisions_speedup": 1.7467331965988295
+        }
+      ]
+    }
+  ],
+  "agreement": [
+    {
+      "a": "baseline12",
+      "b": "new12g1",
+      "seed": 777,
+      "n_a": 36,
+      "n_b": 36,
+      "paired": 36,
+      "union": 36,
+      "exact": 16,
+      "exact_rate_union": 0.4444444444444444,
+      "jobs_equal": 35,
+      "fields_equal": {
+        "deck_id": 36,
+        "controller": 35,
+        "seat": 36,
+        "result": 32,
+        "seconds": 16
+      },
+      "per_wave": [
+        {
+          "wave": 1,
+          "paired": 12,
+          "exact": 12
+        },
+        {
+          "wave": 2,
+          "paired": 12,
+          "exact": 2
+        },
+        {
+          "wave": 3,
+          "paired": 12,
+          "exact": 2
+        }
+      ],
+      "mismatches": [
+        {
+          "policy_version": 1,
+          "seed": 156566592,
+          "a": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 201.55
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 161.5
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 290988490,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.05
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.75
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 353480184,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 122.25
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 379669279,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 101.05
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 190.05
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 421045866,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.35
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.35
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 431820188,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 209.3
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 227.4
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 489433939,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 291.85
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 299.55
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 539228271,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.1
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.5
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 736849942,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.2
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.0
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 915666144,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 286.05
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 176.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 45101620,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 168.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 100369651,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 300.8
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.15
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 159077007,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 287.1
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 280.55
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 343214645,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "W",
+            "seconds": 36.8
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 343606884,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 94.7
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 86.4
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 539521365,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.95
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 301.5
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 574407879,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 172.55
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 156.9
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 706476062,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 86.15
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 86.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 781760812,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 301.35
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 884478367,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.85
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "W",
+            "seconds": 302.05
+          }
+        }
+      ]
+    },
+    {
+      "a": "new12g1",
+      "b": "new12g2",
+      "seed": 777,
+      "n_a": 36,
+      "n_b": 36,
+      "paired": 36,
+      "union": 36,
+      "exact": 15,
+      "exact_rate_union": 0.4166666666666667,
+      "jobs_equal": 35,
+      "fields_equal": {
+        "deck_id": 36,
+        "controller": 35,
+        "seat": 36,
+        "result": 32,
+        "seconds": 15
+      },
+      "per_wave": [
+        {
+          "wave": 1,
+          "paired": 12,
+          "exact": 12
+        },
+        {
+          "wave": 2,
+          "paired": 12,
+          "exact": 1
+        },
+        {
+          "wave": 3,
+          "paired": 12,
+          "exact": 2
+        }
+      ],
+      "mismatches": [
+        {
+          "policy_version": 1,
+          "seed": 156566592,
+          "a": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 161.5
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 163.1
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 290988490,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.75
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.65
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 353480184,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 122.25
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 184.85
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 379669279,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 190.05
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 101.05
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 421045866,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.35
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.7
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 431820188,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 227.4
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 209.3
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 489433939,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 299.55
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.2
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 539228271,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.5
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.65
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 736849942,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.0
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 191.35
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 823234511,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.35
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.8
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 915666144,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 176.05
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 175.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 45101620,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 168.05
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 172.8
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 100369651,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.15
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 299.65
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 159077007,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 280.55
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 284.6
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 343214645,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "W",
+            "seconds": 302.45
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 343606884,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 86.4
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 164.6
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 539521365,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 301.5
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 301.8
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 574407879,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 156.9
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 95.2
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 706476062,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 86.05
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 135.1
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 781760812,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 301.35
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 204.35
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 884478367,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "W",
+            "seconds": 302.05
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.85
+          }
+        }
+      ]
+    },
+    {
+      "a": "baseline16",
+      "b": "new16g1",
+      "seed": 777,
+      "n_a": 48,
+      "n_b": 48,
+      "paired": 48,
+      "union": 48,
+      "exact": 17,
+      "exact_rate_union": 0.3541666666666667,
+      "jobs_equal": 47,
+      "fields_equal": {
+        "deck_id": 48,
+        "controller": 47,
+        "seat": 47,
+        "result": 43,
+        "seconds": 17
+      },
+      "per_wave": [
+        {
+          "wave": 1,
+          "paired": 16,
+          "exact": 16
+        },
+        {
+          "wave": 2,
+          "paired": 16,
+          "exact": 0
+        },
+        {
+          "wave": 3,
+          "paired": 16,
+          "exact": 1
+        }
+      ],
+      "mismatches": [
+        {
+          "policy_version": 1,
+          "seed": 100369651,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.45
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.15
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 156566592,
+          "a": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 91.1
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 160.0
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 159077007,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 283.5
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.05
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 271639737,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.3
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.65
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 343214645,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.7
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 300.95
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 343606884,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 90.8
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 87.25
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 353480184,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 118.3
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 150.6
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 421045866,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 290.85
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 298.9
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 489433939,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 299.2
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 300.1
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 539228271,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.1
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.75
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 561172228,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.0
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.5
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 571977941,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 128.85
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 574407879,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 30.55
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 23.45
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 736849942,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.05
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.35
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 781760812,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 210.65
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 823234511,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.45
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.5
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 23123119,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 261.4
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 212.15
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 45101620,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 148.65
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 142842501,
+          "a": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 300.15
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 318208855,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.45
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.5
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 355731339,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 145.75
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 539521365,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 301.65
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 300.8
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 649590816,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 108.4
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 676996619,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 52.65
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 61.55
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 695609880,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 300.95
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "D",
+            "seconds": 298.4
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 706476062,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 92.5
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 93.85
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 721718573,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 67.1
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 74.1
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 789400626,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.8
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.7
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 844062014,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.65
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.15
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 884478367,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 50.95
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 48.35
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 989845896,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 40.45
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 125.45
+          }
+        }
+      ]
+    },
+    {
+      "a": "new16g1",
+      "b": "new16g2",
+      "seed": 777,
+      "n_a": 48,
+      "n_b": 48,
+      "paired": 48,
+      "union": 48,
+      "exact": 15,
+      "exact_rate_union": 0.3125,
+      "jobs_equal": 43,
+      "fields_equal": {
+        "deck_id": 48,
+        "controller": 46,
+        "seat": 44,
+        "result": 43,
+        "seconds": 15
+      },
+      "per_wave": [
+        {
+          "wave": 1,
+          "paired": 16,
+          "exact": 15
+        },
+        {
+          "wave": 2,
+          "paired": 16,
+          "exact": 0
+        },
+        {
+          "wave": 3,
+          "paired": 16,
+          "exact": 0
+        }
+      ],
+      "mismatches": [
+        {
+          "policy_version": 0,
+          "seed": 851547012,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 84.9
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 101.45
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 100369651,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.15
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 219.05
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 156566592,
+          "a": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 160.0
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 86.0
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 159077007,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.05
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 271639737,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.65
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "W",
+            "seconds": 234.9
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 343214645,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 300.95
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 189.8
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 343606884,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 87.25
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 90.7
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 353480184,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 150.6
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 152.8
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 421045866,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 298.9
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.6
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 489433939,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 300.1
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 291.7
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 539228271,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.75
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.05
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 561172228,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.5
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.95
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 571977941,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 128.85
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 299.95
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 574407879,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 23.45
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 161.4
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 736849942,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.35
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.25
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 781760812,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 210.65
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 212.35
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 823234511,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.5
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.8
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 23123119,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 212.15
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 202.35
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 45101620,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 148.65
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 154.3
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 142842501,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 300.15
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 106.65
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 318208855,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.5
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 300.7
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 355731339,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 157.15
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 469119314,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 206.4
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 539521365,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 300.8
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 649590816,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 108.4
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 676996619,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 61.55
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 54.2
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 695609880,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "D",
+            "seconds": 298.4
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 302.35
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 706476062,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 93.85
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 169.85
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 721718573,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 74.1
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 73.3
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 789400626,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.7
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.0
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 844062014,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.15
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 186.8
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 884478367,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 48.35
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 54.95
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 989845896,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 125.45
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          }
+        }
+      ]
+    },
+    {
+      "a": "new16g1",
+      "b": "new16g2",
+      "seed": 2026,
+      "n_a": 48,
+      "n_b": 48,
+      "paired": 48,
+      "union": 48,
+      "exact": 24,
+      "exact_rate_union": 0.5,
+      "jobs_equal": 47,
+      "fields_equal": {
+        "deck_id": 48,
+        "controller": 47,
+        "seat": 47,
+        "result": 42,
+        "seconds": 24
+      },
+      "per_wave": [
+        {
+          "wave": 1,
+          "paired": 16,
+          "exact": 16
+        },
+        {
+          "wave": 2,
+          "paired": 16,
+          "exact": 2
+        },
+        {
+          "wave": 3,
+          "paired": 16,
+          "exact": 6
+        }
+      ],
+      "mismatches": [
+        {
+          "policy_version": 1,
+          "seed": 1465833,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 46.65
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 48.2
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 77069594,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 262.15
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 263.15
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 93905407,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 300.85
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "W",
+            "seconds": 300.4
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 107300768,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 246.7
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 168.95
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 134488532,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 288.4
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 221.1
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 315216531,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 299.4
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.2
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 355127010,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 229.3
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 256.3
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 383410855,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 189.05
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 186.45
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 468304901,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 56.0
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 508890233,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 301.9
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.6
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 548800919,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 95.65
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 49.65
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 644012012,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.2
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.5
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 781492250,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 221.0
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 300.25
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 834363489,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.1
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.9
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 14668899,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 104.7
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 66.2
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 373475985,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.75
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.45
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 409095310,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 180.3
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 300.5
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 530277187,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.55
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.2
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 660499342,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 90.2
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 93.85
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 784757303,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 92.35
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 68.3
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 827229996,
+          "a": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.75
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 914571472,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 92.2
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 93.9
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 945044853,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.0
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.4
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 951951153,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.9
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.75
+          }
+        }
+      ]
+    }
+  ]
+}

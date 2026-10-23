@@ -1,0 +1,62 @@
+[
+  {
+    "label": "20261023T001000Z-01-BASELINE8-s777",
+    "configuration": "BASELINE8",
+    "seed": 777,
+    "result": "/tmp/cr-prof/bench-safe/20261023T001000Z-01-BASELINE8-s777.json",
+    "total_s": 75.4066295579978,
+    "games_per_min": 19.096464176169643,
+    "decisions_per_s": 151.02120419320826,
+    "memory_peak_bytes": 6316994560
+  },
+  {
+    "label": "20261023T001000Z-02-NEW8g1-s777",
+    "configuration": "NEW8g1",
+    "seed": 777,
+    "result": "/tmp/cr-prof/bench-safe/20261023T001000Z-02-NEW8g1-s777.json",
+    "total_s": 46.57871171399893,
+    "games_per_min": 30.91541064600156,
+    "decisions_per_s": 242.34246900837888,
+    "memory_peak_bytes": 5733199872
+  },
+  {
+    "label": "20261023T001000Z-03-NEW8g2-s777",
+    "configuration": "NEW8g2",
+    "seed": 777,
+    "result": "/tmp/cr-prof/bench-safe/20261023T001000Z-03-NEW8g2-s777.json",
+    "total_s": 38.74088457800099,
+    "games_per_min": 37.17003407861534,
+    "decisions_per_s": 297.0505223449342,
+    "memory_peak_bytes": 5712576512
+  },
+  {
+    "label": "20261023T001000Z-04-NEW8g2-s2026",
+    "configuration": "NEW8g2",
+    "seed": 2026,
+    "result": "/tmp/cr-prof/bench-safe/20261023T001000Z-04-NEW8g2-s2026.json",
+    "total_s": 39.75426835399412,
+    "games_per_min": 36.22252552046585,
+    "decisions_per_s": 283.944352829874,
+    "memory_peak_bytes": 5714653184
+  },
+  {
+    "label": "20261023T001000Z-05-NEW8g1-s2026",
+    "configuration": "NEW8g1",
+    "seed": 2026,
+    "result": "/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026.json",
+    "total_s": 39.482796557000256,
+    "games_per_min": 36.47158067745051,
+    "decisions_per_s": 263.91241017988494,
+    "memory_peak_bytes": 5711572992
+  },
+  {
+    "label": "20261023T001000Z-06-BASELINE8-s2026",
+    "configuration": "BASELINE8",
+    "seed": 2026,
+    "result": "/tmp/cr-prof/bench-safe/20261023T001000Z-06-BASELINE8-s2026.json",
+    "total_s": 67.397623345998,
+    "games_per_min": 21.365738560356903,
+    "decisions_per_s": 157.75036970396846,
+    "memory_peak_bytes": 5720297472
+  }
+]

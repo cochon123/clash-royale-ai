@@ -1,0 +1,62 @@
+{
+  "status": "earlier incomplete matrix, before final correctness fix; not final-code measurements; unsafe worker counts are not recommendations",
+  "completed_runs": 8,
+  "observations": [
+    {
+      "configuration": "baseline12",
+      "seed": 777,
+      "total_s": 86.56094174299506,
+      "games_per_min": 24.95351779343133,
+      "decisions_per_s": 189.64673523007812
+    },
+    {
+      "configuration": "new12g1",
+      "seed": 777,
+      "total_s": 52.369444832002046,
+      "games_per_min": 41.24542482604402,
+      "decisions_per_s": 318.7736676138791
+    },
+    {
+      "configuration": "new12g2",
+      "seed": 777,
+      "total_s": 51.169248381993384,
+      "games_per_min": 42.21285378035982,
+      "decisions_per_s": 324.2572545943195
+    },
+    {
+      "configuration": "baseline16",
+      "seed": 777,
+      "total_s": 102.80108951299917,
+      "games_per_min": 28.015267286012808,
+      "decisions_per_s": 201.69046941256582
+    },
+    {
+      "configuration": "new16g1",
+      "seed": 777,
+      "total_s": 61.65304921999632,
+      "games_per_min": 46.71301803294932,
+      "decisions_per_s": 343.1784845628964
+    },
+    {
+      "configuration": "new16g2",
+      "seed": 777,
+      "total_s": 58.711419173007016,
+      "games_per_min": 49.05348977365718,
+      "decisions_per_s": 352.29943836052956
+    },
+    {
+      "configuration": "new16g2",
+      "seed": 2026,
+      "total_s": 58.43827283899009,
+      "games_per_min": 49.282770692676266,
+      "decisions_per_s": 349.1547406990856
+    },
+    {
+      "configuration": "new16g1",
+      "seed": 2026,
+      "total_s": 71.56588342999748,
+      "games_per_min": 40.242638838058724,
+      "decisions_per_s": 288.93655760186743
+    }
+  ]
+}

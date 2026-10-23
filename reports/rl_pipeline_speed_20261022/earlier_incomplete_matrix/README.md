@@ -1,0 +1,1 @@
+Earlier incomplete 12/16-worker benchmark matrix. Eight runs completed before the process was killed under memory pressure. These measurements use commit fc0f2c8, before the placement sampling reproducibility fixes in fc4d9eb. The missing repeats were not run. Use the final bounded eight-worker comparison for final-code measurements.

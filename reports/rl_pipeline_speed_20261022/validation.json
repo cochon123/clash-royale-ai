@@ -1,0 +1,15 @@
+{
+  "validated_at_utc": "2026-10-23T00:09:37.283496+00:00",
+  "commit": "fc4d9eb",
+  "tests_run": 77,
+  "result": "OK",
+  "devices": [
+    "cpu",
+    "cuda"
+  ],
+  "reference_encoder_sample_pairs": 3790,
+  "reference_encoder_tensor_pairs": 49218,
+  "command": "systemd-run --user --scope --unit=rl-speed-validation -p MemoryMax=4G -p MemorySwapMax=0 env OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=rl /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python -m unittest rl.test_banana_fast_features rl.test_banana_fast_policy rl.test_banana_hog_adaptive rl.test_hog_league rl.test_hog_retrain rl.test_banana_tower_hp rl.test_banana_inference_batching rl.test_step_groups",
+  "cwd": "engine",
+  "sampling_review": "No additional correctness findings; per-game uniform fast path restored after review."
+}

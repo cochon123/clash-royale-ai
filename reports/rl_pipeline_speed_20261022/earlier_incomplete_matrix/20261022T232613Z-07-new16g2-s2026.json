@@ -1,0 +1,145 @@
+{
+  "code_root": "/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine",
+  "workers": 16,
+  "waves": 3,
+  "seed": 2026,
+  "extra": "--step-groups 2",
+  "constructor_s": 1.064159417990595,
+  "wave_records": [
+    {
+      "wave": 1,
+      "elapsed_s": 21.934465780999744,
+      "wave_s": 21.934465780999744,
+      "games": 16,
+      "decisions": 6840,
+      "phases": {
+        "cache_request_s": 3.7010392650263384,
+        "act_batch_s": 13.476757496668142,
+        "act_batch_calls": 1720,
+        "act_rows": 6840,
+        "launch_s": 13.724853060135501,
+        "rounds": 602,
+        "wait_steps_s": 1.6547085559432162,
+        "consume_s": 0.1192932336271042,
+        "publish_s": 0.06720831022539642,
+        "update_s": 2.66267465200508,
+        "play_s": 19.2452361619944
+      },
+      "engine": {
+        "step_s": 49.96073257390526,
+        "step_n": 3436,
+        "reset_s": 52.182743329016375,
+        "reset_n": 16,
+        "mask_s": 0.9035427581693511,
+        "mask_n": 2422
+      }
+    },
+    {
+      "wave": 2,
+      "elapsed_s": 40.67462830898876,
+      "wave_s": 18.740162527989014,
+      "games": 16,
+      "decisions": 6918,
+      "phases": {
+        "cache_request_s": 3.8235145881335484,
+        "act_batch_s": 14.038078744633822,
+        "act_batch_calls": 1769,
+        "act_rows": 6918,
+        "launch_s": 14.270223886167514,
+        "rounds": 605,
+        "wait_steps_s": 1.484819605218945,
+        "consume_s": 0.12429482315201312,
+        "publish_s": 0.049159238929860294,
+        "update_s": 2.5995064189919503,
+        "play_s": 16.08328264798911
+      },
+      "engine": {
+        "step_s": 51.197731980879325,
+        "step_n": 3475,
+        "reset_s": 0.22241976400255226,
+        "reset_n": 16,
+        "mask_s": 0.8777637751481961,
+        "mask_n": 2326
+      }
+    },
+    {
+      "wave": 3,
+      "elapsed_s": 57.55356932998984,
+      "wave_s": 16.878941021001083,
+      "games": 16,
+      "decisions": 6646,
+      "phases": {
+        "cache_request_s": 3.597617296385579,
+        "act_batch_s": 12.790085620246828,
+        "act_batch_calls": 1695,
+        "act_rows": 6646,
+        "launch_s": 13.002864830137696,
+        "rounds": 608,
+        "wait_steps_s": 0.9773958557052538,
+        "consume_s": 0.1200232994306134,
+        "publish_s": 0.08870429197850171,
+        "update_s": 2.4547382929886226,
+        "play_s": 14.340110434000962
+      },
+      "engine": {
+        "step_s": 42.90240556122444,
+        "step_n": 3339,
+        "reset_s": 0.22404255796573125,
+        "reset_n": 16,
+        "mask_s": 0.8830526638776064,
+        "mask_n": 2419
+      }
+    }
+  ],
+  "cleanup_s": 0.8847035090002464,
+  "counters": {
+    "accepted_plays": 7017,
+    "decisions": 20404,
+    "simulated_seconds": 10172.35,
+    "games": 48,
+    "losses": 38,
+    "training_games": 48,
+    "wins": 10,
+    "rejected_plays": 150,
+    "updates": 3
+  },
+  "errors": {},
+  "total_s": 58.43827283899009,
+  "games": 48,
+  "decisions": 20404,
+  "updates": 3,
+  "games_per_min": 49.282770692676266,
+  "decisions_per_s": 349.1547406990856,
+  "cache_request_s": 11.122171149545466,
+  "act_batch_s": 40.30492186154879,
+  "act_batch_calls": 5184,
+  "act_rows": 20404,
+  "launch_s": 40.99794177644071,
+  "rounds": 1815,
+  "wait_steps_s": 4.116924016867415,
+  "consume_s": 0.36361135620973073,
+  "publish_s": 0.206334540140233,
+  "update_s": 7.716919363985653,
+  "play_s": 49.66862924398447,
+  "engine": {
+    "step_s": 144.06087011600903,
+    "step_n": 10250,
+    "reset_s": 52.62920565098466,
+    "reset_n": 48,
+    "mask_s": 2.6643591971951537,
+    "mask_n": 7167
+  },
+  "pace": {
+    "infer_s": 40.43139159400016,
+    "infer_batches": 1815,
+    "infer_games": 10202,
+    "engine_s": 278.9593923931825,
+    "engine_steps": 10202
+  },
+  "label": "20261022T232613Z-07-new16g2-s2026",
+  "configuration": "new16g2",
+  "groups": 2,
+  "subprocess_wall_s": 62.278424899006495,
+  "command": "cd /home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine && PYTHONDONTWRITEBYTECODE=1 /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python /tmp/cr-prof/bench/bench_wave_measured.py --code-root /home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --workers 16 --waves 3 --seed 2026 --run-dir /tmp/cr-prof/bench/20261022T232613Z-07-new16g2-s2026-scratch --extra '--step-groups 2'",
+  "available_before_gib": 15
+}

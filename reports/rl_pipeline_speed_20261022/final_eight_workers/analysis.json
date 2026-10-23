@@ -1,0 +1,3887 @@
+{
+  "created_utc": "2026-10-23T00:15:53.445665+00:00",
+  "model": "banana-hog-2 configured learner, 3 PPO waves per scratch run",
+  "baseline_head": "8b623650017a22b546d69c8f1a6eed21eddd462a",
+  "final_head": "fc4d9ebe6d7330aa3d4e261a5cb848890765a623",
+  "preflight": {
+    "utc": "2026-10-23T00:10:00.198997+00:00",
+    "memory_bytes": {
+      "MemTotal": 32718692352,
+      "MemAvailable": 17655947264,
+      "SwapTotal": 8589930496,
+      "SwapFree": 469078016
+    },
+    "gpu": "48, 0 %, 2020 MiB, 4.26 W",
+    "repos": {
+      "baseline": {
+        "head": {
+          "command": "git rev-parse HEAD",
+          "returncode": 0,
+          "output": "8b623650017a22b546d69c8f1a6eed21eddd462a\n"
+        },
+        "status": {
+          "command": "git status --short",
+          "returncode": 0,
+          "output": " M native-engine/README.md\n M rl/README.md\n M rl/banana_watch.py\n M ../webapps/README.md\n"
+        }
+      },
+      "new": {
+        "head": {
+          "command": "git rev-parse HEAD",
+          "returncode": 0,
+          "output": "fc4d9ebe6d7330aa3d4e261a5cb848890765a623\n"
+        },
+        "status": {
+          "command": "git status --short",
+          "returncode": 0,
+          "output": "?? ../reports/rl_pipeline_speed_20261022/\n"
+        }
+      }
+    },
+    "inputs": {
+      "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-2/bin/rust_league_rl": "afc5cdea352a140c1645621098e76d83a901e6ff6077e2fd42c4338110542a80",
+      "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-2/pool.json": "96879fac68bae6f69cbe6802c51944867e1239d1a344f09e9e57cd2fbf8dd70b",
+      "/home/cochon/Documents/mini-project/clash-royale-ai/engine/runs/banana-hog-1/models/final.pt": "eb569d0629774b04280fb218e414df61aa6542730506646e7c7eda1f3695a149"
+    },
+    "limits": {
+      "memory_max_bytes": 8589934592,
+      "swap_max_bytes": 0,
+      "abort_mem_available_bytes": 6442450944,
+      "required_launch_available_bytes": 12884901888,
+      "workers": 8
+    }
+  },
+  "method": {
+    "workers": 8,
+    "waves_per_run": 3,
+    "seeds": [
+      777,
+      2026
+    ],
+    "order": [
+      "BASELINE8",
+      "NEW8g1",
+      "NEW8g2",
+      "NEW8g2",
+      "NEW8g1",
+      "BASELINE8"
+    ],
+    "memory_cap_bytes": 8589934592,
+    "swap_cap_bytes": 0,
+    "watchdog_available_bytes": 6442450944,
+    "prelaunch_available_bytes": 12884901888,
+    "timing": "total_s includes 3 collect+PPO waves and cleanup; constructor_s excluded; per-wave includes first native startup/reset costs",
+    "caveat": "Two seeds, one machine, no confidence intervals. First wave is isolated; later policy trajectories can differ. Outcome equality does not establish action equality. Native request durations and pace engine_s overlap; never add these to wall time."
+  },
+  "runs": [
+    {
+      "configuration": "BASELINE8",
+      "seed": 777,
+      "total_s": 75.4066295579978,
+      "games": 24,
+      "decisions": 11388,
+      "games_per_min": 19.096464176169643,
+      "decisions_per_s": 151.02120419320826,
+      "constructor_s": 1.5775311889883596,
+      "cleanup_s": 0.33602795100887306,
+      "cache_request_s": 33.11098524816043,
+      "act_batch_s": 49.042400926715345,
+      "act_batch_calls": 3181,
+      "launch_s": 49.522040125128115,
+      "wait_steps_s": 17.595566019008402,
+      "consume_s": 0.20627935172524303,
+      "publish_s": 0.24342776945559308,
+      "update_s": 4.966384540995932,
+      "memory_peak_bytes": 6316994560,
+      "first_wave_s": 22.872730023998884,
+      "first_wave_games_per_min": 20.985689049639763,
+      "first_wave_decisions_per_s": 153.45785117549076,
+      "later_games_per_min": 18.391554499950903,
+      "later_decisions_per_s": 150.92569411522211,
+      "act_minus_encoding_s": 15.931415678554913,
+      "residual_reset_orchestration_s": 2.8729317516845185,
+      "engine_reset_sum_s": 16.479881250023027,
+      "engine_step_sum_s": 70.71816756189219,
+      "engine_mask_sum_s": 1.216538102235063
+    },
+    {
+      "configuration": "NEW8g1",
+      "seed": 777,
+      "total_s": 46.57871171399893,
+      "games": 24,
+      "decisions": 11288,
+      "games_per_min": 30.91541064600156,
+      "decisions_per_s": 242.34246900837888,
+      "constructor_s": 1.2400897140032612,
+      "cleanup_s": 0.31851649399322923,
+      "cache_request_s": 5.178748852034914,
+      "act_batch_s": 19.670436564832926,
+      "act_batch_calls": 2727,
+      "launch_s": 20.13115979914437,
+      "wait_steps_s": 18.349249769788003,
+      "consume_s": 0.19664772984106094,
+      "publish_s": 0.1418019400589401,
+      "update_s": 4.726067505005631,
+      "memory_peak_bytes": 5733199872,
+      "first_wave_s": 16.54240345300059,
+      "first_wave_games_per_min": 29.016339818077277,
+      "first_wave_decisions_per_s": 212.18198491969008,
+      "later_games_per_min": 32.3038807030697,
+      "later_decisions_per_s": 261.72873344632933,
+      "act_minus_encoding_s": 14.491687712798011,
+      "residual_reset_orchestration_s": 3.033784970160923,
+      "engine_reset_sum_s": 18.43429101302172,
+      "engine_step_sum_s": 72.85682580572029,
+      "engine_mask_sum_s": 1.5323201638530008
+    },
+    {
+      "configuration": "NEW8g2",
+      "seed": 777,
+      "total_s": 38.74088457800099,
+      "games": 24,
+      "decisions": 11508,
+      "games_per_min": 37.17003407861534,
+      "decisions_per_s": 297.0505223449342,
+      "constructor_s": 0.997102356996038,
+      "cleanup_s": 0.31711119299870916,
+      "cache_request_s": 5.05887677129067,
+      "act_batch_s": 25.179476360892295,
+      "act_batch_calls": 4909,
+      "launch_s": 25.442105877998983,
+      "wait_steps_s": 5.547456822940148,
+      "consume_s": 0.20019103845697828,
+      "publish_s": 0.11324043104832526,
+      "update_s": 4.494705225995858,
+      "memory_peak_bytes": 5712576512,
+      "first_wave_s": 13.995637077008723,
+      "first_wave_games_per_min": 34.29640232587326,
+      "first_wave_decisions_per_s": 250.7924420079482,
+      "later_games_per_min": 39.29894560502603,
+      "later_decisions_per_s": 327.4093405718731,
+      "act_minus_encoding_s": 20.120599589601625,
+      "residual_reset_orchestration_s": 2.9431851815606933,
+      "engine_reset_sum_s": 15.554522589984117,
+      "engine_step_sum_s": 64.2509017198754,
+      "engine_mask_sum_s": 1.3317684402136365
+    },
+    {
+      "configuration": "NEW8g2",
+      "seed": 2026,
+      "total_s": 39.75426835399412,
+      "games": 24,
+      "decisions": 11288,
+      "games_per_min": 36.22252552046585,
+      "decisions_per_s": 283.944352829874,
+      "constructor_s": 0.9835192070022458,
+      "cleanup_s": 0.3150541820068611,
+      "cache_request_s": 5.009638805073337,
+      "act_batch_s": 25.081637756622513,
+      "act_batch_calls": 4918,
+      "launch_s": 25.357081822745386,
+      "wait_steps_s": 6.814566623288556,
+      "consume_s": 0.18725681499927305,
+      "publish_s": 0.10192661499604583,
+      "update_s": 4.374859325005673,
+      "memory_peak_bytes": 5714653184,
+      "first_wave_s": 15.775015598992468,
+      "first_wave_games_per_min": 30.427862146181145,
+      "first_wave_decisions_per_s": 281.33094209323315,
+      "later_games_per_min": 40.56761090128515,
+      "later_decisions_per_s": 289.4668069518784,
+      "act_minus_encoding_s": 20.071998951549176,
+      "residual_reset_orchestration_s": 2.9185771529591875,
+      "engine_reset_sum_s": 15.77138332100003,
+      "engine_step_sum_s": 64.98803275183309,
+      "engine_mask_sum_s": 1.3640242396795657
+    },
+    {
+      "configuration": "NEW8g1",
+      "seed": 2026,
+      "total_s": 39.482796557000256,
+      "games": 24,
+      "decisions": 10420,
+      "games_per_min": 36.47158067745051,
+      "decisions_per_s": 263.91241017988494,
+      "constructor_s": 0.9601457870012382,
+      "cleanup_s": 0.3161921290011378,
+      "cache_request_s": 3.767811465484556,
+      "act_batch_s": 14.380702703667339,
+      "act_batch_calls": 2471,
+      "launch_s": 14.671768117885222,
+      "wait_steps_s": 17.22025041487359,
+      "consume_s": 0.15041987044969574,
+      "publish_s": 0.10222894778416958,
+      "update_s": 4.2198928220022935,
+      "memory_peak_bytes": 5711572992,
+      "first_wave_s": 16.601638313004514,
+      "first_wave_games_per_min": 28.91280914269786,
+      "first_wave_decisions_per_s": 267.3230145318606,
+      "later_games_per_min": 42.54382635044473,
+      "later_decisions_per_s": 265.10121794620875,
+      "act_minus_encoding_s": 10.612891238182783,
+      "residual_reset_orchestration_s": 3.118236384005286,
+      "engine_reset_sum_s": 17.70852059702156,
+      "engine_step_sum_s": 62.156076730650966,
+      "engine_mask_sum_s": 1.3206862023071153
+    },
+    {
+      "configuration": "BASELINE8",
+      "seed": 2026,
+      "total_s": 67.397623345998,
+      "games": 24,
+      "decisions": 10632,
+      "games_per_min": 21.365738560356903,
+      "decisions_per_s": 157.75036970396846,
+      "constructor_s": 1.0354168769990792,
+      "cleanup_s": 0.31381414500356186,
+      "cache_request_s": 27.188591988073313,
+      "act_batch_s": 41.36572047472873,
+      "act_batch_calls": 3330,
+      "launch_s": 41.76368911223835,
+      "wait_steps_s": 17.82479338417761,
+      "consume_s": 0.16960381191165652,
+      "publish_s": 0.1931627431040397,
+      "update_s": 4.454714838982909,
+      "memory_peak_bytes": 5720297472,
+      "first_wave_s": 30.50711923399649,
+      "first_wave_games_per_min": 15.734032319416713,
+      "first_wave_decisions_per_s": 145.47424048660702,
+      "later_games_per_min": 26.246224053247555,
+      "later_decisions_per_s": 169.34282477689098,
+      "act_minus_encoding_s": 14.17712848665542,
+      "residual_reset_orchestration_s": 2.991659455583431,
+      "engine_reset_sum_s": 16.764173979041516,
+      "engine_step_sum_s": 67.47037586278748,
+      "engine_mask_sum_s": 1.0598794760589954
+    }
+  ],
+  "wave_records": [
+    {
+      "configuration": "BASELINE8",
+      "seed": 777,
+      "wave": 1,
+      "wave_s": 22.872730023998884,
+      "games": 8,
+      "decisions": 3510,
+      "games_per_min": 20.985689049639763,
+      "decisions_per_s": 153.45785117549076,
+      "cache_request_s": 9.16079867510416,
+      "act_batch_s": 13.691617738761124,
+      "act_batch_calls": 963,
+      "act_rows": 3510,
+      "launch_s": 13.818397233088035,
+      "rounds": 303,
+      "wait_steps_s": 5.026230625939206,
+      "consume_s": 0.05370584073534701,
+      "publish_s": 0.06255252970731817,
+      "update_s": 1.5878382660011994,
+      "play_s": 21.261263523003436
+    },
+    {
+      "configuration": "BASELINE8",
+      "seed": 777,
+      "wave": 2,
+      "wave_s": 24.867017652999493,
+      "games": 8,
+      "decisions": 3850,
+      "games_per_min": 19.302676609557228,
+      "decisions_per_s": 154.82355197249026,
+      "cache_request_s": 11.031080278306035,
+      "act_batch_s": 16.471577035990776,
+      "act_batch_calls": 1096,
+      "act_rows": 3850,
+      "launch_s": 16.646955526986858,
+      "rounds": 303,
+      "wait_steps_s": 6.298602005990688,
+      "consume_s": 0.07552392594516277,
+      "publish_s": 0.07253239888814278,
+      "update_s": 1.6737781029951293,
+      "play_s": 23.148572271005833
+    },
+    {
+      "configuration": "BASELINE8",
+      "seed": 777,
+      "wave": 3,
+      "wave_s": 27.330853929990553,
+      "games": 8,
+      "decisions": 4028,
+      "games_per_min": 17.562568708227914,
+      "decisions_per_s": 147.37922240987925,
+      "cache_request_s": 12.919106294750236,
+      "act_batch_s": 18.879206151963444,
+      "act_batch_calls": 1122,
+      "act_rows": 4028,
+      "launch_s": 19.05668736505322,
+      "rounds": 303,
+      "wait_steps_s": 6.270733387078508,
+      "consume_s": 0.07704958504473325,
+      "publish_s": 0.10701900486310478,
+      "update_s": 1.7047681719996035,
+      "play_s": 25.57075500198698
+    },
+    {
+      "configuration": "NEW8g1",
+      "seed": 777,
+      "wave": 1,
+      "wave_s": 16.54240345300059,
+      "games": 8,
+      "decisions": 3510,
+      "games_per_min": 29.016339818077277,
+      "decisions_per_s": 212.18198491969008,
+      "cache_request_s": 1.5738179568434134,
+      "act_batch_s": 6.480567407881608,
+      "act_batch_calls": 909,
+      "act_rows": 3510,
+      "launch_s": 6.606898880985682,
+      "rounds": 303,
+      "wait_steps_s": 5.6443077279109275,
+      "consume_s": 0.06377450442232657,
+      "publish_s": 0.04241725418251008,
+      "update_s": 1.6600717230030568,
+      "play_s": 14.852902119004284
+    },
+    {
+      "configuration": "NEW8g1",
+      "seed": 777,
+      "wave": 2,
+      "wave_s": 14.315725050997571,
+      "games": 8,
+      "decisions": 3600,
+      "games_per_min": 33.52956265156489,
+      "decisions_per_s": 251.47171988673665,
+      "cache_request_s": 1.6350081045238767,
+      "act_batch_s": 6.213203634979436,
+      "act_batch_calls": 909,
+      "act_rows": 3600,
+      "launch_s": 6.362834074054263,
+      "rounds": 303,
+      "wait_steps_s": 6.212294855926302,
+      "consume_s": 0.059254364314256236,
+      "publish_s": 0.060626809077803046,
+      "update_s": 1.5272164810012328,
+      "play_s": 12.725251560012111
+    },
+    {
+      "configuration": "NEW8g1",
+      "seed": 777,
+      "wave": 3,
+      "wave_s": 15.402066716007539,
+      "games": 8,
+      "decisions": 4178,
+      "games_per_min": 31.164648800094515,
+      "decisions_per_s": 271.262297264156,
+      "cache_request_s": 1.9699227906676242,
+      "act_batch_s": 6.976665521971881,
+      "act_batch_calls": 909,
+      "act_rows": 4178,
+      "launch_s": 7.161426844104426,
+      "rounds": 303,
+      "wait_steps_s": 6.492647185950773,
+      "consume_s": 0.07361886110447813,
+      "publish_s": 0.03759247080597561,
+      "update_s": 1.538779301001341,
+      "play_s": 13.826152224006364
+    },
+    {
+      "configuration": "NEW8g2",
+      "seed": 777,
+      "wave": 1,
+      "wave_s": 13.995637077008723,
+      "games": 8,
+      "decisions": 3510,
+      "games_per_min": 34.29640232587326,
+      "decisions_per_s": 250.7924420079482,
+      "cache_request_s": 1.5077043658966431,
+      "act_batch_s": 8.254967441069311,
+      "act_batch_calls": 1710,
+      "act_rows": 3510,
+      "launch_s": 8.339584425106295,
+      "rounds": 571,
+      "wait_steps_s": 1.7528096960741095,
+      "consume_s": 0.05699456970614847,
+      "publish_s": 0.03337570297298953,
+      "update_s": 1.477981477000867,
+      "play_s": 12.492981039002188
+    },
+    {
+      "configuration": "NEW8g2",
+      "seed": 777,
+      "wave": 2,
+      "wave_s": 11.94211695199192,
+      "games": 8,
+      "decisions": 3850,
+      "games_per_min": 40.193878684125345,
+      "decisions_per_s": 322.3884019455887,
+      "cache_request_s": 1.6883151554502547,
+      "act_batch_s": 8.023340342057054,
+      "act_batch_calls": 1513,
+      "act_rows": 3850,
+      "launch_s": 8.109140131942695,
+      "rounds": 605,
+      "wait_steps_s": 2.1214790947997244,
+      "consume_s": 0.06458641188510228,
+      "publish_s": 0.039805007676477544,
+      "update_s": 1.4593144789978396,
+      "play_s": 10.446705087000737
+    },
+    {
+      "configuration": "NEW8g2",
+      "seed": 777,
+      "wave": 3,
+      "wave_s": 12.486019356001634,
+      "games": 8,
+      "decisions": 4148,
+      "games_per_min": 38.442996628006924,
+      "decisions_per_s": 332.2115625270265,
+      "cache_request_s": 1.8628572499437723,
+      "act_batch_s": 8.90116857776593,
+      "act_batch_calls": 1686,
+      "act_rows": 4148,
+      "launch_s": 8.993381320949993,
+      "rounds": 604,
+      "wait_steps_s": 1.6731680320663145,
+      "consume_s": 0.07861005686572753,
+      "publish_s": 0.038917732395930216,
+      "update_s": 1.5574092699971516,
+      "play_s": 10.890193708997685
+    },
+    {
+      "configuration": "NEW8g2",
+      "seed": 2026,
+      "wave": 1,
+      "wave_s": 15.775015598992468,
+      "games": 8,
+      "decisions": 4438,
+      "games_per_min": 30.427862146181145,
+      "decisions_per_s": 281.33094209323315,
+      "cache_request_s": 1.9904194857808761,
+      "act_batch_s": 9.772222281753784,
+      "act_batch_calls": 1812,
+      "act_rows": 4438,
+      "launch_s": 9.88542251479521,
+      "rounds": 605,
+      "wait_steps_s": 1.668243062129477,
+      "consume_s": 0.07052303863747511,
+      "publish_s": 0.036261280736653134,
+      "update_s": 1.784383684003842,
+      "play_s": 13.966959092998877
+    },
+    {
+      "configuration": "NEW8g2",
+      "seed": 2026,
+      "wave": 2,
+      "wave_s": 11.264788371001487,
+      "games": 8,
+      "decisions": 3446,
+      "games_per_min": 42.61065403018539,
+      "decisions_per_s": 305.9089870583726,
+      "cache_request_s": 1.498297831582022,
+      "act_batch_s": 7.642577030826942,
+      "act_batch_calls": 1560,
+      "act_rows": 3446,
+      "launch_s": 7.721640574076446,
+      "rounds": 603,
+      "wait_steps_s": 2.0273122231301386,
+      "consume_s": 0.05768587443162687,
+      "publish_s": 0.031592993036611006,
+      "update_s": 1.2845280260080472,
+      "play_s": 9.942240132993902
+    },
+    {
+      "configuration": "NEW8g2",
+      "seed": 2026,
+      "wave": 3,
+      "wave_s": 12.399410201993305,
+      "games": 8,
+      "decisions": 3404,
+      "games_per_min": 38.7115187077879,
+      "decisions_per_s": 274.52918683606254,
+      "cache_request_s": 1.5209214877104387,
+      "act_batch_s": 7.666838444041787,
+      "act_batch_calls": 1546,
+      "act_rows": 3404,
+      "launch_s": 7.7500187338737305,
+      "rounds": 516,
+      "wait_steps_s": 3.1190113380289404,
+      "consume_s": 0.059047901930171065,
+      "publish_s": 0.032903907223953865,
+      "update_s": 1.3059476149937836,
+      "play_s": 11.058114045998082
+    },
+    {
+      "configuration": "NEW8g1",
+      "seed": 2026,
+      "wave": 1,
+      "wave_s": 16.601638313004514,
+      "games": 8,
+      "decisions": 4438,
+      "games_per_min": 28.91280914269786,
+      "decisions_per_s": 267.3230145318606,
+      "cache_request_s": 1.5995876670640428,
+      "act_batch_s": 5.768569456937257,
+      "act_batch_calls": 909,
+      "act_rows": 4438,
+      "launch_s": 5.900299680055468,
+      "rounds": 303,
+      "wait_steps_s": 6.125414832975366,
+      "consume_s": 0.06019326756359078,
+      "publish_s": 0.03248488006647676,
+      "update_s": 1.847004162002122,
+      "play_s": 14.729864155990072
+    },
+    {
+      "configuration": "NEW8g1",
+      "seed": 2026,
+      "wave": 2,
+      "wave_s": 9.875348399000359,
+      "games": 8,
+      "decisions": 2610,
+      "games_per_min": 48.60588007695895,
+      "decisions_per_s": 264.2944729184643,
+      "cache_request_s": 0.8648382454994135,
+      "act_batch_s": 3.587693644076353,
+      "act_batch_calls": 668,
+      "act_rows": 2610,
+      "launch_s": 3.6488087088655448,
+      "rounds": 303,
+      "wait_steps_s": 5.0029242960736156,
+      "consume_s": 0.03755361273942981,
+      "publish_s": 0.03322894668963272,
+      "update_s": 1.0661217869928805,
+      "play_s": 8.765223476002575
+    },
+    {
+      "configuration": "NEW8g1",
+      "seed": 2026,
+      "wave": 3,
+      "wave_s": 12.689617715994245,
+      "games": 8,
+      "decisions": 3372,
+      "games_per_min": 37.82619860919833,
+      "decisions_per_s": 265.72904522961824,
+      "cache_request_s": 1.3033855529210996,
+      "act_batch_s": 5.024439602653729,
+      "act_batch_calls": 894,
+      "act_rows": 3372,
+      "launch_s": 5.122659728964209,
+      "rounds": 303,
+      "wait_steps_s": 6.091911285824608,
+      "consume_s": 0.05267299014667515,
+      "publish_s": 0.03495374204067048,
+      "update_s": 1.306766873007291,
+      "play_s": 11.348223338995012
+    },
+    {
+      "configuration": "BASELINE8",
+      "seed": 2026,
+      "wave": 1,
+      "wave_s": 30.50711923399649,
+      "games": 8,
+      "decisions": 4438,
+      "games_per_min": 15.734032319416713,
+      "decisions_per_s": 145.47424048660702,
+      "cache_request_s": 13.668061438540462,
+      "act_batch_s": 19.42378378783178,
+      "act_batch_calls": 1209,
+      "act_rows": 4438,
+      "launch_s": 19.608799877081765,
+      "rounds": 303,
+      "wait_steps_s": 6.299761031099479,
+      "consume_s": 0.0700174802186666,
+      "publish_s": 0.0856773569539655,
+      "update_s": 1.9648136049945606,
+      "play_s": 28.49660836000112
+    },
+    {
+      "configuration": "BASELINE8",
+      "seed": 2026,
+      "wave": 2,
+      "wave_s": 19.40677363400755,
+      "games": 8,
+      "decisions": 3112,
+      "games_per_min": 24.733632135476128,
+      "decisions_per_s": 160.3563816783369,
+      "cache_request_s": 7.308568791660946,
+      "act_batch_s": 11.919121244907728,
+      "act_batch_calls": 1079,
+      "act_rows": 3112,
+      "launch_s": 12.045075939080562,
+      "rounds": 302,
+      "wait_steps_s": 5.920947427061037,
+      "consume_s": 0.052803386803134345,
+      "publish_s": 0.04433207801776007,
+      "update_s": 1.2314635989896487,
+      "play_s": 18.131992733993684
+    },
+    {
+      "configuration": "BASELINE8",
+      "seed": 2026,
+      "wave": 3,
+      "wave_s": 17.169916332990397,
+      "games": 8,
+      "decisions": 3082,
+      "games_per_min": 27.95587297520633,
+      "decisions_per_s": 179.5000010616373,
+      "cache_request_s": 6.211961757871904,
+      "act_batch_s": 10.022815441989223,
+      "act_batch_calls": 1042,
+      "act_rows": 3082,
+      "launch_s": 10.109813296076027,
+      "rounds": 303,
+      "wait_steps_s": 5.604084926017094,
+      "consume_s": 0.04678294488985557,
+      "publish_s": 0.062030938133830205,
+      "update_s": 1.2584376349986997,
+      "play_s": 15.876119726002798
+    }
+  ],
+  "raw_runs": [
+    {
+      "code_root": "/home/cochon/Documents/mini-project/clash-royale-ai/engine",
+      "workers": 8,
+      "waves": 3,
+      "seed": 777,
+      "extra": "",
+      "constructor_s": 1.5775311889883596,
+      "wave_records": [
+        {
+          "wave": 1,
+          "elapsed_s": 22.872730023998884,
+          "wave_s": 22.872730023998884,
+          "games": 8,
+          "decisions": 3510,
+          "phases": {
+            "cache_request_s": 9.16079867510416,
+            "act_batch_s": 13.691617738761124,
+            "act_batch_calls": 963,
+            "act_rows": 3510,
+            "launch_s": 13.818397233088035,
+            "rounds": 303,
+            "wait_steps_s": 5.026230625939206,
+            "consume_s": 0.05370584073534701,
+            "publish_s": 0.06255252970731817,
+            "update_s": 1.5878382660011994,
+            "play_s": 21.261263523003436
+          },
+          "engine": {
+            "step_s": 18.821025744153303,
+            "step_n": 1763,
+            "reset_s": 16.351355809980305,
+            "reset_n": 8,
+            "mask_s": 0.3475383339828113,
+            "mask_n": 1256
+          }
+        },
+        {
+          "wave": 2,
+          "elapsed_s": 47.73974767699838,
+          "wave_s": 24.867017652999493,
+          "games": 8,
+          "decisions": 3850,
+          "phases": {
+            "cache_request_s": 11.031080278306035,
+            "act_batch_s": 16.471577035990776,
+            "act_batch_calls": 1096,
+            "act_rows": 3850,
+            "launch_s": 16.646955526986858,
+            "rounds": 303,
+            "wait_steps_s": 6.298602005990688,
+            "consume_s": 0.07552392594516277,
+            "publish_s": 0.07253239888814278,
+            "update_s": 1.6737781029951293,
+            "play_s": 23.148572271005833
+          },
+          "engine": {
+            "step_s": 25.377959086676128,
+            "step_n": 1933,
+            "reset_s": 0.06522035802481696,
+            "reset_n": 8,
+            "mask_s": 0.3997694869758561,
+            "mask_n": 1321
+          }
+        },
+        {
+          "wave": 3,
+          "elapsed_s": 75.07060160698893,
+          "wave_s": 27.330853929990553,
+          "games": 8,
+          "decisions": 4028,
+          "phases": {
+            "cache_request_s": 12.919106294750236,
+            "act_batch_s": 18.879206151963444,
+            "act_batch_calls": 1122,
+            "act_rows": 4028,
+            "launch_s": 19.05668736505322,
+            "rounds": 303,
+            "wait_steps_s": 6.270733387078508,
+            "consume_s": 0.07704958504473325,
+            "publish_s": 0.10701900486310478,
+            "update_s": 1.7047681719996035,
+            "play_s": 25.57075500198698
+          },
+          "engine": {
+            "step_s": 26.519182731062756,
+            "step_n": 2022,
+            "reset_s": 0.06330508201790508,
+            "reset_n": 8,
+            "mask_s": 0.46923028127639554,
+            "mask_n": 1511
+          }
+        }
+      ],
+      "cleanup_s": 0.33602795100887306,
+      "counters": {
+        "accepted_plays": 4010,
+        "decisions": 11388,
+        "simulated_seconds": 5679.3,
+        "games": 24,
+        "losses": 19,
+        "training_games": 24,
+        "wins": 5,
+        "rejected_plays": 78,
+        "updates": 3
+      },
+      "errors": {},
+      "total_s": 75.4066295579978,
+      "games": 24,
+      "decisions": 11388,
+      "updates": 3,
+      "games_per_min": 19.096464176169643,
+      "decisions_per_s": 151.02120419320826,
+      "cache_request_s": 33.11098524816043,
+      "act_batch_s": 49.042400926715345,
+      "act_batch_calls": 3181,
+      "act_rows": 11388,
+      "launch_s": 49.522040125128115,
+      "rounds": 909,
+      "wait_steps_s": 17.595566019008402,
+      "consume_s": 0.20627935172524303,
+      "publish_s": 0.24342776945559308,
+      "update_s": 4.966384540995932,
+      "play_s": 69.98059079599625,
+      "engine": {
+        "step_s": 70.71816756189219,
+        "step_n": 5718,
+        "reset_s": 16.479881250023027,
+        "reset_n": 24,
+        "mask_s": 1.216538102235063,
+        "mask_n": 4088
+      },
+      "pace": {
+        "infer_s": 49.11572888305818,
+        "infer_batches": 909,
+        "infer_games": 5694,
+        "engine_s": 112.7924989144376,
+        "engine_steps": 5694
+      },
+      "label": "20261023T001000Z-01-BASELINE8-s777",
+      "configuration": "BASELINE8",
+      "groups": null,
+      "subprocess_wall_s": 80.63678294900456,
+      "command": "systemd-run --user --unit=cr-bench-safe-20261023t001000z-1.service --remain-after-exit --working-directory=/home/cochon/Documents/mini-project/clash-royale-ai/engine --property=MemoryMax=8G --property=MemorySwapMax=0 --property=OOMPolicy=kill --property=KillMode=control-group --property=TimeoutStopSec=10 --property=RuntimeMaxSec=1200 --property=StandardOutput=append:/tmp/cr-prof/bench-safe/20261023T001000Z-01-BASELINE8-s777.stdout.log --property=StandardError=append:/tmp/cr-prof/bench-safe/20261023T001000Z-01-BASELINE8-s777.stdout.log --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONUNBUFFERED=1 /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python /tmp/cr-prof/bench-safe/bench_wave_measured.py --code-root /home/cochon/Documents/mini-project/clash-royale-ai/engine --workers 8 --waves 3 --seed 777 --run-dir /tmp/cr-prof/bench-safe/20261023T001000Z-01-BASELINE8-s777-scratch",
+      "memory_peak_bytes": 6316994560,
+      "unit": "cr-bench-safe-20261023t001000z-1.service"
+    },
+    {
+      "code_root": "/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine",
+      "workers": 8,
+      "waves": 3,
+      "seed": 777,
+      "extra": "--step-groups 1",
+      "constructor_s": 1.2400897140032612,
+      "wave_records": [
+        {
+          "wave": 1,
+          "elapsed_s": 16.54240345300059,
+          "wave_s": 16.54240345300059,
+          "games": 8,
+          "decisions": 3510,
+          "phases": {
+            "cache_request_s": 1.5738179568434134,
+            "act_batch_s": 6.480567407881608,
+            "act_batch_calls": 909,
+            "act_rows": 3510,
+            "launch_s": 6.606898880985682,
+            "rounds": 303,
+            "wait_steps_s": 5.6443077279109275,
+            "consume_s": 0.06377450442232657,
+            "publish_s": 0.04241725418251008,
+            "update_s": 1.6600717230030568,
+            "play_s": 14.852902119004284
+          },
+          "engine": {
+            "step_s": 20.73485429408902,
+            "step_n": 1763,
+            "reset_s": 18.305350891998387,
+            "reset_n": 8,
+            "mask_s": 0.4718218979687663,
+            "mask_n": 1256
+          }
+        },
+        {
+          "wave": 2,
+          "elapsed_s": 30.85812850399816,
+          "wave_s": 14.315725050997571,
+          "games": 8,
+          "decisions": 3600,
+          "phases": {
+            "cache_request_s": 1.6350081045238767,
+            "act_batch_s": 6.213203634979436,
+            "act_batch_calls": 909,
+            "act_rows": 3600,
+            "launch_s": 6.362834074054263,
+            "rounds": 303,
+            "wait_steps_s": 6.212294855926302,
+            "consume_s": 0.059254364314256236,
+            "publish_s": 0.060626809077803046,
+            "update_s": 1.5272164810012328,
+            "play_s": 12.725251560012111
+          },
+          "engine": {
+            "step_s": 22.947138527568313,
+            "step_n": 1808,
+            "reset_s": 0.06824917600897606,
+            "reset_n": 8,
+            "mask_s": 0.4533773268776713,
+            "mask_n": 1195
+          }
+        },
+        {
+          "wave": 3,
+          "elapsed_s": 46.2601952200057,
+          "wave_s": 15.402066716007539,
+          "games": 8,
+          "decisions": 4178,
+          "phases": {
+            "cache_request_s": 1.9699227906676242,
+            "act_batch_s": 6.976665521971881,
+            "act_batch_calls": 909,
+            "act_rows": 4178,
+            "launch_s": 7.161426844104426,
+            "rounds": 303,
+            "wait_steps_s": 6.492647185950773,
+            "consume_s": 0.07361886110447813,
+            "publish_s": 0.03759247080597561,
+            "update_s": 1.538779301001341,
+            "play_s": 13.826152224006364
+          },
+          "engine": {
+            "step_s": 29.17483298406296,
+            "step_n": 2097,
+            "reset_s": 0.06069094501435757,
+            "reset_n": 8,
+            "mask_s": 0.6071209390065633,
+            "mask_n": 1573
+          }
+        }
+      ],
+      "cleanup_s": 0.31851649399322923,
+      "counters": {
+        "accepted_plays": 3956,
+        "decisions": 11288,
+        "simulated_seconds": 5629.450000000001,
+        "games": 24,
+        "losses": 18,
+        "training_games": 24,
+        "wins": 6,
+        "rejected_plays": 68,
+        "updates": 3
+      },
+      "errors": {},
+      "total_s": 46.57871171399893,
+      "games": 24,
+      "decisions": 11288,
+      "updates": 3,
+      "games_per_min": 30.91541064600156,
+      "decisions_per_s": 242.34246900837888,
+      "cache_request_s": 5.178748852034914,
+      "act_batch_s": 19.670436564832926,
+      "act_batch_calls": 2727,
+      "act_rows": 11288,
+      "launch_s": 20.13115979914437,
+      "rounds": 909,
+      "wait_steps_s": 18.349249769788003,
+      "consume_s": 0.19664772984106094,
+      "publish_s": 0.1418019400589401,
+      "update_s": 4.726067505005631,
+      "play_s": 41.40430590302276,
+      "engine": {
+        "step_s": 72.85682580572029,
+        "step_n": 5668,
+        "reset_s": 18.43429101302172,
+        "reset_n": 24,
+        "mask_s": 1.5323201638530008,
+        "mask_n": 4024
+      },
+      "pace": {
+        "infer_s": 19.738304873128072,
+        "infer_batches": 909,
+        "infer_games": 5644,
+        "engine_s": 115.4020608629944,
+        "engine_steps": 5644
+      },
+      "label": "20261023T001000Z-02-NEW8g1-s777",
+      "configuration": "NEW8g1",
+      "groups": 1,
+      "subprocess_wall_s": 49.99668183700123,
+      "command": "systemd-run --user --unit=cr-bench-safe-20261023t001000z-2.service --remain-after-exit --working-directory=/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --property=MemoryMax=8G --property=MemorySwapMax=0 --property=OOMPolicy=kill --property=KillMode=control-group --property=TimeoutStopSec=10 --property=RuntimeMaxSec=1200 --property=StandardOutput=append:/tmp/cr-prof/bench-safe/20261023T001000Z-02-NEW8g1-s777.stdout.log --property=StandardError=append:/tmp/cr-prof/bench-safe/20261023T001000Z-02-NEW8g1-s777.stdout.log --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONUNBUFFERED=1 /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python /tmp/cr-prof/bench-safe/bench_wave_measured.py --code-root /home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --workers 8 --waves 3 --seed 777 --run-dir /tmp/cr-prof/bench-safe/20261023T001000Z-02-NEW8g1-s777-scratch --extra '--step-groups 1'",
+      "memory_peak_bytes": 5733199872,
+      "unit": "cr-bench-safe-20261023t001000z-2.service"
+    },
+    {
+      "code_root": "/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine",
+      "workers": 8,
+      "waves": 3,
+      "seed": 777,
+      "extra": "--step-groups 2",
+      "constructor_s": 0.997102356996038,
+      "wave_records": [
+        {
+          "wave": 1,
+          "elapsed_s": 13.995637077008723,
+          "wave_s": 13.995637077008723,
+          "games": 8,
+          "decisions": 3510,
+          "phases": {
+            "cache_request_s": 1.5077043658966431,
+            "act_batch_s": 8.254967441069311,
+            "act_batch_calls": 1710,
+            "act_rows": 3510,
+            "launch_s": 8.339584425106295,
+            "rounds": 571,
+            "wait_steps_s": 1.7528096960741095,
+            "consume_s": 0.05699456970614847,
+            "publish_s": 0.03337570297298953,
+            "update_s": 1.477981477000867,
+            "play_s": 12.492981039002188
+          },
+          "engine": {
+            "step_s": 17.907799697932205,
+            "step_n": 1763,
+            "reset_s": 15.434858488995815,
+            "reset_n": 8,
+            "mask_s": 0.40324638489983045,
+            "mask_n": 1256
+          }
+        },
+        {
+          "wave": 2,
+          "elapsed_s": 25.937754029000644,
+          "wave_s": 11.94211695199192,
+          "games": 8,
+          "decisions": 3850,
+          "phases": {
+            "cache_request_s": 1.6883151554502547,
+            "act_batch_s": 8.023340342057054,
+            "act_batch_calls": 1513,
+            "act_rows": 3850,
+            "launch_s": 8.109140131942695,
+            "rounds": 605,
+            "wait_steps_s": 2.1214790947997244,
+            "consume_s": 0.06458641188510228,
+            "publish_s": 0.039805007676477544,
+            "update_s": 1.4593144789978396,
+            "play_s": 10.446705087000737
+          },
+          "engine": {
+            "step_s": 21.238188424089458,
+            "step_n": 1933,
+            "reset_s": 0.059493134991498664,
+            "reset_n": 8,
+            "mask_s": 0.41948975979175884,
+            "mask_n": 1321
+          }
+        },
+        {
+          "wave": 3,
+          "elapsed_s": 38.42377338500228,
+          "wave_s": 12.486019356001634,
+          "games": 8,
+          "decisions": 4148,
+          "phases": {
+            "cache_request_s": 1.8628572499437723,
+            "act_batch_s": 8.90116857776593,
+            "act_batch_calls": 1686,
+            "act_rows": 4148,
+            "launch_s": 8.993381320949993,
+            "rounds": 604,
+            "wait_steps_s": 1.6731680320663145,
+            "consume_s": 0.07861005686572753,
+            "publish_s": 0.038917732395930216,
+            "update_s": 1.5574092699971516,
+            "play_s": 10.890193708997685
+          },
+          "engine": {
+            "step_s": 25.104913597853738,
+            "step_n": 2082,
+            "reset_s": 0.060170965996803716,
+            "reset_n": 8,
+            "mask_s": 0.5090322955220472,
+            "mask_n": 1576
+          }
+        }
+      ],
+      "cleanup_s": 0.31711119299870916,
+      "counters": {
+        "accepted_plays": 4065,
+        "decisions": 11508,
+        "simulated_seconds": 5739.549999999999,
+        "games": 24,
+        "losses": 19,
+        "training_games": 24,
+        "wins": 5,
+        "rejected_plays": 88,
+        "updates": 3
+      },
+      "errors": {},
+      "total_s": 38.74088457800099,
+      "games": 24,
+      "decisions": 11508,
+      "updates": 3,
+      "games_per_min": 37.17003407861534,
+      "decisions_per_s": 297.0505223449342,
+      "cache_request_s": 5.05887677129067,
+      "act_batch_s": 25.179476360892295,
+      "act_batch_calls": 4909,
+      "act_rows": 11508,
+      "launch_s": 25.442105877998983,
+      "rounds": 1780,
+      "wait_steps_s": 5.547456822940148,
+      "consume_s": 0.20019103845697828,
+      "publish_s": 0.11324043104832526,
+      "update_s": 4.494705225995858,
+      "play_s": 33.82987983500061,
+      "engine": {
+        "step_s": 64.2509017198754,
+        "step_n": 5778,
+        "reset_s": 15.554522589984117,
+        "reset_n": 24,
+        "mask_s": 1.3317684402136365,
+        "mask_n": 4153
+      },
+      "pace": {
+        "infer_s": 25.26653074331989,
+        "infer_batches": 1780,
+        "infer_games": 5754,
+        "engine_s": 113.01802937188768,
+        "engine_steps": 5754
+      },
+      "label": "20261023T001000Z-03-NEW8g2-s777",
+      "configuration": "NEW8g2",
+      "groups": 2,
+      "subprocess_wall_s": 41.80037452299439,
+      "command": "systemd-run --user --unit=cr-bench-safe-20261023t001000z-3.service --remain-after-exit --working-directory=/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --property=MemoryMax=8G --property=MemorySwapMax=0 --property=OOMPolicy=kill --property=KillMode=control-group --property=TimeoutStopSec=10 --property=RuntimeMaxSec=1200 --property=StandardOutput=append:/tmp/cr-prof/bench-safe/20261023T001000Z-03-NEW8g2-s777.stdout.log --property=StandardError=append:/tmp/cr-prof/bench-safe/20261023T001000Z-03-NEW8g2-s777.stdout.log --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONUNBUFFERED=1 /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python /tmp/cr-prof/bench-safe/bench_wave_measured.py --code-root /home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --workers 8 --waves 3 --seed 777 --run-dir /tmp/cr-prof/bench-safe/20261023T001000Z-03-NEW8g2-s777-scratch --extra '--step-groups 2'",
+      "memory_peak_bytes": 5712576512,
+      "unit": "cr-bench-safe-20261023t001000z-3.service"
+    },
+    {
+      "code_root": "/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine",
+      "workers": 8,
+      "waves": 3,
+      "seed": 2026,
+      "extra": "--step-groups 2",
+      "constructor_s": 0.9835192070022458,
+      "wave_records": [
+        {
+          "wave": 1,
+          "elapsed_s": 15.775015598992468,
+          "wave_s": 15.775015598992468,
+          "games": 8,
+          "decisions": 4438,
+          "phases": {
+            "cache_request_s": 1.9904194857808761,
+            "act_batch_s": 9.772222281753784,
+            "act_batch_calls": 1812,
+            "act_rows": 4438,
+            "launch_s": 9.88542251479521,
+            "rounds": 605,
+            "wait_steps_s": 1.668243062129477,
+            "consume_s": 0.07052303863747511,
+            "publish_s": 0.036261280736653134,
+            "update_s": 1.784383684003842,
+            "play_s": 13.966959092998877
+          },
+          "engine": {
+            "step_s": 27.48858381950413,
+            "step_n": 2227,
+            "reset_s": 15.645466591988225,
+            "reset_n": 8,
+            "mask_s": 0.5639541868440574,
+            "mask_n": 1795
+          }
+        },
+        {
+          "wave": 2,
+          "elapsed_s": 27.039803969993955,
+          "wave_s": 11.264788371001487,
+          "games": 8,
+          "decisions": 3446,
+          "phases": {
+            "cache_request_s": 1.498297831582022,
+            "act_batch_s": 7.642577030826942,
+            "act_batch_calls": 1560,
+            "act_rows": 3446,
+            "launch_s": 7.721640574076446,
+            "rounds": 603,
+            "wait_steps_s": 2.0273122231301386,
+            "consume_s": 0.05768587443162687,
+            "publish_s": 0.031592993036611006,
+            "update_s": 1.2845280260080472,
+            "play_s": 9.942240132993902
+          },
+          "engine": {
+            "step_s": 18.031050305537065,
+            "step_n": 1731,
+            "reset_s": 0.06487061700318009,
+            "reset_n": 8,
+            "mask_s": 0.44336590070452075,
+            "mask_n": 1157
+          }
+        },
+        {
+          "wave": 3,
+          "elapsed_s": 39.43921417198726,
+          "wave_s": 12.399410201993305,
+          "games": 8,
+          "decisions": 3404,
+          "phases": {
+            "cache_request_s": 1.5209214877104387,
+            "act_batch_s": 7.666838444041787,
+            "act_batch_calls": 1546,
+            "act_rows": 3404,
+            "launch_s": 7.7500187338737305,
+            "rounds": 516,
+            "wait_steps_s": 3.1190113380289404,
+            "consume_s": 0.059047901930171065,
+            "publish_s": 0.032903907223953865,
+            "update_s": 1.3059476149937836,
+            "play_s": 11.058114045998082
+          },
+          "engine": {
+            "step_s": 19.468398626791895,
+            "step_n": 1710,
+            "reset_s": 0.06104611200862564,
+            "reset_n": 8,
+            "mask_s": 0.3567041521309875,
+            "mask_n": 1103
+          }
+        }
+      ],
+      "cleanup_s": 0.3150541820068611,
+      "counters": {
+        "accepted_plays": 3952,
+        "decisions": 11288,
+        "simulated_seconds": 5631.600000000002,
+        "games": 24,
+        "losses": 16,
+        "training_games": 24,
+        "rejected_plays": 103,
+        "wins": 8,
+        "updates": 3
+      },
+      "errors": {},
+      "total_s": 39.75426835399412,
+      "games": 24,
+      "decisions": 11288,
+      "updates": 3,
+      "games_per_min": 36.22252552046585,
+      "decisions_per_s": 283.944352829874,
+      "cache_request_s": 5.009638805073337,
+      "act_batch_s": 25.081637756622513,
+      "act_batch_calls": 4918,
+      "act_rows": 11288,
+      "launch_s": 25.357081822745386,
+      "rounds": 1724,
+      "wait_steps_s": 6.814566623288556,
+      "consume_s": 0.18725681499927305,
+      "publish_s": 0.10192661499604583,
+      "update_s": 4.374859325005673,
+      "play_s": 34.96731327199086,
+      "engine": {
+        "step_s": 64.98803275183309,
+        "step_n": 5668,
+        "reset_s": 15.77138332100003,
+        "reset_n": 24,
+        "mask_s": 1.3640242396795657,
+        "mask_n": 4055
+      },
+      "pace": {
+        "infer_s": 25.170560874030343,
+        "infer_batches": 1724,
+        "infer_games": 5644,
+        "engine_s": 115.57431903855468,
+        "engine_steps": 5644
+      },
+      "label": "20261023T001000Z-04-NEW8g2-s2026",
+      "configuration": "NEW8g2",
+      "groups": 2,
+      "subprocess_wall_s": 42.77036516099179,
+      "command": "systemd-run --user --unit=cr-bench-safe-20261023t001000z-4.service --remain-after-exit --working-directory=/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --property=MemoryMax=8G --property=MemorySwapMax=0 --property=OOMPolicy=kill --property=KillMode=control-group --property=TimeoutStopSec=10 --property=RuntimeMaxSec=1200 --property=StandardOutput=append:/tmp/cr-prof/bench-safe/20261023T001000Z-04-NEW8g2-s2026.stdout.log --property=StandardError=append:/tmp/cr-prof/bench-safe/20261023T001000Z-04-NEW8g2-s2026.stdout.log --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONUNBUFFERED=1 /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python /tmp/cr-prof/bench-safe/bench_wave_measured.py --code-root /home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --workers 8 --waves 3 --seed 2026 --run-dir /tmp/cr-prof/bench-safe/20261023T001000Z-04-NEW8g2-s2026-scratch --extra '--step-groups 2'",
+      "memory_peak_bytes": 5714653184,
+      "unit": "cr-bench-safe-20261023t001000z-4.service"
+    },
+    {
+      "code_root": "/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine",
+      "workers": 8,
+      "waves": 3,
+      "seed": 2026,
+      "extra": "--step-groups 1",
+      "constructor_s": 0.9601457870012382,
+      "wave_records": [
+        {
+          "wave": 1,
+          "elapsed_s": 16.601638313004514,
+          "wave_s": 16.601638313004514,
+          "games": 8,
+          "decisions": 4438,
+          "phases": {
+            "cache_request_s": 1.5995876670640428,
+            "act_batch_s": 5.768569456937257,
+            "act_batch_calls": 909,
+            "act_rows": 4438,
+            "launch_s": 5.900299680055468,
+            "rounds": 303,
+            "wait_steps_s": 6.125414832975366,
+            "consume_s": 0.06019326756359078,
+            "publish_s": 0.03248488006647676,
+            "update_s": 1.847004162002122,
+            "play_s": 14.729864155990072
+          },
+          "engine": {
+            "step_s": 28.86065682696062,
+            "step_n": 2227,
+            "reset_s": 17.58236540199141,
+            "reset_n": 8,
+            "mask_s": 0.6536362987244502,
+            "mask_n": 1795
+          }
+        },
+        {
+          "wave": 2,
+          "elapsed_s": 26.476986712004873,
+          "wave_s": 9.875348399000359,
+          "games": 8,
+          "decisions": 2610,
+          "phases": {
+            "cache_request_s": 0.8648382454994135,
+            "act_batch_s": 3.587693644076353,
+            "act_batch_calls": 668,
+            "act_rows": 2610,
+            "launch_s": 3.6488087088655448,
+            "rounds": 303,
+            "wait_steps_s": 5.0029242960736156,
+            "consume_s": 0.03755361273942981,
+            "publish_s": 0.03322894668963272,
+            "update_s": 1.0661217869928805,
+            "play_s": 8.765223476002575
+          },
+          "engine": {
+            "step_s": 12.898537998626125,
+            "step_n": 1313,
+            "reset_s": 0.06569727099849842,
+            "reset_n": 8,
+            "mask_s": 0.2750364319217624,
+            "mask_n": 814
+          }
+        },
+        {
+          "wave": 3,
+          "elapsed_s": 39.16660442799912,
+          "wave_s": 12.689617715994245,
+          "games": 8,
+          "decisions": 3372,
+          "phases": {
+            "cache_request_s": 1.3033855529210996,
+            "act_batch_s": 5.024439602653729,
+            "act_batch_calls": 894,
+            "act_rows": 3372,
+            "launch_s": 5.122659728964209,
+            "rounds": 303,
+            "wait_steps_s": 6.091911285824608,
+            "consume_s": 0.05267299014667515,
+            "publish_s": 0.03495374204067048,
+            "update_s": 1.306766873007291,
+            "play_s": 11.348223338995012
+          },
+          "engine": {
+            "step_s": 20.39688190506422,
+            "step_n": 1694,
+            "reset_s": 0.06045792403165251,
+            "reset_n": 8,
+            "mask_s": 0.3920134716609027,
+            "mask_n": 1138
+          }
+        }
+      ],
+      "cleanup_s": 0.3161921290011378,
+      "counters": {
+        "accepted_plays": 3660,
+        "decisions": 10420,
+        "simulated_seconds": 5194.750000000001,
+        "games": 24,
+        "losses": 16,
+        "training_games": 24,
+        "rejected_plays": 87,
+        "wins": 8,
+        "updates": 3
+      },
+      "errors": {},
+      "total_s": 39.482796557000256,
+      "games": 24,
+      "decisions": 10420,
+      "updates": 3,
+      "games_per_min": 36.47158067745051,
+      "decisions_per_s": 263.91241017988494,
+      "cache_request_s": 3.767811465484556,
+      "act_batch_s": 14.380702703667339,
+      "act_batch_calls": 2471,
+      "act_rows": 10420,
+      "launch_s": 14.671768117885222,
+      "rounds": 909,
+      "wait_steps_s": 17.22025041487359,
+      "consume_s": 0.15041987044969574,
+      "publish_s": 0.10222894778416958,
+      "update_s": 4.2198928220022935,
+      "play_s": 34.84331097098766,
+      "engine": {
+        "step_s": 62.156076730650966,
+        "step_n": 5234,
+        "reset_s": 17.70852059702156,
+        "reset_n": 24,
+        "mask_s": 1.3206862023071153,
+        "mask_n": 3747
+      },
+      "pace": {
+        "infer_s": 14.431435419857735,
+        "infer_batches": 909,
+        "infer_games": 5210,
+        "engine_s": 99.60194764469634,
+        "engine_steps": 5210
+      },
+      "label": "20261023T001000Z-05-NEW8g1-s2026",
+      "configuration": "NEW8g1",
+      "groups": 1,
+      "subprocess_wall_s": 42.28624942000897,
+      "command": "systemd-run --user --unit=cr-bench-safe-20261023t001000z-5.service --remain-after-exit --working-directory=/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --property=MemoryMax=8G --property=MemorySwapMax=0 --property=OOMPolicy=kill --property=KillMode=control-group --property=TimeoutStopSec=10 --property=RuntimeMaxSec=1200 --property=StandardOutput=append:/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026.stdout.log --property=StandardError=append:/tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026.stdout.log --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONUNBUFFERED=1 /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python /tmp/cr-prof/bench-safe/bench_wave_measured.py --code-root /home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --workers 8 --waves 3 --seed 2026 --run-dir /tmp/cr-prof/bench-safe/20261023T001000Z-05-NEW8g1-s2026-scratch --extra '--step-groups 1'",
+      "memory_peak_bytes": 5711572992,
+      "unit": "cr-bench-safe-20261023t001000z-5.service"
+    },
+    {
+      "code_root": "/home/cochon/Documents/mini-project/clash-royale-ai/engine",
+      "workers": 8,
+      "waves": 3,
+      "seed": 2026,
+      "extra": "",
+      "constructor_s": 1.0354168769990792,
+      "wave_records": [
+        {
+          "wave": 1,
+          "elapsed_s": 30.50711923399649,
+          "wave_s": 30.50711923399649,
+          "games": 8,
+          "decisions": 4438,
+          "phases": {
+            "cache_request_s": 13.668061438540462,
+            "act_batch_s": 19.42378378783178,
+            "act_batch_calls": 1209,
+            "act_rows": 4438,
+            "launch_s": 19.608799877081765,
+            "rounds": 303,
+            "wait_steps_s": 6.299761031099479,
+            "consume_s": 0.0700174802186666,
+            "publish_s": 0.0856773569539655,
+            "update_s": 1.9648136049945606,
+            "play_s": 28.49660836000112
+          },
+          "engine": {
+            "step_s": 30.193475309453788,
+            "step_n": 2227,
+            "reset_s": 16.510120468999958,
+            "reset_n": 8,
+            "mask_s": 0.5033856082445709,
+            "mask_n": 1795
+          }
+        },
+        {
+          "wave": 2,
+          "elapsed_s": 49.91389286800404,
+          "wave_s": 19.40677363400755,
+          "games": 8,
+          "decisions": 3112,
+          "phases": {
+            "cache_request_s": 7.308568791660946,
+            "act_batch_s": 11.919121244907728,
+            "act_batch_calls": 1079,
+            "act_rows": 3112,
+            "launch_s": 12.045075939080562,
+            "rounds": 302,
+            "wait_steps_s": 5.920947427061037,
+            "consume_s": 0.052803386803134345,
+            "publish_s": 0.04433207801776007,
+            "update_s": 1.2314635989896487,
+            "play_s": 18.131992733993684
+          },
+          "engine": {
+            "step_s": 19.54057316003309,
+            "step_n": 1564,
+            "reset_s": 0.13214990502456203,
+            "reset_n": 8,
+            "mask_s": 0.28708611670299433,
+            "mask_n": 983
+          }
+        },
+        {
+          "wave": 3,
+          "elapsed_s": 67.08380920099444,
+          "wave_s": 17.169916332990397,
+          "games": 8,
+          "decisions": 3082,
+          "phases": {
+            "cache_request_s": 6.211961757871904,
+            "act_batch_s": 10.022815441989223,
+            "act_batch_calls": 1042,
+            "act_rows": 3082,
+            "launch_s": 10.109813296076027,
+            "rounds": 303,
+            "wait_steps_s": 5.604084926017094,
+            "consume_s": 0.04678294488985557,
+            "publish_s": 0.062030938133830205,
+            "update_s": 1.2584376349986997,
+            "play_s": 15.876119726002798
+          },
+          "engine": {
+            "step_s": 17.7363273933006,
+            "step_n": 1549,
+            "reset_s": 0.12190360501699615,
+            "reset_n": 8,
+            "mask_s": 0.2694077511114301,
+            "mask_n": 934
+          }
+        }
+      ],
+      "cleanup_s": 0.31381414500356186,
+      "counters": {
+        "accepted_plays": 3643,
+        "decisions": 10632,
+        "simulated_seconds": 5303.1500000000015,
+        "games": 24,
+        "losses": 15,
+        "training_games": 24,
+        "rejected_plays": 69,
+        "wins": 8,
+        "updates": 3,
+        "draws": 1
+      },
+      "errors": {},
+      "total_s": 67.397623345998,
+      "games": 24,
+      "decisions": 10632,
+      "updates": 3,
+      "games_per_min": 21.365738560356903,
+      "decisions_per_s": 157.75036970396846,
+      "cache_request_s": 27.188591988073313,
+      "act_batch_s": 41.36572047472873,
+      "act_batch_calls": 3330,
+      "act_rows": 10632,
+      "launch_s": 41.76368911223835,
+      "rounds": 908,
+      "wait_steps_s": 17.82479338417761,
+      "consume_s": 0.16960381191165652,
+      "publish_s": 0.1931627431040397,
+      "update_s": 4.454714838982909,
+      "play_s": 62.5047208199976,
+      "engine": {
+        "step_s": 67.47037586278748,
+        "step_n": 5340,
+        "reset_s": 16.764173979041516,
+        "reset_n": 24,
+        "mask_s": 1.0598794760589954,
+        "mask_n": 3712
+      },
+      "pace": {
+        "infer_s": 41.43362275620166,
+        "infer_batches": 908,
+        "infer_games": 5316,
+        "engine_s": 107.04832082126813,
+        "engine_steps": 5316
+      },
+      "label": "20261023T001000Z-06-BASELINE8-s2026",
+      "configuration": "BASELINE8",
+      "groups": null,
+      "subprocess_wall_s": 70.33523148100358,
+      "command": "systemd-run --user --unit=cr-bench-safe-20261023t001000z-6.service --remain-after-exit --working-directory=/home/cochon/Documents/mini-project/clash-royale-ai/engine --property=MemoryMax=8G --property=MemorySwapMax=0 --property=OOMPolicy=kill --property=KillMode=control-group --property=TimeoutStopSec=10 --property=RuntimeMaxSec=1200 --property=StandardOutput=append:/tmp/cr-prof/bench-safe/20261023T001000Z-06-BASELINE8-s2026.stdout.log --property=StandardError=append:/tmp/cr-prof/bench-safe/20261023T001000Z-06-BASELINE8-s2026.stdout.log --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONUNBUFFERED=1 /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python /tmp/cr-prof/bench-safe/bench_wave_measured.py --code-root /home/cochon/Documents/mini-project/clash-royale-ai/engine --workers 8 --waves 3 --seed 2026 --run-dir /tmp/cr-prof/bench-safe/20261023T001000Z-06-BASELINE8-s2026-scratch",
+      "memory_peak_bytes": 5720297472,
+      "unit": "cr-bench-safe-20261023t001000z-6.service"
+    }
+  ],
+  "medians": {
+    "BASELINE8": {
+      "total_s": 71.4021264519979,
+      "games": 24.0,
+      "decisions": 11010.0,
+      "games_per_min": 20.231101368263275,
+      "decisions_per_s": 154.38578694858836,
+      "constructor_s": 1.3064740329937194,
+      "cleanup_s": 0.32492104800621746,
+      "cache_request_s": 30.149788618116872,
+      "act_batch_s": 45.20406070072204,
+      "act_batch_calls": 3255.5,
+      "launch_s": 45.642864618683234,
+      "wait_steps_s": 17.710179701593006,
+      "consume_s": 0.18794158181844978,
+      "publish_s": 0.21829525627981639,
+      "update_s": 4.710549689989421,
+      "memory_peak_bytes": 6018646016.0,
+      "first_wave_s": 26.689924628997687,
+      "first_wave_games_per_min": 18.359860684528236,
+      "first_wave_decisions_per_s": 149.4660458310489,
+      "later_games_per_min": 22.31888927659923,
+      "later_decisions_per_s": 160.13425944605655,
+      "act_minus_encoding_s": 15.054272082605166,
+      "residual_reset_orchestration_s": 2.9322956036339747,
+      "engine_reset_sum_s": 16.62202761453227,
+      "engine_step_sum_s": 69.09427171233983,
+      "engine_mask_sum_s": 1.1382087891470292
+    },
+    "NEW8g1": {
+      "total_s": 43.03075413549959,
+      "games": 24.0,
+      "decisions": 10854.0,
+      "games_per_min": 33.69349566172603,
+      "decisions_per_s": 253.1274395941319,
+      "constructor_s": 1.1001177505022497,
+      "cleanup_s": 0.3173543114971835,
+      "cache_request_s": 4.473280158759735,
+      "act_batch_s": 17.025569634250132,
+      "act_batch_calls": 2599.0,
+      "launch_s": 17.401463958514796,
+      "wait_steps_s": 17.784750092330796,
+      "consume_s": 0.17353380014537834,
+      "publish_s": 0.12201544392155483,
+      "update_s": 4.472980163503962,
+      "memory_peak_bytes": 5722386432.0,
+      "first_wave_s": 16.57202088300255,
+      "first_wave_games_per_min": 28.96457448038757,
+      "first_wave_decisions_per_s": 239.75249972577535,
+      "later_games_per_min": 37.42385352675721,
+      "later_decisions_per_s": 263.41497569626904,
+      "act_minus_encoding_s": 12.552289475490397,
+      "residual_reset_orchestration_s": 3.0760106770831044,
+      "engine_reset_sum_s": 18.07140580502164,
+      "engine_step_sum_s": 67.50645126818563,
+      "engine_mask_sum_s": 1.426503183080058
+    },
+    "NEW8g2": {
+      "total_s": 39.247576465997554,
+      "games": 24.0,
+      "decisions": 11398.0,
+      "games_per_min": 36.69627979954059,
+      "decisions_per_s": 290.4974375874041,
+      "constructor_s": 0.9903107819991419,
+      "cleanup_s": 0.3160826875027851,
+      "cache_request_s": 5.034257788182003,
+      "act_batch_s": 25.130557058757404,
+      "act_batch_calls": 4913.5,
+      "launch_s": 25.399593850372185,
+      "wait_steps_s": 6.181011723114352,
+      "consume_s": 0.19372392672812566,
+      "publish_s": 0.10758352302218555,
+      "update_s": 4.4347822755007655,
+      "memory_peak_bytes": 5713614848.0,
+      "first_wave_s": 14.885326338000596,
+      "first_wave_games_per_min": 32.3621322360272,
+      "first_wave_decisions_per_s": 266.0616920505907,
+      "later_games_per_min": 39.93327825315559,
+      "later_decisions_per_s": 308.4380737618758,
+      "act_minus_encoding_s": 20.0962992705754,
+      "residual_reset_orchestration_s": 2.9308811672599404,
+      "engine_reset_sum_s": 15.662952955492074,
+      "engine_step_sum_s": 64.61946723585424,
+      "engine_mask_sum_s": 1.347896339946601
+    }
+  },
+  "paired_speedups": [
+    {
+      "a": "BASELINE8",
+      "b": "NEW8g1",
+      "seeds": [
+        {
+          "seed": 777,
+          "games_per_min": 1.618907582094737,
+          "decisions_per_s": 1.6046916742786608,
+          "first_wave_games_per_min": 1.3826727227989384,
+          "first_wave_decisions_per_s": 1.3826727227989384
+        },
+        {
+          "seed": 2026,
+          "games_per_min": 1.7070124009249916,
+          "decisions_per_s": 1.672974907603312,
+          "first_wave_games_per_min": 1.8375969081376404,
+          "first_wave_decisions_per_s": 1.8375969081376406
+        }
+      ],
+      "range": {
+        "games_per_min": {
+          "min": 1.618907582094737,
+          "max": 1.7070124009249916,
+          "median": 1.6629599915098643
+        },
+        "decisions_per_s": {
+          "min": 1.6046916742786608,
+          "max": 1.672974907603312,
+          "median": 1.6388332909409864
+        },
+        "first_wave_games_per_min": {
+          "min": 1.3826727227989384,
+          "max": 1.8375969081376404,
+          "median": 1.6101348154682893
+        },
+        "first_wave_decisions_per_s": {
+          "min": 1.3826727227989384,
+          "max": 1.8375969081376406,
+          "median": 1.6101348154682895
+        }
+      }
+    },
+    {
+      "a": "BASELINE8",
+      "b": "NEW8g2",
+      "seeds": [
+        {
+          "seed": 777,
+          "games_per_min": 1.9464354100168757,
+          "decisions_per_s": 1.9669457936840713,
+          "first_wave_games_per_min": 1.6342757316544718,
+          "first_wave_decisions_per_s": 1.6342757316544718
+        },
+        {
+          "seed": 2026,
+          "games_per_min": 1.6953556469924704,
+          "decisions_per_s": 1.7999599833757531,
+          "first_wave_games_per_min": 1.9338883719357427,
+          "first_wave_decisions_per_s": 1.9338883719357427
+        }
+      ],
+      "range": {
+        "games_per_min": {
+          "min": 1.6953556469924704,
+          "max": 1.9464354100168757,
+          "median": 1.820895528504673
+        },
+        "decisions_per_s": {
+          "min": 1.7999599833757531,
+          "max": 1.9669457936840713,
+          "median": 1.8834528885299122
+        },
+        "first_wave_games_per_min": {
+          "min": 1.6342757316544718,
+          "max": 1.9338883719357427,
+          "median": 1.7840820517951073
+        },
+        "first_wave_decisions_per_s": {
+          "min": 1.6342757316544718,
+          "max": 1.9338883719357427,
+          "median": 1.7840820517951073
+        }
+      }
+    },
+    {
+      "a": "NEW8g1",
+      "b": "NEW8g2",
+      "seeds": [
+        {
+          "seed": 777,
+          "games_per_min": 1.2023140984356524,
+          "decisions_per_s": 1.2257468678948873,
+          "first_wave_games_per_min": 1.181968592210465,
+          "first_wave_decisions_per_s": 1.181968592210465
+        },
+        {
+          "seed": 2026,
+          "games_per_min": 0.9931712541009048,
+          "decisions_per_s": 1.0759037539626692,
+          "first_wave_games_per_min": 1.0524007541434597,
+          "first_wave_decisions_per_s": 1.0524007541434597
+        }
+      ],
+      "range": {
+        "games_per_min": {
+          "min": 0.9931712541009048,
+          "max": 1.2023140984356524,
+          "median": 1.0977426762682785
+        },
+        "decisions_per_s": {
+          "min": 1.0759037539626692,
+          "max": 1.2257468678948873,
+          "median": 1.1508253109287783
+        },
+        "first_wave_games_per_min": {
+          "min": 1.0524007541434597,
+          "max": 1.181968592210465,
+          "median": 1.1171846731769624
+        },
+        "first_wave_decisions_per_s": {
+          "min": 1.0524007541434597,
+          "max": 1.181968592210465,
+          "median": 1.1171846731769624
+        }
+      }
+    }
+  ],
+  "outcome_agreement": [
+    {
+      "a": "BASELINE8",
+      "b": "NEW8g1",
+      "seed": 777,
+      "paired": 24,
+      "union": 24,
+      "exact": 11,
+      "per_wave": [
+        {
+          "wave": 1,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 8,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 8,
+            "seconds": 8
+          }
+        },
+        {
+          "wave": 2,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 3,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 5,
+            "seconds": 3
+          }
+        },
+        {
+          "wave": 3,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 0,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 8,
+            "seconds": 0
+          }
+        }
+      ],
+      "mismatches": [
+        {
+          "policy_version": 1,
+          "seed": 99350777,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.55
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.75
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 239607631,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 300.65
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 188.05
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 290988490,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.1
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.0
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 915666144,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 186.7
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 175.05
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 923382614,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.5
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.4
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 156566592,
+          "a": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 209.0
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 271639737,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.2
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.5
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 353480184,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 135.95
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 164.6
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 421045866,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 279.85
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.25
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 489433939,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 300.75
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 539228271,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 213.4
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 300.85
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 736849942,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.15
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 203.4
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 823234511,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.35
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.45
+          }
+        }
+      ]
+    },
+    {
+      "a": "BASELINE8",
+      "b": "NEW8g2",
+      "seed": 777,
+      "paired": 24,
+      "union": 24,
+      "exact": 17,
+      "per_wave": [
+        {
+          "wave": 1,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 8,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 8,
+            "seconds": 8
+          }
+        },
+        {
+          "wave": 2,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 8,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 8,
+            "seconds": 8
+          }
+        },
+        {
+          "wave": 3,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 1,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 8,
+            "seconds": 1
+          }
+        }
+      ],
+      "mismatches": [
+        {
+          "policy_version": 2,
+          "seed": 271639737,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.2
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.9
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 353480184,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 135.95
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 172.2
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 421045866,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 279.85
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.35
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 489433939,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 300.75
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.9
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 539228271,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 213.4
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 214.65
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 736849942,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.15
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.4
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 823234511,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.35
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.5
+          }
+        }
+      ]
+    },
+    {
+      "a": "NEW8g1",
+      "b": "NEW8g2",
+      "seed": 777,
+      "paired": 24,
+      "union": 24,
+      "exact": 11,
+      "per_wave": [
+        {
+          "wave": 1,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 8,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 8,
+            "seconds": 8
+          }
+        },
+        {
+          "wave": 2,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 3,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 5,
+            "seconds": 3
+          }
+        },
+        {
+          "wave": 3,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 0,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 8,
+            "seconds": 0
+          }
+        }
+      ],
+      "mismatches": [
+        {
+          "policy_version": 1,
+          "seed": 99350777,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.75
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.55
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 239607631,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 188.05
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 300.65
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 290988490,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.0
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.1
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 915666144,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 186.7
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 923382614,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.4
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.5
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 156566592,
+          "a": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 209.0
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 175.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 271639737,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.5
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.9
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 353480184,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 164.6
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 172.2
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 421045866,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.25
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.35
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 489433939,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.05
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.9
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 539228271,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 300.85
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 214.65
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 736849942,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 203.4
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.4
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 823234511,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.45
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "W",
+            "seconds": 301.5
+          }
+        }
+      ]
+    },
+    {
+      "a": "BASELINE8",
+      "b": "NEW8g1",
+      "seed": 2026,
+      "paired": 24,
+      "union": 24,
+      "exact": 9,
+      "per_wave": [
+        {
+          "wave": 1,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 8,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 8,
+            "seconds": 8
+          }
+        },
+        {
+          "wave": 2,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 1,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 6,
+            "seconds": 1
+          }
+        },
+        {
+          "wave": 3,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 0,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 8,
+            "seconds": 0
+          }
+        }
+      ],
+      "mismatches": [
+        {
+          "policy_version": 1,
+          "seed": 62739630,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 50.4
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 50.35
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 93780898,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 126.7
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 178755235,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.8
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 301.3
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 448156877,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 240.85
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 175.05
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 876822164,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "D",
+            "seconds": 298.4
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.05
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 898528755,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 134.75
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 107.75
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 933362516,
+          "a": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 61.85
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 1465833,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 49.6
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 48.2
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 93905407,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 239.55
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.35
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 355127010,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 195.3
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 212.3
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 383410855,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 186.95
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 508890233,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 293.85
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.25
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 548800919,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 94.85
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 52.1
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 597258183,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 287.85
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 644012012,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.15
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.05
+          }
+        }
+      ]
+    },
+    {
+      "a": "BASELINE8",
+      "b": "NEW8g2",
+      "seed": 2026,
+      "paired": 24,
+      "union": 24,
+      "exact": 11,
+      "per_wave": [
+        {
+          "wave": 1,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 8,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 8,
+            "seconds": 8
+          }
+        },
+        {
+          "wave": 2,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 2,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 7,
+            "seconds": 2
+          }
+        },
+        {
+          "wave": 3,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 7,
+          "exact": 1,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 7,
+            "seat": 8,
+            "result": 7,
+            "seconds": 1
+          }
+        }
+      ],
+      "mismatches": [
+        {
+          "policy_version": 1,
+          "seed": 62739630,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 50.4
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 53.5
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 448156877,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 240.85
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 191.0
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 693361549,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 300.25
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 876822164,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "D",
+            "seconds": 298.4
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.1
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 898528755,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 134.75
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 96.7
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 933362516,
+          "a": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 299.8
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 1465833,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 49.6
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 143.25
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 93905407,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 239.55
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.35
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 355127010,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 195.3
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 212.6
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 383410855,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 186.95
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 209.25
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 508890233,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 293.85
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.85
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 548800919,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 94.85
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 53.0
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 644012012,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 302.15
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 300.55
+          }
+        }
+      ]
+    },
+    {
+      "a": "NEW8g1",
+      "b": "NEW8g2",
+      "seed": 2026,
+      "paired": 24,
+      "union": 24,
+      "exact": 8,
+      "per_wave": [
+        {
+          "wave": 1,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 8,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 8,
+            "seconds": 8
+          }
+        },
+        {
+          "wave": 2,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 8,
+          "exact": 0,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 8,
+            "seat": 8,
+            "result": 7,
+            "seconds": 0
+          }
+        },
+        {
+          "wave": 3,
+          "count_a": 8,
+          "count_b": 8,
+          "paired": 8,
+          "jobs_equal": 7,
+          "exact": 0,
+          "fields_equal": {
+            "deck_id": 8,
+            "controller": 7,
+            "seat": 8,
+            "result": 7,
+            "seconds": 1
+          }
+        }
+      ],
+      "mismatches": [
+        {
+          "policy_version": 1,
+          "seed": 62739630,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 50.35
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 53.5
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 93780898,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 126.7
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 178755235,
+          "a": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 301.3
+          },
+          "b": {
+            "deck_id": "hog-mirror",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.8
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 448156877,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 191.0
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 693361549,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 300.25
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 876822164,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.05
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 301.1
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 898528755,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 107.75
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 96.7
+          }
+        },
+        {
+          "policy_version": 1,
+          "seed": 933362516,
+          "a": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 61.85
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 299.8
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 1465833,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 48.2
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 143.25
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 93905407,
+          "a": {
+            "deck_id": "custom-mortar",
+            "controller": "bc-sampled",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.35
+          },
+          "b": {
+            "deck_id": "custom-mortar",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.35
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 355127010,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 212.3
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 212.6
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 383410855,
+          "a": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 175.05
+          },
+          "b": {
+            "deck_id": "golem",
+            "controller": "bc-sampled",
+            "seat": 0,
+            "result": "L",
+            "seconds": 209.25
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 508890233,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 302.25
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 302.85
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 548800919,
+          "a": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 52.1
+          },
+          "b": {
+            "deck_id": "pekka-bridge",
+            "controller": "bc-greedy",
+            "seat": 0,
+            "result": "L",
+            "seconds": 53.0
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 597258183,
+          "a": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 287.85
+          },
+          "b": {
+            "deck_id": "log-bait",
+            "controller": "hog1-greedy",
+            "seat": 0,
+            "result": "W",
+            "seconds": 175.05
+          }
+        },
+        {
+          "policy_version": 2,
+          "seed": 644012012,
+          "a": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 301.05
+          },
+          "b": {
+            "deck_id": "lava-loon",
+            "controller": "bc-greedy",
+            "seat": 1,
+            "result": "L",
+            "seconds": 300.55
+          }
+        }
+      ]
+    }
+  ],
+  "training_curves": {
+    "20261023T001000Z-01-BASELINE8-s777": [
+      {
+        "at": "2026-10-23T00:10:26.746952+00:00",
+        "updates": 1,
+        "loss": -0.010827635082283191,
+        "policy_loss": -0.012136478110083513,
+        "value_loss": 0.014791419696328896,
+        "entropy": 3.0466069834572926,
+        "approx_kl": 0.0009167909410590568,
+        "parent_card_kl": 6.301030201630706e-05,
+        "parent_wait_kl": 2.3768697826450795e-06,
+        "clip_fraction": 0.041088837664574385,
+        "grad_norm": 4.371927457196372,
+        "samples": 1755,
+        "minibatches": 28,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.191099613904953,
+        "parent_kl": 0.00016500626225024462
+      },
+      {
+        "at": "2026-10-23T00:10:51.608645+00:00",
+        "updates": 2,
+        "loss": 0.02265350451489212,
+        "policy_loss": 0.017178578578750603,
+        "value_loss": 0.023274681414477527,
+        "entropy": 3.0955136977136135,
+        "approx_kl": 0.0009168652717634583,
+        "parent_card_kl": 0.0002856922915270843,
+        "parent_wait_kl": 2.1916887540385233e-06,
+        "clip_fraction": 0.049165625736350194,
+        "grad_norm": 3.91347898170352,
+        "samples": 1925,
+        "minibatches": 32,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.1894838660955429,
+        "parent_kl": 0.00045043783029541373
+      },
+      {
+        "at": "2026-10-23T00:11:18.929206+00:00",
+        "updates": 3,
+        "loss": 0.017929582274518907,
+        "policy_loss": -0.014428630194743164,
+        "value_loss": 0.07704246731009334,
+        "entropy": 3.1037582680583,
+        "approx_kl": 0.0008451405155144726,
+        "parent_card_kl": 0.0004435436381982072,
+        "parent_wait_kl": 7.0454513121376294e-06,
+        "clip_fraction": 0.03861646607401781,
+        "grad_norm": 4.313371039927006,
+        "samples": 2014,
+        "minibatches": 32,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.3708813786506653,
+        "parent_kl": 0.0004773701657541096
+      }
+    ],
+    "20261023T001000Z-02-NEW8g1-s777": [
+      {
+        "at": "2026-10-23T00:11:40.015429+00:00",
+        "updates": 1,
+        "loss": -0.011290001117491297,
+        "policy_loss": -0.012674658492739712,
+        "value_loss": 0.014914969564415514,
+        "entropy": 3.039548099040985,
+        "approx_kl": 0.0008716121360899605,
+        "parent_card_kl": 6.255869263733465e-05,
+        "parent_wait_kl": 6.784186896067825e-07,
+        "clip_fraction": 0.03367034981160292,
+        "grad_norm": 4.44822542156492,
+        "samples": 1755,
+        "minibatches": 28,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.191099613904953,
+        "parent_kl": 0.00011260950850555673
+      },
+      {
+        "at": "2026-10-23T00:11:54.312430+00:00",
+        "updates": 2,
+        "loss": 0.0022875511553138495,
+        "policy_loss": -0.019036226502309243,
+        "value_loss": 0.05492380059634646,
+        "entropy": 3.0738227168718972,
+        "approx_kl": 0.0005627315659492704,
+        "parent_card_kl": 9.493541122841028e-05,
+        "parent_wait_kl": 1.5272660742008763e-06,
+        "clip_fraction": 0.02824122135837873,
+        "grad_norm": 4.251638297239939,
+        "samples": 1800,
+        "minibatches": 30,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.322598397731781,
+        "parent_kl": 0.0002223328046966344
+      },
+      {
+        "at": "2026-10-23T00:12:09.742625+00:00",
+        "updates": 3,
+        "loss": 0.022426332593621576,
+        "policy_loss": -0.0029120381839354247,
+        "value_loss": 0.06310717136982609,
+        "entropy": 3.119359212763169,
+        "approx_kl": 0.0005773295905020645,
+        "parent_card_kl": 0.00023425167391371147,
+        "parent_wait_kl": 3.981182653192531e-06,
+        "clip_fraction": 0.02096548879190403,
+        "grad_norm": 4.642163718447966,
+        "samples": 2089,
+        "minibatches": 34,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.3391590416431427,
+        "parent_kl": 0.00034017988946288824
+      }
+    ],
+    "20261023T001000Z-03-NEW8g2-s777": [
+      {
+        "at": "2026-10-23T00:12:27.004790+00:00",
+        "updates": 1,
+        "loss": -0.010830797121993132,
+        "policy_loss": -0.012139595562725194,
+        "value_loss": 0.014791331021115184,
+        "entropy": 3.0466083032744273,
+        "approx_kl": 0.0009170449721529235,
+        "parent_card_kl": 6.301028322549687e-05,
+        "parent_wait_kl": 2.3760459018719515e-06,
+        "clip_fraction": 0.041088837664574385,
+        "grad_norm": 4.3716561283384054,
+        "samples": 1755,
+        "minibatches": 28,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.19109979271888733,
+        "parent_kl": 0.00016499494086019695
+      },
+      {
+        "at": "2026-10-23T00:12:38.946340+00:00",
+        "updates": 2,
+        "loss": 0.006986406311625615,
+        "policy_loss": 0.001826934089876886,
+        "value_loss": 0.022873238820466213,
+        "entropy": 3.1518544405698776,
+        "approx_kl": 0.0011505467910286823,
+        "parent_card_kl": 0.00026519240532252297,
+        "parent_wait_kl": 2.144442767360033e-06,
+        "clip_fraction": 0.06294351496035233,
+        "grad_norm": 4.369420439004898,
+        "samples": 1925,
+        "minibatches": 32,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.18951694667339325,
+        "parent_kl": 0.0008623335161246359
+      },
+      {
+        "at": "2026-10-23T00:12:51.431476+00:00",
+        "updates": 3,
+        "loss": 0.01893545818679473,
+        "policy_loss": -0.009548056303174235,
+        "value_loss": 0.0695069288725362,
+        "entropy": 3.157643759951872,
+        "approx_kl": 0.0007411415084339664,
+        "parent_card_kl": 0.00045088241056552813,
+        "parent_wait_kl": 1.2469726002831629e-05,
+        "clip_fraction": 0.03042896116590675,
+        "grad_norm": 4.391741370453554,
+        "samples": 2074,
+        "minibatches": 34,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.3642740845680237,
+        "parent_kl": 0.0003992155834566802
+      }
+    ],
+    "20261023T001000Z-04-NEW8g2-s2026": [
+      {
+        "at": "2026-10-23T00:13:10.581288+00:00",
+        "updates": 1,
+        "loss": 0.0009469392049747208,
+        "policy_loss": -0.008030791094319688,
+        "value_loss": 0.030442008334729407,
+        "entropy": 3.1288204391797385,
+        "approx_kl": 0.0012929601097590186,
+        "parent_card_kl": 0.00014311471798262373,
+        "parent_wait_kl": 2.7565464640765135e-06,
+        "clip_fraction": 0.05708413511618144,
+        "grad_norm": 4.613783895969391,
+        "samples": 2219,
+        "minibatches": 36,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.2299719899892807,
+        "parent_kl": 0.0002598321589175612
+      },
+      {
+        "at": "2026-10-23T00:13:21.845358+00:00",
+        "updates": 2,
+        "loss": 0.0010875457498644079,
+        "policy_loss": -0.007708989782258868,
+        "value_loss": 0.030010290410635725,
+        "entropy": 3.1108139838491167,
+        "approx_kl": 0.0006194969473507307,
+        "parent_card_kl": 0.00012997949592577891,
+        "parent_wait_kl": 1.0131061247063502e-06,
+        "clip_fraction": 0.021268147975206375,
+        "grad_norm": 5.160797766276768,
+        "samples": 1723,
+        "minibatches": 28,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.22078809142112732,
+        "parent_kl": 0.00015299979713745415
+      },
+      {
+        "at": "2026-10-23T00:13:34.244081+00:00",
+        "updates": 3,
+        "loss": 0.007614365396355944,
+        "policy_loss": -0.009431512693741493,
+        "value_loss": 0.046083670774740834,
+        "entropy": 3.0075674993651256,
+        "approx_kl": 0.0003420421692769067,
+        "parent_card_kl": 0.0001883651362472197,
+        "parent_wait_kl": 1.7010775885799895e-05,
+        "clip_fraction": 0.010730548828308071,
+        "grad_norm": 4.411809716905866,
+        "samples": 1702,
+        "minibatches": 28,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.29158082604408264,
+        "parent_kl": 0.0003320330288261175
+      }
+    ],
+    "20261023T001000Z-05-NEW8g1-s2026": [
+      {
+        "at": "2026-10-23T00:13:54.183830+00:00",
+        "updates": 1,
+        "loss": 0.007850460811621614,
+        "policy_loss": -0.000793097883514646,
+        "value_loss": 0.029750895634707477,
+        "entropy": 3.1200609736972384,
+        "approx_kl": 0.0010935999960363712,
+        "parent_card_kl": 8.119092272964836e-05,
+        "parent_wait_kl": 5.659597840749579e-06,
+        "clip_fraction": 0.05265805937556757,
+        "grad_norm": 4.497138619422913,
+        "samples": 2219,
+        "minibatches": 36,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.22997181117534637,
+        "parent_kl": 0.00020731217227876186
+      },
+      {
+        "at": "2026-10-23T00:14:04.056051+00:00",
+        "updates": 2,
+        "loss": 0.009928441479463469,
+        "policy_loss": -0.016668340222994713,
+        "value_loss": 0.0656847535547885,
+        "entropy": 3.125804966146296,
+        "approx_kl": 0.0010212063219904109,
+        "parent_card_kl": 5.7105617667151485e-05,
+        "parent_wait_kl": 1.5272176369762747e-05,
+        "clip_fraction": 0.04333300482143055,
+        "grad_norm": 6.262728907845237,
+        "samples": 1305,
+        "minibatches": 22,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.3386881649494171,
+        "parent_kl": 0.00010662480781320482
+      },
+      {
+        "at": "2026-10-23T00:14:16.746082+00:00",
+        "updates": 3,
+        "loss": -0.0026128920036609525,
+        "policy_loss": -0.008779866905469034,
+        "value_loss": 0.024138634058612364,
+        "entropy": 2.961439750812672,
+        "approx_kl": 0.0005739354944551936,
+        "parent_card_kl": 0.00020180075322665894,
+        "parent_wait_kl": 1.7905634026478595e-05,
+        "clip_fraction": 0.02351294568291417,
+        "grad_norm": 4.508403610300134,
+        "samples": 1686,
+        "minibatches": 27,
+        "learning_rate": 3e-05,
+        "kl_early_stop": true,
+        "advantage_std": 0.2106240838766098,
+        "parent_kl": 0.0002143635501852259
+      }
+    ],
+    "20261023T001000Z-06-BASELINE8-s2026": [
+      {
+        "at": "2026-10-23T00:14:50.520454+00:00",
+        "updates": 1,
+        "loss": -0.008481619465682242,
+        "policy_loss": -0.016833160816329636,
+        "value_loss": 0.029184489174642496,
+        "entropy": 3.1246589289771185,
+        "approx_kl": 0.0011257247893404888,
+        "parent_card_kl": 8.47007310274724e-05,
+        "parent_wait_kl": 7.171874212927618e-06,
+        "clip_fraction": 0.056308259877065815,
+        "grad_norm": 4.615361842844221,
+        "samples": 2219,
+        "minibatches": 36,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.22997181117534637,
+        "parent_kl": 0.0001763546169968322
+      },
+      {
+        "at": "2026-10-23T00:15:09.947874+00:00",
+        "updates": 2,
+        "loss": 0.010033168400136324,
+        "policy_loss": 0.005802956696313161,
+        "value_loss": 0.020858651456924584,
+        "entropy": 3.1031346871302676,
+        "approx_kl": 0.0005196633115648202,
+        "parent_card_kl": 6.872800937484359e-05,
+        "parent_wait_kl": 1.4079723244391902e-05,
+        "clip_fraction": 0.013153459518574752,
+        "grad_norm": 5.144429050959074,
+        "samples": 1556,
+        "minibatches": 26,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.19838741421699524,
+        "parent_kl": 0.00022814817202743143
+      },
+      {
+        "at": "2026-10-23T00:15:27.119086+00:00",
+        "updates": 3,
+        "loss": -0.0060585720034746025,
+        "policy_loss": -0.026494749152334407,
+        "value_loss": 0.05217699677898334,
+        "entropy": 2.832361487241892,
+        "approx_kl": 0.0003372568026644579,
+        "parent_card_kl": 0.00012336586265659067,
+        "parent_wait_kl": 3.3147537451965877e-06,
+        "clip_fraction": 0.005656792352405878,
+        "grad_norm": 4.506256508139463,
+        "samples": 1541,
+        "minibatches": 26,
+        "learning_rate": 3e-05,
+        "kl_early_stop": false,
+        "advantage_std": 0.30672672390937805,
+        "parent_kl": 0.0001171265757875517
+      }
+    ]
+  },
+  "earlier_incomplete_matrix": {
+    "status": "earlier incomplete matrix, before final correctness fix; not final-code measurements; unsafe worker counts are not recommendations",
+    "completed_runs": 8,
+    "observations": [
+      {
+        "configuration": "baseline12",
+        "seed": 777,
+        "total_s": 86.56094174299506,
+        "games_per_min": 24.95351779343133,
+        "decisions_per_s": 189.64673523007812
+      },
+      {
+        "configuration": "new12g1",
+        "seed": 777,
+        "total_s": 52.369444832002046,
+        "games_per_min": 41.24542482604402,
+        "decisions_per_s": 318.7736676138791
+      },
+      {
+        "configuration": "new12g2",
+        "seed": 777,
+        "total_s": 51.169248381993384,
+        "games_per_min": 42.21285378035982,
+        "decisions_per_s": 324.2572545943195
+      },
+      {
+        "configuration": "baseline16",
+        "seed": 777,
+        "total_s": 102.80108951299917,
+        "games_per_min": 28.015267286012808,
+        "decisions_per_s": 201.69046941256582
+      },
+      {
+        "configuration": "new16g1",
+        "seed": 777,
+        "total_s": 61.65304921999632,
+        "games_per_min": 46.71301803294932,
+        "decisions_per_s": 343.1784845628964
+      },
+      {
+        "configuration": "new16g2",
+        "seed": 777,
+        "total_s": 58.711419173007016,
+        "games_per_min": 49.05348977365718,
+        "decisions_per_s": 352.29943836052956
+      },
+      {
+        "configuration": "new16g2",
+        "seed": 2026,
+        "total_s": 58.43827283899009,
+        "games_per_min": 49.282770692676266,
+        "decisions_per_s": 349.1547406990856
+      },
+      {
+        "configuration": "new16g1",
+        "seed": 2026,
+        "total_s": 71.56588342999748,
+        "games_per_min": 40.242638838058724,
+        "decisions_per_s": 288.93655760186743
+      }
+    ]
+  },
+  "validation": {
+    "same_updates": true,
+    "same_sampler_games_per_wave": true,
+    "games_per_run": 24,
+    "decisions_per_game_variable": true,
+    "all_runs_errors_empty": true,
+    "all_memory_events_cap_hits_zero": true
+  }
+}

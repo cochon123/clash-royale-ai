@@ -1,0 +1,32 @@
+[
+  {
+    "elapsed_s": 0.0005942839925410226,
+    "gpu": "2026/10/22 17:27:42.700, 53, 0 %, 2022 MiB, 12.91 W, 1732 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          14          10           2           8          15\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 10.029491852998035,
+    "gpu": "2026/10/22 17:27:52.743, 54, 9 %, 2165 MiB, 9.45 W, 1177 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          21           3           2           8           8\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 20.07013171899598,
+    "gpu": "2026/10/22 17:28:02.771, 56, 67 %, 2535 MiB, 18.61 W, 1732 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          22           2           2           8           8\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 30.107602075993782,
+    "gpu": "2026/10/22 17:28:12.807, 54, 11 %, 2923 MiB, 9.45 W, 1177 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          22           2           2           8           8\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 40.14047021699662,
+    "gpu": "2026/10/22 17:28:22.845, 56, 5 %, 2929 MiB, 13.86 W, 1732 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          22           2           2           8           8\nSwap:              7           7           0\n"
+  },
+  {
+    "elapsed_s": 50.17399884699262,
+    "gpu": "2026/10/22 17:28:32.873, 55, 11 %, 2929 MiB, 9.38 W, 1177 MHz",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:              30          22           2           2           8           8\nSwap:              7           7           0\n"
+  }
+]

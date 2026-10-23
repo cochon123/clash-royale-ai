@@ -54,3 +54,10 @@ completion order.
 
 The accompanying HTML report and raw benchmark evidence record the measured
 configuration, machine, spread across seeds, outcome agreement and limitations.
+
+See the [22 October 2026 benchmark report](../../reports/rl_pipeline_speed_20261022.html)
+and [validation evidence](../../reports/rl_pipeline_speed_20261022/validation.json).
+The final measurements use eight workers in an 8 GiB memory-capped transient
+service with swap disabled. The supervisor stops its benchmark if host available
+memory falls below 6 GiB; each new run requires at least 12 GiB available.
+The earlier incomplete 12/16-worker measurements remain supplemental evidence.

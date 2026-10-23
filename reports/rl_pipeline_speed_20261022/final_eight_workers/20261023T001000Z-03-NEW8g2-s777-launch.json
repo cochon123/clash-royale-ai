@@ -1,0 +1,5 @@
+{
+  "command": "systemd-run --user --unit=cr-bench-safe-20261023t001000z-3.service --remain-after-exit --working-directory=/home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --property=MemoryMax=8G --property=MemorySwapMax=0 --property=OOMPolicy=kill --property=KillMode=control-group --property=TimeoutStopSec=10 --property=RuntimeMaxSec=1200 --property=StandardOutput=append:/tmp/cr-prof/bench-safe/20261023T001000Z-03-NEW8g2-s777.stdout.log --property=StandardError=append:/tmp/cr-prof/bench-safe/20261023T001000Z-03-NEW8g2-s777.stdout.log --setenv=PYTHONDONTWRITEBYTECODE=1 --setenv=PYTHONUNBUFFERED=1 /home/cochon/Documents/mini-project/clash-royale-ai/.venv/bin/python /tmp/cr-prof/bench-safe/bench_wave_measured.py --code-root /home/cochon/Documents/mini-project/clash-royale-ai-worktrees/rl-speed-integration/engine --workers 8 --waves 3 --seed 777 --run-dir /tmp/cr-prof/bench-safe/20261023T001000Z-03-NEW8g2-s777-scratch --extra '--step-groups 2'",
+  "returncode": 0,
+  "output": "Running as unit: cr-bench-safe-20261023t001000z-3.service; invocation ID: f3cac526c2514791affb737b79ddc29d\n"
+}

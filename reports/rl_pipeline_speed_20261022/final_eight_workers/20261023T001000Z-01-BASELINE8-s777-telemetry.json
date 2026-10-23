@@ -1,0 +1,5140 @@
+{
+  "samples": [
+    {
+      "elapsed_s": 0.1950334209977882,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 17502879744,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469082112
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "1835008",
+        "MemoryPeak": "1835008",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 1835008,
+      "cgroup_memory_peak": 1835008,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 0.7047795969992876,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 17315631104,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469082112
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "109158400",
+        "MemoryPeak": "109178880",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 109355008,
+      "cgroup_memory_peak": 109387776,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 1.2145207839930663,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 17119801344,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469127168
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "303136768",
+        "MemoryPeak": "303136768",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 303398912,
+      "cgroup_memory_peak": 303398912,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 1.7236886199971195,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 17096597504,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469127168
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "358039552",
+        "MemoryPeak": "358039552",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 358301696,
+      "cgroup_memory_peak": 358301696,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 2.23127487799502,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 17043070976,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469127168
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "396713984",
+        "MemoryPeak": "413888512",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 396976128,
+      "cgroup_memory_peak": 413888512,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 2.737805919998209,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 17342676992,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469127168
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "545660928",
+        "MemoryPeak": "545660928",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 545923072,
+      "cgroup_memory_peak": 545923072,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 3.2457267790014157,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 17105395712,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469135360
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "605241344",
+        "MemoryPeak": "605241344",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 605241344,
+      "cgroup_memory_peak": 605241344,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 3.7555860949942144,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 16920809472,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469139456
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "746549248",
+        "MemoryPeak": "746786816",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 746332160,
+      "cgroup_memory_peak": 746786816,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 4.267969972992432,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 15075028992,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469139456
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "2412085248",
+        "MemoryPeak": "2412085248",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 2423095296,
+      "cgroup_memory_peak": 2423357440,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 4.776749552998808,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 13527662592,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469143552
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "3747020800",
+        "MemoryPeak": "3747282944",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 3753050112,
+      "cgroup_memory_peak": 3753050112,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 5.2866440739890095,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 12792111104,
+        "SwapTotal": 8589930496,
+        "SwapFree": 466857984
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "4553773056",
+        "MemoryPeak": "4607365120",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 4559278080,
+      "cgroup_memory_peak": 4607365120,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 5.796828227001242,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 12272484352,
+        "SwapTotal": 8589930496,
+        "SwapFree": 466862080
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5029031936",
+        "MemoryPeak": "5029031936",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5033226240,
+      "cgroup_memory_peak": 5033226240,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 6.304445232002763,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11730604032,
+        "SwapTotal": 8589930496,
+        "SwapFree": 466890752
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5604220928",
+        "MemoryPeak": "5604220928",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5604999168,
+      "cgroup_memory_peak": 5604999168,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 6.813666981994174,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11462000640,
+        "SwapTotal": 8589930496,
+        "SwapFree": 466898944
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5893910528",
+        "MemoryPeak": "5894078464",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5893808128,
+      "cgroup_memory_peak": 5894078464,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 7.3199118499906035,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11467632640,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467066880
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5896491008",
+        "MemoryPeak": "5896495104",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5896232960,
+      "cgroup_memory_peak": 5896495104,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 7.8288984690007055,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11436118016,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467103744
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5899010048",
+        "MemoryPeak": "5899010048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5898706944,
+      "cgroup_memory_peak": 5899010048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 8.338282839991734,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11437731840,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467107840
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5900226560",
+        "MemoryPeak": "5900230656",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5900226560,
+      "cgroup_memory_peak": 5900230656,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 8.850872064998839,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11442458624,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467116032
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5900869632",
+        "MemoryPeak": "5901070336",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5900746752,
+      "cgroup_memory_peak": 5901070336,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 9.361015110000153,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 12039892992,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467116032
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5902544896",
+        "MemoryPeak": "5902544896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5902544896,
+      "cgroup_memory_peak": 5902544896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 9.870401674997993,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11966271488,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467116032
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5903642624",
+        "MemoryPeak": "5903646720",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5903642624,
+      "cgroup_memory_peak": 5903646720,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 10.379686127998866,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 12215689216,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467296256
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5905035264",
+        "MemoryPeak": "5905035264",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5905035264,
+      "cgroup_memory_peak": 5905035264,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 10.886418354988564,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 12055609344,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467304448
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5906497536",
+        "MemoryPeak": "5906747392",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5906497536,
+      "cgroup_memory_peak": 5906747392,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 11.394363603001693,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11927379968,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467304448
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5907951616",
+        "MemoryPeak": "5907951616",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5907607552,
+      "cgroup_memory_peak": 5907951616,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 11.903970112995012,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11695833088,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467304448
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5908377600",
+        "MemoryPeak": "5909090304",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5908377600,
+      "cgroup_memory_peak": 5909090304,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 12.412531698995735,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11495415808,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467304448
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5910437888",
+        "MemoryPeak": "5910523904",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5910437888,
+      "cgroup_memory_peak": 5910523904,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 12.921049583994318,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11418349568,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467312640
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5911359488",
+        "MemoryPeak": "5911605248",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5911359488,
+      "cgroup_memory_peak": 5911605248,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 13.43134500499582,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11417165824,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467312640
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5911904256",
+        "MemoryPeak": "5912391680",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5911646208,
+      "cgroup_memory_peak": 5912391680,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 13.93921324898838,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11421220864,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467312640
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5913985024",
+        "MemoryPeak": "5914210304",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5913985024,
+      "cgroup_memory_peak": 5914210304,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 14.449139951990219,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11402391552,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467312640
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5914669056",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5914669056,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 14.958627068990609,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11397414912,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467439616
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5915742208",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5915742208,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 15.476725410990184,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11173679104,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467656704
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5915000832",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5915262976,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 15.984906348996446,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11042254848,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467685376
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5916721152",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5916721152,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 16.49466985098843,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11044589568,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467685376
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5916905472",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5916905472,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 17.00170230799995,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11053690880,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467763200
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5918187520",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5918187520,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 17.511442111994256,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11023015936,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467763200
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5919313920",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5919313920,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 18.02514373899612,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11092602880,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467787776
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5920444416",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5920444416,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 18.53387417898921,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11263549440,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467800064
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5920686080",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5920686080,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 19.041610151994973,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11274579968,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467800064
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5921857536",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5921857536,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 19.551526376002585,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11268431872,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467800064
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5922537472",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5922537472,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 20.06179303699173,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11294769152,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467800064
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5923123200",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5923123200,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 20.570379406999564,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11288961024,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467800064
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5924495360",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5924495360,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 21.079930626990972,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11329323008,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467800064
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5924900864",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5924900864,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 21.58755378999922,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11323564032,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467800064
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5926047744",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5926047744,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 22.097167089988943,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11324129280,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467800064
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5927059456",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5927059456,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 22.60526476499217,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11311009792,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467800064
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5927141376",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5927137280,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 23.112482921002083,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11288285184,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467927040
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5927395328",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5927395328,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 23.620676453996566,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11268153344,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467931136
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5928710144",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5928706048,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 24.12753151799552,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11283550208,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467931136
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5928910848",
+        "MemoryPeak": "5931569152",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5928910848,
+      "cgroup_memory_peak": 5931569152,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 24.63742281899613,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11286134784,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467935232
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "5929820160",
+        "MemoryPeak": "5947265024",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 5929820160,
+      "cgroup_memory_peak": 5947265024,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 25.14571936200082,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11939450880,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467939328
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6050549760",
+        "MemoryPeak": "6050553856",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6050541568,
+      "cgroup_memory_peak": 6050553856,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 25.655568898000638,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11551039488,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467939328
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6257299456",
+        "MemoryPeak": "6257561600",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6257299456,
+      "cgroup_memory_peak": 6257561600,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 26.163493697997183,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11426058240,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467943424
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6257233920",
+        "MemoryPeak": "6257745920",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6257233920,
+      "cgroup_memory_peak": 6257745920,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 26.673062082991237,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11406888960,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467947520
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6266343424",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6266343424,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 27.185971391998464,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11381325824,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468029440
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6266236928",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6265769984,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 27.698419565000222,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10992615424,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468086784
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6266486784",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6266486784,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 28.20900183399499,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10816102400,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468336640
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6266359808",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6266359808,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 28.72201993499766,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10820034560,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468336640
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6267580416",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6267371520,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 29.23120903299423,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11300163584,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467722240
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6267961344",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6267961344,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 29.74191053600225,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11221438464,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467722240
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6267711488",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6267457536,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 30.25265115199727,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11115266048,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467722240
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6269267968",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6269267968,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 30.764333243991132,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10924511232,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467722240
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6269702144",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6269616128,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 31.271564529990428,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10765910016,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467722240
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6271221760",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6271221760,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 31.77970531999017,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10652446720,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467722240
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6272442368",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6272442368,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 32.28765484200267,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10647445504,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467722240
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6272475136",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6272475136,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 32.79493765698862,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10654433280,
+        "SwapTotal": 8589930496,
+        "SwapFree": 467722240
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6272987136",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6272987136,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 33.30496279300132,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10650669056,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468033536
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6274281472",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6274281472,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 33.815842866999446,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10651422720,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468033536
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6275469312",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6275469312,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 34.32529042600072,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10655145984,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468033536
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6276575232",
+        "MemoryPeak": "6278402048",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6276575232,
+      "cgroup_memory_peak": 6278402048,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 34.83346952700231,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10673020928,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468033536
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6277615616",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6277615616,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 35.34507847299392,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10675994624,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468033536
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6278377472",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6278123520,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 35.85778634400049,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11443245056,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468033536
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6279364608",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6279364608,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 36.367031506000785,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11302068224,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468033536
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6280704000",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6280704000,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 36.87788492398977,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11306123264,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468033536
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6281895936",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6282158080,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 37.386812283002655,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11408478208,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468033536
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6282436608",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6281920512,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 37.89717985999596,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11192320000,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468033536
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6283325440",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6283325440,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 38.406785419996595,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11090538496,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468430848
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6283923456",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6283923456,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 38.91627455998969,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10900496384,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468430848
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6285139968",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6285139968,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 39.424563638996915,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10692624384,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468434944
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6285914112",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6285660160,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 39.93125854499522,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10642907136,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468439040
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6287052800",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6287052800,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 40.44152008299716,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10611122176,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468439040
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6287159296",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6287159296,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 40.95911598899693,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10606182400,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468443136
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6287794176",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6287794176,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 41.46763272299722,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10615001088,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468443136
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6288371712",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6288314368,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 41.97753166098846,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10618585088,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468443136
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6289006592",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6289006592,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 42.489695875992766,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10621960192,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468443136
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6289408000",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6289408000,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 42.99948334599321,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10532167680,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468443136
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6289563648",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6289563648,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 43.50865012699796,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10513526784,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468574208
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6289543168",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6289543168,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 44.01924025599146,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10524893184,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468574208
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6291206144",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6291206144,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 44.527222320990404,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10522075136,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468574208
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6291832832",
+        "MemoryPeak": "6294835200",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6291832832,
+      "cgroup_memory_peak": 6294835200,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 45.037377658998594,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10522243072,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468574208
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6291877888",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6291877888,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 45.549065910992795,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10510610432,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468574208
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6292422656",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6292422656,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 46.059653485994204,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10505830400,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468574208
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6292725760",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6292725760,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 46.57006613399426,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10501160960,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468574208
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6294118400",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6294118400,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 47.082572892992175,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10516385792,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468574208
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6294319104",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6294319104,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 47.58952734198829,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10511024128,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468574208
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6294163456",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6294163456,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 48.09993847399892,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10522001408,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468574208
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6295547904",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6295547904,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 48.61040073899494,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10525810688,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468574208
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6295597056",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6295597056,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 49.123250691991416,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10528006144,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468578304
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6296297472",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6296297472,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 49.63953303299786,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10531348480,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468582400
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6297128960",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6297128960,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 50.15057369299757,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10552864768,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468582400
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6297505792",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6297505792,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 50.66086427999835,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10558181376,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468582400
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6297313280",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6297313280,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 51.170879404991865,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10561503232,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468582400
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6297128960",
+        "MemoryPeak": "6308724736",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6297128960,
+      "cgroup_memory_peak": 6308724736,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 51.67985713000235,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10548269056,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468582400
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6297583616",
+        "MemoryPeak": "6309851136",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6297518080,
+      "cgroup_memory_peak": 6309851136,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 52.18634508799005,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10534449152,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468586496
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298054656",
+        "MemoryPeak": "6309851136",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6297808896,
+      "cgroup_memory_peak": 6309851136,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 52.695866648995434,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10526838784,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468598784
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298214400",
+        "MemoryPeak": "6309851136",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298214400,
+      "cgroup_memory_peak": 6309851136,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 53.20746601399151,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10526711808,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468598784
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298066944",
+        "MemoryPeak": "6309851136",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298329088,
+      "cgroup_memory_peak": 6309851136,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 53.71990430000005,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10525851648,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468832256
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298390528",
+        "MemoryPeak": "6309851136",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298132480,
+      "cgroup_memory_peak": 6309851136,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 54.22938475100091,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11271839744,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468832256
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298353664",
+        "MemoryPeak": "6309851136",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298353664,
+      "cgroup_memory_peak": 6309851136,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 54.73829160799505,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11073245184,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468836352
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299246592",
+        "MemoryPeak": "6309851136",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299246592,
+      "cgroup_memory_peak": 6309851136,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 55.25002858399239,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10899132416,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468836352
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299099136",
+        "MemoryPeak": "6309851136",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299099136,
+      "cgroup_memory_peak": 6309851136,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 55.760676851990866,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10817339392,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468836352
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298431488",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298431488,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 56.27050963699003,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10779402240,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468836352
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298484736",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298484736,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 56.78071644199372,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10777096192,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468836352
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298517504",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298517504,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 57.29079363599885,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10782707712,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468860928
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299054080",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299054080,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 57.79852707400278,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10795122688,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468860928
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298808320",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298808320,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 58.304820871999254,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10796392448,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468869120
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299615232",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299615232,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 58.81576291799138,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10832711680,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468885504
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6297931776",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6297931776,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 59.323674988001585,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11300171776,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468885504
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299004928",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299004928,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 59.83408963799593,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11111325696,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468885504
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299525120",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299525120,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 60.34676520799985,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10958422016,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468885504
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298554368",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298554368,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 60.858154276997084,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10817634304,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468885504
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298611712",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298611712,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 61.370307197998045,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10665328640,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468885504
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299410432",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299152384,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 61.88032627198845,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10632220672,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468885504
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298918912",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299181056,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 62.39125726699422,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10637139968,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468885504
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298185728",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298185728,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 62.898862437999924,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10653249536,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468885504
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299250688",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299250688,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 63.41200497400132,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10648981504,
+        "SwapTotal": 8589930496,
+        "SwapFree": 468885504
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298767360",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298767360,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 63.921621682995465,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10957897728,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469090304
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298763264",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298763264,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 64.43123241099238,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11251863552,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469102592
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298312704",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298574848,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 64.93748348999361,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11332845568,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469102592
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298054656",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298054656,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 65.45072358498874,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11124240384,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469106688
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299648000",
+        "MemoryPeak": "6315728896",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299389952,
+      "cgroup_memory_peak": 6315728896,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 65.95890265499474,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11021836288,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469106688
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299308032",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299308032,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 66.46849007099809,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10774540288,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469106688
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298910720",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298910720,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 66.98192152100091,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10572795904,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469127168
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298931200",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298931200,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 67.49339448999672,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10524176384,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469127168
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299275264",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299275264,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 68.00346668899874,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10532515840,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469127168
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299815936",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299815936,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 68.51360980799654,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10537734144,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469131264
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6300123136",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6300123136,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 69.02205339098873,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10535321600,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469278720
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298329088",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298329088,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 69.53001182099979,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10534793216,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469282816
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298861568",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298861568,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 70.03948582299927,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11064037376,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469282816
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299635712",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299373568,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 70.5514185429929,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11106873344,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469282816
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299176960",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299176960,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 71.06162288099586,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10914603008,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469282816
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6298943488",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6298685440,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 71.56862380199891,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10799751168,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469299200
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299504640",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299504640,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 72.08306158200139,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10650550272,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469299200
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299750400",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299750400,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 72.59799992998887,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10483318784,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469299200
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299848704",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299848704,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 73.10836268500134,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10411319296,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469299200
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299099136",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299099136,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 73.61621311400086,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10437439488,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469303296
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299656192",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299656192,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 74.12723802399705,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10441105408,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469417984
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299136000",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299136000,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 74.63699965899286,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10467651584,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469643264
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299987968",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299987968,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 75.14768172199547,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10478211072,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469647360
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6300311552",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299807744,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 75.65799641699414,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10489606144,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469647360
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299418624",
+        "MemoryPeak": "6316277760",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299418624,
+      "cgroup_memory_peak": 6316277760,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 76.16716432999237,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11258916864,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469647360
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299414528",
+        "MemoryPeak": "6316994560",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299414528,
+      "cgroup_memory_peak": 6316994560,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 76.68203686499328,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11176534016,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469647360
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6300016640",
+        "MemoryPeak": "6316994560",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6300016640,
+      "cgroup_memory_peak": 6316994560,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 77.20487555,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11173261312,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469651456
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6300102656",
+        "MemoryPeak": "6316994560",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299869184,
+      "cgroup_memory_peak": 6316994560,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 77.7148876519932,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 11076800512,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469651456
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6299910144",
+        "MemoryPeak": "6316994560",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6299910144,
+      "cgroup_memory_peak": 6316994560,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 78.22267376400123,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10990964736,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469692416
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6300172288",
+        "MemoryPeak": "6316994560",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6300172288,
+      "cgroup_memory_peak": 6316994560,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 78.73299659999611,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 10741846016,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469704704
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "6300209152",
+        "MemoryPeak": "6316994560",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 6300209152,
+      "cgroup_memory_peak": 6316994560,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 79.24352106099832,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 14209966080,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469704704
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "2119401472",
+        "MemoryPeak": "6316994560",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 2119356416,
+      "cgroup_memory_peak": 6316994560,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 79.75194754199765,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 14159597568,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469942272
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "2109075456",
+        "MemoryPeak": "6316994560",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 2109575168,
+      "cgroup_memory_peak": 6316994560,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 80.26033314099186,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 14223585280,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469942272
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "running",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cr-bench-safe-20261023t001000z-1.service",
+        "MemoryCurrent": "2193727488",
+        "MemoryPeak": "6316994560",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": 2193936384,
+      "cgroup_memory_peak": 6316994560,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0,
+        "sock_throttled": 0
+      }
+    },
+    {
+      "elapsed_s": 80.76968512499298,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 15941492736,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469962752
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "exited",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "",
+        "MemoryCurrent": "[not set]",
+        "MemoryPeak": "6316994560",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": null,
+      "cgroup_memory_peak": null
+    },
+    {
+      "elapsed_s": 80.7821979099972,
+      "host": {
+        "MemTotal": 32718692352,
+        "MemAvailable": 15940595712,
+        "SwapTotal": 8589930496,
+        "SwapFree": 469962752
+      },
+      "unit": {
+        "ActiveState": "active",
+        "SubState": "exited",
+        "Result": "success",
+        "OOMPolicy": "kill",
+        "ExecMainStatus": "0",
+        "ControlGroup": "",
+        "MemoryCurrent": "[not set]",
+        "MemoryPeak": "6316994560",
+        "MemoryMax": "8589934592",
+        "MemorySwapMax": "0"
+      },
+      "cgroup_memory_current": null,
+      "cgroup_memory_peak": null
+    }
+  ],
+  "peak_bytes": 6316994560,
+  "aborted": null,
+  "before": {
+    "utc": "2026-10-23T00:10:00.347864+00:00",
+    "memory_bytes": {
+      "MemTotal": 32718692352,
+      "MemAvailable": 17527951360,
+      "SwapTotal": 8589930496,
+      "SwapFree": 469082112
+    },
+    "gpu": "48, 0 %, 2020 MiB, 4.26 W"
+  },
+  "after": {
+    "utc": "2026-10-23T00:11:20.981462+00:00",
+    "memory_bytes": {
+      "MemTotal": 32718692352,
+      "MemAvailable": 15940595712,
+      "SwapTotal": 8589930496,
+      "SwapFree": 469962752
+    },
+    "gpu": "58, 1 %, 2020 MiB, 10.37 W"
+  },
+  "final_unit": {
+    "ActiveState": "active",
+    "SubState": "exited",
+    "Result": "success",
+    "OOMPolicy": "kill",
+    "ExecMainStatus": "0",
+    "ControlGroup": "",
+    "MemoryCurrent": "[not set]",
+    "MemoryPeak": "6316994560",
+    "MemoryMax": "8589934592",
+    "MemorySwapMax": "0"
+  }
+}

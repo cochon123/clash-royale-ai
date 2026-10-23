@@ -1,0 +1,74 @@
+[
+  {
+    "configuration": "BASELINE8",
+    "seed": 777,
+    "peak_gib": 5.883159637451172,
+    "available_before_gib": 16.324176788330078,
+    "available_min_gib": 9.696296691894531,
+    "available_after_gib": 14.845836639404297,
+    "all_sampled_guards_correct": true,
+    "sample_count": 160,
+    "result": "success",
+    "aborted": null
+  },
+  {
+    "configuration": "NEW8g1",
+    "seed": 777,
+    "peak_gib": 5.339458465576172,
+    "available_before_gib": 14.880138397216797,
+    "available_min_gib": 9.652156829833984,
+    "available_after_gib": 15.091590881347656,
+    "all_sampled_guards_correct": true,
+    "sample_count": 100,
+    "result": "success",
+    "aborted": null
+  },
+  {
+    "configuration": "NEW8g2",
+    "seed": 777,
+    "peak_gib": 5.32025146484375,
+    "available_before_gib": 15.121997833251953,
+    "available_min_gib": 9.799236297607422,
+    "available_after_gib": 16.24134063720703,
+    "all_sampled_guards_correct": true,
+    "sample_count": 84,
+    "result": "success",
+    "aborted": null
+  },
+  {
+    "configuration": "NEW8g2",
+    "seed": 2026,
+    "peak_gib": 5.322185516357422,
+    "available_before_gib": 16.270408630371094,
+    "available_min_gib": 10.433300018310547,
+    "available_after_gib": 16.47370147705078,
+    "all_sampled_guards_correct": true,
+    "sample_count": 86,
+    "result": "success",
+    "aborted": null
+  },
+  {
+    "configuration": "NEW8g1",
+    "seed": 2026,
+    "peak_gib": 5.319316864013672,
+    "available_before_gib": 16.518550872802734,
+    "available_min_gib": 10.455181121826172,
+    "available_after_gib": 15.561927795410156,
+    "all_sampled_guards_correct": true,
+    "sample_count": 85,
+    "result": "success",
+    "aborted": null
+  },
+  {
+    "configuration": "BASELINE8",
+    "seed": 2026,
+    "peak_gib": 5.327442169189453,
+    "available_before_gib": 15.596664428710938,
+    "available_min_gib": 9.947284698486328,
+    "available_after_gib": 15.658935546875,
+    "all_sampled_guards_correct": true,
+    "sample_count": 140,
+    "result": "success",
+    "aborted": null
+  }
+]
