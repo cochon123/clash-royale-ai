@@ -49,6 +49,21 @@ HASH_BUCKETS = 32
 MOTION_SCALE = 1000.0
 AGE_TICKS = 4000.0
 TOWER_ROWS = ("KingTower", "PrincessTower")
+ZERO_VALUE_KINDS = frozenset({"tower", "projectile", "area_effect"})
+# Spawned rows that board_rows.json cannot cost from the card tables alone
+# (several producers or a missing count). Values are elixir per entity, taken
+# from the usual deploying card in the training pool. Heuristic, not native.
+UNIT_VALUE_OVERRIDES = {
+    "Skeleton": ("Skeletons", 1.0 / 3.0),
+    "SpearGoblin": ("GoblinGang", 0.5),
+    "Goblin_Stab": ("GoblinGang", 0.5),
+    "Minion": ("Minions", 1.0),
+    "Bat": ("Bats", 0.4),
+    "Barbarian": ("Barbarians", 1.0),
+    "ElectroWizard": ("ElectroWizard", 4.0),
+    "BalloonBomb": ("Balloon", 0.0),
+    "RageBarbarianBottle": ("RageBarbarian", 0.0),
+}
 
 FEATURE_NAMES = ("own", "x", "y", "hp_fraction", "motion_x", "motion_y", "age")
 RASTER_CHANNELS = (
@@ -81,7 +96,7 @@ class RowCost:
     kind: str = "unit"
 
     def entity_value(self, hp_fraction: float) -> float:
-        if self.unknown or self.kind == "tower" or self.units_per_card <= 0:
+        if self.unknown or self.kind in ZERO_VALUE_KINDS or self.units_per_card <= 0:
             return 0.0
         return self.elixir / self.units_per_card * float(hp_fraction)
 
@@ -238,11 +253,21 @@ def tile_of(x_norm: float, y_norm: float) -> tuple[int, int]:
 
 
 def _parse_cost(row: str, payload: Mapping[str, Any], *, unknown: bool = False) -> RowCost:
+    kind = payload.get("kind")
+    if row in UNIT_VALUE_OVERRIDES:
+        card, value = UNIT_VALUE_OVERRIDES[row]
+        return RowCost(card=card, elixir=value, units_per_card=1.0, kind=str(kind or "troop"))
+    if not unknown and (payload.get("elixir") is None or payload.get("units_per_card") is None):
+        # W1 leaves projectiles, area effects and ambiguous spawns without a
+        # cost. They keep their own type id but carry no board value.
+        if kind in ZERO_VALUE_KINDS or payload.get("uncertain"):
+            return RowCost(card=payload.get("source_card"), elixir=0.0, units_per_card=1.0,
+                           kind=str(kind) if kind in ZERO_VALUE_KINDS else "unvalued")
     elixir = _finite_number(payload.get("elixir", 0 if unknown else None), f"{row}.elixir")
     units = _finite_number(payload.get("units_per_card", 1), f"{row}.units_per_card")
     if elixir < 0 or units <= 0:
         raise ValueError(f"row {row} needs non-negative elixir and positive units_per_card")
-    card = payload.get("card")
+    card = payload.get("card", payload.get("source_card"))
     return RowCost(
         card=None if card is None else str(card),
         elixir=elixir,

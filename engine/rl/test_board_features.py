@@ -84,7 +84,16 @@ class BoardFeatureTests(unittest.TestCase):
             path.unlink(missing_ok=True)
         self.assertEqual(table.lookup("HogRider").elixir, 9.0)
         self.assertTrue(table.lookup("Pekka").unknown)
-        self.assertEqual(load_row_table().source, "fallback:fast_league_decks")
+
+    def test_shipped_board_rows_load_with_costs_for_the_hog_deck(self):
+        table = load_row_table()
+        self.assertTrue(table.source.endswith("board_rows.json"))
+        self.assertEqual(table.lookup("HogRider").entity_value(1.0), 4.0)
+        self.assertAlmostEqual(table.lookup("Skeleton").entity_value(1.0), 1.0 / 3.0)
+        self.assertEqual(table.lookup("Pekka").entity_value(0.5), 3.5)
+        self.assertEqual(table.lookup("FireballSpell").entity_value(1.0), 0.0)
+        self.assertEqual(table.lookup("Lightning").entity_value(1.0), 0.0)
+        self.assertFalse(table.lookup("FireballSpell").unknown)
 
     def test_native_cell_and_placement_scales_agree(self):
         self.assertEqual(NATIVE_CELLS, (36, 64))
