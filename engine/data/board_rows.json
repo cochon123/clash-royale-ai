@@ -1,0 +1,892 @@
+{
+  "description": "Presentation row names seen by replaying real league traces with board export, joined to the recovered card catalog. units_per_card is null when the row is not one deployed unit or the count is ambiguous. uncertain marks a missing field, a reconstruction default, or more than one producer.",
+  "games": {
+    "development": 36,
+    "holdout-final": 252,
+    "holdout-cycle": 252
+  },
+  "binary": "release rust_league_rl; the traced actions are unchanged and board export is request-only",
+  "row_count": 74,
+  "uncertain_count": 32,
+  "rows": [
+    {
+      "row": "Archer",
+      "kind": "troop",
+      "source_card": "Archer",
+      "source_cards": [
+        "Archer"
+      ],
+      "elixir": 3,
+      "units_per_card": 2,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "ArcherArrow",
+      "kind": "projectile",
+      "source_card": "Archer",
+      "source_cards": [
+        "Archer"
+      ],
+      "elixir": 3,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by Archer; projectile owned by Archer; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "ArrowsSpell",
+      "kind": "projectile",
+      "source_card": "Arrows",
+      "source_cards": [
+        "Arrows"
+      ],
+      "elixir": 3,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "projectile owned by Arrows; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "Assassin",
+      "kind": "troop",
+      "source_card": "Assassin",
+      "source_cards": [
+        "Assassin"
+      ],
+      "elixir": 3,
+      "units_per_card": 1,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "BabyDragon",
+      "kind": "troop",
+      "source_card": "BabyDragon",
+      "source_cards": [
+        "BabyDragon"
+      ],
+      "elixir": 4,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "BabyDragon omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "BabyDragonProjectile",
+      "kind": "projectile",
+      "source_card": "BabyDragon",
+      "source_cards": [
+        "BabyDragon"
+      ],
+      "elixir": 4,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by BabyDragon; projectile owned by BabyDragon; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "Balloon",
+      "kind": "troop",
+      "source_card": "Balloon",
+      "source_cards": [
+        "Balloon"
+      ],
+      "elixir": 5,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "Balloon omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "BalloonBomb",
+      "kind": "troop",
+      "source_card": "Balloon",
+      "source_cards": [
+        "Balloon"
+      ],
+      "elixir": 5,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "DeathSpawnCount absent on Balloon; not defaulting it; DeathSpawnCharacter of Balloon xunknown"
+    },
+    {
+      "row": "BalloonBombExplosion",
+      "kind": "area_effect",
+      "source_card": null,
+      "source_cards": [],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "area effect referenced by BalloonBomb.DeathAreaEffect"
+    },
+    {
+      "row": "BarbLogProjectile",
+      "kind": "projectile",
+      "source_card": "BarbLog",
+      "source_cards": [
+        "BarbLog"
+      ],
+      "elixir": 2,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "chains to projectile BarbLogProjectileRolling; projectile owned by BarbLog; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "BarbLogProjectileRolling",
+      "kind": "projectile",
+      "source_card": "BarbLog",
+      "source_cards": [
+        "BarbLog"
+      ],
+      "elixir": 2,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "this projectile spawns ? Barbarian; projectile owned by BarbLog; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "Barbarian",
+      "kind": "troop",
+      "source_card": null,
+      "source_cards": [
+        "BarbLog",
+        "BarbarianHut",
+        "Barbarians",
+        "BattleRam"
+      ],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "SpawnCharacterCount absent on BarbLogProjectileRolling; not defaulting it; projectile BarbarianLauncherProjectile spawns this row but no card Projectile field reaches it; SpawnCharacterCount absent on BarbarianLauncherProjectile; not defaulting it; BarbarianHut periodically spawns 3 Barbarian; DeathSpawnCharacter of BattleRam x2; DeathSpawnCharacter of BarbarianHut x1; periodic SpawnCharacter of BarbarianHut; more than one catalog card can produce this row"
+    },
+    {
+      "row": "BarbarianRage",
+      "kind": "area_effect",
+      "source_card": null,
+      "source_cards": [],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "area effect referenced by RageBarbarianBottle.DeathAreaEffect"
+    },
+    {
+      "row": "BarbarianRageDamage",
+      "kind": "area_effect",
+      "source_card": null,
+      "source_cards": [],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "area effect referenced by AEO BarbarianRage.SpawnAreaEffectObject"
+    },
+    {
+      "row": "BarrelGoblin",
+      "kind": "troop",
+      "source_card": "GoblinBarrel",
+      "source_cards": [
+        "GoblinBarrel"
+      ],
+      "elixir": 3,
+      "units_per_card": 3,
+      "uncertain": false,
+      "notes": "projectile GoblinBarrelSpell SpawnCharacter"
+    },
+    {
+      "row": "Bat",
+      "kind": "troop",
+      "source_card": null,
+      "source_cards": [
+        "Bats",
+        "DarkWitch"
+      ],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "DarkWitch periodically spawns 2 Bat; DeathSpawnCharacter of DarkWitch x1; periodic SpawnCharacter of DarkWitch; more than one catalog card can produce this row"
+    },
+    {
+      "row": "BattleRam",
+      "kind": "troop",
+      "source_card": "BattleRam",
+      "source_cards": [
+        "BattleRam"
+      ],
+      "elixir": 4,
+      "units_per_card": 1,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "Cannon",
+      "kind": "building",
+      "source_card": "Cannon",
+      "source_cards": [
+        "Cannon"
+      ],
+      "elixir": 3,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "Cannon omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "DarkWitch",
+      "kind": "troop",
+      "source_card": "DarkWitch",
+      "source_cards": [
+        "DarkWitch"
+      ],
+      "elixir": 4,
+      "units_per_card": 1,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "ElectroWizard",
+      "kind": "troop",
+      "source_card": "ElectroWizard",
+      "source_cards": [
+        "ElectroWizard"
+      ],
+      "elixir": 4,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "ElectroWizard has no SummonCharacter; the matching character exists, so the unit count is not in the card table; card name matches the row and SummonCharacter is absent"
+    },
+    {
+      "row": "EliteArcher",
+      "kind": "troop",
+      "source_card": "EliteArcher",
+      "source_cards": [
+        "EliteArcher"
+      ],
+      "elixir": 4,
+      "units_per_card": 1,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "EliteArcherArrow",
+      "kind": "projectile",
+      "source_card": "EliteArcher",
+      "source_cards": [
+        "EliteArcher"
+      ],
+      "elixir": 4,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by EliteArcher; projectile owned by EliteArcher; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "FireballSpell",
+      "kind": "projectile",
+      "source_card": "Fireball",
+      "source_cards": [
+        "Fireball"
+      ],
+      "elixir": 4,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "projectile owned by Fireball; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "FreezeIceGolemite",
+      "kind": "area_effect",
+      "source_card": "IceGolemite",
+      "source_cards": [
+        "IceGolemite"
+      ],
+      "elixir": 2,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "area effect referenced by IceGolemite.DeathAreaEffect; IceGolemite DeathAreaEffect; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "Ghost",
+      "kind": "troop",
+      "source_card": "Ghost",
+      "source_cards": [
+        "Ghost"
+      ],
+      "elixir": 3,
+      "units_per_card": 1,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "GoblinBarrelSpell",
+      "kind": "projectile",
+      "source_card": "GoblinBarrel",
+      "source_cards": [
+        "GoblinBarrel"
+      ],
+      "elixir": 3,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "this projectile spawns 3 BarrelGoblin; projectile owned by GoblinBarrel; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "Goblin_Stab",
+      "kind": "troop",
+      "source_card": null,
+      "source_cards": [
+        "GoblinGang",
+        "Goblins"
+      ],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "projectile GoblinProjectile spawns this row but no card Projectile field reaches it; SpawnCharacterCount absent on GoblinProjectile; not defaulting it; more than one catalog card can produce this row; direct deploys do not agree on units per card"
+    },
+    {
+      "row": "Golem",
+      "kind": "troop",
+      "source_card": "Golem",
+      "source_cards": [
+        "Golem"
+      ],
+      "elixir": 8,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "Golem omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "GolemDeathExplosion",
+      "kind": "area_effect",
+      "source_card": "Golem",
+      "source_cards": [
+        "Golem"
+      ],
+      "elixir": 8,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "area effect referenced by Golem.DeathAreaEffect; Golem DeathAreaEffect; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "Golemite",
+      "kind": "troop",
+      "source_card": "Golem",
+      "source_cards": [
+        "Golem"
+      ],
+      "elixir": 8,
+      "units_per_card": 2,
+      "uncertain": true,
+      "notes": "DeathSpawnCharacter of Golem x2"
+    },
+    {
+      "row": "GolemiteDeathExplosion",
+      "kind": "area_effect",
+      "source_card": null,
+      "source_cards": [],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "area effect referenced by Golemite.DeathAreaEffect"
+    },
+    {
+      "row": "HogRider",
+      "kind": "troop",
+      "source_card": "HogRider",
+      "source_cards": [
+        "HogRider"
+      ],
+      "elixir": 4,
+      "units_per_card": 1,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "IceGolemite",
+      "kind": "troop",
+      "source_card": "IceGolemite",
+      "source_cards": [
+        "IceGolemite"
+      ],
+      "elixir": 2,
+      "units_per_card": 1,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "IceGolemiteDeathArea",
+      "kind": "area_effect",
+      "source_card": null,
+      "source_cards": [],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "area-effect row with no recovered field pointing at this name"
+    },
+    {
+      "row": "IceSpirits",
+      "kind": "troop",
+      "source_card": "IceSpirits",
+      "source_cards": [
+        "IceSpirits"
+      ],
+      "elixir": 1,
+      "units_per_card": 1,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "IceSpiritsProjectile",
+      "kind": "projectile",
+      "source_card": "IceSpirits",
+      "source_cards": [
+        "IceSpirits"
+      ],
+      "elixir": 1,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by IceSpirits; projectile owned by IceSpirits; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "InfernoTower",
+      "kind": "building",
+      "source_card": "InfernoTower",
+      "source_cards": [
+        "InfernoTower"
+      ],
+      "elixir": 5,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "InfernoTower omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "KingProjectile",
+      "kind": "projectile",
+      "source_card": null,
+      "source_cards": [],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by KingTower; KingProjectile belongs to the KingTower, not to a card"
+    },
+    {
+      "row": "KingTower",
+      "kind": "tower",
+      "source_card": null,
+      "source_cards": [],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "Arena tower placed by the match, not by a card. Attacks with KingProjectile."
+    },
+    {
+      "row": "Knight",
+      "kind": "troop",
+      "source_card": "Knight",
+      "source_cards": [
+        "Knight"
+      ],
+      "elixir": 3,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "Knight omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "LavaHound",
+      "kind": "troop",
+      "source_card": "LavaHound",
+      "source_cards": [
+        "LavaHound"
+      ],
+      "elixir": 7,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "LavaHound omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "LavaHoundProjectile",
+      "kind": "projectile",
+      "source_card": "LavaHound",
+      "source_cards": [
+        "LavaHound"
+      ],
+      "elixir": 7,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by LavaHound; fired by SuperLavaHound; fired by SuperLavaHound2; projectile owned by LavaHound; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "LavaPupProjectile",
+      "kind": "projectile",
+      "source_card": null,
+      "source_cards": [],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "fired by LavaPups; no recovered card or tower Projectile field points at this row"
+    },
+    {
+      "row": "LavaPups",
+      "kind": "troop",
+      "source_card": "LavaHound",
+      "source_cards": [
+        "LavaHound"
+      ],
+      "elixir": 7,
+      "units_per_card": 6,
+      "uncertain": true,
+      "notes": "death spawn of SuperLavaHound2, which is not a direct card summon; DeathSpawnCharacter of LavaHound x6"
+    },
+    {
+      "row": "Lightning",
+      "kind": "area_effect",
+      "source_card": "Lightning",
+      "source_cards": [
+        "Lightning"
+      ],
+      "elixir": 6,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "area effect referenced by card Lightning.AreaEffectObject; card AreaEffectObject; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "LogProjectile",
+      "kind": "projectile",
+      "source_card": "Log",
+      "source_cards": [
+        "Log"
+      ],
+      "elixir": 2,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "chains to projectile LogProjectileRolling; projectile owned by Log; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "LogProjectileRolling",
+      "kind": "projectile",
+      "source_card": "Log",
+      "source_cards": [
+        "Log"
+      ],
+      "elixir": 2,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "projectile owned by Log; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "MegaMinion",
+      "kind": "troop",
+      "source_card": "MegaMinion",
+      "source_cards": [
+        "MegaMinion"
+      ],
+      "elixir": 3,
+      "units_per_card": 1,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "MegaMinionSpit",
+      "kind": "projectile",
+      "source_card": "MegaMinion",
+      "source_cards": [
+        "MegaMinion"
+      ],
+      "elixir": 3,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by MegaMinion; projectile owned by MegaMinion; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "MiniPekka",
+      "kind": "troop",
+      "source_card": "MiniPekka",
+      "source_cards": [
+        "MiniPekka"
+      ],
+      "elixir": 4,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "MiniPekka omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "Minion",
+      "kind": "troop",
+      "source_card": null,
+      "source_cards": [
+        "MinionHorde",
+        "Minions"
+      ],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "more than one catalog card can produce this row; direct deploys do not agree on units per card"
+    },
+    {
+      "row": "MinionSpit",
+      "kind": "projectile",
+      "source_card": null,
+      "source_cards": [
+        "MinionHorde",
+        "Minions"
+      ],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "fired by Minion; projectile owned by Minions; projectile owned by MinionHorde; more than one catalog card can produce this row"
+    },
+    {
+      "row": "Mortar",
+      "kind": "building",
+      "source_card": "Mortar",
+      "source_cards": [
+        "Mortar"
+      ],
+      "elixir": 4,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "Mortar omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "MortarProjectile",
+      "kind": "projectile",
+      "source_card": "Mortar",
+      "source_cards": [
+        "Mortar"
+      ],
+      "elixir": 4,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by Mortar; projectile owned by Mortar; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "Musketeer",
+      "kind": "troop",
+      "source_card": "Musketeer",
+      "source_cards": [
+        "Musketeer"
+      ],
+      "elixir": 4,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "Musketeer omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "MusketeerProjectile",
+      "kind": "projectile",
+      "source_card": "Musketeer",
+      "source_cards": [
+        "Musketeer"
+      ],
+      "elixir": 4,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by Musketeer; projectile owned by Musketeer; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "Pekka",
+      "kind": "troop",
+      "source_card": "Pekka",
+      "source_cards": [
+        "Pekka"
+      ],
+      "elixir": 7,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "Pekka omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "Poison",
+      "kind": "area_effect",
+      "source_card": "Poison",
+      "source_cards": [
+        "Poison"
+      ],
+      "elixir": 4,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "area effect referenced by card Poison.AreaEffectObject; card AreaEffectObject; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "Princess",
+      "kind": "troop",
+      "source_card": "Princess",
+      "source_cards": [
+        "Princess"
+      ],
+      "elixir": 3,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "Princess omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "PrincessProjectile",
+      "kind": "projectile",
+      "source_card": "Princess",
+      "source_cards": [
+        "Princess"
+      ],
+      "elixir": 3,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by Princess; projectile owned by Princess; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "PrincessProjectileDeco",
+      "kind": "projectile",
+      "source_card": "Princess",
+      "source_cards": [
+        "Princess"
+      ],
+      "elixir": 3,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by Princess; projectile owned by Princess; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "PrincessTower",
+      "kind": "tower",
+      "source_card": null,
+      "source_cards": [],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "Arena tower placed by the match, not by a card. Attacks with TowerPrincessProjectile."
+    },
+    {
+      "row": "RageBarbarian",
+      "kind": "troop",
+      "source_card": "RageBarbarian",
+      "source_cards": [
+        "RageBarbarian"
+      ],
+      "elixir": 4,
+      "units_per_card": 1,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "RageBarbarianBottle",
+      "kind": "building",
+      "source_card": null,
+      "source_cards": [],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "no summon, death-spawn, projectile, or area-effect link in the recovered catalog"
+    },
+    {
+      "row": "RageBarbarianDummyForSpawn",
+      "kind": "area_effect",
+      "source_card": "RageBarbarian",
+      "source_cards": [
+        "RageBarbarian"
+      ],
+      "elixir": 4,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "area effect referenced by RageBarbarian.DeathAreaEffect; RageBarbarian DeathAreaEffect; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "RocketSpell",
+      "kind": "projectile",
+      "source_card": "Rocket",
+      "source_cards": [
+        "Rocket"
+      ],
+      "elixir": 6,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "projectile owned by Rocket; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "Skeleton",
+      "kind": "troop",
+      "source_card": null,
+      "source_cards": [
+        "SkeletonArmy",
+        "Skeletons",
+        "Tombstone",
+        "Witch"
+      ],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "SuperWitch periodically spawns 4 Skeleton; Witch periodically spawns 4 Skeleton; Tombstone periodically spawns 2 Skeleton; DeathSpawnCharacter of Tombstone x4; periodic SpawnCharacter of Witch; periodic SpawnCharacter of Tombstone; more than one catalog card can produce this row; direct deploys do not agree on units per card"
+    },
+    {
+      "row": "SkeletonWarrior",
+      "kind": "troop",
+      "source_card": "SkeletonWarriors",
+      "source_cards": [
+        "SkeletonWarriors"
+      ],
+      "elixir": 3,
+      "units_per_card": 3,
+      "uncertain": false,
+      "notes": "SummonCharacter"
+    },
+    {
+      "row": "SpearGoblin",
+      "kind": "troop",
+      "source_card": null,
+      "source_cards": [
+        "GoblinGang",
+        "GoblinHut",
+        "SpearGoblins"
+      ],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "death spawn of SpearGoblinGiant, which is not a direct card summon; death spawn of GoblinPartyHut, which is not a direct card summon; DeathSpawnCharacter of GoblinHut_Rework x1; more than one catalog card can produce this row"
+    },
+    {
+      "row": "SpearGoblinProjectile",
+      "kind": "projectile",
+      "source_card": null,
+      "source_cards": [
+        "GoblinGang",
+        "SpearGoblins"
+      ],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": true,
+      "notes": "fired by SpearGoblin; projectile owned by SpearGoblins; projectile owned by GoblinGang; more than one catalog card can produce this row"
+    },
+    {
+      "row": "Tombstone",
+      "kind": "building",
+      "source_card": "Tombstone",
+      "source_cards": [
+        "Tombstone"
+      ],
+      "elixir": 3,
+      "units_per_card": 1,
+      "uncertain": true,
+      "notes": "Tombstone omits SummonNumber; catalog reconstruction uses 1"
+    },
+    {
+      "row": "Tornado",
+      "kind": "area_effect",
+      "source_card": "Tornado",
+      "source_cards": [
+        "Tornado"
+      ],
+      "elixir": 3,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "area effect referenced by card Tornado.AreaEffectObject; card AreaEffectObject; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "TowerCannonball",
+      "kind": "projectile",
+      "source_card": "Cannon",
+      "source_cards": [
+        "Cannon"
+      ],
+      "elixir": 3,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by Cannon; projectile owned by Cannon; not a deployed unit; units_per_card does not apply"
+    },
+    {
+      "row": "TowerPrincessProjectile",
+      "kind": "projectile",
+      "source_card": null,
+      "source_cards": [],
+      "elixir": null,
+      "units_per_card": null,
+      "uncertain": false,
+      "notes": "fired by TowerCannoneer; fired by TowerKnifeThrower; fired by TowerPrincess; fired by PrincessTower; TowerPrincessProjectile belongs to the PrincessTower, not to a card"
+    }
+  ]
+}

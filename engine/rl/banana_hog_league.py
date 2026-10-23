@@ -159,9 +159,11 @@ class Sampler:
 
 
 class NativeClient:
-    def __init__(self, binary, checkpoint, error_path):
+    def __init__(self, binary, checkpoint, error_path, command=None):
         self.err = error_path.open("ab")
-        self.proc = subprocess.Popen([str(binary), "--checkpoint", str(checkpoint)],
+        if command is None:
+            command = [str(binary), "--checkpoint", str(checkpoint)]
+        self.proc = subprocess.Popen(command,
                                      stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.err,
                                      cwd=ROOT, bufsize=0)
         self.selector = selectors.DefaultSelector()

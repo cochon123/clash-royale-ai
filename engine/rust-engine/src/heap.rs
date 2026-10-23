@@ -15,7 +15,7 @@ struct Arena {
 ///
 /// Allocator size classes, free-bucket order, alignment selection, and extra
 /// arena addresses match the model in `native-engine/src/oracle.rs`.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct GuestHeap {
     base: u64,
     capacity: u64,
@@ -135,6 +135,122 @@ impl GuestHeap {
     fn record_allocation(&mut self, pointer: u64, size: u64) {
         let previous_size = self.allocations.insert(pointer, size);
         self.journal.push((pointer, previous_size));
+    }
+
+    /// Full allocator image, including the reset baseline and journal.
+    ///
+    /// Addresses are decimal strings so the JSON integer width does not matter.
+    pub fn export_full(&self) -> Value {
+        let allocations = self
+            .allocations
+            .iter()
+            .map(|(address, size)| (address.to_string(), json!(size)))
+            .collect::<serde_json::Map<_, _>>();
+        let free_buckets = |free: &BTreeMap<u64, Vec<u64>>| {
+            free.iter()
+                .map(|(size, pointers)| {
+                    (
+                        size.to_string(),
+                        json!(pointers.iter().map(|p| p.to_string()).collect::<Vec<_>>()),
+                    )
+                })
+                .collect::<serde_json::Map<_, _>>()
+        };
+        let arenas = |arenas: &[Arena]| {
+            arenas
+                .iter()
+                .map(|arena| {
+                    json!({
+                        "base": arena.base.to_string(),
+                        "capacity": arena.capacity.to_string(),
+                        "pointer": arena.pointer.to_string(),
+                    })
+                })
+                .collect::<Vec<_>>()
+        };
+        json!({
+            "base": self.base.to_string(),
+            "capacity": self.capacity.to_string(),
+            "primary_pointer": self.pointer.to_string(),
+            "allocations": allocations,
+            "free_buckets": free_buckets(&self.free),
+            "extra_heaps": arenas(&self.extras),
+            "baseline_pointer": self.baseline_pointer.to_string(),
+            "baseline_free": free_buckets(&self.baseline_free),
+            "baseline_extras": arenas(&self.baseline_extras),
+            "journal": self.journal.iter().map(|(pointer, previous)| json!({
+                "pointer": pointer.to_string(),
+                "previous": previous.map(|size| size.to_string()),
+            })).collect::<Vec<_>>(),
+        })
+    }
+
+    /// Restore [`export_full`]. This does not touch guest memory.
+    pub fn import_full(value: &Value) -> Result<Self, String> {
+        let parse_map = |object: &Value, label: &str| -> Result<BTreeMap<u64, u64>, String> {
+            let mut out = BTreeMap::new();
+            for (key, size) in object.as_object().ok_or_else(|| format!("{label} missing"))? {
+                out.insert(parse_u64_value(&Value::String(key.clone()))?, json_u64(size)?);
+            }
+            Ok(out)
+        };
+        let parse_free = |object: &Value, label: &str| -> Result<BTreeMap<u64, Vec<u64>>, String> {
+            let mut out = BTreeMap::new();
+            for (key, pointers) in object
+                .as_object()
+                .ok_or_else(|| format!("{label} missing"))?
+            {
+                let class = parse_u64_value(&Value::String(key.clone()))?;
+                let values = pointers
+                    .as_array()
+                    .ok_or_else(|| format!("{label} bucket is not an array"))?
+                    .iter()
+                    .map(parse_u64_value)
+                    .collect::<Result<Vec<_>, _>>()?;
+                out.insert(class, values);
+            }
+            Ok(out)
+        };
+        let parse_arenas = |value: &Value, label: &str| -> Result<Vec<Arena>, String> {
+            value
+                .as_array()
+                .ok_or_else(|| format!("{label} missing"))?
+                .iter()
+                .map(|arena| {
+                    Ok(Arena {
+                        base: parse_u64_value(&arena["base"])?,
+                        capacity: parse_u64_value(&arena["capacity"])?,
+                        pointer: parse_u64_value(&arena["pointer"])?,
+                    })
+                })
+                .collect()
+        };
+        let journal = value["journal"]
+            .as_array()
+            .ok_or("heap journal missing")?
+            .iter()
+            .map(|entry| {
+                let pointer = parse_u64_value(&entry["pointer"])?;
+                let previous = if entry["previous"].is_null() {
+                    None
+                } else {
+                    Some(parse_u64_value(&entry["previous"])?)
+                };
+                Ok((pointer, previous))
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        Ok(Self {
+            base: parse_u64_value(&value["base"])?,
+            capacity: parse_u64_value(&value["capacity"])?,
+            pointer: parse_u64_value(&value["primary_pointer"])?,
+            allocations: parse_map(&value["allocations"], "allocations")?,
+            free: parse_free(&value["free_buckets"], "free_buckets")?,
+            extras: parse_arenas(&value["extra_heaps"], "extra_heaps")?,
+            baseline_pointer: parse_u64_value(&value["baseline_pointer"])?,
+            baseline_free: parse_free(&value["baseline_free"], "baseline_free")?,
+            baseline_extras: parse_arenas(&value["baseline_extras"], "baseline_extras")?,
+            journal,
+        })
     }
 
     /// Serialize the allocator state using the checkpoint-compatible schema.
@@ -271,6 +387,19 @@ fn align(value: u64, alignment: u64) -> Result<u64, String> {
         .checked_add(alignment - 1)
         .map(|value| value & !(alignment - 1))
         .ok_or_else(|| "alignment overflow".into())
+}
+
+fn parse_u64_value(value: &Value) -> Result<u64, String> {
+    if let Some(text) = value.as_str() {
+        if let Some(hex) = text.strip_prefix("0x") {
+            u64::from_str_radix(hex, 16).map_err(|e| format!("bad integer {text:?}: {e}"))
+        } else {
+            text.parse::<u64>()
+                .map_err(|e| format!("bad integer {text:?}: {e}"))
+        }
+    } else {
+        json_u64(value)
+    }
 }
 
 fn json_u64(value: &Value) -> Result<u64, String> {

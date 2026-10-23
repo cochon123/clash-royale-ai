@@ -9,7 +9,9 @@ use std::ffi::{c_int, c_void};
 use std::fs::File;
 use std::io;
 use std::os::fd::AsRawFd;
+use std::os::unix::fs::FileExt;
 use std::path::Path;
+use std::sync::Arc;
 
 #[cfg(target_os = "linux")]
 const PROT_READ: c_int = 0x1;
@@ -41,12 +43,41 @@ unsafe extern "C" {
 }
 
 #[derive(Debug)]
+enum Baseline {
+    /// Anonymous mapping; reset restores zeros.
+    Zero,
+    /// Private file mapping; reset restores these checkpoint bytes.
+    File { file: Arc<File>, offset: u64 },
+}
+
+#[derive(Debug)]
+struct Segment {
+    address: u64,
+    size: usize,
+    baseline: Baseline,
+}
+
+#[derive(Debug)]
 struct Mapping {
     address: u64,
     size: usize,
     /// The segments are contiguous and cover the complete mapping. File-backed
     /// segments are private mappings; anonymous segments reset to zero.
-    segments: Vec<(u64, usize)>,
+    segments: Vec<Segment>,
+}
+
+/// Dirty guest pages relative to the reset checkpoint, plus every reserved
+/// mapping so a fresh process can recreate extra arenas before writing them.
+#[derive(Clone, Debug)]
+pub struct DirtyPages {
+    pub pages: Vec<(u64, Vec<u8>)>,
+    pub mappings: Vec<(u64, usize)>,
+}
+
+impl DirtyPages {
+    pub fn payload_bytes(&self) -> u64 {
+        self.pages.iter().map(|(_, page)| page.len() as u64).sum()
+    }
 }
 
 /// A process-local view of fixed-address guest memory.
@@ -113,11 +144,15 @@ impl Memory {
         #[cfg(target_os = "linux")]
         {
             for mapping in &self.mappings {
-                for &(address, size) in &mapping.segments {
-                    let result = unsafe { madvise(address as *mut c_void, size, MADV_DONTNEED) };
+                for segment in &mapping.segments {
+                    let result = unsafe {
+                        madvise(segment.address as *mut c_void, segment.size, MADV_DONTNEED)
+                    };
                     if result != 0 {
                         return Err(format!(
-                            "madvise(MADV_DONTNEED) at {address:#x}+{size:#x}: {}",
+                            "madvise(MADV_DONTNEED) at {:#x}+{:#x}: {}",
+                            segment.address,
+                            segment.size,
                             io::Error::last_os_error()
                         ));
                     }
@@ -125,6 +160,61 @@ impl Memory {
             }
             Ok(())
         }
+    }
+
+    /// Pages that differ from the reset checkpoint, and the reserved ranges.
+    ///
+    /// File-backed pages are compared with the checkpoint file. Anonymous
+    /// pages are compared with zeros. A page written back to that baseline is
+    /// omitted, so restore is `reset` plus these bytes.
+    pub fn capture_dirty(&self) -> Result<DirtyPages, String> {
+        #[cfg(not(target_os = "linux"))]
+        {
+            return Err("fixed guest memory mappings require Linux".into());
+        }
+        #[cfg(target_os = "linux")]
+        {
+            let page = page_size();
+            let mut pages = Vec::new();
+            for mapping in &self.mappings {
+                for segment in &mapping.segments {
+                    if segment.size % page != 0 {
+                        return Err(format!(
+                            "segment {:#x} is not page aligned in length",
+                            segment.address
+                        ));
+                    }
+                    pages.extend(dirty_segment(segment)?);
+                }
+            }
+            Ok(DirtyPages {
+                pages,
+                mappings: self
+                    .mappings
+                    .iter()
+                    .map(|mapping| (mapping.address, mapping.size))
+                    .collect(),
+            })
+        }
+    }
+
+    /// Restore the checkpoint baseline, ensure every snapshotted range is
+    /// reserved, then write the dirty pages back.
+    pub fn apply_dirty(&mut self, dirty: &DirtyPages) -> Result<(), String> {
+        self.reset()?;
+        for &(address, size) in &dirty.mappings {
+            if !self
+                .mappings
+                .iter()
+                .any(|mapping| mapping.address == address && mapping.size == size)
+            {
+                self.map_zeroed(address, size)?;
+            }
+        }
+        for (address, bytes) in &dirty.pages {
+            self.write_bytes(*address, bytes)?;
+        }
+        Ok(())
     }
 
     /// Map a zero-filled guest region, refusing to replace any existing host
@@ -174,7 +264,11 @@ impl Memory {
             self.mappings.push(Mapping {
                 address,
                 size,
-                segments: vec![(address, size)],
+                segments: vec![Segment {
+                    address,
+                    size,
+                    baseline: Baseline::Zero,
+                }],
             });
             Ok(())
         }
@@ -309,7 +403,15 @@ impl Memory {
             ));
         }
 
-        let mut segments = vec![(address, file_size)];
+        let file = Arc::new(file);
+        let mut segments = vec![Segment {
+            address,
+            size: file_size,
+            baseline: Baseline::File {
+                file: Arc::clone(&file),
+                offset: 0,
+            },
+        }];
         if capacity > file_size {
             let tail_address = address + file_size as u64;
             let tail_size = capacity - file_size;
@@ -332,7 +434,11 @@ impl Memory {
                 unsafe { munmap(address as *mut c_void, capacity) };
                 return Err(format!("map zero tail at {tail_address:#x}: {error}"));
             }
-            segments.push((tail_address, tail_size));
+            segments.push(Segment {
+                address: tail_address,
+                size: tail_size,
+                baseline: Baseline::Zero,
+            });
         }
         self.mappings.push(Mapping {
             address,
@@ -371,6 +477,57 @@ impl Drop for Memory {
             unsafe { munmap(mapping.address as *mut c_void, mapping.size) };
         }
     }
+}
+
+#[cfg(target_os = "linux")]
+fn dirty_segment(segment: &Segment) -> Result<Vec<(u64, Vec<u8>)>, String> {
+    let page = page_size();
+    let mut out = Vec::new();
+    match &segment.baseline {
+        Baseline::Zero => {
+            let mut cursor = 0usize;
+            while cursor < segment.size {
+                let guest = unsafe {
+                    std::slice::from_raw_parts((segment.address + cursor as u64) as *const u8, page)
+                };
+                if guest.iter().any(|byte| *byte != 0) {
+                    out.push((segment.address + cursor as u64, guest.to_vec()));
+                }
+                cursor += page;
+            }
+        }
+        Baseline::File { file, offset } => {
+            let chunk_len = 1024 * 1024;
+            let mut buf = vec![0u8; chunk_len];
+            let mut cursor = 0usize;
+            while cursor < segment.size {
+                let n = (segment.size - cursor).min(buf.len());
+                if n % page != 0 {
+                    return Err(format!(
+                        "baseline chunk at {:#x} is not page aligned",
+                        segment.address
+                    ));
+                }
+                file.read_exact_at(&mut buf[..n], offset + cursor as u64)
+                    .map_err(|e| format!("checkpoint baseline read: {e}"))?;
+                let mut local = 0usize;
+                while local < n {
+                    let guest = unsafe {
+                        std::slice::from_raw_parts(
+                            (segment.address + (cursor + local) as u64) as *const u8,
+                            page,
+                        )
+                    };
+                    if guest != &buf[local..local + page] {
+                        out.push((segment.address + (cursor + local) as u64, guest.to_vec()));
+                    }
+                    local += page;
+                }
+                cursor += n;
+            }
+        }
+    }
+    Ok(out)
 }
 
 fn json_u64(value: &Value) -> Result<u64, String> {
@@ -472,6 +629,66 @@ mod tests {
             memory.read_bytes(address + page as u64 + 10, 2).unwrap(),
             [0, 0]
         );
+        drop(memory);
+        std::fs::remove_file(path).expect("remove temporary mapping source");
+    }
+
+    #[test]
+    fn dirty_page_diff_round_trips_and_ignores_baseline() {
+        let page = page_size();
+        let path = std::env::temp_dir().join(format!(
+            "clash-recompiled-dirty-{}-{}.bin",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let baseline = vec![0x11; page];
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&path)
+            .expect("create temporary mapping source");
+        file.write_all(&baseline).expect("write baseline mapping");
+        drop(file);
+
+        let address = 0x4e00_0000_0000_u64 + (u64::from(std::process::id()) << 12);
+        let mut memory = Memory {
+            mappings: Vec::new(),
+        };
+        memory
+            .map_private_file(&path, address, page, page * 2)
+            .expect("map private checkpoint plus anonymous tail");
+        memory
+            .write_bytes(address + 4, &[0xab, 0xcd])
+            .expect("dirty file page");
+        memory
+            .write_bytes(address + page as u64 + 8, &[0xef])
+            .expect("dirty anonymous tail");
+        let dirty = memory.capture_dirty().expect("capture dirty pages");
+        assert_eq!(dirty.pages.len(), 2, "baseline bytes must not be retained");
+        assert_eq!(dirty.payload_bytes(), (page * 2) as u64);
+
+        memory
+            .write_bytes(address + 4, &[0x00, 0x00])
+            .expect("overwrite the snapshotted file page");
+        memory
+            .write_bytes(address + page as u64 + 8, &[0x00])
+            .expect("overwrite the snapshotted tail");
+        memory.apply_dirty(&dirty).expect("restore dirty pages");
+        assert_eq!(memory.read_bytes(address + 4, 2).unwrap(), [0xab, 0xcd]);
+        assert_eq!(
+            memory.read_bytes(address + page as u64 + 8, 1).unwrap(),
+            [0xef]
+        );
+        // A page returned to the checkpoint baseline is not part of the diff.
+        memory
+            .write_bytes(address + 4, &[0x11, 0x11])
+            .expect("restore file baseline bytes");
+        let cleaned = memory.capture_dirty().expect("recapture");
+        assert_eq!(cleaned.pages.len(), 1);
+        assert_eq!(cleaned.pages[0].0, address + page as u64);
         drop(memory);
         std::fs::remove_file(path).expect("remove temporary mapping source");
     }

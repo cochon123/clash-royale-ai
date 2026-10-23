@@ -9,5 +9,6 @@ pub mod memory;
 pub mod rl;
 pub mod runtime;
 pub mod session;
+pub mod snapshot;
 /// Exact source/compiler identities embedded when this executable was built.
 pub const BUILD_PROVENANCE: &str = include_str!(concat!(env!("OUT_DIR"), "/provenance.json"));
