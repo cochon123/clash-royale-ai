@@ -1,8 +1,19 @@
 //! Fast card-play and observation API for the compiled native session.
 
 use crate::session::{num, Session};
+use crate::snapshot::EngineSnapshot;
 use serde_json::{json, Value};
 use std::{collections::BTreeMap, path::Path, time::Instant};
+
+/// Host-side motion and first-seen tracking for board export.
+///
+/// This is not guest state. Snapshots retain it so a restored branch reports
+/// the same `dx`/`dy` and `first_seen_tick` as the original run.
+#[derive(Clone, Debug, Default)]
+pub struct BoardMemory {
+    pub positions: BTreeMap<u64, (i32, i32)>,
+    pub first_seen: BTreeMap<u64, u32>,
+}
 
 #[derive(Clone, Copy, Debug)]
 pub struct PlayCardRequest {
@@ -394,6 +405,85 @@ impl RlSession {
             }));
         }
         Ok(json!({"tick":self.engine.ticks()[0],"entities":towers}))
+    }
+
+    /// Read every current entity the presentation snapshot would see.
+    ///
+    /// `hp`/`max_hp` come from the original health component when its vtable
+    /// matches; otherwise they are the presentation sentinels `-1` and `0`.
+    /// `dx`/`dy` are the displacement since this session's previous board
+    /// read, or 0 the first time an entity is seen. The read does not write
+    /// guest memory. `track` is updated to this frame.
+    pub fn board_snapshot(&self, track: &mut BoardMemory) -> Result<Value, String> {
+        let tick = self.engine.ticks()[0];
+        let manager = read_u64(&self.engine, self.engine.world + 0x40)?;
+        let count = read_i32(&self.engine, manager + 0x14)?;
+        if !(0..=8192).contains(&count) {
+            return Err(format!("invalid native entity count {count}"));
+        }
+        let array = read_u64(&self.engine, manager + 8)?;
+        let mut entities = Vec::with_capacity(count as usize);
+        let mut positions = BTreeMap::new();
+        for index in 0..count as u64 {
+            let address = read_u64(&self.engine, array + index * 8)?;
+            let row = read_u64(&self.engine, address + 0x48)?;
+            let name = self.native_string(row + 0x28)?;
+            let id = read_i32(&self.engine, address + 8)?;
+            let side = read_i32(&self.engine, address + 0x78)?;
+            let x = read_i32(&self.engine, address + 0x7c)?;
+            let y = read_i32(&self.engine, address + 0x80)?;
+            let component_count = read_i32(&self.engine, address + 0x24)?;
+            if !(0..=32).contains(&component_count) {
+                return Err(format!(
+                    "unrecognized native component layout on {name} id={id}"
+                ));
+            }
+            let (hp, max_hp) = if component_count > 2 {
+                let table = read_u64(&self.engine, address + 0x18)?;
+                let health = read_u64(&self.engine, table + 16)?;
+                if health != 0 && read_u64(&self.engine, health)? == 0x1193b660 {
+                    (
+                        read_i32(&self.engine, health + 0x10)?,
+                        read_i32(&self.engine, health + 0x14)?,
+                    )
+                } else {
+                    (-1, 0)
+                }
+            } else {
+                (-1, 0)
+            };
+            let (dx, dy) = track
+                .positions
+                .get(&address)
+                .map(|(px, py)| (i64::from(x) - i64::from(*px), i64::from(y) - i64::from(*py)))
+                .unwrap_or((0, 0));
+            let first_seen_tick = *track.first_seen.entry(address).or_insert(tick);
+            positions.insert(address, (x, y));
+            entities.push(json!({
+                "id": id,
+                "row": name,
+                "side": side,
+                "x": x,
+                "y": y,
+                "hp": hp,
+                "max_hp": max_hp,
+                "dx": dx,
+                "dy": dy,
+                "first_seen_tick": first_seen_tick,
+            }));
+        }
+        track.first_seen.retain(|address, _| positions.contains_key(address));
+        track.positions = positions;
+        Ok(json!({"tick": tick, "entities": entities}))
+    }
+
+    pub fn capture_snapshot(&self, protocol: Value) -> Result<EngineSnapshot, String> {
+        let tick = u64::from(self.engine.ticks()[0]);
+        EngineSnapshot::from_live(&self.engine, self.descriptor_scratch, tick, protocol)
+    }
+
+    pub fn restore_snapshot(&mut self, snapshot: &EngineSnapshot) -> Result<(), String> {
+        snapshot.restore_into(&mut self.engine, &mut self.descriptor_scratch)
     }
 
     /// Query the original target validator at every policy heatmap center.
