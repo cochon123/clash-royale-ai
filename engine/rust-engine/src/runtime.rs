@@ -17,6 +17,7 @@ pub struct Runtime {
     pub deck_swap: Option<DeckSwap>,
 }
 
+#[derive(Clone, Debug)]
 pub struct DeckSwap {
     pub slot: u64,
     pub second_ptr: u64,
