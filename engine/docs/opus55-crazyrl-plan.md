@@ -131,3 +131,55 @@ audits them in `reward-audit.jsonl`:
 - Commit in small logical commits on your branch. Do not push, do not merge
   other branches, and do not rewrite history.
 - Add a short doc section under `engine/docs/` for what you built.
+
+## Phase 2 (after W1-W3 merged at `3784a41`)
+
+Phase-1 facts that phase 2 relies on:
+- Engine (W1): `rust-engine/target/pgo/rust_league_rl` sha256 `32b6deb2...`.
+  The 540 saved league games replay exactly. Snapshot capture takes 0.135 s
+  (352 KB of dirty pages); restore takes **0.190 s**; a disk save is 47 MB.
+  `--sessions` is slower than separate processes (66 vs 173 games/min with
+  random play over 8), so the per-process thread pool stays the default.
+  `engine/data/board_rows.json` holds 74 rows. `native_ai_side` is not
+  feasible.
+- Board (W2): `rl/board_policy.py` `BoardHogPolicy`, `rl/board_rewards.py`,
+  `rl/hog_distill.py`; API in `docs/board-policy.md`.
+- Speed (W3): `--async-collection`, `--max-policy-lag`, `--engine-pool`,
+  `rl/engine_pool.py`. Main finding: **every policy forward had batch size 1**
+  at 2 workers, and inference was about two thirds of wall time. The
+  throughput lever is many concurrent games with one batched forward per
+  scheduling round.
+- Random-play engine ceiling: 173 games/min on 8 processes. The trainer
+  reaches about 36.
+
+### C7. Search / expert-iteration interface (W5 produces, W4 consumes)
+
+`rl/hog_search.py`:
+
+```python
+@dataclass
+class SearchConfig:
+    candidates: int = 6           # top-k (card, tile) from the learner, plus "wait"
+    horizon_ticks: int = 120      # 6 s lookahead per candidate
+    search_fraction: float = 0.05 # upper bound on the share of learner decisions searched
+    temperature: float = 0.5      # softmax over candidate Q into target probabilities
+    aux_coef: float = 0.5
+
+class ExpertIteration:
+    def __init__(self, config: SearchConfig, row_table): ...
+    def should_search(self, observation: dict, board: dict, side: int, rng) -> bool: ...
+    def search(self, pool, slot: int, policy, episode, side: int,
+               observation: dict, board: dict, opponent_act=None) -> "SearchTarget | None":
+        """Uses snapshot/restore on the pool slot's own engine session. It must
+        leave the engine exactly in its pre-search state and must not mutate
+        episode or policy caches. Candidate Q = change in (tower-HP potential +
+        elixir-trade potential) over the horizon, optionally plus critic
+        bootstrap. opponent_act=None means the opponent submits nothing during
+        lookahead."""
+    def aux_loss(self, policy, targets: list["SearchTarget"]) -> torch.Tensor:
+        """KL(target || policy) over the searched card/placement/wait choices,
+        differentiable through the policy and recomputed from stored inputs."""
+```
+
+W4 calls this behind `--search none|expert` (default `none`). When the module is
+missing, W4 uses a stub with the same signature for its tests.
