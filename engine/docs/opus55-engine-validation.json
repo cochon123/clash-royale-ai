@@ -1,0 +1,59 @@
+{
+  "name": "opus5.5crazyrl-engine",
+  "created": "2026-10-23",
+  "checkpoint_sha256": "66f9bf75bfde9b5e0c1f4056573079016d41576020018b9e57fca538fd1b840e",
+  "binaries": {
+    "rust_league_rl": {
+      "path": "rust-engine/target/pgo/rust_league_rl",
+      "sha256": "32b6deb2f5116ebc84b74b6d25fb7e7ef90d38564ba74faafa811eff15103eaa"
+    },
+    "rust_deck_rl": {
+      "path": "rust-engine/target/pgo/rust_deck_rl",
+      "sha256": "3db0068ec52d23c7f51781eed7ce0d66a2244cb0ce87682afcb3187690b0395c"
+    },
+    "instrumented_rust_league_rl": {
+      "sha256": "2e890b312b796a54227baed7de6b9e636455c90e3240119581773f4933265deb"
+    }
+  },
+  "profile_sha256": "6797fdc3dd078afc16f1f3063a010282658ba9e717c037db253fd4cfcdf7c327",
+  "pgo": {
+    "out": "analysis-local/pgo-opus55",
+    "lto": "thin",
+    "cpu": "native",
+    "train": {
+      "games": 36,
+      "matched": 36,
+      "requests": 4702,
+      "elapsed_seconds": 236.49319342098897
+    }
+  },
+  "replay": {
+    "command": "python tools/replay_saved_league.py --candidate rust-engine/target/pgo/rust_league_rl --workers 2",
+    "development": {"games": 36, "matched": 36, "requests": 4702, "elapsed_seconds": 19.7809816240042},
+    "holdout-final": {"games": 252, "matched": 252, "requests": 46044, "elapsed_seconds": 137.638594819},
+    "holdout-cycle": {"games": 252, "matched": 252, "requests": 33111, "elapsed_seconds": 77.40537348098587}
+  },
+  "pytest": {
+    "command": "python -m pytest rl/test_engine_ops.py -s --tb=short",
+    "passed": 4,
+    "failed": 0,
+    "elapsed_seconds": 51.37,
+    "binary": "rust-engine/target/release/rust_league_rl"
+  },
+  "snapshot": {
+    "snapshot_seconds": 0.13488255397533067,
+    "restore_seconds": 0.19000445498386398,
+    "dirty_page_bytes": 352256,
+    "file_bytes": 47179717
+  },
+  "benchmark": {
+    "seconds_budget": 75,
+    "max_ticks": 3600,
+    "memory_peak_bytes_sessions": 4209549312,
+    "sessions_8": {"games": 97, "seconds": 87.87791705699055, "games_per_minute": 66.23, "steps": 16528, "mask_calls": 16549},
+    "processes_8": {"games": 219, "seconds": 75.92741720299819, "games_per_minute": 173.06, "steps": 35672, "mask_calls": 35599}
+  },
+  "board_rows": {"rows": 74, "uncertain": 32, "games": {"development": 36, "holdout-final": 252, "holdout-cycle": 252}},
+  "native_ai_side": "not implemented; the Normal bot is inside harness step 11d6398 and there is no per-side disable that preserves constructor exactness",
+  "not_run": "The older discovery holdout cohort (analysis/fast-league-worktree-20261022/holdout, 252 games) was started and interrupted. It is not part of the 504-game final test. Games that finished before the interrupt matched."
+}
