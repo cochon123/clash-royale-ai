@@ -10,7 +10,8 @@ GET  /api/matches                active matches
 POST /api/matches                start one: {"mode": "human"|"watch", "sides": [...], "seed"?}
 GET  /api/matches/{id}           summary of one match
 GET  /api/matches/{id}/stream    server-sent events: meta, rows, frame, status, closed
-GET  /api/matches/{id}/scene     original-sprite display-list SSE
+GET  /api/matches/{id}/ticks     protocol-2 tick SSE: meta, ticks, round, resync, status, closed, error
+GET  /api/matches/{id}/scene     legacy original-sprite display-list SSE (ARENA_SCENE_LEGACY=1)
 GET  /api/matches/{id}/textures/{id}.png   immutable original sprite
 GET  /api/matches/{id}/view      rendered original spectator frame (JPEG)
 GET  /api/matches/{id}/video     multipart/x-mixed-replace JPEG stream of the match
@@ -29,11 +30,12 @@ import time
 from webapps.common import catalog, paths
 from webapps.common.httpkit import App, ByteStream, EventStream, HTTPError
 
+from .assets import register_routes as register_asset_routes
 from .match import MatchManager
 from .placement import Warmer
 from .gallery import register_routes as register_gallery_routes
 from .renderer import ASSETS, BINARY, register_routes
-from .scene import BINARY as SCENE_BINARY, browser_scene_enabled, register_routes as register_scene_routes
+from .scene import BINARY as SCENE_BINARY, browser_scene_enabled, register_routes as register_scene_routes, scene_legacy_enabled
 
 HERE = paths.REPO / "webapps" / "arena"
 app = App("arena")
@@ -42,6 +44,7 @@ warmer = Warmer()
 app.mount("/cards", paths.CARD_ART)
 app.mount("/", HERE / "static")
 register_gallery_routes(app, HERE / "static")
+register_asset_routes(app)
 _warmup_lock = threading.Lock()
 _warming = False
 
@@ -65,6 +68,9 @@ def warmup():
         if os.environ.get("ARENA_WARM_PLACEMENTS", "1") == "1":
             for preset in catalog.presets():
                 warmer.enqueue(preset["cards"], preset["cards"])
+        if os.environ.get("ARENA_ENGINE_POOL", "0") == "1":
+            from .engine_pool import get_pool
+            get_pool().warm()
         threading.Thread(target=_warm_imports, daemon=True).start()
 
 
@@ -73,7 +79,15 @@ def _checkpoint_available():
 
 
 def _renderer_binary():
-    return SCENE_BINARY if browser_scene_enabled() else BINARY
+    """Binary required before a match starts.
+
+    The default tick path still requires the JPEG renderer so an explicit
+    Stream view can start later. It does not start that process at create time.
+    The scene presenter is required only when legacy mode is on.
+    """
+    if scene_legacy_enabled() and browser_scene_enabled():
+        return SCENE_BINARY
+    return BINARY
 
 
 def _renderer_assets():
@@ -94,6 +108,7 @@ def health(_request):
             "renderer_built": _renderer_binary().is_file(),
             "scene_built": SCENE_BINARY.is_file(), "stream_renderer_built": BINARY.is_file(),
             "renderer_assets": _renderer_assets().is_file(),
+            "tick_stream": True, "scene_legacy": scene_legacy_enabled(),
             "matches": len(manager.list()), "max_matches": manager.max_matches,
             "placement_warmer": warmer.status}
 
@@ -103,8 +118,9 @@ def get_catalog(_request):
     return {"models": catalog.engine_models(), "presets": catalog.presets(),
             "public": os.environ.get("ARENA_PUBLIC", "0") == "1",
             "cards": list(catalog.cards().values()),
-            "rendering": {"default": "browser" if browser_scene_enabled() else "stream",
-                          "scene_available": SCENE_BINARY.is_file(), "stream_available": BINARY.is_file()},
+            "rendering": {
+                "default": "ticks" if not scene_legacy_enabled() else ("browser" if browser_scene_enabled() else "stream"),
+                "scene_available": SCENE_BINARY.is_file(), "stream_available": BINARY.is_file()},
             "notes": {
                 "presets": "These six presets are supported by the fast training engine. "
                            "Browser matches use the original engine.",
@@ -178,8 +194,9 @@ def create_match(request):
     if not _checkpoint_available():
         raise HTTPError(503, f"the original engine checkpoint is missing: {paths.relative(paths.ENGINE_CHECKPOINT)}")
     if not _renderer_binary().is_file():
+        legacy_scene = scene_legacy_enabled() and browser_scene_enabled()
         build = ("cargo build --offline --manifest-path engine/native-spectator/Cargo.toml --bin clash-web-scene"
-                 if browser_scene_enabled() else
+                 if legacy_scene else
                  "TURBOJPEG_STATIC=1 cargo build --offline --manifest-path engine/native-spectator/Cargo.toml --features web-jpeg --bin clash-web-renderer")
         raise HTTPError(503, f"the original renderer is not built yet; run: {build}")
     if not _renderer_assets().is_file():
@@ -215,6 +232,42 @@ def get_match(request):
 @app.route("GET", "/api/matches/{id}/stream")
 def stream(request):
     return EventStream(_match(request).events(), gzip=True)
+
+
+def _last_event_id(request):
+    headers = request.headers
+    getter = getattr(headers, "get", None)
+    if getter is None:
+        return None
+    for key in ("Last-Event-ID", "last-event-id"):
+        value = getter(key)
+        if value:
+            return value
+    return None
+
+
+@app.route("GET", "/api/matches/{id}/ticks")
+def ticks(request):
+    """Ordered protocol-2 snapshots. Gzip is negotiated and flushed per event."""
+    match = _match(request)
+
+    def events():
+        match.subscribers += 1
+        source = None
+        try:
+            source = iter(match.tick_stream(_last_event_id(request)))
+            yield from source
+        finally:
+            try:
+                close = getattr(source, "close", None)
+                if close:
+                    close()
+            finally:
+                match.subscribers -= 1
+                match.last_watched = time.monotonic()
+
+    source = events()
+    return EventStream(source, on_close=source.close, gzip=True)
 
 
 @app.route("GET", "/api/matches/{id}/video")

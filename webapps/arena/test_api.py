@@ -167,7 +167,7 @@ class ArenaValidationTests(unittest.TestCase):
         self.manager.list.assert_called_with(owner=None)
 
     def test_other_sessions_cannot_read_stream_input_control_or_close(self):
-        functions = (server.get_match, server.stream, server.match_input,
+        functions = (server.get_match, server.stream, server.ticks, server.match_input,
                      server.match_control, server.close_match)
         for function in functions:
             with self.subTest(route=function.__name__):
