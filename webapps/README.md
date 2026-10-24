@@ -55,6 +55,14 @@ and End. Watch mode shows both hands and offers playback speeds. Human mode
 hides the opponent’s hand. Gameplay stays authoritative in the reference
 engine; models and checkpoints are never trained or modified by a match.
 
+AI and human plays use the original native placement resolver before submission.
+The accepted action's `result.resolved_target` supplies policy history and play
+markers; `request` in the action log retains the original aim for diagnostics.
+This matters when a troop aimed across the river is moved back to its territory:
+the requested aim must never be presented to the policies as its deployment.
+Match manifests identify this contract as `native-resolved-target-v1`. Rebuild
+`native-watch` and restart Arena together when updating this contract.
+
 The **very fast, recompiled six-deck engine is for training**. Every browser
 match uses the original Unicorn reference engine, including custom decks.
 An RL specialist may play less well outside its training deck. Presets do not

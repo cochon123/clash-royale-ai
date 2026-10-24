@@ -1,0 +1,74 @@
+{
+  "seed": 7925,
+  "decks": [
+    [
+      "Golem",
+      "DarkWitch",
+      "BabyDragon",
+      "MegaMinion",
+      "RageBarbarian",
+      "Tornado",
+      "Lightning",
+      "BarbLog"
+    ],
+    [
+      "Golem",
+      "DarkWitch",
+      "BabyDragon",
+      "MegaMinion",
+      "RageBarbarian",
+      "Tornado",
+      "Lightning",
+      "BarbLog"
+    ]
+  ],
+  "frames": 1600,
+  "played": [
+    [
+      "BabyDragon",
+      "RageBarbarian",
+      "Tornado",
+      "BarbLog",
+      "MegaMinion",
+      "DarkWitch",
+      "BabyDragon",
+      "Tornado",
+      "BarbLog",
+      "MegaMinion"
+    ],
+    [
+      "BarbLog",
+      "Tornado",
+      "MegaMinion",
+      "RageBarbarian",
+      "BabyDragon",
+      "BarbLog",
+      "Tornado",
+      "MegaMinion",
+      "DarkWitch",
+      "RageBarbarian",
+      "BarbLog"
+    ]
+  ],
+  "observed_rows": [
+    "BabyDragon",
+    "BabyDragonProjectile",
+    "BarbLogProjectile",
+    "BarbLogProjectileRolling",
+    "Barbarian",
+    "BarbarianRage",
+    "BarbarianRageDamage",
+    "Bat",
+    "DarkWitch",
+    "KingTower",
+    "MegaMinion",
+    "MegaMinionSpit",
+    "PrincessTower",
+    "RageBarbarian",
+    "RageBarbarianBottle",
+    "RageBarbarianDummyForSpawn",
+    "Tornado",
+    "TowerPrincessProjectile"
+  ],
+  "source": "original-native-engine"
+}

@@ -1,0 +1,63 @@
+{
+  "seed": 7935,
+  "decks": [
+    [
+      "LavaHound",
+      "MegaKnight",
+      "Pekka",
+      "RoyalRecruits",
+      "Golem",
+      "SuperLavaHound",
+      "ThreeMusketeers",
+      "ElectroSpirit"
+    ],
+    [
+      "LavaHound",
+      "MegaKnight",
+      "Pekka",
+      "RoyalRecruits",
+      "Golem",
+      "SuperLavaHound",
+      "ThreeMusketeers",
+      "ElectroSpirit"
+    ]
+  ],
+  "frames": 1838,
+  "played": [
+    [
+      "MegaKnight",
+      "RoyalRecruits",
+      "LavaHound",
+      "Pekka",
+      "ElectroSpirit",
+      "SuperLavaHound"
+    ],
+    [
+      "RoyalRecruits",
+      "ElectroSpirit",
+      "Pekka",
+      "LavaHound",
+      "MegaKnight",
+      "Golem"
+    ]
+  ],
+  "observed_rows": [
+    "ElectroSpirit",
+    "ElectroSpiritProjectile",
+    "Golem",
+    "KingProjectile",
+    "KingTower",
+    "LavaHound",
+    "LavaHoundProjectile",
+    "LavaPupProjectile",
+    "LavaPups",
+    "MegaKnight",
+    "MegaKnightAppear",
+    "Pekka",
+    "PrincessTower",
+    "Recruit",
+    "SuperLavaHound",
+    "TowerPrincessProjectile"
+  ],
+  "source": "original-native-engine"
+}

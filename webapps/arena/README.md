@@ -50,8 +50,18 @@ network and the time needed to download newly encountered animation poses.
 The initial asset cache and cold effects may still produce visible delays.
 
 Protocol details: [SCENE_PROTOCOL.md](SCENE_PROTOCOL.md).
-Measured results and remaining limits: [BROWSER_RENDERER_VALIDATION.md](BROWSER_RENDERER_VALIDATION.md). No production deployment
-has been made from this prototype.
+Measured results and remaining limits: [BROWSER_RENDERER_VALIDATION.md](BROWSER_RENDERER_VALIDATION.md).
+The tested baseline `8b62365` was integrated into local `main` and deployed to
+the VPS on 2026-10-22. Subsequent animation and coverage changes in this
+worktree remain local for review.
+
+To isolate newly recovered original art from a shared `engine/analysis` tree,
+set `ARENA_ASSETS_DIR="$PWD/.local-arena/assets/native-spectator"`. Both the
+browser presenter and explicit stream view use this bundle. The optional
+developer viewer at `/visual-gallery` is enabled only when
+`ARENA_VISUAL_GALLERY_DIR` points to a generated fixture directory. It compares
+browser compositing with original-asset CPU output; this comparison alone
+does not validate timing against the official game.
 
 Focused checks:
 

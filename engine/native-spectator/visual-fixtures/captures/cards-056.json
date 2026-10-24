@@ -1,0 +1,64 @@
+{
+  "seed": 7928,
+  "decks": [
+    [
+      "HogRider",
+      "Hunter",
+      "InfernoDragon",
+      "RageBarbarian",
+      "EliteArcher",
+      "MightyMiner",
+      "MiniPekka",
+      "Mortar"
+    ],
+    [
+      "HogRider",
+      "Hunter",
+      "InfernoDragon",
+      "RageBarbarian",
+      "EliteArcher",
+      "MightyMiner",
+      "MiniPekka",
+      "Mortar"
+    ]
+  ],
+  "frames": 1098,
+  "played": [
+    [
+      "MiniPekka",
+      "Hunter",
+      "RageBarbarian",
+      "EliteArcher",
+      "HogRider",
+      "InfernoDragon"
+    ],
+    [
+      "Hunter",
+      "RageBarbarian",
+      "EliteArcher",
+      "MightyMiner",
+      "HogRider",
+      "InfernoDragon"
+    ]
+  ],
+  "observed_rows": [
+    "BarbarianRage",
+    "BarbarianRageDamage",
+    "EliteArcher",
+    "EliteArcherArrow",
+    "HogRider",
+    "Hunter",
+    "HunterProjectile",
+    "InfernoDragon",
+    "KingProjectile",
+    "KingTower",
+    "MightyMiner",
+    "MiniPekka",
+    "PrincessTower",
+    "RageBarbarian",
+    "RageBarbarianBottle",
+    "RageBarbarianDummyForSpawn",
+    "TowerPrincessProjectile"
+  ],
+  "source": "original-native-engine"
+}

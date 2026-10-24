@@ -1,0 +1,86 @@
+{
+  "seed": 7921,
+  "decks": [
+    [
+      "HogRider",
+      "Musketeer",
+      "IceGolemite",
+      "Skeletons",
+      "IceSpirits",
+      "Cannon",
+      "Fireball",
+      "Log"
+    ],
+    [
+      "HogRider",
+      "Musketeer",
+      "IceGolemite",
+      "Skeletons",
+      "IceSpirits",
+      "Cannon",
+      "Fireball",
+      "Log"
+    ]
+  ],
+  "frames": 1600,
+  "played": [
+    [
+      "IceSpirits",
+      "Skeletons",
+      "Log",
+      "Cannon",
+      "IceGolemite",
+      "IceSpirits",
+      "Skeletons",
+      "Log",
+      "Cannon",
+      "IceGolemite",
+      "IceSpirits",
+      "Skeletons",
+      "Log",
+      "Cannon",
+      "IceGolemite",
+      "IceSpirits",
+      "Skeletons",
+      "Log",
+      "Cannon"
+    ],
+    [
+      "IceGolemite",
+      "Log",
+      "Musketeer",
+      "IceSpirits",
+      "Skeletons",
+      "IceGolemite",
+      "Log",
+      "Cannon",
+      "IceSpirits",
+      "Skeletons",
+      "IceGolemite",
+      "Log",
+      "Cannon",
+      "IceSpirits",
+      "Skeletons",
+      "IceGolemite",
+      "Log"
+    ]
+  ],
+  "observed_rows": [
+    "Cannon",
+    "FreezeIceGolemite",
+    "IceGolemite",
+    "IceGolemiteDeathArea",
+    "IceSpirits",
+    "IceSpiritsProjectile",
+    "KingTower",
+    "LogProjectile",
+    "LogProjectileRolling",
+    "Musketeer",
+    "MusketeerProjectile",
+    "PrincessTower",
+    "Skeleton",
+    "TowerCannonball",
+    "TowerPrincessProjectile"
+  ],
+  "source": "original-native-engine"
+}

@@ -5,6 +5,7 @@
 //! so the file baseline and zero-filled anonymous tails are restored.
 
 use serde_json::Value;
+use std::collections::HashSet;
 use std::ffi::{c_int, c_void};
 use std::fs::File;
 use std::io;
@@ -27,6 +28,18 @@ const MAP_ANONYMOUS: c_int = 0x20;
 const MAP_FIXED_NOREPLACE: c_int = 0x100000;
 #[cfg(target_os = "linux")]
 const MADV_DONTNEED: c_int = 4;
+/// `/proc/self/pagemap` bit 56: the PTE is exclusively mapped.
+#[cfg(target_os = "linux")]
+const PM_EXCLUSIVE: u64 = 1 << 56;
+/// `/proc/self/pagemap` bit 61: the PTE still names a file or shared page.
+#[cfg(target_os = "linux")]
+const PM_FILE: u64 = 1 << 61;
+/// `/proc/self/pagemap` bit 62: the PTE is swapped.
+#[cfg(target_os = "linux")]
+const PM_SWAP: u64 = 1 << 62;
+/// `/proc/self/pagemap` bit 63: the PTE is present.
+#[cfg(target_os = "linux")]
+const PM_PRESENT: u64 = 1 << 63;
 
 #[cfg(target_os = "linux")]
 unsafe extern "C" {
@@ -166,7 +179,9 @@ impl Memory {
     ///
     /// File-backed pages are compared with the checkpoint file. Anonymous
     /// pages are compared with zeros. A page written back to that baseline is
-    /// omitted, so restore is `reset` plus these bytes.
+    /// omitted, so restore reverts every other private page and then writes
+    /// these bytes. Only privately modified PTEs are read: a clean file page
+    /// and an untouched anonymous page still match the baseline.
     pub fn capture_dirty(&self) -> Result<DirtyPages, String> {
         #[cfg(not(target_os = "linux"))]
         {
@@ -175,6 +190,7 @@ impl Memory {
         #[cfg(target_os = "linux")]
         {
             let page = page_size();
+            let pagemap = PageMap::open().ok();
             let mut pages = Vec::new();
             for mapping in &self.mappings {
                 for segment in &mapping.segments {
@@ -184,7 +200,11 @@ impl Memory {
                             segment.address
                         ));
                     }
-                    pages.extend(dirty_segment(segment)?);
+                    let found = match &pagemap {
+                        Some(map) => dirty_segment_pagemap(segment, map)?,
+                        None => dirty_segment_scan(segment)?,
+                    };
+                    pages.extend(found);
                 }
             }
             Ok(DirtyPages {
@@ -200,8 +220,10 @@ impl Memory {
 
     /// Restore the checkpoint baseline, ensure every snapshotted range is
     /// reserved, then write the dirty pages back.
+    ///
+    /// Private pages that are not part of the diff are discarded individually.
+    /// A full-range `MADV_DONTNEED` is the fallback when pagemap cannot be read.
     pub fn apply_dirty(&mut self, dirty: &DirtyPages) -> Result<(), String> {
-        self.reset()?;
         for &(address, size) in &dirty.mappings {
             if !self
                 .mappings
@@ -211,10 +233,65 @@ impl Memory {
                 self.map_zeroed(address, size)?;
             }
         }
+        let keep = dirty.pages.iter().map(|(address, _)| *address).collect();
+        if self.revert_private_except(&keep).is_err() {
+            self.reset()?;
+        }
         for (address, bytes) in &dirty.pages {
             self.write_bytes(*address, bytes)?;
         }
         Ok(())
+    }
+
+    /// Drop private pages whose addresses are not in `keep`.
+    #[cfg(target_os = "linux")]
+    fn revert_private_except(&mut self, keep: &HashSet<u64>) -> Result<(), String> {
+        let page = page_size();
+        let map = PageMap::open()?;
+        for mapping in &self.mappings {
+            for segment in &mapping.segments {
+                let count = segment.size / page;
+                let entries = map.read(segment.address, count)?;
+                let mut run_start: Option<u64> = None;
+                let mut run_pages = 0usize;
+                let flush = |start: &mut Option<u64>, pages: &mut usize| -> Result<(), String> {
+                    if let Some(address) = start.take() {
+                        advise_dontneed(address, *pages * page)?;
+                        *pages = 0;
+                    }
+                    Ok(())
+                };
+                for (index, entry) in entries.iter().enumerate() {
+                    let address = segment.address + (index * page) as u64;
+                    let discard = may_differ(*entry) && !keep.contains(&address);
+                    if discard {
+                        match run_start {
+                            Some(start) if start + (run_pages as u64) * page as u64 == address => {
+                                run_pages += 1;
+                            }
+                            Some(_) => {
+                                flush(&mut run_start, &mut run_pages)?;
+                                run_start = Some(address);
+                                run_pages = 1;
+                            }
+                            None => {
+                                run_start = Some(address);
+                                run_pages = 1;
+                            }
+                        }
+                    } else if run_start.is_some() {
+                        flush(&mut run_start, &mut run_pages)?;
+                    }
+                }
+                flush(&mut run_start, &mut run_pages)?;
+            }
+        }
+        Ok(())
+    }
+
+    #[cfg(not(target_os = "linux"))]
+    fn revert_private_except(&mut self, _keep: &HashSet<u64>) -> Result<(), String> {
+        Err("fixed guest memory mappings require Linux".into())
     }
 
     /// Map a zero-filled guest region, refusing to replace any existing host
@@ -480,54 +557,111 @@ impl Drop for Memory {
 }
 
 #[cfg(target_os = "linux")]
-fn dirty_segment(segment: &Segment) -> Result<Vec<(u64, Vec<u8>)>, String> {
-    let page = page_size();
-    let mut out = Vec::new();
-    match &segment.baseline {
-        Baseline::Zero => {
-            let mut cursor = 0usize;
-            while cursor < segment.size {
-                let guest = unsafe {
-                    std::slice::from_raw_parts((segment.address + cursor as u64) as *const u8, page)
-                };
-                if guest.iter().any(|byte| *byte != 0) {
-                    out.push((segment.address + cursor as u64, guest.to_vec()));
-                }
-                cursor += page;
-            }
+struct PageMap {
+    file: File,
+}
+
+#[cfg(target_os = "linux")]
+impl PageMap {
+    fn open() -> Result<Self, String> {
+        File::open("/proc/self/pagemap")
+            .map(|file| Self { file })
+            .map_err(|error| format!("open /proc/self/pagemap: {error}"))
+    }
+
+    fn read(&self, address: u64, pages: usize) -> Result<Vec<u64>, String> {
+        if pages == 0 {
+            return Ok(Vec::new());
         }
-        Baseline::File { file, offset } => {
-            let chunk_len = 1024 * 1024;
-            let mut buf = vec![0u8; chunk_len];
-            let mut cursor = 0usize;
-            while cursor < segment.size {
-                let n = (segment.size - cursor).min(buf.len());
-                if n % page != 0 {
-                    return Err(format!(
-                        "baseline chunk at {:#x} is not page aligned",
-                        segment.address
-                    ));
-                }
-                file.read_exact_at(&mut buf[..n], offset + cursor as u64)
-                    .map_err(|e| format!("checkpoint baseline read: {e}"))?;
-                let mut local = 0usize;
-                while local < n {
-                    let guest = unsafe {
-                        std::slice::from_raw_parts(
-                            (segment.address + (cursor + local) as u64) as *const u8,
-                            page,
-                        )
-                    };
-                    if guest != &buf[local..local + page] {
-                        out.push((segment.address + (cursor + local) as u64, guest.to_vec()));
-                    }
-                    local += page;
-                }
-                cursor += n;
-            }
+        let mut bytes = vec![0u8; pages * 8];
+        self.file
+            .read_exact_at(&mut bytes, address / page_size() as u64 * 8)
+            .map_err(|error| format!("read /proc/self/pagemap at {address:#x}: {error}"))?;
+        Ok(bytes
+            .chunks_exact(8)
+            .map(|word| u64::from_le_bytes(word.try_into().expect("8-byte pagemap word")))
+            .collect())
+    }
+}
+
+/// A page can differ from the reset baseline only when it is a private
+/// anonymous PTE or it has been swapped out. The shared zero page is present
+/// but not exclusive. A clean file page keeps the file bit.
+#[cfg(target_os = "linux")]
+fn may_differ(entry: u64) -> bool {
+    if entry & PM_SWAP != 0 {
+        return true;
+    }
+    if entry & PM_PRESENT == 0 || entry & PM_FILE != 0 {
+        return false;
+    }
+    entry & PM_EXCLUSIVE != 0
+}
+
+#[cfg(target_os = "linux")]
+fn advise_dontneed(address: u64, length: usize) -> Result<(), String> {
+    let result = unsafe { madvise(address as *mut c_void, length, MADV_DONTNEED) };
+    if result != 0 {
+        return Err(format!(
+            "madvise(MADV_DONTNEED) at {address:#x}+{length:#x}: {}",
+            io::Error::last_os_error()
+        ));
+    }
+    Ok(())
+}
+
+#[cfg(target_os = "linux")]
+fn dirty_segment_pagemap(segment: &Segment, map: &PageMap) -> Result<Vec<(u64, Vec<u8>)>, String> {
+    let page = page_size();
+    let entries = map.read(segment.address, segment.size / page)?;
+    let mut out = Vec::new();
+    for (index, entry) in entries.iter().enumerate() {
+        if !may_differ(*entry) {
+            continue;
+        }
+        let address = segment.address + (index * page) as u64;
+        if let Some(bytes) = page_if_dirty(segment, address, index)? {
+            out.push((address, bytes));
         }
     }
     Ok(out)
+}
+
+#[cfg(target_os = "linux")]
+fn dirty_segment_scan(segment: &Segment) -> Result<Vec<(u64, Vec<u8>)>, String> {
+    let page = page_size();
+    let mut out = Vec::new();
+    let mut index = 0usize;
+    let mut cursor = 0usize;
+    while cursor < segment.size {
+        let address = segment.address + cursor as u64;
+        if let Some(bytes) = page_if_dirty(segment, address, index)? {
+            out.push((address, bytes));
+        }
+        cursor += page;
+        index += 1;
+    }
+    Ok(out)
+}
+
+#[cfg(target_os = "linux")]
+fn page_if_dirty(segment: &Segment, address: u64, index: usize) -> Result<Option<Vec<u8>>, String> {
+    let page = page_size();
+    let guest = unsafe { std::slice::from_raw_parts(address as *const u8, page) };
+    let differs = match &segment.baseline {
+        Baseline::Zero => guest.iter().any(|byte| *byte != 0),
+        Baseline::File { file, offset } => {
+            let mut baseline = vec![0u8; page];
+            file.read_exact_at(&mut baseline, offset + (index * page) as u64)
+                .map_err(|error| format!("checkpoint baseline read: {error}"))?;
+            guest != baseline.as_slice()
+        }
+    };
+    if differs {
+        Ok(Some(guest.to_vec()))
+    } else {
+        Ok(None)
+    }
 }
 
 fn json_u64(value: &Value) -> Result<u64, String> {
@@ -689,6 +823,83 @@ mod tests {
         let cleaned = memory.capture_dirty().expect("recapture");
         assert_eq!(cleaned.pages.len(), 1);
         assert_eq!(cleaned.pages[0].0, address + page as u64);
+        // The omitted file page is still a private PTE. Restoring the cleaned
+        // diff must put it back on the checkpoint bytes.
+        memory
+            .write_bytes(address + 4, &[0x22, 0x33])
+            .expect("dirty the baseline-matching page again");
+        memory.apply_dirty(&cleaned).expect("restore cleaned diff");
+        assert_eq!(memory.read_bytes(address + 4, 2).unwrap(), [0x11, 0x11]);
+        assert_eq!(
+            memory.read_bytes(address + page as u64 + 8, 1).unwrap(),
+            [0xef]
+        );
+        drop(memory);
+        std::fs::remove_file(path).expect("remove temporary mapping source");
+    }
+
+    #[test]
+    fn pagemap_dirty_set_matches_full_scan() {
+        let page = page_size();
+        let path = std::env::temp_dir().join(format!(
+            "clash-recompiled-pagemap-{}-{}.bin",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&path)
+            .expect("create temporary mapping source");
+        file.write_all(&vec![0x42; page]).expect("write baseline mapping");
+        drop(file);
+
+        let address = 0x4d00_0000_0000_u64 + (u64::from(std::process::id()) << 12);
+        let mut memory = Memory {
+            mappings: Vec::new(),
+        };
+        memory
+            .map_private_file(&path, address, page, page * 2)
+            .expect("map private checkpoint plus anonymous tail");
+        let _ = memory.read_bytes(address, 1).expect("fault the clean file page");
+        let _ = memory
+            .read_bytes(address + page as u64, 1)
+            .expect("fault the shared zero page");
+        {
+            let map = super::PageMap::open().expect("pagemap");
+            let clean_fast = super::dirty_segment_pagemap(&memory.mappings[0].segments[0], &map)
+                .expect("pagemap file");
+            let clean_scan =
+                super::dirty_segment_scan(&memory.mappings[0].segments[0]).expect("scan file");
+            assert!(clean_fast.is_empty());
+            assert!(clean_scan.is_empty());
+            assert!(
+                super::dirty_segment_pagemap(&memory.mappings[0].segments[1], &map)
+                    .expect("pagemap tail")
+                    .is_empty()
+            );
+        }
+
+        memory
+            .write_bytes(address + 3, &[0x7e])
+            .expect("dirty file page");
+        memory
+            .write_bytes(address + page as u64 + 6, &[0x9a])
+            .expect("dirty anonymous page");
+        let fast = memory.capture_dirty().expect("pagemap capture");
+        // Re-scan after the capture so both paths see the same private pages.
+        let scanned = super::dirty_segment_scan(&memory.mappings[0].segments[0])
+            .expect("scan file")
+            .into_iter()
+            .chain(
+                super::dirty_segment_scan(&memory.mappings[0].segments[1])
+                    .expect("scan tail"),
+            )
+            .collect::<Vec<_>>();
+        assert_eq!(fast.pages, scanned);
         drop(memory);
         std::fs::remove_file(path).expect("remove temporary mapping source");
     }

@@ -11,7 +11,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import MagicMock, patch
 
-from webapps.arena import scene
+from webapps.arena import scene, renderer as renderer_module
 from webapps.common.httpkit import App, EventStream, HTTPError, Request
 
 
@@ -126,6 +126,7 @@ class SceneTests(unittest.TestCase):
             renderer = scene.NativeSceneRenderer(self.root / 'constructor')
             try:
                 self.assertIn('--texture-cache', popen.call_args.args[0])
+                self.assertIn('--pose-cache', popen.call_args.args[0])
                 arguments = popen.call_args.args[0]
                 self.assertEqual(arguments[arguments.index('--fps') + 1],
                                  scene.os.environ.get('ARENA_SCENE_FPS', '30'))
@@ -155,6 +156,32 @@ class SceneTests(unittest.TestCase):
             self.assertEqual(fallback.submit.call_args.args[0], {'tick': 101})
             self.assertEqual(list(self.renderer.frames()), [({'sequence': 2}, b'jpeg2')])
             self.assertEqual(jpeg.call_count, 1)
+
+    def test_entire_decks_select_original_dependencies_in_both_views(self):
+        bundle = self.root / 'assets'
+        bundle.mkdir()
+        (bundle / 'assets.json').write_text(json.dumps({'scene': {
+            'card_dependency_documents': {'Pekka': ['chr_pekka'], 'Golem': ['chr_golem_dl', 'chr_golemite']}}}))
+        process = MagicMock()
+        process.poll.return_value = 0
+        cards = ['Pekka', 'Golem', 'Pekka']
+        with patch.object(renderer_module, 'ASSETS', bundle), patch.object(scene, 'ASSETS', bundle), \
+                patch.object(scene.subprocess, 'Popen', return_value=process) as popen, \
+                patch.object(scene.threading, 'Thread'), patch.object(scene, 'NativeRenderer') as jpeg:
+            viewer = scene.NativeSceneRenderer(self.root / 'selected-decks', cards=cards)
+            try:
+                arguments = popen.call_args.args[0]
+                self.assertEqual(arguments[arguments.index('--cards') + 1], 'Pekka,Golem')
+                self.assertEqual(arguments[arguments.index('--assets') + 1], str(bundle))
+                viewer._fallback()
+                jpeg.assert_called_once_with(viewer.run_dir / 'stream-fallback', cards=tuple(cards))
+            finally:
+                viewer.close()
+
+        # Existing baseline bundles remain usable without a dependency index.
+        (bundle / 'assets.json').write_text('{}')
+        with patch.object(renderer_module, 'ASSETS', bundle):
+            self.assertEqual(renderer_module.asset_selection_args(cards), [])
 
     def test_failed_explicit_stream_does_not_kill_browser_presentation(self):
         self.renderer.fallback = MagicMock()

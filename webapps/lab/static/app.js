@@ -63,6 +63,24 @@ function servicePanel(services) {
   return `<div class="panel">${arr(services).map(s => `<div class="service"><div><h3>${link(localService(s.url), s.name + ' ↗')}</h3><p class="muted">${s.data?.collector?.paused ? 'Collector paused · ' + esc(s.data.collector.pause_reason || 'reason unknown') : s.reachable ? 'Responding on this machine' : 'Unreachable at last observation'}</p>${src(s.source)}${s.error ? `<span class="source">${esc(s.error)}</span>` : ''}</div>${pill(s.data?.collector?.paused ? 'unknown' : s.reachable ? 'ok' : 'unknown', s.data?.collector?.paused ? 'paused' : s.reachable ? 'online' : 'offline')}</div>${s.data ? json(s.data, s.name + ' response', s.source) : ''}`).join('') || empty('First service observation pending.')}</div>`;
 }
 let overviewState = null;
+function nightPanel(night) {
+  if (!night || !arr(night.decks).length) return '';
+  const focused = !!night.focus;
+  const done = Number(night.decks_finished) || 0;
+  const total = Number(night.decks_total) || arr(night.decks).length;
+  const width = focused
+    ? Math.max(0, Math.min(100, (Number(night.progress) || 0) * 100))
+    : Math.max(0, Math.min(100, total ? done / total * 100 : 0));
+  const rows = arr(night.decks).map(deck => `<tr class="${deck.current ? 'current' : ''}"><td>${link(runLink(deck.run_id), deck.run_id)}${deck.current ? ' <span class="pill running">now</span>' : ''}<div class="muted">${esc(deck.name || deck.deck_id)}</div></td><td>${pill(deck.status)}</td><td>${esc(deck.phase || '—')}</td><td>${fmt(deck.games)}</td><td>${fmt(deck.wins)} / ${fmt(deck.losses)}</td><td>${fmt(deck.updates)}</td><td>${percent(deck.latest_evaluation?.score)}</td></tr>`).join('');
+  const memory = night.memory_available_gib == null ? '—' : fmt(night.memory_available_gib) + ' GiB';
+  const title = focused ? (night.headline || 'One specialist') : 'Deck specialists';
+  const track = focused ? 'Time elapsed toward 06:00' : (done + ' of ' + total + ' specialists finished');
+  const workValue = focused ? (night.work_done || '—') : (done + '/' + total + ' decks');
+  const workDetail = focused ? 'Live updates and games from this run' : (night.current_deck ? night.current_deck + ' is in progress' : 'No deck is in progress');
+  const workHint = focused ? 'PPO updates, completed games, and training games from the specialist state file.' : 'Specialists that have saved final.pt, out of the decks scheduled until 6:00 AM Edmonton.';
+  const timeHint = focused ? 'Wall clock left until 06:00 America/Edmonton, when this run stops and saves its final checkpoint.' : 'Wall clock remaining before the night supervisor stops starting decks.';
+  return `<section class="panel" style="margin-bottom:22px"><div class="panel-head"><div><div class="eyebrow">TONIGHT · UNTIL 06:00</div><h2>${esc(title)}</h2><p class="muted">${esc(night.work_done || 'Waiting for the first progress write.')}</p></div>${night.current_model ? link(runLink(night.current_model), 'Open ' + night.current_model + ' curves →') : ''}</div><div class="progress-track" title="${esc(track)}"><span style="width:${width}%"></span></div><div class="stats">${stat(focused ? 'Training' : 'Work done', workValue, workDetail, night.source, workHint)}${stat('Time left', night.eta || duration(night.eta_seconds), night.deadline_local || '06:00 America/Edmonton', night.source, timeHint)}${stat('Current phase', night.status || '—', night.phase || 'Waiting for the trainer', night.source)}${stat('Memory free', memory, focused ? 'Host MemAvailable' : 'Host MemAvailable, recorded by the supervisor', night.source)}</div><div class="table-wrap"><table><thead><tr><th>Specialist</th><th>Status</th><th>Phase</th><th>Games</th><th>Wins / losses</th><th>Updates</th><th>Latest eval</th></tr></thead><tbody>${rows}</tbody></table></div>${src(night.source + ' joined to each run state.json')}</section>`;
+}
 function overviewHTML(d) {
   overviewState = d;
   const active = arr(d.active_runs), trainers = arr(d.processes).filter(p => p.category === 'training');
@@ -72,6 +90,7 @@ function overviewHTML(d) {
   const hw = dict(d.hardware), gpu = arr(hw.gpu)[0], mem = dict(hw.memory), disk = dict(hw.disk);
   const text = active.length ? active.map(r => r.id).join(', ') : trainers.length ? trainers.map(p => `PID ${p.pid}`).join(', ') : status === 'idle' ? 'No trainer process, active training service, or recent active run state was found.' : 'One or more observation sources are unavailable. See the evidence below.';
   return heading('01 / LIVE OBSERVATIONS', 'The research, at a glance.', 'Models, experiments and the machine behind them. A live view of local evidence.', 'REFRESH / 5 SEC') +
+    nightPanel(d.night) +
     `<div class="hero ${esc(status)}"><div class="hero-head"><div><div class="status-line">${pill(status === 'running' ? 'running' : status === 'idle' ? 'finished' : 'unknown', status === 'running' ? '● LIVE TRAINING' : status === 'idle' ? '● IDLE' : '● UNKNOWN')}<span class="source-inline">${esc(date(d.sampled_at))}</span></div><h2>${esc(title)}</h2><p>${esc(text)}</p>${latest ? `<p>Latest run: ${link(runLink(latest.id), latest.id)} · ${esc(latest.phase || latest.status)}</p>` : ''}${latest ? `<p class="file-meta" title="${esc(latest.metric_source)}">${pill(latest.status)} · Elapsed ${esc(duration(latest.elapsed_seconds))}${latest.status === 'running' ? ' · Remaining ' + esc(duration(latest.remaining_seconds)) : ''} · Deadline ${esc(date(latest.deadline))} · Wins / losses ${fmt(latest.counters?.wins)} / ${fmt(latest.counters?.losses)}</p>` : ''}${src(d.source)}</div><span class="hero-mark" aria-hidden="true">⌁</span></div></div>` +
     `<div class="stats">${stat('Latest run · games', fmt(latest?.counters?.games), latest?.id || 'No run state', latest?.metric_source || 'engine/runs/*/state.json', 'Recorded total games; training and evaluation may both be included.')}${stat('Latest run · evaluation', percent(latest?.latest_evaluation?.score), latest?.latest_evaluation ? `${latest.latest_evaluation.bank || 'bank unknown'} · ${latest.latest_evaluation.mode || 'mode unknown'}` : 'No evaluation recorded', (latest?.metric_source || 'engine/runs/*/state.json') + '#evaluation.history', 'Wins plus half the draws, divided by games. This is the latest recorded bank, not necessarily the best checkpoint.')}${stat('GPU utilization', gpu ? fmt(gpu.utilization) + '%' : 'unknown', gpu?.name || 'nvidia-smi unavailable', 'nvidia-smi · whole device, all processes', 'Whole-device utilization; this includes services unrelated to this project.')}${stat('Memory in use', bytes(mem.used), `${bytes(mem.available)} available`, '/proc/meminfo', 'Total minus MemAvailable; includes every process on the host.')}</div>` +
     `<div class="grid"><div><div class="panel"><div class="panel-head"><div><h2>Machine pulse</h2><span class="muted">Whole host, sampled every five seconds</span></div>${pill('', 'HARDWARE')}</div><div class="service"><div>CPU load <span class="muted">1 / 5 / 15 min</span>${src('/proc/loadavg')}</div><span>${arr(hw.load).map(fmt).join(' / ') || 'unknown'}</span></div><div class="service"><div>GPU memory${src('nvidia-smi · MiB')}</div><span>${gpu ? fmt(gpu.memory_used_mib) + ' / ' + fmt(gpu.memory_total_mib) + ' MiB' : 'unknown'}</span></div><div class="service"><div>Disk free${src('statvfs · repository filesystem')}</div><span>${bytes(disk.free)} <span class="muted">/ ${bytes(disk.total)}</span></span></div>${arr(hw.errors).length ? json(hw.errors, 'Unavailable hardware observations') : ''}</div>${section('Observation evidence', 'Workers and dashboards alone do not imply training.')}<div class="panel"><p class="muted">${esc(d.status_explanation)}</p><ul class="evidence"><li>Process scan: ${d.process_scan_ok ? 'available' : 'incomplete / unknown'}</li><li>User service scan: ${d.unit_scan_ok ? 'available' : 'unknown'}</li></ul>${src('/proc/*/cmdline; systemctl --user list-units --all --output=json')}${json(d.processes, 'Observed processes (' + arr(d.processes).length + ')', '/proc/*/cmdline')}${json(d.units, 'Observed user services', 'systemctl --user list-units --all --output=json')}${d.error || arr(d.errors).length ? json({error:d.error, errors:d.errors}, 'Observation errors') : ''}</div></div><div><div class="panel-head"><div><h2>Local services</h2><span class="muted">Links use this browser’s host for LAN access</span></div>${pill('', 'GET ONLY')}</div>${servicePanel(d.services)}</div></div>` +
@@ -118,6 +137,7 @@ let runData = null;
 function runsHTML(d) {
   runData = d;
   return heading('03 / EXPERIMENT LOG', 'Follow the run.', 'Training, benchmarks, human play, watch sessions and evaluation. Open an experiment for curves and its original metadata.') +
+    nightPanel(d.night) +
     `<div class="toolbar"><input id="run-search" type="search" placeholder="Search run folders…" aria-label="Search runs"><select id="run-kind" aria-label="Run type"><option value="">All run types</option>${['training run','benchmark','play session','watch','eval','other'].map(x => `<option>${x}</option>`).join('')}</select><select id="run-status" aria-label="Run status"><option value="">All statuses</option>${['running','finished','stopped','stale','unknown'].map(x => `<option>${x}</option>`).join('')}</select></div><div id="run-table">${runTable(arr(d.runs))}</div>${src('engine/runs/ · cached 5s · nested banana-play sessions included')}`;
 }
 function runDetailHTML(d) {
@@ -347,5 +367,48 @@ async function refreshOverview() {
 $('#arena-link').href=localService('http://127.0.0.1:8800/');
 window.addEventListener('hashchange',render);
 window.addEventListener('scroll',() => {$('#tooltip').hidden=true;},{passive:true});
-setInterval(refreshOverview,5000);
+async function refreshRuns() {
+  if (document.hidden || busy || route().page !== 'runs' || route().query.get('id')) return;
+  const token = generation;
+  const search = $('#run-search')?.value, kind = $('#run-kind')?.value, status = $('#run-status')?.value;
+  const scroll = window.scrollY;
+  try {
+    const data = await api('/api/runs');
+    if (token !== generation || route().page !== 'runs' || route().query.get('id')) return;
+    runData = data;
+    $('#main').innerHTML = runsHTML(data);
+    if ($('#run-search')) { $('#run-search').value = search || ''; $('#run-kind').value = kind || ''; $('#run-status').value = status || ''; }
+    wireFilters();
+    if ($('#run-search')) $('#run-search').oninput();
+    window.scrollTo(0, scroll);
+    $('#connection').textContent = '● Observed ' + new Date().toLocaleTimeString();
+  } catch { $('#connection').textContent = '● Disconnected · retrying'; }
+}
+let runRefreshAt = 0;
+async function refreshRunDetail() {
+  const current = route();
+  const id = current.query.get('id');
+  if (document.hidden || busy || current.page !== 'runs' || !id) return;
+  if ($$('#run-charts .off').length) return;
+  if (Date.now() - runRefreshAt < 15000) return;
+  runRefreshAt = Date.now();
+  const token = generation;
+  const scroll = window.scrollY;
+  const open = $$('details[open]').map(n => $('summary', n)?.textContent);
+  try {
+    const data = await api('/api/runs/' + encodeURIComponent(id));
+    if (token !== generation || route().query.get('id') !== id || $$('#run-charts .off').length) return;
+    $('#main').innerHTML = runDetailHTML(data);
+    mountRunCharts(data);
+    $$('details').forEach(n => { if (open.includes($('summary', n)?.textContent)) n.open = true; });
+    window.scrollTo(0, scroll);
+    $('#connection').textContent = '● Observed ' + new Date().toLocaleTimeString();
+  } catch { $('#connection').textContent = '● Disconnected · retrying'; }
+}
+setInterval(() => {
+  const page = route().page;
+  if (page === 'runs' && route().query.get('id')) refreshRunDetail();
+  else if (page === 'runs') refreshRuns();
+  else refreshOverview();
+}, 5000);
 render();

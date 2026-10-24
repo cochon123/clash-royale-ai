@@ -339,7 +339,7 @@ class AdaptiveLeague(StableLeague):
             for key, file in (("adaptive_source_sha256", "banana_hog_adaptive.py"), ("fast_policy_sha256", "banana_fast_policy.py")):
                 if saved.get(key) != sha256(ROOT / "rl" / file):
                     raise ValueError(f"adaptive source changed: {file}")
-            for key in ("trainable", "backbone_learning_rate", "opponents", "parent_name", "confirmation_seeds", "native_placement_masks"):
+            for key in ("trainable", "backbone_learning_rate", "opponents", "parent_name", "confirmation_seeds", "native_placement_masks", "learner_deck"):
                 if saved["args"].get(key) != getattr(self.args, key):
                     raise ValueError(f"resume cannot change {key}")
         super().restore(path)

@@ -1,0 +1,117 @@
+{
+  "created_at": "2026-10-23T17:46:40.425598+00:00",
+  "unit_tests": "4 passed: rare-class metric, train-only fitting, validation-only coordinate selection, cluster bootstrap",
+  "browser_checks": {
+    "summary": {
+      "title": "Inside Banana-1 \u00b7 Representation study",
+      "atlasRows": 15,
+      "heatCells": 2400,
+      "trainingPoints": 18,
+      "width": 1280,
+      "scrollWidth": 1265
+    },
+    "checks": {
+      "errors": [],
+      "finite": true,
+      "concepts": 15,
+      "ablationConditions": 20
+    },
+    "animation": {
+      "limit": 3,
+      "points": 3
+    },
+    "mobile": {
+      "width": 390,
+      "scrollWidth": 390,
+      "overflow": []
+    },
+    "exceptions": [],
+    "consoleErrors": []
+  },
+  "rendering": {
+    "desktop_width": 1280,
+    "mobile_width": 390,
+    "console_errors": 0,
+    "manual_screenshots_reviewed": [
+      "qa_desktop.png",
+      "qa_inspector.png",
+      "qa_mobile.png",
+      "qa_mobile_inspector.png"
+    ]
+  },
+  "t3_headless_preview": "Unavailable: host AppArmor sandbox block. Standalone local Chrome used for visual and interaction verification.",
+  "files": {
+    "reports/banana1_study/activations.npz": {
+      "bytes": 148297256,
+      "sha256": "22dac523f27da803df0d9b30d2c7ab8617c7459d924fcc6e5f84d5c8b8c5c1ca"
+    },
+    "reports/banana1_study/browser_checks.json": {
+      "bytes": 474,
+      "sha256": "4710332b89f05c14e6f7723e07457c0b7d59098bdb238305a1324082fadb0ade"
+    },
+    "reports/banana1_study/index.html": {
+      "bytes": 298524,
+      "sha256": "13de4ec2683c526cf0ffd20d52edad57a8c0fb14c5e40719628c1f056b917a8d"
+    },
+    "reports/banana1_study/inline.html": {
+      "bytes": 8329,
+      "sha256": "fe1fe46cfb7e70d78f32b1c8c6b4a5cea5136f2bb51d74864e469aa4430d94cb"
+    },
+    "reports/banana1_study/probe_parameters.json": {
+      "bytes": 1307647,
+      "sha256": "f76ffaed3ee3a0c767276338c4929f99fb1f1f5d69ec84545afbf6897301d5f9"
+    },
+    "reports/banana1_study/progress.jsonl": {
+      "bytes": 7259,
+      "sha256": "bab01148e49779cd162a7e84cdc13a36dbfa629601e3f729e9fb4c972845bcd6"
+    },
+    "reports/banana1_study/qa_desktop.png": {
+      "bytes": 127650,
+      "sha256": "8d9a036614b13db01c47aae756cdecbfd339fae0841b22864e78ba142d49edfa"
+    },
+    "reports/banana1_study/qa_inspector.png": {
+      "bytes": 106619,
+      "sha256": "6afd5ca9770066eeb40b23ba0881069cfab091c6f024c1a38767ffa659acd869"
+    },
+    "reports/banana1_study/qa_mobile.png": {
+      "bytes": 70756,
+      "sha256": "2590668a56f8545810529c4d829f14f383689a75c855b7975063a798714e8c1c"
+    },
+    "reports/banana1_study/qa_mobile_inspector.png": {
+      "bytes": 56386,
+      "sha256": "5f9d024c1c778effc240aa10ef6c110845fcef7c57ad5af650c95e5674ada21c"
+    },
+    "reports/banana1_study/report_data.json": {
+      "bytes": 723699,
+      "sha256": "aa4a16c05ecd64af6615a443cd19df97c91919bfd560b42171ec1b884ddf0b68"
+    },
+    "reports/banana1_study/results.json": {
+      "bytes": 755036,
+      "sha256": "2675a4c9e4a493fd35a40b23efcaa710e211c4a195f67c1ef1fd4734af6b57a0"
+    },
+    "reports/banana1_study/run.log": {
+      "bytes": 2823,
+      "sha256": "086bff8ba92e7d8052fd2a23ec6f460e5b38b0e437224b7c9963ba7568899b6e"
+    },
+    "reports/banana1_study/split_manifest.json": {
+      "bytes": 30359,
+      "sha256": "06d91151f66dcb94fa21a9fada1a2319cb2e6726ff1fba38b3d2914b5f1d383b"
+    },
+    "reports/banana1_study/test_predictions.npz": {
+      "bytes": 3441544,
+      "sha256": "898c48543a208dffde189510d41fcde7fe638ef7adc262f6b648798a635460d0"
+    },
+    "scripts/banana1_representation_study.py": {
+      "bytes": 24825,
+      "sha256": "321fb01bb276ecb291a930bb2a858087721e67a5849f6313b9e6299bcb33cf7a"
+    },
+    "scripts/build_banana1_study_report.py": {
+      "bytes": 53731,
+      "sha256": "6fc34034cd21fd4495d5209dd86ab48635790f9ff046c836f426ac9c6544e11e"
+    },
+    "tests/test_banana1_study.py": {
+      "bytes": 1831,
+      "sha256": "045d45528ae6779720c29f6b84b8d28969b73c2f07066325d41277371a555521"
+    }
+  }
+}

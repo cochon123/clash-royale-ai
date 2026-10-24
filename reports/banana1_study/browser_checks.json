@@ -1,0 +1,27 @@
+{
+  "summary": {
+    "title": "Inside Banana-1 · Representation study",
+    "atlasRows": 15,
+    "heatCells": 2400,
+    "trainingPoints": 18,
+    "width": 1280,
+    "scrollWidth": 1265
+  },
+  "checks": {
+    "errors": [],
+    "finite": true,
+    "concepts": 15,
+    "ablationConditions": 20
+  },
+  "animation": {
+    "limit": 3,
+    "points": 3
+  },
+  "mobile": {
+    "width": 390,
+    "scrollWidth": 390,
+    "overflow": []
+  },
+  "exceptions": [],
+  "consoleErrors": []
+}

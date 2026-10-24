@@ -19,9 +19,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import re
 import tomllib
-import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,10 +43,15 @@ SEED_ROWS = [
     "Princess", "PrincessProjectile", "PrincessProjectileDeco", "InfernoTower",
     "GoblinBarrel", "GoblinBarrelSpell", "BarrelGoblin", "GoblinGang", "Goblin_Stab",
     "SpearGoblin", "SpearGoblinProjectile",
+    # Hog 2.6 rows are already seeded above. These are PEKKA Bridge Spam.
+    "Pekka", "BattleRam", "Assassin", "Ghost", "GhostOverlay", "ElectroWizard",
+    "EliteArcher", "Poison", "Zap",
 ]
 ROW_LINK_FIELDS = (
-    "Projectile", "SpawnProjectile", "SpawnCharacter", "DeathAreaEffect", "AreaEffect",
-    "SpawnAreaObject", "DeathSpawnCharacter", "ProjectileSpecial",
+    "Projectile", "SpawnProjectile", "SpawnCharacter", "DeathSpawnCharacter",
+    "AttachedCharacter", "CustomFirstProjectile", "SummonCharacter", "SummonCharacterSecond",
+    "AreaEffectObject", "AreaEffect", "SpawnAreaObject", "SpawnAreaEffectObject",
+    "DeathAreaEffect", "ProjectileSpecial",
 )
 # Effects the client plays for default towers. They are named by the tower
 # rows' DeathEffect fields or by the default tower skin; listed explicitly so
@@ -135,91 +138,33 @@ def main() -> int:
     ap.add_argument("--logic", type=Path, default=DEFAULT_LOGIC)
     ap.add_argument("--bundle", type=Path, default=DEFAULT_BUNDLE)
     ap.add_argument("--out", type=Path, help="defaults to BUNDLE/presentation.json")
+    ap.add_argument("--cards", default="", help="Comma-separated native card names in one argument. Spaces inside a name are preserved.")
+    ap.add_argument("--frames", nargs="*", type=Path, default=[], help="Runtime capture frames. Entity rows and hand names resolve through original spell roots.")
     args = ap.parse_args()
     out = args.out or args.bundle / "presentation.json"
+    try:
+        from asset_coverage import (
+            build_presentation_graph, discover_frames, missing_exports_against_bundle, output_is_readonly_tree,
+        )
+    except ImportError:
+        from tools.asset_coverage import (
+            build_presentation_graph, discover_frames, missing_exports_against_bundle, output_is_readonly_tree,
+        )
+    if output_is_readonly_tree(args.bundle, ROOT) or output_is_readonly_tree(out.parent, ROOT):
+        raise SystemExit(f"refusing to write presentation under read-only engine tree: {out}")
 
-    with zipfile.ZipFile(args.apk) as apk:
-        effects_raw = apk.read("assets/legacy_vfx/effects.json")
-        emitters_raw = apk.read("assets/legacy_vfx/emitters.json")
-    all_effects = json.loads(effects_raw)
-    all_emitters = json.loads(emitters_raw)
-    index, logic_hashes = index_logic(args.logic)
+    graph = build_presentation_graph(args.logic, args.apk, ROOT, args.cards, discover_frames(ROOT, args.frames))
+    effects_raw = graph["effects_raw"]
+    emitters_raw = graph["emitters_raw"]
+    logic_hashes = graph["logic_hashes"]
     exports = bundle_exports(args.bundle)
-
-    rows: dict[str, dict] = {}
-    pending = list(SEED_ROWS)
-    unresolved_rows = []
-    while pending:
-        name = pending.pop()
-        if name in rows or name in unresolved_rows:
-            continue
-        picked = pick_row(index, name)
-        if picked is None:
-            unresolved_rows.append(name)
-            continue
-        rel, kind, fields = picked
-        scalars = scalar_fields(fields)
-        rows[name] = {"logic_file": rel, "type": kind, "fields": scalars}
-        for link in ROW_LINK_FIELDS:
-            target = scalars.get(link)
-            if isinstance(target, str) and target not in rows:
-                pending.append(target)
-
-    wanted_effects = list(EXTRA_EFFECTS)
-    for row in rows.values():
-        for key, value in row["fields"].items():
-            if isinstance(value, str) and (re.search(r"Effect\d*$", key) or key.endswith("EffectName")):
-                wanted_effects.append(value)
-    effects: dict[str, dict] = {}
-    missing_effects = []
-    while wanted_effects:
-        name = wanted_effects.pop()
-        if name in effects or name in missing_effects:
-            continue
-        effect = all_effects.get(name)
-        if effect is None:
-            missing_effects.append(name)
-            continue
-        effects[name] = effect
-        for linked in ("EnemyVersion",):
-            if isinstance(effect.get(linked), str):
-                wanted_effects.append(effect[linked])
-        for component in effect.get("RenderableComponents", []):
-            if component.get("Type") == "Effect" and isinstance(component.get("Effect"), str):
-                wanted_effects.append(component["Effect"])
-
-    emitters = {}
-    missing_emitters = []
-    missing_exports = set()
-    for effect in effects.values():
-        for component in effect.get("RenderableComponents", []):
-            if component.get("Type") == "SWF" and component.get("ExportName"):
-                doc = doc_of(component.get("FileName", ""))
-                if component["ExportName"] not in exports.get(doc, set()):
-                    missing_exports.add(f"{doc}:{component['ExportName']}")
-            name = component.get("ParticleEmitterName")
-            if not name or name in emitters:
-                continue
-            emitter = all_emitters.get(name)
-            if emitter is None:
-                missing_emitters.append(name)
-                continue
-            emitters[name] = emitter
-            for export, resource in zip(emitter.get("ParticleExportName", []),
-                                        emitter.get("ParticleResource", [])):
-                doc = doc_of(resource)
-                if export not in exports.get(doc, set()):
-                    missing_exports.add(f"{doc}:{export}")
-    for row in rows.values():
-        fields = row["fields"]
-        file_name = fields.get("FileName")
-        if not isinstance(file_name, str):
-            continue
-        doc = doc_of(file_name)
-        for key in ("ExportName", "RedExportName", "ShadowExportName"):
-            export = fields.get(key)
-            if isinstance(export, str) and export not in exports.get(doc, set()):
-                missing_exports.add(f"{doc}:{export}")
+    rows = graph["rows"]
+    effects = graph["effects"]
+    emitters = graph["emitters"]
+    unresolved_rows = graph["unresolved_rows"]
+    missing_effects = graph["missing_effects"]
+    missing_emitters = graph["missing_emitters"]
+    missing_exports = missing_exports_against_bundle(graph["export_refs"], exports)
 
     result = {
         "format": "clash-native-spectator-presentation-v1",

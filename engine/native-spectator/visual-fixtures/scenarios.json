@@ -1,0 +1,296 @@
+{
+ "version": 1,
+ "note": "Fixtures are every-tick original-engine captures (see README.md). Ticks are native 20 Hz ticks. lag/fps default to the live clash-web-scene presenter (lag 0, one pose per tick).",
+ "suites": {
+  "quick": [
+   "ghost-lifecycle",
+   "bandit-ewiz",
+   "battle-ram",
+   "hog-mirror-defense",
+   "golem-air",
+   "dark-witch-bats",
+   "lava-tombstone",
+   "log-bait-open",
+   "mortar"
+  ],
+  "ghost": [
+   "ghost-lifecycle"
+  ],
+  "full": [
+   "match-cards-000",
+   "match-cards-008",
+   "match-cards-016",
+   "match-cards-024",
+   "match-cards-032",
+   "match-cards-040",
+   "match-cards-048",
+   "match-cards-056",
+   "match-cards-064",
+   "match-cards-072",
+   "match-cards-080",
+   "match-cards-088",
+   "match-cards-096",
+   "match-cards-104",
+   "match-cards-112",
+   "match-custom-mortar",
+   "match-golem",
+   "match-hog-mirror",
+   "match-lava-loon",
+   "match-log-bait",
+   "match-pekka-bridge"
+  ]
+ },
+ "scenarios": [
+  {
+   "name": "ghost-lifecycle",
+   "capture": "pekka-bridge",
+   "from_tick": 110,
+   "to_tick": 380,
+   "focus": [
+    "Ghost"
+   ],
+   "why": "Royal Ghost: deploy, walk, attack, invisibility, death (both sides)."
+  },
+  {
+   "name": "bandit-ewiz",
+   "capture": "pekka-bridge",
+   "from_tick": 200,
+   "to_tick": 520,
+   "focus": [
+    "Assassin",
+    "ElectroWizard"
+   ],
+   "why": "Bandit (native row Assassin) dash and Electro Wizard beam/zap."
+  },
+  {
+   "name": "battle-ram",
+   "capture": "pekka-bridge",
+   "from_tick": 1310,
+   "to_tick": 1599,
+   "focus": [
+    "BattleRam",
+    "Barbarian"
+   ],
+   "why": "Battle Ram charge, death and spawned Barbarians."
+  },
+  {
+   "name": "hog-mirror-defense",
+   "capture": "hog-mirror",
+   "from_tick": 110,
+   "to_tick": 420,
+   "focus": [
+    "IceGolemite",
+    "IceSpirits",
+    "Musketeer",
+    "Cannon"
+   ],
+   "why": "Ice Golem, Ice Spirits, Musketeer shots and a turret building."
+  },
+  {
+   "name": "golem-air",
+   "capture": "golem",
+   "from_tick": 110,
+   "to_tick": 420,
+   "focus": [
+    "BabyDragon",
+    "RageBarbarian",
+    "MegaMinion"
+   ],
+   "why": "Air units (Baby Dragon, Mega Minion) and Rage Barbarian."
+  },
+  {
+   "name": "dark-witch-bats",
+   "capture": "golem",
+   "from_tick": 800,
+   "to_tick": 1100,
+   "focus": [
+    "DarkWitch",
+    "Bat"
+   ],
+   "why": "Night Witch (native DarkWitch) spawning Bats."
+  },
+  {
+   "name": "lava-tombstone",
+   "capture": "lava-loon",
+   "from_tick": 110,
+   "to_tick": 420,
+   "focus": [
+    "SkeletonWarrior",
+    "Tombstone",
+    "MegaMinion"
+   ],
+   "why": "Guards (native SkeletonWarrior), Tombstone spawning Skeletons."
+  },
+  {
+   "name": "log-bait-open",
+   "capture": "log-bait",
+   "from_tick": 110,
+   "to_tick": 400,
+   "focus": [
+    "Goblin_Stab",
+    "SpearGoblin",
+    "Princess",
+    "IceSpirits"
+   ],
+   "why": "Goblin Gang, Princess arrows, Ice Spirits."
+  },
+  {
+   "name": "mortar",
+   "capture": "custom-mortar",
+   "from_tick": 120,
+   "to_tick": 420,
+   "focus": [
+    "Mortar",
+    "Archer"
+   ],
+   "why": "Mortar shells (arc + shadow), Archers."
+  },
+  {
+   "name": "match-cards-000",
+   "capture": "cards-000",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: ElectroSpirit, FireSpirits, Heal, IceSpirits, Mirror, Skeletons, BarbLog, Bats."
+  },
+  {
+   "name": "match-cards-008",
+   "capture": "cards-008",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: Bomber, Goblins, IceGolemite, Rage, SpearGoblins, Log, Wallbreakers, Zap."
+  },
+  {
+   "name": "match-cards-016",
+   "capture": "cards-016",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: Archer, Arrows, Assassin, Cannon, Clone, BlowdartGoblin, Earthquake, ElixirGolem."
+  },
+  {
+   "name": "match-cards-024",
+   "capture": "cards-024",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: Firecracker, Fisherman, GoblinBarrel, GoblinGang, SkeletonWarriors, IceWizard, Knight, LittlePrince."
+  },
+  {
+   "name": "match-cards-032",
+   "capture": "cards-032",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: MegaMinion, Miner, Minions, Princess, RoyalDelivery, Ghost, SkeletonArmy, SkeletonBalloon."
+  },
+  {
+   "name": "match-cards-040",
+   "capture": "cards-040",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: SuperArcher, Tombstone, Tornado, BabyDragon, BattleHealer, BattleRam, BombTower, DarkPrince."
+  },
+  {
+   "name": "match-cards-048",
+   "capture": "cards-048",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: ElectroWizard, Fireball, DartBarrell, Freeze, FirespiritHut, GoblinCage, GoblinDrill, GoldenKnight."
+  },
+  {
+   "name": "match-cards-056",
+   "capture": "cards-056",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: HogRider, Hunter, InfernoDragon, RageBarbarian, EliteArcher, MightyMiner, MiniPekka, Mortar."
+  },
+  {
+   "name": "match-cards-064",
+   "capture": "cards-064",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: WitchMother, Musketeer, DarkWitch, Phoenix, Poison, SkeletonDragons, SkeletonKing, SuperIceGolemite."
+  },
+  {
+   "name": "match-cards-072",
+   "capture": "cards-072",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: SuperHogRiderTerry, Tesla, Valkyrie, MiniSparkys, ArcherQueen, Balloon, Barbarians, Bowler."
+  },
+  {
+   "name": "match-cards-080",
+   "capture": "cards-080",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: MovingCannon, ElectroDragon, AxeMan, Giant, GoblinHut, Graveyard, InfernoTower, MinionHorde."
+  },
+  {
+   "name": "match-cards-088",
+   "capture": "cards-088",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: Monk, GoblinPartyHut, GoblinPartyRocket, Prince, PrinceBuff, RamRider, Rascals, RoyalHogs."
+  },
+  {
+   "name": "match-cards-096",
+   "capture": "cards-096",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: SuperHogRider, SuperEliteArcher, SuperMiniPekka, Witch, Wizard, AngryBarbarians, Elixir Collector, GiantSkeleton."
+  },
+  {
+   "name": "match-cards-104",
+   "capture": "cards-104",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: GoblinGiant, Lightning, Rocket, RoyalGiant, ZapMachine, SuperWitch, Xbow, ElectroGiant."
+  },
+  {
+   "name": "match-cards-112",
+   "capture": "cards-112",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: LavaHound, MegaKnight, Pekka, RoyalRecruits, Golem, SuperLavaHound, ThreeMusketeers, ElectroSpirit."
+  },
+  {
+   "name": "match-custom-mortar",
+   "capture": "custom-mortar",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: Mortar, Knight, Archer, Skeletons, BarbLog, Arrows, MiniPekka, Rocket."
+  },
+  {
+   "name": "match-golem",
+   "capture": "golem",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: Golem, DarkWitch, BabyDragon, MegaMinion, RageBarbarian, Tornado, Lightning, BarbLog."
+  },
+  {
+   "name": "match-hog-mirror",
+   "capture": "hog-mirror",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: HogRider, Musketeer, IceGolemite, Skeletons, IceSpirits, Cannon, Fireball, Log."
+  },
+  {
+   "name": "match-lava-loon",
+   "capture": "lava-loon",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: LavaHound, Balloon, Tombstone, MegaMinion, Minions, SkeletonWarriors, Fireball, Zap."
+  },
+  {
+   "name": "match-log-bait",
+   "capture": "log-bait",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: GoblinBarrel, Princess, Knight, GoblinGang, InfernoTower, Rocket, Log, IceSpirits."
+  },
+  {
+   "name": "match-pekka-bridge",
+   "capture": "pekka-bridge",
+   "images": false,
+   "focus": [],
+   "why": "Whole match, data only. Deck: Pekka, BattleRam, Assassin, Ghost, ElectroWizard, EliteArcher, Poison, Zap."
+  }
+ ]
+}

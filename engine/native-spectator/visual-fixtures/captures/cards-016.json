@@ -1,0 +1,75 @@
+{
+  "seed": 7923,
+  "decks": [
+    [
+      "Archer",
+      "Arrows",
+      "Assassin",
+      "Cannon",
+      "Clone",
+      "BlowdartGoblin",
+      "Earthquake",
+      "ElixirGolem"
+    ],
+    [
+      "Archer",
+      "Arrows",
+      "Assassin",
+      "Cannon",
+      "Clone",
+      "BlowdartGoblin",
+      "Earthquake",
+      "ElixirGolem"
+    ]
+  ],
+  "frames": 1452,
+  "played": [
+    [
+      "Cannon",
+      "Earthquake",
+      "Clone",
+      "Archer",
+      "Assassin",
+      "ElixirGolem",
+      "BlowdartGoblin",
+      "Arrows",
+      "Cannon",
+      "Assassin",
+      "ElixirGolem"
+    ],
+    [
+      "Earthquake",
+      "Cannon",
+      "Assassin",
+      "Archer",
+      "BlowdartGoblin",
+      "Clone",
+      "Arrows",
+      "ElixirGolem",
+      "Earthquake",
+      "BlowdartGoblin",
+      "Clone"
+    ]
+  ],
+  "observed_rows": [
+    "Archer",
+    "ArcherArrow",
+    "ArrowsSpell",
+    "Assassin",
+    "BlowdartGoblin",
+    "BlowdartGoblinProjectile",
+    "Cannon",
+    "Clone",
+    "Earthquake",
+    "EarthquakeHiddenDamage",
+    "ElixirGolem1",
+    "ElixirGolem2",
+    "ElixirGolem4",
+    "KingProjectile",
+    "KingTower",
+    "PrincessTower",
+    "TowerCannonball",
+    "TowerPrincessProjectile"
+  ],
+  "source": "original-native-engine"
+}

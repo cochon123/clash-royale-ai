@@ -27,6 +27,7 @@ const D=JSON.parse(document.getElementById('data').textContent), runs=D.runs||[D
 const keys=D.chart_keys||[['card','Card top-1','accuracy'],['joint','Card + tile','accuracy'],['cell_teacher_top5','True-card tile top-5','accuracy'],['cell_teacher_near1','True-card within 1 tile','accuracy'],['joint_nll','Joint NLL','loss'],['train_loss','Training loss','loss']];let selected=Math.max(0,runs.findIndex(r=>(r.history||[]).length)),visible=new Set(keys.map(k=>k[0])),frame=1,timer=null;
 const pct=x=>x==null?'—':(100*x).toFixed(2)+'%',num=x=>x==null?'—':Number(x).toFixed(3),fmt=x=>x==null?'—':Number(x).toLocaleString();
 $('title').textContent=D.title||D.model_name||'Policy v9 · overnight experiments';$('status').textContent=D.status||'experiment';
+if((D.config||{}).trunk==='transformer'){const node=document.querySelectorAll('#flowPanel .node')[1];if(node)node.innerHTML='Causal transformer<small>4 layers · learned time and position</small>';}
 const first=runs[selected]||{},train=D.train_battles||first.train_battles;
 $('stats').innerHTML=[['Training battles',fmt(train)],['Unique actions',fmt(D.train_actions||first.train_actions)],['GPU',(first.compute||{}).gpu||'See run record'],['Created (UTC)',String(D.created_at||first.created_at||'').slice(0,16).replace('T',' ')]].map(([a,b])=>`<div class="stat"><strong>${b}</strong><span>${a}</span></div>`).join('');
 for(let i=0;i<runs.length;i++){let o=document.createElement('option');o.value=i;o.textContent=runs[i].model_name||runs[i].name;$('run').append(o)}

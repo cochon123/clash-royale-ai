@@ -181,7 +181,6 @@ function drawControls() {
         controls.strokeStyle = "#62e8ff"; controls.lineWidth = 3;
         controls.strokeRect(x - 1.5, y - 1.5, w + 3, h + 3);
       }
-      text(String(slot + 1), x + w - 8, y + 13, 11);
     }
     if (selection && aim) {
       const t = cur.human?.target;

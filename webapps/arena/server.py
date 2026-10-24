@@ -31,6 +31,7 @@ from webapps.common.httpkit import App, ByteStream, EventStream, HTTPError
 
 from .match import MatchManager
 from .placement import Warmer
+from .gallery import register_routes as register_gallery_routes
 from .renderer import ASSETS, BINARY, register_routes
 from .scene import BINARY as SCENE_BINARY, browser_scene_enabled, register_routes as register_scene_routes
 
@@ -40,6 +41,7 @@ manager = MatchManager()
 warmer = Warmer()
 app.mount("/cards", paths.CARD_ART)
 app.mount("/", HERE / "static")
+register_gallery_routes(app, HERE / "static")
 _warmup_lock = threading.Lock()
 _warming = False
 

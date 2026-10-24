@@ -56,3 +56,13 @@ When you launch a run, provide a command that lets me **stream the evolution of 
 
 - A column for an **estimation of the amount of time left**
 - A column for the **amount of work done so far**
+
+## Arena renderer changes
+
+For changes to Arena animation, artwork or effects, follow
+[`engine/native-spectator/VISUAL_QA.md`](engine/native-spectator/VISUAL_QA.md).
+Run a baseline before editing, then replay the same scenarios with
+`--expect <affected native rows>`. Read new, worsened and fixed findings and
+inspect affected screenshots. A regression PASS can still contain known
+baseline errors; report those limits. Keep rules and fixtures unchanged while
+fixing the renderer.

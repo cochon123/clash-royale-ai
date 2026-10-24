@@ -1,0 +1,68 @@
+{
+  "seed": 7923,
+  "decks": [
+    [
+      "Pekka",
+      "BattleRam",
+      "Assassin",
+      "Ghost",
+      "ElectroWizard",
+      "EliteArcher",
+      "Poison",
+      "Zap"
+    ],
+    [
+      "Pekka",
+      "BattleRam",
+      "Assassin",
+      "Ghost",
+      "ElectroWizard",
+      "EliteArcher",
+      "Poison",
+      "Zap"
+    ]
+  ],
+  "frames": 1600,
+  "played": [
+    [
+      "Ghost",
+      "Poison",
+      "Zap",
+      "ElectroWizard",
+      "Assassin",
+      "Ghost",
+      "EliteArcher",
+      "Zap",
+      "BattleRam",
+      "Assassin"
+    ],
+    [
+      "Zap",
+      "Ghost",
+      "Zap",
+      "Assassin",
+      "Poison",
+      "EliteArcher",
+      "Zap",
+      "Ghost",
+      "Assassin",
+      "ElectroWizard",
+      "BattleRam",
+      "Zap"
+    ]
+  ],
+  "observed_rows": [
+    "Assassin",
+    "Barbarian",
+    "BattleRam",
+    "ElectroWizard",
+    "EliteArcher",
+    "EliteArcherArrow",
+    "Ghost",
+    "KingTower",
+    "Poison",
+    "PrincessTower",
+    "TowerPrincessProjectile"
+  ],
+  "source": "original-native-engine"
+}

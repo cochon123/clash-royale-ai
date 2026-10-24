@@ -1,0 +1,43 @@
+{"at": "2026-10-23T17:32:12.003650+00:00", "stage": "prepare", "done": 0, "total": 1500, "elapsed_seconds": 2.39, "note": "Building prefix streams", "eta_seconds": null}
+{"at": "2026-10-23T17:32:12.556583+00:00", "stage": "extract activations", "done": 256, "total": 34427, "elapsed_seconds": 2.94, "note": "", "eta_seconds": 0.0}
+{"at": "2026-10-23T17:32:13.432326+00:00", "stage": "extract activations", "done": 2304, "total": 34427, "elapsed_seconds": 3.82, "note": "", "eta_seconds": 12.2}
+{"at": "2026-10-23T17:32:14.279942+00:00", "stage": "extract activations", "done": 4352, "total": 34427, "elapsed_seconds": 4.67, "note": "", "eta_seconds": 11.9}
+{"at": "2026-10-23T17:32:15.202361+00:00", "stage": "extract activations", "done": 6400, "total": 34427, "elapsed_seconds": 5.59, "note": "", "eta_seconds": 11.6}
+{"at": "2026-10-23T17:32:16.063849+00:00", "stage": "extract activations", "done": 8448, "total": 34427, "elapsed_seconds": 6.45, "note": "", "eta_seconds": 10.8}
+{"at": "2026-10-23T17:32:16.900435+00:00", "stage": "extract activations", "done": 10496, "total": 34427, "elapsed_seconds": 7.29, "note": "", "eta_seconds": 9.9}
+{"at": "2026-10-23T17:32:17.752346+00:00", "stage": "extract activations", "done": 12544, "total": 34427, "elapsed_seconds": 8.14, "note": "", "eta_seconds": 9.1}
+{"at": "2026-10-23T17:32:18.608309+00:00", "stage": "extract activations", "done": 14592, "total": 34427, "elapsed_seconds": 9.0, "note": "", "eta_seconds": 8.2}
+{"at": "2026-10-23T17:32:19.477586+00:00", "stage": "extract activations", "done": 16640, "total": 34427, "elapsed_seconds": 9.87, "note": "", "eta_seconds": 7.4}
+{"at": "2026-10-23T17:32:20.333680+00:00", "stage": "extract activations", "done": 18688, "total": 34427, "elapsed_seconds": 10.72, "note": "", "eta_seconds": 6.5}
+{"at": "2026-10-23T17:32:21.188538+00:00", "stage": "extract activations", "done": 20736, "total": 34427, "elapsed_seconds": 11.58, "note": "", "eta_seconds": 5.7}
+{"at": "2026-10-23T17:32:22.031909+00:00", "stage": "extract activations", "done": 22784, "total": 34427, "elapsed_seconds": 12.42, "note": "", "eta_seconds": 4.8}
+{"at": "2026-10-23T17:32:22.877108+00:00", "stage": "extract activations", "done": 24832, "total": 34427, "elapsed_seconds": 13.26, "note": "", "eta_seconds": 4.0}
+{"at": "2026-10-23T17:32:23.712055+00:00", "stage": "extract activations", "done": 26880, "total": 34427, "elapsed_seconds": 14.1, "note": "", "eta_seconds": 3.1}
+{"at": "2026-10-23T17:32:24.554690+00:00", "stage": "extract activations", "done": 28928, "total": 34427, "elapsed_seconds": 14.94, "note": "", "eta_seconds": 2.3}
+{"at": "2026-10-23T17:32:25.384872+00:00", "stage": "extract activations", "done": 30976, "total": 34427, "elapsed_seconds": 15.77, "note": "", "eta_seconds": 1.4}
+{"at": "2026-10-23T17:32:26.216942+00:00", "stage": "extract activations", "done": 33024, "total": 34427, "elapsed_seconds": 16.6, "note": "", "eta_seconds": 0.6}
+{"at": "2026-10-23T17:32:26.799016+00:00", "stage": "extract activations", "done": 34427, "total": 34427, "elapsed_seconds": 17.19, "note": "", "eta_seconds": 0.0}
+{"at": "2026-10-23T17:32:33.046071+00:00", "stage": "linear probes", "done": 10, "total": 150, "elapsed_seconds": 23.43, "note": "elapsed_seconds", "eta_seconds": 0.0}
+{"at": "2026-10-23T17:32:34.778507+00:00", "stage": "linear probes", "done": 20, "total": 150, "elapsed_seconds": 25.17, "note": "own_elixir", "eta_seconds": 11.3}
+{"at": "2026-10-23T17:32:36.465911+00:00", "stage": "linear probes", "done": 30, "total": 150, "elapsed_seconds": 26.85, "note": "enemy_elixir", "eta_seconds": 13.7}
+{"at": "2026-10-23T17:32:38.179188+00:00", "stage": "linear probes", "done": 40, "total": 150, "elapsed_seconds": 28.57, "note": "elixir_advantage", "eta_seconds": 14.1}
+{"at": "2026-10-23T17:32:39.898637+00:00", "stage": "linear probes", "done": 50, "total": 150, "elapsed_seconds": 30.29, "note": "enemy_left_fraction", "eta_seconds": 13.7}
+{"at": "2026-10-23T17:32:41.573067+00:00", "stage": "linear probes", "done": 60, "total": 150, "elapsed_seconds": 31.96, "note": "own_spend_30", "eta_seconds": 12.8}
+{"at": "2026-10-23T17:32:43.234445+00:00", "stage": "linear probes", "done": 70, "total": 150, "elapsed_seconds": 33.62, "note": "enemy_spend_30", "eta_seconds": 11.6}
+{"at": "2026-10-23T17:32:44.937332+00:00", "stage": "linear probes", "done": 80, "total": 150, "elapsed_seconds": 35.32, "note": "enemy_revealed", "eta_seconds": 10.4}
+{"at": "2026-10-23T17:32:46.628821+00:00", "stage": "linear probes", "done": 90, "total": 150, "elapsed_seconds": 37.02, "note": "last_enemy_x", "eta_seconds": 9.1}
+{"at": "2026-10-23T17:32:48.638931+00:00", "stage": "linear probes", "done": 100, "total": 150, "elapsed_seconds": 39.03, "note": "double_phase", "eta_seconds": 7.8}
+{"at": "2026-10-23T17:32:50.425344+00:00", "stage": "linear probes", "done": 110, "total": 150, "elapsed_seconds": 40.81, "note": "low_own_elixir", "eta_seconds": 6.3}
+{"at": "2026-10-23T17:32:52.195365+00:00", "stage": "linear probes", "done": 120, "total": 150, "elapsed_seconds": 42.58, "note": "enemy_recent_wincon", "eta_seconds": 4.8}
+{"at": "2026-10-23T17:32:54.008537+00:00", "stage": "linear probes", "done": 130, "total": 150, "elapsed_seconds": 44.4, "note": "enemy_recent_hog", "eta_seconds": 3.2}
+{"at": "2026-10-23T17:32:55.811598+00:00", "stage": "linear probes", "done": 140, "total": 150, "elapsed_seconds": 46.2, "note": "enemy_last_left", "eta_seconds": 1.6}
+{"at": "2026-10-23T17:32:57.636879+00:00", "stage": "linear probes", "done": 150, "total": 150, "elapsed_seconds": 48.02, "note": "last_event_enemy", "eta_seconds": 0.0}
+{"at": "2026-10-23T17:32:58.448132+00:00", "stage": "linear probes", "done": 150, "total": 150, "elapsed_seconds": 48.84, "note": "Finished probes, starting interventions", "eta_seconds": 0.0}
+{"at": "2026-10-23T17:33:00.026607+00:00", "stage": "neuron interventions", "done": 1, "total": 52, "elapsed_seconds": 50.41, "note": "own_elixir", "eta_seconds": 0.0}
+{"at": "2026-10-23T17:33:00.419090+00:00", "stage": "neuron interventions", "done": 9, "total": 52, "elapsed_seconds": 50.81, "note": "enemy_recent_wincon", "eta_seconds": 1.9}
+{"at": "2026-10-23T17:33:00.815327+00:00", "stage": "neuron interventions", "done": 17, "total": 52, "elapsed_seconds": 51.2, "note": "double_phase", "eta_seconds": 1.6}
+{"at": "2026-10-23T17:33:01.182606+00:00", "stage": "neuron interventions", "done": 25, "total": 52, "elapsed_seconds": 51.57, "note": "random", "eta_seconds": 1.2}
+{"at": "2026-10-23T17:33:01.540648+00:00", "stage": "neuron interventions", "done": 33, "total": 52, "elapsed_seconds": 51.93, "note": "random", "eta_seconds": 0.9}
+{"at": "2026-10-23T17:33:01.898280+00:00", "stage": "neuron interventions", "done": 41, "total": 52, "elapsed_seconds": 52.29, "note": "random", "eta_seconds": 0.5}
+{"at": "2026-10-23T17:33:02.254719+00:00", "stage": "neuron interventions", "done": 49, "total": 52, "elapsed_seconds": 52.64, "note": "random", "eta_seconds": 0.1}
+{"at": "2026-10-23T17:33:04.731795+00:00", "stage": "complete", "done": 1, "total": 1, "elapsed_seconds": 55.12, "note": "Evidence saved to /home/cochon/Documents/mini-project/clash-royale-ai-worktrees/arena-baseline/reports/banana1_study", "eta_seconds": 0.0}

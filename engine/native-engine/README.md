@@ -45,6 +45,22 @@ bounded integer/string `vsnprintf` imports are modeled explicitly. Unsupported
 imports/conversions fail. This runner starts from a prepared native battle;
 it does not reproduce the entire resource loader, Java client or Android OS.
 
+## Watched deployment coordinates
+
+`native-watch` resolves each `step` action with the original `f9e16c` placement
+routine before submitting it. This handles territory, pockets, blocked positions
+and card-specific snapping. An accepted result includes
+`"resolved_target":{"x":7499,"y":17499}`. Browser and desktop watch harnesses
+use that pair for policy history and play markers, keeping the original aim in
+the action log's `request`. Coarse `d42214` validation alone is insufficient:
+it can accept a target that the native deployment path later moves elsewhere.
+
+`resolve_target` accepts `side`, `slot`, `x` and `y` and returns the native
+placement without advancing the world or submitting a command. For native
+differential probes only, `step` with `"raw_targets":true` retains the original
+unresolved submission path. Regular watched matches always use resolved targets.
+The raw oracle and training entry points retain their existing contracts.
+
 ## Verification
 
 Independent Python and Rust adapters executing the same original calls from

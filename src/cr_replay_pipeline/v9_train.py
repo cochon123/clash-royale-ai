@@ -141,6 +141,8 @@ def save_checkpoint(path,payload):
 def train(args):
     if args.clock_every<1 or args.sigma<0 or args.winner_weight<=0 or args.reaction_weight<=0:
         raise ValueError("Invalid loss/sampling settings")
+    if args.gate_epoch and (args.gate_max_joint_nll is None or args.gate_min_card is None):
+        raise ValueError("A gate epoch needs both a joint-NLL ceiling and a card floor")
     cache=Path(args.cache);out=Path(args.output);out.mkdir(parents=True,exist_ok=True)
     contract=json.loads((cache/"contract.json").read_text())
     vocab=CardVocab.from_dict(json.loads((cache/"vocab.json").read_text()))
@@ -151,7 +153,7 @@ def train(args):
     device=torch.device(args.device or ("cuda" if torch.cuda.is_available() else "cpu"))
     from .winner_dataset import load_card_costs
     stats=load_motion_stats(vocab) if args.ghost != "none" else None
-    model=V9Policy(vocab.vocab_size,args.d_model,args.clock,args.ghost,stats).to(device)
+    model=V9Policy(vocab.vocab_size,args.d_model,args.clock,args.ghost,stats,trunk=args.trunk,trunk_layers=args.trunk_layers,trunk_heads=args.trunk_heads).to(device)
     optimizer=torch.optim.AdamW(model.parameters(),lr=args.lr,weight_decay=.01)
     train_ds=ShardDataset(cache/"train",limit_battles=args.limit_battles,winner_weight=args.winner_weight,reaction_weight=args.reaction_weight,mirror=args.mirror,advantage=args.advantage)
     dev_ds=ShardDataset(cache/"validation",reaction_weight=1.)
@@ -173,6 +175,8 @@ def train(args):
     advantage_digest=sha256_json({str(Path(s["g"].filename).parent.relative_to(cache.resolve())):sha256_file(Path(s["g"].filename).parent/"advantage.npy") for s in train_ds.shards}) if args.advantage else None
     motion_digest=sha256_json({p.name:sha256_file(p) for p in Path("data/v9_card_stats").glob("*.json")}) if args.ghost != "none" else None
     config=dict(vocab_size=vocab.vocab_size,d_model=args.d_model,clock=args.clock,ghost=args.ghost,limit_battles=args.limit_battles,seed=args.seed,batch_size=args.batch_size,lr=args.lr,sigma=args.sigma,winner_weight=args.winner_weight,reaction_weight=args.reaction_weight,mirror=args.mirror,clock_weight=.1,clock_every=args.clock_every,advantage=args.advantage,warmstart_sha256=sha256_file(Path(args.warmstart)/"best.pt") if args.warmstart else None,donor_weights_epoch=donor["weights_epoch"] if donor else None,observation=contract["observation"],max_context=64,padded_encoder=True,training_version="v9-1")
+    if args.trunk != "gru":
+        config.update(trunk=args.trunk,trunk_layers=args.trunk_layers,trunk_heads=args.trunk_heads,time_bins=64,training_version="banano-0")
     config.update(advantage_sha256=advantage_digest,motion_stats_sha256=motion_digest)
     source_names=("v9_train.py","v9_policy.py","v9_cache.py","policy_model.py","controlled_policy.py","causal_observation.py","policy_dataset.py","event_clock.py","feature_schema.py")
     full_contract=dict(data=contract,training=sha256_json(config),source={p:sha256_file(Path(__file__).with_name(p)) for p in source_names})
@@ -195,7 +199,10 @@ def train(args):
     elif report_path.exists():raise ValueError("Run report exists without resumable checkpoint")
     elapsed_prior=old.get("elapsed_seconds",0) if old else 0
     initial_done=done
-    report=dict(model_name=f"Policy v9 · {out.name}",version="9.0",created_at=old["created_at"] if old else datetime.now(timezone.utc).isoformat(),config=config,contract=full_contract,parameters=sum(p.numel() for p in model.parameters()),compute=dict(device=str(device),gpu=torch.cuda.get_device_name() if device.type=="cuda" else None,vram_bytes=torch.cuda.get_device_properties(device).total_memory if device.type=="cuda" else None,precision="fp32 with TF32",cpu_threads=args.threads,loader_workers=args.workers),train_battles=args.limit_battles or json.loads((cache/"train"/"complete.json").read_text())["battles"],train_actions=len(train_ds),validation_actions=len(dev_ds),history=history,metrics_definition="joint_nll = card NLL + true-card-conditioned tile NLL; timing MAE is separate. Clock NLL is a probabilistic time/actor score.",limitations=["Offline imitation metrics do not establish playing strength.","Ghost positions omit combat, deaths and targeting changes; movement and survival assumptions are tested with a shuffled control.",contract["reference_ancestry_caveat"]],status="running")
+    report=dict(model_name=args.model_name or f"Policy v9 · {out.name}",version="9.0" if args.trunk=="gru" else "banano-0",created_at=old["created_at"] if old else datetime.now(timezone.utc).isoformat(),config=config,contract=full_contract,parameters=sum(p.numel() for p in model.parameters()),compute=dict(device=str(device),gpu=torch.cuda.get_device_name() if device.type=="cuda" else None,vram_bytes=torch.cuda.get_device_properties(device).total_memory if device.type=="cuda" else None,precision="fp32 with TF32",cpu_threads=args.threads,loader_workers=args.workers),train_battles=args.limit_battles or json.loads((cache/"train"/"complete.json").read_text())["battles"],train_actions=len(train_ds),validation_actions=len(dev_ds),history=history,metrics_definition="joint_nll = card NLL + true-card-conditioned tile NLL; timing MAE is separate. Clock NLL is a probabilistic time/actor score.",limitations=["Offline imitation metrics do not establish playing strength.","Ghost positions omit combat, deaths and targeting changes; movement and survival assumptions are tested with a shuffled control.",contract["reference_ancestry_caveat"]],status="running")
+    if args.trunk == "transformer":
+        report["lessons"]=["banano-0 swaps only the v9 GRU for a 4-layer causal transformer. Heads, loss, cache, seed 42, and the development cohort stay the same.","Position and event time are learned embeddings. There is no v8 memory bank and no extra clock.","Epoch 2 must beat the logged width-256 GRU by at least 0.01 joint NLL, with card accuracy no more than 0.5 points worse. Otherwise the run stops.","Epoch 4 is worth keeping only with about +1 card point or +1 joint point over the width-160 GRU. The 1,000-battle holdout is not scored."]
+        report["gate_message"]="banano-0 epoch-2 gate against the logged width-256 GRU: joint NLL ≤ 4.3875 and card ≥ 52.74%. Epoch-4 keep rule against the width-160 GRU: card ≥ 54.52% or joint ≥ 12.2%. The untouched holdout is not used."
     atomic_json(out/"config.json",config);atomic_json(out/"contract.json",full_contract)
     total=args.epochs*len(train_ds)
     deadline=started+args.run_seconds if args.run_seconds else float("inf")
@@ -251,6 +258,8 @@ def train(args):
             from .v9_report import write_run_report
             write_run_report(out,report)
             print(f"VALIDATION {out.name} epoch={epoch} card={metrics['card']:.4f} joint={metrics['joint']:.4f} NLL={metrics['joint_nll']:.4f} near1={metrics['cell_teacher_near1']:.4f}",flush=True)
+            if args.gate_epoch and epoch==args.gate_epoch and (metrics["joint_nll"]>args.gate_max_joint_nll or metrics["card"]<args.gate_min_card):
+                status="gate_stopped";break
             if bad>=args.patience:status="early_stopped";break
     except TimeoutError:status="budget_stopped"
     except BaseException:
@@ -268,6 +277,8 @@ def parser():
     p.add_argument("--limit-battles",type=int);p.add_argument("--epochs",type=int,default=8);p.add_argument("--patience",type=int,default=3)
     p.add_argument("--batch-size",type=int,default=512);p.add_argument("--workers",type=int,default=2);p.add_argument("--threads",type=int,default=2)
     p.add_argument("--d-model",type=int,default=160);p.add_argument("--seed",type=int,default=42);p.add_argument("--lr",type=float,default=2e-4)
+    p.add_argument("--trunk",choices=["gru","transformer"],default="gru");p.add_argument("--trunk-layers",type=int,default=4);p.add_argument("--trunk-heads",type=int,default=4)
+    p.add_argument("--model-name");p.add_argument("--gate-epoch",type=int,default=0);p.add_argument("--gate-max-joint-nll",type=float);p.add_argument("--gate-min-card",type=float)
     p.add_argument("--clock",action=argparse.BooleanOptionalAction,default=True);p.add_argument("--mirror",action=argparse.BooleanOptionalAction,default=True)
     p.add_argument("--ghost",choices=["none","aligned","shuffled"],default="none");p.add_argument("--sigma",type=float,default=0.)
     p.add_argument("--winner-weight",type=float,default=1.);p.add_argument("--reaction-weight",type=float,default=3.)

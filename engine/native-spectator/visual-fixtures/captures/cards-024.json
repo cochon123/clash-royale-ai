@@ -1,0 +1,85 @@
+{
+  "seed": 7924,
+  "decks": [
+    [
+      "Firecracker",
+      "Fisherman",
+      "GoblinBarrel",
+      "GoblinGang",
+      "SkeletonWarriors",
+      "IceWizard",
+      "Knight",
+      "LittlePrince"
+    ],
+    [
+      "Firecracker",
+      "Fisherman",
+      "GoblinBarrel",
+      "GoblinGang",
+      "SkeletonWarriors",
+      "IceWizard",
+      "Knight",
+      "LittlePrince"
+    ]
+  ],
+  "frames": 2331,
+  "played": [
+    [
+      "IceWizard",
+      "SkeletonWarriors",
+      "GoblinGang",
+      "Knight",
+      "LittlePrince",
+      "GoblinBarrel",
+      "Fisherman",
+      "Firecracker",
+      "IceWizard",
+      "LittlePrince",
+      "GoblinBarrel",
+      "Fisherman",
+      "Firecracker",
+      "IceWizard",
+      "LittlePrince"
+    ],
+    [
+      "Firecracker",
+      "Fisherman",
+      "LittlePrince",
+      "Knight",
+      "GoblinGang",
+      "SkeletonWarriors",
+      "GoblinBarrel",
+      "IceWizard",
+      "Firecracker",
+      "GoblinGang",
+      "SkeletonWarriors",
+      "GoblinBarrel",
+      "IceWizard",
+      "Firecracker",
+      "GoblinGang"
+    ]
+  ],
+  "observed_rows": [
+    "BarrelGoblin",
+    "Firecracker",
+    "FirecrackerExplosion",
+    "FirecrackerProjectile",
+    "Fisherman",
+    "FishermanProjectile",
+    "GoblinBarrelSpell",
+    "Goblin_Stab",
+    "IceWizard",
+    "KingProjectile",
+    "KingTower",
+    "Knight",
+    "LittlePrince",
+    "LittlePrinceProjectile",
+    "PrincessTower",
+    "SkeletonWarrior",
+    "SpearGoblin",
+    "SpearGoblinProjectile",
+    "TowerPrincessProjectile",
+    "ice_wizardProjectile"
+  ],
+  "source": "original-native-engine"
+}

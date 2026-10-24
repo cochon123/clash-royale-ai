@@ -25,6 +25,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 from ui_recover import corrected_parser, decode_sctx  # noqa: E402
 from sc5_parser._schemas.sc.flash.SC2.FileDescriptor import FileDescriptor  # noqa: E402
+from asset_coverage import (  # noqa: E402
+    apk_document_stems, discover_frames, finalize_coverage, output_is_readonly_tree, plan_coverage,
+)
 
 DEFAULT_APK = ROOT / "analysis/apks/install_time_asset_pack.apk"
 DEFAULT_LOGIC = ROOT / "analysis/decoded/assets/csv_logic"
@@ -57,6 +60,8 @@ FIXED_TRAINING_CARDS = {
     "HogRider", "Musketeer", "IceGolemite", "Skeletons", "IceSpirits", "Cannon",
     "Fireball", "Log", "Mortar", "Knight", "Archer", "BarbLog", "Arrows",
     "MiniPekka", "Rocket", "GoblinBarrel", "Princess", "GoblinGang", "InfernoTower",
+    # Hog 2.6 is above. PEKKA Bridge Spam uses these original SC documents.
+    "Pekka", "BattleRam", "Assassin", "Ghost", "ElectroWizard", "EliteArcher",
 }
 TOWER_ATTACHED_ROWS = {"TowerPrincess"}
 PARSER_COMMIT = "9108080256a0df6cd772d81afdbc26047d79d78d"
@@ -489,10 +494,14 @@ def main() -> int:
     ap.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     ap.add_argument("--docs", nargs="+", default=DEFAULT_DOCS, help="SC document stems to extract")
     ap.add_argument("--frames", nargs="*", type=Path, default=[], help="Additional native captures to include in exact visual bindings")
+    ap.add_argument("--cards", default="", help="Comma-separated native card names in one argument. Spaces inside a name are preserved. Example: --cards \"Pekka,Elixir Collector,BabyDragon\". Empty selects every selectable card.")
     ap.add_argument("--reuse-existing", action="store_true", help="Reuse matching source-verified decoded documents and atlases")
     args = ap.parse_args()
+    args.docs = list(args.docs)
     apk = args.apk.resolve()
     out = args.output.resolve()
+    if output_is_readonly_tree(out, ROOT):
+        raise SystemExit(f"refusing to write spectator assets under read-only engine tree: {out}")
     out.mkdir(parents=True, exist_ok=True)
     previous = json.loads((out / "assets.json").read_text()) if args.reuse_existing and (out / "assets.json").exists() else {}
     cached_docs = {doc["name"]: doc for doc in previous.get("documents", [])}
@@ -504,18 +513,14 @@ def main() -> int:
     for binding in character_rows.values():
         if binding["document"] not in args.docs:
             args.docs.append(binding["document"])
-    battle_frames = sorted(set((ROOT / "runs").glob("spectator-*.jsonl")) | {
-        ROOT / "runs/v442-custom-watch/frames.jsonl",
-        ROOT / "runs/v442-watch-smoke/frames.jsonl",
-    })
-    battle_frames = sorted(set(battle_frames) | {path.resolve() for path in args.frames} | {ROOT / "runs/banana-duel-watch/frames.jsonl"})
-    battle_frames = [path for path in battle_frames if path.is_file()]
-    live_names = observed_entity_names(battle_frames)
-    live_bindings = observed_entity_bindings(args.logic, live_names)
-    for binding in live_bindings:
-        doc = binding.get("document")
-        if doc and doc not in args.docs:
-            args.docs.append(doc)
+    battle_frames = discover_frames(ROOT, args.frames)
+    print(f"planning coverage from {len(battle_frames)} frame files", flush=True)
+    coverage_plan = plan_coverage(args.logic, apk, ROOT, args.cards, battle_frames)
+    print(f"coverage planned cards={len(coverage_plan['cards'])} documents={len(coverage_plan['documents'])} bindings={len(coverage_plan['bindings'])}", flush=True)
+    present_stems = apk_document_stems(apk)
+    for stem in coverage_plan["documents"]:
+        if stem in present_stems and stem not in args.docs:
+            args.docs.append(stem)
     sc_parser = corrected_parser()
     apk_bytes = apk.read_bytes()
     apk_hash = sha256(apk_bytes)
@@ -525,7 +530,8 @@ def main() -> int:
         names = archive.namelist()
         by_basename = {Path(n).name: n for n in names if n.startswith("assets/sc/")}
         docs_meta = []
-        for stem in args.docs:
+        for index, stem in enumerate(args.docs, start=1):
+            print(f"extract {index}/{len(args.docs)} {stem}", flush=True)
             sc_name = f"{stem}.sc"
             entry = by_basename.get(sc_name)
             if not entry:
@@ -624,6 +630,8 @@ def main() -> int:
                                  ("portrait_slot_export", "portrait_slot_export")):
             export = card.get(role)
             card[role + "_present_in_source_document"] = bool(export and export in ui_exports)
+    coverage = finalize_coverage(coverage_plan, docs_meta)
+    live_bindings = coverage["bindings"]
     entity_animation_rows = list(live_bindings)
     known_animation_rows = {row["native_row"] for row in entity_animation_rows}
     for name, binding in sorted(character_rows.items()):
@@ -763,6 +771,10 @@ def main() -> int:
                   "background": background, "objects": placements,
                   "observed_decks": deck_metadata,
                   "observed_entity_bindings": live_bindings,
+                  "card_dependency_documents": coverage["card_dependency_documents"],
+                  "always_documents": coverage["always_documents"],
+                  "asset_coverage": coverage["asset_coverage"],
+                  "cards_selector": coverage["cards_selector"],
                   "animations_by_native_row": entity_animations,
                   "effects_by_native_row": effects_by_native_row,
                   "tower_visuals": tower_visuals,
@@ -811,7 +823,9 @@ def main() -> int:
                       "documents": [{"name": d["name"], "exports": d["counts"]["exports"],
                                      "movies": d["counts"]["movies"], "atlases": len(d["atlases"])} for d in docs_meta],
                       "placements": len(placements), "bindings": len(bindings),
-                      "observed_live_rows": len(live_bindings), "fonts": len(font_entries)}, indent=2))
+                      "observed_live_rows": len(live_bindings), "fonts": len(font_entries),
+                      "coverage": coverage["asset_coverage"]["summary"],
+                      "always_documents": coverage["always_documents"]}, indent=2))
     return 0
 
 

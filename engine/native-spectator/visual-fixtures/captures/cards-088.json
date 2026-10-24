@@ -1,0 +1,51 @@
+{
+  "seed": 7932,
+  "decks": [
+    [
+      "Monk",
+      "GoblinPartyHut",
+      "GoblinPartyRocket",
+      "Prince",
+      "PrinceBuff",
+      "RamRider",
+      "Rascals",
+      "RoyalHogs"
+    ],
+    [
+      "Monk",
+      "GoblinPartyHut",
+      "GoblinPartyRocket",
+      "Prince",
+      "PrinceBuff",
+      "RamRider",
+      "Rascals",
+      "RoyalHogs"
+    ]
+  ],
+  "frames": 596,
+  "played": [
+    [
+      "PrinceBuff",
+      "RoyalHogs",
+      "RamRider"
+    ],
+    [
+      "Prince",
+      "RoyalHogs",
+      "RamRider"
+    ]
+  ],
+  "observed_rows": [
+    "KingProjectile",
+    "KingTower",
+    "Prince",
+    "PrinceBuff",
+    "PrincessTower",
+    "Ram",
+    "RamRider",
+    "RamRiderBola",
+    "RoyalHog",
+    "TowerPrincessProjectile"
+  ],
+  "source": "original-native-engine"
+}

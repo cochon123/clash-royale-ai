@@ -17,8 +17,26 @@ from webapps.common import paths
 from webapps.common.httpkit import HTTPError, Raw
 
 BINARY = Path(os.environ["ARENA_RENDERER_BIN"]) if os.environ.get("ARENA_RENDERER_BIN") else paths.ENGINE / "native-spectator/target/debug/clash-web-renderer"
-ASSETS = paths.ENGINE / "analysis/native-spectator"
+# A worktree can recover additional original art into its own bundle without
+# writing through an analysis/ symlink shared with another checkout.
+ASSETS = Path(os.environ.get("ARENA_ASSETS_DIR", str(paths.ENGINE / "analysis/native-spectator"))).expanduser().resolve()
 JPEG_QUALITY = int(os.environ.get("ARENA_JPEG_QUALITY", "88"))
+
+
+def asset_selection_args(cards):
+    """Use the dependency-complete deck subset when the bundle supports it.
+
+    Older bundles have no dependency index and retain their existing loading
+    behavior. Rust validates all requested cards and transitive documents.
+    Names come from the private match configuration, including all eight
+    cards on each side rather than just the currently visible hand.
+    """
+    if not cards:
+        return []
+    manifest = json.loads((ASSETS / "assets.json").read_text())
+    if not isinstance(manifest.get("scene", {}).get("card_dependency_documents"), dict):
+        return []
+    return ["--cards", ",".join(dict.fromkeys(cards))]
 
 
 def spectator_hands(hands, *, hide_opponent=False):
@@ -35,13 +53,18 @@ def spectator_hands(hands, *, hide_opponent=False):
 
 
 class NativeRenderer:
-    def __init__(self, run_dir):
+    def __init__(self, run_dir, *, cards=None):
         run_dir.mkdir(parents=True, exist_ok=True)
+        selection = asset_selection_args(cards)
         self.log = (run_dir / "viewer.log").open("ab", buffering=0)
-        self.proc = subprocess.Popen([str(BINARY), "--assets", str(ASSETS),
-                                      "--fps", os.environ.get("ARENA_RENDER_FPS", "30"),
-                                      "--jpeg-quality", str(JPEG_QUALITY)], cwd=paths.ENGINE,
-                                     stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.log)
+        try:
+            self.proc = subprocess.Popen([str(BINARY), "--assets", str(ASSETS),
+                                          "--fps", os.environ.get("ARENA_RENDER_FPS", "30"),
+                                          "--jpeg-quality", str(JPEG_QUALITY), *selection], cwd=paths.ENGINE,
+                                         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.log)
+        except Exception:
+            self.log.close()
+            raise
         self.snapshots = queue.Queue(maxsize=2)
         self.condition = threading.Condition()
         self.closed = threading.Event()

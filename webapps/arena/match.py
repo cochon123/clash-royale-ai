@@ -272,7 +272,10 @@ class Match:
                 engine, policies = self._load()
             if self.closed.is_set():
                 return
-            self.renderer = (NativeSceneRenderer if browser_scene_enabled() else NativeRenderer)(self.run_dir)
+            known_cards = catalog.cards()
+            native_cards = [known_cards[slug]["native"] for side in self.sides for slug in side["deck"]]
+            self.renderer = (NativeSceneRenderer if browser_scene_enabled() else NativeRenderer)(
+                self.run_dir, cards=native_cards)
             self._loop(engine, policies)
         except Exception as exc:  # surface to the browser instead of dying silently
             import traceback

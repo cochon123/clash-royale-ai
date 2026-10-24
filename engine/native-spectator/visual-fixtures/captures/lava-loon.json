@@ -1,0 +1,69 @@
+{
+  "seed": 7924,
+  "decks": [
+    [
+      "LavaHound",
+      "Balloon",
+      "Tombstone",
+      "MegaMinion",
+      "Minions",
+      "SkeletonWarriors",
+      "Fireball",
+      "Zap"
+    ],
+    [
+      "LavaHound",
+      "Balloon",
+      "Tombstone",
+      "MegaMinion",
+      "Minions",
+      "SkeletonWarriors",
+      "Fireball",
+      "Zap"
+    ]
+  ],
+  "frames": 1600,
+  "played": [
+    [
+      "SkeletonWarriors",
+      "Minions",
+      "MegaMinion",
+      "Tombstone",
+      "Zap",
+      "SkeletonWarriors",
+      "Minions",
+      "MegaMinion",
+      "Tombstone",
+      "Zap",
+      "SkeletonWarriors",
+      "Minions"
+    ],
+    [
+      "Tombstone",
+      "SkeletonWarriors",
+      "Zap",
+      "Minions",
+      "MegaMinion",
+      "Tombstone",
+      "SkeletonWarriors",
+      "Zap",
+      "Minions",
+      "MegaMinion",
+      "Tombstone",
+      "SkeletonWarriors"
+    ]
+  ],
+  "observed_rows": [
+    "KingTower",
+    "MegaMinion",
+    "MegaMinionSpit",
+    "Minion",
+    "MinionSpit",
+    "PrincessTower",
+    "Skeleton",
+    "SkeletonWarrior",
+    "Tombstone",
+    "TowerPrincessProjectile"
+  ],
+  "source": "original-native-engine"
+}

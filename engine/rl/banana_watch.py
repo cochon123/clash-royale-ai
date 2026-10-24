@@ -190,6 +190,7 @@ def main(argv=None):
         'device': a.device, 'seed': a.seed, 'seed_mode': 'random' if random_seed else 'explicit', 'ticks_per_second': 20,
         'decision_ticks': a.decision_ticks, 'learning': False, 'action_selection': 'greedy' if a.greedy else 'sampled',
         'native_placement_masks': not a.unmasked_placement,
+        'placement_history': 'native-resolved-target-v1',
         'timing_controller': 'legacy_wait_head' if a.legacy_wait_head else 'phone_style_learned_delay',
         'reference_harness': str(ROOT.parent / 'src/cr_replay_pipeline/phone_lab/battle.py'),
         'note': 'Independent watched match. No optimizer, no RL-run files or weights are modified. Each side samples its own saved actor through the native adapter.',

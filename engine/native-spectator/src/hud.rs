@@ -7,6 +7,7 @@ use crate::{frame::BattleFrame, scene as target};
 use clash_native_ui_viewer::{Playback, Scene};
 use image::{imageops, Rgba, RgbaImage};
 use serde_json::Value;
+use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
@@ -32,12 +33,52 @@ struct SpectateArt {
     divider_line: f64,
 }
 
+struct CatalogCard {
+    file: String,
+    label: String,
+}
+
 #[derive(Default)]
 pub struct HandHud {
     cards: BTreeMap<(String, u32), RgbaImage>,
     labels: BTreeMap<(String, u32), RgbaImage>,
     art: Option<Option<SpectateArt>>,
     fitted: BTreeMap<(&'static str, usize, u32, u32), RgbaImage>,
+    /// Elixir fill rasters keyed by pixel size. The bar used to be rebuilt for
+    /// every fractional elixir value, which minted a new texture each tick.
+    fills: RefCell<BTreeMap<(u32, u32), RgbaImage>>,
+    /// Native row -> original portrait under `engine/web/`. The spectator
+    /// bundle only ships the training-deck portraits; every other card still
+    /// has art in the shared card catalog.
+    portraits: Option<BTreeMap<String, CatalogCard>>,
+}
+
+fn load_catalog_portraits() -> BTreeMap<String, CatalogCard> {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/card_catalog.json");
+    let Ok(bytes) = std::fs::read(path) else {
+        return BTreeMap::new();
+    };
+    let Ok(rows) = serde_json::from_slice::<Vec<Value>>(&bytes) else {
+        return BTreeMap::new();
+    };
+    let mut portraits = BTreeMap::new();
+    for row in rows {
+        let Some(name) = row["sc_name"].as_str() else {
+            continue;
+        };
+        let Some(file) = row["art"]["path"].as_str().filter(|file| !file.is_empty()) else {
+            continue;
+        };
+        let label = row["name"].as_str().unwrap_or(name);
+        portraits.insert(
+            name.to_owned(),
+            CatalogCard {
+                file: file.to_owned(),
+                label: label.to_owned(),
+            },
+        );
+    }
+    portraits
 }
 
 /// Shared card rectangles for drawing and mouse hit testing.
@@ -251,6 +292,9 @@ impl HandHud {
             Path::new(env!("CARGO_MANIFEST_DIR"))
                 .join("..")
                 .join(relative),
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../web")
+                .join(relative),
         ]
         .into_iter()
         .find(|p| p.is_file());
@@ -330,15 +374,28 @@ impl HandHud {
         let (fx, fy) = at(&art.bar_body);
         let inset = fx - bx;
         let span = (art.bar_bg.image.width() as f64 * s - 2. * inset).max(1.);
+        // Quarter-elixir steps: forty shared fills cover the whole bar.
+        let elixir = (elixir * 4.).round() / 4.;
         let fraction = (elixir / 10.).clamp(0., 1.);
         let fill_w = span * fraction;
         if fill_w >= 1. {
-            let body = imageops::resize(
-                &art.bar_body.image,
-                fill_w.round().max(1.) as u32,
-                ((art.bar_body.image.height() as f64 * s).round() as u32).max(1),
-                imageops::FilterType::Triangle,
-            );
+            let width = fill_w.round().max(1.) as u32;
+            let height = ((art.bar_body.image.height() as f64 * s).round() as u32).max(1);
+            let body = {
+                let mut fills = self.fills.borrow_mut();
+                if let Some(body) = fills.get(&(width, height)) {
+                    body.clone()
+                } else {
+                    let body = imageops::resize(
+                        &art.bar_body.image,
+                        width,
+                        height,
+                        imageops::FilterType::Triangle,
+                    );
+                    fills.insert((width, height), body.clone());
+                    body
+                }
+            };
             place(out, &body, fx, fy);
             let (_, ey) = at(&art.bar_end);
             let cap = scaled(&art.bar_end, s, s);
@@ -500,7 +557,26 @@ impl HandHud {
                     .iter()
                     .find(|c| c.slot == slot && c.available);
                 if let Some(card) = row {
-                    let meta = &manifest["scene"]["card_visuals"][&card.name];
+                    if self.portraits.is_none() {
+                        self.portraits = Some(load_catalog_portraits());
+                    }
+                    let bundled = manifest["scene"]["card_visuals"][&card.name].clone();
+                    let face = self
+                        .portraits
+                        .as_ref()
+                        .and_then(|portraits| portraits.get(&card.name))
+                        .map(|face| (face.file.clone(), face.label.clone()));
+                    let fallback = face.as_ref().map(|(file, _)| {
+                        serde_json::json!({
+                            "portrait": {"file": file},
+                            "ui": {"frame_export": "card_item_frame"}
+                        })
+                    });
+                    let meta = if bundled["portrait"]["file"].as_str().is_some() {
+                        &bundled
+                    } else {
+                        fallback.as_ref().unwrap_or(&bundled)
+                    };
                     if let Some(image) = self.card(root, scene, meta, &card.name, cw)? {
                         target::overlay(out, &image, x as i64, cy as i64);
                         if frame.elixir[side] + 0.001 < card.cost as f64 {
@@ -526,14 +602,17 @@ impl HandHud {
                                 imageops::FilterType::Triangle,
                             );
                             let ix = x + cw / 2 - iconw / 2;
-                            let iy = cy + card_h - ih / 2;
+                            // Keep the gem and its cost on the card. Centering
+                            // the gem on the bottom edge drops the number into
+                            // the elixir bar.
+                            let iy = cy + card_h.saturating_sub(ih);
                             target::overlay(out, &image, ix as i64, iy as i64);
                             self.label(
                                 out,
                                 scene,
                                 &card.cost.to_string(),
                                 (x + cw / 2) as i64,
-                                iy as i64 + (ih as f32 * 0.27) as i64,
+                                iy as i64 + (ih as f32 * 0.22) as i64,
                                 14. * scale,
                             )?;
                         }
@@ -541,7 +620,7 @@ impl HandHud {
                         self.label(
                             out,
                             scene,
-                            &card.name,
+                            face.as_ref().map(|(_, label)| label.as_str()).unwrap_or(&card.name),
                             (x + cw / 2) as i64,
                             cy as i64 + 25,
                             9. * scale,
@@ -602,5 +681,24 @@ impl HandHud {
             }
         }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn cards_outside_the_training_bundle_use_catalog_portraits() {
+        let portraits = load_catalog_portraits();
+        let magic = portraits.get("EliteArcher").expect("magic archer");
+        assert_eq!(magic.file, "cards/magic_archer.png");
+        assert_eq!(magic.label, "Magic Archer");
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../web");
+        for name in ["EliteArcher", "Poison", "Zap"] {
+            let face = portraits.get(name).unwrap_or_else(|| panic!("{name}"));
+            let path = root.join(&face.file);
+            assert!(path.is_file(), "{}", path.display());
+        }
     }
 }

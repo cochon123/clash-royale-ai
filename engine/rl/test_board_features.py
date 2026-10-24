@@ -99,6 +99,16 @@ class BoardFeatureTests(unittest.TestCase):
         self.assertEqual(NATIVE_CELLS, (36, 64))
         self.assertEqual(NATIVE_CELLS[0] * CELL_SIZE, ARENA_X)
         self.assertEqual(NATIVE_CELLS[1] * CELL_SIZE, ARENA_Y)
+
+    def test_native_no_health_projectile_sentinel(self):
+        table = load_row_table()
+        encoded = encode_board(board(entity("TowerPrincessProjectile", 0, 4000, 7000,
+                                            hp=-1, max_hp=0)), 0, table, vocab_for_table(table))
+        self.assertTrue(torch.isfinite(encoded.features).all())
+        self.assertEqual(float(encoded.features[0, 3]), 0.0)
+        with self.assertRaises(ValueError):
+            encode_board(board(entity("HogRider", 0, 4000, 7000, hp=-2, max_hp=0)),
+                         0, table, vocab_for_table(table))
         self.assertEqual(TILE_ROWS, 18)
         self.assertEqual(TILE_COLS, 32)
 
@@ -169,11 +179,24 @@ class BoardFeatureTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             collate_boards([])
         with self.assertRaises(ValueError):
-            self.encode(board(entity("HogRider", 0, -1, 0)), 0)
+            self.encode(board(entity("HogRider", 0, float('nan'), 0)), 0)
         with self.assertRaises(ValueError):
             self.encode(board(entity("HogRider", 0, 1000, 1000, hp=5, max_hp=4)), 0)
         with self.assertRaises(ValueError):
             self.encode(board(entity("HogRider", 2, 1000, 1000)), 0)
+
+    def test_native_off_arena_entities_project_to_edge_without_mutating_board(self):
+        payload = board(entity("HogRider", 0, -500, ARENA_Y + 700),
+                        entity("TowerPrincessProjectile", 1, ARENA_X + 600, -900,
+                               hp=-1, max_hp=0, entity_id=2))
+        for perspective in (0, 1):
+            encoded = self.encode(payload, perspective)
+            self.assertEqual(int(encoded.mask.sum()), 2)
+            present = encoded.features[encoded.mask]
+            self.assertTrue(torch.isfinite(present).all())
+            self.assertTrue(((present[:, 1:3] >= 0) & (present[:, 1:3] <= 1)).all())
+        self.assertEqual(payload['entities'][0]['x'], -500)
+        self.assertEqual(payload['entities'][1]['y'], -900)
 
 
 if __name__ == "__main__":

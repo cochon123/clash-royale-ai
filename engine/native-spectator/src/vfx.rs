@@ -8,6 +8,7 @@
 //! particle budget and `Inertia` as velocity damping. Nothing here feeds back
 //! into the engine.
 use crate::blit::{self, Affine, Blend, ShadowMask};
+use crate::pose_cache::{self, PoseCache};
 use crate::presentation::{EffectDef, EmitterDef, Presentation};
 use clash_native_ui_viewer::{Playback, Scene};
 use image::RgbaImage;
@@ -150,9 +151,14 @@ pub struct CachedSprite {
 pub struct SpriteCache {
     entries: BTreeMap<(String, String, usize), Option<Rc<CachedSprite>>>,
     meta: BTreeMap<(String, String), Option<ClipMeta>>,
+    disk: Option<PoseCache>,
 }
 
 impl SpriteCache {
+    pub fn enable_disk(&mut self, cache: PoseCache) {
+        self.disk = Some(cache);
+    }
+
     /// Frame count, fps and the compositing mode implied by the root
     /// children's SC blend modes. A clip rendered alone onto transparency
     /// keeps additive (8) or screen (4) children premultiplied.
@@ -205,6 +211,19 @@ impl SpriteCache {
             return entry.clone();
         }
         let (count, _, blend) = self.meta(scenes, doc, export)?;
+        let disk_key = pose_cache::key(&[doc, export], &[frame as u64]);
+        let cached = self.disk.as_ref().and_then(|cache| cache.load(&disk_key));
+        if let Some((image, dx, dy)) = cached {
+            let entry = Some(Rc::new(CachedSprite {
+                image,
+                x: dx,
+                y: dy,
+                blend,
+            }));
+            pose_cache::trim_map(&mut self.entries, 6000);
+            self.entries.insert(key, entry.clone());
+            return entry;
+        }
         let rendered = scenes.get(doc).and_then(|scene| {
             scene
                 .render(
@@ -225,9 +244,12 @@ impl SpriteCache {
                 blend,
             })
         });
-        if self.entries.len() > 6000 {
-            self.entries.clear();
+        if let Some(sprite) = entry.as_ref() {
+            if let Some(cache) = &self.disk {
+                cache.store(&disk_key, &sprite.image, sprite.x, sprite.y);
+            }
         }
+        pose_cache::trim_map(&mut self.entries, 6000);
         self.entries.insert(key, entry.clone());
         entry
     }
@@ -244,6 +266,12 @@ pub struct Vfx {
     rng: u64,
     next_id: u64,
     pub cache: SpriteCache,
+}
+
+impl Vfx {
+    pub fn enable_pose_cache(&mut self, cache: PoseCache) {
+        self.cache.enable_disk(cache);
+    }
 }
 
 const MAX_PARTICLES: usize = 1600;
@@ -330,7 +358,22 @@ impl Vfx {
     }
 
     fn resolve(&mut self, defs: &Presentation, effect: PendingEffect) {
-        let Some(def) = Self::effect_def(defs, &effect.name, effect.red) else {
+        let def = Self::effect_def(defs, &effect.name, effect.red);
+        crate::probe::with(|r| {
+            r.effects.push(crate::probe::Effect {
+                name: effect.name.clone(),
+                x: effect.anchor.x,
+                y: effect.anchor.y,
+                z: effect.anchor.z,
+                red: effect.red,
+                start_ms: effect.start_ms,
+                attach: effect.attach,
+                known: def.is_some(),
+                components: def.map_or(0, |d| d.renderable_components.len()),
+                depth: effect.depth,
+            })
+        });
+        let Some(def) = def else {
             return;
         };
         let def = def.clone();

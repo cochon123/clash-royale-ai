@@ -5,10 +5,28 @@ use clash_recompiled::snapshot::EngineSnapshot;
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
 use std::io::{self, BufRead, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
+
+/// Session::load has already converted this JSON map into GuestHeap's owned
+/// allocation table. Reset, calls and snapshots use that table, never the
+/// duplicate JSON map. Keep the immutable checkpoint file and its identity.
+fn load_session(checkpoint: &Path) -> Result<RlSession, String> {
+    let mut session = RlSession::load(checkpoint)?;
+    if std::env::var("CR_TRIM_CHECKPOINT_JSON").as_deref() == Ok("1") {
+        if let Some(heap) = session.engine.checkpoint.get_mut("native_heap").and_then(Value::as_object_mut) {
+            heap.remove("allocations");
+        }
+        #[cfg(target_os = "linux")]
+        unsafe {
+            unsafe extern "C" { fn malloc_trim(pad: usize) -> i32; }
+            malloc_trim(0);
+        }
+    }
+    Ok(session)
+}
 
 fn deck<'a>(request: &'a Value, key: &str) -> Result<Vec<&'a str>, String> {
     let values = request[key]
@@ -364,7 +382,7 @@ impl Server {
 
     fn install(&mut self, image: &EngineSnapshot) -> Result<(), String> {
         if self.session.is_none() {
-            self.session = Some(RlSession::load(&self.checkpoint)?);
+            self.session = Some(load_session(&self.checkpoint)?);
         }
         self.session
             .as_mut()
@@ -449,7 +467,7 @@ impl Server {
                 if let Some(session) = self.session.as_mut() {
                     session.reset()?;
                 } else {
-                    self.session = Some(RlSession::load(&self.checkpoint)?);
+                    self.session = Some(load_session(&self.checkpoint)?);
                 }
                 let session = self.session.as_mut().ok_or("session failed to load")?;
                 self.configured = session.configure_normal_decks_and_rebuild(&d0, &d1, seed)?;

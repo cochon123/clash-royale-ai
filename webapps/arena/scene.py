@@ -17,7 +17,7 @@ import threading
 
 from webapps.common import paths
 from webapps.common.httpkit import EventStream, HTTPError, Raw
-from .renderer import ASSETS, NativeRenderer
+from .renderer import ASSETS, NativeRenderer, asset_selection_args
 
 BINARY = Path(os.environ.get("ARENA_SCENE_BIN", str(
     paths.ENGINE / "native-spectator/target/debug/clash-web-scene")))
@@ -61,16 +61,24 @@ def texture_references(draws):
 
 
 class NativeSceneRenderer:
-    def __init__(self, run_dir):
+    def __init__(self, run_dir, *, cards=None):
+        self.cards = tuple(cards) if cards else None
         self.run_dir = Path(run_dir)
         self.run_dir.mkdir(parents=True, exist_ok=True)
-        self.texture_dir = self.run_dir / "scene-textures"
-        self.texture_dir.mkdir(exist_ok=True)
+        # Poses and encoded textures are shared by every match in this arena.
+        # A walk frame rendered in one game is reused by the next.
+        shared = Path(os.environ.get("ARENA_SCENE_CACHE", self.run_dir.parent / "scene-cache"))
+        self.texture_dir = shared / "textures"
+        self.pose_dir = shared / "poses"
+        self.texture_dir.mkdir(parents=True, exist_ok=True)
+        self.pose_dir.mkdir(parents=True, exist_ok=True)
         self.log = (self.run_dir / "scene.log").open("ab", buffering=0)
         try:
             self.proc = subprocess.Popen(
                 [str(BINARY), "--assets", str(ASSETS), "--texture-cache", str(self.texture_dir),
-                 "--fps", os.environ.get("ARENA_SCENE_FPS", "30")],
+                 "--pose-cache", str(self.pose_dir),
+                 "--fps", os.environ.get("ARENA_SCENE_FPS", "30"),
+                 *asset_selection_args(self.cards)],
                 cwd=paths.ENGINE, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.log)
         except Exception:
             self.log.close()
@@ -256,7 +264,8 @@ class NativeSceneRenderer:
             if self.closed.is_set():
                 raise HTTPError(404, "match has closed")
             if self.fallback is None:
-                self.fallback = NativeRenderer(self.run_dir / "stream-fallback")
+                options = {"cards": self.cards} if getattr(self, "cards", None) else {}
+                self.fallback = NativeRenderer(self.run_dir / "stream-fallback", **options)
                 if self.last_snapshot:
                     self.fallback.submit(self.last_snapshot)
             return self.fallback

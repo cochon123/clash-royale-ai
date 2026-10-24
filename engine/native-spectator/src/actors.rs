@@ -9,7 +9,10 @@ use crate::animation::{HeadingSource, PresentationHeading};
 use crate::frame::Entity;
 
 /// Ticks without displacement before a walking unit is shown as stopped.
-pub const MOVE_HOLD_TICKS: u32 = 3;
+/// Original movement holds one position for several ticks between steps.
+/// Pauses of up to eleven ticks still belong to the same step; dropping the
+/// run cycle in the middle and starting it again on the next step flickers.
+pub const MOVE_HOLD_TICKS: u32 = 11;
 pub const TICK_MS: f64 = 50.;
 
 pub struct Actor {
@@ -43,6 +46,11 @@ pub struct Actor {
     pub turret: Option<(f64, f64)>,
     /// Native loss of the last attributed melee hit.
     pub hit_damage: Option<i32>,
+    /// Set when this actor was planned for the current display tick.
+    pub shown: bool,
+    pub shown_state: &'static str,
+    pub shown_heading: u8,
+    pub shown_projectile: bool,
 }
 
 impl Actor {
@@ -69,6 +77,10 @@ impl Actor {
             max_z: entity.z,
             turret: None,
             hit_damage: None,
+            shown: false,
+            shown_state: "idle",
+            shown_heading: 0,
+            shown_projectile: false,
         }
     }
 
@@ -82,6 +94,16 @@ impl Actor {
     }
 
     pub fn observe(&mut self, entity: &Entity, tick: u32) {
+        // `entity.moving`, `entity.attacking`, and the raw action timers are
+        // not clocks. Captures leave the attack flag false and the timers null
+        // or zero. Displacement is the walk signal; HitSpeed/LoadTime and
+        // observed impacts own the attack phase.
+        let _ignored = (
+            entity.moving,
+            entity.attacking,
+            entity.native_action_timer_raw,
+            entity.native_secondary_timer_raw,
+        );
         let dt = tick.saturating_sub(self.last_tick).max(1) as f64;
         let delta = [
             (entity.x - self.last.x) as f64 / dt,
@@ -157,6 +179,8 @@ impl Actor {
             return;
         }
         self.impacts.push(at_ms);
+        let uid = self.uid;
+        crate::probe::with(|r| r.impacts.push(crate::probe::Impact { uid, at_ms }));
         if self.impacts.len() > 8 {
             self.impacts.remove(0);
         }
@@ -168,7 +192,19 @@ impl Actor {
     pub fn set_engaged(&mut self, engaged: bool, now_ms: f64, hit_speed_ms: f64, load_ms: f64) {
         if !engaged {
             self.engaged_since_ms = None;
-            self.predicted_ms = None;
+            // A one-tick step used to erase the swing. The projectile or the
+            // melee hit then restarted the clip on the action frame, so the
+            // wind-up never appeared. Keep a swing that is still on screen.
+            let pending = self
+                .predicted_ms
+                .is_some_and(|predicted| now_ms <= predicted + hit_speed_ms * 0.25);
+            let recent = self
+                .impacts
+                .last()
+                .is_some_and(|hit| now_ms <= hit + hit_speed_ms * 0.25);
+            if !pending && !recent {
+                self.predicted_ms = None;
+            }
             return;
         }
         if self.engaged_since_ms.is_none() {
@@ -211,24 +247,80 @@ impl Actor {
     }
 
     /// Milliseconds into the authored attack clip at display time `t_ms`.
-    /// `action_ms` is the authored `action_frame` time and `clip_ms` its
-    /// length; `speed` compresses the clip when the cadence is shorter.
+    /// The wind-up occupies `[impact - windup_ms, impact]` and is mapped onto
+    /// frames `0..action_frame`, so a swing that has just started draws the
+    /// first frame rather than the hit pose. `action_ms` is the authored
+    /// `action_frame` time and `clip_ms` the clip length.
     pub fn attack_clip_ms(
         &self,
         t_ms: f64,
         action_ms: f64,
         clip_ms: f64,
-        speed: f64,
+        windup_ms: f64,
     ) -> Option<f64> {
-        let pre = action_ms / speed;
-        let post = (clip_ms - action_ms).max(TICK_MS) / speed;
+        self.attack_clip_known(t_ms, action_ms, clip_ms, windup_ms, &[])
+    }
+
+    /// Same as `attack_clip_ms`, plus impact times taken from a full replay.
+    /// Those replace the inferred cadence: a swing is drawn only around a hit
+    /// that actually lands, starting `windup_ms` before it.
+    pub fn attack_clip_known(
+        &self,
+        t_ms: f64,
+        action_ms: f64,
+        clip_ms: f64,
+        windup_ms: f64,
+        known: &[f64],
+    ) -> Option<f64> {
+        let windup = windup_ms.max(TICK_MS);
+        let tail = (clip_ms - action_ms).max(windup * 0.35).max(TICK_MS);
         let mut best: Option<f64> = None;
-        for &impact in self.impacts.iter().chain(self.predicted_ms.iter()) {
-            if t_ms >= impact - pre && t_ms < impact + post && best.is_none_or(|b| impact > b) {
+        let predicted = if known.is_empty() {
+            self.predicted_ms
+        } else {
+            None
+        };
+        let times: Vec<f64> = self
+            .impacts
+            .iter()
+            .chain(known.iter())
+            .chain(predicted.iter())
+            .copied()
+            .collect();
+        for &impact in &times {
+            if t_ms >= impact - windup && t_ms < impact + tail && best.is_none_or(|b| impact > b) {
                 best = Some(impact);
             }
         }
-        best.map(|impact| ((t_ms - (impact - pre)) * speed).clamp(0., clip_ms))
+        // Swings on a normal cadence can leave a one-frame run or idle pose
+        // between the recovery and the next wind-up. Hold the attack across
+        // a hole of up to three display frames.
+        if best.is_none() {
+            for &impact in &times {
+                let end = impact + tail;
+                let Some(next) = times.iter().copied().filter(|hit| *hit > impact + 1.).reduce(f64::min)
+                else {
+                    continue;
+                };
+                let next_start = next - windup;
+                if t_ms >= end
+                    && t_ms < next_start
+                    && next_start - end <= 3. * TICK_MS + 1e-6
+                    && best.is_none_or(|b| impact > b)
+                {
+                    best = Some(impact);
+                }
+            }
+        }
+        best.map(|impact| {
+            let dt = t_ms - (impact - windup);
+            if dt <= windup {
+                action_ms * (dt / windup)
+            } else {
+                let follow = (clip_ms - action_ms).max(0.);
+                action_ms + follow * ((dt - windup) / tail).clamp(0., 1.)
+            }
+        })
     }
 }
 
@@ -306,7 +398,7 @@ mod tests {
             assert!(actor.moving, "tick {tick}");
         }
         assert_eq!(actor.walk_at(20. * TICK_MS), Some(10. * TICK_MS));
-        for tick in 31..=36 {
+        for tick in 31..=42 {
             actor.observe(&unit(0, 1000), tick);
         }
         assert!(!actor.moving);
@@ -319,20 +411,45 @@ mod tests {
         let mut actor = Actor::new(1, &unit(0, 0), 0, false);
         actor.set_engaged(true, 1000., 1000., 300.);
         assert_eq!(actor.predicted_ms, Some(1300.));
+        // The swing starts on its first frame and reaches the action frame
+        // (467 ms into the clip) at the predicted hit.
+        let start = actor.attack_clip_ms(1000., 467., 1000., 300.).unwrap();
+        assert!(start.abs() < 1.);
+        let mid = actor.attack_clip_ms(1150., 467., 1000., 300.).unwrap();
+        assert!((mid - 233.5).abs() < 2.);
+        let hit = actor.attack_clip_ms(1300., 467., 1000., 300.).unwrap();
+        assert!((hit - 467.).abs() < 2.);
         actor.register_impact(1310., 1000.);
         assert_eq!(actor.predicted_ms, Some(2310.));
-        // 467 ms wind-up to the action frame in a 1000 ms clip.
-        let windup = actor.attack_clip_ms(2000., 467., 1000., 1.).unwrap();
-        // A later engagement does not hide earlier, already displayed swings.
-        assert!((windup - 157.).abs() < 1.);
-        let recovery = actor.attack_clip_ms(1400., 467., 1000., 1.).unwrap();
-        assert!((recovery - 557.).abs() < 1.);
-        actor.set_engaged(false, 2100., 1000., 300.);
-        assert!(actor.attack_clip_ms(2200., 467., 1000., 1.).is_none());
+        // A step during the wind-up must not erase it.
+        actor.set_engaged(false, 1200., 1000., 300.);
+        assert!(actor.attack_clip_ms(1200., 467., 1000., 300.).is_some());
+        actor.set_engaged(false, 2700., 1000., 300.);
+        assert!(actor.attack_clip_ms(2800., 467., 1000., 300.).is_none());
         // Observed impacts ahead of the display clock still show their wind-up.
         actor.register_impact(3000., 1000.);
-        let ahead = actor.attack_clip_ms(2600., 467., 1000., 1.).unwrap();
-        assert!((ahead - 67.).abs() < 1.);
+        let ahead = actor.attack_clip_ms(2700., 467., 1000., 300.).unwrap();
+        assert!(ahead.abs() < 1.);
+    }
+
+    #[test]
+    fn source_attack_flag_and_zero_timers_do_not_start_a_clip() {
+        let mut lying = unit(0, 0);
+        lying.attacking = true;
+        lying.moving = true;
+        lying.native_action_timer_raw = Some(0);
+        lying.native_secondary_timer_raw = None;
+        let mut actor = Actor::new(1, &lying, 0, false);
+        actor.observe(&lying, 1);
+        assert!(actor.impacts.is_empty());
+        assert!(actor.predicted_ms.is_none());
+        assert!(actor.attack_clip_ms(400., 200., 800., 300.).is_none());
+        assert!(!actor.moving, "a stationary position is not a walk");
+        // The original cadence still schedules a clip with the flag left false.
+        lying.attacking = false;
+        actor.set_engaged(true, 1000., 1000., 300.);
+        assert_eq!(actor.predicted_ms, Some(1300.));
+        assert!(actor.attack_clip_ms(1100., 200., 800., 300.).is_some());
     }
 
     #[test]

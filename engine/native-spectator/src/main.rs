@@ -2,7 +2,7 @@
 use clash_native_spectator::backend::Battle;
 use clash_native_spectator::{
     clock::{Flow, PlaybackClock, DEFAULT_LAG_TICKS},
-    draw::Painter,
+    draw::{parse_card_list, Painter},
     frame::BattleFrame,
     input::PlayerInput,
 };
@@ -42,6 +42,7 @@ struct Args {
     fps: f64,
     input_file: Option<PathBuf>,
     display_lag_ticks: f64,
+    cards: Vec<String>,
 }
 fn args() -> Result<Args> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..");
@@ -66,12 +67,14 @@ fn args() -> Result<Args> {
         fps: 30.,
         input_file: None,
         display_lag_ticks: DEFAULT_LAG_TICKS,
+        cards: Vec::new(),
     };
     let mut it = std::env::args().skip(1);
     while let Some(k) = it.next() {
         match k.as_str() {
             "--checkpoint" => a.checkpoint = it.next().ok_or("checkpoint path")?.into(),
             "--assets" => a.assets = it.next().ok_or("asset directory")?.into(),
+            "--cards" => a.cards.extend(parse_card_list(&it.next().ok_or("card names")?)),
             "--ticks" => {
                 a.ticks = Some(
                     it.next()
@@ -117,7 +120,7 @@ fn args() -> Result<Args> {
             }
             "--fps" => a.fps = it.next().ok_or("fps")?.parse().map_err(|_| "fps")?,
             "--help" | "-h" => {
-                println!("Original-engine spectator (built-in Normal scenario bots).\nUsage: clash-native-spectator [--ticks N | --run-to-end] [--render PNG] [--record JSONL] [--audit-out NEWDIR] [--assets DIR] [--checkpoint DIR]\nFollow external snapshots: clash-native-spectator --follow FRAME.json [--control-file COMMAND.json] [--ready-file READY.json] [--title LABEL]\nInterpolated PNG sequence from a capture: clash-native-spectator --follow FRAMES.jsonl --render-sequence NEWDIR [--from-tick N] [--to-tick M] [--fps 30]\nEngine mode: Space pause, Right one tick, R restart, +/- speed, S screenshot, Esc close. Follow mode: Space pause and R reset write commands when --control-file is set; S screenshot, Esc close. No human controls or Banana policy connection in this viewer.");
+                println!("Original-engine spectator (built-in Normal scenario bots).\nUsage: clash-native-spectator [--ticks N | --run-to-end] [--render PNG] [--record JSONL] [--audit-out NEWDIR] [--assets DIR] [--cards NAMES] [--checkpoint DIR]\nNAMES is one comma-separated argument of native card names. Omitted --cards loads the whole bundle.\nFollow external snapshots: clash-native-spectator --follow FRAME.json [--control-file COMMAND.json] [--ready-file READY.json] [--title LABEL]\nInterpolated PNG sequence from a capture: clash-native-spectator --follow FRAMES.jsonl --render-sequence NEWDIR [--from-tick N] [--to-tick M] [--fps 30]\nEngine mode: Space pause, Right one tick, R restart, +/- speed, S screenshot, Esc close. Follow mode: Space pause and R reset write commands when --control-file is set; S screenshot, Esc close. No human controls or Banana policy connection in this viewer.");
                 std::process::exit(0);
             }
             _ => return Err(format!("unknown argument {k}")),
@@ -192,7 +195,7 @@ fn headless(a: Args) -> Result<()> {
     }
     let mut unresolved = Vec::new();
     if let Some(path) = a.render {
-        let mut painter = Painter::load(&a.assets, a.width, a.height)?;
+        let mut painter = Painter::load_for_cards(&a.assets, a.width, a.height, &a.cards)?;
         painter
             .render(&frame)?
             .save(&path)
@@ -231,7 +234,7 @@ fn present(buffer: &mut [u32], rgba: &image::RgbaImage) {
 
 #[cfg(feature = "compiled-engine")]
 fn desktop(a: Args) -> Result<()> {
-    let mut painter = Painter::load(&a.assets, a.width, a.height)?;
+    let mut painter = Painter::load_for_cards(&a.assets, a.width, a.height, &a.cards)?;
     let mut window = Window::new(
         "Recovered Clash spectator · loading original engine",
         a.width as usize,
@@ -463,6 +466,11 @@ fn render_sequence(
         |t| t as f64,
     );
     let step = 20. / a.fps;
+    let keep = frames
+        .iter()
+        .take_while(|f| f.match_id == first.match_id)
+        .count();
+    painter.anticipate(&frames[..keep]);
     let mut next = 0usize;
     let mut t = from;
     let mut index = 0u32;
@@ -495,7 +503,7 @@ fn render_sequence(
 }
 
 fn follow(a: Args, frame_path: PathBuf) -> Result<()> {
-    let mut painter = Painter::load(&a.assets, a.width, a.height)?;
+    let mut painter = Painter::load_for_cards(&a.assets, a.width, a.height, &a.cards)?;
     if let Some(dir) = &a.sequence {
         return render_sequence(&a, &mut painter, &frame_path, dir);
     }

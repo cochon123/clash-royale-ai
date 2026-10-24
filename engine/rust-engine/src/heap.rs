@@ -2,13 +2,133 @@
 
 use crate::memory::Memory;
 use serde_json::{json, Value};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 
 #[derive(Clone, Debug)]
-struct Arena {
+pub(crate) struct Arena {
     base: u64,
     capacity: u64,
     pointer: u64,
+}
+
+/// One net edit of the checkpoint allocation map.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct HeapChange {
+    pub pointer: u64,
+    /// Size at the checkpoint baseline. `None` means the pointer was not live.
+    pub baseline: Option<u64>,
+    /// Size in the snapshotted session. `None` means the pointer is not live.
+    pub current: Option<u64>,
+}
+
+/// Allocator state that differs from the checkpoint the session was loaded from.
+#[derive(Clone, Debug)]
+pub(crate) struct HeapDelta {
+    pub pointer: u64,
+    pub free: BTreeMap<u64, Vec<u64>>,
+    pub extras: Vec<Arena>,
+    pub changes: Vec<HeapChange>,
+}
+
+impl HeapDelta {
+    pub fn to_json(&self) -> Value {
+        json!({
+            "pointer": self.pointer.to_string(),
+            "free_buckets": free_buckets_json(&self.free),
+            "extra_heaps": arenas_json(&self.extras),
+            "changes": self.changes.iter().map(|change| json!({
+                "pointer": change.pointer.to_string(),
+                "baseline": change.baseline.map(|size| size.to_string()),
+                "current": change.current.map(|size| size.to_string()),
+            })).collect::<Vec<_>>(),
+        })
+    }
+
+    pub fn from_json(value: &Value) -> Result<Self, String> {
+        let changes = value["changes"]
+            .as_array()
+            .ok_or("heap delta changes missing")?
+            .iter()
+            .map(|change| {
+                Ok(HeapChange {
+                    pointer: parse_u64_value(&change["pointer"])?,
+                    baseline: optional_u64(&change["baseline"])?,
+                    current: optional_u64(&change["current"])?,
+                })
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        Ok(Self {
+            pointer: parse_u64_value(&value["pointer"])?,
+            free: parse_free_buckets(&value["free_buckets"], "heap delta free_buckets")?,
+            extras: parse_arena_list(&value["extra_heaps"], "heap delta extra_heaps")?,
+            changes,
+        })
+    }
+}
+
+fn optional_u64(value: &Value) -> Result<Option<u64>, String> {
+    if value.is_null() {
+        Ok(None)
+    } else {
+        parse_u64_value(value).map(Some)
+    }
+}
+
+fn free_buckets_json(free: &BTreeMap<u64, Vec<u64>>) -> serde_json::Map<String, Value> {
+    free.iter()
+        .map(|(size, pointers)| {
+            (
+                size.to_string(),
+                json!(pointers.iter().map(|pointer| pointer.to_string()).collect::<Vec<_>>()),
+            )
+        })
+        .collect()
+}
+
+fn arenas_json(arenas: &[Arena]) -> Vec<Value> {
+    arenas
+        .iter()
+        .map(|arena| {
+            json!({
+                "base": arena.base.to_string(),
+                "capacity": arena.capacity.to_string(),
+                "pointer": arena.pointer.to_string(),
+            })
+        })
+        .collect()
+}
+
+fn parse_free_buckets(value: &Value, label: &str) -> Result<BTreeMap<u64, Vec<u64>>, String> {
+    let mut out = BTreeMap::new();
+    for (key, pointers) in value
+        .as_object()
+        .ok_or_else(|| format!("{label} missing"))?
+    {
+        let class = parse_u64_value(&Value::String(key.clone()))?;
+        let values = pointers
+            .as_array()
+            .ok_or_else(|| format!("{label} bucket is not an array"))?
+            .iter()
+            .map(parse_u64_value)
+            .collect::<Result<Vec<_>, _>>()?;
+        out.insert(class, values);
+    }
+    Ok(out)
+}
+
+fn parse_arena_list(value: &Value, label: &str) -> Result<Vec<Arena>, String> {
+    value
+        .as_array()
+        .ok_or_else(|| format!("{label} missing"))?
+        .iter()
+        .map(|arena| {
+            Ok(Arena {
+                base: parse_u64_value(&arena["base"])?,
+                capacity: parse_u64_value(&arena["capacity"])?,
+                pointer: parse_u64_value(&arena["pointer"])?,
+            })
+        })
+        .collect()
 }
 
 /// Deterministic adapter for the allocator state recorded in native checkpoints.
@@ -253,6 +373,73 @@ impl GuestHeap {
         })
     }
 
+    /// Net allocator image relative to the checkpoint baseline.
+    ///
+    /// The live allocation map holds millions of checkpoint entries. Cloning it
+    /// dominated snapshot capture. The journal already names every pointer
+    /// touched since reset, so the image keeps that net edit plus the small
+    /// pointer, free-list and extra-arena fields.
+    pub(crate) fn capture_delta(&self) -> HeapDelta {
+        let mut baseline: HashMap<u64, Option<u64>> = HashMap::with_capacity(self.journal.len());
+        for &(pointer, previous) in &self.journal {
+            baseline.entry(pointer).or_insert(previous);
+        }
+        let mut changes = Vec::new();
+        for (pointer, baseline_size) in baseline {
+            let current = self.allocations.get(&pointer).copied();
+            if current != baseline_size {
+                changes.push(HeapChange {
+                    pointer,
+                    baseline: baseline_size,
+                    current,
+                });
+            }
+        }
+        changes.sort_by_key(|change| change.pointer);
+        HeapDelta {
+            pointer: self.pointer,
+            free: self.free.clone(),
+            extras: self.extras.clone(),
+            changes,
+        }
+    }
+
+    /// Return to the checkpoint baseline, then install [`capture_delta`].
+    ///
+    /// The rebuilt journal still undoes to that same baseline on the next
+    /// [`reset`](Self::reset). Guest memory is not touched.
+    pub(crate) fn restore_delta(&mut self, delta: &HeapDelta) -> Result<(), String> {
+        self.reset();
+        for change in &delta.changes {
+            match change.current {
+                Some(size) => {
+                    let previous = self.allocations.insert(change.pointer, size);
+                    if previous != change.baseline {
+                        return Err(format!(
+                            "heap delta baseline mismatch at {:#x}",
+                            change.pointer
+                        ));
+                    }
+                    self.journal.push((change.pointer, previous));
+                }
+                None => {
+                    let previous = self.allocations.remove(&change.pointer);
+                    if previous != change.baseline || previous.is_none() {
+                        return Err(format!(
+                            "heap delta could not remove {:#x}",
+                            change.pointer
+                        ));
+                    }
+                    self.journal.push((change.pointer, previous));
+                }
+            }
+        }
+        self.pointer = delta.pointer;
+        self.free.clone_from(&delta.free);
+        self.extras.clone_from(&delta.extras);
+        Ok(())
+    }
+
     /// Serialize the allocator state using the checkpoint-compatible schema.
     pub fn snapshot(&self) -> Value {
         let allocations = self
@@ -485,6 +672,31 @@ mod tests {
         // this exercises arena expansion rather than free-bucket reuse.
         heap.alloc(32, 8, &mut memory).unwrap();
         assert_eq!(heap.extras[0].pointer, 0x6000_0120);
+        heap.reset();
+        assert_eq!(heap.snapshot(), original);
+        assert!(heap.journal.is_empty());
+    }
+
+    #[test]
+    fn delta_restores_mid_game_allocator_and_still_resets_to_baseline() {
+        let baseline = baseline();
+        let mut heap = GuestHeap::from_json(&baseline).expect("restore allocator baseline");
+        let mut memory = empty_memory();
+        let original = heap.snapshot();
+
+        let reused = heap.alloc(8, 8, &mut memory).expect("reuse free bucket");
+        heap.free_ptr(0x5000_0000).expect("free a baseline allocation");
+        let grown = heap.alloc(24, 8, &mut memory).expect("bump the primary arena");
+        let mid = heap.snapshot();
+        let delta = heap.capture_delta();
+        let encoded = HeapDelta::from_json(&delta.to_json()).expect("decode heap delta");
+
+        heap.alloc(32, 8, &mut memory).expect("diverge after the snapshot");
+        heap.restore_delta(&encoded).expect("restore allocator delta");
+        assert_eq!(heap.snapshot(), mid);
+        assert!(heap.is_live(reused));
+        assert!(heap.is_live(grown));
+
         heap.reset();
         assert_eq!(heap.snapshot(), original);
         assert!(heap.journal.is_empty());

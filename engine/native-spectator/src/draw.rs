@@ -14,10 +14,11 @@ use crate::{
     hud::{HandHud, HandLayout},
     input::{ControlLayout, PlayerInput},
     presentation::Presentation,
+    pose_cache::{self, PoseCache},
     scene,
     vfx::{self, Anchor, Layer, Vfx, VfxSprite},
 };
-use clash_native_ui_viewer::{Matrix, Playback, Rendered, Scene};
+use clash_native_ui_viewer::{ColorTransform, Matrix, Playback, Rendered, Scene};
 use image::{imageops, Rgba, RgbaImage};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
@@ -106,6 +107,83 @@ struct Plan {
     sort_y: f64,
     air: bool,
     hp: Option<HpBar>,
+    /// Projected entity or projectile point, shared by body parts.
+    screen_anchor: [f64; 2],
+    /// Ground point shared by the shadow and ground-layer projectile art.
+    ground_anchor: [f64; 2],
+}
+
+/// A troop or tower that was planned for the current display tick.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ShownSubject {
+    pub row: String,
+    pub team: i32,
+    pub state: &'static str,
+    pub heading: u8,
+    pub projectile: bool,
+    pub tower: bool,
+}
+
+/// One `--cards` argument: comma-separated native names, spaces kept.
+pub fn parse_card_list(raw: &str) -> Vec<String> {
+    raw.split(',')
+        .map(str::trim)
+        .filter(|name| !name.is_empty())
+        .map(str::to_owned)
+        .collect()
+}
+
+/// `None` means the whole bundle. A non-empty card list never falls back to it.
+fn documents_for_cards(manifest: &Value, cards: &[String]) -> Result<Option<BTreeSet<String>>> {
+    if cards.is_empty() {
+        return Ok(None);
+    }
+    let scene = &manifest["scene"];
+    let Some(always) = scene["always_documents"].as_array() else {
+        return Err(
+            "--cards requires scene.always_documents; refusing to load the full bundle".into(),
+        );
+    };
+    let Some(deps) = scene["card_dependency_documents"].as_object() else {
+        return Err(
+            "--cards requires scene.card_dependency_documents; refusing to load the full bundle"
+                .into(),
+        );
+    };
+    if always.is_empty() {
+        return Err("scene.always_documents is empty".into());
+    }
+    let missing: Vec<_> = cards
+        .iter()
+        .filter(|card| !deps.contains_key(card.as_str()))
+        .cloned()
+        .collect();
+    if !missing.is_empty() {
+        return Err(format!(
+            "native cards absent from scene.card_dependency_documents: {}",
+            missing.join(", ")
+        ));
+    }
+    let mut set = BTreeSet::new();
+    for doc in always {
+        if let Some(name) = doc.as_str() {
+            set.insert(name.to_owned());
+        }
+    }
+    for card in cards {
+        let Some(list) = deps.get(card).and_then(Value::as_array) else {
+            return Err(format!("native card {card} has no document list"));
+        };
+        for doc in list {
+            if let Some(name) = doc.as_str() {
+                set.insert(name.to_owned());
+            }
+        }
+    }
+    if set.is_empty() {
+        return Err("card selection produced no original documents".into());
+    }
+    Ok(Some(set))
 }
 
 #[derive(Clone, Copy)]
@@ -140,6 +218,8 @@ pub struct Painter {
     scenes: BTreeMap<String, Scene>,
     bindings: BTreeMap<String, Visual>,
     sprite_cache: BTreeMap<(String, String, usize, u64), Option<Rc<Rendered>>>,
+    /// Fitted poses already composited by an earlier fight or match.
+    pose_cache: Option<PoseCache>,
     deco_cache: BTreeMap<String, RgbaImage>,
     text_cache: BTreeMap<(String, u32, u32, u8), RgbaImage>,
     arena_field: Option<RgbaImage>,
@@ -161,14 +241,53 @@ pub struct Painter {
     next_uid: u64,
     king_activations: BTreeMap<u64, u32>,
     pending_detach: Vec<(u64, f64)>,
+    /// Impact times (ms) for one replay, keyed by native address. Filled by
+    /// `anticipate` so a wind-up can start before the damage tick.
+    scheduled_impacts: BTreeMap<u64, Vec<f64>>,
+    scheduled_match: Option<u64>,
 }
 
 impl Painter {
+    /// Remember fitted sprites under `root` so a later match does not composite
+    /// the same walk, attack, spell or health-bar frame again.
+    pub fn enable_pose_cache(&mut self, root: &Path) -> Result<()> {
+        let cache = PoseCache::open(root)?;
+        self.vfx.enable_pose_cache(cache.clone());
+        self.pose_cache = Some(cache);
+        Ok(())
+    }
+
     pub fn load(root: &Path, width: u32, height: u32) -> Result<Self> {
+        Self::load_for_cards(root, width, height, &[])
+    }
+
+    /// Load `always_documents` plus each named card's dependency documents.
+    /// An empty list keeps the previous whole-bundle load.
+    pub fn load_for_cards(root: &Path, width: u32, height: u32, cards: &[String]) -> Result<Self> {
         let manifest: Value = serde_json::from_slice(
             &std::fs::read(root.join("assets.json")).map_err(|e| e.to_string())?,
         )
         .map_err(|e| e.to_string())?;
+        let selected = documents_for_cards(&manifest, cards)?;
+        if let Some(set) = &selected {
+            let present: BTreeSet<&str> = manifest["documents"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter_map(|doc| doc["name"].as_str())
+                .collect();
+            let missing: Vec<_> = set
+                .iter()
+                .filter(|name| !present.contains(name.as_str()))
+                .cloned()
+                .collect();
+            if !missing.is_empty() {
+                return Err(format!(
+                    "selected original documents are not in the bundle: {}",
+                    missing.join(", ")
+                ));
+            }
+        }
         let mut scenes = BTreeMap::new();
         let mut exports = BTreeMap::new();
         if let Some(docs) = manifest["documents"].as_array() {
@@ -176,6 +295,9 @@ impl Painter {
                 let Some(name) = doc["name"].as_str() else {
                     continue;
                 };
+                if selected.as_ref().is_some_and(|set| !set.contains(name)) {
+                    continue;
+                }
                 let scene = Scene::load(root, name).map_err(|e| e.to_string())?;
                 let set: BTreeSet<String> = scene.document.exports.keys().cloned().collect();
                 exports.insert(name.to_owned(), set);
@@ -359,6 +481,7 @@ impl Painter {
             scenes,
             bindings,
             sprite_cache: BTreeMap::new(),
+            pose_cache: None,
             deco_cache: BTreeMap::new(),
             text_cache: BTreeMap::new(),
             arena_field,
@@ -378,6 +501,8 @@ impl Painter {
             next_uid: 1,
             king_activations: BTreeMap::new(),
             pending_detach: Vec::new(),
+            scheduled_impacts: BTreeMap::new(),
+            scheduled_match: None,
         })
     }
 
@@ -393,6 +518,30 @@ impl Painter {
 
     pub fn oldest_tick(&self) -> Option<u32> {
         self.history.front().map(|f| f.tick)
+    }
+
+    pub fn snapshot_at(&self, display_tick: f64) -> Option<BattleFrame> {
+        self.history
+            .iter()
+            .rev()
+            .find(|frame| frame.tick as f64 <= display_tick)
+            .cloned()
+            .or_else(|| self.history.front().cloned())
+    }
+
+    pub fn shown_subjects(&self) -> Vec<ShownSubject> {
+        self.actors
+            .values()
+            .filter(|actor| actor.shown)
+            .map(|actor| ShownSubject {
+                row: actor.row.clone(),
+                team: actor.side,
+                state: actor.shown_state,
+                heading: actor.shown_heading,
+                projectile: actor.shown_projectile,
+                tower: matches!(actor.row.as_str(), "KingTower" | "PrincessTower"),
+            })
+            .collect()
     }
 
     pub fn particle_count(&self) -> usize {
@@ -517,7 +666,7 @@ impl Painter {
             .map(|e| (e.address, self.radius(&e.row)))
             .collect();
         for (addr, actor) in self.actors.iter_mut() {
-            let Some(&(hit, load, range, own, _)) = profiles.get(addr) else {
+            let Some(&(hit, load, range, own, ranged)) = profiles.get(addr) else {
                 continue;
             };
             let target = actor
@@ -525,14 +674,25 @@ impl Painter {
                 .native_focus_entity
                 .and_then(|t| by_addr.get(&t))
                 .filter(|t| t.side != actor.side && t.hp != 0);
-            let engaged = actor.last.hp != 0
-                && actor.still_ticks(tick) >= 2
-                && target.is_some_and(|t| {
-                    let dx = (t.x - actor.last.x) as f64;
-                    let dy = (t.y - actor.last.y) as f64;
-                    (dx * dx + dy * dy).sqrt()
-                        <= range + own + radii.get(&t.address).copied().unwrap_or(500.) + 400.
-                });
+            let in_range = target.is_some_and(|t| {
+                let dx = (t.x - actor.last.x) as f64;
+                let dy = (t.y - actor.last.y) as f64;
+                (dx * dx + dy * dy).sqrt()
+                    <= range + own + radii.get(&t.address).copied().unwrap_or(500.) + 400.
+            });
+            let deploy = self
+                .logic
+                .row(&actor.row)
+                .and_then(|r| r.num("DeployTime"))
+                .unwrap_or(0.);
+            let age_ms = now_ms - actor.spawn_tick as f64 * TICK_MS;
+            let ready = !actor.deploys || age_ms >= deploy;
+            // Ranged units wind up only after a real stop. The four-tick gaps
+            // between pathing steps are shorter than MOVE_HOLD_TICKS, so they
+            // do not start a shot. Melee units start the swing as soon as the
+            // target is in reach, which puts the wind-up on screen before the hit.
+            let aiming = !ranged || actor.still_ticks(tick) >= actors::MOVE_HOLD_TICKS;
+            let engaged = actor.last.hp != 0 && ready && in_range && aiming;
             actor.set_engaged(engaged, now_ms, hit, load);
         }
 
@@ -832,6 +992,169 @@ impl Painter {
         }
     }
 
+    /// Replay impact attribution for one match without spawning effects.
+    /// Attack clips and Royal Ghost visibility then begin `LoadTime` before
+    /// the damage tick. Uses the same engagement and damage rules as `observe`.
+    pub fn anticipate(&mut self, frames: &[BattleFrame]) {
+        self.scheduled_impacts.clear();
+        self.scheduled_match = None;
+        let Some(first) = frames.first() else {
+            return;
+        };
+        let match_id = first.match_id;
+        let mut actors: BTreeMap<u64, Actor> = BTreeMap::new();
+        let mut next_uid = 1u64;
+        let mut scheduled: BTreeMap<u64, Vec<f64>> = BTreeMap::new();
+        for (index, frame) in frames.iter().enumerate() {
+            if frame.match_id != match_id {
+                break;
+            }
+            let first_frame = index == 0;
+            let tick = frame.tick;
+            let now_ms = tick as f64 * TICK_MS;
+            let by_addr: BTreeMap<u64, &Entity> =
+                frame.entities.iter().map(|e| (e.address, e)).collect();
+            let stale: Vec<u64> = actors
+                .iter()
+                .filter(|(addr, actor)| !by_addr.get(addr).is_some_and(|e| actor.matches(e)))
+                .map(|(addr, _)| *addr)
+                .collect();
+            for addr in stale {
+                actors.remove(&addr);
+            }
+            let mut spawned = Vec::new();
+            let mut hp_drops = Vec::new();
+            for entity in &frame.entities {
+                if let Some(actor) = actors.get_mut(&entity.address) {
+                    if entity.hp >= 0 && entity.hp < actor.last.hp {
+                        hp_drops.push((entity.address, actor.last.hp));
+                    }
+                    actor.observe(entity, tick);
+                } else {
+                    actors.insert(
+                        entity.address,
+                        Actor::new(next_uid, entity, tick, !first_frame),
+                    );
+                    next_uid += 1;
+                    spawned.push(entity.address);
+                }
+            }
+            let profiles: BTreeMap<u64, (f64, f64, f64, f64, bool)> = actors
+                .iter()
+                .filter_map(|(addr, actor)| self.attack_profile(&actor.row).map(|p| (*addr, p)))
+                .collect();
+            let radii: BTreeMap<u64, f64> = frame
+                .entities
+                .iter()
+                .map(|e| (e.address, self.radius(&e.row)))
+                .collect();
+            for (addr, actor) in actors.iter_mut() {
+                let Some(&(hit, load, range, own, ranged)) = profiles.get(addr) else {
+                    continue;
+                };
+                let target = actor
+                    .last
+                    .native_focus_entity
+                    .and_then(|t| by_addr.get(&t))
+                    .filter(|t| t.side != actor.side && t.hp != 0);
+                let in_range = target.is_some_and(|t| {
+                    let dx = (t.x - actor.last.x) as f64;
+                    let dy = (t.y - actor.last.y) as f64;
+                    (dx * dx + dy * dy).sqrt()
+                        <= range + own + radii.get(&t.address).copied().unwrap_or(500.) + 400.
+                });
+                let deploy = self
+                    .logic
+                    .row(&actor.row)
+                    .and_then(|r| r.num("DeployTime"))
+                    .unwrap_or(0.);
+                let age_ms = now_ms - actor.spawn_tick as f64 * TICK_MS;
+                let ready = !actor.deploys || age_ms >= deploy;
+                let aiming = !ranged || actor.still_ticks(tick) >= actors::MOVE_HOLD_TICKS;
+                let engaged = actor.last.hp != 0 && ready && in_range && aiming;
+                actor.set_engaged(engaged, now_ms, hit, load);
+            }
+            for addr in &spawned {
+                let Some(projectile) = by_addr.get(addr).copied() else {
+                    continue;
+                };
+                if !self.is_projectile(&projectile.row) {
+                    continue;
+                }
+                let shooter = actors
+                    .iter()
+                    .filter(|(a, actor)| {
+                        *a != addr
+                            && actor.side == projectile.side
+                            && actor.last.max_hp > 0
+                            && self.row_str(&actor.row, "Projectile").as_deref()
+                                == Some(projectile.row.as_str())
+                    })
+                    .map(|(a, actor)| {
+                        let dx = (actor.last.x - projectile.x) as f64;
+                        let dy = (actor.last.y - projectile.y) as f64;
+                        (dx * dx + dy * dy, *a)
+                    })
+                    .filter(|(d, _)| *d < 5000. * 5000.)
+                    .min_by(|a, b| a.0.total_cmp(&b.0))
+                    .map(|(_, a)| a);
+                if let Some(shooter) = shooter {
+                    let hit = profiles.get(&shooter).map_or(1000., |p| p.0);
+                    note_scheduled(&mut scheduled, &mut actors, shooter, now_ms - TICK_MS * 0.5, hit);
+                }
+            }
+            for (target_addr, before) in &hp_drops {
+                let Some(target) = by_addr.get(target_addr).copied() else {
+                    continue;
+                };
+                let loss = (before - target.hp.max(0)) as f64;
+                let candidates: Vec<MeleeCandidate> = actors
+                    .iter()
+                    .filter(|(_, actor)| {
+                        actor.side != target.side
+                            && actor.last.native_focus_entity == Some(*target_addr)
+                            && actor.engaged_since_ms.is_some()
+                    })
+                    .filter_map(|(addr, actor)| {
+                        let (hit, _, _, _, ranged) = *profiles.get(addr)?;
+                        if ranged
+                            || actor
+                                .impacts
+                                .last()
+                                .is_some_and(|last| now_ms - last < hit * 0.75)
+                        {
+                            return None;
+                        }
+                        let damage = self.logic.row(&actor.row).and_then(|r| {
+                            let base = r.num("Hitpoints").filter(|h| *h > 0.)?;
+                            Some(r.num("Damage")? * actor.last.max_hp as f64 / base)
+                        });
+                        let error = actor
+                            .predicted_ms
+                            .map_or(hit, |p| (p - now_ms).abs().min(hit));
+                        Some(MeleeCandidate {
+                            addr: *addr,
+                            hit,
+                            damage,
+                            on_time: error <= hit * 0.35,
+                        })
+                    })
+                    .collect();
+                for candidate in attribute_loss(loss, &candidates) {
+                    note_scheduled(
+                        &mut scheduled,
+                        &mut actors,
+                        candidate.addr,
+                        now_ms - TICK_MS * 0.5,
+                        candidate.hit,
+                    );
+                }
+            }
+        }
+        self.scheduled_impacts = scheduled;
+        self.scheduled_match = Some(match_id);
+    }
+
     fn spawn_death(&mut self, row: &str, x: f64, y: f64, z: f64, side: i32, now_ms: f64) {
         let effect = self
             .row_str(row, "DeathEffect")
@@ -921,15 +1244,6 @@ impl Painter {
                     );
                 }
             }
-            self.text(
-                out,
-                &(slot + 1).to_string(),
-                (x + w - 8.) as u32,
-                (y + 4.) as u32,
-                (11. * scale) as f32,
-                WHITE,
-                1,
-            )?;
         }
         if let (Some(selection), Some((x, y))) = (input.selection, input.cursor) {
             let checked = human.target.as_ref().filter(|t| {
@@ -1026,6 +1340,9 @@ impl Painter {
     pub fn draw(&mut self, display_tick: f64) -> Result<RgbaImage> {
         let mut out = RgbaImage::from_pixel(self.width, self.height, Rgba([19, 27, 31, 255]));
         scene::register_root(&out);
+        for actor in self.actors.values_mut() {
+            actor.shown = false;
+        }
         let Some(latest) = self.history.back() else {
             return Ok(out);
         };
@@ -1175,7 +1492,10 @@ impl Painter {
         self.draw_vfx_layer(&mut out, &sprites, Layer::Ground, &layout);
         for plan in &plans {
             if let Some(spec) = &plan.shadow {
-                let _scope = scene::ScopeGuard::enter(format!("entity-{}-shadow", plan.uid));
+                let _scope = scene::ScopeGuard::enter_anchored(
+                    format!("entity-{}-shadow", plan.uid),
+                    plan.ground_anchor,
+                );
                 let part = spec.source.as_ref().unwrap_or(&plan.parts[spec.part]);
                 let t = Affine {
                     m: [
@@ -1212,9 +1532,11 @@ impl Painter {
         scene::scope("shadows", || self.shadows.apply(&mut out));
         for plan in &plans {
             for (index, part) in plan.ground_parts.iter().enumerate() {
-                scene::scope(format!("entity-{}-ground-{index}", plan.uid), || {
-                    draw_part(&mut out, part)
-                });
+                scene::scope_anchored(
+                    format!("entity-{}-ground-{index}", plan.uid),
+                    plan.ground_anchor,
+                    || draw_part(&mut out, part),
+                );
             }
         }
         self.draw_vfx_layer(&mut out, &sprites, Layer::Base, &layout);
@@ -1610,6 +1932,27 @@ impl Painter {
         if let Some(fitted) = self.sprite_fit_cache.get(&fit) {
             return Ok(Some(fitted.clone()));
         }
+        // Thousandths of a draw-scale are enough to share a raster. Exact
+        // float bits were splitting one pose into many near-duplicate files.
+        let scale_q = (scale * 1000.).round() as u64;
+        let disk_key = pose_cache::key(
+            &[doc, export],
+            &[frame_index as u64, variant, scale_q, u64::from(flip)],
+        );
+        let cached = self
+            .pose_cache
+            .as_ref()
+            .and_then(|cache| cache.load(&disk_key));
+        if let Some((image, dx, dy)) = cached {
+            let fitted = Rc::new(Fitted {
+                image,
+                dx: dx.round() as i64,
+                dy: dy.round() as i64,
+            });
+            pose_cache::trim_map(&mut self.sprite_fit_cache, 4000);
+            self.sprite_fit_cache.insert(fit, fitted.clone());
+            return Ok(Some(fitted));
+        }
         let key = (doc.to_owned(), export.to_owned(), frame_index, variant);
         if !self.sprite_cache.contains_key(&key) {
             let scene = self
@@ -1622,9 +1965,7 @@ impl Painter {
                 scene.render(export, &playback)
             }
             .map_err(|e| e.to_string())?;
-            if self.sprite_cache.len() > 2500 {
-                self.sprite_cache.clear();
-            }
+            pose_cache::trim_map(&mut self.sprite_cache, 2500);
             self.sprite_cache.insert(key.clone(), rendered.map(Rc::new));
         }
         let Some(Some(sprite)) = self.sprite_cache.get(&key).cloned() else {
@@ -1646,9 +1987,10 @@ impl Painter {
             dx: dx.round() as i64,
             dy: (sprite.y * scale).round() as i64,
         });
-        if self.sprite_fit_cache.len() > 4000 {
-            self.sprite_fit_cache.clear();
+        if let Some(cache) = &self.pose_cache {
+            cache.store(&disk_key, &fitted.image, fitted.dx as f64, fitted.dy as f64);
         }
+        pose_cache::trim_map(&mut self.sprite_fit_cache, 4000);
         self.sprite_fit_cache.insert(fit, fitted.clone());
         Ok(Some(fitted))
     }
@@ -1719,24 +2061,38 @@ impl Painter {
                     5,
                     if entity.side == 0 { BLUE } else { RED },
                 );
+                let part = Part {
+                    sprite: Rc::new(Fitted {
+                        image: marker,
+                        dx: -5,
+                        dy: -5,
+                    }),
+                    x,
+                    y: py,
+                };
+                probe_shown(
+                    entity,
+                    0,
+                    "marker",
+                    "none",
+                    None,
+                    None,
+                    (x, py),
+                    std::slice::from_ref(&part),
+                );
                 return Ok(Some(Plan {
                     uid: 0,
-                    parts: vec![Part {
-                        sprite: Rc::new(Fitted {
-                            image: marker,
-                            dx: -5,
-                            dy: -5,
-                        }),
-                        x,
-                        y: py,
-                    }],
+                    parts: vec![part],
                     shadow: None,
                     ground_parts: Vec::new(),
                     sort_y: gy,
                     air: false,
                     hp: None,
+                    screen_anchor: [x, py],
+                    ground_anchor: [gx, gy],
                 }));
             }
+            probe_shown(entity, 0, "missing", "none", None, None, (x, py), &[]);
             return Ok(None);
         };
         let Some(actor) = self.actor_for(entity) else {
@@ -1761,17 +2117,38 @@ impl Painter {
         };
         let heading = actors::stable_heading(vector.0, vector.1, entity.side, actor.heading);
         let (uid, spawn_tick, deploys) = (actor.uid, actor.spawn_tick, actor.deploys);
+        // Hits known from the whole replay. The wind-up is drawn before the
+        // damage tick; hit effects still spawn when that tick is observed.
+        let known = if self.scheduled_match == Some(frame.match_id) {
+            let key = entity.native_entity_id.unwrap_or(entity.address);
+            self.scheduled_impacts
+                .get(&key)
+                .cloned()
+                .unwrap_or_default()
+        } else {
+            Vec::new()
+        };
+        let mut impacts = actor.impacts.clone();
+        for &at in &known {
+            if !impacts.iter().any(|hit| (hit - at).abs() < 100.) {
+                impacts.push(at);
+            }
+        }
+        let hidden_now = if projectile {
+            1.
+        } else {
+            self.stealth_alpha(&entity.row, spawn_tick, now_ms, deploys, &impacts)
+        };
         let flash = actor
             .flash_at(now_ms)
             .map(|(export, age)| (export.to_owned(), age));
         let age_ms = now_ms - spawn_tick as f64 * TICK_MS;
         // Attack phase in the authored clip, resolved after export selection.
-        let actor_attack = |action_ms: f64, clip_ms: f64, hit: f64| {
-            let speed = (clip_ms / hit).max(1.);
-            actor.attack_clip_ms(now_ms, action_ms, clip_ms, speed)
+        let actor_attack = |action_ms: f64, clip_ms: f64, windup_ms: f64| {
+            actor.attack_clip_known(now_ms, action_ms, clip_ms, windup_ms, &known)
         };
         let mut attack_phase = None;
-        if let (Some((hit, ..)), false) = (profile, projectile) {
+        if let (Some((_hit, load, ..)), false) = (profile, projectile) {
             let attack_scene_prefix = if entity.row == "PrincessTower" {
                 Some(("chr_princess", "princess_tower", Some("princess_tower_red")))
             } else {
@@ -1790,7 +2167,7 @@ impl Painter {
                     red,
                     AnimationState::Attacking,
                     heading,
-                    0,
+                    0.0,
                 ) {
                     if sel.matched_state {
                         if let Some(movie) = scene
@@ -1806,12 +2183,20 @@ impl Painter {
                                 .iter()
                                 .position(|l| l == "action_frame")
                                 .map_or(count * 0.5, |p| p as f64);
-                            attack_phase =
-                                actor_attack(action * 1000. / fps, count * 1000. / fps, hit);
+                            attack_phase = actor_attack(
+                                action * 1000. / fps,
+                                count * 1000. / fps,
+                                load.max(TICK_MS),
+                            );
                         }
                     }
                 }
             }
+        }
+        // A faded invisible unit keeps walking. A swing that never lands must
+        // not pop it back to a solid attack pose.
+        if hidden_now < 0.75 {
+            attack_phase = None;
         }
         let state = if attack_phase.is_some() {
             AnimationState::Attacking
@@ -1825,7 +2210,7 @@ impl Painter {
             AnimationState::Moving => now_ms - walk_since.unwrap_or(now_ms),
             _ => now_ms - spawn_tick as f64 * TICK_MS,
         }
-        .max(0.) as u64;
+        .max(0.);
         // Buildings with `HasRotationOnTimeline` keep their turret aim in a
         // child timeline of views; the native target gives the aim.
         let rotating = !projectile
@@ -1838,6 +2223,15 @@ impl Painter {
         if let Some(actor) = self.actors.get_mut(&entity.address) {
             if actor.uid == uid {
                 actor.heading = Some(heading);
+                actor.shown = true;
+                actor.shown_state = match state {
+                    AnimationState::Attacking => "attack",
+                    AnimationState::Moving => "walk",
+                    AnimationState::Deploying => "deploy",
+                    AnimationState::Idle => "idle",
+                };
+                actor.shown_heading = heading.direction_index;
+                actor.shown_projectile = projectile;
                 if rotating {
                     let goal = attack_target.map(|t| {
                         ((t.x - entity.x) as f64)
@@ -1852,9 +2246,11 @@ impl Painter {
         let mut parts = Vec::new();
         let mut ground_parts = Vec::new();
         let mut shadow = None;
+        let mut conceal = false;
         let mut top = py - 40. * scale;
         let air = projectile || entity.z > 400;
         let tower = matches!(entity.row.as_str(), "KingTower" | "PrincessTower");
+        let mut pick: Option<(String, usize, bool, f32, bool)> = None;
         if entity.hp == 0 && entity.max_hp > 0 && tower {
             let export = if entity.row == "KingTower" {
                 "kingtower_destroyed"
@@ -1873,6 +2269,17 @@ impl Painter {
             )? {
                 parts.push(p);
             }
+            let pick = Some((export.to_owned(), 0, false, 1., false));
+            probe_shown(
+                entity,
+                uid,
+                "tower-destroyed",
+                "none",
+                pick,
+                None,
+                (x, py),
+                &parts,
+            );
             return Ok(Some(Plan {
                 uid: 0,
                 parts,
@@ -1881,6 +2288,8 @@ impl Painter {
                 sort_y: gy,
                 air: false,
                 hp: None,
+                screen_anchor: [x, py],
+                ground_anchor: [gx, gy],
             }));
         }
         if entity.row == "KingTower" {
@@ -1901,6 +2310,7 @@ impl Painter {
             let root_frame = layers.root_playback.frame.unwrap_or(0);
             let king_frame = layers.king_playback.frame.unwrap_or(0);
             let turret_frame = layers.turret_playback.frame.unwrap_or(0);
+            pick = Some((layers.king_export.to_owned(), king_frame, false, 1., false));
             let root = self.part(
                 "building_tower",
                 layers.root_export,
@@ -1988,6 +2398,13 @@ impl Painter {
                 phase_ms,
             )? {
                 set_attack_frame(scene, &mut selected, state, phase_ms);
+                pick = Some((
+                    selected.export.clone(),
+                    selected.frame_index,
+                    selected.flip_horizontal,
+                    1.,
+                    false,
+                ));
                 let top_y = py - 2200. * Z_TO_SC * field_scale;
                 if let Some(p) = self.part(
                     "chr_princess",
@@ -2117,7 +2534,34 @@ impl Painter {
                             self.apply_filter(Some(export), *age, &mut selected.playback);
                         }
                     }
+                    let hidden = hidden_now;
+                    if hidden < 0.99 {
+                        let mut color = selected.playback.root_color.unwrap_or(ColorTransform {
+                            r_mul: 255,
+                            g_mul: 255,
+                            b_mul: 255,
+                            alpha: 255,
+                            r_add: 0,
+                            g_add: 0,
+                            b_add: 0,
+                        });
+                        color.alpha = (color.alpha as f64 * hidden).round() as i32;
+                        selected.playback.root_color = Some(color);
+                        if hidden < 0.75 {
+                            conceal = true;
+                        }
+                    }
                 }
+                pick = Some((
+                    selected.export.clone(),
+                    selected.frame_index,
+                    selected.flip_horizontal,
+                    selected
+                        .playback
+                        .root_color
+                        .map_or(1., |c| c.alpha as f32 / 255.),
+                    deploying,
+                ));
                 if let Some(p) = self.part(
                     &visual.document,
                     &selected.export,
@@ -2130,7 +2574,7 @@ impl Painter {
                 )? {
                     top = py + p.sprite.dy as f64;
                     parts.push(p);
-                    if !projectile {
+                    if !projectile && !conceal {
                         shadow = self.shadow_spec(&entity.row, 0);
                     }
                 }
@@ -2173,6 +2617,31 @@ impl Painter {
             x,
             top,
         });
+        let kind = match entity.row.as_str() {
+            _ if projectile => "projectile",
+            "KingTower" => "king",
+            "PrincessTower" => "princess",
+            _ => "unit",
+        };
+        let shown_state = match state {
+            AnimationState::Attacking => "attacking",
+            AnimationState::Moving => "moving",
+            _ => "idle",
+        };
+        let flash_name = flash
+            .as_ref()
+            .filter(|_| !pick.as_ref().is_some_and(|p| p.4))
+            .map(|(export, _)| export.as_str());
+        probe_shown(
+            entity,
+            uid,
+            kind,
+            shown_state,
+            pick,
+            flash_name,
+            (x, py),
+            &parts,
+        );
         Ok(Some(Plan {
             uid: 0,
             parts,
@@ -2181,7 +2650,41 @@ impl Painter {
             sort_y: gy,
             air,
             hp,
+            screen_anchor: [x, py],
+            ground_anchor: [gx, gy],
         }))
+    }
+
+    /// Opacity for `BuffWhenNotAttacking = Invisibility` (Royal Ghost).
+    /// Fully visible while deploying or inside a recorded attack window,
+    /// then faded across `HideTimeMs` after `BuffWhenNotAttackingTime`
+    /// without an attack. A predicted swing is not an attack: the ghost
+    /// stays faded until a hit that actually lands.
+    fn stealth_alpha(
+        &self,
+        row: &str,
+        spawn_tick: u32,
+        now_ms: f64,
+        deploys: bool,
+        impacts: &[f64],
+    ) -> f64 {
+        let Some(logic) = self.logic.row(row) else {
+            return 1.;
+        };
+        if logic.str("BuffWhenNotAttacking") != Some("Invisibility") {
+            return 1.;
+        }
+        invisibility_alpha(
+            now_ms,
+            spawn_tick as f64 * TICK_MS,
+            deploys,
+            logic.num("DeployTime").unwrap_or(1000.),
+            logic.num("BuffWhenNotAttackingTime").unwrap_or(2000.),
+            logic.num("HideTimeMs").unwrap_or(400.),
+            logic.num("LoadTime").unwrap_or(0.),
+            logic.num("HitSpeed").unwrap_or(1000.),
+            impacts,
+        )
     }
 
     /// Apply one frame of an original `filter_*` movie (root matrix and color)
@@ -2388,10 +2891,79 @@ impl Painter {
 
 fn draw_plan(out: &mut RgbaImage, plan: &Plan) {
     for (index, part) in plan.parts.iter().enumerate() {
-        scene::scope(format!("entity-{}-part-{index}", plan.uid), || {
-            draw_part(out, part)
-        });
+        scene::scope_anchored(
+            format!("entity-{}-part-{index}", plan.uid),
+            plan.screen_anchor,
+            || draw_part(out, part),
+        );
     }
+}
+
+/// Record one entity's presentation for `clash-visual-check`; no-op otherwise.
+#[allow(clippy::too_many_arguments)]
+fn probe_shown(
+    entity: &Entity,
+    uid: u64,
+    kind: &'static str,
+    state: &'static str,
+    pick: Option<(String, usize, bool, f32, bool)>,
+    flash: Option<&str>,
+    anchor: (f64, f64),
+    parts: &[Part],
+) {
+    if !crate::probe::active() {
+        return;
+    }
+    let (export, frame, flip, alpha, deploying) =
+        pick.unwrap_or_else(|| (String::new(), 0, false, 1., false));
+    let bbox = parts
+        .iter()
+        .map(|p| {
+            let x0 = p.x.round() + p.sprite.dx as f64;
+            let y0 = p.y.round() + p.sprite.dy as f64;
+            [
+                x0,
+                y0,
+                x0 + p.sprite.image.width() as f64,
+                y0 + p.sprite.image.height() as f64,
+            ]
+        })
+        .reduce(|a, b| {
+            [
+                a[0].min(b[0]),
+                a[1].min(b[1]),
+                a[2].max(b[2]),
+                a[3].max(b[3]),
+            ]
+        });
+    let shown = crate::probe::Shown {
+        uid,
+        address: entity.address,
+        native_id: entity.native_entity_id,
+        row: entity.row.clone(),
+        side: entity.side,
+        kind,
+        state,
+        export,
+        frame,
+        flip,
+        deploying,
+        flash: flash.map(str::to_owned),
+        alpha,
+        x: entity.x,
+        y: entity.y,
+        z: entity.z,
+        hp: entity.hp,
+        max_hp: entity.max_hp,
+        anchor: [anchor.0, anchor.1],
+        bbox,
+        coverage: parts
+            .iter()
+            .map(|p| crate::probe::coverage(&p.sprite.image))
+            .sum(),
+        parts: parts.len(),
+    };
+    crate::probe::with(|r| r.shown.push(shown));
 }
 
 fn draw_part(out: &mut RgbaImage, part: &Part) {
@@ -2412,7 +2984,7 @@ fn set_attack_frame(
     scene: &Scene,
     selection: &mut animation::PlaybackSelection,
     state: AnimationState,
-    phase_ms: u64,
+    phase_ms: f64,
 ) {
     if state != AnimationState::Attacking {
         return;
@@ -2426,7 +2998,7 @@ fn set_attack_frame(
         return;
     };
     let count = movie.frame_element_counts.len().max(1);
-    let index = ((phase_ms * movie.framerate as u64 / 1000) as usize).min(count - 1);
+    let index = animation::authored_frame_index(phase_ms, movie.framerate as f64, count, false);
     selection.frame_index = index;
     selection.playback.frame = Some(index);
     selection.playback.label = None;
@@ -2446,6 +3018,81 @@ struct MeleeCandidate {
 /// expected damage sums to the loss; otherwise the loss also includes
 /// other damage, and candidates on their cadence (or the closest one
 /// without known damage) are credited.
+/// Record one attributed hit on the rehearsal actor and on the schedule.
+/// The schedule key is the native id so a reused address does not inherit
+/// the previous object's swings.
+fn note_scheduled(
+    scheduled: &mut BTreeMap<u64, Vec<f64>>,
+    actors: &mut BTreeMap<u64, Actor>,
+    addr: u64,
+    at_ms: f64,
+    hit: f64,
+) {
+    let Some(actor) = actors.get_mut(&addr) else {
+        return;
+    };
+    let key = actor.last.native_entity_id.unwrap_or(addr);
+    let last = actor.impacts.last().copied();
+    actor.register_impact(at_ms, hit);
+    if actor.impacts.last().copied() != last {
+        scheduled.entry(key).or_default().push(at_ms);
+    }
+}
+
+/// Royal Ghost opacity from recorded hits. `1` while deploying or inside an
+/// attack window (including the checker's 150 ms lead-in), then a fade to
+/// 0.28 after `wait_ms` without an attack. A hit that has not started yet
+/// does not keep the ghost solid.
+fn invisibility_alpha(
+    now_ms: f64,
+    spawn_ms: f64,
+    deploys: bool,
+    deploy_ms: f64,
+    wait_ms: f64,
+    hide_ms: f64,
+    load_ms: f64,
+    hit_ms: f64,
+    impacts: &[f64],
+) -> f64 {
+    let hide = hide_ms.max(1.);
+    if deploys && now_ms < spawn_ms + deploy_ms {
+        return 1.;
+    }
+    let mut last_end = if deploys {
+        spawn_ms + deploy_ms
+    } else {
+        spawn_ms
+    };
+    for &impact in impacts {
+        let start = impact - load_ms;
+        let end = impact + (hit_ms - load_ms).max(0.);
+        if now_ms >= start - 150. && now_ms <= end {
+            return 1.;
+        }
+        if end <= now_ms && end > last_end {
+            last_end = end;
+        }
+    }
+    let since = now_ms - last_end;
+    if since <= wait_ms {
+        return 1.;
+    }
+    let fade = ((since - wait_ms) / hide).clamp(0., 1.);
+    let faded = 1. - fade * 0.72;
+    // Rise across the 100 ms before the visible window so a fully faded
+    // sprite does not jump to solid in one frame. The peak stays under the
+    // invisible-mass ceiling; the window itself is solid.
+    let mut eased = faded;
+    for &impact in impacts {
+        let lead = impact - load_ms - 150.;
+        if now_ms < lead && lead - now_ms <= 100. {
+            let u = 1. - ((lead - now_ms) / 100.).clamp(0., 1.);
+            eased = eased.max(faded + (0.58 - faded).max(0.) * u);
+        }
+    }
+    eased
+}
+
 fn attribute_loss(loss: f64, candidates: &[MeleeCandidate]) -> Vec<MeleeCandidate> {
     // A swing cannot be part of a smaller loss.
     let candidates: Vec<MeleeCandidate> = candidates
@@ -2772,5 +3419,83 @@ mod tests {
             assert_eq!(visual.document, "effects");
             assert!(painter.is_projectile(row));
         }
+    }
+
+    #[test]
+    fn card_list_keeps_spaces_and_unknown_metadata_does_not_load_everything() {
+        assert_eq!(
+            parse_card_list("P.E.K.K.A, Hog Rider,Knight,,"),
+            vec!["P.E.K.K.A".to_owned(), "Hog Rider".into(), "Knight".into()]
+        );
+        let old = serde_json::json!({"documents":[{"name":"arena"}]});
+        assert!(documents_for_cards(&old, &[]).unwrap().is_none());
+        assert!(documents_for_cards(&old, &["Knight".into()]).is_err());
+        let bundle = serde_json::json!({
+            "scene": {
+                "always_documents": ["arena", "ui"],
+                "card_dependency_documents": {
+                    "Hog Rider": ["chr_hog", "ui"],
+                    "Knight": ["chr_knight"]
+                }
+            }
+        });
+        let set = documents_for_cards(&bundle, &parse_card_list("Hog Rider,Knight"))
+            .unwrap()
+            .unwrap();
+        assert_eq!(
+            set.into_iter().collect::<Vec<_>>(),
+            vec!["arena", "chr_hog", "chr_knight", "ui"]
+        );
+        let missing = documents_for_cards(&bundle, &["Missing".into()]).unwrap_err();
+        assert!(missing.contains("Missing"), "{missing}");
+        let dir = std::env::temp_dir().join(format!(
+            "spectator-cards-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(
+            dir.join("assets.json"),
+            r#"{"documents":[{"name":"arena"}],"scene":{"always_documents":["arena"],"card_dependency_documents":{"Knight":["chr_knight"]}}}"#,
+        )
+        .unwrap();
+        match Painter::load_for_cards(&dir, 540, 900, &["Knight".into()]) {
+            Err(err) => assert!(err.contains("not in the bundle"), "{err}"),
+            Ok(_) => panic!("card selection must not load a bundle that lacks the documents"),
+        }
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn invisibility_follows_recorded_hits_and_ignores_a_later_one() {
+        let solid = |now: f64, hits: &[f64]| {
+            invisibility_alpha(now, 0., true, 1000., 2000., 400., 1200., 1800., hits)
+        };
+        assert_eq!(solid(500., &[]), 1.);
+        assert_eq!(solid(13750., &[14925.]), 1.);
+        assert_eq!(solid(13575., &[14925.]), 1.);
+        let faded = solid(13400., &[14925.]);
+        assert!((faded - 0.28).abs() < 1e-9, "{faded}");
+        let rising = solid(13525., &[14925.]);
+        assert!(rising > 0.4 && rising < 0.6, "{rising}");
+        let between = invisibility_alpha(
+            16050.,
+            5000.,
+            true,
+            1000.,
+            2000.,
+            400.,
+            1200.,
+            1800.,
+            &[12875., 20000.],
+        );
+        assert!((between - 0.28).abs() < 1e-9, "{between}");
+        assert_eq!(
+            invisibility_alpha(12875., 5000., true, 1000., 2000., 400., 1200., 1800., &[12875.]),
+            1.
+        );
     }
 }

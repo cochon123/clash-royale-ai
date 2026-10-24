@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0d1220">
+<title>Visual gallery · Arena</title>
+<style>
+  :root { color-scheme: dark; --bg: #0d1220; --panel: #151c2f; --line: #2a3557; --text: #e8ecf8; --muted: #93a0c2; --gold: #ffcf4a; --good: #3ddc84; --warn: #ffb547; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 system-ui, sans-serif; }
+  header, main { width: min(1200px, calc(100% - 28px)); margin: 0 auto; }
+  header { padding: 18px 0 8px; }
+  h1 { margin: 0 0 6px; font-size: 22px; }
+  h1 span { color: var(--gold); }
+  .note { margin: 0; color: var(--muted); max-width: 78ch; }
+  .warn { color: var(--warn); }
+  .bar, .filters, .transport { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
+  label { color: var(--muted); font-size: 13px; display: flex; gap: 6px; align-items: center; }
+  select, button, input[type=range] { font: inherit; color: inherit; background: #0f1528; border: 1px solid var(--line); border-radius: 10px; }
+  select, button { padding: 7px 10px; }
+  button { cursor: pointer; }
+  button[aria-pressed="true"] { border-color: var(--gold); }
+  input[type=range] { flex: 1; min-width: 160px; }
+  .inventory, #coverage { color: var(--muted); font-size: 13px; white-space: pre-wrap; }
+  #status { min-height: 1.4em; }
+  #status.error { color: #ffb3bb; }
+  .cases { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+  .cases button { text-align: left; max-width: 280px; }
+  .cases small { display: block; color: var(--muted); }
+  .stage { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .panel h2 { margin: 0; padding: 10px 12px; font-size: 14px; border-bottom: 1px solid var(--line); }
+  .panel img, .panel canvas { width: 100%; height: auto; display: block; background: #101820; image-rendering: pixelated; }
+  .meta { padding: 8px 12px 12px; color: var(--muted); font-size: 12px; }
+  @media (max-width: 800px) { .stage { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Visual <span>gallery</span></h1>
+  <p class="note">Developer fixture viewer. Each paused frame is the CPU reference PNG beside one exact browser composite of that scene. CPU reference parity is not official game animation parity. This page does not score frames and is not part of gameplay.</p>
+</header>
+<main>
+  <p id="status" role="status">Loading fixtures…</p>
+  <div class="filters">
+    <label>Card <select id="filter-card"><option value="">All</option></select></label>
+    <label>Team <select id="filter-team"><option value="">All</option></select></label>
+    <label>State <select id="filter-state"><option value="">All</option></select></label>
+  </div>
+  <p class="inventory" id="inventory"></p>
+  <pre class="inventory" id="coverage"></pre>
+  <div class="cases" id="cases"></div>
+  <div class="transport">
+    <button id="play" type="button" aria-pressed="false">Play</button>
+    <input id="scrub" type="range" min="0" max="0" value="0" disabled>
+    <label>Speed
+      <select id="speed">
+        <option value="0.25">0.25×</option>
+        <option value="0.5">0.5×</option>
+        <option value="1" selected>1×</option>
+        <option value="2">2×</option>
+        <option value="4">4×</option>
+      </select>
+    </label>
+    <span id="frame-label">No frame</span>
+  </div>
+  <div class="stage" id="stage" hidden>
+    <section class="panel">
+      <h2>CPU reference</h2>
+      <img id="reference" alt="">
+      <p class="meta" id="reference-meta"></p>
+    </section>
+    <section class="panel">
+      <h2>Browser composite</h2>
+      <canvas id="browser-view" width="540" height="900"></canvas>
+      <p class="meta" id="browser-meta">Waiting for an exact frame.</p>
+    </section>
+  </div>
+</main>
+<script src="/scene-renderer.js"></script>
+<script>
+"use strict";
+const asset = document.querySelector("script[src*='scene-renderer.js']");
+const BASE = new URL(".", asset.src).pathname.replace(/\/$/, "");
+const $ = id => document.getElementById(id);
+const status = $("status");
+const casesEl = $("cases");
+const stage = $("stage");
+const reference = $("reference");
+const scrub = $("scrub");
+const playButton = $("play");
+const frameLabel = $("frame-label");
+let manifest = null;
+let filtered = [];
+let current = null;
+let frameIndex = 0;
+let playing = false;
+let speed = 1;
+let playHandle = 0;
+let showToken = 0;
+let lastPaint = null;
+const filters = {card: "", team: "", state: ""};
+
+const renderer = new ArenaSceneRenderer($("browser-view"), {
+  textureUrl: id => arenaGalleryFileUrl(BASE, "textures/" + id + ".png"),
+  preserveDrawingBuffer: true,
+  onError: error => setStatus(error.message, true)
+});
+
+function setStatus(message, error = false) {
+  status.textContent = message;
+  status.classList.toggle("error", error);
+}
+function gap(frames, index) {
+  const left = Number(frames[index] && frames[index].time_ms);
+  const right = Number(frames[index + 1] && frames[index + 1].time_ms);
+  return Number.isFinite(left) && Number.isFinite(right) && right > left ? right - left : 50;
+}
+function optionValues(key) {
+  return [...new Set((manifest.cases || []).map(item => item && item[key]).filter(value => value != null && value !== ""))].sort();
+}
+function fillSelect(id, key) {
+  const select = $(id);
+  const previous = filters[key];
+  select.replaceChildren(new Option("All", ""));
+  for (const value of optionValues(key)) select.add(new Option(value, value));
+  select.value = [...select.options].some(option => option.value === previous) ? previous : "";
+  filters[key] = select.value;
+}
+function visible(item) {
+  return (!filters.card || item.card === filters.card) && (!filters.team || item.team === filters.team) && (!filters.state || item.state === filters.state);
+}
+function describeCoverage(coverage) {
+  if (!coverage || typeof coverage !== "object" || Array.isArray(coverage)) return "Manifest coverage: none. Inventory counts above are fixture files only.";
+  const lines = ["Manifest coverage (source metadata, not a visual result):"];
+  for (const [key, value] of Object.entries(coverage)) {
+    if (Array.isArray(value)) lines.push(key + ": " + value.length + " entries");
+    else if (value && typeof value === "object") lines.push(key + ": " + Object.keys(value).length + " fields");
+    else lines.push(key + ": " + String(value));
+  }
+  return lines.join("\n");
+}
+function applyFilters() {
+  const cases = Array.isArray(manifest.cases) ? manifest.cases : [];
+  const invalid = cases.filter(item => !item || typeof item.id !== "string" || !Array.isArray(item.frames)).length;
+  filtered = cases.filter(item => item && typeof item.id === "string" && Array.isArray(item.frames) && visible(item));
+  const frames = cases.reduce((count, item) => count + (item && Array.isArray(item.frames) ? item.frames.length : 0), 0);
+  const shown = filtered.reduce((count, item) => count + item.frames.length, 0);
+  $("inventory").textContent = "Fixture inventory: " + cases.length + " cases, " + frames + " frames. Showing " + filtered.length + " cases, " + shown + " frames." + (invalid ? " " + invalid + " cases omitted because id or frames is missing." : "");
+  $("coverage").textContent = describeCoverage(manifest.coverage);
+  casesEl.replaceChildren();
+  for (const item of filtered) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.id = item.id;
+    button.setAttribute("aria-pressed", current && current.id === item.id ? "true" : "false");
+    button.append(document.createTextNode([item.card || item.id, item.team, item.state, item.heading].filter(Boolean).join(" · ")));
+    const detail = document.createElement("small");
+    detail.textContent = item.frames.length + " frames";
+    button.append(detail);
+    button.addEventListener("click", () => selectCase(item.id));
+    casesEl.append(button);
+  }
+  if (current && !filtered.some(item => item.id === current.id)) {
+    current = null;
+    pause();
+    stage.hidden = true;
+    frameLabel.textContent = "No frame";
+    scrub.disabled = true;
+  }
+}
+async function showFrame(index) {
+  if (!current) return null;
+  const frames = current.frames;
+  frameIndex = Math.max(0, Math.min(frames.length - 1, index));
+  const token = ++showToken;
+  const frame = frames[frameIndex];
+  scrub.max = String(Math.max(0, frames.length - 1));
+  scrub.value = String(frameIndex);
+  scrub.disabled = frames.length < 2;
+  const stamp = Number(frame.time_ms);
+  frameLabel.textContent = current.id + " · frame " + (frameIndex + 1) + "/" + frames.length + (Number.isFinite(stamp) ? " · " + stamp + " ms" : "");
+  for (const button of casesEl.querySelectorAll("button")) button.setAttribute("aria-pressed", button.dataset.id === current.id ? "true" : "false");
+  try {
+    const response = await fetch(arenaGalleryFileUrl(BASE, frame.scene), {credentials: "same-origin", cache: "no-store"});
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.error || "Scene fixture could not be loaded (" + response.status + ")");
+    if (token !== showToken) return null;
+    reference.src = arenaGalleryFileUrl(BASE, frame.reference);
+    reference.alt = "CPU reference for " + (current.label || current.card || current.id);
+    $("reference-meta").textContent = frame.reference;
+    stage.hidden = false;
+    lastPaint = await renderer.displayExact(body);
+    if (token !== showToken) return null;
+    const diag = renderer.diagnostics();
+    $("browser-meta").textContent = diag.backend + " · exact frame · sequence " + diag.sequence + " · tick " + diag.tick + " · " + diag.texture_count + " cached textures";
+    if (diag.backend !== "webgl2") setStatus("This browser composite is using " + diag.backend + " because WebGL2 is unavailable.", true);
+    else setStatus("Showing an exact paused frame. Playback steps whole fixture frames.");
+    return lastPaint;
+  } catch (error) {
+    if (error && error.name === "AbortError") return null;
+    if (token !== showToken) return null;
+    setStatus(error.message || String(error), true);
+    throw error;
+  }
+}
+function selectCase(id) {
+  pause();
+  current = filtered.find(item => item.id === id) || null;
+  if (!current) return;
+  showFrame(0).catch(() => {});
+}
+function pause() {
+  playing = false;
+  if (playHandle) cancelAnimationFrame(playHandle);
+  playHandle = 0;
+  playButton.textContent = "Play";
+  playButton.setAttribute("aria-pressed", "false");
+}
+function play() {
+  if (!current || current.frames.length < 2) return;
+  if (frameIndex >= current.frames.length - 1) showFrame(0).catch(() => {});
+  playing = true;
+  playButton.textContent = "Pause";
+  playButton.setAttribute("aria-pressed", "true");
+  let last = performance.now();
+  let carry = 0;
+  const step = now => {
+    if (!playing || !current) return;
+    carry += (now - last) * speed;
+    last = now;
+    let guard = 0;
+    while (playing && frameIndex < current.frames.length - 1 && carry >= gap(current.frames, frameIndex) && guard++ < current.frames.length) {
+      carry -= gap(current.frames, frameIndex);
+      showFrame(frameIndex + 1).catch(() => {});
+    }
+    if (!playing) return;
+    if (frameIndex >= current.frames.length - 1) pause();
+    else playHandle = requestAnimationFrame(step);
+  };
+  playHandle = requestAnimationFrame(step);
+}
+for (const [id, key] of [["filter-card", "card"], ["filter-team", "team"], ["filter-state", "state"]]) {
+  $(id).addEventListener("change", event => { filters[key] = event.target.value; pause(); applyFilters(); });
+}
+playButton.addEventListener("click", () => playing ? pause() : play());
+$("speed").addEventListener("change", event => { speed = Number(event.target.value) || 1; });
+scrub.addEventListener("input", () => { pause(); showFrame(Number(scrub.value)).catch(() => {}); });
+window.addEventListener("keydown", event => {
+  if (event.code !== "Space" || event.repeat) return;
+  const tag = event.target && event.target.tagName;
+  if (tag === "INPUT" || tag === "SELECT" || tag === "BUTTON" || tag === "TEXTAREA") return;
+  event.preventDefault();
+  playing ? pause() : play();
+});
+
+window.galleryDiagnostics = () => ({
+  case_id: current ? current.id : null,
+  frame_index: current ? frameIndex : null,
+  time_ms: current && current.frames[frameIndex] ? current.frames[frameIndex].time_ms ?? null : null,
+  playing, speed, filters: {...filters},
+  inventory: manifest ? {cases: manifest.cases.length, frames: manifest.cases.reduce((count, item) => count + (Array.isArray(item.frames) ? item.frames.length : 0), 0)} : null,
+  coverage: manifest ? manifest.coverage ?? null : null,
+  compared: false,
+  note: "CPU reference parity is not official game animation parity. This page does not score frames.",
+  renderer: renderer.diagnostics(),
+  last_paint: lastPaint
+});
+window.galleryHelper = {
+  renderExact: index => showFrame(index),
+  snapshot: () => renderer.snapshot(),
+  play, pause,
+  scrub: index => { pause(); return showFrame(index); },
+  setSpeed: value => { speed = Number(value) || 1; $("speed").value = String(speed); },
+  setFilters: (next = {}) => {
+    for (const key of ["card", "team", "state"]) if (key in next) { filters[key] = next[key] || ""; $( "filter-" + key).value = filters[key]; }
+    pause(); applyFilters();
+  },
+  cases: () => filtered.map(item => item.id)
+};
+
+fetch(BASE + "/api/visual-gallery/manifest", {credentials: "same-origin", cache: "no-store"})
+  .then(async response => {
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.error || "Visual gallery fixtures are unavailable");
+    if (!body || body.version !== 1 || !Array.isArray(body.cases)) throw new Error("Visual gallery manifest is invalid");
+    manifest = body;
+    for (const [id, key] of [["filter-card", "card"], ["filter-team", "team"], ["filter-state", "state"]]) fillSelect(id, key);
+    applyFilters();
+    setStatus(filtered.length ? "Choose a case. The composite stays on exact fixture frames." : "The manifest has no cases to show.");
+    if (filtered.length === 1) selectCase(filtered[0].id);
+  })
+  .catch(error => setStatus(error.message || String(error), true));
+</script>
+</body>
+</html>

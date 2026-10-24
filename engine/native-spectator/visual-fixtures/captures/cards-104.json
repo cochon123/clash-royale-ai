@@ -1,0 +1,56 @@
+{
+  "seed": 7934,
+  "decks": [
+    [
+      "GoblinGiant",
+      "Lightning",
+      "Rocket",
+      "RoyalGiant",
+      "ZapMachine",
+      "SuperWitch",
+      "Xbow",
+      "ElectroGiant"
+    ],
+    [
+      "GoblinGiant",
+      "Lightning",
+      "Rocket",
+      "RoyalGiant",
+      "ZapMachine",
+      "SuperWitch",
+      "Xbow",
+      "ElectroGiant"
+    ]
+  ],
+  "frames": 697,
+  "played": [
+    [
+      "GoblinGiant",
+      "SuperWitch",
+      "Xbow"
+    ],
+    [
+      "RoyalGiant",
+      "Lightning",
+      "Xbow"
+    ]
+  ],
+  "observed_rows": [
+    "Bat",
+    "GoblinGiant",
+    "KingProjectile",
+    "KingTower",
+    "Lightning",
+    "PrincessTower",
+    "RoyalGiant",
+    "RoyalGiantProjectile",
+    "Skeleton",
+    "SpearGoblinGiant",
+    "SpearGoblinGiantProjectile",
+    "SuperWitch",
+    "TowerPrincessProjectile",
+    "VoodooHog",
+    "VoodooProjectile"
+  ],
+  "source": "original-native-engine"
+}

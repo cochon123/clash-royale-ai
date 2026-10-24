@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from .feature_schema import CONTINUOUS_INDEX
 from .winner_dataset import CONTINUOUS_DIM, GLOBAL_DIM
 
 SLOT_FEAT_DIM = 8
@@ -294,6 +295,7 @@ class PolicyBC(nn.Module):
         self.arena_memory_version = str(arena_memory_version)
         self.arena_gate_bias = float(arena_gate_bias)
         self.max_think_steps = int(max_think_steps)
+        self.trunk = "gru"
         if self.placement_mode not in {"xy", "heatmap"}:
             raise ValueError(f"Unknown placement_mode: {self.placement_mode}")
         if self.placement_card_mode not in {"soft", "selected"}:
@@ -443,7 +445,11 @@ class PolicyBC(nn.Module):
     ) -> dict[str, torch.Tensor]:
         embeds = self.card_embedding(card_ids)
         tokens = self.input_proj(torch.cat([embeds, continuous], dim=-1))
-        if getattr(self, "padded_encoder", False):
+        if getattr(self, "trunk", "gru") == "transformer":
+            encoded = self.encoder(
+                tokens, lengths, continuous[:, :, CONTINUOUS_INDEX["seconds"]]
+            )
+        elif getattr(self, "padded_encoder", False):
             # Unidirectional GRU: later padding cannot affect an earlier state.
             # Gathering at the true length preserves causal inference and keeps
             # the dense cuDNN path free of per-batch CPU synchronization.

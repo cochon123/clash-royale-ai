@@ -37,6 +37,7 @@ class OvernightInvariants(unittest.TestCase):
                         else:
                             call()
                             self.assertEqual(constructor.call_args.args[0].step_groups, value or 2)
+                            self.assertEqual(constructor.call_args.args[0].learner_deck, "hog-mirror")
 
     def test_absolute_edmonton_deadline(self):
         at = dt.datetime.fromtimestamp(deadline_epoch("2026-10-20T11:00:00Z"), ZoneInfo("America/Edmonton"))

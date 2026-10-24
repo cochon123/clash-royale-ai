@@ -1,0 +1,43 @@
+prepare                      0/1500    ETA pending   Building prefix streams
+extract activations        256/34427   ETA     0.0s   
+extract activations       2304/34427   ETA    12.2s   
+extract activations       4352/34427   ETA    11.9s   
+extract activations       6400/34427   ETA    11.6s   
+extract activations       8448/34427   ETA    10.8s   
+extract activations      10496/34427   ETA     9.9s   
+extract activations      12544/34427   ETA     9.1s   
+extract activations      14592/34427   ETA     8.2s   
+extract activations      16640/34427   ETA     7.4s   
+extract activations      18688/34427   ETA     6.5s   
+extract activations      20736/34427   ETA     5.7s   
+extract activations      22784/34427   ETA     4.8s   
+extract activations      24832/34427   ETA     4.0s   
+extract activations      26880/34427   ETA     3.1s   
+extract activations      28928/34427   ETA     2.3s   
+extract activations      30976/34427   ETA     1.4s   
+extract activations      33024/34427   ETA     0.6s   
+extract activations      34427/34427   ETA     0.0s   
+linear probes               10/150     ETA     0.0s   elapsed_seconds
+linear probes               20/150     ETA    11.3s   own_elixir
+linear probes               30/150     ETA    13.7s   enemy_elixir
+linear probes               40/150     ETA    14.1s   elixir_advantage
+linear probes               50/150     ETA    13.7s   enemy_left_fraction
+linear probes               60/150     ETA    12.8s   own_spend_30
+linear probes               70/150     ETA    11.6s   enemy_spend_30
+linear probes               80/150     ETA    10.4s   enemy_revealed
+linear probes               90/150     ETA     9.1s   last_enemy_x
+linear probes              100/150     ETA     7.8s   double_phase
+linear probes              110/150     ETA     6.3s   low_own_elixir
+linear probes              120/150     ETA     4.8s   enemy_recent_wincon
+linear probes              130/150     ETA     3.2s   enemy_recent_hog
+linear probes              140/150     ETA     1.6s   enemy_last_left
+linear probes              150/150     ETA     0.0s   last_event_enemy
+linear probes              150/150     ETA     0.0s   Finished probes, starting interventions
+neuron interventions         1/52      ETA     0.0s   own_elixir
+neuron interventions         9/52      ETA     1.9s   enemy_recent_wincon
+neuron interventions        17/52      ETA     1.6s   double_phase
+neuron interventions        25/52      ETA     1.2s   random
+neuron interventions        33/52      ETA     0.9s   random
+neuron interventions        41/52      ETA     0.5s   random
+neuron interventions        49/52      ETA     0.1s   random
+complete                     1/1       ETA     0.0s   Evidence saved to /home/cochon/Documents/mini-project/clash-royale-ai-worktrees/arena-baseline/reports/banana1_study

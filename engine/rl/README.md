@@ -22,6 +22,12 @@ actual hand (including unaffordable cards), anchor the model's delay to the
 latest confirmed event, and check native elixir before executing. A planned
 card persists while saving, with replanning after confirmed events or hand
 changes. Both sides use independent clocks; native tile masks stay enabled.
+Watched matches resolve placements through the original native `f9e16c` routine
+and feed `result.resolved_target` into accepted-play history and play markers.
+The action log keeps the requested aim separately. A target accepted by the
+coarse validator can still be moved back into its own territory; recording the
+uncorrected aim can make both actors infer the wrong arena orientation. Rebuild
+`native-watch` with the Python harness update; older binaries fail explicitly.
 `--legacy-wait-head` reproduces the former affordable-card/PPO-wait behavior.
 This inference controller is separate from the existing PPO wait-head trainer.
 

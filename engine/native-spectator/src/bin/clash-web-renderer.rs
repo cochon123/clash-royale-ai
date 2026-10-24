@@ -4,7 +4,7 @@
 //! No window, engine, game logic, or alternative artwork lives here.
 use clash_native_spectator::{
     clock::{Flow, PlaybackClock, DEFAULT_LAG_TICKS},
-    draw::Painter,
+    draw::{parse_card_list, Painter},
     frame::BattleFrame,
     input::PlayerInput,
 };
@@ -36,10 +36,12 @@ fn run() -> Result<(), String> {
     let mut assets = root.join("analysis/native-spectator");
     let mut fps = 30u32;
     let mut jpeg_quality = 88u32;
+    let mut cards = Vec::new();
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--assets" => assets = args.next().ok_or("missing asset directory")?.into(),
+            "--cards" => cards.extend(parse_card_list(&args.next().ok_or("missing card names")?)),
             "--fps" => {
                 fps = args
                     .next()
@@ -55,7 +57,7 @@ fn run() -> Result<(), String> {
                     .map_err(|_| "invalid jpeg quality")?
             }
             "--help" | "-h" => {
-                println!("clash-web-renderer [--assets DIR] [--fps 1..60] [--jpeg-quality 1..100]; reads BattleFrame JSONL, writes JSON headers followed by JPEG bytes");
+                println!("clash-web-renderer [--assets DIR] [--cards NAMES] [--fps 1..60] [--jpeg-quality 1..100]; reads BattleFrame JSONL, writes JSON headers followed by JPEG bytes. NAMES is one comma-separated argument; omitted --cards loads the whole bundle.");
                 return Ok(());
             }
             _ => return Err(format!("unknown argument {arg}")),
@@ -68,7 +70,7 @@ fn run() -> Result<(), String> {
         return Err("jpeg quality must be in 1..100".into());
     }
     let (width, height) = (540, 900);
-    let mut painter = Painter::load(&assets, width, height)?;
+    let mut painter = Painter::load_for_cards(&assets, width, height, &cards)?;
     let mut compressor = turbojpeg::Compressor::new().map_err(|e| e.to_string())?;
     compressor.set_quality(jpeg_quality as i32).map_err(|e| e.to_string())?;
     compressor.set_subsamp(turbojpeg::Subsamp::Sub2x2).map_err(|e| e.to_string())?;

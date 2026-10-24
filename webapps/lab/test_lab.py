@@ -91,6 +91,57 @@ class ReaderTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_night_board_joins_each_specialist(self):
+        runs = self.root / 'runs'
+        night = runs / 'banana-deck-night-20261022'
+        night.mkdir(parents=True)
+        (night / 'progress.json').write_text(json.dumps({
+            'deadline_local': '2026-10-23 06:00 America/Edmonton',
+            'work_done': '0/2 decks · x-bow update 1 · 10 games',
+            'eta': '10h00m', 'eta_seconds': 36000, 'decks_finished': 0, 'decks_total': 2,
+            'current_deck': 'x-bow', 'current_model': 'banana-x-bow-1', 'phase': 'training', 'status': 'running',
+            'roster': ['log-bait', 'x-bow'],
+        }))
+        rows = [
+            {'id': 'banana-log-bait-1', 'status': 'stale', 'phase': 'preparing', 'counters': {'games': 40, 'wins': 10, 'losses': 30, 'updates': 2}},
+            {'id': 'banana-x-bow-1', 'status': 'running', 'phase': 'training', 'counters': {'games': 10, 'wins': 4, 'losses': 6, 'updates': 1}},
+        ]
+        with patch.object(s.paths, 'ENGINE_RUNS', runs):
+            board = s.night_board(rows)
+        self.assertEqual(board['current_model'], 'banana-x-bow-1')
+        self.assertEqual([deck['deck_id'] for deck in board['decks']], ['log-bait', 'x-bow'])
+        self.assertFalse(board['decks'][0]['current'])
+        self.assertEqual(board['decks'][0]['games'], 40)
+        self.assertTrue(board['decks'][1]['current'])
+        self.assertEqual(board['work_done'], '0/2 decks · x-bow update 1 · 10 games')
+        self.assertNotIn('focus', board)
+
+    def test_focus_board_follows_the_live_run(self):
+        runs = self.root / 'runs'
+        night = runs / 'banana-deck-night-20261022'
+        night.mkdir(parents=True)
+        now = time.time()
+        (night / 'progress.json').write_text(json.dumps({
+            'focus': 'log-bait', 'headline': 'Classic Log Bait',
+            'deadline': datetime.fromtimestamp(now + 3600, timezone.utc).isoformat(),
+            'started_at': datetime.fromtimestamp(now - 3600, timezone.utc).isoformat(),
+            'deadline_local': '2026-10-23 06:00 America/Edmonton',
+            'roster': ['log-bait'], 'current_deck': 'log-bait', 'current_model': 'banana-log-bait-1',
+            'decks_finished': 0, 'decks_total': 1,
+        }))
+        rows = [{'id': 'banana-log-bait-1', 'status': 'running', 'phase': 'training · stable heads · wave 33',
+                 'counters': {'games': 400, 'wins': 180, 'losses': 210, 'updates': 33, 'training_games': 264}}]
+        with patch.object(s.paths, 'ENGINE_RUNS', runs):
+            board = s.night_board(rows)
+        self.assertTrue(board['focus'])
+        self.assertEqual(board['headline'], 'Classic Log Bait')
+        self.assertEqual(board['work_done'], 'update 33 · 400 games · 264 training')
+        self.assertEqual(board['phase'], 'training · stable heads · wave 33')
+        self.assertGreater(board['eta_seconds'], 3500)
+        self.assertLess(board['eta_seconds'], 3700)
+        self.assertAlmostEqual(board['progress'], 0.5, delta=0.05)
+        self.assertTrue(board['decks'][0]['current'])
+
     def test_partial_and_bounded_jsonl(self):
         path = self.root / 'partial.jsonl'
         path.write_bytes(b'{"at":1,"loss":2}\nnot-json\n{"at":2')

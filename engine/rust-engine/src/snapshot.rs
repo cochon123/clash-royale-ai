@@ -1,7 +1,7 @@
 //! Exact session images as a dirty-page diff against the reset checkpoint.
 
 use crate::cpu::Cpu;
-use crate::heap::GuestHeap;
+use crate::heap::{GuestHeap, HeapDelta};
 use crate::memory::DirtyPages;
 use crate::runtime::DeckSwap;
 use crate::session::{sha256, Session, CHECKPOINT_SHA256};
@@ -13,12 +13,17 @@ use std::path::Path;
 
 const MAGIC: &[u8] = b"CRSNAP01";
 
+/// Full checkpoint image, or the net edit against the loaded checkpoint.
+pub(crate) enum SnapshotHeap {
+    Full(GuestHeap),
+    Delta(HeapDelta),
+}
+
 /// Guest memory, architectural state, allocator, and protocol bookkeeping.
 pub struct EngineSnapshot {
     pub tick: u64,
     pub bytes: u64,
     pub cpu: Cpu,
-    pub heap: GuestHeap,
     pub clock_calls: u64,
     pub calls: BTreeMap<String, u64>,
     pub deck_swap: Option<DeckSwap>,
@@ -28,6 +33,7 @@ pub struct EngineSnapshot {
     pub descriptor_scratch: u64,
     pub dirty: DirtyPages,
     pub protocol: Value,
+    pub(crate) heap: SnapshotHeap,
 }
 
 impl EngineSnapshot {
@@ -43,7 +49,6 @@ impl EngineSnapshot {
             tick,
             bytes,
             cpu: engine.cpu.clone(),
-            heap: engine.runtime.heap.clone(),
             clock_calls: engine.runtime.clock_calls,
             calls: engine.runtime.calls.clone(),
             deck_swap: engine.runtime.deck_swap.clone(),
@@ -53,6 +58,7 @@ impl EngineSnapshot {
             descriptor_scratch,
             dirty,
             protocol,
+            heap: SnapshotHeap::Delta(engine.runtime.heap.capture_delta()),
         })
     }
 
@@ -65,7 +71,10 @@ impl EngineSnapshot {
     ) -> Result<(), String> {
         engine.runtime.memory.apply_dirty(&self.dirty)?;
         engine.cpu = self.cpu.clone();
-        engine.runtime.heap = self.heap.clone();
+        match &self.heap {
+            SnapshotHeap::Full(heap) => engine.runtime.heap = heap.clone(),
+            SnapshotHeap::Delta(delta) => engine.runtime.heap.restore_delta(delta)?,
+        }
         engine.runtime.clock_calls = self.clock_calls;
         engine.runtime.calls = self.calls.clone();
         engine.runtime.deck_swap = self.deck_swap.clone();
@@ -120,7 +129,8 @@ impl EngineSnapshot {
         file.read_exact(&mut header_bytes)
             .map_err(|e| format!("snapshot header: {e}"))?;
         let header: Value = serde_json::from_slice(&header_bytes).map_err(|e| e.to_string())?;
-        if header["version"] != 1 {
+        let version = header["version"].as_u64().unwrap_or(0);
+        if version != 1 && version != 2 {
             return Err("unsupported snapshot version".into());
         }
         if header["checkpoint_sha256"].as_str() != Some(CHECKPOINT_SHA256) {
@@ -173,7 +183,6 @@ impl EngineSnapshot {
             tick: header["tick"].as_u64().ok_or("snapshot tick missing")?,
             bytes,
             cpu: cpu_from_json(&header["cpu"])?,
-            heap: GuestHeap::import_full(&header["heap"])?,
             clock_calls: header["clock_calls"]
                 .as_u64()
                 .ok_or("snapshot clock_calls missing")?,
@@ -195,14 +204,23 @@ impl EngineSnapshot {
             descriptor_scratch: parse_u64(&header["descriptor_scratch"])?,
             dirty,
             protocol: header["protocol"].clone(),
+            heap: if version == 1 {
+                SnapshotHeap::Full(GuestHeap::import_full(&header["heap"])?)
+            } else {
+                SnapshotHeap::Delta(HeapDelta::from_json(&header["heap_delta"])?)
+            },
         })
     }
 
     fn header_json(&self) -> Result<Value, String> {
         let executable = format!("/proc/{}/exe", std::process::id());
         let binary = sha256(Path::new(&executable))?;
-        Ok(json!({
-            "version": 1,
+        let (version, heap_json) = match &self.heap {
+            SnapshotHeap::Full(heap) => (1, ("heap", heap.export_full())),
+            SnapshotHeap::Delta(delta) => (2, ("heap_delta", delta.to_json())),
+        };
+        let mut header = json!({
+            "version": version,
             "checkpoint_sha256": CHECKPOINT_SHA256,
             "binary_sha256": binary,
             "tick": self.tick,
@@ -214,7 +232,6 @@ impl EngineSnapshot {
             "calls": self.calls,
             "deck_swap": deck_to_json(&self.deck_swap),
             "cpu": cpu_to_json(&self.cpu),
-            "heap": self.heap.export_full(),
             "mappings": self.dirty.mappings.iter().map(|(address, size)| json!({
                 "address": address.to_string(),
                 "size": size.to_string(),
@@ -224,7 +241,9 @@ impl EngineSnapshot {
                 "length": page.len().to_string(),
             })).collect::<Vec<_>>(),
             "protocol": self.protocol,
-        }))
+        });
+        header[heap_json.0] = heap_json.1;
+        Ok(header)
     }
 }
 

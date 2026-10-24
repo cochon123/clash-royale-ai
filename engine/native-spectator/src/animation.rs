@@ -257,6 +257,30 @@ pub fn direction_for_motion(
     }
 }
 
+/// Frame of an authored clip at `elapsed_ms`.
+///
+/// Integer 20 Hz samples (0, 50, 100, … ms) are not the authored 24/30 fps
+/// grid. `wrapping` cycles a walk or idle; attack and deploy clips do not wrap.
+pub fn authored_frame_index(elapsed_ms: f64, fps: f64, count: usize, wrapping: bool) -> usize {
+    if count == 0 {
+        return 0;
+    }
+    let frames = (elapsed_ms.max(0.) * fps.max(1.) / 1000.).floor();
+    if !frames.is_finite() || frames <= 0. {
+        return 0;
+    }
+    let index = if frames > (usize::MAX as f64) {
+        usize::MAX
+    } else {
+        frames as usize
+    };
+    if wrapping {
+        index % count
+    } else {
+        index.min(count - 1)
+    }
+}
+
 /// Select an exact original export by row prefix, team prefix, action token,
 /// and optional authored directional suffix. `red_prefix` comes from the
 /// original nested logic row; it is not synthesized from a color assumption.
@@ -267,7 +291,7 @@ pub fn select_export(
     red_team: bool,
     state: AnimationState,
     direction_index: Option<u8>,
-    elapsed_ms: u64,
+    elapsed_ms: f64,
 ) -> Result<Option<PlaybackSelection>, String> {
     if direction_index.is_some_and(|d| !(1..=9).contains(&d)) {
         return Err("authored SC direction index must be in 1..=9".into());
@@ -309,6 +333,21 @@ pub fn select_export(
             Some((name.clone(), suffix.filter(|d| (1..=9).contains(d))))
         })
         .collect();
+    // Prefer exports whose name continues with the action right after the
+    // family stem: attached characters share it (`ghost_blue_overlay_run1`).
+    let direct: Vec<(String, Option<u8>)> = candidates
+        .iter()
+        .filter(|(name, _)| {
+            name[prefix.len()..]
+                .trim_start_matches('_')
+                .to_ascii_lowercase()
+                .starts_with(token)
+        })
+        .cloned()
+        .collect();
+    if !direct.is_empty() {
+        candidates = direct;
+    }
     if candidates.is_empty() {
         // A source may define only a static form for a row. Keep the state
         // mismatch visible instead of relabelling its idle artwork as attack.
@@ -359,8 +398,8 @@ pub fn select_export(
         return Ok(None);
     };
     let matched_state = export.to_ascii_lowercase().contains(token);
-    let fps = scene.framerate(export).map_err(|e| e.to_string())? as u64;
-    let count = scene.frame_count(export).map_err(|e| e.to_string())?.max(1) as u64;
+    let fps = scene.framerate(export).map_err(|e| e.to_string())? as f64;
+    let count = scene.frame_count(export).map_err(|e| e.to_string())?.max(1);
     let idle_label_frame = scene
         .document
         .movies
@@ -372,18 +411,19 @@ pub fn select_export(
                 None
             }
         });
-    let elapsed_frames = elapsed_ms * fps / 1000;
+    let elapsed_frames = (elapsed_ms.max(0.) * fps.max(1.) / 1000.).floor();
     // Deployment effects are authored one-shots. Returning no selection after
     // the source clip ends lets the caller remove the transient overlay.
-    if state == AnimationState::Deploying && elapsed_frames >= count {
+    if state == AnimationState::Deploying && elapsed_frames >= count as f64 {
         return Ok(None);
     }
     let frame_index = idle_label_frame.unwrap_or_else(|| {
-        if state == AnimationState::Deploying {
-            elapsed_frames as usize
-        } else {
-            (elapsed_frames % count) as usize
-        }
+        authored_frame_index(
+            elapsed_ms,
+            fps,
+            count,
+            state != AnimationState::Deploying,
+        )
     });
     let has_idle_label = idle_label_frame.is_some();
     let playback = if has_idle_label {
@@ -420,7 +460,7 @@ pub fn select_for_heading(
     red_team: bool,
     state: AnimationState,
     heading: PresentationHeading,
-    elapsed_ms: u64,
+    elapsed_ms: f64,
 ) -> Result<Option<PlaybackSelection>, String> {
     let mut selection = select_export(
         scene,
@@ -444,7 +484,7 @@ pub fn tower_layers(
     scene: &Scene,
     base_export: &str,
     top_export: Option<&str>,
-    elapsed_ms: u64,
+    elapsed_ms: f64,
 ) -> Result<Vec<PlaybackSelection>, String> {
     let mut layers = Vec::with_capacity(if top_export.is_some() { 2 } else { 1 });
     for export in std::iter::once(base_export).chain(top_export) {
@@ -453,9 +493,9 @@ pub fn tower_layers(
                 "tower export is absent from original scene: {export}"
             ));
         }
-        let fps = scene.framerate(export).map_err(|e| e.to_string())? as u64;
-        let count = scene.frame_count(export).map_err(|e| e.to_string())?.max(1) as u64;
-        let frame_index = ((elapsed_ms * fps / 1000) % count) as usize;
+        let fps = scene.framerate(export).map_err(|e| e.to_string())? as f64;
+        let count = scene.frame_count(export).map_err(|e| e.to_string())?.max(1);
+        let frame_index = authored_frame_index(elapsed_ms, fps, count, true);
         let playback = Playback {
             frame: Some(frame_index),
             time_seconds: Some(elapsed_ms as f64 / 1000.),
@@ -624,7 +664,7 @@ mod tests {
             true,
             AnimationState::Moving,
             Some(7),
-            200,
+            200.0,
         )
         .unwrap()
         .unwrap();
@@ -640,7 +680,7 @@ mod tests {
             false,
             AnimationState::Idle,
             None,
-            10_000,
+            10_000.0,
         )
         .unwrap()
         .unwrap();
@@ -649,7 +689,7 @@ mod tests {
         assert_eq!(king.frame_index, 0);
 
         let princess =
-            tower_layers(&towers, "StarTower_base_red", Some("StarTower_top_red"), 50).unwrap();
+            tower_layers(&towers, "StarTower_base_red", Some("StarTower_top_red"), 50.0).unwrap();
         assert_eq!(
             princess
                 .iter()
@@ -674,6 +714,35 @@ mod tests {
     }
 
     #[test]
+    fn attached_character_exports_sharing_the_stem_are_not_selected() {
+        // Royal Ghost's attached GhostOverlay exports start with the Ghost stem
+        // (`ghost_blue_overlay_run1_*`) and sort before its own run clips.
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../analysis/native-spectator");
+        let ghost = Scene::load(&root, "chr_ghost_dl").unwrap();
+        for red in [false, true] {
+            for (state, action) in [
+                (AnimationState::Idle, "idle1"),
+                (AnimationState::Moving, "run1"),
+                (AnimationState::Attacking, "attack1"),
+            ] {
+                let selected = select_export(
+                    &ghost,
+                    "ghost_blue",
+                    Some("ghost_red"),
+                    red,
+                    state,
+                    Some(5),
+                    0.0,
+                )
+                .unwrap()
+                .unwrap();
+                let team = if red { "red" } else { "blue" };
+                assert_eq!(selected.export, format!("ghost_{team}_{action}_5"));
+            }
+        }
+    }
+
+    #[test]
     fn blue_prefix_excludes_enemy_exports_and_short_direction_banks_remap() {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../analysis/native-spectator");
         let knight = Scene::load(&root, "chr_knight").unwrap();
@@ -684,7 +753,7 @@ mod tests {
             false,
             AnimationState::Moving,
             Some(7),
-            0,
+            0.0,
         )
         .unwrap()
         .unwrap();
@@ -703,7 +772,7 @@ mod tests {
                 red,
                 AnimationState::Idle,
                 Some(5),
-                0,
+                0.0,
             )
             .unwrap()
             .unwrap();
@@ -718,7 +787,7 @@ mod tests {
             false,
             AnimationState::Idle,
             Some(5),
-            0,
+            0.0,
         )
         .unwrap()
         .unwrap();
@@ -730,7 +799,7 @@ mod tests {
             true,
             AnimationState::Idle,
             Some(1),
-            0,
+            0.0,
         )
         .unwrap()
         .unwrap();
@@ -742,7 +811,7 @@ mod tests {
             true,
             AnimationState::Idle,
             Some(9),
-            0,
+            0.0,
         )
         .unwrap()
         .unwrap();
@@ -864,5 +933,18 @@ mod tests {
             flip_horizontal: true,
             source: HeadingSource::MotionDeltaPresentation,
         }));
+    }
+
+    #[test]
+    fn authored_24_and_30_fps_are_not_quantized_to_20hz() {
+        let at30 = |ms| authored_frame_index(ms, 30., 90, true);
+        assert_eq!([0., 50., 100.].map(at30), [0, 1, 3]);
+        let smooth: Vec<_> = (0..4).map(|i| at30(i as f64 * 1000. / 30.)).collect();
+        assert_eq!(smooth, vec![0, 1, 2, 3]);
+        let at24 = |ms| authored_frame_index(ms, 24., 90, true);
+        assert_eq!(at24(200.), 4);
+        assert_eq!(at24(250.), 6);
+        assert_eq!(at24(1000. / 24. * 5.), 5);
+        assert_eq!(authored_frame_index(10_000., 12., 4, false), 3);
     }
 }

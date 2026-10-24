@@ -1,6 +1,7 @@
 .venv/
 .venv
 .local-arena/
+.visual-check/
 engine/runs
 __pycache__/
 *.py[cod]

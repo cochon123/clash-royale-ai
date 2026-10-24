@@ -84,6 +84,79 @@ impl PlaybackClock {
     }
 }
 
+/// Browser scene lag. One native tick is 50 ms. The scene presenter stays
+/// this far behind the newest snapshot so the interval it draws has already
+/// been observed. It does not predict combat past that snapshot.
+pub const SCENE_LAG_TICKS: f64 = 1.;
+
+/// Fractional display clock for the browser scene presenter.
+///
+/// Wall time advances the clock at `TICKS_PER_SECOND * speed`, capped one
+/// engine tick behind the newest observed snapshot while the match is running.
+/// Pause holds, unless a single step moved the lag target forward. The ended
+/// match plays out to the final snapshot. A reset clears `display` so the next
+/// step starts at the new oldest snapshot.
+pub struct SceneDisplayClock {
+    display: Option<f64>,
+}
+
+impl Default for SceneDisplayClock {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl SceneDisplayClock {
+    pub fn new() -> Self {
+        Self { display: None }
+    }
+
+    pub fn reset(&mut self) {
+        self.display = None;
+    }
+
+    pub fn display(&self) -> Option<f64> {
+        self.display
+    }
+
+    /// `dt` is elapsed wall seconds. The result is a fractional native tick
+    /// inside `[oldest, latest]`.
+    pub fn step(&mut self, oldest: u32, latest: u32, speed: f64, flow: Flow, dt: f64) -> f64 {
+        let oldest_f = oldest as f64;
+        let latest_f = latest as f64;
+        let target = scene_target(oldest, latest, flow);
+        let mut display = match self.display {
+            Some(d) if (oldest_f - 0.5..=latest_f + 0.5).contains(&d) => d,
+            _ => oldest_f,
+        };
+        let advance = dt.max(0.).min(0.25) * TICKS_PER_SECOND * speed.clamp(0., 16.);
+        match flow {
+            Flow::Running | Flow::Finished => display = (display + advance).min(target),
+            Flow::Paused if display < target => display = (display + advance).min(target),
+            Flow::Paused => {}
+        }
+        let display = display.clamp(oldest_f, latest_f);
+        self.display = Some(display);
+        display
+    }
+
+    /// True when another wall step cannot move the clock without a new snapshot
+    /// or a flow change. Callers use this to stop emitting duplicate poses.
+    pub fn caught_up(&self, oldest: u32, latest: u32, flow: Flow) -> bool {
+        self.display
+            .is_some_and(|display| display + 1e-6 >= scene_target(oldest, latest, flow))
+    }
+}
+
+fn scene_target(oldest: u32, latest: u32, flow: Flow) -> f64 {
+    let oldest_f = oldest as f64;
+    let latest_f = latest as f64;
+    match flow {
+        Flow::Finished => latest_f,
+        Flow::Running | Flow::Paused => (latest_f - SCENE_LAG_TICKS).max(oldest_f),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -133,5 +206,45 @@ mod tests {
             shown = clock.step(60, 101, 1., Flow::Finished, 1. / 60.);
         }
         assert_eq!(shown, 101.);
+    }
+
+    #[test]
+    fn scene_clock_stays_one_tick_behind_and_samples_between_engine_ticks() {
+        let mut clock = SceneDisplayClock::new();
+        assert_eq!(clock.step(100, 100, 1., Flow::Running, 0.), 100.);
+        assert!(clock.caught_up(100, 100, Flow::Running));
+        // The next snapshot is known, but the drawable interval is still tick 100.
+        assert_eq!(clock.step(100, 101, 1., Flow::Running, 1. / 30.), 100.);
+        let mut shown = Vec::new();
+        for _ in 0..4 {
+            shown.push(clock.step(100, 102, 1., Flow::Running, 1. / 30.));
+        }
+        let step = 20. / 30.;
+        assert!((shown[0] - (100. + step)).abs() < 1e-9, "{shown:?}");
+        assert!((shown[1] - 101.).abs() < 1e-9, "{shown:?}");
+        assert!(shown.iter().all(|t| (100.0..=101.0).contains(t)));
+        assert!(clock.caught_up(100, 102, Flow::Running));
+        // Speed scales wall advance, still without leaving the lag target.
+        clock.reset();
+        clock.step(0, 10, 2., Flow::Running, 0.);
+        let fast = clock.step(0, 10, 2., Flow::Running, 0.05);
+        assert!((fast - 2.).abs() < 1e-9, "{fast}");
+        assert!(fast <= 9.);
+    }
+
+    #[test]
+    fn scene_clock_pause_holds_end_plays_out_and_reset_restarts() {
+        let mut clock = SceneDisplayClock::new();
+        let held = clock.step(50, 52, 1., Flow::Running, 0.);
+        assert_eq!(held, 50.);
+        let held = clock.step(50, 52, 1., Flow::Paused, 1.);
+        assert_eq!(held, 51.);
+        let held = clock.step(50, 52, 4., Flow::Paused, 1.);
+        assert_eq!(held, 51.);
+        let played = clock.step(50, 52, 1., Flow::Finished, 1. / 20.);
+        assert!((played - 52.).abs() < 1e-9, "{played}");
+        clock.reset();
+        assert_eq!(clock.display(), None);
+        assert_eq!(clock.step(0, 0, 1., Flow::Running, 1.), 0.);
     }
 }

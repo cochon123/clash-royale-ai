@@ -1,5 +1,8 @@
 # Original-engine desktop spectator
 
+**Changing how the Arena looks?** Check it with the deterministic visual QA
+harness: [VISUAL_QA.md](VISUAL_QA.md).
+
 The browser Arena reuses this viewer’s `Painter` through the windowless
 `clash-web-renderer` binary, including original artwork, animation, effects,
 HUD and control geometry. [Arena instructions](../../webapps/README.md).
@@ -114,6 +117,27 @@ native-spectator/target/debug/clash-native-spectator \
 JSONL playback processes the preceding frames so movement, impact cues and
 animation clocks have their observed history. A single JSON snapshot is also
 supported, with less presentation history.
+
+`--cards NAME,NAME` limits the loaded SC documents to `scene.always_documents`
+plus each card's `scene.card_dependency_documents`. The value is one argument;
+spaces stay inside a name. Omitting it loads the whole bundle. The same flag
+is on `clash-web-scene`, `clash-web-renderer`, and `clash-visual-gallery`.
+
+`clash-web-scene` draws a fractional tick one engine tick (50 ms) behind the
+newest snapshot at `--fps`, and writes that value as `display_tick`. Entity,
+projectile, and shadow sprites may include `anchor: [screenX, screenY]`.
+
+Build an offline gallery (scene JSON, `textures/<hash>.png`, and a CPU
+reference PNG at the same display time) with:
+
+```sh
+cargo build --offline --manifest-path native-spectator/Cargo.toml --bin clash-visual-gallery
+native-spectator/target/debug/clash-visual-gallery \
+  --frames FRAMES.jsonl --output NEWDIR --assets DIR --cards 'P.E.K.K.A' \
+  --from-tick 1451 --to-tick 1470 --fps 30
+```
+
+The gallery does not claim official 1:1 parity.
 
 The debug profile compiles the viewer and its engine dependency at
 optimization level 3, so `run.sh` and `rl.banana_watch` composite 60 FPS frames.

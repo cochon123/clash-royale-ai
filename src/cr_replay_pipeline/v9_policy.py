@@ -1,4 +1,8 @@
-"""v9 GRU policy and a separately gated approximate troop-motion placement prior."""
+"""v9 GRU policy and a separately gated approximate troop-motion placement prior.
+
+``trunk="transformer"`` (banano-0) keeps these heads and swaps only the GRU
+for a causal transformer over the same 64 deployment events.
+"""
 from __future__ import annotations
 import json
 from pathlib import Path
@@ -7,6 +11,45 @@ from torch import nn
 from .controlled_policy import ControlledPolicy
 from .feature_schema import CONTINUOUS_INDEX as C, GLOBAL_INDEX as G
 from .policy_model import TILE_ROWS, TILE_COLS, NUM_TILES
+
+
+class CausalEventEncoder(nn.Module):
+    """Causal transformer over deployment events.
+
+    Learned position ids and learned buckets of normalized event time. Padding
+    and future events are masked, so a later token cannot change an earlier state.
+    """
+
+    def __init__(self, d_model, num_layers=4, nhead=4, dropout=0.2, max_len=64, time_bins=64):
+        super().__init__()
+        if d_model % nhead:
+            raise ValueError(f"d_model {d_model} is not divisible by {nhead} heads")
+        self.max_len = int(max_len)
+        self.time_bins = int(time_bins)
+        self.position = nn.Embedding(self.max_len, d_model)
+        self.time = nn.Embedding(self.time_bins, d_model)
+        layer = nn.TransformerEncoderLayer(
+            d_model=d_model,
+            nhead=nhead,
+            dim_feedforward=d_model * 4,
+            dropout=dropout,
+            activation="gelu",
+            batch_first=True,
+            norm_first=True,
+        )
+        self.blocks = nn.TransformerEncoder(layer, num_layers=int(num_layers), enable_nested_tensor=False)
+
+    def forward(self, tokens, lengths, seconds):
+        steps = tokens.size(1)
+        if steps > self.max_len:
+            raise ValueError(f"context {steps} exceeds {self.max_len}")
+        pos = torch.arange(steps, device=tokens.device)
+        bins = (seconds.clamp(0, 1) * (self.time_bins - 1)).long()
+        hidden = tokens + self.position(pos) + self.time(bins)
+        safe = lengths.clamp(min=1, max=steps)
+        padding = torch.arange(steps, device=tokens.device)[None, :] >= safe[:, None]
+        causal = torch.triu(torch.ones(steps, steps, device=tokens.device, dtype=torch.bool), diagonal=1)
+        return self.blocks(hidden, mask=causal, src_key_padding_mask=padding)
 
 
 def load_motion_stats(vocab, root="data/v9_card_stats"):
@@ -86,11 +129,17 @@ class GhostRasterizer(nn.Module):
 
 
 class V9Policy(ControlledPolicy):
-    def __init__(self,vocab_size,d_model=160,clock=True,ghost="none",motion_stats=None):
+    def __init__(self,vocab_size,d_model=160,clock=True,ghost="none",motion_stats=None,trunk="gru",trunk_layers=4,trunk_heads=4):
         super().__init__(vocab_size,"clock" if clock else "baseline",d_model)
         if ghost not in {"none","aligned","shuffled"}:
             raise ValueError(ghost)
+        if trunk not in {"gru","transformer"}:
+            raise ValueError(trunk)
+        self.trunk=trunk
         self.base.padded_encoder=True
+        if trunk == "transformer":
+            self.base.trunk="transformer"
+            self.base.encoder=CausalEventEncoder(d_model,trunk_layers,trunk_heads,dropout=0.2,max_len=64,time_bins=64)
         self.ghost=ghost
         if ghost != "none":
             if motion_stats is None:
@@ -134,7 +183,7 @@ def load_v9_policy(path,device="cpu"):
     from .winner_dataset import CardVocab
     artifact=torch.load(path,map_location=device,weights_only=False)
     config=artifact["config"]
-    model=V9Policy(config["vocab_size"],config["d_model"],config["clock"],config["ghost"]).to(device)
+    model=V9Policy(config["vocab_size"],config["d_model"],config["clock"],config["ghost"],trunk=config.get("trunk","gru"),trunk_layers=config.get("trunk_layers",4),trunk_heads=config.get("trunk_heads",4)).to(device)
     model.load_state_dict(artifact["model_state"])
     model.eval()
     return model,CardVocab.from_dict(artifact["vocab"]),config

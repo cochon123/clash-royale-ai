@@ -46,6 +46,27 @@ def number(value):
     return value if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) else None
 
 
+def format_eta(seconds):
+    seconds = max(0, int(seconds))
+    hours, rem = divmod(seconds, 3600)
+    minutes = rem // 60
+    if hours:
+        return f'{hours}h{minutes:02d}m'
+    if minutes:
+        return f'{minutes}m'
+    return f'{seconds}s'
+
+
+def memory_available_gib():
+    try:
+        for line in Path('/proc/meminfo').read_text().splitlines():
+            if line.startswith('MemAvailable:'):
+                return float(line.split()[1]) / (1024 * 1024)
+    except (OSError, IndexError, ValueError):
+        return None
+    return None
+
+
 def mapped(value):
     """Normalize historical absolute paths in both display text and metadata."""
     if isinstance(value, str):
@@ -557,10 +578,98 @@ def run_summary(row, observation):
         'error': state.get('error'), 'metric_source': row['source'] + '/state.json'}
 
 
+def night_directory():
+    root = paths.ENGINE_RUNS
+    if not root.is_dir():
+        return None
+    found = [directory for directory in entries(root)
+             if directory.name.startswith('banana-deck-night-') and (directory / 'progress.json').is_file()]
+    if not found:
+        return None
+    return max(found, key=lambda directory: (directory / 'progress.json').stat().st_mtime)
+
+
+def night_roster(progress, pool):
+    roster = progress.get('roster')
+    if isinstance(roster, list):
+        chosen = [deck for deck in roster if isinstance(deck, str) and re.fullmatch(r'[a-z0-9-]{1,80}', deck)]
+        if chosen:
+            return chosen
+    decks = pool.get('decks') if isinstance(pool, dict) else None
+    if not isinstance(decks, list):
+        return []
+    return [deck['id'] for deck in decks if isinstance(deck, dict) and deck.get('id') not in {None, 'hog-mirror'} and isinstance(deck.get('id'), str)]
+
+
+def night_board(run_rows):
+    """Join the overnight supervisor's progress file to each specialist's run."""
+    directory = night_directory()
+    if directory is None:
+        return None
+    progress = obj(directory / 'progress.json')
+    if not progress:
+        return None
+    pool = obj(paths.ENGINE / 'data' / 'hog2_opponent_pool.json')
+    names = {deck['id']: deck.get('name') or deck['id'] for deck in pool.get('decks', []) if isinstance(deck, dict) and isinstance(deck.get('id'), str)}
+    by_id = {row['id']: row for row in run_rows}
+    decks = []
+    for deck_id in night_roster(progress, pool):
+        run_id = f'banana-{deck_id}-1'
+        row = by_id.get(run_id, {})
+        counters = row.get('counters') if isinstance(row.get('counters'), dict) else {}
+        decks.append({'deck_id': deck_id, 'name': names.get(deck_id, deck_id), 'run_id': run_id,
+                      'status': row.get('status', 'unknown'), 'phase': row.get('phase'),
+                      'games': counters.get('games'), 'wins': counters.get('wins'), 'losses': counters.get('losses'),
+                      'updates': counters.get('updates'), 'latest_evaluation': row.get('latest_evaluation'),
+                      'current': deck_id == progress.get('current_deck')})
+    board = {'source': source(directory / 'progress.json'), 'deadline_local': progress.get('deadline_local'),
+             'work_done': progress.get('work_done'), 'eta': progress.get('eta'), 'eta_seconds': number(progress.get('eta_seconds')),
+             'decks_finished': number(progress.get('decks_finished')), 'decks_total': number(progress.get('decks_total')) or len(decks),
+             'current_deck': progress.get('current_deck'), 'current_model': progress.get('current_model'),
+             'phase': progress.get('phase'), 'status': progress.get('status'),
+             'memory_available_gib': number(progress.get('memory_available_gib')), 'updated_at': progress.get('updated_at'),
+             'decks': decks}
+    if progress.get('focus'):
+        # One specialist owns the rest of the night. Counters and the clock
+        # come from the live run, so this board keeps moving after the
+        # multi-deck supervisor has stopped writing progress.json.
+        board['focus'] = True
+        board['headline'] = progress.get('headline') or board.get('current_model')
+        deadline = stamp(progress.get('deadline'))
+        started = stamp(progress.get('started_at'))
+        if deadline:
+            eta_seconds = max(0., deadline - time.time())
+            board['eta_seconds'] = eta_seconds
+            board['eta'] = format_eta(eta_seconds)
+            if started and deadline > started:
+                board['progress'] = min(1., max(0., (time.time() - started) / (deadline - started)))
+        row = by_id.get(progress.get('current_model'), {})
+        counters = row.get('counters') if isinstance(row.get('counters'), dict) else {}
+        if row.get('phase'):
+            board['phase'] = row.get('phase')
+        if row.get('status') not in {None, 'unknown'}:
+            board['status'] = row.get('status')
+        updates, games, training = counters.get('updates'), counters.get('games'), counters.get('training_games')
+        parts = []
+        if isinstance(updates, (int, float)):
+            parts.append(f'update {int(updates)}')
+        if isinstance(games, (int, float)):
+            parts.append(f'{int(games)} games')
+        if isinstance(training, (int, float)):
+            parts.append(f'{int(training)} training')
+        if parts:
+            board['work_done'] = ' · '.join(parts)
+        available = memory_available_gib()
+        if available is not None:
+            board['memory_available_gib'] = available
+    return board
+
+
 def runs():
     observation = live()
     rows = [run_summary(r, observation) for r in cached('run-scan', 5, run_scan)]
-    return {'sampled_at': now(), 'ttl_seconds': 5, 'runs': sorted(rows, key=lambda r: (r['status'] != 'running', r['id']), reverse=False)}
+    rows = sorted(rows, key=lambda r: (r['status'] != 'running', r['id']), reverse=False)
+    return {'sampled_at': now(), 'ttl_seconds': 5, 'runs': rows, 'night': night_board(rows)}
 
 
 def jsonl(path, max_bytes=8 * 1024 * 1024, max_rows=12000):
@@ -788,8 +897,14 @@ def docs_scan():
 
 def overview():
     observation = live()
-    run_rows = runs()['runs']
-    running = [r for r in run_rows if r['status'] == 'running' and r['kind'] == 'training run']
+    catalog = runs()
+    run_rows = catalog['runs']
+    night = catalog.get('night')
+    running = [r for r in run_rows if r['status'] == 'running' and r['kind'] == 'training run' and not str(r['id']).startswith('banana-deck-night-')]
+    if night and night.get('current_model'):
+        current = next((row for row in running if row['id'] == night['current_model']), None)
+        if current:
+            running = [current, *[row for row in running if row is not current]]
     trainers = [p for p in observation.get('processes', []) if p['category'] == 'training']
     active_train_units = [u for u in observation.get('units', []) if u.get('active') == 'active' and u.get('sub') == 'running' and re.search(r'train.*\.service$', u.get('name', ''))]
     fresh = observation_fresh(observation)
@@ -798,4 +913,4 @@ def overview():
             'status_explanation': 'Trainer processes, active training units and recent run state are combined. Engine worker or dashboard processes alone do not prove training.',
             'source': '/proc/*/cmdline; systemd user units; engine/runs/*/state.json; STOP files',
             'active_runs': running, 'recent_runs': sorted(run_rows, key=lambda r: r.get('updated_at') or '', reverse=True)[:5],
-            **observation}
+            'night': night, **observation}

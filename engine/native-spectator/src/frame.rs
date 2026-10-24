@@ -12,6 +12,9 @@ pub struct Entity {
     pub hp: i32,
     pub max_hp: i32,
     pub moving: bool,
+    /// Recovered snapshots leave this false. Walk and attack presentation does
+    /// not read it; motion comes from positions and attacks from impacts plus
+    /// original HitSpeed/LoadTime.
     pub attacking: bool,
     /// Exact position deltas; used as a presentation heading while moving.
     #[serde(default)]
@@ -27,8 +30,10 @@ pub struct Entity {
     #[serde(default)]
     pub native_focus_entity_id: Option<u64>,
     #[serde(default)]
+    /// Source value is null or 0 in current captures. Not an animation clock.
     pub native_action_timer_raw: Option<i32>,
     #[serde(default)]
+    /// Source value is null or 0 in current captures. Not an animation clock.
     pub native_secondary_timer_raw: Option<i32>,
 }
 

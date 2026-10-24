@@ -1,0 +1,77 @@
+{
+  "seed": 7926,
+  "decks": [
+    [
+      "Mortar",
+      "Knight",
+      "Archer",
+      "Skeletons",
+      "BarbLog",
+      "Arrows",
+      "MiniPekka",
+      "Rocket"
+    ],
+    [
+      "Mortar",
+      "Knight",
+      "Archer",
+      "Skeletons",
+      "BarbLog",
+      "Arrows",
+      "MiniPekka",
+      "Rocket"
+    ]
+  ],
+  "frames": 1600,
+  "played": [
+    [
+      "Skeletons",
+      "Archer",
+      "Mortar",
+      "BarbLog",
+      "Arrows",
+      "Skeletons",
+      "Knight",
+      "Archer",
+      "BarbLog",
+      "Arrows",
+      "Skeletons",
+      "Knight",
+      "Archer",
+      "BarbLog"
+    ],
+    [
+      "Skeletons",
+      "BarbLog",
+      "Arrows",
+      "BarbLog",
+      "Archer",
+      "Knight",
+      "Skeletons",
+      "BarbLog",
+      "Arrows",
+      "Archer",
+      "Knight",
+      "Skeletons",
+      "BarbLog",
+      "Arrows",
+      "Archer"
+    ]
+  ],
+  "observed_rows": [
+    "Archer",
+    "ArcherArrow",
+    "ArrowsSpell",
+    "BarbLogProjectile",
+    "BarbLogProjectileRolling",
+    "Barbarian",
+    "KingTower",
+    "Knight",
+    "Mortar",
+    "MortarProjectile",
+    "PrincessTower",
+    "Skeleton",
+    "TowerPrincessProjectile"
+  ],
+  "source": "original-native-engine"
+}

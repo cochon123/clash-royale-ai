@@ -2,7 +2,8 @@
 //! snapshots are all observed; display lists are paced in wall-clock time.
 //! Immutable PNG poses are cached once and cold poses expire by bounded LRU.
 use clash_native_spectator::{
-    draw::Painter,
+    clock::{Flow, SceneDisplayClock},
+    draw::{parse_card_list, Painter},
     frame::BattleFrame,
     scene::{CaptureGuard, TextureCache},
 };
@@ -33,7 +34,7 @@ fn one() -> f64 {
 
 trait SceneSink {
     fn observe(&mut self, snapshot: &Snapshot);
-    fn emit(&mut self, snapshot: &Snapshot) -> Result<(), String>;
+    fn emit(&mut self, snapshot: &Snapshot, display_tick: f64) -> Result<(), String>;
 }
 
 struct Presenter<W: Write> {
@@ -46,16 +47,24 @@ impl<W: Write> SceneSink for Presenter<W> {
     fn observe(&mut self, snapshot: &Snapshot) {
         self.painter.observe(&snapshot.frame);
     }
-    fn emit(&mut self, snapshot: &Snapshot) -> Result<(), String> {
+    fn emit(&mut self, snapshot: &Snapshot, display_tick: f64) -> Result<(), String> {
         let frame = &snapshot.frame;
         let started = Instant::now();
+        let oldest = self.painter.oldest_tick().unwrap_or(frame.tick) as f64;
+        let latest = self.painter.latest_tick().unwrap_or(frame.tick) as f64;
+        let display_tick = display_tick.clamp(oldest, latest);
         let capture = CaptureGuard::begin(self.cache.clone())?;
-        self.painter.draw(frame.tick as f64)?;
+        self.painter.draw(display_tick)?;
         let scene = capture.finish()?;
         self.sequence += 1;
-        let layout = self.painter.controls_layout(frame);
+        let layout = self
+            .painter
+            .snapshot_at(display_tick)
+            .as_ref()
+            .map(|shown| self.painter.controls_layout(shown))
+            .unwrap_or_else(|| self.painter.controls_layout(frame));
         let packet = json!({
-            "v":1, "sequence":self.sequence, "tick":frame.tick, "display_tick":frame.tick as f64,
+            "v":1, "sequence":self.sequence, "tick":frame.tick, "display_tick":display_tick,
             "match_id":frame.match_id, "width":540, "height":900,
             "clear":[19,27,31,255], "layout":{"field":layout.field,"world":layout.world,"cards":layout.cards},
             "textures":scene.textures, "draws":scene.draws, "status":status(snapshot),
@@ -80,9 +89,47 @@ fn status(snapshot: &Snapshot) -> &str {
     }
 }
 
-/// Observe every snapshot, including short-lived entities between render ticks.
-/// Only drawing is coalesced. recv_timeout publishes the final pending pose even
-/// when the input pipe stays open and no next snapshot arrives (paused/idle).
+struct Horizon {
+    match_id: u64,
+    oldest: u32,
+    latest: u32,
+}
+
+fn flow_of(snapshot: &Snapshot) -> Flow {
+    match status(snapshot) {
+        "paused" => Flow::Paused,
+        "ended" | "closed" => Flow::Finished,
+        _ => Flow::Running,
+    }
+}
+
+fn note_horizon(clock: &mut SceneDisplayClock, horizon: &mut Option<Horizon>, snapshot: &Snapshot) {
+    let tick = snapshot.frame.tick;
+    let match_id = snapshot.frame.match_id;
+    let reset = horizon
+        .as_ref()
+        .is_none_or(|seen| seen.match_id != match_id || tick < seen.latest);
+    if reset {
+        clock.reset();
+        *horizon = Some(Horizon {
+            match_id,
+            oldest: tick,
+            latest: tick,
+        });
+    } else if let Some(seen) = horizon.as_mut() {
+        if tick > seen.latest {
+            seen.latest = tick;
+        }
+    }
+}
+
+/// Observe every snapshot. Drawing stays one engine tick behind the newest
+/// snapshot and is capped at `fps`.
+///
+/// A running match emits one pose per snapshot, not a second in-between
+/// sample. The browser interpolates those poses on its own display clock.
+/// Filling the gap on the server builds another authored texture almost every
+/// frame and made live matches heavier than the measured browser sample.
 fn drive(
     sink: &mut impl SceneSink,
     rx: Receiver<Result<Snapshot, String>>,
@@ -92,6 +139,25 @@ fn drive(
     let mut due = Instant::now();
     let mut latest: Option<Snapshot> = None;
     let mut dirty = false;
+    let mut clock = SceneDisplayClock::new();
+    let mut horizon = None;
+    let mut last_step = Instant::now();
+    let publish = |sink: &mut dyn SceneSink,
+                   clock: &mut SceneDisplayClock,
+                   horizon: &Horizon,
+                   snapshot: &Snapshot,
+                   last_step: &mut Instant|
+     -> Result<bool, String> {
+        let now = Instant::now();
+        let dt = now.duration_since(*last_step).as_secs_f64();
+        *last_step = now;
+        let flow = flow_of(snapshot);
+        let display = clock.step(horizon.oldest, horizon.latest, snapshot.playback_speed, flow, dt);
+        sink.emit(snapshot, display)?;
+        // Caught-up is reported for the end-of-match drain. A running match
+        // does not keep painting until the clock reaches the lag target.
+        Ok(clock.caught_up(horizon.oldest, horizon.latest, flow))
+    };
     loop {
         let timeout = if dirty {
             due.saturating_duration_since(Instant::now())
@@ -118,18 +184,31 @@ fn drive(
                                 && matches!(status(&snapshot), "paused" | "ended" | "closed")
                     });
                     sink.observe(&snapshot);
+                    note_horizon(&mut clock, &mut horizon, &snapshot);
                     latest = Some(snapshot);
                     dirty = true;
                     if forced {
                         let started = Instant::now();
-                        sink.emit(latest.as_ref().unwrap())?;
+                        publish(
+                            sink,
+                            &mut clock,
+                            horizon.as_ref().unwrap(),
+                            latest.as_ref().unwrap(),
+                            &mut last_step,
+                        )?;
                         dirty = false;
                         due = started + interval;
                     }
                 }
                 if dirty && Instant::now() >= due {
                     let started = Instant::now();
-                    sink.emit(latest.as_ref().unwrap())?;
+                    publish(
+                        sink,
+                        &mut clock,
+                        horizon.as_ref().unwrap(),
+                        latest.as_ref().unwrap(),
+                        &mut last_step,
+                    )?;
                     dirty = false;
                     due = started + interval;
                 }
@@ -137,14 +216,47 @@ fn drive(
             Err(RecvTimeoutError::Timeout) => {
                 if dirty {
                     let started = Instant::now();
-                    sink.emit(latest.as_ref().unwrap())?;
+                    publish(
+                        sink,
+                        &mut clock,
+                        horizon.as_ref().unwrap(),
+                        latest.as_ref().unwrap(),
+                        &mut last_step,
+                    )?;
                     dirty = false;
                     due = started + interval;
                 }
             }
             Err(RecvTimeoutError::Disconnected) => {
                 if dirty {
-                    sink.emit(latest.as_ref().unwrap())?;
+                    publish(
+                        sink,
+                        &mut clock,
+                        horizon.as_ref().unwrap(),
+                        latest.as_ref().unwrap(),
+                        &mut last_step,
+                    )?;
+                }
+                if let Some(snapshot) = latest.as_ref() {
+                    if flow_of(snapshot) == Flow::Finished {
+                        for _ in 0..64 {
+                            if clock.caught_up(
+                                horizon.as_ref().unwrap().oldest,
+                                horizon.as_ref().unwrap().latest,
+                                Flow::Finished,
+                            ) {
+                                break;
+                            }
+                            let display = clock.step(
+                                horizon.as_ref().unwrap().oldest,
+                                horizon.as_ref().unwrap().latest,
+                                snapshot.playback_speed,
+                                Flow::Finished,
+                                1. / fps as f64,
+                            );
+                            sink.emit(snapshot, display)?;
+                        }
+                    }
                 }
                 return Ok(());
             }
@@ -155,14 +267,22 @@ fn drive(
 fn run() -> Result<(), String> {
     let mut assets = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../analysis/native-spectator");
     let mut texture_root = None;
+    let mut pose_root = None;
     let mut fps = 30;
+    let mut cards = Vec::new();
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--assets" => assets = args.next().ok_or("missing asset directory")?.into(),
+            "--cards" => cards.extend(parse_card_list(&args.next().ok_or("missing card names")?)),
             "--texture-cache" => {
                 texture_root = Some(PathBuf::from(
                     args.next().ok_or("missing texture cache directory")?,
+                ))
+            }
+            "--pose-cache" => {
+                pose_root = Some(PathBuf::from(
+                    args.next().ok_or("missing pose cache directory")?,
                 ))
             }
             "--fps" => {
@@ -173,7 +293,7 @@ fn run() -> Result<(), String> {
                     .map_err(|_| "invalid fps")?
             }
             "--help" | "-h" => {
-                println!("clash-web-scene [--assets DIR] --texture-cache DIR [--fps 1..120]; reads every Snapshot JSONL, writes paced original-sprite display-list JSONL");
+                println!("clash-web-scene [--assets DIR] --texture-cache DIR [--pose-cache DIR] [--cards NAMES] [--fps 1..120]; reads every Snapshot JSONL, writes paced original-sprite display-list JSONL. NAMES is one comma-separated argument; spaces stay inside a native card name. Omitted --cards loads the whole bundle.");
                 return Ok(());
             }
             _ => return Err(format!("unknown argument {arg}")),
@@ -201,8 +321,12 @@ fn run() -> Result<(), String> {
             }
         }
     });
+    let mut painter = Painter::load_for_cards(&assets, 540, 900, &cards)?;
+    if let Some(dir) = pose_root {
+        painter.enable_pose_cache(&dir)?;
+    }
     let mut presenter = Presenter {
-        painter: Painter::load(&assets, 540, 900)?,
+        painter,
         cache,
         stdout: io::BufWriter::new(io::stdout().lock()),
         sequence: 0,
@@ -234,7 +358,7 @@ mod tests {
                 .unwrap()
                 .push((s.frame.tick, s.frame.entities.len()));
         }
-        fn emit(&mut self, s: &Snapshot) -> Result<(), String> {
+        fn emit(&mut self, s: &Snapshot, _display_tick: f64) -> Result<(), String> {
             self.output
                 .send((s.frame.match_id, s.frame.tick, status(s).into()))
                 .map_err(|e| e.to_string())
@@ -343,5 +467,51 @@ mod tests {
         tx.send(Err("invalid snapshot".into())).unwrap();
         drop(tx);
         assert_eq!(drive(&mut sink, rx, 30).unwrap_err(), "invalid snapshot");
+    }
+
+    struct LagSink {
+        output: mpsc::Sender<(u32, f64)>,
+    }
+    impl SceneSink for LagSink {
+        fn observe(&mut self, _s: &Snapshot) {}
+        fn emit(&mut self, s: &Snapshot, display_tick: f64) -> Result<(), String> {
+            self.output
+                .send((s.frame.tick, display_tick))
+                .map_err(|e| e.to_string())
+        }
+    }
+
+    #[test]
+    fn running_display_stays_one_tick_behind_the_latest_snapshot() {
+        let (tx, rx) = mpsc::sync_channel(256);
+        let (output, packets) = mpsc::channel();
+        let mut sink = LagSink { output };
+        let worker = thread::spawn(move || drive(&mut sink, rx, 30));
+        let mut first = snapshot(200, 1, "running", false);
+        first.playback_speed = 1.;
+        tx.send(Ok(first)).unwrap();
+        let (tick, display) = packets.recv_timeout(Duration::from_secs(1)).unwrap();
+        assert_eq!(tick, 200);
+        assert!((display - 200.).abs() < 1e-6, "{display}");
+        for tick in [201u32, 202] {
+            let mut frame = snapshot(tick, 1, "running", false);
+            frame.playback_speed = 1.;
+            tx.send(Ok(frame)).unwrap();
+        }
+        let mut seen = Vec::new();
+        let deadline = Instant::now() + Duration::from_millis(400);
+        while Instant::now() < deadline {
+            match packets.recv_timeout(Duration::from_millis(50)) {
+                Ok(packet) => seen.push(packet),
+                Err(_) => continue,
+            }
+        }
+        assert!(seen.iter().any(|(tick, _)| *tick == 202), "{seen:?}");
+        assert!(
+            seen.iter().all(|(_, display)| *display <= 201. + 1e-6),
+            "{seen:?}"
+        );
+        drop(tx);
+        worker.join().unwrap().unwrap();
     }
 }

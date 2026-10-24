@@ -1,8 +1,18 @@
 # Local browser-renderer validation
 
-Validated in the isolated `arena/browser-renderer` worktree on 2026-10-22.
-Arena runs at <http://127.0.0.1:8810/>. The main checkout and its 8800/8801
-services were left alone. No VPS deployment was performed.
+Initially validated in the isolated `arena/browser-renderer` worktree on
+2026-10-22 at <http://127.0.0.1:8810/>. That tested baseline, commit `8b62365`,
+was subsequently integrated into local `main` and deployed to
+<https://calgarypermit.ca/clashroyale/> at the user's request. Further animation
+and coverage work remains in this feature worktree.
+
+The deployed baseline passed a real signed-session match with mouse and mobile
+touch deployment, pause/resume, no browser exceptions and no video requests.
+The test match was closed afterward. Its first frame took 8.63 seconds; an
+8.08-second sample including new pose textures used 1.20 Mbps. These are single
+sample observations, not a capacity or frame-rate guarantee. Release
+`20261022-04-browser-8b62365` retains the previous release for rollback. Main's
+unrelated working changes were preserved during integration.
 
 ## Automated checks
 

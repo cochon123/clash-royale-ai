@@ -1,0 +1,80 @@
+{
+  "seed": 7922,
+  "decks": [
+    [
+      "GoblinBarrel",
+      "Princess",
+      "Knight",
+      "GoblinGang",
+      "InfernoTower",
+      "Rocket",
+      "Log",
+      "IceSpirits"
+    ],
+    [
+      "GoblinBarrel",
+      "Princess",
+      "Knight",
+      "GoblinGang",
+      "InfernoTower",
+      "Rocket",
+      "Log",
+      "IceSpirits"
+    ]
+  ],
+  "frames": 1600,
+  "played": [
+    [
+      "Log",
+      "GoblinGang",
+      "Princess",
+      "IceSpirits",
+      "Knight",
+      "Log",
+      "GoblinBarrel",
+      "GoblinGang",
+      "IceSpirits",
+      "Knight",
+      "Log",
+      "GoblinBarrel",
+      "GoblinGang",
+      "IceSpirits"
+    ],
+    [
+      "IceSpirits",
+      "Log",
+      "GoblinGang",
+      "Log",
+      "Princess",
+      "Knight",
+      "IceSpirits",
+      "Log",
+      "GoblinBarrel",
+      "GoblinGang",
+      "Knight",
+      "IceSpirits",
+      "Log",
+      "GoblinBarrel",
+      "GoblinGang"
+    ]
+  ],
+  "observed_rows": [
+    "BarrelGoblin",
+    "GoblinBarrelSpell",
+    "Goblin_Stab",
+    "IceSpirits",
+    "IceSpiritsProjectile",
+    "KingTower",
+    "Knight",
+    "LogProjectile",
+    "LogProjectileRolling",
+    "Princess",
+    "PrincessProjectile",
+    "PrincessProjectileDeco",
+    "PrincessTower",
+    "SpearGoblin",
+    "SpearGoblinProjectile",
+    "TowerPrincessProjectile"
+  ],
+  "source": "original-native-engine"
+}

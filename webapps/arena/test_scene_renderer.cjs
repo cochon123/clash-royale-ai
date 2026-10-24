@@ -1,7 +1,9 @@
 /* Run with: node --test webapps/arena/test_scene_renderer.cjs */
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const {ArenaSceneRenderer, SoftwarePainter, interpolateDraws, collectTextures} = require('./static/scene-renderer.js');
+const fs = require('node:fs');
+const path = require('node:path');
+const {ArenaSceneRenderer, SoftwarePainter, interpolateDraws, collectTextures, galleryFileUrl} = require('./static/scene-renderer.js');
 function canvas() {
   const context = {createImageData: (w, h) => ({data: new Uint8ClampedArray(w * h * 4)}), putImageData() {}};
   return {width: 0, height: 0, getContext: kind => kind === '2d' ? context : null, addEventListener() {}, removeEventListener() {}};
@@ -44,18 +46,48 @@ test('soft ellipse shadows retain the original flat-center falloff', () => {
   assert.deepEqual(pixels.slice(0, 4), [50, 50, 100, 255]);
   assert.deepEqual(pixels.slice(4, 8), [100, 100, 100, 255]);
 });
-test('interpolation follows stable IDs only and switches discrete original poses at the next tick', () => {
+test('a texture change without anchors keeps the previous crop instead of lerping it', () => {
   const older = [sprite(), sprite({id: 'removed'})];
   const newer = [sprite({id: 'new', m: [1, 0, 0, 1, 99, 0]}), sprite({tex: 'b', m: [2, 0, 0, 2, 10, 20]})];
   const middle = interpolateDraws(older, newer, .5);
-  assert.deepEqual(middle[0].m, [1.5, 0, 0, 1.5, 5, 10]); assert.equal(middle[0].tex, 'a'); assert.equal(middle[1], older[1]);
+  assert.equal(middle[0], older[0]);
+  assert.deepEqual(middle[0].m, [1, 0, 0, 1, 0, 0]);
+  assert.equal(middle[0].tex, 'a');
+  assert.equal(middle[1], older[1]);
   assert.equal(interpolateDraws(older, newer, 1), newer);
   assert.deepEqual(older[0].m, [1, 0, 0, 1, 0, 0]);
+});
+test('different textures move anchor only, missing anchors hold the pose, and the same texture lerps m', () => {
+  const older = [sprite({m: [1, 0, 0, 2, 100, 200], anchor: [120, 230]})];
+  const newer = [sprite({tex: 'b', m: [4, 1, 0, 9, 0, 0], anchor: [140, 250]})];
+  const moved = interpolateDraws(older, newer, .5);
+  assert.equal(moved[0].tex, 'a');
+  assert.deepEqual(moved[0].m, [1, 0, 0, 2, 110, 210]);
+  assert.deepEqual(moved[0].anchor, [130, 240]);
+  const missing = interpolateDraws([sprite({anchor: [4, 6]})], [sprite({tex: 'b', m: [3, 0, 0, 3, 9, 9]})], .5);
+  assert.equal(missing[0].tex, 'a');
+  assert.deepEqual(missing[0].m, [1, 0, 0, 1, 0, 0]);
+  const omitted = interpolateDraws([sprite()], [sprite({tex: 'b', m: [8, 0, 0, 8, 40, 40], anchor: [10, 10]})], .5);
+  assert.equal(omitted[0].tex, 'a');
+  assert.deepEqual(omitted[0].m, [1, 0, 0, 1, 0, 0]);
+  const same = interpolateDraws([sprite({m: [1, 0, 0, 1, 0, 0]})], [sprite({m: [1, 0, 0, 1, 100, 40]})], .25);
+  assert.equal(same[0].tex, 'a');
+  assert.deepEqual(same[0].m, [1, 0, 0, 1, 25, 10]);
+  const shadow = (tex, anchor, m) => ({kind: 'shadow', id: 'shadow-1', draws: [sprite({id: 'shadow-1-part', tex, anchor, m})]});
+  const nested = interpolateDraws([shadow('a', [10, 20], [1, 0, 0, 1, 3, 4])], [shadow('b', [30, 50], [9, 0, 0, 9, 0, 0])], .5);
+  assert.equal(nested[0].draws[0].tex, 'a');
+  assert.deepEqual(nested[0].draws[0].m, [1, 0, 0, 1, 13, 19]);
 });
 test('unknown commands, invalid matrices and unsafe texture IDs are explicit errors', () => {
   assert.throws(() => collectTextures([sprite({tex: '../secret'})]), /Invalid scene sprite/);
   assert.throws(() => collectTextures([sprite({m: [1, 0, 0, 1, Infinity, 0]})]), /Invalid scene sprite/);
+  assert.throws(() => collectTextures([sprite({anchor: [Number.NaN, 1]})]), /Invalid scene sprite/);
+  assert.throws(() => collectTextures([sprite({anchor: [1]})]), /Invalid scene sprite/);
+  assert.throws(() => collectTextures([{kind: 'shadow', draws: [sprite({anchor: [1, Infinity]})]}]), /Invalid scene sprite/);
+  assert.throws(() => collectTextures([{kind: 'shadow', draws: [{kind: 'ellipse', cx: 0, cy: 0, rx: 1, ry: 1, alpha: Number.NaN}]}]), /Invalid scene ellipse/);
+  assert.throws(() => collectTextures([{kind: 'shadow', draws: null}]), /Invalid scene draw list/);
   assert.throws(() => collectTextures([{kind: 'made-up'}]), /Unsupported/);
+  assert.deepEqual([...collectTextures([sprite()])], ['a']);
 });
 function fixture(options = {}) {
   let callbackId = 0; const callbacks = new Map(); global.requestAnimationFrame = fn => {callbacks.set(++callbackId, fn); return callbackId;}; global.cancelAnimationFrame = id => callbacks.delete(id);
@@ -75,6 +107,17 @@ test('packet queue and concurrent downloads stay bounded while each texture is f
   f.renderer.push(packet(26)); f.frame(); assert.equal(f.loading.length, 1); assert.equal(f.errors.length, 0);
   f.renderer.destroy(); assert.equal(f.renderer.stats.texture_bytes, 0);
 });
+test('a decoded pose stays on the GPU when the next match starts', async () => {
+  const f = fixture();
+  f.renderer.push(packet(1, {match_id: 1}));
+  f.loading[0].resolve(); await settle();
+  assert.equal(f.renderer.stats.texture_count, 1);
+  f.renderer.push(packet(1, {match_id: 2}));
+  assert.equal(f.renderer.stats.texture_count, 1);
+  assert.equal(f.loading.length, 1);
+  f.renderer.destroy();
+  assert.equal(f.renderer.stats.texture_count, 0);
+});
 test('new matches reset the timeline and abort old loads; stale completion cannot publish', async () => {
   const f = fixture(); f.renderer.push(packet()); const old = f.loading[0];
   f.renderer.push(packet(1, {match_id: 2})); assert.equal(old.signal.aborted, true); old.resolve(); await settle();
@@ -88,7 +131,7 @@ test('incomplete poses never render partial objects and missing textures fail ex
   assert.deepEqual(f.errors, ['Texture missing']); assert.equal(f.renderer.stats.error, 'Texture missing');
   f.renderer.reset(1); assert.equal(f.renderer.halted, false); f.renderer.destroy();
 });
-test('paused scenes freeze and do not spin requestAnimationFrame continuously', async () => {
+test('paused scenes paint the authored frame and do not spin requestAnimationFrame continuously', async () => {
   const f = fixture(); f.renderer.push(packet(1, {status: 'paused'})); f.loading[0].resolve(); await settle(); f.frame();
   const count = f.renderer.stats.frames; f.frame(); assert.equal(f.renderer.stats.frames, count); f.renderer.destroy();
 });
@@ -117,8 +160,13 @@ test('HUD/root draw-order IDs switch discretely when inserted shades renumber un
   const middle = interpolateDraws(older, newer, .75);
   assert.equal(middle[0], older[0]); assert.equal(middle[1], older[1]);
   assert.equal(interpolateDraws(older, newer, 1), newer);
-  const moving = interpolateDraws([sprite({id: 'entity-1-part-0'})], [sprite({id: 'entity-1-part-0', tex: 'b', m: [1, 0, 0, 1, 10, 20]})], .5);
+  const moving = interpolateDraws([sprite({id: 'entity-1-part-0', m: [1, 0, 0, 1, 0, 0]})], [sprite({id: 'entity-1-part-0', m: [1, 0, 0, 1, 10, 20]})], .5);
   assert.deepEqual(moving[0].m, [1, 0, 0, 1, 5, 10]);
+  const hudOlder = [sprite({id: 'hud-1', anchor: [1, 2]})];
+  const hudAnchored = interpolateDraws(hudOlder, [sprite({id: 'hud-1', tex: 'b', anchor: [30, 40], m: [1, 0, 0, 1, 30, 40]})], .5);
+  assert.equal(hudAnchored[0], hudOlder[0]);
+  assert.equal(hudAnchored[0].tex, 'a');
+  assert.equal(hudAnchored[0].m[4], 0);
 });
 
 
@@ -214,4 +262,64 @@ test('a cold pose starts its display clock when assets finish so interpolation k
   assert.equal(f.renderer.stats.frames, count + 1);
   assert.equal(f.errors.length, 0);
   f.renderer.destroy();
+});
+
+test('a paused timeline paints the authored pose instead of the in-between frame', () => {
+  const f = fixture();
+  let shown;
+  f.renderer.painter.paint = (_packet, draws) => {shown = draws;};
+  f.renderer.timeline = [
+    {packet: packet(1, {draws: [sprite({m: [1, 0, 0, 1, 0, 0]})]}), nativeTime: 0, readyAt: 0, received: 0, ids: new Set()},
+    {packet: packet(2, {status: 'paused', draws: [sprite({m: [1, 0, 0, 1, 80, 0]})]}), nativeTime: 50, readyAt: 0, received: 0, ids: new Set()}
+  ];
+  f.renderer.render(1000);
+  assert.equal(shown[0].m[4], 80);
+  assert.equal(f.renderer.frameHandle, 0);
+  f.renderer.destroy();
+});
+
+test('exact fixture display keeps cached textures when the tick and match move backward', async () => {
+  const f = fixture();
+  let shown;
+  f.renderer.painter.paint = (_packet, draws) => {shown = draws;};
+  const first = f.renderer.displayExact(packet(4, {tick: 20, match_id: 1, draws: [sprite({tex: 'a', m: [1, 0, 0, 1, 8, 0]})]}));
+  f.loading[0].resolve(); await settle(); f.frame();
+  const painted = await first;
+  assert.equal(painted.exact, true);
+  assert.equal(painted.tick, 20);
+  assert.equal(shown[0].m[4], 8);
+  const resident = f.renderer.textures.get('a');
+  const second = f.renderer.displayExact(packet(1, {tick: 2, match_id: 8, draws: [sprite({tex: 'b', m: [1, 0, 0, 1, 1, 0]})]}));
+  assert.equal(f.renderer.textures.get('a'), resident);
+  f.loading.find(load => load.id === 'b').resolve(); await settle(); f.frame();
+  const later = await second;
+  assert.equal(later.exact, true);
+  assert.equal(later.tick, 2);
+  assert.equal(shown[0].tex, 'b');
+  assert.equal(shown[0].m[4], 1);
+  assert.equal(f.renderer.textures.get('a'), resident);
+  assert.equal(f.renderer.textures.has('b'), true);
+  assert.equal(f.renderer.diagnostics().exact, true);
+  assert.equal(f.renderer.diagnostics().match_id, 8);
+  assert.equal(f.loading.length, 2);
+  f.renderer.destroy();
+});
+
+test('gallery file URLs stay under the deployment prefix and reject traversal', () => {
+  assert.equal(galleryFileUrl('/clashroyale', 'cases/pekka/0.json'), '/clashroyale/api/visual-gallery/files/cases/pekka/0.json');
+  assert.equal(galleryFileUrl('', 'textures/ab.png'), '/api/visual-gallery/files/textures/ab.png');
+  assert.equal(galleryFileUrl('/clashroyale/', 'textures/ab cd.png'), '/clashroyale/api/visual-gallery/files/textures/ab%20cd.png');
+  for (const relative of ['../secret', '/etc/passwd', 'a/../../b', 'a//b', './pose.json', 'pose.json?x=1']) {
+    assert.throws(() => galleryFileUrl('/arena', relative), /not relative/);
+  }
+  const html = fs.readFileSync(path.join(__dirname, 'static/gallery.html'), 'utf8');
+  assert.match(html, /\/api\/visual-gallery\/manifest/);
+  assert.match(html, /arenaGalleryFileUrl/);
+  assert.match(html, /displayExact/);
+  assert.match(html, /preserveDrawingBuffer:\s*true/);
+  assert.match(html, /CPU reference parity is not official game animation parity/);
+  assert.match(html, /galleryDiagnostics/);
+  assert.match(html, /galleryHelper/);
+  assert.doesNotMatch(html, /href="\/play\.html"/);
+  assert.doesNotMatch(html, /passed frames/i);
 });

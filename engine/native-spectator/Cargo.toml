@@ -11,9 +11,17 @@ compiled-engine = ["dep:clash-recompiled"]
 web-jpeg = ["dep:turbojpeg"]
 
 [[bin]]
+name = "clash-visual-check"
+path = "src/bin/clash-visual-check.rs"
+
+[[bin]]
 name = "clash-web-renderer"
 path = "src/bin/clash-web-renderer.rs"
 required-features = ["web-jpeg"]
+
+[[bin]]
+name = "clash-visual-gallery"
+path = "src/bin/clash-visual-gallery.rs"
 
 [dependencies]
 clash-recompiled = { path = "../rust-engine", optional = true }

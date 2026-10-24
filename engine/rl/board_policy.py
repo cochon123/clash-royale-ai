@@ -166,6 +166,10 @@ class BoardHogPolicy(AdaptiveHogPolicy):
         base_critic = self.critic
         self.critic = PrivilegedCritic(base_critic, BOARD_DIM, d_model).to(self.device)
         self._board_cache: dict[tuple, BoardTensors] = {}
+        # Placement-prior from a Hog-connect value head. The head's scale is
+        # zero at init, and the branch stays off until a caller enables it.
+        self.connect_prior = None
+        self.connect_prior_enabled = False
         self.eval()
 
     def board_parameters(self) -> list[nn.Parameter]:
@@ -218,6 +222,18 @@ class BoardHogPolicy(AdaptiveHogPolicy):
 
     def clear_boards(self) -> None:
         self._board_cache.clear()
+
+    def set_connect_prior(self, prior, *, enabled: bool = False) -> None:
+        """Attach a Hog-connect placement prior.
+
+        ``enabled`` defaults to false, so attaching a head does not change
+        actions. The prior's own scale is zero-initialized; enabling it still
+        leaves tile logits unchanged until that scale moves.
+        """
+        if prior is not None:
+            prior.to(self.device)
+        self.connect_prior = prior
+        self.connect_prior_enabled = bool(enabled) and prior is not None
 
     def _lookup_board(self, episode: BananaEpisode, observation: Mapping[str, Any], side: int) -> BoardTensors:
         if observation.get("board") is not None:
@@ -279,6 +295,14 @@ class BoardHogPolicy(AdaptiveHogPolicy):
             )
         second = dict(second)
         second["tile_logits"] = second["tile_logits"] + residual
+        if self.connect_prior_enabled and self.connect_prior is not None:
+            batch = collate_boards([caches[index]["board"] for index in indices]).to(self.device)
+            extra = self.connect_prior.residual(batch.raster)
+            if extra.shape != second["tile_logits"].shape:
+                raise RuntimeError(
+                    f"connect prior shape {tuple(extra.shape)} != tile logits {tuple(second['tile_logits'].shape)}"
+                )
+            second["tile_logits"] = second["tile_logits"] + extra
         return second
 
     def checkpoint_payload(self) -> dict[str, Any]:
@@ -308,14 +332,17 @@ class BoardHogPolicy(AdaptiveHogPolicy):
         return self
 
     def _load_payload(self, payload: Mapping[str, Any]) -> None:
-        if payload.get("format") != CHECKPOINT_FORMAT:
+        if payload.get("format") not in (CHECKPOINT_FORMAT, "crazy-hog-ppo-v1"):
             raise ValueError(f"expected {CHECKPOINT_FORMAT}, got {payload.get('format')}")
         vocab = RowVocab.from_dict(payload["board_state"]["vocab"])
         if vocab.names != self.row_vocab.names or vocab.hash_buckets != self.row_vocab.hash_buckets:
             raise ValueError("board checkpoint vocab does not match this policy")
         self.model.load_state_dict(payload["model_state"])
         self.wait_head.load_state_dict(payload["wait_state"])
-        self.critic.base.load_state_dict(payload["critic_state"])
+        if payload.get("format") == "crazy-hog-ppo-v1":
+            self.critic.load_state_dict(payload["critic_state"])
+        else:
+            self.critic.base.load_state_dict(payload["critic_state"])
         board = payload["board_state"]
         self.board_encoder.load_state_dict(board["encoder"])
         self.context_residual.load_state_dict(board["context_residual"])
@@ -326,7 +353,7 @@ class BoardHogPolicy(AdaptiveHogPolicy):
     @classmethod
     def from_checkpoint(cls, path: str | Path, **kwargs) -> "BoardHogPolicy":
         payload = torch.load(Path(path), map_location="cpu", weights_only=False)
-        if payload.get("format") != CHECKPOINT_FORMAT:
+        if payload.get("format") not in (CHECKPOINT_FORMAT, "crazy-hog-ppo-v1"):
             raise ValueError(f"expected {CHECKPOINT_FORMAT}, got {payload.get('format')}")
         vocab = RowVocab.from_dict(payload["board_state"]["vocab"])
         kwargs.pop("row_vocab", None)

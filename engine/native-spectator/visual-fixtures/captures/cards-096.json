@@ -1,0 +1,56 @@
+{
+  "seed": 7933,
+  "decks": [
+    [
+      "SuperHogRider",
+      "SuperEliteArcher",
+      "SuperMiniPekka",
+      "Witch",
+      "Wizard",
+      "AngryBarbarians",
+      "Elixir Collector",
+      "GiantSkeleton"
+    ],
+    [
+      "SuperHogRider",
+      "SuperEliteArcher",
+      "SuperMiniPekka",
+      "Witch",
+      "Wizard",
+      "AngryBarbarians",
+      "Elixir Collector",
+      "GiantSkeleton"
+    ]
+  ],
+  "frames": 718,
+  "played": [
+    [
+      "Wizard",
+      "SuperMiniPekka",
+      "SuperEliteArcher"
+    ],
+    [
+      "SuperHogRider",
+      "SuperEliteArcher",
+      "Wizard"
+    ]
+  ],
+  "observed_rows": [
+    "BoostInvisibilityBottle",
+    "KingProjectile",
+    "KingTower",
+    "PrincessTower",
+    "SantaPresent",
+    "SuperEliteArcher",
+    "SuperEliteArcherArrow",
+    "SuperHogRider",
+    "SuperMiniPekka",
+    "SuperMiniPekkaHit",
+    "SuperMiniPekkaPancakes",
+    "SuperMiniPekkaPancakesHeal",
+    "TowerPrincessProjectile",
+    "Wizard",
+    "chr_wizardProjectile"
+  ],
+  "source": "original-native-engine"
+}

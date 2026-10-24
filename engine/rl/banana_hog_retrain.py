@@ -33,6 +33,7 @@ def validate_resume_config(saved, args):
     if bool(saved.get("args", {}).get("tower_hp", False)) != bool(getattr(args, "tower_hp", False)):
         raise ValueError("resume cannot change experiment setting tower_hp")
     fields = ("seed", "workers", "eval_seeds", "match_ticks", "duration_seconds", "learning_rate",
+              "learner_deck",
               "critic_learning_rate", "shaping_coefficient", "gae_lambda", "card_anchor", "wait_anchor",
               "target_kl", "max_parent_kl", "entropy_coef", "regression_threshold", "epochs", "minibatch_size",
               "async_collection", "max_policy_lag", "async_ready_games", "engine_pool", "step_groups")
@@ -511,6 +512,8 @@ def main(league_class=StableLeague, configure_parser=None):
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--tower-hp", action="store_true", help="Add zero-initialized native tower-HP inputs; use a fresh run directory")
     parser.add_argument("--name", default="banana-hog-1-r2")
+    parser.add_argument("--learner-deck", default="hog-mirror",
+                        help="Deck id this specialist plays in every match")
     parser.add_argument("--parent", type=Path, default=ROOT / "runs/banana-league-20261019/models/hog/final.pt")
     parser.add_argument("--pool", type=Path, default=ROOT / "data/hog2_opponent_pool.json")
     parser.add_argument("--engine", type=Path, required=True)

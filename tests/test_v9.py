@@ -14,7 +14,7 @@ from cr_replay_pipeline.feature_schema import CONTINUOUS_INDEX as C, GLOBAL_INDE
 from cr_replay_pipeline.policy_dataset import collate_policy_batch
 from cr_replay_pipeline.policy_model import TILE_ROWS, TILE_COLS
 from cr_replay_pipeline.v9_cache import PrefixBank, check_bank, _write_shard, ShardDataset
-from cr_replay_pipeline.v9_policy import V9Policy, GhostRasterizer, tile_loss
+from cr_replay_pipeline.v9_policy import V9Policy, GhostRasterizer, CausalEventEncoder, tile_loss
 from cr_replay_pipeline.winner_dataset import BattleExample, build_vocab
 
 
@@ -187,6 +187,23 @@ def test_dense_gru_parity_and_ghost_ignores_unknown_positions(tmp_path,battles):
     continuous=batch[0].clone();continuous[:,:,C["pad"]]=1
     ghost=raster(continuous,batch[1],batch[4],batch[12])
     assert ghost.count_nonzero()==0
+
+
+def test_transformer_trunk_ignores_future_and_padding():
+    torch.manual_seed(0)
+    encoder=CausalEventEncoder(32,num_layers=2,nhead=4,dropout=0.0,max_len=8,time_bins=16).eval()
+    tokens=torch.randn(2,6,32)
+    lengths=torch.tensor([4,6])
+    seconds=torch.rand(2,6)
+    base=encoder(tokens,lengths,seconds)
+    changed=tokens.clone();changed[:,5]+=4
+    later=encoder(changed,lengths,seconds)
+    torch.testing.assert_close(base[0,:4],later[0,:4])
+    torch.testing.assert_close(base[1,:5],later[1,:5])
+    assert not torch.allclose(base[1,5],later[1,5])
+    model=V9Policy(20,d_model=32,clock=True,trunk="transformer",trunk_layers=2,trunk_heads=4).eval()
+    assert model.base.trunk=="transformer"
+    assert not any(isinstance(module,torch.nn.GRU) for module in model.modules())
 
 
 def test_smoothing_is_normalized_and_preserves_tile_center():

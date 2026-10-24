@@ -232,7 +232,12 @@ class League:
         for deck in self.pool:
             deck["holdout"] = deck["id"] in HOLDOUTS
         self.decks = {d["id"]: d for d in self.pool}
-        self.hog = self.decks["hog-mirror"]
+        learner_id = getattr(args, "learner_deck", "hog-mirror")
+        if learner_id not in self.decks:
+            raise ValueError(f"learner deck {learner_id!r} is not in the opponent pool")
+        self.learner_deck_id = learner_id
+        # Existing call sites still read `hog` for the specialist's own deck.
+        self.hog = self.decks[learner_id]
         self.sampler = self.make_sampler(self.pool, args.seed + 14)
         self.counters = Counter()
         self.errors = Counter()
@@ -477,6 +482,10 @@ class League:
             torch.cuda.set_rng_state_all([s.cpu() for s in runtime["cuda_rng"]])
         self.restore_extra(runtime)
         self.log(f"Resumed {path.name}, policy version {self.version}, {self.counters['games']} native games.")
+        # The constructor publishes "preparing" before this restore. Write the
+        # recovered counters immediately so a failed later step cannot leave
+        # the run looking empty, and a monitor does not wait for the next wave.
+        self.publish(force=True)
 
     def verify_decks(self, reset, expected):
         actual = reset.get("configured_decks")
@@ -1083,6 +1092,8 @@ def main():
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--parent", type=Path, default=ROOT / "runs/banana-league-20261019/models/hog/final.pt")
     parser.add_argument("--pool", type=Path, default=ROOT / "data/hog2_opponent_pool.json")
+    parser.add_argument("--learner-deck", default="hog-mirror",
+                        help="Deck id this specialist plays in every match")
     parser.add_argument("--engine", type=Path, default=ROOT / "analysis/hog2/reference-target/release/league_reference")
     parser.add_argument("--checkpoint", type=Path, default=ROOT / "analysis/native-pipeline/oracle-export-01/stage01-attempt001/state")
     parser.add_argument("--deadline", default="2026-10-20T11:00:00Z")

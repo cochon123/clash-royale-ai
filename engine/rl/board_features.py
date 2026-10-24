@@ -404,15 +404,23 @@ def _entity_views(board: Mapping[str, Any], perspective: int, table: RowTable) -
         y = _finite_number(entity.get("y"), f"{row}.y")
         hp = _finite_number(entity.get("hp"), f"{row}.hp")
         maximum = _finite_number(entity.get("max_hp"), f"{row}.max_hp")
-        if maximum <= 0 or hp < 0 or hp > maximum:
+        # Native board export uses this sentinel for entities without a health
+        # component (projectiles and spell effects). Keep their position/type,
+        # with zero health and elixir value, rather than rejecting the match.
+        no_health = hp == -1 and maximum == 0 and row not in TOWER_ROWS
+        if not no_health and (maximum <= 0 or hp < 0 or hp > maximum):
             raise ValueError(f"board entity {row} has invalid hp")
         dx = _finite_number(entity.get("dx", 0), f"{row}.dx")
         dy = _finite_number(entity.get("dy", 0), f"{row}.dy")
         first_seen = entity.get("first_seen_tick", tick)
         age_ticks = tick - _finite_number(first_seen, f"{row}.first_seen_tick")
         age = min(1.0, max(0.0, age_ticks / AGE_TICKS))
-        nx, ny, mx, my = learner_motion(x, y, dx, dy, perspective)
-        fraction = hp / maximum
+        # Native entities can briefly extend past arena edges (projectiles,
+        # airborne units and displacement). Only clip the feature/raster
+        # projection; the board JSON and native simulation remain untouched.
+        nx, ny, mx, my = learner_motion(
+            min(ARENA_X, max(0.0, x)), min(ARENA_Y, max(0.0, y)), dx, dy, perspective)
+        fraction = 0.0 if no_health else hp / maximum
         cost = table.lookup(row)
         views.append(EntityView(
             row=row,

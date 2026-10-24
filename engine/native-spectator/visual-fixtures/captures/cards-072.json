@@ -1,0 +1,59 @@
+{
+  "seed": 7930,
+  "decks": [
+    [
+      "SuperHogRiderTerry",
+      "Tesla",
+      "Valkyrie",
+      "MiniSparkys",
+      "ArcherQueen",
+      "Balloon",
+      "Barbarians",
+      "Bowler"
+    ],
+    [
+      "SuperHogRiderTerry",
+      "Tesla",
+      "Valkyrie",
+      "MiniSparkys",
+      "ArcherQueen",
+      "Balloon",
+      "Barbarians",
+      "Bowler"
+    ]
+  ],
+  "frames": 1195,
+  "played": [
+    [
+      "Tesla",
+      "SuperHogRiderTerry",
+      "Valkyrie",
+      "MiniSparkys",
+      "Balloon",
+      "ArcherQueen"
+    ],
+    [
+      "MiniSparkys",
+      "SuperHogRiderTerry",
+      "Tesla",
+      "Valkyrie",
+      "Barbarians",
+      "Balloon"
+    ]
+  ],
+  "observed_rows": [
+    "ArcherQueen",
+    "ArcherQueenArrow",
+    "Balloon",
+    "Barbarian",
+    "KingProjectile",
+    "KingTower",
+    "MiniZapMachine",
+    "PrincessTower",
+    "SuperHogRider_Terry",
+    "Tesla",
+    "TowerPrincessProjectile",
+    "Valkyrie"
+  ],
+  "source": "original-native-engine"
+}

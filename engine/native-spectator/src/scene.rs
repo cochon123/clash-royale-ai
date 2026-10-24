@@ -38,6 +38,11 @@ pub enum Draw {
         add: [i16; 3],
         #[serde(skip_serializing_if = "std::ops::Not::not")]
         replace: bool,
+        /// Stable screen point of the entity, projectile, or shadow. HUD and
+        /// root draws omit it. The browser keeps the previous pose affine when
+        /// the texture changes and moves this point.
+        #[serde(skip_serializing_if = "Option::is_none")]
+        anchor: Option<[f64; 2]>,
     },
     Rect {
         id: String,
@@ -282,6 +287,11 @@ struct Capture {
     list: DisplayList,
     shadows: Vec<Draw>,
     scope: String,
+    /// Screen anchor inherited by sprites captured in this scope.
+    anchor: Option<[f64; 2]>,
+    /// When set, the CPU frame is rasterized as well as recorded. The web
+    /// presenter leaves this false so it does not composite full frames.
+    keep_pixels: bool,
     counters: BTreeMap<String, usize>,
     error: Option<String>,
 }
@@ -330,6 +340,7 @@ impl Capture {
                     },
                     add,
                     replace,
+                    anchor: finite_anchor(self.anchor),
                 };
                 if shadow {
                     self.shadows.push(draw);
@@ -347,8 +358,21 @@ thread_local! { static ACTIVE: RefCell<Option<Capture>> = const { RefCell::new(N
 /// RAII scope: failures and unwinding cannot accidentally capture a later CPU
 /// fallback frame. Root registration happens inside Painter::draw itself.
 pub struct CaptureGuard;
+fn finite_anchor(anchor: Option<[f64; 2]>) -> Option<[f64; 2]> {
+    anchor.filter(|point| point[0].is_finite() && point[1].is_finite())
+}
+
 impl CaptureGuard {
     pub fn begin(cache: Rc<RefCell<TextureCache>>) -> Result<Self, String> {
+        Self::begin_with(cache, false)
+    }
+
+    /// Record the display list and also rasterize the CPU reference frame.
+    pub fn begin_reference(cache: Rc<RefCell<TextureCache>>) -> Result<Self, String> {
+        Self::begin_with(cache, true)
+    }
+
+    fn begin_with(cache: Rc<RefCell<TextureCache>>, keep_pixels: bool) -> Result<Self, String> {
         ACTIVE.with(|a| {
             let mut a = a.borrow_mut();
             if a.is_some() {
@@ -363,6 +387,8 @@ impl CaptureGuard {
                 list: DisplayList::default(),
                 shadows: Vec::new(),
                 scope: "root".into(),
+                anchor: None,
+                keep_pixels,
                 counters: BTreeMap::new(),
                 error: None,
             });
@@ -411,22 +437,43 @@ pub fn scope<T>(name: impl Into<String>, f: impl FnOnce() -> T) -> T {
     f()
 }
 
-pub struct ScopeGuard(Option<String>);
+pub fn scope_anchored<T>(name: impl Into<String>, anchor: [f64; 2], f: impl FnOnce() -> T) -> T {
+    let _guard = ScopeGuard::enter_anchored(name, anchor);
+    f()
+}
+
+pub struct ScopeGuard {
+    previous: Option<(String, Option<[f64; 2]>)>,
+}
 impl ScopeGuard {
     pub fn enter(name: impl Into<String>) -> Self {
-        Self(ACTIVE.with(|a| {
-            a.borrow_mut()
-                .as_mut()
-                .map(|c| std::mem::replace(&mut c.scope, name.into()))
-        }))
+        Self::swap(name.into(), None)
+    }
+
+    pub fn enter_anchored(name: impl Into<String>, anchor: [f64; 2]) -> Self {
+        Self::swap(name.into(), finite_anchor(Some(anchor)))
+    }
+
+    fn swap(name: String, anchor: Option<[f64; 2]>) -> Self {
+        Self {
+            previous: ACTIVE.with(|active| {
+                active.borrow_mut().as_mut().map(|capture| {
+                    (
+                        std::mem::replace(&mut capture.scope, name),
+                        std::mem::replace(&mut capture.anchor, anchor),
+                    )
+                })
+            }),
+        }
     }
 }
 impl Drop for ScopeGuard {
     fn drop(&mut self) {
-        if let Some(previous) = self.0.take() {
-            ACTIVE.with(|a| {
-                if let Some(c) = a.borrow_mut().as_mut() {
-                    c.scope = previous;
+        if let Some((scope, anchor)) = self.previous.take() {
+            ACTIVE.with(|active| {
+                if let Some(capture) = active.borrow_mut().as_mut() {
+                    capture.scope = scope;
+                    capture.anchor = anchor;
                 }
             });
         }
@@ -451,7 +498,7 @@ pub fn capture_blit(
             return false;
         };
         c.sprite(src, m, alpha, blend, add, replace, false);
-        true
+        !c.keep_pixels
     })
 }
 
@@ -482,7 +529,7 @@ pub fn capture_shadow(src: &RgbaImage, ox: f64, oy: f64, t: &Affine, alpha: f32)
             false,
             true,
         );
-        true
+        !c.keep_pixels
     })
 }
 
@@ -501,7 +548,7 @@ pub fn capture_ellipse(cx: f64, cy: f64, rx: f64, ry: f64, alpha: f32) -> bool {
             ry,
             alpha,
         });
-        true
+        !c.keep_pixels
     })
 }
 
@@ -521,7 +568,7 @@ pub fn capture_shadow_apply(dst: &RgbaImage) -> bool {
                 draws: std::mem::take(&mut c.shadows),
             });
         }
-        true
+        !c.keep_pixels
     })
 }
 
@@ -550,7 +597,7 @@ pub fn capture_rect(dst: &RgbaImage, x: i32, y: i32, w: i32, h: i32, color: Rgba
                 replace: true,
             });
         }
-        true
+        !c.keep_pixels
     })
 }
 
@@ -832,6 +879,82 @@ mod tests {
         };
         assert_eq!(id(&first.draws[0]), id(&second.draws[1]));
         assert_eq!(id(&first.draws[1]), id(&second.draws[0]));
+    }
+
+    fn sprite_anchor(draw: &Draw) -> Option<[f64; 2]> {
+        match draw {
+            Draw::Sprite { anchor, .. } => *anchor,
+            Draw::Shadow { draws, .. } => draws.iter().find_map(sprite_anchor),
+            _ => None,
+        }
+    }
+
+    #[test]
+    fn entity_and_shadow_sprites_carry_anchors_and_hud_does_not() {
+        let cache = TestCache::new();
+        let art = RgbaImage::from_pixel(2, 2, Rgba([9, 8, 7, 255]));
+        let capture = CaptureGuard::begin(cache.cache.clone()).unwrap();
+        let mut root = RgbaImage::new(32, 32);
+        register_root(&root);
+        scope_anchored("entity-3-part-0", [12.5, 40.], || overlay(&mut root, &art, 4, 6));
+        scope("hud-0", || overlay(&mut root, &art, 1, 1));
+        scope("root-arena", || replace(&mut root, &art, 0, 0));
+        let mut shadow = ShadowMask::new(32, 32);
+        scope_anchored("entity-3-shadow", [12.5, 48.], || {
+            shadow.add_silhouette(
+                &art,
+                0.,
+                0.,
+                &blit::Affine {
+                    m: [1., 0., 0., 1.],
+                    tx: 10.,
+                    ty: 20.,
+                },
+                0.5,
+            );
+        });
+        scope("shadows", || shadow.apply(&mut root));
+        let list = capture.finish().unwrap();
+        let entity = list
+            .draws
+            .iter()
+            .find(|draw| matches!(draw, Draw::Sprite { id, .. } if id.starts_with("entity-3-part")))
+            .unwrap();
+        assert_eq!(sprite_anchor(entity), Some([12.5, 40.]));
+        let hud = list
+            .draws
+            .iter()
+            .find(|draw| matches!(draw, Draw::Sprite { id, .. } if id.starts_with("hud-")))
+            .unwrap();
+        assert_eq!(sprite_anchor(hud), None);
+        let arena = list
+            .draws
+            .iter()
+            .find(|draw| matches!(draw, Draw::Sprite { id, .. } if id.starts_with("root-")))
+            .unwrap();
+        assert_eq!(sprite_anchor(arena), None);
+        let encoded = serde_json::to_value(hud).unwrap();
+        assert!(encoded.get("anchor").is_none());
+        let shadow_draw = list
+            .draws
+            .iter()
+            .find(|draw| matches!(draw, Draw::Shadow { .. }))
+            .unwrap();
+        assert_eq!(sprite_anchor(shadow_draw), Some([12.5, 48.]));
+        assert_eq!(root.get_pixel(4, 6).0[3], 0, "web capture skips root pixels");
+    }
+
+    #[test]
+    fn reference_capture_keeps_the_cpu_pixels_and_the_display_list() {
+        let cache = TestCache::new();
+        let art = RgbaImage::from_pixel(2, 2, Rgba([4, 5, 6, 255]));
+        let capture = CaptureGuard::begin_reference(cache.cache.clone()).unwrap();
+        let mut root = RgbaImage::from_pixel(8, 8, Rgba([19, 27, 31, 255]));
+        register_root(&root);
+        scope_anchored("entity-1-part-0", [3., 4.], || overlay(&mut root, &art, 1, 2));
+        let list = capture.finish().unwrap();
+        assert_eq!(root.get_pixel(1, 2).0, [4, 5, 6, 255]);
+        assert_eq!(sprite_anchor(&list.draws[0]), Some([3., 4.]));
     }
 
     #[test]
