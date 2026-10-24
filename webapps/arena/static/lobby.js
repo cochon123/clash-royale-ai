@@ -224,6 +224,50 @@ function render() {
   renderDecks($("red-decks"), "red", $("red-note"));
   if (watch) renderModels($("blue-models"), "blue");
   renderDecks($("blue-decks"), "blue", $("blue-note"));
+  prefetchSelectedDecks();
+}
+
+let prefetchToken = 0;
+function selectedNatives() {
+  const natives = [];
+  for (const side of [state.sides.red, state.sides.blue]) {
+    const deck = deckById(side.deck);
+    if (!deck) return null;
+    for (const id of deck.cards) {
+      const native = state.cards[id]?.native;
+      if (native) natives.push(native);
+    }
+  }
+  return natives;
+}
+function prefetchFetch(url) {
+  return fetch(url, {priority: "low", credentials: "same-origin"});
+}
+async function prefetchSelectedDecks() {
+  if (typeof planPackFiles !== "function" || typeof resolveAssetUrl !== "function") return;
+  const natives = selectedNatives();
+  if (!natives || !natives.length) return;
+  const key = natives.slice().sort().join("|");
+  if (key === state.prefetchKey) return;
+  state.prefetchKey = key;
+  const token = ++prefetchToken;
+  const manifestUrl = `${BASE}/assets/manifest.json`;
+  try {
+    const first = await prefetchFetch(manifestUrl);
+    if (!first.ok || token !== prefetchToken) return;
+    let manifest = await first.json();
+    let resolved = manifestUrl;
+    if (manifest.current && !manifest.v) {
+      resolved = resolveAssetUrl(manifestUrl, manifest.current);
+      const second = await prefetchFetch(resolved);
+      if (!second.ok || token !== prefetchToken) return;
+      manifest = await second.json();
+    }
+    const plan = planPackFiles(manifest, natives);
+    const jobs = plan.files.map((file) => prefetchFetch(resolveAssetUrl(resolved, file.url)));
+    if (plan.wasm) jobs.push(prefetchFetch(resolveAssetUrl(resolved, plan.wasm.url)));
+    await Promise.all(jobs);
+  } catch { /* packs are optional until a match starts */ }
 }
 
 async function refreshActive() {
