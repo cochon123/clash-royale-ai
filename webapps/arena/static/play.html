@@ -29,12 +29,17 @@
     </div>
     <div class="overlay show" id="loading"><div class="box"><div class="spinner"></div>
       <h2>Preparing the match</h2><p id="loading-msg">Connecting...</p>
+      <div class="loading-progress" id="loading-progress" hidden>
+        <div class="track"><div class="bar" id="loading-bar"></div></div>
+        <div class="label" id="loading-progress-label"></div>
+      </div>
       <a class="btn" href="/">Back to the lobby</a>
       <a class="btn" id="fallback-link" hidden>Use original stream</a>
     </div></div>
   </div>
   <div class="sr-only" id="feedback" role="status" aria-live="polite"></div>
 </main>
+<script src="/scene-compositor.js"></script>
 <script src="/scene-renderer.js"></script>
 <script src="/input-transport.js"></script>
 <script src="/play.js"></script>
