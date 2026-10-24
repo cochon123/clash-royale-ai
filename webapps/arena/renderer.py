@@ -173,6 +173,55 @@ class NativeRenderer:
         self.log.close()
 
 
+class LazyStreamRenderer:
+    """JPEG spectator started only when an explicit Stream view asks for pixels.
+
+    ``submit`` remembers the latest snapshot and forwards it once the process
+    exists. The default tick path never constructs ``NativeRenderer``.
+    """
+
+    def __init__(self, run_dir, *, cards=None):
+        self.run_dir = Path(run_dir)
+        self.cards = tuple(cards) if cards else None
+        self.lock = threading.Lock()
+        self.inner = None
+        self.last = None
+        self.closed = False
+
+    def submit(self, snapshot):
+        with self.lock:
+            if self.closed:
+                return
+            self.last = snapshot
+            inner = self.inner
+        if inner is not None:
+            inner.submit(snapshot)
+
+    def _start(self):
+        with self.lock:
+            if self.closed:
+                raise HTTPError(404, "match has closed")
+            if self.inner is None:
+                options = {"cards": self.cards} if self.cards else {}
+                self.inner = NativeRenderer(self.run_dir / "stream-view", **options)
+                if self.last is not None:
+                    self.inner.submit(self.last)
+            return self.inner
+
+    def image(self, after=0):
+        return self._start().image(after)
+
+    def frames(self):
+        yield from self._start().frames()
+
+    def close(self):
+        with self.lock:
+            self.closed = True
+            inner = self.inner
+        if inner is not None:
+            inner.close()
+
+
 def register_routes(app, manager):
     @app.route("GET", "/api/matches/{id}/view")
     def view(request):

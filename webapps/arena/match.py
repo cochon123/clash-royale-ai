@@ -8,6 +8,7 @@ any number of browser tabs can follow over server-sent events.
 """
 from __future__ import annotations
 
+import copy
 import datetime as dt
 import hashlib
 import json
@@ -23,9 +24,13 @@ from pathlib import Path
 
 from webapps.common import catalog, paths
 
+from .assets import manifest_public_path
+from .engine_pool import get_pool
 from .placement import CACHE
-from .renderer import NativeRenderer, spectator_hands
-from .scene import NativeSceneRenderer, browser_scene_enabled
+from .policy_cache import engine_sha256, load_match_policy
+from .renderer import LazyStreamRenderer, NativeRenderer, spectator_hands
+from .scene import NativeSceneRenderer, browser_scene_enabled, scene_legacy_enabled
+from .ticks import AddressRemap, TickLog, addresses_remapped
 
 if str(paths.ENGINE) not in sys.path:
     sys.path.insert(0, str(paths.ENGINE))
@@ -52,6 +57,32 @@ def card_for_row(row) -> dict | None:
     """Card for a native hand row (by numeric id, then by native name)."""
     table = catalog.native_to_card()
     return table.get(row.get("name", "")) or table.get(_compact(row.get("name", "")))
+
+
+def hud_hands(obs_hands, *, human):
+    """Browser hand rows. A human match omits the opponent's hand entirely."""
+    hands = []
+    for side in (0, 1):
+        if human and side == 1:
+            hands.append(None)
+            continue
+        hand = []
+        for row in obs_hands[side]:
+            card = card_for_row(row)
+            hand.append({"slot": row["slot"], "card_id": row["card_id"], "cost": row["cost"],
+                         "available": row.get("available", True), "name": card["name"] if card else row["name"],
+                         "id": card["id"] if card else None, "art": card["art"] if card else None})
+        hands.append(hand)
+    return hands
+
+
+def make_renderer(run_dir, cards):
+    """Legacy scene presenter, eager JPEG, or a stream view that starts on demand."""
+    if scene_legacy_enabled():
+        if browser_scene_enabled():
+            return NativeSceneRenderer(run_dir, cards=cards)
+        return NativeRenderer(run_dir, cards=cards)
+    return LazyStreamRenderer(run_dir, cards=cards)
 
 
 # Units and effects spawned by cards whose native row is not the card's own name.
@@ -175,6 +206,8 @@ class Match:
         self.result_history: list[dict] = []
         self.renderer = None
         self.log_streams = []
+        self.ticks = TickLog()
+        self.remapper = AddressRemap()
         self.thread = threading.Thread(target=self._run, name=f"match-{match_id}", daemon=True)
         self.expiry_timer = None
         if self.owner is not None:
@@ -202,18 +235,49 @@ class Match:
         self.closed.set()
         if self.expiry_timer is not None:
             self.expiry_timer.cancel()
+        if getattr(self, "ticks", None) is not None:
+            self.ticks.close()
         with self.cond:
             self.cond.notify_all()
 
     def meta(self) -> dict:
         cards = catalog.cards()
+        if scene_legacy_enabled():
+            kind = "browser-scene" if browser_scene_enabled() else "original-spectator"
+        else:
+            kind = "tick-stream"
         return {"id": self.id, "mode": "human" if self.human else "watch", "labels": self.labels,
                 "decks": [[{"id": c, "name": cards[c]["name"], "art": cards[c]["art"], "elixir": cards[c]["elixir"]}
                            for c in side["deck"]] for side in self.sides],
                 "rows": dict(self.rows), "arena": {"width": 18000, "height": 32000, "columns": 18, "rows": 32},
-                "renderer": {"kind": "browser-scene" if browser_scene_enabled() else "original-spectator",
-                             "width": 540, "height": 900},
+                "renderer": {"kind": kind, "width": 540, "height": 900},
                 "ticks_per_second": TICKS_PER_SECOND}
+
+    def native_card_rows(self) -> list:
+        cards = catalog.cards()
+        return [cards[slug]["native"] for side in self.sides for slug in side["deck"]]
+
+    def ticks_meta(self) -> dict:
+        meta = self.meta()
+        meta["protocol"] = 2
+        meta["assets"] = {"manifest": manifest_public_path()}
+        meta["cards"] = self.native_card_rows()
+        return meta
+
+    def tick_stream(self, last_event_id):
+        """Protocol-2 events for one subscriber. Ordered and complete."""
+        yield ("meta", self.ticks_meta(), None)
+        yield from self.ticks.events(last_event_id, match_id=self.id, summary=self.summary)
+
+    def deliver_tick(self, match_number, tick, original, payload, seed=None):
+        """Copy one publication into the ring. Remap only the streamed snapshot."""
+        snapshot = copy.deepcopy(original)
+        if addresses_remapped():
+            self.remapper.begin_round(match_number)
+            self.remapper.apply(snapshot)
+        hud = copy.deepcopy({key: value for key, value in payload.items() if key != "entities"})
+        self.ticks.publish(int(match_number), int(tick), snapshot, hud,
+                           seed=None if seed is None else int(seed))
 
     def events(self):
         """Server-sent event stream for one browser tab."""
@@ -264,6 +328,7 @@ class Match:
             else:
                 self.payload = {"status": status, "message": self.message, "loading": True}
             self.cond.notify_all()
+        self.ticks.nudge()
 
     def _run(self):
         engine = None
@@ -274,17 +339,17 @@ class Match:
                 return
             known_cards = catalog.cards()
             native_cards = [known_cards[slug]["native"] for side in self.sides for slug in side["deck"]]
-            self.renderer = (NativeSceneRenderer if browser_scene_enabled() else NativeRenderer)(
-                self.run_dir, cards=native_cards)
+            self.renderer = make_renderer(self.run_dir, native_cards)
             self._loop(engine, policies)
         except Exception as exc:  # surface to the browser instead of dying silently
             import traceback
             traceback.print_exc()
             self.error = f"{type(exc).__name__}: {exc}"
             self._status("failed", self.error)
+            self.ticks.fail(self.error)
         finally:
             if engine is not None:
-                engine.close()
+                get_pool().release(engine)
             if self.renderer is not None:
                 self.renderer.close()
             for stream in self.log_streams:
@@ -295,8 +360,6 @@ class Match:
 
     def _load(self):
         import torch
-        from rl.banana_train import JsonlEngine
-        from rl.banana_watch import load_watched_policy
         torch.set_num_threads(max(1, int(os.environ.get("ARENA_TORCH_THREADS", min(2, os.cpu_count() or 1)))))
         torch.manual_seed(self.seed)
         policies = [None, None]
@@ -307,14 +370,14 @@ class Match:
             model = catalog.engine_model(controller)
             self.message = f"Loading {model['name']}..."
             self._status("loading")
-            policy = load_watched_policy(paths.REPO / model["checkpoint"], "cpu", self.seed + side, model["name"])
+            policy = load_match_policy(paths.REPO / model["checkpoint"], "cpu", self.seed + side, model["name"])
             policies[side] = policy
         self.message = "Starting the original engine..."
         self._status("loading")
         if not paths.NATIVE_WATCH.is_file():
             raise RuntimeError("native-watch is not built: cargo build --release --offline "
                                "--manifest-path engine/native-engine/Cargo.toml --bin native-watch")
-        engine = JsonlEngine(paths.ENGINE_CHECKPOINT, paths.NATIVE_WATCH)
+        engine = get_pool().acquire()
         return engine, policies
 
     def _loop(self, engine, policies):
@@ -333,7 +396,7 @@ class Match:
             "created_at": self.created_at, "match": self.id, "mode": "human" if self.human else "watch",
             "controllers": [s["controller"] for s in self.sides], "labels": self.labels, "decks": decks,
             "native_decks": natives, "seed": self.seed, "engine": paths.relative(paths.NATIVE_WATCH),
-            "engine_sha256": hashlib.sha256(paths.NATIVE_WATCH.read_bytes()).hexdigest(),
+            "engine_sha256": engine_sha256(paths.NATIVE_WATCH),
             "checkpoints": [catalog.engine_model(s["controller"]).get("checkpoint")
                             if s["controller"] not in ("human", "random") else None for s in self.sides],
             "learning": False, "source": "webapps.arena",
@@ -418,18 +481,7 @@ class Match:
                 entities.append({"i": e["native_entity_id"], "r": row, "s": e["side"], "x": e["x"], "y": e["y"],
                                  "z": e.get("z") or 0, "hp": e.get("hp") or 0, "mhp": e.get("max_hp") or 0,
                                  "a": bool(e.get("attacking")), "m": bool(e.get("moving"))})
-            hands = []
-            for side in (0, 1):
-                if self.human and side == 1:
-                    hands.append(None)  # the opponent's hand stays hidden, as in the real game
-                    continue
-                hand = []
-                for row in obs["hands"][side]:
-                    card = card_for_row(row)
-                    hand.append({"slot": row["slot"], "card_id": row["card_id"], "cost": row["cost"],
-                                 "available": row.get("available", True), "name": card["name"] if card else row["name"],
-                                 "id": card["id"] if card else None, "art": card["art"] if card else None})
-                hands.append(hand)
+            hands = hud_hands(obs["hands"], human=self.human)
             tick = int(obs["tick"])
             plans = []
             if scheduler is not None:
@@ -467,6 +519,7 @@ class Match:
             if human is not None:
                 original["human"] = snapshot
             self.renderer.submit(original)
+            self.deliver_tick(state["match_number"], tick, original, payload, seed=game["match_seed"])
             self._publish(payload)
 
         def record_end(r):
