@@ -30,3 +30,30 @@ Notes and open items
 - Address remap stays off (W1 gate: actor BTreeMap ordering depends on addresses).
 - Local server needs ARENA_RENDERER_BIN pointing at a clash-web-renderer build; create_match requires it so Stream view stays available.
 - Not measured yet: the VPS (reset time, CPU, RSS), real WAN latency, phones.
+
+# P3 deployment (2026-10-24 21:36 UTC)
+
+Release `/opt/clash-arena/releases/20261024-02-arena-speed` (archive sha256
+`0030c7f180df38b84a4cc71cebfeeacbcb7892b2e9267d35b3dce67b197a1830`, 1,257 files, all verified).
+Previous release `20261024-01-inline-poses` kept; backups `/etc/nginx/snippets/clash-arena.conf.bak-20261024-01`
+and `/etc/clash-arena.env.bak-20261024-01`. Rollback: relink `/opt/clash-arena/current`, restore both files,
+restart `clash-arena`, reload nginx.
+
+Changes on the VPS: env `ARENA_ENGINE_POOL=1`, `ARENA_WEB_ASSETS_DIR=...`, `ARENA_WARMUP=1` (preloads one engine,
+588 MB). Web assets copied world-readable to `/var/www/clash-arena-assets/next` (`current` symlink), served by
+nginx under `/clashroyale/assets/` (immutable, `application/wasm`). CSP adds `'wasm-unsafe-eval'`.
+
+Added after P2 at the user's request: the painter decodes every atlas page on the loading screen
+(`painter_prewarm`), and the server holds the first round at its start tick until a viewer posts
+`control {"op":"ready"}` (90 s fallback). Art download and unpacking therefore happen before the battle starts.
+
+Public-site probes (headless Chrome on the laptop, which was under load average ~30 from other jobs):
+
+| Run | Loading screen until first frame | Frozen display after start | Notes |
+| --- | ---: | ---: | --- |
+| Watch, first visit (52 MB download) | 9.0 s | 0 s of 37.9 s | 852 ticks at the end, about 19.8 ticks/s shown |
+| Watch, returning visit | about 2.5 s | 0.5 s (one 494 ms hitch) of 37.8 s | |
+| Human, returning visit | 2.48 s | 0.5 s (one 452 ms hitch) of 28.3 s | 5 human and 6 model plays accepted, 0 rejected |
+
+Service memory with a match running: 1.29 GB (was about 2 GB). VPS load average 0.3-0.5.
+The single ~0.5 s hitches were not investigated; the client laptop was heavily loaded during these runs.
