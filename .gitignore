@@ -2,6 +2,8 @@
 .venv
 .local-arena/
 .visual-check/
+# Intermediate spectator bundle. build_web_assets.py regenerates it; the pack is deploy/arena/web-assets/.
+deploy/arena/derived-bundle/
 engine/runs
 __pycache__/
 *.py[cod]

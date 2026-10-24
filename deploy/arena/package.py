@@ -11,6 +11,33 @@ import tarfile
 
 ROOT = Path(__file__).resolve().parents[2]
 
+# clash-web-scene is not part of the browser pack. Pose rasterization runs in
+# the browser. The JPEG stream view still ships clash-web-renderer.
+REQUIRED_PATHS = (
+    "webapps/__init__.py", "models/registry.json", "data/card_costs.json",
+    "models/policy_bc_v4.4.2/best_model.pt", "models/policy_bc_v4.4.2/vocab.json",
+    "engine/runs/banana-1/base.pt", "engine/runs/banana-hog-1/models/final.pt",
+    "engine/runs/banana-league-20261019/models/mortar/final.pt",
+    "engine/native-engine/target/release/native-watch",
+    "engine/native-spectator/target/debug/clash-web-renderer",
+    "engine/analysis/libg-cipher/libg.decrypted.so",
+    "engine/tools/reverse-env/lib/python3.13/site-packages/unicorn/lib/libunicorn.so.2",
+)
+
+
+def web_asset_files(root: Path) -> list[Path]:
+    """Content-addressed pack, including painter wasm when the builder stored one.
+
+    ``painter_wasm: null`` means the wasm file is absent. Packaging still
+    requires ``manifest.json`` and does not require a wasm file.
+    """
+    directory = root / "deploy/arena/web-assets"
+    manifest = directory / "manifest.json"
+    if not manifest.is_file():
+        raise FileNotFoundError(
+            f"{manifest} is missing; run deploy/arena/build_web_assets.py before packaging")
+    return sorted(path for path in directory.rglob("*") if path.is_file() and not path.is_symlink())
+
 
 def build(output):
     files = set()
@@ -22,19 +49,12 @@ def build(output):
                       "engine/analysis/native-pipeline/oracle-export-01/stage01-attempt001/state",
                       "engine/analysis/decoded/assets/csv_logic"):
         files.update(p for p in (ROOT / directory).rglob("*") if p.is_file() and not p.is_symlink())
-    for name in ("webapps/__init__.py", "models/registry.json", "data/card_costs.json",
-                 "models/policy_bc_v4.4.2/best_model.pt", "models/policy_bc_v4.4.2/vocab.json",
-                 "engine/runs/banana-1/base.pt", "engine/runs/banana-hog-1/models/final.pt",
-                 "engine/runs/banana-league-20261019/models/mortar/final.pt",
-                 "engine/native-engine/target/release/native-watch",
-                 "engine/native-spectator/target/debug/clash-web-renderer",
-                 "engine/native-spectator/target/debug/clash-web-scene",
-                 "engine/analysis/libg-cipher/libg.decrypted.so",
-                 "engine/tools/reverse-env/lib/python3.13/site-packages/unicorn/lib/libunicorn.so.2"):
+    for name in REQUIRED_PATHS:
         path = ROOT / name
         if not path.is_file():
             raise FileNotFoundError(path)
         files.add(path)
+    files.update(web_asset_files(ROOT))
     manifest = {"created_at": dt.datetime.now(dt.timezone.utc).isoformat(), "files": {}}
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
