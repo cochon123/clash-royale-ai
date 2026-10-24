@@ -279,6 +279,8 @@ const MAX_PARTICLES: usize = 1600;
 /// high-velocity debris stays near its source, as in the original client.
 const Z_FORESHORTEN: f64 = 0.65;
 
+const RNG_SEED: u64 = 0x9e37_79b9_7f4a_7c15;
+
 impl Default for Vfx {
     fn default() -> Self {
         Self {
@@ -289,7 +291,7 @@ impl Default for Vfx {
             emitter_defs: BTreeMap::new(),
             attachments: BTreeMap::new(),
             now_ms: f64::NAN,
-            rng: 0x9e37_79b9_7f4a_7c15,
+            rng: RNG_SEED,
             next_id: 1,
             cache: SpriteCache::default(),
         }
@@ -304,6 +306,11 @@ impl Vfx {
         self.pending.clear();
         self.attachments.clear();
         self.now_ms = f64::NAN;
+        // A new round must replay the same particles as a fresh painter.
+        // Leaving the xorshift and id counter advanced made the address-gate
+        // passes, and the recording after them, diverge from a cold wasm start.
+        self.rng = RNG_SEED;
+        self.next_id = 1;
     }
 
     fn random(&mut self) -> f64 {
@@ -929,6 +936,16 @@ mod tests {
         vfx.update(&defs, 100.);
         let early = vfx.sprites(&scenes);
         assert!(!early.is_empty(), "death effect produced no sprites");
+        let first_ids: Vec<u64> = early.iter().map(|sprite| sprite.uid).collect();
+        vfx.clear();
+        vfx.update(&defs, 0.);
+        vfx.spawn("knight_die", Anchor::default(), false, 1., 0., 0., None);
+        vfx.update(&defs, 100.);
+        let again: Vec<u64> = vfx.sprites(&scenes).iter().map(|sprite| sprite.uid).collect();
+        assert_eq!(
+            again, first_ids,
+            "clear must restart particle ids and the effect rng"
+        );
         assert!(early.iter().all(|s| s.doc == "effects"));
         // The Knight's dropped sword lingers for 24-25 s in the source data.
         vfx.update(&defs, 10_000.);

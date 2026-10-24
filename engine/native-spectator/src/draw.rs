@@ -264,10 +264,16 @@ impl Painter {
     /// Load `always_documents` plus each named card's dependency documents.
     /// An empty list keeps the previous whole-bundle load.
     pub fn load_for_cards(root: &Path, width: u32, height: u32, cards: &[String]) -> Result<Self> {
-        let manifest: Value = serde_json::from_slice(
-            &std::fs::read(root.join("assets.json")).map_err(|e| e.to_string())?,
-        )
-        .map_err(|e| e.to_string())?;
+        #[cfg(not(feature = "wasm"))]
+        let manifest_bytes =
+            std::fs::read(root.join("assets.json")).map_err(|e| e.to_string())?;
+        #[cfg(feature = "wasm")]
+        let manifest_bytes = {
+            let _ = root;
+            clash_native_ui_viewer::vfs::take("assets.json")?
+        };
+        let manifest: Value =
+            serde_json::from_slice(&manifest_bytes).map_err(|e| e.to_string())?;
         let selected = documents_for_cards(&manifest, cards)?;
         if let Some(set) = &selected {
             let present: BTreeSet<&str> = manifest["documents"]
@@ -546,6 +552,27 @@ impl Painter {
 
     pub fn particle_count(&self) -> usize {
         self.vfx.particle_count()
+    }
+
+    /// Decoded atlas bytes and how many scenes are loaded. The VFS remainder
+    /// is reported separately; wasm linear memory does not shrink after a free.
+    pub fn memory_profile(&self) -> (usize, usize) {
+        let atlas = self
+            .scenes
+            .values()
+            .map(|scene| scene.atlas_rgba_bytes())
+            .sum();
+        (atlas, self.scenes.len())
+    }
+
+    /// New round: drop actors, history and the display-clock inputs. Loaded
+    /// documents stay. The wasm `painter_reset` entry point calls this.
+    pub fn reset_round(&mut self) {
+        self.reset_presentation();
+        self.scheduled_impacts.clear();
+        self.scheduled_match = None;
+        self.next_uid = 1;
+        self.unresolved_rows.clear();
     }
 
     fn reset_presentation(&mut self) {
@@ -1893,7 +1920,9 @@ impl Painter {
         flip: bool,
     ) -> Result<Option<Rc<Fitted>>> {
         use std::hash::{Hash, Hasher};
-        let mut hasher = std::collections::hash_map::DefaultHasher::new();
+        // Same 8-byte usize prefix as x86_64, so a fitted-pose cache key does
+        // not change between the native spectator and wasm32.
+        let mut hasher = scene::Width64Hasher::new();
         playback.object_frames.hash(&mut hasher);
         playback.hidden_objects.hash(&mut hasher);
         playback.label.hash(&mut hasher);

@@ -5,6 +5,7 @@
 //! renderer always has the next snapshots to interpolate toward and already
 //! knows upcoming impacts. Arrival jitter is absorbed by a soft correction
 //! instead of visible jumps.
+#[cfg(not(feature = "wasm"))]
 use std::time::Instant;
 
 pub const TICKS_PER_SECOND: f64 = 20.;
@@ -26,6 +27,7 @@ pub enum Flow {
 
 pub struct PlaybackClock {
     display: Option<f64>,
+    #[cfg(not(feature = "wasm"))]
     last: Instant,
     lag: f64,
 }
@@ -40,6 +42,7 @@ impl PlaybackClock {
     pub fn new(lag_ticks: f64) -> Self {
         Self {
             display: None,
+            #[cfg(not(feature = "wasm"))]
             last: Instant::now(),
             lag: lag_ticks.max(0.),
         }
@@ -50,11 +53,18 @@ impl PlaybackClock {
     }
 
     /// Advance to now and return the fractional tick to draw.
+    /// Wasm has no wall clock; callers pass `dt` to [`PlaybackClock::step`].
+    #[cfg(not(feature = "wasm"))]
     pub fn advance(&mut self, oldest: u32, latest: u32, speed: f64, flow: Flow) -> f64 {
         let now = Instant::now();
         let dt = now.duration_since(self.last).as_secs_f64().min(0.25);
         self.last = now;
         self.step(oldest, latest, speed, flow, dt)
+    }
+
+    #[cfg(feature = "wasm")]
+    pub fn advance(&mut self, oldest: u32, latest: u32, speed: f64, flow: Flow) -> f64 {
+        self.step(oldest, latest, speed, flow, 0.)
     }
 
     pub fn step(&mut self, oldest: u32, latest: u32, speed: f64, flow: Flow, dt: f64) -> f64 {
@@ -98,6 +108,7 @@ pub const SCENE_LAG_TICKS: f64 = 1.;
 /// step starts at the new oldest snapshot.
 pub struct SceneDisplayClock {
     display: Option<f64>,
+    lag_ticks: f64,
 }
 
 impl Default for SceneDisplayClock {
@@ -108,7 +119,22 @@ impl Default for SceneDisplayClock {
 
 impl SceneDisplayClock {
     pub fn new() -> Self {
-        Self { display: None }
+        Self {
+            display: None,
+            lag_ticks: SCENE_LAG_TICKS,
+        }
+    }
+
+    /// Display lag behind the newest observed tick. The native presenter keeps
+    /// one tick. The wasm painter defaults to 3 ticks (150 ms at 20 Hz).
+    pub fn set_lag_ticks(&mut self, lag_ticks: f64) {
+        if lag_ticks.is_finite() {
+            self.lag_ticks = lag_ticks.max(0.);
+        }
+    }
+
+    pub fn lag_ticks(&self) -> f64 {
+        self.lag_ticks
     }
 
     pub fn reset(&mut self) {
@@ -124,7 +150,7 @@ impl SceneDisplayClock {
     pub fn step(&mut self, oldest: u32, latest: u32, speed: f64, flow: Flow, dt: f64) -> f64 {
         let oldest_f = oldest as f64;
         let latest_f = latest as f64;
-        let target = scene_target(oldest, latest, flow);
+        let target = scene_target(oldest, latest, flow, self.lag_ticks);
         let mut display = match self.display {
             Some(d) if (oldest_f - 0.5..=latest_f + 0.5).contains(&d) => d,
             _ => oldest_f,
@@ -144,16 +170,16 @@ impl SceneDisplayClock {
     /// or a flow change. Callers use this to stop emitting duplicate poses.
     pub fn caught_up(&self, oldest: u32, latest: u32, flow: Flow) -> bool {
         self.display
-            .is_some_and(|display| display + 1e-6 >= scene_target(oldest, latest, flow))
+            .is_some_and(|display| display + 1e-6 >= scene_target(oldest, latest, flow, self.lag_ticks))
     }
 }
 
-fn scene_target(oldest: u32, latest: u32, flow: Flow) -> f64 {
+fn scene_target(oldest: u32, latest: u32, flow: Flow, lag_ticks: f64) -> f64 {
     let oldest_f = oldest as f64;
     let latest_f = latest as f64;
     match flow {
         Flow::Finished => latest_f,
-        Flow::Running | Flow::Paused => (latest_f - SCENE_LAG_TICKS).max(oldest_f),
+        Flow::Running | Flow::Paused => (latest_f - lag_ticks).max(oldest_f),
     }
 }
 
@@ -246,5 +272,20 @@ mod tests {
         clock.reset();
         assert_eq!(clock.display(), None);
         assert_eq!(clock.step(0, 0, 1., Flow::Running, 1.), 0.);
+    }
+
+    #[test]
+    fn scene_lag_override_trails_by_the_injected_distance() {
+        let mut clock = SceneDisplayClock::new();
+        assert!((clock.lag_ticks() - 1.).abs() < 1e-12);
+        clock.set_lag_ticks(3.);
+        // Each step accepts at most 0.25s, which is 5 native ticks. The lag
+        // target is latest - 3 = 7, so the second quarter-second reaches it.
+        assert_eq!(clock.step(0, 10, 1., Flow::Running, 0.), 0.);
+        let mid = clock.step(0, 10, 1., Flow::Running, 0.25);
+        assert!((mid - 5.).abs() < 1e-9, "{mid}");
+        let shown = clock.step(0, 10, 1., Flow::Running, 0.25);
+        assert!((shown - 7.).abs() < 1e-9, "{shown}");
+        assert!(clock.caught_up(0, 10, Flow::Running));
     }
 }

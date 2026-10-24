@@ -3,9 +3,12 @@
 
 use image::{Rgba, RgbaImage};
 use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
 use std::error::Error;
 use std::path::{Path, PathBuf};
+
+pub mod vfs;
 
 pub type Result<T> = std::result::Result<T, Box<dyn Error>>;
 const MAX_DIMENSION: u32 = 8192;
@@ -154,7 +157,12 @@ pub struct Document {
 pub struct Scene {
     pub document: Document,
     pub document_path: PathBuf,
-    textures: Vec<RgbaImage>,
+    /// `None` until the page is decoded. Native load fills every slot.
+    /// Wasm keeps the PNG in the VFS and decodes the first time a shape
+    /// samples that page, then drops the PNG bytes.
+    textures: RefCell<Vec<Option<RgbaImage>>>,
+    #[cfg(feature = "wasm")]
+    atlas_keys: Vec<Option<String>>,
     shape_index: BTreeMap<u32, Vec<usize>>,
 }
 
@@ -245,25 +253,50 @@ impl Scene {
             return Err("--document must be one recovered document name".into());
         }
         let document_path = root.join("display-trees").join(format!("{document}.json"));
+        #[cfg(not(feature = "wasm"))]
         let document: Document = serde_json::from_reader(std::io::BufReader::new(
             std::fs::File::open(&document_path)?,
         ))?;
+        #[cfg(feature = "wasm")]
+        let document: Document = {
+            let _ = &document_path;
+            let bytes = crate::vfs::take(&format!("display-trees/{document}.json"))?;
+            serde_json::from_slice(&bytes)?
+        };
         let mut textures = Vec::new();
+        #[cfg(feature = "wasm")]
+        let mut atlas_keys = Vec::new();
         for texture in &document.textures {
             let filename = Path::new(&texture.external)
                 .file_stem()
                 .ok_or("missing atlas name")?;
             let mut atlas_path = root.join("atlases").join(filename);
             atlas_path.set_extension("png");
-            let atlas = image::open(&atlas_path)?.to_rgba8();
-            if atlas.dimensions() != (texture.width, texture.height) {
-                return Err(format!(
-                    "Atlas dimensions differ from recovered SC data: {}",
-                    atlas_path.display()
-                )
-                .into());
+            #[cfg(not(feature = "wasm"))]
+            {
+                let atlas = image::open(&atlas_path)?.to_rgba8();
+                if atlas.dimensions() != (texture.width, texture.height) {
+                    return Err(format!(
+                        "Atlas dimensions differ from recovered SC data: {}",
+                        atlas_path.display()
+                    )
+                    .into());
+                }
+                textures.push(Some(atlas));
             }
-            textures.push(atlas);
+            #[cfg(feature = "wasm")]
+            {
+                let name = atlas_path
+                    .file_name()
+                    .and_then(|name| name.to_str())
+                    .ok_or("missing atlas name")?;
+                let key = format!("atlases/{name}");
+                if !crate::vfs::contains(&key) {
+                    return Err(format!("vfs missing {key}").into());
+                }
+                atlas_keys.push(Some(key));
+                textures.push(None);
+            }
         }
         let mut shape_index: BTreeMap<u32, Vec<usize>> = BTreeMap::new();
         for (index, shape) in document.shapes.iter().enumerate() {
@@ -272,9 +305,59 @@ impl Scene {
         Ok(Self {
             document,
             document_path,
-            textures,
+            textures: RefCell::new(textures),
+            #[cfg(feature = "wasm")]
+            atlas_keys,
             shape_index,
         })
+    }
+
+    /// Decoded atlas bytes currently resident. Pages not yet sampled are omitted.
+    pub fn atlas_rgba_bytes(&self) -> usize {
+        self.textures
+            .borrow()
+            .iter()
+            .flatten()
+            .map(|image| image.as_raw().len())
+            .sum()
+    }
+
+    fn ensure_atlas(&self, index: usize) -> Result<()> {
+        if self
+            .textures
+            .borrow()
+            .get(index)
+            .is_some_and(|image| image.is_some())
+        {
+            return Ok(());
+        }
+        #[cfg(not(feature = "wasm"))]
+        {
+            let _ = index;
+            Ok(())
+        }
+        #[cfg(feature = "wasm")]
+        {
+            let Some(key) = self.atlas_keys.get(index).and_then(|key| key.clone()) else {
+                return Ok(());
+            };
+            let bytes = crate::vfs::take(&key)?;
+            let atlas = image::load_from_memory(&bytes)?.into_rgba8();
+            drop(bytes);
+            let expected = self.document.textures.get(index);
+            if let Some(expected) = expected {
+                if atlas.dimensions() != (expected.width, expected.height) {
+                    return Err(format!(
+                        "Atlas dimensions differ from recovered SC data: {key}"
+                    )
+                    .into());
+                }
+            }
+            if let Some(slot) = self.textures.borrow_mut().get_mut(index) {
+                *slot = Some(atlas);
+            }
+            Ok(())
+        }
     }
 
     pub fn export_id(&self, export: &str) -> Result<u32> {
@@ -383,11 +466,22 @@ impl Scene {
                 let shape = &self.document.shapes[index];
                 let mut commands = Vec::new();
                 for command in &shape.commands {
-                    let Some(atlas) = self.textures.get(command.texture_index) else {
+                    self.ensure_atlas(command.texture_index)?;
+                    let raster = {
+                        let textures = self.textures.borrow();
+                        match textures
+                            .get(command.texture_index)
+                            .and_then(|image| image.as_ref())
+                        {
+                            Some(atlas) => Some(rasterize(command, atlas, matrix)),
+                            None => None,
+                        }
+                    };
+                    let Some(raster) = raster else {
                         stats.invalid_references += 1;
                         continue;
                     };
-                    if let Some(p) = rasterize(command, atlas, matrix)? {
+                    if let Some(p) = raster? {
                         if p.image.pixels().any(|pixel| pixel[3] > 0) {
                             commands.push(p);
                             stats.triangle_commands += 1;
@@ -577,8 +671,13 @@ impl Scene {
             .unwrap_or(Path::new("."))
             .join("fonts")
             .join(filename);
+        #[cfg(not(feature = "wasm"))]
         let bytes = std::fs::read(&path)
             .map_err(|e| format!("Cannot load recovered font {}: {e}", path.display()))?;
+        #[cfg(feature = "wasm")]
+        let bytes = crate::vfs::read(&format!("fonts/{filename}")).map_err(|e| {
+            format!("Cannot load recovered font {}: {e}", path.display())
+        })?;
         let font = fontdue::Font::from_bytes(bytes, fontdue::FontSettings::default())
             .map_err(|e| format!("Invalid recovered font: {e}"))?;
         let size = field.font_size.max(1.);
@@ -655,8 +754,15 @@ pub fn rasterize_text(
     size: f32,
     color: u32,
 ) -> Result<RgbaImage> {
-    let path = root.join("fonts").join(font_filename(font_name));
-    let font = fontdue::Font::from_bytes(std::fs::read(path)?, fontdue::FontSettings::default())
+    let filename = font_filename(font_name);
+    #[cfg(not(feature = "wasm"))]
+    let bytes = std::fs::read(root.join("fonts").join(filename))?;
+    #[cfg(feature = "wasm")]
+    let bytes = {
+        let _ = root;
+        crate::vfs::read(&format!("fonts/{filename}"))?
+    };
+    let font = fontdue::Font::from_bytes(bytes, fontdue::FontSettings::default())
         .map_err(|e| format!("Invalid recovered font: {e}"))?;
     let glyphs: Vec<_> = text
         .chars()

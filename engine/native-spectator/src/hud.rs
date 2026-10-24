@@ -54,9 +54,20 @@ pub struct HandHud {
 }
 
 fn load_catalog_portraits() -> BTreeMap<String, CatalogCard> {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/card_catalog.json");
-    let Ok(bytes) = std::fs::read(path) else {
-        return BTreeMap::new();
+    #[cfg(not(feature = "wasm"))]
+    let bytes = {
+        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data/card_catalog.json");
+        let Ok(bytes) = std::fs::read(path) else {
+            return BTreeMap::new();
+        };
+        bytes
+    };
+    #[cfg(feature = "wasm")]
+    let bytes = {
+        let Ok(bytes) = clash_native_ui_viewer::vfs::take("data/card_catalog.json") else {
+            return BTreeMap::new();
+        };
+        bytes
     };
     let Ok(rows) = serde_json::from_slice::<Vec<Value>>(&bytes) else {
         return BTreeMap::new();
@@ -282,26 +293,42 @@ impl HandHud {
         let Some(relative) = metadata["portrait"]["file"].as_str() else {
             return Ok(None);
         };
-        let path = [
-            root.join(relative),
-            root.join(
-                metadata["portrait"]["recovered_path"]
-                    .as_str()
-                    .unwrap_or("cards/missing.png"),
-            ),
-            Path::new(env!("CARGO_MANIFEST_DIR"))
-                .join("..")
-                .join(relative),
-            Path::new(env!("CARGO_MANIFEST_DIR"))
-                .join("../web")
-                .join(relative),
-        ]
-        .into_iter()
-        .find(|p| p.is_file());
-        let Some(path) = path else {
-            return Err(format!("original portrait missing: {name} {relative}"));
+        #[cfg(not(feature = "wasm"))]
+        let portrait = {
+            let path = [
+                root.join(relative),
+                root.join(
+                    metadata["portrait"]["recovered_path"]
+                        .as_str()
+                        .unwrap_or("cards/missing.png"),
+                ),
+                Path::new(env!("CARGO_MANIFEST_DIR"))
+                    .join("..")
+                    .join(relative),
+                Path::new(env!("CARGO_MANIFEST_DIR"))
+                    .join("../web")
+                    .join(relative),
+            ]
+            .into_iter()
+            .find(|p| p.is_file());
+            let Some(path) = path else {
+                return Err(format!("original portrait missing: {name} {relative}"));
+            };
+            image::open(path).map_err(|e| e.to_string())?.to_rgba8()
         };
-        let portrait = image::open(path).map_err(|e| e.to_string())?.to_rgba8();
+        #[cfg(feature = "wasm")]
+        let portrait = {
+            let _ = root;
+            let recovered = metadata["portrait"]["recovered_path"]
+                .as_str()
+                .unwrap_or("cards/missing.png");
+            let bytes = clash_native_ui_viewer::vfs::read(relative)
+                .or_else(|_| clash_native_ui_viewer::vfs::read(recovered))
+                .map_err(|_| format!("original portrait missing: {name} {relative}"))?;
+            image::load_from_memory(&bytes)
+                .map_err(|e| e.to_string())?
+                .to_rgba8()
+        };
         let h = (width as f64 * 163. / 130.).round() as u32;
         let mut card = RgbaImage::new(width, h);
         let art = imageops::resize(
