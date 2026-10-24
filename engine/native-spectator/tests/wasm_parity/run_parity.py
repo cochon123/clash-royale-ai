@@ -67,6 +67,12 @@ def main() -> int:
     parser.add_argument("--lag", type=float, default=3.0)
     parser.add_argument("--fps", type=float, default=30.0)
     parser.add_argument("--out", type=Path, default=None)
+    parser.add_argument(
+        "--assets",
+        type=Path,
+        default=None,
+        help="Read-only bundle that already has scene.always_documents. Nothing is written there.",
+    )
     parser.add_argument("--skip-wasm", action="store_true")
     args = parser.parse_args()
     out = args.out or (SPECTATOR / "target" / "wasm-parity" / args.capture)
@@ -74,11 +80,17 @@ def main() -> int:
         shutil.rmtree(out)
     out.mkdir(parents=True)
     cards = cards_for(args.capture)
-    missing = [card for card in cards if card not in CARD_DOCS]
-    if missing:
-        raise SystemExit(f"no temporary dependency documents for {missing}")
-    index = out / "card-index"
-    vfs = prepare_index(index, cards)
+    if args.assets:
+        assets_dir = args.assets.resolve()
+        vfs = vfs_from_existing(assets_dir, out, cards)
+        index_note = f"read-only bundle {assets_dir}"
+    else:
+        missing = [card for card in cards if card not in CARD_DOCS]
+        if missing:
+            raise SystemExit(f"no temporary dependency documents for {missing}")
+        assets_dir = out / "card-index"
+        vfs = prepare_index(assets_dir, cards)
+        index_note = "temporary; scene.always_documents and scene.card_dependency_documents were injected locally"
     frames = out / "frames.jsonl"
     extract_frames(args.capture, frames, args.from_tick, args.limit)
     if not RECORDER.is_file():
@@ -87,7 +99,7 @@ def main() -> int:
         [
             str(RECORDER),
             "--assets",
-            str(index),
+            str(assets_dir),
             "--frames",
             str(frames),
             "--out",
@@ -112,7 +124,7 @@ def main() -> int:
         "cards": cards,
         "from_tick": args.from_tick,
         "limit": args.limit,
-        "index": "temporary; scene.always_documents and scene.card_dependency_documents were injected locally",
+        "index": index_note,
         "address_gate": json.loads((out / "native" / "address-gate.json").read_text()),
     }
     if not args.skip_wasm:
@@ -165,6 +177,75 @@ def cards_for(capture: str) -> list[str]:
         if names:
             return names
     raise SystemExit(f"no decks in {sidecar}")
+
+
+def vfs_from_existing(bundle: Path, out: Path, cards: list[str]) -> Path:
+    """Point the wasm VFS at files already in a bundle. Does not write into it."""
+    assets_path = bundle / "assets.json"
+    assets = json.loads(assets_path.read_text())
+    scene = assets.get("scene") or {}
+    always = scene.get("always_documents")
+    deps = scene.get("card_dependency_documents")
+    if not always or not isinstance(deps, dict):
+        raise SystemExit(
+            f"{bundle} has no scene.always_documents; refusing to rewrite a read-only bundle"
+        )
+    missing = [card for card in cards if card not in deps]
+    if missing:
+        raise SystemExit(f"{bundle} has no dependency documents for {missing}")
+    selected = set(always)
+    for card in cards:
+        selected.update(deps[card])
+    by_name = {doc["name"]: doc for doc in assets["documents"]}
+    absent = sorted(name for name in selected if name not in by_name)
+    if absent:
+        raise SystemExit(f"{bundle} is missing documents {absent}")
+    files: list[dict[str, str]] = []
+    seen: set[str] = set()
+
+    def add(rel: str, source: Path) -> None:
+        if rel in seen:
+            return
+        if not source.is_file():
+            raise SystemExit(f"missing {source}")
+        seen.add(rel)
+        files.append({"path": rel, "source": str(source.resolve())})
+
+    add("assets.json", assets_path)
+    add("presentation.json", bundle / "presentation.json")
+    fonts = bundle / "fonts"
+    if fonts.is_dir():
+        for dirpath, _dirnames, filenames in os.walk(fonts, followlinks=True):
+            for name in filenames:
+                path = Path(dirpath) / name
+                if path.is_file():
+                    add(path.relative_to(bundle).as_posix(), path)
+    cards_dir = bundle / "cards"
+    if cards_dir.is_dir():
+        for dirpath, _dirnames, filenames in os.walk(cards_dir, followlinks=True):
+            for name in filenames:
+                path = Path(dirpath) / name
+                if path.is_file():
+                    add(path.relative_to(bundle).as_posix(), path)
+    for name in sorted(selected):
+        add(
+            f"display-trees/{name}.json",
+            bundle / "display-trees" / f"{name}.json",
+        )
+        for atlas in by_name[name]["atlases"]:
+            source = bundle / atlas["file"]
+            add(f"atlases/{source.name}", source)
+    if CATALOG.is_file():
+        files.append({"path": "data/card_catalog.json", "source": str(CATALOG.resolve())})
+    names = {item["path"] for item in files}
+    if "fonts/supercell-magic_0.ttf" not in names:
+        raise SystemExit("vfs manifest is missing fonts/supercell-magic_0.ttf")
+    files.sort(key=lambda item: item["path"])
+    manifest = out / "vfs.json"
+    manifest.write_text(json.dumps(files))
+    total = sum(Path(item["source"]).stat().st_size for item in files)
+    print(f"vfs {len(files)} files, {total / (1024 * 1024):.1f} MB from {bundle}", flush=True)
+    return manifest
 
 
 def prepare_index(dest: Path, cards: list[str]) -> Path:

@@ -64,7 +64,7 @@ fn load_catalog_portraits() -> BTreeMap<String, CatalogCard> {
     };
     #[cfg(feature = "wasm")]
     let bytes = {
-        let Ok(bytes) = clash_native_ui_viewer::vfs::read("data/card_catalog.json") else {
+        let Ok(bytes) = clash_native_ui_viewer::vfs::take("data/card_catalog.json") else {
             return BTreeMap::new();
         };
         bytes

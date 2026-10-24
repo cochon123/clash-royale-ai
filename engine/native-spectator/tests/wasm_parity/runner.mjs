@@ -27,6 +27,7 @@ const required = [
   "painter_texture_len",
   "painter_texture_release",
   "painter_reset",
+  "painter_set_draw_ms",
   "painter_stats_json",
   "painter_last_error",
 ];
@@ -85,6 +86,8 @@ for (const file of vfs) {
   api.painter_free(dataPtr, data.length);
   callChecked(rc, `painter_vfs_put ${file.path}`);
 }
+noteMemory();
+const memoryAfterVfs = api.memory.buffer.byteLength;
 
 const cards = readFileSync(args.cards);
 const cardsPtr = allocCopy(cards);
@@ -93,6 +96,7 @@ const initRc = api.painter_init(cardsPtr, cards.length, args.width, args.height)
 api.painter_free(cardsPtr, cards.length);
 callChecked(initRc, "painter_init");
 noteMemory();
+const memoryAfterInit = api.memory.buffer.byteLength;
 
 const frames = readFileSync(args.frames, "utf8")
   .split("\n")
@@ -130,6 +134,7 @@ for (let stepIndex = 0; stepIndex < cap; stepIndex += 1) {
   const started = performance.now();
   const code = api.painter_step(dt);
   const elapsed = performance.now() - started;
+  if (code > 0) api.painter_set_draw_ms(elapsed);
   stepMs.push(elapsed);
   noteMemory();
   if (code < 0) {
@@ -159,9 +164,15 @@ const report = {
   wasm_packets: wasmPackets.length,
   vfs_files: vfs.length,
   vfs_bytes: vfsBytes,
+  memory_after_vfs_mb: memoryAfterVfs / (1024 * 1024),
+  memory_after_init_mb: memoryAfterInit / (1024 * 1024),
   draw_samples: drawMs.length,
   draw_p50_ms: percentile(drawMs, 0.5),
+  draw_p90_ms: percentile(drawMs, 0.9),
   draw_p95_ms: percentile(drawMs, 0.95),
+  draw_max_ms: drawMs.length ? Math.max(...drawMs) : null,
+  draw_over_12: drawMs.filter((ms) => ms > 12).length,
+  draw_first_ms: drawMs.slice(0, 6).map((ms) => Number(ms.toFixed(2))),
   step_p50_ms: percentile(stepMs, 0.5),
   step_p95_ms: percentile(stepMs, 0.95),
   peak_wasm_bytes: Math.max(peakWasm, Number(stats.wasm_memory_peak || 0)),

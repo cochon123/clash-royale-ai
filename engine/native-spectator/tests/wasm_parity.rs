@@ -41,7 +41,7 @@ const required = [
   'memory','painter_alloc','painter_free','painter_vfs_put','painter_init',
   'painter_set_lag_ticks','painter_observe','painter_step','painter_result_ptr',
   'painter_result_len','painter_texture_ptr','painter_texture_len',
-  'painter_texture_release','painter_reset','painter_stats_json','painter_last_error'
+  'painter_texture_release','painter_reset','painter_set_draw_ms','painter_stats_json','painter_last_error'
 ];
 const missing = required.filter((name) => !names.has(name));
 if (missing.length) {

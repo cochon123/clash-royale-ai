@@ -135,7 +135,7 @@ impl Presentation {
         #[cfg(feature = "wasm")]
         {
             let _ = root;
-            return match clash_native_ui_viewer::vfs::read("presentation.json") {
+            return match clash_native_ui_viewer::vfs::take("presentation.json") {
                 Ok(bytes) => {
                     serde_json::from_slice(&bytes).map_err(|e| format!("presentation.json: {e}"))
                 }

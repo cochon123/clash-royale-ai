@@ -364,9 +364,83 @@ impl TextureCache {
     }
 }
 
+/// `DefaultHasher` with `usize` and length prefixes forced to 8 bytes.
+///
+/// `Hash` for `[u8]`, `Vec<u8>`, `str` and `usize` writes a `usize` length or
+/// value. That is 8 bytes on x86_64 and 4 on wasm32, so the same pixels hashed
+/// to different texture ids. Forwarding every other write keeps the x86_64
+/// digest, including the variant key of a fitted pose.
+pub(crate) struct Width64Hasher(DefaultHasher);
+
+impl Width64Hasher {
+    pub(crate) fn new() -> Self {
+        Self(DefaultHasher::new())
+    }
+}
+
+impl Hasher for Width64Hasher {
+    fn finish(&self) -> u64 {
+        self.0.finish()
+    }
+
+    fn write(&mut self, bytes: &[u8]) {
+        self.0.write(bytes);
+    }
+
+    fn write_u8(&mut self, value: u8) {
+        self.0.write_u8(value);
+    }
+
+    fn write_u16(&mut self, value: u16) {
+        self.0.write_u16(value);
+    }
+
+    fn write_u32(&mut self, value: u32) {
+        self.0.write_u32(value);
+    }
+
+    fn write_u64(&mut self, value: u64) {
+        self.0.write_u64(value);
+    }
+
+    fn write_u128(&mut self, value: u128) {
+        self.0.write_u128(value);
+    }
+
+    fn write_i8(&mut self, value: i8) {
+        self.0.write_i8(value);
+    }
+
+    fn write_i16(&mut self, value: i16) {
+        self.0.write_i16(value);
+    }
+
+    fn write_i32(&mut self, value: i32) {
+        self.0.write_i32(value);
+    }
+
+    fn write_i64(&mut self, value: i64) {
+        self.0.write_i64(value);
+    }
+
+    fn write_i128(&mut self, value: i128) {
+        self.0.write_i128(value);
+    }
+
+    fn write_usize(&mut self, value: usize) {
+        // `[u8]`/`str` length prefixes call this. x86_64 writes 8 bytes; wasm32
+        // would write 4. `write_u64` is the portable form of the native digest.
+        self.0.write_u64(value as u64);
+    }
+
+    fn write_isize(&mut self, value: isize) {
+        self.0.write_i64(value as i64);
+    }
+}
+
 fn texture_id(image: &RgbaImage) -> String {
     let hash = |salt: u64| {
-        let mut h = DefaultHasher::new();
+        let mut h = Width64Hasher::new();
         salt.hash(&mut h);
         image.width().hash(&mut h);
         image.height().hash(&mut h);
@@ -750,6 +824,47 @@ pub fn fill_rect(dst: &mut RgbaImage, x: i32, y: i32, w: i32, h: i32, color: Rgb
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn width64_hasher_matches_native_default_hasher() {
+        let image = RgbaImage::from_fn(3, 2, |x, y| Rgba([x as u8, y as u8, 9, 255]));
+        let mut native = DefaultHasher::new();
+        0x7363656e655f7631u64.hash(&mut native);
+        image.width().hash(&mut native);
+        image.height().hash(&mut native);
+        image.as_raw().hash(&mut native);
+        let mut portable = Width64Hasher::new();
+        0x7363656e655f7631u64.hash(&mut portable);
+        image.width().hash(&mut portable);
+        image.height().hash(&mut portable);
+        image.as_raw().hash(&mut portable);
+        assert_eq!(
+            native.finish(),
+            portable.finish(),
+            "texture id prefix must stay the x86_64 digest"
+        );
+
+        let mut frames = BTreeMap::new();
+        frames.insert(4u32, 7usize);
+        let mut hidden = BTreeSet::new();
+        hidden.insert(11u32);
+        let label = Some("attack".to_owned());
+        let mut direct = DefaultHasher::new();
+        frames.hash(&mut direct);
+        hidden.hash(&mut direct);
+        label.hash(&mut direct);
+        true.hash(&mut direct);
+        let mut wrapped = Width64Hasher::new();
+        frames.hash(&mut wrapped);
+        hidden.hash(&mut wrapped);
+        label.hash(&mut wrapped);
+        true.hash(&mut wrapped);
+        assert_eq!(direct.finish(), wrapped.finish());
+    }
+    use image::{Rgba, RgbaImage};
+    use std::collections::hash_map::DefaultHasher;
+    use std::collections::{BTreeMap, BTreeSet};
+    use std::hash::{Hash, Hasher};
     use crate::{
         blit::{self, ShadowMask},
         draw::Painter,

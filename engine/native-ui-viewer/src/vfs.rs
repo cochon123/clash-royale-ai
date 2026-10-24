@@ -55,6 +55,36 @@ pub fn read(path: &str) -> Result<Vec<u8>, String> {
     })
 }
 
+/// Remove a file and return its bytes. Parsing and atlas decode use this so
+/// the compressed copy does not stay beside the decoded one.
+pub fn take(path: &str) -> Result<Vec<u8>, String> {
+    let key = normalize(path)?;
+    FILES.with(|files| {
+        files
+            .borrow_mut()
+            .remove(&key)
+            .ok_or_else(|| format!("vfs missing {key}"))
+    })
+}
+
+/// Bytes still stored in the VFS. Decoded images are not included.
+pub fn resident_bytes() -> usize {
+    FILES.with(|files| files.borrow().values().map(|bytes| bytes.len()).sum())
+}
+
+/// Paths still stored, largest first. Decoded images are not included.
+pub fn resident_files() -> Vec<(String, usize)> {
+    FILES.with(|files| {
+        let mut rows: Vec<_> = files
+            .borrow()
+            .iter()
+            .map(|(path, bytes)| (path.clone(), bytes.len()))
+            .collect();
+        rows.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+        rows
+    })
+}
+
 pub fn contains(path: &str) -> bool {
     normalize(path)
         .ok()
@@ -80,6 +110,10 @@ mod tests {
         assert_eq!(read("./display-trees/chr_hog_rider.json").unwrap(), b"{\"a\":1}");
         assert!(put("../assets.json", b"no").is_err());
         assert!(read("missing.json").is_err());
+        assert_eq!(resident_bytes(), b"{\"a\":1}".len());
+        assert_eq!(take("display-trees/chr_hog_rider.json").unwrap(), b"{\"a\":1}");
+        assert_eq!(resident_bytes(), 0);
+        assert!(take("display-trees/chr_hog_rider.json").is_err());
         clear();
         assert_eq!(len(), 0);
     }

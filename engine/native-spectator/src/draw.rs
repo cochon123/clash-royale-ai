@@ -270,7 +270,7 @@ impl Painter {
         #[cfg(feature = "wasm")]
         let manifest_bytes = {
             let _ = root;
-            clash_native_ui_viewer::vfs::read("assets.json")?
+            clash_native_ui_viewer::vfs::take("assets.json")?
         };
         let manifest: Value =
             serde_json::from_slice(&manifest_bytes).map_err(|e| e.to_string())?;
@@ -552,6 +552,17 @@ impl Painter {
 
     pub fn particle_count(&self) -> usize {
         self.vfx.particle_count()
+    }
+
+    /// Decoded atlas bytes and how many scenes are loaded. The VFS remainder
+    /// is reported separately; wasm linear memory does not shrink after a free.
+    pub fn memory_profile(&self) -> (usize, usize) {
+        let atlas = self
+            .scenes
+            .values()
+            .map(|scene| scene.atlas_rgba_bytes())
+            .sum();
+        (atlas, self.scenes.len())
     }
 
     /// New round: drop actors, history and the display-clock inputs. Loaded
@@ -1909,7 +1920,9 @@ impl Painter {
         flip: bool,
     ) -> Result<Option<Rc<Fitted>>> {
         use std::hash::{Hash, Hasher};
-        let mut hasher = std::collections::hash_map::DefaultHasher::new();
+        // Same 8-byte usize prefix as x86_64, so a fitted-pose cache key does
+        // not change between the native spectator and wasm32.
+        let mut hasher = scene::Width64Hasher::new();
         playback.object_frames.hash(&mut hasher);
         playback.hidden_objects.hash(&mut hasher);
         playback.label.hash(&mut hasher);

@@ -65,6 +65,7 @@ pub struct ExportSession {
     pub observe_count: u64,
     pub steps: u64,
     pub packets: u64,
+    last_draw_ms: Option<f64>,
     width: u32,
     height: u32,
     result: Vec<u8>,
@@ -95,6 +96,7 @@ impl ExportSession {
             observe_count: 0,
             steps: 0,
             packets: 0,
+            last_draw_ms: None,
             width,
             height,
             result: Vec::new(),
@@ -260,6 +262,7 @@ impl ExportSession {
         self.last_display = None;
         self.force_emit = false;
         self.result.clear();
+        self.last_draw_ms = None;
     }
 
     /// Drop published RGBA. Not part of `painter_reset`: the page keeps ids
@@ -268,15 +271,31 @@ impl ExportSession {
         self.cache.borrow_mut().clear();
     }
 
+    /// Host-measured duration of the last `painter_step` that published a packet.
+    /// Wasm has no `Instant`; the page passes `performance.now()` around the call.
+    pub fn set_draw_ms(&mut self, ms: f64) {
+        if ms.is_finite() && ms >= 0. {
+            self.last_draw_ms = Some(ms);
+        }
+    }
+
     pub fn stats_value(&self) -> Value {
+        let (atlas_rgba_bytes, scene_count) = self.painter.memory_profile();
         json!({
             "observe_count": self.observe_count,
             "steps": self.steps,
             "packets": self.packets,
             "cache_bytes": self.cache_bytes(),
             "texture_count": self.texture_count(),
-            "draw_ms": Value::Null,
+            "draw_ms": self.last_draw_ms,
             "draw_ms_source": "host",
+            "atlas_rgba_bytes": atlas_rgba_bytes,
+            "scene_count": scene_count,
+            "vfs_bytes": clash_native_ui_viewer::vfs::resident_bytes(),
+            "vfs_files": clash_native_ui_viewer::vfs::resident_files()
+                .into_iter()
+                .map(|(path, bytes)| json!({"path": path, "bytes": bytes}))
+                .collect::<Vec<_>>(),
         })
     }
 }
@@ -336,6 +355,9 @@ pub fn address_permutation(frames: &[BattleFrame], seed: u64) -> BTreeMap<u64, u
         state = state
             .wrapping_mul(6364136223846793005)
             .wrapping_add(1);
+        // Native usize is 8 bytes, so this keeps the full LCG word. A wasm32
+        // `usize` would truncate it. The gate runs in the native recorder
+        // only; changing the cast would change which permutation is tested.
         let swap = (state as usize) % (index + 1);
         order.swap(index, swap);
     }

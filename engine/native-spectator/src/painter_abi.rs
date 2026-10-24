@@ -18,6 +18,7 @@ struct Host {
     /// RGBA returned by `painter_texture_ptr`, stable until the next call.
     texture: Vec<u8>,
     peak_memory: usize,
+    init_memory: usize,
 }
 
 impl Host {
@@ -30,6 +31,7 @@ impl Host {
             error: String::new(),
             texture: Vec::new(),
             peak_memory: 0,
+            init_memory: 0,
         }
     }
 
@@ -152,6 +154,7 @@ pub extern "C" fn painter_init(
             Ok(session) => {
                 host.session = Some(session);
                 host.error.clear();
+                host.init_memory = linear_memory();
                 host.note_memory();
                 0
             }
@@ -302,6 +305,19 @@ pub extern "C" fn painter_texture_release(id_ptr: *const u8, id_len: u32) {
     });
 }
 
+/// Record the host's measurement of the last `painter_step`, in milliseconds.
+/// `Instant` panics on `wasm32-unknown-unknown` and the module has no imports,
+/// so the page times the call and passes the duration in.
+#[no_mangle]
+pub extern "C" fn painter_set_draw_ms(ms: f64) {
+    HOST.with(|host| {
+        let mut host = host.borrow_mut();
+        if let Some(session) = host.session.as_mut() {
+            session.set_draw_ms(ms);
+        }
+    });
+}
+
 #[no_mangle]
 pub extern "C" fn painter_reset() {
     HOST.with(|host| {
@@ -332,6 +348,10 @@ pub extern "C" fn painter_stats_json() -> i32 {
             object.insert(
                 "wasm_memory_peak".into(),
                 serde_json::json!(host.peak_memory),
+            );
+            object.insert(
+                "wasm_memory_after_init".into(),
+                serde_json::json!(host.init_memory),
             );
         }
         match serde_json::to_vec(&stats) {
