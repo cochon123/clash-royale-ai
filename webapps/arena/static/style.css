@@ -138,6 +138,11 @@ img#board-stream { display: block; width: 100%; height: 100%; touch-action: none
 .overlay p { color: var(--muted); margin: 6px 0 18px; }
 .spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid #ffffff22; border-top-color: var(--gold); animation: spin 1s linear infinite; margin: 0 auto 12px; }
 .spinner[hidden] { display: none; }
+.loading-progress { margin: 0 0 14px; }
+.loading-progress[hidden] { display: none; }
+.loading-progress .track { height: 8px; border-radius: 99px; background: #ffffff22; overflow: hidden; }
+.loading-progress .bar { height: 100%; width: 0; background: var(--gold); }
+.loading-progress .label { color: var(--muted); font-size: 12px; margin-top: 6px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 600px) {
   .lobby { padding: 12px 10px 120px; }

@@ -3,16 +3,21 @@
 // The explicit stream view remains available for comparison and compatibility.
 const $ = (id) => document.getElementById(id);
 const BASE = new URL(".", document.currentScript.src).pathname.replace(/\/$/, "");
-const matchId = new URLSearchParams(location.search).get("id");
+const WORKER_URL = new URL("painter-worker.js", document.currentScript.src);
+const pageParams = new URLSearchParams(location.search);
+const matchId = pageParams.get("id");
 const canvas = $("board"), fallbackCanvas = $("board-fallback"), ctx = fallbackCanvas.getContext("2d");
 const controlsCanvas = $("local-controls"), controls = controlsCanvas.getContext("2d");
-const explicitStream = new URLSearchParams(location.search).get("view") === "stream";
+const explicitStream = pageParams.get("view") === "stream";
 const video = $("board-stream"), stage = $("native-stage");
 let meta = null, cur = null, layout = null, selection = null;
 let serial = Date.now() * 1000, pendingSerial = 0, lastAimSent = 0;
 let pointer = null, aim = null, running = true, viewReady = false, polling = false;
 let stream = null, sceneStream = null, sceneRenderer = null, imageRequest = null, browserMode = false, viewStarted = false;
 let videoTimer = null, readySceneMatchId = null, sceneRetryTimer = null, sceneFailed = false;
+let painterWorker = null, painterMode = false, painterDiag = null, mainCompositor = null, mainTextures = null;
+let canvasTransferred = false, engineStatus = "", legacyStarted = false;
+const displayTrace = [];
 const human = () => meta?.mode === "human";
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -40,13 +45,36 @@ function send(op, extra = {}) {
 }
 function showLoading(message, final = false) {
   $("loading").classList.add("show");
-  $("loading-msg").textContent = message;
+  if (message) $("loading-msg").textContent = message;
   $("loading").querySelector(".spinner").hidden = final;
   if (final) $("loading").querySelector("h2").textContent = "Match stopped";
 }
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${Math.round(bytes)} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+function showProgress(loaded, total) {
+  const box = $("loading-progress");
+  if (!box) return;
+  box.hidden = false;
+  const fraction = total > 0 ? Math.max(0, Math.min(1, loaded / total)) : 0;
+  $("loading-bar").style.width = `${fraction * 100}%`;
+  $("loading-progress-label").textContent = total > 0 ? `${formatBytes(loaded)} / ${formatBytes(total)}` : formatBytes(loaded);
+}
+function supportsOffscreenWebGL() {
+  try {
+    if (typeof OffscreenCanvas === "undefined" || !canvas.transferControlToOffscreen) return false;
+    const probe = new OffscreenCanvas(1, 1);
+    const gl = probe.getContext("webgl2", {alpha: false, antialias: false});
+    if (!gl) return false;
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return true;
+  } catch { return false; }
+}
 function stop(message) {
   running = false; clearTimeout(sceneRetryTimer);
-  stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); inputTransport.destroy();
+  stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); painterWorker?.terminate(); mainCompositor?.destroy(); inputTransport.destroy();
   imageRequest?.abort();
   stopVideo();
   showLoading(message, true);
@@ -252,7 +280,19 @@ function drawControls() {
   }
 }
 // Read-only diagnostics for local profiling and QA.
-window.arenaDiagnostics = () => ({mode: browserMode ? "browser" : "stream", scene: sceneRenderer?.stats, input: inputTransport.stats, tick: cur?.tick, status: cur?.status});
+window.arenaDiagnostics = () => ({
+  mode: browserMode ? "browser" : "stream",
+  scene: sceneRenderer?.stats || mainCompositor?.stats || null,
+  input: inputTransport.stats,
+  tick: cur?.tick,
+  status: cur?.status,
+  painter: painterDiag?.painter || null,
+  lag_ms: painterDiag?.lag_ms ?? null,
+  jitter_ms: painterDiag?.jitter_ms ?? null,
+  freezes: painterDiag?.freezes || null,
+  asset_bytes: painterDiag?.asset_bytes ?? null
+});
+window.arenaDisplayTrace = () => displayTrace;
 
 async function bootstrapView() {
   // One frame up front: instant picture, plus the input layout header.
@@ -330,6 +370,134 @@ async function pollImages() {
     }
   }
 }
+function applyMeta(next) {
+  meta = next;
+  $("match-title").textContent = meta.labels.join(" vs ");
+  document.title = `${meta.labels.join(" vs ")} · Arena`;
+  $("speed").hidden = human();
+  $("speed").replaceChildren(...(human() ? [] : [0.5, 1, 2, 4].map((value) => {
+    const button = document.createElement("button");
+    button.className = "icon-btn"; button.textContent = `${value}×`; button.dataset.speed = value;
+    button.onclick = () => control("speed", value);
+    return button;
+  })));
+  updateHandTargets();
+}
+function showPainterChrome() {
+  painterMode = true;
+  browserMode = true;
+  canvas.hidden = false; fallbackCanvas.hidden = true; controlsCanvas.hidden = false;
+  const alternate = `${BASE}/play.html?id=${encodeURIComponent(matchId)}&view=stream`;
+  $("view-mode").href = alternate;
+  $("view-mode").hidden = false;
+  $("view-mode").textContent = "Stream view";
+  $("fallback-link").href = alternate;
+}
+function notePainterLayout(next, matchNumber) {
+  if (!next) return;
+  layout = next;
+  if (matchNumber != null) readySceneMatchId = matchNumber;
+  updateHandTargets();
+  drawControls();
+}
+function markPainterReady() {
+  viewReady = true;
+  $("fallback-link").hidden = true;
+  if (cur) $("loading").classList.remove("show");
+  updateHandTargets();
+  drawControls();
+}
+function compositeOnMain(message) {
+  if (!mainTextures) mainTextures = new Map();
+  for (const tex of message.textures || []) mainTextures.set(tex.id, {width: tex.width, height: tex.height, rgba: new Uint8Array(tex.buffer)});
+  for (const id of message.evicted || []) mainTextures.delete(id);
+  if (!mainCompositor) {
+    mainCompositor = new SceneCompositor(canvas, {textureSource: (id) => mainTextures.get(id) || null, alpha: false});
+  }
+  mainCompositor.push(message.packet);
+  notePainterLayout(message.packet.layout, message.packet.match_id);
+}
+function attachPainterCanvas() {
+  showPainterChrome();
+  if (canvasTransferred) return;
+  if (supportsOffscreenWebGL()) {
+    const offscreen = canvas.transferControlToOffscreen();
+    canvasTransferred = true;
+    painterWorker.postMessage({type: "canvas", canvas: offscreen}, [offscreen]);
+  } else painterWorker.postMessage({type: "canvas", fallback: true});
+}
+function forwardTicks(url) {
+  sceneStream?.close();
+  sceneStream = new EventSource(url);
+  for (const name of ["meta", "ticks", "status", "closed", "error", "round", "resync"]) {
+    sceneStream.addEventListener(name, (event) => {
+      painterWorker?.postMessage({type: "sse", event: name, data: event.data});
+    });
+  }
+  sceneStream.onerror = () => { if (!meta && running) $("feedback").textContent = "Reconnecting to the match..."; };
+}
+function onPainterMessage(message) {
+  if (!running || !message) return;
+  if (message.type === "need-ticks") { forwardTicks(message.url); return; }
+  if (message.type === "need-canvas") { attachPainterCanvas(); return; }
+  if (message.type === "legacy") {
+    if (canvasTransferred) { showLoading("Browser graphics could not start on this device.", true); $("fallback-link").hidden = false; return; }
+    painterWorker?.terminate(); painterWorker = null;
+    connectLegacy();
+    return;
+  }
+  if (message.type === "meta") { applyMeta(message.meta); showPainterChrome(); return; }
+  if (message.type === "progress") {
+    showProgress(message.loaded, message.total);
+    if (!viewReady) showLoading(engineStatus || "Loading battle assets...");
+    return;
+  }
+  if (message.type === "status") {
+    if (message.status?.error) { showLoading(message.status.error, true); $("fallback-link").hidden = false; return; }
+    engineStatus = message.status?.message || "";
+    if (!viewReady && engineStatus) showLoading(engineStatus);
+    return;
+  }
+  if (message.type === "hud") { onFrame(message.hud); return; }
+  if (message.type === "layout") { notePainterLayout(message.layout, message.match_id); return; }
+  if (message.type === "ready") { markPainterReady(); return; }
+  if (message.type === "composite") { compositeOnMain(message); return; }
+  if (message.type === "trace") {
+    displayTrace.push(message.sample);
+    if (displayTrace.length > 12000) displayTrace.splice(0, displayTrace.length - 12000);
+    return;
+  }
+  if (message.type === "diagnostics") { painterDiag = message.diagnostics; return; }
+  if (message.type === "round" || message.type === "resync") {
+    viewReady = false; selection = null; aim = null; pointer = null;
+    showLoading(message.type === "round" ? "Preparing the new battle..." : "Catching up...");
+    return;
+  }
+  if (message.type === "error") { viewReady = false; showLoading(message.message, true); $("fallback-link").hidden = false; return; }
+  if (message.type === "closed") stop(cur?.message || "This match has closed.");
+}
+function beginPainter() {
+  painterWorker = new Worker(WORKER_URL);
+  painterWorker.onmessage = (event) => onPainterMessage(event.data);
+  painterWorker.postMessage({
+    type: "init", base: BASE, matchId, width: 540, height: 900,
+    painter: pageParams.get("painter") || "auto",
+    recordingUrl: pageParams.get("recording") || ""
+  });
+}
+function connectLegacy() {
+  if (legacyStarted || !running) return;
+  legacyStarted = true;
+  stream = new EventSource(`${BASE}/api/matches/${matchId}/stream`);
+  stream.addEventListener("meta", (event) => { applyMeta(JSON.parse(event.data)); startView(); });
+  stream.addEventListener("frame", (event) => onFrame(JSON.parse(event.data)));
+  stream.addEventListener("status", (event) => {
+    const status = JSON.parse(event.data);
+    if (status.error) stop(status.error);
+  });
+  stream.addEventListener("closed", () => stop(cur?.message || "This match has closed."));
+  stream.onerror = () => { $("feedback").textContent = "Reconnecting to the match..."; };
+}
 async function connect() {
   if (!matchId) { stop("No match selected. Go back to the lobby."); return; }
   try {
@@ -337,29 +505,8 @@ async function connect() {
     const summary = await response.json();
     if (!response.ok) { stop(summary.error); return; }
     if (summary.error || summary.status === "closed") { stop(summary.error || summary.message); return; }
-    stream = new EventSource(`${BASE}/api/matches/${matchId}/stream`);
-    stream.addEventListener("meta", (event) => {
-      meta = JSON.parse(event.data);
-      $("match-title").textContent = meta.labels.join(" vs ");
-      document.title = `${meta.labels.join(" vs ")} · Arena`;
-      $("speed").hidden = human();
-      $("speed").replaceChildren(...(human() ? [] : [0.5, 1, 2, 4].map((value) => {
-        const button = document.createElement("button");
-        button.className = "icon-btn"; button.textContent = `${value}×`; button.dataset.speed = value;
-        button.onclick = () => control("speed", value);
-        return button;
-      })));
-      updateHandTargets();
-      startView();
-    });
-    stream.addEventListener("frame", (event) => onFrame(JSON.parse(event.data)));
-    stream.addEventListener("status", (event) => {
-      const status = JSON.parse(event.data);
-      if (status.error) stop(status.error);
-    });
-    stream.addEventListener("closed", () => stop(cur?.message || "This match has closed."));
-    stream.onerror = () => { $("feedback").textContent = "Reconnecting to the match..."; };
-
+    if (explicitStream) connectLegacy();
+    else beginPainter();
   } catch (error) { stop(error.message); }
 }
 function toWorld(event) {
@@ -422,14 +569,14 @@ window.addEventListener("keydown", (event) => {
 $("pause").onclick = () => control("pause");
 $("rematch").onclick = () => control("reset");
 $("end-match").onclick = async () => {
-  try { await post(`/api/matches/${matchId}/close`); running = false; clearTimeout(sceneRetryTimer); stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); inputTransport.destroy(); imageRequest?.abort(); stopVideo(); location.href = `${BASE}/`; }
+  try { await post(`/api/matches/${matchId}/close`); running = false; clearTimeout(sceneRetryTimer); stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); painterWorker?.terminate(); mainCompositor?.destroy(); inputTransport.destroy(); imageRequest?.abort(); stopVideo(); location.href = `${BASE}/`; }
   catch (error) { $("feedback").textContent = error.message; }
 };
 $("fullscreen").onclick = () => {
   const action = document.fullscreenElement ? document.exitFullscreen() : $("native-wrap").requestFullscreen?.();
   action?.catch(() => {});
 };
-window.addEventListener("pagehide", () => { running = false; clearTimeout(sceneRetryTimer); stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); inputTransport.destroy(); imageRequest?.abort(); stopVideo(); });
+window.addEventListener("pagehide", () => { running = false; clearTimeout(sceneRetryTimer); stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); painterWorker?.terminate(); mainCompositor?.destroy(); inputTransport.destroy(); imageRequest?.abort(); stopVideo(); });
 window.addEventListener("pageshow", event => { if (event.persisted) location.reload(); });
 resize();
 connect();
