@@ -74,9 +74,12 @@ impl PlayerInput {
     }
 
     pub fn command(&mut self, op: &str) -> Value {
+        #[cfg(not(feature = "wasm"))]
         let stamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map_or(0, |d| d.as_nanos() as u64);
+        #[cfg(feature = "wasm")]
+        let stamp = self.serial.saturating_add(1);
         self.serial = stamp.max(self.serial + 1);
         json!({"op":op,"serial":self.serial,"match_id":self.match_id})
     }

@@ -132,16 +132,29 @@ impl Presentation {
     /// Missing file means older bundles: the viewer still renders, without
     /// logic-timed attacks or original particle effects.
     pub fn load(root: &Path) -> Result<Self, String> {
-        let path = root.join("presentation.json");
-        if !path.is_file() {
-            eprintln!(
-                "native-spectator: {} missing; run tools/spectator_presentation.py for original effects",
-                path.display()
-            );
-            return Ok(Self::default());
+        #[cfg(feature = "wasm")]
+        {
+            let _ = root;
+            return match clash_native_ui_viewer::vfs::read("presentation.json") {
+                Ok(bytes) => {
+                    serde_json::from_slice(&bytes).map_err(|e| format!("presentation.json: {e}"))
+                }
+                Err(_) => Ok(Self::default()),
+            };
         }
-        let bytes = std::fs::read(&path).map_err(|e| e.to_string())?;
-        serde_json::from_slice(&bytes).map_err(|e| format!("{}: {e}", path.display()))
+        #[cfg(not(feature = "wasm"))]
+        {
+            let path = root.join("presentation.json");
+            if !path.is_file() {
+                eprintln!(
+                    "native-spectator: {} missing; run tools/spectator_presentation.py for original effects",
+                    path.display()
+                );
+                return Ok(Self::default());
+            }
+            let bytes = std::fs::read(&path).map_err(|e| e.to_string())?;
+            serde_json::from_slice(&bytes).map_err(|e| format!("{}: {e}", path.display()))
+        }
     }
 
     pub fn row(&self, name: &str) -> Option<&RowLogic> {

@@ -7,6 +7,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::error::Error;
 use std::path::{Path, PathBuf};
 
+pub mod vfs;
+
 pub type Result<T> = std::result::Result<T, Box<dyn Error>>;
 const MAX_DIMENSION: u32 = 8192;
 
@@ -245,9 +247,16 @@ impl Scene {
             return Err("--document must be one recovered document name".into());
         }
         let document_path = root.join("display-trees").join(format!("{document}.json"));
+        #[cfg(not(feature = "wasm"))]
         let document: Document = serde_json::from_reader(std::io::BufReader::new(
             std::fs::File::open(&document_path)?,
         ))?;
+        #[cfg(feature = "wasm")]
+        let document: Document = {
+            let _ = &document_path;
+            let bytes = crate::vfs::read(&format!("display-trees/{document}.json"))?;
+            serde_json::from_slice(&bytes)?
+        };
         let mut textures = Vec::new();
         for texture in &document.textures {
             let filename = Path::new(&texture.external)
@@ -255,7 +264,17 @@ impl Scene {
                 .ok_or("missing atlas name")?;
             let mut atlas_path = root.join("atlases").join(filename);
             atlas_path.set_extension("png");
+            #[cfg(not(feature = "wasm"))]
             let atlas = image::open(&atlas_path)?.to_rgba8();
+            #[cfg(feature = "wasm")]
+            let atlas = {
+                let name = atlas_path
+                    .file_name()
+                    .and_then(|name| name.to_str())
+                    .ok_or("missing atlas name")?;
+                let bytes = crate::vfs::read(&format!("atlases/{name}"))?;
+                image::load_from_memory(&bytes)?.to_rgba8()
+            };
             if atlas.dimensions() != (texture.width, texture.height) {
                 return Err(format!(
                     "Atlas dimensions differ from recovered SC data: {}",
@@ -577,8 +596,13 @@ impl Scene {
             .unwrap_or(Path::new("."))
             .join("fonts")
             .join(filename);
+        #[cfg(not(feature = "wasm"))]
         let bytes = std::fs::read(&path)
             .map_err(|e| format!("Cannot load recovered font {}: {e}", path.display()))?;
+        #[cfg(feature = "wasm")]
+        let bytes = crate::vfs::read(&format!("fonts/{filename}")).map_err(|e| {
+            format!("Cannot load recovered font {}: {e}", path.display())
+        })?;
         let font = fontdue::Font::from_bytes(bytes, fontdue::FontSettings::default())
             .map_err(|e| format!("Invalid recovered font: {e}"))?;
         let size = field.font_size.max(1.);
@@ -655,8 +679,15 @@ pub fn rasterize_text(
     size: f32,
     color: u32,
 ) -> Result<RgbaImage> {
-    let path = root.join("fonts").join(font_filename(font_name));
-    let font = fontdue::Font::from_bytes(std::fs::read(path)?, fontdue::FontSettings::default())
+    let filename = font_filename(font_name);
+    #[cfg(not(feature = "wasm"))]
+    let bytes = std::fs::read(root.join("fonts").join(filename))?;
+    #[cfg(feature = "wasm")]
+    let bytes = {
+        let _ = root;
+        crate::vfs::read(&format!("fonts/{filename}"))?
+    };
+    let font = fontdue::Font::from_bytes(bytes, fontdue::FontSettings::default())
         .map_err(|e| format!("Invalid recovered font: {e}"))?;
     let glyphs: Vec<_> = text
         .chars()

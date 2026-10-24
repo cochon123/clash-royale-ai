@@ -7,16 +7,26 @@
 //! deliberately single-threaded. No pointer is dereferenced or retained beyond
 //! a draw; the root allocation's address is only compared for target identity.
 use crate::blit::{Affine, Blend};
-use image::{imageops, ImageFormat, Rgba, RgbaImage};
+#[cfg(not(feature = "wasm"))]
+use image::ImageFormat;
+use image::{imageops, Rgba, RgbaImage};
 use serde::Serialize;
 use std::{
-    cell::RefCell,
+    cell::{Cell, RefCell},
     collections::{hash_map::DefaultHasher, BTreeMap, BTreeSet},
-    fs,
     hash::{Hash, Hasher},
-    path::{Path, PathBuf},
+    path::PathBuf,
+};
+#[cfg(not(feature = "wasm"))]
+use std::path::Path;
+use std::{
     rc::Rc,
-    time::{Duration, SystemTime, UNIX_EPOCH},
+    time::Duration,
+};
+#[cfg(not(feature = "wasm"))]
+use std::{
+    fs,
+    time::{SystemTime, UNIX_EPOCH},
 };
 
 #[derive(Clone, Debug, Serialize)]
@@ -79,6 +89,7 @@ struct CacheEntry {
 }
 
 pub struct TextureCache {
+    #[cfg_attr(feature = "wasm", allow(dead_code))]
     root: PathBuf,
     entries: BTreeMap<String, CacheEntry>,
     pub encoded_bytes: u64,
@@ -90,9 +101,14 @@ pub struct TextureCache {
     current: BTreeSet<String>,
     published: BTreeSet<String>,
     evicted: BTreeSet<String>,
+    /// RGBA copies for the wasm painter. Disk mode leaves this empty.
+    memory: bool,
+    pixels: BTreeMap<String, Vec<u8>>,
+    manual_clock: Option<Rc<Cell<Duration>>>,
 }
 
 impl TextureCache {
+    #[cfg(not(feature = "wasm"))]
     pub fn new(root: &Path) -> Result<Self, String> {
         fs::create_dir_all(root).map_err(|e| format!("create texture cache: {e}"))?;
         let mut cache = Self {
@@ -111,6 +127,9 @@ impl TextureCache {
             current: BTreeSet::new(),
             published: BTreeSet::new(),
             evicted: BTreeSet::new(),
+            memory: false,
+            pixels: BTreeMap::new(),
+            manual_clock: None,
         };
         // Account for immutable files left by a presenter restart. Ignoring
         // these would make the on-disk budget grow without bound across runs.
@@ -155,11 +174,74 @@ impl TextureCache {
         Ok(cache)
     }
 
+    /// Pose store that keeps RGBA in memory and reads time from [`Self::advance_clock`].
+    pub fn memory() -> Self {
+        let now = Rc::new(Cell::new(Duration::ZERO));
+        let clock_now = now.clone();
+        Self {
+            root: PathBuf::new(),
+            entries: BTreeMap::new(),
+            encoded_bytes: 0,
+            encodes: 0,
+            max_textures: 8192,
+            max_bytes: 256 * 1024 * 1024,
+            grace: Duration::from_secs(30),
+            clock: Rc::new(move || clock_now.get()),
+            current: BTreeSet::new(),
+            published: BTreeSet::new(),
+            evicted: BTreeSet::new(),
+            memory: true,
+            pixels: BTreeMap::new(),
+            manual_clock: Some(now),
+        }
+    }
+
+    /// Move the injected clock. Disk mode keeps using the wall clock.
+    pub fn advance_clock(&mut self, dt_seconds: f64) {
+        let Some(clock) = &self.manual_clock else {
+            return;
+        };
+        let step = if dt_seconds.is_finite() && dt_seconds > 0. {
+            Duration::from_secs_f64(dt_seconds)
+        } else {
+            Duration::ZERO
+        };
+        clock.set(clock.get().saturating_add(step));
+    }
+
+    pub fn rgba(&self, id: &str) -> Option<&[u8]> {
+        self.pixels.get(id).map(Vec::as_slice)
+    }
+
+    /// Drop the RGBA copy after the page has uploaded it. The id stays known,
+    /// so a later draw does not publish the pose again.
+    pub fn release_rgba(&mut self, id: &str) -> bool {
+        let Some(pixels) = self.pixels.remove(id) else {
+            return false;
+        };
+        if let Some(entry) = self.entries.get_mut(id) {
+            self.encoded_bytes = self.encoded_bytes.saturating_sub(entry.bytes);
+            entry.bytes = entry.bytes.saturating_sub(pixels.len() as u64);
+        }
+        true
+    }
+
     pub fn len(&self) -> usize {
         self.entries.len()
     }
     pub fn is_empty(&self) -> bool {
         self.entries.is_empty()
+    }
+
+    /// Drop every pose. The address-gate harness uses this between replays so
+    /// the second pass publishes textures again. `painter_reset` does not.
+    pub fn clear(&mut self) {
+        self.entries.clear();
+        self.pixels.clear();
+        self.current.clear();
+        self.published.clear();
+        self.evicted.clear();
+        self.encoded_bytes = 0;
     }
 
     fn begin_frame(&mut self) {
@@ -195,8 +277,19 @@ impl TextureCache {
             let Some((_, id)) = cold.next() else {
                 return Err(format!("original texture working set exceeds {} textures / {} bytes within the {}s in-flight grace", self.max_textures, self.max_bytes, self.grace.as_secs()));
             };
-            fs::remove_file(self.root.join(format!("{id}.png")))
-                .map_err(|e| format!("evict cold original texture: {e}"))?;
+            if self.memory {
+                self.pixels.remove(&id);
+            } else {
+                #[cfg(not(feature = "wasm"))]
+                {
+                    fs::remove_file(self.root.join(format!("{id}.png")))
+                        .map_err(|e| format!("evict cold original texture: {e}"))?;
+                }
+                #[cfg(feature = "wasm")]
+                {
+                    return Err("disk texture cache is disabled under wasm".into());
+                }
+            }
             let entry = self.entries.remove(&id).expect("candidate exists");
             self.encoded_bytes = self.encoded_bytes.saturating_sub(entry.bytes);
             self.evicted.insert(id);
@@ -218,21 +311,37 @@ impl TextureCache {
             entry.last_used = (self.clock)();
             return Ok((entry.texture.clone(), false));
         }
-        let path = self.root.join(format!("{id}.png"));
-        let temp = self.root.join(format!(".{id}.{}.tmp", std::process::id()));
-        let result = image
-            .save_with_format(&temp, ImageFormat::Png)
-            .map_err(|e| format!("encode original texture: {e}"))
-            .and_then(|_| {
-                let bytes = fs::metadata(&temp).map_err(|e| e.to_string())?.len();
-                self.make_room(bytes, 1)?;
-                fs::rename(&temp, &path).map_err(|e| format!("publish original texture: {e}"))?;
-                Ok(bytes)
-            });
-        if result.is_err() {
-            let _ = fs::remove_file(&temp);
-        }
-        let bytes = result?;
+        let bytes = if self.memory {
+            let raw = image.as_raw().clone();
+            let bytes = raw.len() as u64;
+            self.make_room(bytes, 1)?;
+            self.pixels.insert(id.clone(), raw);
+            bytes
+        } else {
+            #[cfg(feature = "wasm")]
+            {
+                return Err("disk texture cache is disabled under wasm".into());
+            }
+            #[cfg(not(feature = "wasm"))]
+            {
+                let path = self.root.join(format!("{id}.png"));
+                let temp = self.root.join(format!(".{id}.{}.tmp", std::process::id()));
+                let result = image
+                    .save_with_format(&temp, ImageFormat::Png)
+                    .map_err(|e| format!("encode original texture: {e}"))
+                    .and_then(|_| {
+                        let bytes = fs::metadata(&temp).map_err(|e| e.to_string())?.len();
+                        self.make_room(bytes, 1)?;
+                        fs::rename(&temp, &path)
+                            .map_err(|e| format!("publish original texture: {e}"))?;
+                        Ok(bytes)
+                    });
+                if result.is_err() {
+                    let _ = fs::remove_file(&temp);
+                }
+                result?
+            }
+        };
         self.encodes += 1;
         self.encoded_bytes += bytes;
         let texture = Texture {
@@ -1092,6 +1201,51 @@ mod tests {
         let restarted = TextureCache::new(&cache.root).unwrap();
         assert_eq!(restarted.encoded_bytes, cache.cache.borrow().encoded_bytes);
         assert_eq!(restarted.len(), cache.cache.borrow().len());
+    }
+
+    #[test]
+    fn memory_cache_releases_rgba_and_evicts_cold_poses() {
+        let mut cache = TextureCache::memory();
+        cache.max_bytes = 8;
+        cache.grace = Duration::from_secs(1);
+        let pixel = |r| {
+            let mut image = RgbaImage::new(1, 1);
+            image.put_pixel(0, 0, Rgba([r, 0, 0, 255]));
+            image
+        };
+        let a = pixel(1);
+        let b = pixel(2);
+        let c = pixel(3);
+        cache.begin_frame();
+        let (first, created) = cache.texture(&a).unwrap();
+        assert!(created);
+        assert!(cache.finish_frame().is_empty());
+        assert_eq!(cache.rgba(&first.id).unwrap().len(), 4);
+        cache.begin_frame();
+        cache.texture(&b).unwrap();
+        cache.finish_frame();
+        cache.advance_clock(2.);
+        cache.begin_frame();
+        cache.texture(&c).unwrap();
+        let evicted = cache.finish_frame();
+        assert!(
+            evicted.contains(&first.id),
+            "cold pose should leave the LRU budget: {evicted:?}"
+        );
+        let mut held = TextureCache::memory();
+        held.begin_frame();
+        let (kept, _) = held.texture(&a).unwrap();
+        held.finish_frame();
+        assert!(held.release_rgba(&kept.id));
+        assert!(held.rgba(&kept.id).is_none());
+        held.begin_frame();
+        let (_, again) = held.texture(&a).unwrap();
+        assert!(!again, "a released pose stays known");
+        held.finish_frame();
+        held.clear();
+        assert!(held.is_empty());
+        assert_eq!(held.encoded_bytes, 0);
+        assert!(held.rgba(&kept.id).is_none());
     }
 
     #[test]
