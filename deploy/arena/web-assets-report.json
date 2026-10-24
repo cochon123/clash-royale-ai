@@ -1,0 +1,827 @@
+{
+  "generated_at": "2026-10-24T17:41:15.078677+00:00",
+  "bundle_fingerprint": "2a91c24521f50d679438755a9d17668f1bbf9cc12604e061bd245e2eb32a840e",
+  "painter_wasm": null,
+  "painter_wasm_note": "painter_wasm is null unless build_web_assets.py is given --painter-wasm PATH. That file is content-addressed to files/<sha256[:20]>.wasm. W1's wasm binary is not built by W2.",
+  "wire_encoding": "gzip siblings for JSON (the nginx gzip_static location). wire_bytes_if_brotli uses the .br siblings.",
+  "subset": {
+    "ui": {
+      "document": "ui",
+      "json_bytes_before": 45054311,
+      "json_bytes_after": 189628,
+      "exports_before": 2079,
+      "exports_after": 13,
+      "exports_missing": [],
+      "atlas_cropped": true,
+      "rgba_before": {
+        "ui_0": 67108864,
+        "ui_1": 67108864,
+        "ui_2": 67108864,
+        "ui_3": 22176000,
+        "ui_4": 6669936,
+        "ui_5": 589824
+      },
+      "rgba_after": {
+        "ui_0": 666528,
+        "ui_1": 1821600,
+        "ui_2": 377344,
+        "ui_3": 98064,
+        "ui_4": 4,
+        "ui_5": 4
+      }
+    },
+    "effects": {
+      "document": "effects",
+      "json_bytes_before": 18724278,
+      "json_bytes_after": 2897671,
+      "exports_before": 803,
+      "exports_after": 212,
+      "exports_missing": [
+        "projectile_rocket_prestige1",
+        "projectile_rocket_prestige2",
+        "projectile_rocket_prestige3_blue",
+        "projectile_rocket_prestige3_red"
+      ],
+      "atlas_cropped": true,
+      "rgba_before": {
+        "effects_0": 30554304
+      },
+      "rgba_after": {
+        "effects_0": 20679040
+      }
+    }
+  },
+  "index": {
+    "always_documents": [
+      "arena_training",
+      "building_tower",
+      "chr_king",
+      "chr_princess",
+      "effects",
+      "level_bootcamp_arena_dl",
+      "ui",
+      "ui_spectate_hud"
+    ],
+    "cards": 119,
+    "omitted_always_documents": [
+      "effects_evolution"
+    ],
+    "font_document": "arena_training",
+    "portraits_copied": 137
+  },
+  "deviations": [
+    "always_documents names absent from this bundle were omitted: effects_evolution"
+  ],
+  "preset_pairs": [
+    {
+      "decks": [
+        "hog-mirror",
+        "hog-mirror"
+      ],
+      "native_cards": [
+        [
+          "HogRider",
+          "Musketeer",
+          "IceGolemite",
+          "Skeletons",
+          "IceSpirits",
+          "Cannon",
+          "Fireball",
+          "Log"
+        ],
+        [
+          "HogRider",
+          "Musketeer",
+          "IceGolemite",
+          "Skeletons",
+          "IceSpirits",
+          "Cannon",
+          "Fireball",
+          "Log"
+        ]
+      ],
+      "wire_bytes": 30551099,
+      "wire_bytes_if_brotli": 30138416,
+      "decoded_rgba_bytes": 142206148,
+      "files": 50,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "hog-mirror",
+        "log-bait"
+      ],
+      "native_cards": [
+        [
+          "HogRider",
+          "Musketeer",
+          "IceGolemite",
+          "Skeletons",
+          "IceSpirits",
+          "Cannon",
+          "Fireball",
+          "Log"
+        ],
+        [
+          "GoblinBarrel",
+          "Princess",
+          "Knight",
+          "GoblinGang",
+          "InfernoTower",
+          "Rocket",
+          "Log",
+          "IceSpirits"
+        ]
+      ],
+      "wire_bytes": 38555156,
+      "wire_bytes_if_brotli": 38034044,
+      "decoded_rgba_bytes": 192312496,
+      "files": 66,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "hog-mirror",
+        "pekka-bridge"
+      ],
+      "native_cards": [
+        [
+          "HogRider",
+          "Musketeer",
+          "IceGolemite",
+          "Skeletons",
+          "IceSpirits",
+          "Cannon",
+          "Fireball",
+          "Log"
+        ],
+        [
+          "Pekka",
+          "BattleRam",
+          "Assassin",
+          "Ghost",
+          "ElectroWizard",
+          "EliteArcher",
+          "Poison",
+          "Zap"
+        ]
+      ],
+      "wire_bytes": 59458400,
+      "wire_bytes_if_brotli": 58588244,
+      "decoded_rgba_bytes": 291383860,
+      "files": 72,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "hog-mirror",
+        "lava-loon"
+      ],
+      "native_cards": [
+        [
+          "HogRider",
+          "Musketeer",
+          "IceGolemite",
+          "Skeletons",
+          "IceSpirits",
+          "Cannon",
+          "Fireball",
+          "Log"
+        ],
+        [
+          "LavaHound",
+          "Balloon",
+          "Tombstone",
+          "MegaMinion",
+          "Minions",
+          "SkeletonWarriors",
+          "Fireball",
+          "Zap"
+        ]
+      ],
+      "wire_bytes": 33783920,
+      "wire_bytes_if_brotli": 33341722,
+      "decoded_rgba_bytes": 173131080,
+      "files": 61,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "hog-mirror",
+        "golem"
+      ],
+      "native_cards": [
+        [
+          "HogRider",
+          "Musketeer",
+          "IceGolemite",
+          "Skeletons",
+          "IceSpirits",
+          "Cannon",
+          "Fireball",
+          "Log"
+        ],
+        [
+          "Golem",
+          "DarkWitch",
+          "BabyDragon",
+          "MegaMinion",
+          "RageBarbarian",
+          "Tornado",
+          "Lightning",
+          "BarbLog"
+        ]
+      ],
+      "wire_bytes": 38974864,
+      "wire_bytes_if_brotli": 38295271,
+      "decoded_rgba_bytes": 197766472,
+      "files": 62,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "hog-mirror",
+        "custom-mortar"
+      ],
+      "native_cards": [
+        [
+          "HogRider",
+          "Musketeer",
+          "IceGolemite",
+          "Skeletons",
+          "IceSpirits",
+          "Cannon",
+          "Fireball",
+          "Log"
+        ],
+        [
+          "Mortar",
+          "Knight",
+          "Archer",
+          "Skeletons",
+          "BarbLog",
+          "Arrows",
+          "MiniPekka",
+          "Rocket"
+        ]
+      ],
+      "wire_bytes": 47195593,
+      "wire_bytes_if_brotli": 46394675,
+      "decoded_rgba_bytes": 226086668,
+      "files": 69,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "log-bait",
+        "log-bait"
+      ],
+      "native_cards": [
+        [
+          "GoblinBarrel",
+          "Princess",
+          "Knight",
+          "GoblinGang",
+          "InfernoTower",
+          "Rocket",
+          "Log",
+          "IceSpirits"
+        ],
+        [
+          "GoblinBarrel",
+          "Princess",
+          "Knight",
+          "GoblinGang",
+          "InfernoTower",
+          "Rocket",
+          "Log",
+          "IceSpirits"
+        ]
+      ],
+      "wire_bytes": 29502894,
+      "wire_bytes_if_brotli": 29082963,
+      "decoded_rgba_bytes": 143346052,
+      "files": 50,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "log-bait",
+        "pekka-bridge"
+      ],
+      "native_cards": [
+        [
+          "GoblinBarrel",
+          "Princess",
+          "Knight",
+          "GoblinGang",
+          "InfernoTower",
+          "Rocket",
+          "Log",
+          "IceSpirits"
+        ],
+        [
+          "Pekka",
+          "BattleRam",
+          "Assassin",
+          "Ghost",
+          "ElectroWizard",
+          "EliteArcher",
+          "Poison",
+          "Zap"
+        ]
+      ],
+      "wire_bytes": 58410195,
+      "wire_bytes_if_brotli": 57532791,
+      "decoded_rgba_bytes": 292523764,
+      "files": 72,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "log-bait",
+        "lava-loon"
+      ],
+      "native_cards": [
+        [
+          "GoblinBarrel",
+          "Princess",
+          "Knight",
+          "GoblinGang",
+          "InfernoTower",
+          "Rocket",
+          "Log",
+          "IceSpirits"
+        ],
+        [
+          "LavaHound",
+          "Balloon",
+          "Tombstone",
+          "MegaMinion",
+          "Minions",
+          "SkeletonWarriors",
+          "Fireball",
+          "Zap"
+        ]
+      ],
+      "wire_bytes": 33602897,
+      "wire_bytes_if_brotli": 33148514,
+      "decoded_rgba_bytes": 181742036,
+      "files": 64,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "log-bait",
+        "golem"
+      ],
+      "native_cards": [
+        [
+          "GoblinBarrel",
+          "Princess",
+          "Knight",
+          "GoblinGang",
+          "InfernoTower",
+          "Rocket",
+          "Log",
+          "IceSpirits"
+        ],
+        [
+          "Golem",
+          "DarkWitch",
+          "BabyDragon",
+          "MegaMinion",
+          "RageBarbarian",
+          "Tornado",
+          "Lightning",
+          "BarbLog"
+        ]
+      ],
+      "wire_bytes": 37926659,
+      "wire_bytes_if_brotli": 37239818,
+      "decoded_rgba_bytes": 198906376,
+      "files": 62,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "log-bait",
+        "custom-mortar"
+      ],
+      "native_cards": [
+        [
+          "GoblinBarrel",
+          "Princess",
+          "Knight",
+          "GoblinGang",
+          "InfernoTower",
+          "Rocket",
+          "Log",
+          "IceSpirits"
+        ],
+        [
+          "Mortar",
+          "Knight",
+          "Archer",
+          "Skeletons",
+          "BarbLog",
+          "Arrows",
+          "MiniPekka",
+          "Rocket"
+        ]
+      ],
+      "wire_bytes": 43076010,
+      "wire_bytes_if_brotli": 42316375,
+      "decoded_rgba_bytes": 212251100,
+      "files": 68,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "pekka-bridge",
+        "pekka-bridge"
+      ],
+      "native_cards": [
+        [
+          "Pekka",
+          "BattleRam",
+          "Assassin",
+          "Ghost",
+          "ElectroWizard",
+          "EliteArcher",
+          "Poison",
+          "Zap"
+        ],
+        [
+          "Pekka",
+          "BattleRam",
+          "Assassin",
+          "Ghost",
+          "ElectroWizard",
+          "EliteArcher",
+          "Poison",
+          "Zap"
+        ]
+      ],
+      "wire_bytes": 49860826,
+      "wire_bytes_if_brotli": 49097988,
+      "decoded_rgba_bytes": 237070540,
+      "files": 52,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "pekka-bridge",
+        "lava-loon"
+      ],
+      "native_cards": [
+        [
+          "Pekka",
+          "BattleRam",
+          "Assassin",
+          "Ghost",
+          "ElectroWizard",
+          "EliteArcher",
+          "Poison",
+          "Zap"
+        ],
+        [
+          "LavaHound",
+          "Balloon",
+          "Tombstone",
+          "MegaMinion",
+          "Minions",
+          "SkeletonWarriors",
+          "Fireball",
+          "Zap"
+        ]
+      ],
+      "wire_bytes": 53872142,
+      "wire_bytes_if_brotli": 53074852,
+      "decoded_rgba_bytes": 272747492,
+      "files": 65,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "pekka-bridge",
+        "golem"
+      ],
+      "native_cards": [
+        [
+          "Pekka",
+          "BattleRam",
+          "Assassin",
+          "Ghost",
+          "ElectroWizard",
+          "EliteArcher",
+          "Poison",
+          "Zap"
+        ],
+        [
+          "Golem",
+          "DarkWitch",
+          "BabyDragon",
+          "MegaMinion",
+          "RageBarbarian",
+          "Tornado",
+          "Lightning",
+          "BarbLog"
+        ]
+      ],
+      "wire_bytes": 51088108,
+      "wire_bytes_if_brotli": 50317522,
+      "decoded_rgba_bytes": 263674960,
+      "files": 62,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "pekka-bridge",
+        "custom-mortar"
+      ],
+      "native_cards": [
+        [
+          "Pekka",
+          "BattleRam",
+          "Assassin",
+          "Ghost",
+          "ElectroWizard",
+          "EliteArcher",
+          "Poison",
+          "Zap"
+        ],
+        [
+          "Mortar",
+          "Knight",
+          "Archer",
+          "Skeletons",
+          "BarbLog",
+          "Arrows",
+          "MiniPekka",
+          "Rocket"
+        ]
+      ],
+      "wire_bytes": 60059026,
+      "wire_bytes_if_brotli": 59162178,
+      "decoded_rgba_bytes": 296856716,
+      "files": 72,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "lava-loon",
+        "lava-loon"
+      ],
+      "native_cards": [
+        [
+          "LavaHound",
+          "Balloon",
+          "Tombstone",
+          "MegaMinion",
+          "Minions",
+          "SkeletonWarriors",
+          "Fireball",
+          "Zap"
+        ],
+        [
+          "LavaHound",
+          "Balloon",
+          "Tombstone",
+          "MegaMinion",
+          "Minions",
+          "SkeletonWarriors",
+          "Fireball",
+          "Zap"
+        ]
+      ],
+      "wire_bytes": 25053528,
+      "wire_bytes_if_brotli": 24713711,
+      "decoded_rgba_bytes": 126288812,
+      "files": 44,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "lava-loon",
+        "golem"
+      ],
+      "native_cards": [
+        [
+          "LavaHound",
+          "Balloon",
+          "Tombstone",
+          "MegaMinion",
+          "Minions",
+          "SkeletonWarriors",
+          "Fireball",
+          "Zap"
+        ],
+        [
+          "Golem",
+          "DarkWitch",
+          "BabyDragon",
+          "MegaMinion",
+          "RageBarbarian",
+          "Tornado",
+          "Lightning",
+          "BarbLog"
+        ]
+      ],
+      "wire_bytes": 33343148,
+      "wire_bytes_if_brotli": 32736421,
+      "decoded_rgba_bytes": 178073136,
+      "files": 55,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "lava-loon",
+        "custom-mortar"
+      ],
+      "native_cards": [
+        [
+          "LavaHound",
+          "Balloon",
+          "Tombstone",
+          "MegaMinion",
+          "Minions",
+          "SkeletonWarriors",
+          "Fireball",
+          "Zap"
+        ],
+        [
+          "Mortar",
+          "Knight",
+          "Archer",
+          "Skeletons",
+          "BarbLog",
+          "Arrows",
+          "MiniPekka",
+          "Rocket"
+        ]
+      ],
+      "wire_bytes": 41770409,
+      "wire_bytes_if_brotli": 41042357,
+      "decoded_rgba_bytes": 212349460,
+      "files": 64,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "golem",
+        "golem"
+      ],
+      "native_cards": [
+        [
+          "Golem",
+          "DarkWitch",
+          "BabyDragon",
+          "MegaMinion",
+          "RageBarbarian",
+          "Tornado",
+          "Lightning",
+          "BarbLog"
+        ],
+        [
+          "Golem",
+          "DarkWitch",
+          "BabyDragon",
+          "MegaMinion",
+          "RageBarbarian",
+          "Tornado",
+          "Lightning",
+          "BarbLog"
+        ]
+      ],
+      "wire_bytes": 29377290,
+      "wire_bytes_if_brotli": 28805015,
+      "decoded_rgba_bytes": 143453152,
+      "files": 42,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "golem",
+        "custom-mortar"
+      ],
+      "native_cards": [
+        [
+          "Golem",
+          "DarkWitch",
+          "BabyDragon",
+          "MegaMinion",
+          "RageBarbarian",
+          "Tornado",
+          "Lightning",
+          "BarbLog"
+        ],
+        [
+          "Mortar",
+          "Knight",
+          "Archer",
+          "Skeletons",
+          "BarbLog",
+          "Arrows",
+          "MiniPekka",
+          "Rocket"
+        ]
+      ],
+      "wire_bytes": 39269566,
+      "wire_bytes_if_brotli": 38571029,
+      "decoded_rgba_bytes": 200456292,
+      "files": 59,
+      "missing_cards": []
+    },
+    {
+      "decks": [
+        "custom-mortar",
+        "custom-mortar"
+      ],
+      "native_cards": [
+        [
+          "Mortar",
+          "Knight",
+          "Archer",
+          "Skeletons",
+          "BarbLog",
+          "Arrows",
+          "MiniPekka",
+          "Rocket"
+        ],
+        [
+          "Mortar",
+          "Knight",
+          "Archer",
+          "Skeletons",
+          "BarbLog",
+          "Arrows",
+          "MiniPekka",
+          "Rocket"
+        ]
+      ],
+      "wire_bytes": 38348208,
+      "wire_bytes_if_brotli": 37649671,
+      "decoded_rgba_bytes": 176634908,
+      "files": 52,
+      "missing_cards": []
+    }
+  ],
+  "worst_custom_pair": {
+    "native_cards": [
+      [
+        "BattleRam",
+        "ElectroGiant",
+        "SuperArcher",
+        "RoyalGiant",
+        "SkeletonKing",
+        "DarkPrince",
+        "Wallbreakers",
+        "Ghost"
+      ],
+      [
+        "RamRider",
+        "Pekka",
+        "Knight",
+        "GoblinGang",
+        "SuperMiniPekka",
+        "HogRider",
+        "MinionHorde",
+        "SuperIceGolemite"
+      ]
+    ],
+    "unique_cards": [
+      "BattleRam",
+      "ElectroGiant",
+      "SuperArcher",
+      "RoyalGiant",
+      "SkeletonKing",
+      "DarkPrince",
+      "Wallbreakers",
+      "Ghost",
+      "RamRider",
+      "Pekka",
+      "Knight",
+      "GoblinGang",
+      "SuperMiniPekka",
+      "HogRider",
+      "MinionHorde",
+      "SuperIceGolemite"
+    ],
+    "wire_bytes": 105989744,
+    "wire_bytes_if_brotli": 104382062,
+    "decoded_rgba_bytes": 496347612,
+    "files": 84,
+    "search": "greedy marginal gzip wire bytes, then pairwise swap to a local maximum among selectable cards"
+  },
+  "webp": {
+    "lossless": true,
+    "pillow_method": 4,
+    "png_files": 165,
+    "png_bytes": 122053070,
+    "webp_bytes": 90101200,
+    "shipped_format": "png",
+    "note": "Lossless WebP was measured only. The pack stores PNG as C1 requires."
+  },
+  "selectable_cards": 119
+}
