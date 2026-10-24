@@ -1,0 +1,69 @@
+{
+  "ready_s": 1.177,
+  "loading": "Engine ready",
+  "diag": {
+    "mode": "browser",
+    "scene": null,
+    "input": {
+      "sent": 0,
+      "completed": 0,
+      "failed": 0,
+      "coalesced": 0,
+      "dropped": 0,
+      "maxQueued": 0,
+      "queued": 0,
+      "pendingAims": 0,
+      "inFlight": 0,
+      "destroyed": false,
+      "maxEssential": 16
+    },
+    "tick": 246,
+    "status": "running",
+    "painter": {
+      "draw_ms_p50": 0.2,
+      "draw_ms_p95": 0.3,
+      "wasm_mb": 0,
+      "observe_backlog": 0,
+      "display_tick": 242.24,
+      "error": null
+    },
+    "lag_ms": 138,
+    "jitter_ms": 88,
+    "freezes": {
+      "count": 0,
+      "total_ms": 0
+    },
+    "asset_bytes": 44
+  },
+  "display": {
+    "frames": 470,
+    "span_s": 16.897,
+    "frozen_s": 0.0,
+    "freeze_count": 0,
+    "longest_freeze_ms": 0,
+    "freeze_ratio": 0.0,
+    "cadence_ms_p50": 33,
+    "cadence_ms_p95": 66,
+    "game_per_wall": [
+      0.69,
+      0.689,
+      0.7,
+      0.692,
+      0.725,
+      0.683,
+      0.7,
+      0.725,
+      0.328
+    ],
+    "pending_max": 5,
+    "pending_p95": 4
+  },
+  "requests": 9,
+  "requests_after_ready": 0,
+  "throttle": {
+    "latency_ms": 150.0,
+    "download_bps": 655360.0,
+    "cpu_rate": 1.0
+  },
+  "urls_after_ready": []
+}
