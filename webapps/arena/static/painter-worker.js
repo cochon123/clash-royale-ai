@@ -62,6 +62,7 @@
         try { exp.painter_texture_release(block.ptr, block.len); }
         finally { free(block); }
       },
+      prewarm() { return exp.painter_prewarm ? exp.painter_prewarm() : 0; },
       reset() { exp.painter_reset(); },
       statsJson() { exp.painter_stats_json(); return readResult(); },
       lastError() { exp.painter_last_error(); return readResult(); }
@@ -318,6 +319,9 @@
       }
       const rc = state.painter.init(JSON.stringify(meta.cards || []), state.width, state.height);
       if (rc) throw new Error(state.painter.lastError() || "painter_init failed");
+      // Unpack every sprite sheet on the loading screen, not when a unit first appears.
+      post({type: "progress", loaded, total: total || loaded, phase: "prewarm"});
+      if (state.painter.prewarm && state.painter.prewarm()) throw new Error(state.painter.lastError() || "painter_prewarm failed");
       state.ready = true;
       if (!state.canvas && !state.fallback) post({type: "need-canvas"});
       flushBuffer();

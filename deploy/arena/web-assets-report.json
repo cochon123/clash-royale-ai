@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-24T17:41:15.078677+00:00",
+  "generated_at": "2026-10-24T21:28:09.935116+00:00",
   "bundle_fingerprint": "2a91c24521f50d679438755a9d17668f1bbf9cc12604e061bd245e2eb32a840e",
-  "painter_wasm": null,
+  "painter_wasm": "files/9e884450c87d1a8d1dc5.wasm",
   "painter_wasm_note": "painter_wasm is null unless build_web_assets.py is given --painter-wasm PATH. That file is content-addressed to files/<sha256[:20]>.wasm. W1's wasm binary is not built by W2.",
   "wire_encoding": "gzip siblings for JSON (the nginx gzip_static location). wire_bytes_if_brotli uses the .br siblings.",
   "subset": {
@@ -100,8 +100,8 @@
           "Log"
         ]
       ],
-      "wire_bytes": 30551099,
-      "wire_bytes_if_brotli": 30138416,
+      "wire_bytes": 32175543,
+      "wire_bytes_if_brotli": 31762863,
       "decoded_rgba_bytes": 142206148,
       "files": 50,
       "missing_cards": []
@@ -133,8 +133,8 @@
           "IceSpirits"
         ]
       ],
-      "wire_bytes": 38555156,
-      "wire_bytes_if_brotli": 38034044,
+      "wire_bytes": 40179600,
+      "wire_bytes_if_brotli": 39658491,
       "decoded_rgba_bytes": 192312496,
       "files": 66,
       "missing_cards": []
@@ -166,8 +166,8 @@
           "Zap"
         ]
       ],
-      "wire_bytes": 59458400,
-      "wire_bytes_if_brotli": 58588244,
+      "wire_bytes": 61082844,
+      "wire_bytes_if_brotli": 60212691,
       "decoded_rgba_bytes": 291383860,
       "files": 72,
       "missing_cards": []
@@ -199,8 +199,8 @@
           "Zap"
         ]
       ],
-      "wire_bytes": 33783920,
-      "wire_bytes_if_brotli": 33341722,
+      "wire_bytes": 35408364,
+      "wire_bytes_if_brotli": 34966169,
       "decoded_rgba_bytes": 173131080,
       "files": 61,
       "missing_cards": []
@@ -232,8 +232,8 @@
           "BarbLog"
         ]
       ],
-      "wire_bytes": 38974864,
-      "wire_bytes_if_brotli": 38295271,
+      "wire_bytes": 40599308,
+      "wire_bytes_if_brotli": 39919718,
       "decoded_rgba_bytes": 197766472,
       "files": 62,
       "missing_cards": []
@@ -265,8 +265,8 @@
           "Rocket"
         ]
       ],
-      "wire_bytes": 47195593,
-      "wire_bytes_if_brotli": 46394675,
+      "wire_bytes": 48820037,
+      "wire_bytes_if_brotli": 48019122,
       "decoded_rgba_bytes": 226086668,
       "files": 69,
       "missing_cards": []
@@ -298,8 +298,8 @@
           "IceSpirits"
         ]
       ],
-      "wire_bytes": 29502894,
-      "wire_bytes_if_brotli": 29082963,
+      "wire_bytes": 31127338,
+      "wire_bytes_if_brotli": 30707410,
       "decoded_rgba_bytes": 143346052,
       "files": 50,
       "missing_cards": []
@@ -331,8 +331,8 @@
           "Zap"
         ]
       ],
-      "wire_bytes": 58410195,
-      "wire_bytes_if_brotli": 57532791,
+      "wire_bytes": 60034639,
+      "wire_bytes_if_brotli": 59157238,
       "decoded_rgba_bytes": 292523764,
       "files": 72,
       "missing_cards": []
@@ -364,8 +364,8 @@
           "Zap"
         ]
       ],
-      "wire_bytes": 33602897,
-      "wire_bytes_if_brotli": 33148514,
+      "wire_bytes": 35227341,
+      "wire_bytes_if_brotli": 34772961,
       "decoded_rgba_bytes": 181742036,
       "files": 64,
       "missing_cards": []
@@ -397,8 +397,8 @@
           "BarbLog"
         ]
       ],
-      "wire_bytes": 37926659,
-      "wire_bytes_if_brotli": 37239818,
+      "wire_bytes": 39551103,
+      "wire_bytes_if_brotli": 38864265,
       "decoded_rgba_bytes": 198906376,
       "files": 62,
       "missing_cards": []
@@ -430,8 +430,8 @@
           "Rocket"
         ]
       ],
-      "wire_bytes": 43076010,
-      "wire_bytes_if_brotli": 42316375,
+      "wire_bytes": 44700454,
+      "wire_bytes_if_brotli": 43940822,
       "decoded_rgba_bytes": 212251100,
       "files": 68,
       "missing_cards": []
@@ -463,8 +463,8 @@
           "Zap"
         ]
       ],
-      "wire_bytes": 49860826,
-      "wire_bytes_if_brotli": 49097988,
+      "wire_bytes": 51485270,
+      "wire_bytes_if_brotli": 50722435,
       "decoded_rgba_bytes": 237070540,
       "files": 52,
       "missing_cards": []
@@ -496,8 +496,8 @@
           "Zap"
         ]
       ],
-      "wire_bytes": 53872142,
-      "wire_bytes_if_brotli": 53074852,
+      "wire_bytes": 55496586,
+      "wire_bytes_if_brotli": 54699299,
       "decoded_rgba_bytes": 272747492,
       "files": 65,
       "missing_cards": []
@@ -529,8 +529,8 @@
           "BarbLog"
         ]
       ],
-      "wire_bytes": 51088108,
-      "wire_bytes_if_brotli": 50317522,
+      "wire_bytes": 52712552,
+      "wire_bytes_if_brotli": 51941969,
       "decoded_rgba_bytes": 263674960,
       "files": 62,
       "missing_cards": []
@@ -562,8 +562,8 @@
           "Rocket"
         ]
       ],
-      "wire_bytes": 60059026,
-      "wire_bytes_if_brotli": 59162178,
+      "wire_bytes": 61683470,
+      "wire_bytes_if_brotli": 60786625,
       "decoded_rgba_bytes": 296856716,
       "files": 72,
       "missing_cards": []
@@ -595,8 +595,8 @@
           "Zap"
         ]
       ],
-      "wire_bytes": 25053528,
-      "wire_bytes_if_brotli": 24713711,
+      "wire_bytes": 26677972,
+      "wire_bytes_if_brotli": 26338158,
       "decoded_rgba_bytes": 126288812,
       "files": 44,
       "missing_cards": []
@@ -628,8 +628,8 @@
           "BarbLog"
         ]
       ],
-      "wire_bytes": 33343148,
-      "wire_bytes_if_brotli": 32736421,
+      "wire_bytes": 34967592,
+      "wire_bytes_if_brotli": 34360868,
       "decoded_rgba_bytes": 178073136,
       "files": 55,
       "missing_cards": []
@@ -661,8 +661,8 @@
           "Rocket"
         ]
       ],
-      "wire_bytes": 41770409,
-      "wire_bytes_if_brotli": 41042357,
+      "wire_bytes": 43394853,
+      "wire_bytes_if_brotli": 42666804,
       "decoded_rgba_bytes": 212349460,
       "files": 64,
       "missing_cards": []
@@ -694,8 +694,8 @@
           "BarbLog"
         ]
       ],
-      "wire_bytes": 29377290,
-      "wire_bytes_if_brotli": 28805015,
+      "wire_bytes": 31001734,
+      "wire_bytes_if_brotli": 30429462,
       "decoded_rgba_bytes": 143453152,
       "files": 42,
       "missing_cards": []
@@ -727,8 +727,8 @@
           "Rocket"
         ]
       ],
-      "wire_bytes": 39269566,
-      "wire_bytes_if_brotli": 38571029,
+      "wire_bytes": 40894010,
+      "wire_bytes_if_brotli": 40195476,
       "decoded_rgba_bytes": 200456292,
       "files": 59,
       "missing_cards": []
@@ -760,8 +760,8 @@
           "Rocket"
         ]
       ],
-      "wire_bytes": 38348208,
-      "wire_bytes_if_brotli": 37649671,
+      "wire_bytes": 39972652,
+      "wire_bytes_if_brotli": 39274118,
       "decoded_rgba_bytes": 176634908,
       "files": 52,
       "missing_cards": []
@@ -785,9 +785,9 @@
         "Knight",
         "GoblinGang",
         "SuperMiniPekka",
-        "HogRider",
+        "SuperHogRider",
         "MinionHorde",
-        "SuperIceGolemite"
+        "IceGolemite"
       ]
     ],
     "unique_cards": [
@@ -804,12 +804,12 @@
       "Knight",
       "GoblinGang",
       "SuperMiniPekka",
-      "HogRider",
+      "SuperHogRider",
       "MinionHorde",
-      "SuperIceGolemite"
+      "IceGolemite"
     ],
-    "wire_bytes": 105989744,
-    "wire_bytes_if_brotli": 104382062,
+    "wire_bytes": 107614188,
+    "wire_bytes_if_brotli": 106006509,
     "decoded_rgba_bytes": 496347612,
     "files": 84,
     "search": "greedy marginal gzip wire bytes, then pairwise swap to a local maximum among selectable cards"

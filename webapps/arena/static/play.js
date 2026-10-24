@@ -27,6 +27,13 @@ async function post(path, body = {}, signal) {
   if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
   return data;
 }
+let readyAnnounced = false;
+// The server holds the first round until a viewer has its graphics loaded.
+function announceReady() {
+  if (readyAnnounced || !matchId) return;
+  readyAnnounced = true;
+  control("ready");
+}
 function control(op, value) {
   return post(`/api/matches/${matchId}/control`, { op, ...(value === undefined ? {} : { value }) })
     .catch((error) => { $("feedback").textContent = error.message; });
@@ -175,7 +182,7 @@ function startView() {
       textureUrl: id => `${BASE}/api/matches/${matchId}/textures/${id}.png`,
       alpha: false,
       onReady: packet => {
-        layout = packet.layout; readySceneMatchId = packet.match_id; viewReady = true; $("fallback-link").hidden = true;
+        layout = packet.layout; readySceneMatchId = packet.match_id; viewReady = true; announceReady(); $("fallback-link").hidden = true;
         if (cur) $("loading").classList.remove("show");
         updateHandTargets(); drawControls();
       },
@@ -308,7 +315,7 @@ async function bootstrapView() {
         if (!running) { bitmap.close(); return false; }
         ctx.drawImage(bitmap, 0, 0, 540, 900); bitmap.close();
         layout = JSON.parse(response.headers.get("X-Arena-Layout")); updateHandTargets();
-        viewReady = true;
+        viewReady = true; announceReady();
         if (cur) $("loading").classList.remove("show");
         return true;
       }
@@ -323,7 +330,7 @@ function useVideoStream() {
   const ready = () => {
     if (!running || polling || !video.naturalWidth) return;
     video.hidden = false; fallbackCanvas.hidden = true; canvas.hidden = true;
-    viewReady = true;
+    viewReady = true; announceReady();
     clearInterval(videoTimer); videoTimer = null;
     if (cur) $("loading").classList.remove("show");
   };
@@ -361,7 +368,7 @@ async function pollImages() {
       bitmap.close();
       after = next;
       if (!layout) { layout = newLayout; updateHandTargets(); }
-      viewReady = true;
+      viewReady = true; announceReady();
       if (cur) $("loading").classList.remove("show");
     } catch (error) {
       if (!running) return;
@@ -401,7 +408,7 @@ function notePainterLayout(next, matchNumber) {
   drawControls();
 }
 function markPainterReady() {
-  viewReady = true;
+  viewReady = true; announceReady();
   $("fallback-link").hidden = true;
   if (cur) $("loading").classList.remove("show");
   updateHandTargets();

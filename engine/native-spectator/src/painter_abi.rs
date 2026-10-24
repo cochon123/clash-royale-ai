@@ -318,6 +318,25 @@ pub extern "C" fn painter_set_draw_ms(ms: f64) {
     });
 }
 
+/// Decode all atlas pages now (loading screen) instead of on first use.
+#[no_mangle]
+pub extern "C" fn painter_prewarm() -> i32 {
+    HOST.with(|host| {
+        let mut host = host.borrow_mut();
+        let result = match host.session.as_ref() {
+            Some(session) => session.prewarm_atlases(),
+            None => Err("painter_init required".to_string()),
+        };
+        match result {
+            Ok(()) => {
+                host.note_memory();
+                0
+            }
+            Err(error) => fail(&mut host, error),
+        }
+    })
+}
+
 #[no_mangle]
 pub extern "C" fn painter_reset() {
     HOST.with(|host| {

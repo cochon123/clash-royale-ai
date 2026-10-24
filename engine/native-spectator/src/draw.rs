@@ -248,6 +248,16 @@ pub struct Painter {
 }
 
 impl Painter {
+    /// Decode every loaded document's atlas pages ahead of the first draw.
+    pub fn prewarm_atlases(&self) -> Result<()> {
+        for (name, scene) in &self.scenes {
+            scene
+                .prewarm_atlases()
+                .map_err(|e| format!("prewarm {name}: {e}"))?;
+        }
+        Ok(())
+    }
+
     /// Remember fitted sprites under `root` so a later match does not composite
     /// the same walk, attack, spell or health-bar frame again.
     pub fn enable_pose_cache(&mut self, root: &Path) -> Result<()> {

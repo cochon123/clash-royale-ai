@@ -317,8 +317,8 @@ def match_input(request):
 def match_control(request):
     match = _match(request)
     command = _object_body(request)
-    if command.get("op") not in ("pause", "reset", "speed"):
-        raise HTTPError(400, "control op must be pause, reset or speed")
+    if command.get("op") not in ("pause", "reset", "speed", "ready"):
+        raise HTTPError(400, "control op must be pause, reset, speed or ready")
     if command["op"] == "speed" and match.human:
         raise HTTPError(400, "speed is only adjustable when watching two models")
     if command["op"] == "speed":

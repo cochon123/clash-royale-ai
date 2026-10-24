@@ -72,6 +72,10 @@ pub struct ExportSession {
 }
 
 impl ExportSession {
+    pub fn prewarm_atlases(&self) -> Result<(), String> {
+        self.painter.prewarm_atlases()
+    }
+
     pub fn open(
         root: &Path,
         cards: &[String],

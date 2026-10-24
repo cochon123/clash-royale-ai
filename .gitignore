@@ -64,3 +64,6 @@ data/**/*.pkl
 # Frame corpora and evaluation arrays are in the Hugging Face snapshots.
 data/tower_hp_runs/
 reports/**/*.npz
+
+# Built by deploy/arena/build_web_assets.py (171 MB); not source.
+deploy/arena/web-assets/

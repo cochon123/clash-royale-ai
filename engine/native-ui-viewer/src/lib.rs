@@ -322,6 +322,16 @@ impl Scene {
             .sum()
     }
 
+    /// Decode every atlas page now instead of on first sample, so a browser
+    /// can pay this cost on its loading screen. Pixels are identical either way.
+    pub fn prewarm_atlases(&self) -> Result<()> {
+        let count = self.textures.borrow().len();
+        for index in 0..count {
+            self.ensure_atlas(index)?;
+        }
+        Ok(())
+    }
+
     fn ensure_atlas(&self, index: usize) -> Result<()> {
         if self
             .textures

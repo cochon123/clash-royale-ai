@@ -39,7 +39,10 @@ TICKS_PER_SECOND = 20
 STARTUP_TICKS = 100          # the fresh native harness rejects plays before this
 MAX_TICKS = 7300
 IDLE_CLOSE_SECONDS = 120     # close a match nobody has watched for this long
-SESSION_CLOSE_SECONDS = 900  # public browser sessions cannot hold a slot indefinitely
+SESSION_CLOSE_SECONDS = 900
+# The first round waits for a viewer to report that its graphics are loaded,
+# so a first visit downloads art on the loading screen instead of mid-battle.
+START_GATE_SECONDS = float(os.environ.get("ARENA_START_GATE_SECONDS", "90"))  # public browser sessions cannot hold a slot indefinitely
 CSV_LOGIC = paths.ENGINE / "analysis/decoded/assets/csv_logic"
 
 _LOAD_LOCK = threading.Lock()
@@ -540,6 +543,8 @@ class Match:
                 self.message = f"{self.labels[winner]} wins."
 
         reset()
+        state["waiting"] = START_GATE_SECONDS > 0
+        gate_deadline = time.monotonic() + START_GATE_SECONDS
         publish()
         due = time.monotonic()
         human_action = None  # a validated human play waits here for the next engine tick
@@ -557,6 +562,8 @@ class Match:
                     human_action = None
                 elif op == "speed":
                     state["speed"] = max(0.25, min(8.0, float(command.get("value", 1))))
+                elif op == "ready":
+                    state["waiting"] = False
                 due = time.monotonic()
                 changed = True
             if human is not None:
@@ -579,7 +586,10 @@ class Match:
                 # plus native forbidden zones; no full-grid scan on selection.
             if changed:
                 publish()
-            if state["paused"] or state["ended"]:
+            if state.get("waiting") and time.monotonic() >= gate_deadline:
+                state["waiting"] = False
+                due = time.monotonic()
+            if state.get("waiting") or state["paused"] or state["ended"]:
                 with self.cond:
                     self.cond.wait(timeout=0.03)
                 continue
