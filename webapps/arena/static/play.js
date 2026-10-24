@@ -67,7 +67,10 @@ window.addEventListener("resize", resize);
 
 function updateHandTargets() {
   const container = $("hand-targets");
-  if (!human() || !layout || !cur?.hands[0]) { container.replaceChildren(); return; }
+  if (!human() || !layout || !cur?.hands[0]) {
+    if (container.childElementCount) container.replaceChildren();
+    return;
+  }
   for (const card of cur.hands[0]) {
     let button = container.querySelector(`[data-slot="${card.slot}"]`);
     if (!button) {
@@ -83,11 +86,18 @@ function updateHandTargets() {
       container.append(button);
     }
     const [x, y, w, h] = layout.cards[card.slot];
-    Object.assign(button.style, { left: `${x / 540 * 100}%`, top: `${y / 900 * 100}%`,
-      width: `${w / 540 * 100}%`, height: `${h / 900 * 100}%` });
-    button.setAttribute("aria-label", `${card.name}, ${card.cost} elixir, key ${card.slot + 1}`);
-    button.setAttribute("aria-pressed", String(selection?.slot === card.slot));
-    button.disabled = !card.available || cur.status === "ended";
+    const box = `${x / 540 * 100}% ${y / 900 * 100}% ${w / 540 * 100}% ${h / 900 * 100}%`;
+    if (button.dataset.box !== box) {
+      button.dataset.box = box;
+      Object.assign(button.style, { left: `${x / 540 * 100}%`, top: `${y / 900 * 100}%`,
+        width: `${w / 540 * 100}%`, height: `${h / 900 * 100}%` });
+    }
+    const label = `${card.name}, ${card.cost} elixir, key ${card.slot + 1}`;
+    if (button.getAttribute("aria-label") !== label) button.setAttribute("aria-label", label);
+    const pressed = String(selection?.slot === card.slot);
+    if (button.getAttribute("aria-pressed") !== pressed) button.setAttribute("aria-pressed", pressed);
+    const unavailable = !card.available || cur.status === "ended";
+    if (button.disabled !== unavailable) button.disabled = unavailable;
   }
 }
 function onFrame(frame) {
@@ -103,10 +113,20 @@ function onFrame(frame) {
   }
   cur = frame;
   if (frame.human && frame.human.last_serial >= pendingSerial) selection = frame.human.selection;
-  $("pause").textContent = frame.status === "paused" ? "▶" : "❚❚";
-  $("pause").setAttribute("aria-label", frame.status === "paused" ? "Resume" : "Pause");
-  $("pause").classList.toggle("on", frame.status === "paused");
-  $("feedback").textContent = human() ? frame.human?.feedback || "" : frame.message;
+  const pause = $("pause");
+  if (pause.dataset.state !== frame.status) {
+    pause.dataset.state = frame.status;
+    const paused = frame.status === "paused";
+    pause.textContent = paused ? "▶" : "❚❚";
+    pause.setAttribute("aria-label", paused ? "Resume" : "Pause");
+    pause.classList.toggle("on", paused);
+  }
+  const feedback = human() ? frame.human?.feedback || "" : frame.message || "";
+  const feedbackNode = $("feedback");
+  if (feedbackNode.dataset.t !== feedback) {
+    feedbackNode.dataset.t = feedback;
+    feedbackNode.textContent = feedback;
+  }
   for (const button of $("speed").children) button.classList.toggle("on", Number(button.dataset.speed) === frame.speed);
   if (viewReady) $("loading").classList.remove("show");
   updateHandTargets(); drawControls();
@@ -125,6 +145,7 @@ function startView() {
   try {
     sceneRenderer = new ArenaSceneRenderer(canvas, {
       textureUrl: id => `${BASE}/api/matches/${matchId}/textures/${id}.png`,
+      alpha: false,
       onReady: packet => {
         layout = packet.layout; readySceneMatchId = packet.match_id; viewReady = true; $("fallback-link").hidden = true;
         if (cur) $("loading").classList.remove("show");
@@ -166,9 +187,34 @@ function screenPoint(x, y) {
   const [left, top, width, height] = layout.field;
   return [left + x / layout.world[0] * width, top + (60 + (1 - y / layout.world[1]) * 768) / 828 * height];
 }
+let controlsDrawn = "";
+function controlsKey() {
+  // Scene packets arrive many times a second. Clearing the overlay when nothing
+  // in it changed forces the browser to upload a full transparent canvas over
+  // the game, which is enough to make the whole page feel sticky.
+  if (!browserMode || !layout || !cur) return "";
+  const marks = [];
+  if (cur.status === "paused") marks.push("paused");
+  const feedback = human() ? cur.human?.feedback || "" : "";
+  if (feedback) marks.push("f:" + feedback);
+  if (human() && selection) {
+    marks.push("s:" + selection.slot + ":" + selection.card_id);
+    if (aim) marks.push("a:" + aim.x + ":" + aim.y);
+    const target = cur.human?.target;
+    if (target && target.slot === selection.slot && target.card_id === selection.card_id) {
+      marks.push("t:" + [target.x, target.y, target.land_x, target.land_y, target.valid, target.affordable, target.snaps, target.cost].join(":"));
+      if (target.snaps) marks.push("z:" + JSON.stringify(cur.human.forbidden || []));
+    }
+  }
+  if (marks.length && Array.isArray(layout.field)) marks.push("l:" + layout.field.join(","));
+  return marks.join("|");
+}
 function drawControls() {
+  const key = controlsKey();
+  if (key === controlsDrawn) return;
+  controlsDrawn = key;
   controls.clearRect(0, 0, 540, 900);
-  if (!browserMode || !layout || !cur) return;
+  if (!key) return;
   controls.font = "bold 12px sans-serif"; controls.textAlign = "center";
   const text = (label, x, y, size = 12) => {
     controls.font = `bold ${size}px sans-serif`; controls.lineWidth = 3;

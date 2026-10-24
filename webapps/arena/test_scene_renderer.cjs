@@ -305,6 +305,33 @@ test('exact fixture display keeps cached textures when the tick and match move b
   f.renderer.destroy();
 });
 
+test('inlined pose bytes do not open a texture request', async () => {
+  let fetched = 0;
+  const previousFetch = global.fetch;
+  const previousBitmap = global.createImageBitmap;
+  global.fetch = async () => { fetched += 1; return {ok: false, status: 500}; };
+  global.createImageBitmap = async () => ({width: 2, height: 3, close() {}});
+  global.requestAnimationFrame = () => 1;
+  const errors = [];
+  const renderer = new ArenaSceneRenderer(canvas(), {
+    textureUrl: () => '/textures/a.png', forceCanvas: true, onError: error => errors.push(error.message)
+  });
+  renderer.painter.upload = image => image;
+  try {
+    renderer.push(packet(1, {blobs: [{id: 'a', png: Buffer.from('pose-bytes').toString('base64')}]}));
+    for (let i = 0; i < 10 && renderer.stats.texture_count === 0; i++) await settle();
+    assert.equal(fetched, 0);
+    assert.equal(renderer.stats.texture_count, 1);
+    assert.equal(renderer.timeline[0].packet.blobs, undefined);
+    assert.deepEqual(errors, []);
+  } finally {
+    global.fetch = previousFetch;
+    if (previousBitmap === undefined) delete global.createImageBitmap;
+    else global.createImageBitmap = previousBitmap;
+    renderer.destroy();
+  }
+});
+
 test('gallery file URLs stay under the deployment prefix and reject traversal', () => {
   assert.equal(galleryFileUrl('/clashroyale', 'cases/pekka/0.json'), '/clashroyale/api/visual-gallery/files/cases/pekka/0.json');
   assert.equal(galleryFileUrl('', 'textures/ab.png'), '/api/visual-gallery/files/textures/ab.png');

@@ -463,6 +463,27 @@ class SceneTests(unittest.TestCase):
             self.assertEqual(self.match.subscribers, 0)
             self.assertGreater(self.match.last_watched, 0)
 
+    def test_scene_stream_inlines_pose_bytes_on_the_open_connection(self):
+        import base64
+        payload = b'\x89PNG\r\n\x1a\n'
+        self.asset(FIRST, payload)
+        self.renderer._accept(self.packet(draws=[{'kind': 'sprite', 'tex': FIRST}]))
+        events = self.renderer.events()
+        self.addCleanup(events.close)
+        kind, packet = next(events)
+        self.assertEqual(kind, 'scene')
+        self.assertEqual(packet['blobs'], [{'id': FIRST, 'png': base64.b64encode(payload).decode('ascii')}])
+        self.assertNotIn('blobs', self.renderer.latest)
+        self.asset(SECOND, b'next-pose')
+        self.renderer._accept(self.packet(
+            sequence=2,
+            draws=[{'kind': 'sprite', 'tex': FIRST}, {'kind': 'sprite', 'tex': SECOND}],
+            textures=[{'id': SECOND, 'width': 2, 'height': 2}]))
+        kind, again = next(events)
+        self.assertEqual(kind, 'scene')
+        self.assertEqual(again['blobs'], [{'id': SECOND, 'png': base64.b64encode(b'next-pose').decode('ascii')}])
+        self.assertNotIn('blobs', self.renderer.latest)
+
     def test_incomplete_and_deep_json_packets_fail_cleanly(self):
         for payload in [b'{"v":1}', b'[' * 1100 + b']' * 1100 + b'\n']:
             self.renderer.error = None

@@ -1,0 +1,63 @@
+{
+  "measured_at": "2026-10-24T16:30Z",
+  "site": "https://calgarypermit.ca/clashroyale/",
+  "release": "20261024-01-inline-poses",
+  "scenario": "watch: banana-hog-1 (hog-mirror) vs banana-1 (log-bait), 45 s, headless Chrome 154, WebGL2",
+  "server_stream_probe": {
+    "create_to_first_running_frame_s": 6.85,
+    "create_to_first_scene_packet_s": 7.48,
+    "engine_ticks_per_s": 20.01,
+    "scene_packets_per_s": 20.0,
+    "scene_json_kB_per_10s": [
+      11139,
+      7596,
+      9513,
+      5521,
+      7121,
+      5414
+    ],
+    "wire_mbps_total_gzip": 1.48
+  },
+  "browser_cold_profile": {
+    "create_to_visible_s": 8.09,
+    "display_frozen_ms_of_38500": 33798,
+    "longest_freeze_ms": 19349,
+    "texture_requests": 1416,
+    "texture_download_bytes": 5185398,
+    "packets_dropped": 738,
+    "frames_with_full_pending_queue": "715/767"
+  },
+  "browser_warm_profile": {
+    "create_to_visible_s": 7.72,
+    "display_frozen_ms_of_38500": 35413,
+    "longest_freeze_ms": 11399,
+    "texture_requests": 1531,
+    "texture_download_bytes": 5513287,
+    "packets_dropped": 731,
+    "frames_with_full_pending_queue": "684/731"
+  },
+  "vps_component_timing": {
+    "cpu": "AMD EPYC 9354P, 2 vCPU, CPUQuota=150%",
+    "native_watch_reset_s": [
+      4.11,
+      3.78
+    ],
+    "import_torch_s": 1.5,
+    "load_policy_s": 0.2,
+    "step_1_tick_ms_median": 6.48,
+    "step_1_tick_ms_p95": 8.99,
+    "validate_target_ms": 1.05,
+    "placement_mask_s": 0.08,
+    "frame_json_bytes_6_entities": 2547
+  },
+  "vps_process_rss_mb": {
+    "python": 344,
+    "native-watch": 842,
+    "clash-web-scene (debug build)": 780
+  },
+  "vps_cpu_during_match_pct_of_one_core": {
+    "python": "9-27",
+    "native-watch": "9-18",
+    "clash-web-scene": "9-18"
+  }
+}

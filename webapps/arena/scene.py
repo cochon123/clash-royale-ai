@@ -6,6 +6,7 @@ an image. Neither the game loop nor a slow client waits for presentation work.
 """
 from __future__ import annotations
 
+import base64
 from collections import OrderedDict
 import json
 import os
@@ -23,6 +24,12 @@ BINARY = Path(os.environ.get("ARENA_SCENE_BIN", str(
     paths.ENGINE / "native-spectator/target/debug/clash-web-scene")))
 TEXTURE_ID = re.compile(r"[0-9a-f]{16,64}")
 MAX_PACKET_BYTES = 4 * 1024 * 1024
+# Pose PNGs ride the scene stream that is already open. A separate GET for each
+# new pose would take the browser's remaining HTTP/1.1 connections (the match
+# stream and the scene stream already hold two of the six), and clicks, aims
+# and pause would queue behind image downloads for the whole battle.
+MAX_INLINE_TEXTURE_BYTES = 3 * 1024 * 1024
+MAX_INLINE_FILE_BYTES = 1536 * 1024
 MAX_TEXTURE_BYTES = 256 * 1024 * 1024
 MAX_TEXTURES = 8192
 MAX_TEXTURE_TOMBSTONES = 8192
@@ -208,8 +215,44 @@ class NativeSceneRenderer:
         except (OSError, ValueError, KeyError, TypeError, RuntimeError, RecursionError) as exc:
             self._fail(exc)
 
+    def _client_packet(self, packet, *, full):
+        """Copy of ``packet`` with pose bytes for this subscriber.
+
+        The first packet carries every pose that frame draws, so joining or
+        reloading does not open dozens of texture requests. Later packets carry
+        only poses encoded since the previous one. The stored packet is left
+        unchanged so another subscriber can make its own first delivery.
+        """
+        if full:
+            wanted = texture_references(packet.get("draws"))
+        else:
+            wanted = {item["id"] for item in packet.get("textures") or []
+                      if isinstance(item, dict) and isinstance(item.get("id"), str)}
+        files = []
+        for ident in wanted:
+            try:
+                data = self._texture_path(ident).read_bytes()
+            except (HTTPError, OSError):
+                continue
+            if 0 < len(data) <= MAX_INLINE_FILE_BYTES:
+                files.append((len(data), ident, data))
+        files.sort()
+        blobs = []
+        budget = MAX_INLINE_TEXTURE_BYTES
+        for size, ident, data in files:
+            if size > budget:
+                break
+            blobs.append({"id": ident, "png": base64.b64encode(data).decode("ascii")})
+            budget -= size
+        if not blobs:
+            return packet
+        delivered = dict(packet)
+        delivered["blobs"] = blobs
+        return delivered
+
     def events(self):
         last = 0
+        primed = False
         while not self.closed.is_set():
             with self.condition:
                 changed = self.condition.wait_for(
@@ -226,7 +269,9 @@ class NativeSceneRenderer:
                 return
             if packet and changed:
                 last = packet["sequence"]
-                yield "scene", packet
+                full = not primed
+                primed = True
+                yield "scene", self._client_packet(packet, full=full)
             else:
                 yield "heartbeat", {}
 

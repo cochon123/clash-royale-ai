@@ -65,6 +65,14 @@
     });
   }
 
+  function pngBlob(encoded) {
+    if (typeof encoded !== "string" || encoded.length === 0 || encoded.length > 2800000) throw new Error("inline pose is the wrong size");
+    const binary = atob(encoded);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new root.Blob([bytes], {type: "image/png"});
+  }
+
   function galleryFileUrl(base, relative) {
     if (typeof relative !== "string" || relative === "" || relative.startsWith("/") || relative.includes("\\") || relative.includes("?") || relative.includes("#")) throw new Error("Gallery path is not relative");
     const parts = relative.split("/");
@@ -313,11 +321,11 @@
       this.maxFrames = clamp(number(options.maxPendingFrames, 4), 2, 8); this.maxBytes = Math.max(4 * 1024 * 1024, number(options.maxTextureBytes, 192 * 1024 * 1024));
       this.maxTextures = clamp(number(options.maxTextures, 4096), 32, 8192); this.loadConcurrency = clamp(number(options.loadConcurrency, 4), 1, 8);
       // Interpolation delay is wall-clock milliseconds, including fast playback.
-      this.delay = clamp(number(options.interpolationDelay, 50), 0, 250); this.textures = new Map(); this.inflight = new Map(); this.descriptors = new Map(); this.pending = []; this.timeline = [];
+      this.delay = clamp(number(options.interpolationDelay, 50), 0, 250); this.textures = new Map(); this.inflight = new Map(); this.inlinePng = new Map(); this.descriptors = new Map(); this.pending = []; this.timeline = [];
       this.generation = 0; this.matchId = undefined; this.lastSequence = -Infinity; this.lastTick = -Infinity; this.destroyed = false; this.ready = false; this.bytes = 0; this.frameHandle = 0; this.exactToken = 0; this.exactWait = null;
       this.metrics = {backend: "", fps: 0, render_ms: 0, draws: 0, texture_bytes: 0, texture_count: 0, pending_frames: 0, missing: 0, frames: 0, dropped: 0, requests: 0, download_bytes: 0, evicted_textures: 0, expired_textures: 0, error: null};
       this.samples = [];
-      const gl = options.forceCanvas ? null : canvas.getContext("webgl2", {alpha: true, antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: !!options.preserveDrawingBuffer, powerPreference: "high-performance"});
+      const gl = options.forceCanvas ? null : canvas.getContext("webgl2", {alpha: options.alpha !== false, antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: !!options.preserveDrawingBuffer, powerPreference: "high-performance"});
       this.painter = gl ? new GLPainter(canvas, gl) : new SoftwarePainter(canvas); this.metrics.backend = gl ? "webgl2" : "canvas2d";
       this.contextLost = event => {event.preventDefault(); this.fail(new Error("The graphics context was lost; reload the scene or choose the original stream")); this.halted = true;};
       canvas.addEventListener("webglcontextlost", this.contextLost);
@@ -340,7 +348,7 @@
     }
     reset(matchId) {
       this.abandonExact(new DOMException("Reset", "AbortError"));
-      this.generation++; for (const request of this.inflight.values()) request.abort(); this.inflight.clear();
+      this.generation++; for (const request of this.inflight.values()) request.abort(); this.inflight.clear(); this.inlinePng.clear();
       // Pose ids are the pixels. A new match keeps textures already on the GPU
       // instead of downloading the same walk and spell frames again.
       this.pending = []; this.timeline = [];
@@ -369,6 +377,16 @@
         if (!textureId(descriptor.id) || !dimensions(descriptor.width) || !dimensions(descriptor.height)) throw new Error("Invalid scene texture descriptor");
         if (descriptor.width * descriptor.height * 4 > this.maxBytes) throw new Error("Scene texture exceeds the cache budget");
         this.descriptors.set(descriptor.id, descriptor);
+      }
+      const blobs = packet.blobs;
+      if (packet.blobs) delete packet.blobs;
+      if (Array.isArray(blobs)) {
+        const limit = Math.min(blobs.length, 1024);
+        for (let i = 0; i < limit; i++) {
+          const blob = blobs[i];
+          if (!blob || !textureId(blob.id) || typeof blob.png !== "string" || blob.png.length === 0 || blob.png.length > 2800000) continue;
+          if (!this.textures.has(blob.id)) this.inlinePng.set(blob.id, blob.png);
+        }
       }
       while (this.descriptors.size > 8192) this.descriptors.delete(this.descriptors.keys().next().value);
       return ids;
@@ -470,13 +488,22 @@
       this.trim();
     }
     async loadTexture(id, signal) {
-      const response = await root.fetch(this.options.textureUrl(id), {signal, credentials: "same-origin", cache: "force-cache"});
-      if (response.status === 410) {
-        const error = new Error("Original pose texture expired: " + id);
-        error.code = "ARENA_TEXTURE_EXPIRED"; error.textureId = id; throw error;
+      let blob;
+      const inline = this.inlinePng.get(id);
+      if (inline) {
+        this.inlinePng.delete(id);
+        try { blob = pngBlob(inline); }
+        catch { blob = null; }
       }
-      if (!response.ok) throw new Error("Original texture could not be loaded (" + response.status + "): " + id);
-      const blob = await response.blob();
+      if (!blob) {
+        const response = await root.fetch(this.options.textureUrl(id), {signal, credentials: "same-origin", cache: "force-cache"});
+        if (response.status === 410) {
+          const error = new Error("Original pose texture expired: " + id);
+          error.code = "ARENA_TEXTURE_EXPIRED"; error.textureId = id; throw error;
+        }
+        if (!response.ok) throw new Error("Original texture could not be loaded (" + response.status + "): " + id);
+        blob = await response.blob();
+      }
       if (signal.aborted) throw signal.reason || new DOMException("Cancelled", "AbortError");
       if (root.createImageBitmap) {
         const image = await root.createImageBitmap(blob, {premultiplyAlpha: "none", colorSpaceConversion: "none"});
