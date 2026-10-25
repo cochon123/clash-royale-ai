@@ -16,7 +16,9 @@ ROOT = Path(__file__).resolve().parents[2]
 REQUIRED_PATHS = (
     "webapps/__init__.py", "models/registry.json", "data/card_costs.json",
     "models/policy_bc_v4.4.2/best_model.pt", "models/policy_bc_v4.4.2/vocab.json",
-    "engine/runs/banana-1/base.pt", "engine/runs/banana-hog-1/models/final.pt",
+    "engine/runs/banana-1/base.pt", "engine/runs/banana-2/base.pt",
+    "engine/runs/banana-hog-1/models/final.pt",
+    "engine/runs/banana-hog-2/models/final.pt",
     "engine/runs/banana-league-20261019/models/mortar/final.pt",
     "engine/native-engine/target/release/native-watch",
     "engine/native-spectator/target/debug/clash-web-renderer",

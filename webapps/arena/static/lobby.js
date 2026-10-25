@@ -56,30 +56,45 @@ function modelById(id) {
 }
 
 // ---------------- models ----------------
+function modelCard(model, side) {
+  const kindLabel = { rl: "RL", imitation: "Imitation", baseline: "Baseline" }[model.kind] || model.kind;
+  return el("button", {
+    class: `model${side.model === model.id ? " selected" : ""}${model.available ? "" : " unavailable"}`,
+    type: "button",
+    onclick: () => {
+      if (!model.available) return;
+      side.model = model.id;
+      if (!side.deckTouched && model.trained_deck) side.deck = model.trained_deck;
+      render();
+    },
+  },
+  el("div", { class: "name" }, model.recommended ? el("span", { class: "star" }, "★") : null, model.name,
+    el("span", { class: `badge ${model.kind}` }, kindLabel),
+    model.legacy ? el("span", { class: "badge legacy" }, "Legacy") : null),
+  el("div", { class: "meta" }, model.trained_deck_name ? `Trained on ${model.trained_deck_name}` :
+    model.kind === "imitation" ? "Learned from human replays · any deck" : "Any deck",
+  model.available ? "" : " · checkpoint missing"),
+  el("div", { class: "summary" }, model.summary),
+  model.result ? el("div", { class: "result" }, model.result) : null);
+}
+
 function renderModels(container, sideKey) {
   const side = state.sides[sideKey];
+  const wasOpen = container.querySelector(".legacy-models")?.open;
   container.replaceChildren();
-  for (const model of state.catalog.models) {
-    const kindLabel = { rl: "RL", imitation: "Imitation", baseline: "Baseline" }[model.kind] || model.kind;
-    const card = el("button", {
-      class: `model${side.model === model.id ? " selected" : ""}${model.available ? "" : " unavailable"}`,
-      type: "button",
-      onclick: () => {
-        if (!model.available) return;
-        side.model = model.id;
-        if (!side.deckTouched && model.trained_deck) side.deck = model.trained_deck;
-        render();
-      },
-    },
-    el("div", { class: "name" }, model.recommended ? el("span", { class: "star" }, "★") : null, model.name,
-      el("span", { class: `badge ${model.kind}` }, kindLabel)),
-    el("div", { class: "meta" }, model.trained_deck_name ? `Trained on ${model.trained_deck_name}` :
-      model.kind === "imitation" ? "Learned from human replays · any deck" : "Any deck",
-    model.available ? "" : " · checkpoint missing"),
-    el("div", { class: "summary" }, model.summary),
-    model.result ? el("div", { class: "result" }, model.result) : null);
-    container.append(card);
-  }
+  const current = [];
+  const legacy = [];
+  for (const model of state.catalog.models) (model.legacy ? legacy : current).push(model);
+  for (const model of current) container.append(modelCard(model, side));
+  if (!legacy.length) return;
+  const grid = el("div", { class: "models" });
+  for (const model of legacy) grid.append(modelCard(model, side));
+  const box = el("details", { class: "legacy-models" },
+    el("summary", {}, "Legacy models"),
+    el("p", { class: "hint legacy-hint" }, "Earlier reference actors. They still play, and they stay out of the opening match."),
+    grid);
+  if (wasOpen || legacy.some((model) => model.id === side.model)) box.open = true;
+  container.append(box);
 }
 
 // ---------------- decks ----------------
@@ -322,13 +337,21 @@ $("start").addEventListener("click", async () => {
   $("lab-link").hidden = !!state.catalog.public;
   // Drop saved custom decks that reference cards no longer offered.
   state.customDecks = state.customDecks.filter((d) => d.cards.length === 8 && d.cards.every((c) => state.cards[c]));
-  const available = state.catalog.models.filter((m) => m.available);
-  const first = available.find((m) => m.recommended) || available[0];
-  const second = available.find((m) => m.id !== first?.id && m.recommended) || available[1] || first;
-  state.sides.red.model = first?.id;
-  state.sides.red.deck = first?.trained_deck || state.catalog.presets[0].id;
-  state.sides.blue.model = second?.id;
-  state.sides.blue.deck = state.catalog.presets.find((d) => d.id === "log-bait")?.id || state.catalog.presets[0].id;
+  const defaults = state.catalog.defaults || {};
+  const current = state.catalog.models.filter((m) => m.available && !m.legacy);
+  const pick = (id) => current.find((m) => m.id === id)
+    || current.find((m) => m.recommended)
+    || current[0]
+    || state.catalog.models.find((m) => m.available);
+  const deckOr = (id) => state.catalog.presets.some((d) => d.id === id) ? id : state.catalog.presets[0].id;
+  state.sides.red.model = pick(defaults.opponent_model)?.id || null;
+  state.sides.blue.model = pick(defaults.player_model)?.id || state.sides.red.model;
+  if (state.sides.blue.model === state.sides.red.model) {
+    const other = current.find((m) => m.id !== state.sides.red.model);
+    if (other) state.sides.blue.model = other.id;
+  }
+  state.sides.red.deck = deckOr(defaults.opponent_deck || "log-bait");
+  state.sides.blue.deck = deckOr(defaults.player_deck || "hog-mirror");
   render();
   refreshActive();
   setInterval(refreshActive, 5000);
