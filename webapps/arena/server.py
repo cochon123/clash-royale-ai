@@ -101,6 +101,7 @@ def health(_request):
 @app.route("GET", "/api/catalog")
 def get_catalog(_request):
     return {"models": catalog.engine_models(), "presets": catalog.presets(),
+            "defaults": catalog.DEFAULT_MATCHUP,
             "public": os.environ.get("ARENA_PUBLIC", "0") == "1",
             "cards": list(catalog.cards().values()),
             "rendering": {"default": "browser" if browser_scene_enabled() else "stream",

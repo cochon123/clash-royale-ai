@@ -10,8 +10,10 @@ Run from `clash-royale-ai/`:
 ```
 
 - **Arena:** <http://127.0.0.1:8800/> — play against a saved model or watch two
-  models. Choose both decks, use six presets, or build and save a custom deck
-  from the recovered card catalog. Custom decks are saved in this browser.
+  models. The lobby opens with you on Hog 2.6 against Banana 2 on Classic Log
+  Bait. Banana 1 is under Legacy models. Choose both decks, use six presets,
+  or build and save a custom deck from the recovered card catalog. Custom decks
+  are saved in this browser.
 - **Lab:** <http://127.0.0.1:8801/> — model inventory and evidence, RL runs and
   curves, live process/service observations, engine validation, datasets,
   reports and documentation. [Lab details and limits](lab/README.md).
@@ -115,7 +117,7 @@ playable. Missing checkpoints remain visible but cannot be selected.
 For example, `POST /api/matches` with:
 
 ```json
-{"sides":[{"controller":"human","deck":"hog-mirror"},{"controller":"banana-hog-1","deck":"log-bait"}],"seed":77}
+{"sides":[{"controller":"human","deck":"hog-mirror"},{"controller":"banana-2","deck":"log-bait"}],"seed":77}
 ```
 
 Side 0 is blue/bottom. Decks may be preset IDs or arrays of eight unique card

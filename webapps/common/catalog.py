@@ -14,6 +14,14 @@ from . import paths
 
 PRESET_LABELS = {"hog-mirror": "Hog 2.6"}
 
+# Opening match on the Arena lobby. The player is blue, from the bottom.
+DEFAULT_MATCHUP = {
+    "opponent_model": "banana-2",
+    "opponent_deck": "log-bait",
+    "player_model": "banana-hog-2",
+    "player_deck": "hog-mirror",
+}
+
 
 @lru_cache(maxsize=1)
 def cards() -> dict[str, dict]:
@@ -103,6 +111,7 @@ def engine_models() -> list[dict]:
         model = dict(model)
         checkpoint = model.get("checkpoint")
         model["available"] = checkpoint is None or (paths.REPO / checkpoint).is_file()
+        model["legacy"] = bool(model.get("legacy"))
         trained = model.get("trained_deck")
         model["trained_deck_name"] = (preset(trained) or {}).get("name") if trained else None
         result.append(model)

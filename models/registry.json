@@ -50,9 +50,10 @@
       "parent": "policy-bc-v4.4.2",
       "run": null,
       "created": "2026-10-21",
-      "summary": "Exact export of the policy-bc-v4.4.2 behaviour-cloning actor (learned from human replays), with no reinforcement learning. Plays any deck it has seen in replays.",
+      "summary": "Exact export of the policy-bc-v4.4.2 behaviour-cloning actor (learned from human replays), with no reinforcement learning. Plays any deck it has seen in replays. Kept for comparison; Arena opens on Banana 2.",
       "result": "Reference opponent for every RL run.",
-      "recommended": true
+      "recommended": false,
+      "legacy": true
     },
     {
       "id": "banana-mortar-1",

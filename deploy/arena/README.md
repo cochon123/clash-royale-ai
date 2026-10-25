@@ -76,8 +76,8 @@ The `web-jpeg` feature is separate from the desktop viewer build.
 
 The archive dereferences allowlisted runtime inputs so an isolated worktree’s
 read-only artifact links become portable files. The allowlist includes Arena/shared Python code, inference adapters, card
-metadata/art, four controller entries and their three saved checkpoints, the
-base BC checkpoint, pinned Unicorn library and original engine library, recovered engine state and original
+metadata/art, the playable registry, and the Banana 1, Banana 2, Banana Hog 1,
+Banana Hog 2, and Mortar checkpoints, plus the base BC checkpoint, pinned Unicorn library and original engine library, recovered engine state and original
 spectator assets. It excludes Git metadata, local AGENTS instructions,
 credentials, the Lab and bulk datasets. Every runtime file has a checksum in
 `arena-runtime-manifest.json`.

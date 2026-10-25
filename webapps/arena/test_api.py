@@ -273,5 +273,31 @@ class MatchSessionTests(unittest.TestCase):
             match.close()
 
 
+class ArenaOpeningMatchTests(unittest.TestCase):
+    def test_lobby_opens_on_banana_2_log_bait_against_hog(self):
+        body = server.get_catalog(None)
+        self.assertEqual(body["defaults"], {
+            "opponent_model": "banana-2",
+            "opponent_deck": "log-bait",
+            "player_model": "banana-hog-2",
+            "player_deck": "hog-mirror",
+        })
+        models = {model["id"]: model for model in body["models"]}
+        self.assertTrue(models["banana-1"]["legacy"])
+        self.assertFalse(models["banana-1"]["recommended"])
+        self.assertTrue(models["banana-2"]["available"])
+        self.assertFalse(models["banana-2"].get("legacy"))
+        preset_ids = {deck["id"] for deck in body["presets"]}
+        self.assertIn(body["defaults"]["opponent_deck"], preset_ids)
+        self.assertIn(body["defaults"]["player_deck"], preset_ids)
+        names = {deck["id"]: deck["name"] for deck in body["presets"]}
+        self.assertEqual(names["hog-mirror"], "Hog 2.6")
+        self.assertEqual(names["log-bait"], "Classic Log Bait")
+        lobby = Path(__file__).parent.joinpath("static", "lobby.js").read_text()
+        self.assertIn("state.catalog.defaults", lobby)
+        self.assertIn("legacy-models", lobby)
+        self.assertNotIn('find((d) => d.id === "log-bait")', lobby)
+
+
 if __name__ == "__main__":
     unittest.main()

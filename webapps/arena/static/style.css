@@ -61,7 +61,12 @@ img { display: block; }
 .badge.rl { background: #3a2b62; color: #d6c3ff; }
 .badge.imitation { background: #1f4a46; color: #a7f0e2; }
 .badge.baseline { background: #4a3a1f; color: #f5d9a3; }
+.badge.legacy { background: #3a3148; color: #d7c6ea; }
 .star { color: var(--gold); }
+.legacy-models { grid-column: 1 / -1; margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--line); }
+.legacy-models summary { font-size: 13px; font-weight: 700; }
+.legacy-models .legacy-hint { margin: 6px 0 0; }
+.legacy-models .models { margin-top: 10px; }
 
 .decks { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x proximity; }
 .deck { flex: 0 0 auto; width: 214px; scroll-snap-align: start; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px; cursor: pointer; text-align: left; position: relative; }
