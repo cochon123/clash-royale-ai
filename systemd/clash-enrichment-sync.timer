@@ -1,0 +1,10 @@
+[Unit]
+Description=Refresh enrichment progress on both Clash Labs every 15 seconds
+
+[Timer]
+OnBootSec=10
+OnUnitActiveSec=15
+Unit=clash-enrichment-sync.service
+
+[Install]
+WantedBy=timers.target

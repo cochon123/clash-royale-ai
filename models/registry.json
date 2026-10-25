@@ -29,6 +29,19 @@
       "recommended": true
     },
     {
+      "id": "banana-2",
+      "name": "Banana 2",
+      "kind": "imitation",
+      "checkpoint": "engine/runs/banana-2/base.pt",
+      "trained_deck": null,
+      "parent": "banana-1",
+      "run": "engine/runs/banana-2-e7-20261025",
+      "created": "2026-10-24",
+      "summary": "Epoch-7 behavior-cloning continuation of Banana 1. This file is the Banana-2 actor used from here on. The epoch-3 export is kept at engine/runs/banana-2/archive-epoch3/base.pt.",
+      "result": "On the fresh six-deck round robin it went 47–49 overall and 23–25 against Banana 1. Epoch 7 and epoch 3 split their 48 games 24–24.",
+      "recommended": true
+    },
+    {
       "id": "banana-1",
       "name": "Banana 1",
       "kind": "imitation",

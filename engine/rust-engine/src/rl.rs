@@ -556,6 +556,62 @@ impl RlSession {
         Ok(String::from_utf8_lossy(&bytes).into_owned())
     }
 
+    /// Resolve territory/pocket placement using the same recovered routine as
+    /// native-watch. No command is submitted and the world does not advance.
+    pub fn resolve_target(&mut self, request: PlayCardRequest) -> Result<Value, String> {
+        if request.side > 1 || request.slot > 3 {
+            return Err("target resolution needs side 0..1 and slot 0..3".into());
+        }
+        let side_obj = self.side_object(request.side)?;
+        if side_obj == 0 { return Err("null native battle side".into()); }
+        let tick = self.engine.ticks();
+        let commands = read_u64(&self.engine, self.engine.world + 0x38)?;
+        let queue = read_u32(&self.engine, commands + 0x14)?;
+        let wrapper = self.engine.call(0xf9dd98, &[side_obj, request.slot as u64], 0)?;
+        if wrapper == 0 { return Ok(json!({"valid":false,"rejection":"empty_hand_slot"})); }
+        self.engine.runtime.memory.write_bytes(self.descriptor_scratch, &[0;24])?;
+        self.engine.call(0xe80bbc, &[wrapper,side_obj,1], self.descriptor_scratch)?;
+        let proxy = self.engine.call(0xe80680, &[self.descriptor_scratch],0)?;
+        if proxy == 0 { return Err("null native card selection proxy".into()); }
+        let target = self.engine.runtime.heap.alloc(8,8,&mut self.engine.runtime.memory)?;
+        let resolved = (|| -> Result<Option<(i32,i32)>,String> {
+            self.engine.runtime.memory.write_bytes(target,&[0xff;8])?;
+            let mode = self.engine.call(0xf93d3c, &[side_obj],0)?;
+            let stack = num(&self.engine.checkpoint["emulation_abi"]["call_stack_pointer"])?;
+            self.engine.runtime.memory.write_bytes(stack,&[0;8])?;
+            let valid = self.engine.call(0xf9e16c, &[side_obj,proxy,request.x as i64 as u64,
+                request.y as i64 as u64,target,self.engine.world,0,mode],0)?;
+            if valid & 1 == 0 { return Ok(None); }
+            Ok(Some((read_i32(&self.engine,target)?,read_i32(&self.engine,target+4)?)))
+        })();
+        self.engine.runtime.heap.free_ptr(target)?;
+        let resolved = resolved?;
+        if tick != self.engine.ticks() || queue != read_u32(&self.engine,commands+0x14)? {
+            return Err("native target resolution changed tick or command queue".into());
+        }
+        Ok(match resolved {
+            Some((x,y)) => json!({"valid":true,"x":x,"y":y}),
+            None => json!({"valid":false,"rejection":"no_resolved_target"}),
+        })
+    }
+
+    /// Submit and report the authoritative coordinate for inference history.
+    /// Opt-in at the protocol layer so old replay contracts stay unchanged.
+    pub fn play_card_resolved(&mut self, request: PlayCardRequest) -> Result<Value,String> {
+        let target = self.resolve_target(request)?;
+        if target["valid"] != true {
+            return Ok(json!({"accepted":false,"rejection":target["rejection"]}));
+        }
+        let effective = PlayCardRequest {
+            x:target["x"].as_i64().ok_or("resolved target missing x")? as i32,
+            y:target["y"].as_i64().ok_or("resolved target missing y")? as i32,
+            ..request
+        };
+        let mut result = self.play_card(effective)?;
+        result["resolved_target"] = json!({"x":effective.x,"y":effective.y});
+        Ok(result)
+    }
+
     /// Submit a card through the recovered native descriptor, validator, and
     /// command queue path.
     pub fn play_card(&mut self, request: PlayCardRequest) -> Result<Value, String> {

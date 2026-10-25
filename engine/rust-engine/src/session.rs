@@ -57,8 +57,12 @@ impl Session {
             &std::fs::read(dir.join("checkpoint.json")).map_err(|e| e.to_string())?,
         )
         .map_err(|e| e.to_string())?;
-        let source =
-            Path::new(env!("CARGO_MANIFEST_DIR")).join("../analysis/libg-cipher/libg.decrypted.so");
+        // Deployment hosts need not reproduce the build machine's directory tree.
+        // The pinned SHA-256 below still authenticates the supplied source.
+        let source = std::env::var_os("CR_SOURCE_ELF")
+            .map(PathBuf::from)
+            .unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../analysis/libg-cipher/libg.decrypted.so"));
         if checkpoint["source_sha256"] != SOURCE_SHA256 || sha256(&source)? != SOURCE_SHA256 {
             return Err("source engine identity mismatch".into());
         }

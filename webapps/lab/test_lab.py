@@ -16,6 +16,27 @@ from webapps.lab.__main__ import document, offline_report, safe_document
 
 
 class StatusTests(unittest.TestCase):
+    def test_completed_alignment_is_finished_with_unverified_data(self):
+        state = {'kind': 'data enrichment', 'status': 'blocked',
+                 'completed_at': '2026-10-24T15:09:18+00:00', 'blocker': 'Data needs validation',
+                 'progress': {'done': 17, 'total': 17, 'attempted': 17, 'enriched': 0}}
+        self.assertEqual(s.run_status(state, False, [], [], 'example')['status'], 'finished')
+        self.assertEqual(s.enrichment_validation(state)['status'], 'unverified')
+        self.assertFalse(s.enrichment_validation(state)['training_usable'])
+        self.assertEqual(state['status'], 'blocked')  # Keep the original evidence.
+        state['progress']['done'] = 16
+        self.assertEqual(s.run_status(state, False, [], [], 'example')['status'], 'blocked')
+        state['progress']['done'] = 17
+        state.pop('completed_at')
+        self.assertEqual(s.run_status(state, False, [], [], 'example')['status'], 'blocked')
+
+    def test_enrichment_blocker_is_not_running_or_finished(self):
+        self.assertEqual(s.classify('replay-enrichment-home-example'), 'data enrichment')
+        state = {'status': 'blocked', 'updated_at': time.time(), 'blocker': 'No compatible replays'}
+        result = s.run_status(state, False, [], [], 'replay-enrichment-home-example')
+        self.assertEqual(result['status'], 'blocked')
+        self.assertIn('No compatible replays', result['evidence'])
+
     def test_only_the_executed_entrypoint_counts_as_a_trainer(self):
         self.assertEqual(s.process_category(['python', '-u', '-m', 'rl.banana_hog_adaptive']), 'training')
         self.assertEqual(s.process_category(['python', 'engine/rl/banana_fast_train.py']), 'training')
@@ -141,6 +162,36 @@ class ReaderTests(unittest.TestCase):
         self.assertLess(board['eta_seconds'], 3700)
         self.assertAlmostEqual(board['progress'], 0.5, delta=0.05)
         self.assertTrue(board['decks'][0]['current'])
+
+    def test_focus_board_uses_measurement_progress(self):
+        runs = self.root / 'runs'
+        night = runs / 'banana-deck-night-20261024'
+        night.mkdir(parents=True)
+        now = time.time()
+        (night / 'progress.json').write_text(json.dumps({
+            'focus': 'hog-4-opus', 'headline': 'Hog 4 measurements',
+            'deadline': datetime.fromtimestamp(now + 3600, timezone.utc).isoformat(),
+            'started_at': datetime.fromtimestamp(now - 600, timezone.utc).isoformat(),
+            'current_model': 'banana-hog-4-opus', 'roster': ['hog-mirror'],
+        }))
+        rows = [{'id': 'banana-hog-4-opus', 'status': 'running', 'phase': 'opus · vine 12/60 states',
+                 'counters': {'games': 0, 'updates': 0},
+                 'progress': {'games': 12, 'updates': 60, 'eta_seconds': 400}}]
+        with patch.object(s.paths, 'ENGINE_RUNS', runs):
+            board = s.night_board(rows)
+        self.assertEqual(board['work_done'], '12 / 60')
+        self.assertEqual(board['decks'][0]['run_id'], 'banana-hog-4-opus')
+        self.assertEqual(board['decks'][0]['games'], 12)
+        self.assertEqual(board['phase'], 'opus · vine 12/60 states')
+
+    def test_vine_curve_averages_forced_branches_only(self):
+        rows = [
+            {'branches': [{'hog': {'forced': True, 'result': 'W', 'trade_delta': -1}, 'policy': {'result': 'L', 'trade_delta': 1}}]},
+            {'branches': [{'hog': {'forced': False, 'result': 'L', 'trade_delta': 5}, 'policy': {'result': 'W', 'trade_delta': 0}}]},
+        ]
+        curves = {curve['name']: curve['points'] for curve in s.vine_curves(rows, 'vine.jsonl')}
+        self.assertEqual(curves['vine · hog minus own action'], [[1, 1.0]])
+        self.assertEqual(curves['vine · trade change'], [[1, -2.0]])
 
     def test_partial_and_bounded_jsonl(self):
         path = self.root / 'partial.jsonl'

@@ -1,0 +1,19 @@
+[Unit]
+Description=Banana-2 continuation epochs 4-7 (four more imitation epochs)
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Documents/mini-project/clash-royale-ai
+Environment=PYTHONPATH=%h/Documents/mini-project/clash-royale-ai/src
+Environment=OPENBLAS_NUM_THREADS=2
+Environment=OMP_NUM_THREADS=2
+Environment=PYTHONUNBUFFERED=1
+ExecStart=%h/Documents/mini-project/clash-royale-ai/.venv/bin/python -m cr_replay_pipeline.banana2_train --run-dir engine/runs/banana-2-e7-20261025 --continue-from engine/runs/banana-2 --epochs 4 --batch-size 192 --learning-rate 0.00001 --aux-weight 0.05
+Restart=no
+KillMode=mixed
+TimeoutStopSec=180
+Nice=10
+CPUQuota=300%
+MemoryMax=6G
+StandardOutput=append:%h/Documents/mini-project/clash-royale-ai/engine/runs/banana-2-e7-20261025/console.log
+StandardError=append:%h/Documents/mini-project/clash-royale-ai/engine/runs/banana-2-e7-20261025/console.log

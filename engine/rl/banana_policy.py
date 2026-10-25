@@ -42,8 +42,13 @@ def _slug(name: str) -> str:
 _NATIVE_CARD_ALIASES = {
     "hogrider": "hog-rider", "minipekka": "mini-pekka",
     "icespirit": "ice-spirit", "icespirits": "ice-spirit",
+    "icegolemite": "ice-golem",
     "barblog": "barbarian-barrel", "barbarianbarrel": "barbarian-barrel",
-    "thelog": "the-log",
+    "thelog": "the-log", "log": "the-log",
+    "assassin": "bandit", "ghost": "royal-ghost", "elitearcher": "magic-archer",
+    "skeletonwarriors": "guards", "ragebarbarian": "lumberjack",
+    "darkwitch": "night-witch",
+    "archer": "archers",
 }
 
 

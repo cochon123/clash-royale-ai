@@ -455,6 +455,8 @@ def run_dirs():
 
 
 def classify(name):
+    if name.startswith('replay-enrichment'):
+        return 'data enrichment'
     if name.startswith('perf-') or 'train-bench' in name or 'benchmark' in name:
         return 'benchmark'
     if name.startswith('banana-play/') or 'ui-ai-match' in name:
@@ -466,6 +468,27 @@ def classify(name):
     if 'banana' in name and name != 'banana-1':
         return 'training run'
     return 'other'
+
+
+def completed_alignment(state):
+    """Recognize the original pilot's execution completion independently of its data gate."""
+    p = state.get('progress')
+    return (state.get('kind') == 'data enrichment' and isinstance(p, dict)
+            and stamp(state.get('completed_at')) is not None
+            and number(p.get('total')) is not None and p['total'] > 0
+            and p.get('done') == p['total'] and p.get('attempted') == p['total'])
+
+
+def enrichment_validation(state):
+    if state.get('kind') != 'data enrichment':
+        return None
+    value = state.get('validation')
+    if isinstance(value, dict):
+        return value
+    # Historical runs used 'blocked' for the data-quality gate after processing
+    # every candidate. Preserve that recorded state, but expose its meaning.
+    return {'status': 'unverified', 'training_usable': False,
+            'message': state.get('blocker', 'Simulated states have not been validated against the recorded game.')}
 
 
 def run_status(state, stop, processes, units, run_id, current=None, directory=None):
@@ -496,20 +519,27 @@ def run_status(state, stop, processes, units, run_id, current=None, directory=No
         return False
     matching = [p for p in processes if owns(p)]
     train_proc = [p for p in matching if p['category'] == 'training']
+    enrichment_proc = [p for p in matching if p['category'] == 'pipeline'] if state.get('kind') == 'data enrichment' else []
     active_units = [u for u in units if u.get('active') == 'active' and u.get('sub') in {'running', 'start'}
                     and u['name'] in {run_id.replace('/', '-') + '-train.service', run_id.replace('/', '-') + '.service'}]
     terminal = reported in {'completed', 'complete', 'finished', 'done', 'success', 'succeeded'}
+    legacy_finished = reported == 'blocked' and completed_alignment(state)
+    terminal = terminal or legacy_finished
     evidence = []
-    if train_proc or active_units:
+    if train_proc or active_units or enrichment_proc:
         status = 'running'
-        evidence.append('Trainer process or active training unit observed')
+        evidence.append('Enrichment pipeline process observed' if enrichment_proc else 'Trainer process or active training unit observed')
         if stop:
             evidence.append('STOP exists: stop requested; trainer is still observed')
         if terminal:
             evidence.append('State reports completion but trainer is still observed')
+    elif reported == 'blocked' and not legacy_finished:
+        status = 'blocked'
+        evidence.append(str(state.get('blocker', 'Run requires additional support before continuing')))
     elif terminal:
         status = 'finished'
-        evidence.append('State reports ' + reported)
+        evidence.append('All alignment attempts completed; recorded blocked status refers to data validation'
+                        if legacy_finished else 'State reports ' + reported)
     elif stop or reported in {'stopped', 'failed', 'error', 'cancelled', 'interrupted'}:
         status = 'stopped'
         evidence.append('STOP file present' if stop else 'State reports ' + reported)
@@ -561,7 +591,7 @@ def run_summary(row, observation):
     history = evaluation.get('history', []) if isinstance(evaluation, dict) else []
     latest = next((h for h in reversed(history) if isinstance(h, dict) and number(h.get('score')) is not None), None) if isinstance(history, list) else None
     started = stamp(state.get('started_at', row['launch'].get('started_at')))
-    ended = stamp(state.get('updated_at')) if status['status'] in {'finished', 'stopped', 'stale'} else time.time()
+    ended = stamp(state.get('updated_at')) if status['status'] in {'finished', 'stopped', 'stale', 'blocked'} else time.time()
     elapsed = number(state.get('elapsed_seconds'))
     if elapsed is None and started and ended:
         elapsed = max(0, ended - started)
@@ -575,7 +605,15 @@ def run_summary(row, observation):
         'updated_at': state.get('updated_at'), 'deadline': deadline_value,
         'elapsed_seconds': elapsed, 'remaining_seconds': max(0, deadline - time.time()) if deadline and status['status'] == 'running' else None,
         'counters': counters, 'rates': state.get('rates', {}), 'latest_evaluation': latest, 'dashboard': dashboard,
-        'error': state.get('error'), 'metric_source': row['source'] + '/state.json'}
+        'error': state.get('error'), 'metric_source': row['source'] + '/state.json',
+        'progress': state.get('progress') if isinstance(state.get('progress'), dict) else None,
+        'host': state.get('host'), 'blocker': state.get('blocker'), 'scope': state.get('scope'),
+        'training_method': state.get('method'),
+        'tournament': state.get('tournament') if state.get('method') == 'banana_round_robin' else None,
+        'training_data': state.get('data') if state.get('method') == 'imitation_native_aux' else None,
+        'report': state.get('report') if str(state.get('report', '')).startswith('/reports/') else None,
+        'validation': (state.get('validation') if state.get('method') == 'imitation_native_aux'
+                       else enrichment_validation(state))}
 
 
 def night_directory():
@@ -659,6 +697,26 @@ def night_board(run_rows):
             parts.append(f'{int(training)} training')
         if parts:
             board['work_done'] = ' · '.join(parts)
+        measured = row.get('progress') if isinstance(row.get('progress'), dict) else None
+        done = number(measured.get('games')) if measured else None
+        total = number(measured.get('updates')) if measured else None
+        # A measurement run publishes done/total in progress. Those counts are
+        # the work on the homepage; the training counters stay at zero until a game is recorded.
+        if done is not None and total:
+            board['work_done'] = f'{int(done)} / {int(total)}'
+            board['decks'] = [{
+                'deck_id': progress.get('current_deck') or row.get('id'),
+                'name': board.get('headline') or row.get('id'),
+                'run_id': row.get('id'),
+                'status': row.get('status', 'unknown'),
+                'phase': row.get('phase'),
+                'games': int(done),
+                'wins': counters.get('wins'),
+                'losses': counters.get('losses'),
+                'updates': int(total),
+                'latest_evaluation': row.get('latest_evaluation'),
+                'current': True,
+            }]
         available = memory_available_gib()
         if available is not None:
             board['memory_available_gib'] = available
@@ -736,6 +794,51 @@ def outcome_speed_series(kind, records, src, window=SPEED_WINDOW_SECONDS):
             series(kind + ' · net wins/min', net, src, 'Wins minus losses per minute over the trailing ten minutes. Above zero: results are improving; below zero: worsening.')]
 
 
+_VINE_SCORE = {'W': 1.0, 'D': 0.5, 'L': 0.0}
+
+
+def vine_curves(rows, src):
+    """Running means from vine.jsonl. Each row is one cloned state, not a training game."""
+    gap_sum = trade_sum = 0.0
+    gap_n = trade_n = 0
+    gap_points, trade_points = [], []
+    for index, row in enumerate(rows, 1):
+        if not isinstance(row, dict):
+            continue
+        gaps, trades = [], []
+        for branch in row.get('branches') or []:
+            if not isinstance(branch, dict):
+                continue
+            hog, policy = branch.get('hog') or {}, branch.get('policy') or {}
+            if not isinstance(hog, dict) or not isinstance(policy, dict) or not hog.get('forced'):
+                continue
+            if hog.get('result') in _VINE_SCORE and policy.get('result') in _VINE_SCORE:
+                gaps.append(_VINE_SCORE[hog['result']] - _VINE_SCORE[policy['result']])
+            hog_trade, policy_trade = number(hog.get('trade_delta')), number(policy.get('trade_delta'))
+            if hog_trade is not None and policy_trade is not None:
+                trades.append(hog_trade - policy_trade)
+        if gaps:
+            gap_sum += sum(gaps)
+            gap_n += len(gaps)
+            gap_points.append((index, gap_sum / gap_n))
+        if trades:
+            trade_sum += sum(trades)
+            trade_n += len(trades)
+            trade_points.append((index, trade_sum / trade_n))
+    charts = []
+    if gap_points:
+        charts.append(series(
+            'vine · hog minus own action', gap_points, src,
+            'Running mean of paired outcomes after a cloned state. The forced Hog at the bridge minus the policy\'s own first action. Above zero: the Hog won more often.',
+            x_label='state'))
+    if trade_points:
+        charts.append(series(
+            'vine · trade change', trade_points, src,
+            'Running mean of the elixir-trade change over the first 15 seconds, Hog branch minus the policy branch. Below zero: the trade term prices the Hog as a loss.',
+            x_label='state'))
+    return charts
+
+
 def run_detail(run_id):
     def scan():
         row = next((r for r in cached('run-scan', 5, run_scan) if r['id'] == run_id), None)
@@ -744,6 +847,14 @@ def run_detail(run_id):
         directory = paths.ENGINE_RUNS / run_id
         charts, logs = [], []
         state = row['state']
+        if state.get('method') == 'imitation_native_aux':
+            for model in ('banana-1', 'bc-control', 'banana-2'):
+                records = [r for r in state.get('history', []) if r.get('model') == model]
+                for key in ('loss','slot_top1','tile_top5_acc','timing_mae','aux_mae'):
+                    points = [(r.get('epoch'), r.get(key)) for r in records]
+                    if any(number(y) is not None for x,y in points):
+                        charts.append(series(model+' · '+key, points, row['source']+'/state.json#history',
+                                             'Held-out human action prediction or experimental native-target error; not a game win rate.', 'epoch'))
         evaluation = state.get('evaluation', {})
         history = evaluation.get('history', []) if isinstance(evaluation, dict) else []
         if isinstance(history, list):
@@ -762,7 +873,10 @@ def run_detail(run_id):
         if isinstance(old_history, list):
             for key in ('hog', 'mortar'):
                 charts.append(series(key + ' recent win rate', [(r.get('game'), r.get(key)) for r in old_history if isinstance(r, dict)], row['source'] + '/state.json#history', 'Recent training win rate, as recorded by the trainer; not a held-out evaluation.', 'game'))
-        for filename in ('matches.jsonl', 'updates.jsonl', 'progress.jsonl', 'actions.jsonl'):
+        vine_path = directory / 'vine.jsonl'
+        if vine_path.is_file():
+            charts.extend(vine_curves(jsonl(vine_path)['rows'], source(vine_path)))
+        for filename in ('matches.jsonl', 'updates.jsonl', 'progress.jsonl', 'actions.jsonl', 'vine.jsonl'):
             p = directory / filename
             if not p.is_file():
                 continue
@@ -802,7 +916,7 @@ def run_detail(run_id):
                     model_name = str(record.get('model', 'trainer'))
                     groups.setdefault(model_name, []).append(record)
                 for model_name, records in groups.items():
-                    for key in ('loss', 'policy_loss', 'value_loss', 'entropy', 'approx_kl', 'parent_kl', 'completed_games', 'games_per_minute'):
+                    for key in ('loss', 'control_loss', 'aux_loss', 'policy_loss', 'value_loss', 'entropy', 'approx_kl', 'parent_kl', 'completed_games', 'games_per_minute', 'done', 'candidate', 'rejected', 'attempted', 'simulated_unverified', 'partial_unverified', 'state_rows_exported', 'files_per_second', 'eta_seconds'):
                         pts = [(stamp(r.get('at')), r.get(key)) for r in records]
                         if any(number(y) is not None for x, y in pts):
                             charts.append(series(model_name + ' · ' + key, pts, source(p), 'Recorded trainer metric for this specialist. Compare values within this curve; units differ between metrics.'))
@@ -828,8 +942,9 @@ def run_detail(run_id):
                             charts.append(series(model_name + ' · ' + key, pts, source(p), 'Cumulative specialist outcomes in the loaded progress log window.'))
                         if rates:
                             charts.append(series(model_name + ' games/min', rates, source(p), 'Completed specialist game events in the trailing 60 seconds of wall time.'))
+        artifact_names = {'manifest.json', 'launch.json', 'operator-notes.json', 'run-manifest.json', 'summary.json', 'result.json'}
         artifacts = [{'path': source(p), 'data': compact(obj(p))} for p in entries(directory)
-                     if p.name in {'manifest.json', 'launch.json', 'operator-notes.json', 'run-manifest.json', 'summary.json', 'result.json'}]
+                     if p.name in artifact_names or (p.name.startswith('opus-') and p.suffix == '.json')]
         return {'row': row, 'charts': [c for c in charts if c['points']], 'logs': logs, 'artifacts': artifacts,
                 'weights': [info(p) for p in small_tree(directory / 'models') if p.suffix == '.pt'],
                 'files': [info(p) for p in entries(directory) if p.is_file()]}
@@ -913,4 +1028,5 @@ def overview():
             'status_explanation': 'Trainer processes, active training units and recent run state are combined. Engine worker or dashboard processes alone do not prove training.',
             'source': '/proc/*/cmdline; systemd user units; engine/runs/*/state.json; STOP files',
             'active_runs': running, 'recent_runs': sorted(run_rows, key=lambda r: r.get('updated_at') or '', reverse=True)[:5],
+            'enrichment_runs': [r for r in run_rows if r['kind'] == 'data enrichment'],
             'night': night, **observation}

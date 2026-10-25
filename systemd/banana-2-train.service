@@ -1,0 +1,19 @@
+[Unit]
+Description=Banana-2 human imitation with experimental native-state supervision
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Documents/mini-project/clash-royale-ai
+Environment=PYTHONPATH=%h/Documents/mini-project/clash-royale-ai/src
+Environment=OPENBLAS_NUM_THREADS=2
+Environment=OMP_NUM_THREADS=2
+Environment=PYTHONUNBUFFERED=1
+ExecStart=%h/Documents/mini-project/clash-royale-ai/.venv/bin/python -m cr_replay_pipeline.banana2_train --run-dir engine/runs/banana-2 --epochs 3 --batch-size 192 --learning-rate 0.00001 --aux-weight 0.05
+Restart=no
+KillMode=mixed
+TimeoutStopSec=180
+Nice=10
+CPUQuota=300%
+MemoryMax=6G
+StandardOutput=append:%h/Documents/mini-project/clash-royale-ai/engine/runs/banana-2/console.log
+StandardError=append:%h/Documents/mini-project/clash-royale-ai/engine/runs/banana-2/console.log

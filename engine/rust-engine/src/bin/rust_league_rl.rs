@@ -541,6 +541,9 @@ impl Server {
                     .audit(&path)?;
                 Ok(json!({"saved":path}))
             }
+            "resolve_target" => {
+                self.session.as_mut().ok_or("reset required")?.resolve_target(action(req)?)
+            }
             "finish" => {
                 let session = self.session.as_mut().ok_or("reset required")?;
                 let outcome = session.native_match_until_terminal()?;
@@ -574,7 +577,9 @@ impl Server {
                     .ok_or("missing native tick")?;
                 let mut results = Vec::new();
                 for a in actions {
-                    results.push(session.play_card(a)?);
+                    results.push(if req["resolve_actions"].as_bool().unwrap_or(false) {
+                        session.play_card_resolved(a)?
+                    } else { session.play_card(a)? });
                 }
                 let mut advanced = 0u64;
                 for _ in 0..count {

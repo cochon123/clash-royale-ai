@@ -1,0 +1,12 @@
+[Unit]
+Description=Clash Lab home-server research observatory
+After=network-online.target
+
+[Service]
+WorkingDirectory=%h/projects/clash-royale-ai
+ExecStart=%h/projects/clash-royale-ai/.venv/bin/python -m webapps.lab --host 100.88.135.1 --port 8801
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

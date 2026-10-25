@@ -1,0 +1,7 @@
+[Unit]
+Description=Mirror enrichment progress between laptop and home Clash Lab
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 %h/Documents/mini-project/clash-royale-ai/scripts/sync_home_enrichment.py
+TimeoutStartSec=55

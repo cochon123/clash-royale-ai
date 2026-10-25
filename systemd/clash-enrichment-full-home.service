@@ -1,0 +1,23 @@
+[Unit]
+Description=Clash Royale full-corpus experimental native enrichment
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/projects/clash-royale-ai
+Environment=PYTHONPATH=%h/projects/clash-royale-ai/src
+Environment=CR_SOURCE_ELF=%h/projects/clash-royale-ai/engine/analysis/libg-cipher/libg.decrypted.so
+Environment=CR_TRIM_CHECKPOINT_JSON=1
+Environment=PYTHONUNBUFFERED=1
+ExecStart=%h/projects/clash-royale-ai/.venv/bin/python -m cr_replay_pipeline.native_enrichment_full --input-db engine/runs/replay-enrichment-full-20261024/inputs/input.sqlite3 --run-dir engine/runs/replay-enrichment-full-20261024 --binary engine/rust-engine/target/release/rust_league_rl --checkpoint engine/analysis/native-pipeline/oracle-export-01/stage01-attempt001/state --workers 2 --seeds 4 --battle-timeout 90
+Restart=on-failure
+RestartSec=20
+TimeoutStopSec=30
+Nice=10
+CPUQuota=180%
+MemoryMax=2300M
+StandardOutput=append:%h/projects/clash-royale-ai/engine/runs/replay-enrichment-full-20261024/console.log
+StandardError=append:%h/projects/clash-royale-ai/engine/runs/replay-enrichment-full-20261024/console.log
+
+[Install]
+WantedBy=default.target

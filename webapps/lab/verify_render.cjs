@@ -36,6 +36,44 @@ class Element {
   getBoundingClientRect(){return {left:0,top:0,width:660,height:260};}
 }
 (async()=>{
+  const progressExample = render('enrichmentPanel', {
+    id:'replay-enrichment-example', kind:'data enrichment', status:'running', host:'home',
+    validation:{status:'unverified'}, metric_source:'state.json', progress:{
+      total:64275, done:13665, candidate:50641, attempted:31, preflight_skipped:13634,
+      simulated_unverified:0, partial_unverified:27, failed:4, enriched:0,
+      state_rows_exported:89, files_per_second:.1753, eta_seconds:288660, workers:2,
+    },
+  });
+  assert.ok(progressExample.includes('Harness attempts'));
+  assert.ok(progressExample.includes('31 / 50,641'));
+  assert.ok(progressExample.includes('13,634 skipped'));
+  assert.ok(progressExample.includes('50,610 remaining'));
+  assert.ok(progressExample.includes('aria-valuenow="0.061"'));
+  assert.ok(!progressExample.includes('13,665 / 64,275'));
+  console.log('Harness progress excludes instant skips OK');
+  const imitationExample = render('runDetailHTML', {summary:{
+    id:'banana-2',kind:'training run',status:'running',reported_status:'running',
+    phase:'Epoch 1/3',training_method:'imitation_native_aux',metric_source:'state.json',
+    progress:{done:90,total:17901,eta_seconds:2100},
+    training_data:{train_battles:45826,train_action_rows:1145610,train_rows:19078,validation_rows:1122},
+    report:'/reports/banana2.html',evidence:[],counters:{},
+  },logs:[],weights:[],artifacts:[],files:[]});
+  assert.ok(imitationExample.includes('90 / 17,901'));
+  assert.ok(imitationExample.includes('Native auxiliary rows'));
+  assert.ok(imitationExample.includes('/reports/banana2.html'));
+  assert.ok(!imitationExample.includes('Wins / losses'));
+  console.log('Imitation run progress uses actions and auxiliary rows OK');
+  const tournamentExample = render('runDetailHTML', {summary:{
+    id:'banana-battle-royal-eval-example',kind:'eval',status:'running',reported_status:'running',
+    phase:'Frozen Banana round robin',training_method:'banana_round_robin',metric_source:'state.json',
+    progress:{done:12,total:144,eta_seconds:1000},evidence:[],counters:{},
+    tournament:{valid_games:11,voids:1,standings:[{model:'banana-2',wins:5,losses:2,draws:1,voids:1,score:.6875}],pairings:{}},
+  },logs:[],weights:[],artifacts:[],files:[]});
+  assert.ok(tournamentExample.includes('12 / 144'));
+  assert.ok(tournamentExample.includes('Standings'));
+  assert.ok(tournamentExample.includes('Void matches'));
+  assert.ok(tournamentExample.includes('banana-2'));
+  console.log('Tournament standings and void exclusions OK');
   const [overview,models,runs,engine,data,docs]=await Promise.all(['/api/overview','/api/models','/api/runs','/api/engine','/api/data','/api/docs'].map(get));
   for (const [name,value] of [['overviewHTML',overview],['modelsHTML',models],['runsHTML',runs],['engineHTML',engine],['dataHTML',data],['docsHTML',docs]]) {
     const output=render(name,value);

@@ -1,0 +1,21 @@
+[Unit]
+Description=Frozen Banana-1 / Banana-2 / BC control round robin
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Documents/mini-project/clash-royale-ai
+Environment=PYTHONPATH=%h/Documents/mini-project/clash-royale-ai/src:%h/Documents/mini-project/clash-royale-ai/engine
+Environment=CR_SOURCE_ELF=%h/Documents/mini-project/clash-royale-ai/engine/analysis/libg-cipher/libg.decrypted.so
+Environment=CR_TRIM_CHECKPOINT_JSON=1
+Environment=OMP_NUM_THREADS=1
+Environment=OPENBLAS_NUM_THREADS=1
+Environment=PYTHONUNBUFFERED=1
+ExecStart=%h/Documents/mini-project/clash-royale-ai/.venv/bin/python -m rl.banana_tournament --run-dir engine/runs/banana-battle-royal-eval-20261024 --workers 4 --seeds 4
+Restart=no
+KillMode=mixed
+TimeoutStopSec=300
+Nice=10
+CPUQuota=400%
+MemoryMax=5G
+StandardOutput=append:%h/Documents/mini-project/clash-royale-ai/engine/runs/banana-battle-royal-eval-20261024/console.log
+StandardError=append:%h/Documents/mini-project/clash-royale-ai/engine/runs/banana-battle-royal-eval-20261024/console.log
