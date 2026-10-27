@@ -62,3 +62,10 @@ data/**/*.pkl
 # Frame corpora and evaluation arrays are in the Hugging Face snapshots.
 data/tower_hp_runs/
 reports/**/*.npz
+
+# Local Clash Royale client. Obtain at runtime; never commit Supercell files.
+var/clash-royale/
+*.apk
+*.apks
+*.xapk
+*.aab

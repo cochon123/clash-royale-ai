@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Local match</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #12140f;
+    --panel: #1c2118;
+    --line: #31382c;
+    --text: #e7ecdf;
+    --muted: #a3ad98;
+    --red: #e15b4c;
+    --blue: #6cb6ff;
+    --accent: #d6e26a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 15px/1.45 "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header, main { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  h1 { font-size: 1.4rem; margin: 0 0 8px; }
+  h2 { font-size: 1rem; margin: 0 0 10px; }
+  .banner {
+    background: #2a2718;
+    border: 1px solid #5c5430;
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: #f3e7b0;
+    max-height: 3.4rem;
+    overflow: auto;
+  }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .red h2 { color: var(--red); }
+  .blue h2 { color: var(--blue); }
+  label { display: block; margin: 8px 0 4px; color: var(--muted); font-size: 0.85rem; }
+  select, button, input {
+    font: inherit;
+    color: var(--text);
+    background: #10140e;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px;
+  }
+  select { width: 100%; }
+  input[type="number"] { width: 5rem; }
+  .deckline { margin: 0; font-weight: 650; white-space: pre-wrap; }
+  #plays { min-height: 8rem; max-height: 16rem; }
+  #log { max-height: 8rem; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .actions { display: flex; gap: 10px; align-items: center; margin-top: 16px; }
+  .actions label { display: inline; margin: 0; }
+  button.primary { background: var(--accent); color: #1a1c10; border: 0; font-weight: 650; }
+  button:disabled { opacity: 0.5; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  pre {
+    white-space: pre-wrap;
+    background: #10140e;
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 240px;
+    overflow: auto;
+  }
+  .error { color: #ffb4a8; }
+  @media (max-width: 800px) { .grid, .cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Local match</h1>
+  <div class="banner" id="banner">Loading engine status…</div>
+</header>
+<main>
+  <section class="panel">
+    <div class="grid">
+      <div class="red">
+        <h2>Red</h2>
+        <p class="deckline" id="red-line">Deck</p>
+      </div>
+      <div class="blue">
+        <h2>Blue</h2>
+        <p class="deckline" id="blue-line">Deck</p>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>work</th><th>sim_s</th><th>left_s</th><th>eta_s</th><th>phase</th><th>engine</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="work">0</td>
+          <td id="sim">0</td>
+          <td id="left">—</td>
+          <td id="eta">—</td>
+          <td id="phase">idle</td>
+          <td id="engine">control-harness</td>
+        </tr>
+      </tbody>
+    </table>
+    <p id="hands"></p>
+    <pre id="plays"></pre>
+  </section>
+  <div class="actions">
+    <button class="primary" id="launch" type="button">Launch battle</button>
+    <button id="stop" type="button">Stop</button>
+    <label for="speed">Speed</label>
+    <input id="speed" type="number" min="0" max="8" step="1" value="0" />
+    <span id="error" class="error"></span>
+  </div>
+  <div class="grid">
+    <section class="panel red" id="red-panel">
+      <h2>Red deck</h2>
+      <label for="red-agent">AI</label>
+      <select id="red-agent"></select>
+      <label for="red-preset">Deck preset</label>
+      <select id="red-preset"></select>
+      <div class="cards" id="red-cards"></div>
+    </section>
+    <section class="panel blue" id="blue-panel">
+      <h2>Blue deck</h2>
+      <label for="blue-agent">AI</label>
+      <select id="blue-agent"></select>
+      <label for="blue-preset">Deck preset</label>
+      <select id="blue-preset"></select>
+      <div class="cards" id="blue-cards"></div>
+    </section>
+  </div>
+  <pre id="log"></pre>
+</main>
+<script>
+const state = { cards: [], presets: [], agents: [] };
+
+function option(value, label, disabled) {
+  const node = document.createElement("option");
+  node.value = value;
+  node.textContent = label;
+  node.disabled = Boolean(disabled);
+  return node;
+}
+
+function fillAgents(select, preferred) {
+  select.replaceChildren();
+  for (const agent of state.agents) {
+    const label = agent.loadable ? agent.name : agent.name + " (unavailable)";
+    const node = option(agent.id, label, !agent.loadable);
+    node.title = agent.detail || "";
+    select.appendChild(node);
+  }
+  if ([...select.options].some((row) => row.value === preferred && !row.disabled)) {
+    select.value = preferred;
+  }
+}
+
+function cardSelect(side, index, selected) {
+  const select = document.createElement("select");
+  select.id = side + "-card-" + index;
+  select.dataset.side = side;
+  for (const card of state.cards) {
+    const node = option(card.key, card.name + " · " + card.elixir + " · " + card.id);
+    select.appendChild(node);
+  }
+  select.value = selected;
+  select.addEventListener("change", () => {
+    document.getElementById(side + "-preset").value = "";
+  });
+  return select;
+}
+
+function elixirSummary(keys) {
+  const rows = keys.map((key) => state.cards.find((card) => card.key === key)).filter(Boolean);
+  const total = rows.reduce((sum, card) => sum + Number(card.elixir), 0);
+  const average = rows.length ? total / rows.length : 0;
+  return {
+    total,
+    average,
+    names: rows.map((card) => card.name + " (" + card.elixir + ")").join(", ")
+  };
+}
+
+function presetTitle(keys) {
+  const found = state.presets.find((preset) => preset.cards.join("|") === keys.join("|"));
+  return found ? found.name : "Custom";
+}
+
+function paintDeck(side, keys, agentId) {
+  const summary = elixirSummary(keys);
+  const agent = state.agents.find((row) => row.id === agentId);
+  const agentName = agent ? agent.name : (agentId || "AI");
+  document.getElementById(side + "-line").textContent = agentName + " · " + presetTitle(keys)
+    + "\n" + keys.length + " cards · " + summary.total + " elixir · average "
+    + summary.average.toFixed(3) + "\n" + summary.names;
+}
+
+function renderCards(side, keys) {
+  const host = document.getElementById(side + "-cards");
+  host.replaceChildren();
+  keys.forEach((key, index) => {
+    const wrap = document.createElement("div");
+    const label = document.createElement("label");
+    label.textContent = "Card " + (index + 1);
+    label.htmlFor = side + "-card-" + index;
+    wrap.appendChild(label);
+    wrap.appendChild(cardSelect(side, index, key));
+    host.appendChild(wrap);
+  });
+  paintDeck(side, keys, document.getElementById(side + "-agent").value);
+}
+
+function presetCards(id) {
+  const row = state.presets.find((preset) => preset.id === id);
+  return row ? row.cards.slice() : state.cards.slice(0, 8).map((card) => card.key);
+}
+
+function wirePreset(side, defaultId) {
+  const select = document.getElementById(side + "-preset");
+  select.replaceChildren(option("", "Custom"));
+  for (const preset of state.presets) {
+    select.appendChild(option(preset.id, preset.name));
+  }
+  select.value = defaultId;
+  select.addEventListener("change", () => {
+    if (select.value) renderCards(side, presetCards(select.value));
+  });
+  renderCards(side, presetCards(defaultId));
+}
+
+function chosenCards(side) {
+  const cards = [];
+  for (let index = 0; index < 8; index += 1) {
+    cards.push(document.getElementById(side + "-card-" + index).value);
+  }
+  return cards;
+}
+
+function showMatch(match) {
+  document.getElementById("work").textContent = match.work ?? 0;
+  document.getElementById("sim").textContent = match.sim_s ?? 0;
+  document.getElementById("left").textContent = match.sim_left_s ?? "—";
+  document.getElementById("eta").textContent = match.eta_wall_s ?? "—";
+  document.getElementById("phase").textContent = match.phase || "idle";
+  document.getElementById("engine").textContent = (match.real_engine ? "real " : "") + (match.engine || "control-harness");
+  document.getElementById("launch").disabled = Boolean(match.running);
+  const hands = [];
+  if (match.red && match.red.hand) hands.push("Red hand: " + match.red.hand.join(", ") + " · elixir " + match.red.elixir);
+  if (match.blue && match.blue.hand) hands.push("Blue hand: " + match.blue.hand.join(", ") + " · elixir " + match.blue.elixir);
+  document.getElementById("hands").textContent = hands.join("    ");
+  const redKeys = Array.isArray(match.red_deck) && match.red_deck.length === 8
+    ? match.red_deck : chosenCards("red");
+  const blueKeys = Array.isArray(match.blue_deck) && match.blue_deck.length === 8
+    ? match.blue_deck : chosenCards("blue");
+  if (redKeys.join("|") !== chosenCards("red").join("|")) renderCards("red", redKeys);
+  if (blueKeys.join("|") !== chosenCards("blue").join("|")) renderCards("blue", blueKeys);
+  paintDeck("red", redKeys, match.red_agent || document.getElementById("red-agent").value);
+  paintDeck("blue", blueKeys, match.blue_agent || document.getElementById("blue-agent").value);
+  const plays = (match.events || []).slice(-14).map((event) =>
+    event.seconds + "s  " + event.side + "  " + event.card
+    + "  tile " + event.tile_col + "," + event.tile_row
+    + "  id " + event.card_id
+  );
+  document.getElementById("plays").textContent = plays.join("\n");
+  document.getElementById("log").textContent = (match.lines || []).join("\n");
+  document.getElementById("error").textContent = match.error || "";
+}
+
+async function launch() {
+  document.getElementById("error").textContent = "";
+  const body = {
+    red_agent: document.getElementById("red-agent").value,
+    blue_agent: document.getElementById("blue-agent").value,
+    red_cards: chosenCards("red"),
+    blue_cards: chosenCards("blue"),
+    max_seconds: 180,
+    speed: Number(document.getElementById("speed").value || 0),
+    seed: 1
+  };
+  const response = await fetch("/api/match", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  const payload = await response.json();
+  if (!response.ok) {
+    document.getElementById("error").textContent = payload.error || "launch failed";
+    return;
+  }
+  showMatch(payload);
+}
+
+async function tick() {
+  const response = await fetch("/api/match");
+  if (response.ok) showMatch(await response.json());
+}
+
+async function boot() {
+  const [status, catalog, agents] = await Promise.all([
+    fetch("/api/status").then((response) => response.json()),
+    fetch("/api/catalog").then((response) => response.json()),
+    fetch("/api/agents").then((response) => response.json())
+  ]);
+  document.getElementById("banner").textContent = status.blocker;
+  state.cards = catalog.cards;
+  state.presets = catalog.presets;
+  state.agents = agents.agents;
+  fillAgents(document.getElementById("red-agent"), "random");
+  fillAgents(document.getElementById("blue-agent"), "random");
+  wirePreset("red", "hog_cycle_2.9");
+  wirePreset("blue", "logbait");
+  document.getElementById("red-agent").addEventListener("change", () => {
+    paintDeck("red", chosenCards("red"), document.getElementById("red-agent").value);
+  });
+  document.getElementById("blue-agent").addEventListener("change", () => {
+    paintDeck("blue", chosenCards("blue"), document.getElementById("blue-agent").value);
+  });
+  document.getElementById("launch").addEventListener("click", launch);
+  document.getElementById("stop").addEventListener("click", () => fetch("/api/match/stop", { method: "POST" }));
+  tick();
+  setInterval(tick, 500);
+}
+
+boot().catch((error) => {
+  document.getElementById("banner").textContent = String(error);
+});
+</script>
+</body>
+</html>
