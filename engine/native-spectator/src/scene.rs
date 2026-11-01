@@ -213,17 +213,13 @@ impl TextureCache {
         self.pixels.get(id).map(Vec::as_slice)
     }
 
-    /// Drop the RGBA copy after the page has uploaded it. The id stays known,
-    /// so a later draw does not publish the pose again.
+    /// Drop the RGBA copy after the page has uploaded it. The id and its byte
+    /// budget stay, so a later draw does not publish the pose again. The budget
+    /// is the set the page is holding: zeroing it here made every released pose
+    /// free, the cap was never reached, and a page that dropped the GPU copy
+    /// could not get the pixels back.
     pub fn release_rgba(&mut self, id: &str) -> bool {
-        let Some(pixels) = self.pixels.remove(id) else {
-            return false;
-        };
-        if let Some(entry) = self.entries.get_mut(id) {
-            self.encoded_bytes = self.encoded_bytes.saturating_sub(entry.bytes);
-            entry.bytes = entry.bytes.saturating_sub(pixels.len() as u64);
-        }
-        true
+        self.pixels.remove(id).is_some()
     }
 
     pub fn len(&self) -> usize {
@@ -1353,6 +1349,7 @@ mod tests {
         held.finish_frame();
         assert!(held.release_rgba(&kept.id));
         assert!(held.rgba(&kept.id).is_none());
+        assert_eq!(held.encoded_bytes, 4, "releasing pixels does not free the budget");
         held.begin_frame();
         let (_, again) = held.texture(&a).unwrap();
         assert!(!again, "a released pose stays known");
@@ -1361,6 +1358,46 @@ mod tests {
         assert!(held.is_empty());
         assert_eq!(held.encoded_bytes, 0);
         assert!(held.rgba(&kept.id).is_none());
+    }
+
+    #[test]
+    fn released_pose_still_counts_and_republishes_after_eviction() {
+        let mut cache = TextureCache::memory();
+        cache.max_bytes = 8;
+        cache.grace = Duration::from_secs(1);
+        let pixel = |r| {
+            let mut image = RgbaImage::new(1, 1);
+            image.put_pixel(0, 0, Rgba([r, 0, 0, 255]));
+            image
+        };
+        let a = pixel(1);
+        let b = pixel(2);
+        let c = pixel(3);
+        cache.begin_frame();
+        let (first, _) = cache.texture(&a).unwrap();
+        cache.finish_frame();
+        assert!(cache.release_rgba(&first.id));
+        assert_eq!(cache.encoded_bytes, 4);
+        cache.advance_clock(2.);
+        cache.begin_frame();
+        cache.texture(&b).unwrap();
+        cache.finish_frame();
+        cache.advance_clock(2.);
+        cache.begin_frame();
+        cache.texture(&c).unwrap();
+        let evicted = cache.finish_frame();
+        assert!(
+            evicted.contains(&first.id),
+            "a released pose still has to leave once the budget is full: {evicted:?}"
+        );
+        assert!(cache.rgba(&first.id).is_none());
+        cache.advance_clock(2.);
+        cache.begin_frame();
+        let (back, created) = cache.texture(&a).unwrap();
+        assert!(created, "eviction forgets the id, so the next draw publishes pixels again");
+        assert_eq!(back.id, first.id);
+        assert_eq!(cache.rgba(&first.id).map(|bytes| bytes.len()), Some(4));
+        cache.finish_frame();
     }
 
     #[test]

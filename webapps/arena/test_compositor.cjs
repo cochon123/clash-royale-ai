@@ -77,6 +77,44 @@ test("textureSource is the only pixel path; urls are not consulted", () => {
   view.destroy();
 });
 
+test("a pose the painter still knows survives after it leaves the last three frames", () => {
+  const pixels = new Map([["aa", red()], ["bb", red()], ["cc", red()]]);
+  const {view, errors} = compositor(pixels, {maxTextureBytes: 8});
+  const draw = (sequence, tex, extra = {}) => packet(sequence, {draws: [sprite({tex, id: "troop-" + sequence})], ...extra});
+  view.push(draw(1, "aa"));
+  view.push(draw(2, "bb"));
+  view.push(draw(3, "bb"));
+  view.push(draw(4, "bb"));
+  assert.equal(view.textures.has("aa"), true);
+  view.push(draw(5, "cc"));
+  assert.equal(view.halted, true);
+  assert.match(errors[0], /texture cache budget/);
+  assert.equal(view.textures.has("aa"), true);
+  view.destroy();
+});
+
+test("painter eviction frees a pose before the replacement is uploaded, and the pose can return", () => {
+  const pixels = new Map([["aa", red()], ["bb", red()], ["cc", red()]]);
+  const {view, errors} = compositor(pixels, {maxTextureBytes: 8});
+  const draw = (sequence, tex, extra = {}) => packet(sequence, {draws: [sprite({tex, id: "troop-" + sequence})], ...extra});
+  view.push(draw(1, "aa"));
+  view.push(draw(2, "bb"));
+  view.push(draw(3, "bb"));
+  view.push(draw(4, "bb"));
+  view.push(draw(5, "cc", {evicted: ["aa"]}));
+  assert.deepEqual(errors, []);
+  assert.equal(view.textures.has("aa"), false);
+  assert.equal(view.textures.has("cc"), true);
+  view.push(draw(6, "cc"));
+  view.push(draw(7, "cc"));
+  view.push(draw(8, "aa", {evicted: ["bb"]}));
+  assert.deepEqual(errors, []);
+  assert.equal(view.halted, false);
+  assert.equal(view.textures.has("aa"), true);
+  assert.equal(view.textures.has("bb"), false);
+  view.destroy();
+});
+
 test("moved interpolation still refuses to lerp a texture change without anchors", () => {
   const older = [sprite()];
   const newer = [sprite({tex: "cd", m: [2, 0, 0, 2, 10, 20]})];

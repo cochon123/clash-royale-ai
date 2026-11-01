@@ -310,8 +310,15 @@
       this.options = options;
       this.textureSource = options.textureSource;
       this.delay = clamp(number(options.interpolationDelay, 50), 0, 250);
-      this.maxBytes = Math.max(4 * 1024 * 1024, number(options.maxTextureBytes, 192 * 1024 * 1024));
-      this.maxTextures = clamp(number(options.maxTextures, 4096), 32, 8192);
+      // The painter's pose budget is 256 MB / 8192. This cache has to hold that
+      // set plus poses from the last three frames that the painter has already
+      // retired. The painter is the only one that can rebuild a pose.
+      // An explicit maxTextureBytes is kept so tests can use a tiny budget;
+      // the live page does not pass one.
+      this.maxBytes = options.maxTextureBytes == null
+        ? 384 * 1024 * 1024
+        : Math.max(4, number(options.maxTextureBytes, 384 * 1024 * 1024));
+      this.maxTextures = clamp(number(options.maxTextures, 8192), 32, 8192);
       this.textures = new Map();
       this.timeline = [];
       this.bytes = 0;
@@ -372,7 +379,7 @@
       const pixels = source.rgba || source.pixels;
       if (!pixels) throw new Error("Texture is not available: " + id);
       const size = source.width * source.height * 4;
-      if (size > this.maxBytes || !this.trim(size)) throw new Error("Visible scene exceeds the texture cache budget");
+      if (size > this.maxBytes || !this.fits(size)) throw new Error("Visible scene exceeds the texture cache budget");
       const resource = this.painter.upload({width: source.width, height: source.height, pixels});
       const entry = {resource, bytes: size, used: this.now()};
       this.textures.set(id, entry);
@@ -391,16 +398,12 @@
       for (const frame of this.timeline) for (const id of frame.ids) result.add(id);
       return result;
     }
-    trim(extraBytes = 0) {
-      const protectedIds = this.protectedIds();
-      const candidates = [...this.textures.entries()].filter(([id]) => !protectedIds.has(id)).sort((a, b) => a[1].used - b[1].used);
-      for (const [id, entry] of candidates) {
-        if (this.bytes + extraBytes <= this.maxBytes && this.textures.size < this.maxTextures) break;
-        this.textures.delete(id);
-        this.painter.release(entry.resource);
-        this.bytes -= entry.bytes;
-      }
-      return this.bytes + extraBytes <= this.maxBytes && this.textures.size < this.maxTextures;
+    // Room for one more pose. This used to delete the least-recent GPU texture.
+    // That texture's pixels had already been released from the painter, and the
+    // painter will not send them again while it still knows the id, so the next
+    // draw of it stopped the match.
+    fits(extraBytes = 0) {
+      return this.bytes + extraBytes <= this.maxBytes && this.textures.size + 1 <= this.maxTextures;
     }
     // A local pose is painted in this turn. Nothing stays pending on a texture fetch.
     push(packet) {
@@ -409,6 +412,11 @@
         if (!packet || packet.v !== 1 || !dimensions(packet.width) || !dimensions(packet.height) || !finite(packet.sequence) || !finite(packet.tick)) throw new Error("Unsupported scene packet");
         const ids = collectTextures(packet.draws);
         if (ids.size > 1024) throw new Error("Scene uses too many textures");
+        // Free poses the painter has forgotten before uploading the replacement.
+        // Poses still on screen stay until the frame that uses them scrolls off.
+        const retain = new Set(ids);
+        for (const frame of this.timeline) for (const id of frame.ids) retain.add(id);
+        for (const id of packet.evicted || []) if (!retain.has(id)) this.releaseTexture(id);
         for (const id of ids) this.ensureTexture(id);
         const nativeTime = number(packet.display_tick, packet.tick) * 50;
         const frame = {packet, ids, received: this.now(), readyAt: this.now(), nativeTime};
@@ -418,7 +426,6 @@
         while (this.timeline.length > 3) this.timeline.shift();
         const keep = this.protectedIds();
         for (const id of packet.evicted || []) if (!keep.has(id)) this.releaseTexture(id);
-        this.trim();
         this.render(this.now());
       } catch (error) {
         this.halted = true;
