@@ -5,10 +5,13 @@ pub mod backend;
 pub mod blit;
 pub mod clock;
 pub mod draw;
+pub mod export_session;
 pub mod frame;
 pub mod gallery;
 pub mod hud;
 pub mod input;
+#[cfg(feature = "wasm")]
+pub mod painter_abi;
 pub mod pose_cache;
 pub mod presentation;
 pub mod probe;

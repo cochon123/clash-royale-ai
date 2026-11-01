@@ -65,10 +65,12 @@ Build the native watcher and original renderer locally, then package:
 
 ```sh
 cargo build --release --offline --manifest-path engine/native-engine/Cargo.toml --bin native-watch
-cargo build --offline --manifest-path engine/native-spectator/Cargo.toml --bin clash-web-scene
 TURBOJPEG_STATIC=1 cargo build --offline --manifest-path engine/native-spectator/Cargo.toml --features web-jpeg --bin clash-web-renderer
+.venv/bin/python deploy/arena/build_web_assets.py --assets engine/analysis/native-spectator --out deploy/arena/web-assets
 .venv/bin/python deploy/arena/package.py /tmp/clash-arena-runtime.tar.gz
 ```
+
+The archive does not include `clash-web-scene`. Pose rasterization ships as the content-addressed pack under `deploy/arena/web-assets/`. Pass `--painter-wasm PATH` to the asset build when that binary exists; without it `painter_wasm` stays null and the archive simply has no wasm file.
 
 The optional JPEG fallback build needs CMake, a C compiler and NASM for SIMD. Its
 JPEG library is statically linked, so the VPS needs no codec installation.

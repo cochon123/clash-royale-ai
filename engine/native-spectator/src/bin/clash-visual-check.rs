@@ -15,7 +15,7 @@
 //! - `textures/`: original sprite textures referenced by the display lists.
 //! - `frames/NNNNN.png`: CPU reference image of each frame (`--images`).
 use clash_native_spectator::{
-    draw::Painter,
+    draw::{parse_card_list, Painter},
     frame::BattleFrame,
     probe,
     scene::{CaptureGuard, TextureCache},
@@ -42,6 +42,8 @@ struct Args {
     fps: f64,
     lag: f64,
     images: bool,
+    /// Empty loads the whole bundle, the same as before this flag existed.
+    cards: Vec<String>,
 }
 
 fn parse() -> Result<Args, String> {
@@ -50,6 +52,7 @@ fn parse() -> Result<Args, String> {
     let mut assets = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../analysis/native-spectator");
     let (mut start_tick, mut from_tick, mut to_tick) = (None, None, None);
     let (mut fps, mut lag, mut images) = (20., 0., false);
+    let mut cards = Vec::new();
     let mut it = std::env::args().skip(1);
     let number = |v: Option<String>, name: &str| -> Result<f64, String> {
         v.ok_or(format!("missing {name}"))?
@@ -67,8 +70,11 @@ fn parse() -> Result<Args, String> {
             "--fps" => fps = number(it.next(), "fps")?,
             "--lag" => lag = number(it.next(), "lag")?,
             "--images" => images = true,
+            "--cards" => {
+                cards = parse_card_list(&it.next().ok_or("missing cards")?);
+            }
             "--help" | "-h" => {
-                println!("clash-visual-check --frames FRAMES.jsonl --out NEWDIR [--assets DIR] [--start-tick FIRST] [--from-tick N] [--to-tick M] [--fps 20] [--lag 0] [--images]\nDraws every step from --start-tick (default: first snapshot) and records --from-tick..--to-tick.");
+                println!("clash-visual-check --frames FRAMES.jsonl --out NEWDIR [--assets DIR] [--cards NAMES] [--start-tick FIRST] [--from-tick N] [--to-tick M] [--fps 20] [--lag 0] [--images]\nDraws every step from --start-tick (default: first snapshot) and records --from-tick..--to-tick. NAMES is one comma-separated argument; spaces stay inside a native card name. Omitted --cards loads the whole bundle.");
                 std::process::exit(0);
             }
             _ => return Err(format!("unknown argument {arg}")),
@@ -90,6 +96,7 @@ fn parse() -> Result<Args, String> {
         fps,
         lag,
         images,
+        cards,
     })
 }
 
@@ -138,7 +145,11 @@ fn run() -> Result<(), String> {
         return Err("to tick precedes from tick".into());
     }
 
-    let mut painter = Painter::load(&a.assets, 540, 900)?;
+    let mut painter = if a.cards.is_empty() {
+        Painter::load(&a.assets, 540, 900)?
+    } else {
+        Painter::load_for_cards(&a.assets, 540, 900, &a.cards)?
+    };
     painter.anticipate(&frames);
     let cache = Rc::new(RefCell::new(TextureCache::new(&a.out.join("textures"))?));
     let mut trace =

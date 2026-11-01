@@ -85,17 +85,35 @@ def accepts_gzip(accept_encoding: str) -> bool:
     return qualities.get('gzip', qualities.get('*', 0.)) > 0
 
 
+def _event_fields(item):
+    """Accept ``(event, payload)`` or ``(event, payload, id)``."""
+    if len(item) == 3:
+        event, payload, event_id = item
+    elif len(item) == 2:
+        event, payload = item
+        event_id = None
+    else:
+        raise ValueError("SSE events are (name, payload) or (name, payload, id)")
+    if event_id is not None and (not isinstance(event_id, str) or any(char in event_id for char in "\r\n")):
+        raise ValueError("SSE id cannot contain a newline")
+    return event, payload, event_id
+
+
 def event_stream_chunks(events, *, gzip=False):
     """Encode SSE and optionally flush gzip after every individual event.
 
     The flush emits a complete decodable event without waiting for a second
     native tick. Closing the iterator on disconnect also closes its source.
+    A third tuple field is the SSE ``id:`` line, used by the tick stream so a
+    browser can resume with ``Last-Event-ID``.
     """
     source = iter(events)
     compressor = zlib.compressobj(level=3, wbits=16 + zlib.MAX_WBITS) if gzip else None
     try:
-        for event, payload in source:
-            chunk = ((f'event: {event}\n' if event else '') + 'data: ' +
+        for item in source:
+            event, payload, event_id = _event_fields(item)
+            chunk = ((f'id: {event_id}\n' if event_id is not None else '') +
+                     (f'event: {event}\n' if event else '') + 'data: ' +
                      json.dumps(payload, separators=(',', ':'), default=str) + '\n\n').encode()
             if compressor:
                 chunk = compressor.compress(chunk) + compressor.flush(zlib.Z_SYNC_FLUSH)
@@ -132,8 +150,17 @@ class App:
         self.mounts: list[tuple[str, Path]] = []
 
     def route(self, method: str, pattern: str):
-        """Register ``pattern`` such as ``/api/matches/{id}``."""
-        regex = re.compile("^" + re.sub(r"\{(\w+)\}", r"(?P<\1>[^/]+)", pattern) + "$")
+        """Register ``pattern`` such as ``/api/matches/{id}``.
+
+        ``{name}`` is one path segment. ``{name:path}`` captures the rest of
+        the path, including slashes, for static asset trees.
+        """
+        def replace(match):
+            name, kind = match.group(1), match.group(2)
+            body = ".+" if kind == "path" else "[^/]+"
+            return rf"(?P<{name}>{body})"
+
+        regex = re.compile("^" + re.sub(r"\{(\w+)(?::(path))?\}", replace, pattern) + "$")
 
         def decorate(function):
             self.routes.append((method.upper(), regex, function))
@@ -194,7 +221,7 @@ class App:
                         match = regex.match(url.path)
                         if match and route_method == method:
                             request = Request(method, url.path, query, match.groupdict(), self.headers, body)
-                            return self._respond(function(request))
+                            return self._respond(function(request), head=method == "HEAD")
                     if method in ("GET", "HEAD"):
                         static = app.resolve_static(url.path)
                         if static is not None:
@@ -223,13 +250,13 @@ class App:
             def do_DELETE(self):
                 self._dispatch("DELETE")
 
-            def _respond(self, result):
+            def _respond(self, result, *, head=False):
                 if isinstance(result, EventStream):
                     return self._stream(result)
                 if isinstance(result, ByteStream):
                     return self._stream_bytes(result)
                 if isinstance(result, Raw):
-                    return self._send(result.body, result.content_type, result.status, result.headers)
+                    return self._send(result.body, result.content_type, result.status, result.headers, head=head)
                 if isinstance(result, Path):
                     return self._file(result)
                 status = 200

@@ -7,6 +7,9 @@ description = "Source-bound Rust ports of recovered Clash Royale native operatio
 [dependencies]
 serde_json = "1"
 
+[dev-dependencies]
+serde_json = "1"
+
 [lib]
 name = "clash_native_core"
 path = "src/lib.rs"

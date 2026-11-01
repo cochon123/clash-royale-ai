@@ -6,6 +6,7 @@ use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::ffi::{c_char, c_int, c_void, CStr, CString};
 use std::fs;
+use std::os::unix::fs::MetadataExt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::Instant;
@@ -24,6 +25,7 @@ extern "C" {
     fn dlerror() -> *const c_char;
 }
 
+#[derive(Clone)]
 struct UnicornApi {
     _handle: *mut c_void,
     open: unsafe extern "C" fn(c_int, u32, *mut *mut c_void) -> c_int,
@@ -141,6 +143,7 @@ struct Arena {
     capacity: u64,
     pointer: u64,
 }
+#[derive(Clone)]
 struct GuestHeap {
     base: u64,
     capacity: u64,
@@ -1567,6 +1570,460 @@ unsafe extern "C" fn deck_swap_hook(
     }
 }
 
+/// Device, inode, size and mtime captured when a checkpoint file was hashed.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct FileIdentity {
+    path: PathBuf,
+    dev: u64,
+    ino: u64,
+    len: u64,
+    mtime: i64,
+    mtime_nsec: i64,
+}
+
+fn identity_of(path: &Path) -> Result<FileIdentity, String> {
+    let meta = fs::metadata(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    Ok(FileIdentity {
+        path: path.to_path_buf(),
+        dev: meta.dev(),
+        ino: meta.ino(),
+        len: meta.len(),
+        mtime: meta.mtime(),
+        mtime_nsec: meta.mtime_nsec(),
+    })
+}
+
+fn identities_match(saved: &[FileIdentity]) -> Result<(), String> {
+    for expected in saved {
+        let now = identity_of(&expected.path)?;
+        if now.dev != expected.dev
+            || now.ino != expected.ino
+            || now.len != expected.len
+            || now.mtime != expected.mtime
+            || now.mtime_nsec != expected.mtime_nsec
+        {
+            return Err(format!(
+                "checkpoint file identity changed: {}",
+                expected.path.display()
+            ));
+        }
+    }
+    Ok(())
+}
+
+struct RegionImage {
+    file: String,
+    base: u64,
+    size: u64,
+    bytes: Vec<u8>,
+}
+
+struct Populated {
+    ids: BTreeMap<String, i32>,
+    abi: Value,
+    state: Box<HookState>,
+    world: u64,
+    battle: u64,
+    harness: u64,
+    entities: u64,
+    commands: u64,
+    context: u64,
+    normal_test_row: u64,
+    descriptor_scratch: u64,
+}
+
+/// Checkpoint JSON, region images, and allocator/register state kept after one
+/// successful verification. Later `native-watch` sessions are built from this
+/// value. It is not mutated: each session clones `heap` and copies region bytes
+/// into a new emulator.
+pub struct PristineTemplate {
+    checkpoint_json: Vec<u8>,
+    checkpoint_hash: String,
+    regions: Vec<RegionImage>,
+    heap: GuestHeap,
+    abi: Value,
+    registers: Value,
+    call_values: Value,
+    baseline_clock: u64,
+    identities: Vec<FileIdentity>,
+    /// One `dlopen` of the verified Unicorn library, shared by every session.
+    unicorn: UnicornApi,
+}
+
+impl PristineTemplate {
+    /// Read and hash the checkpoint. A mismatch returns an error and does not
+    /// produce a template, which is what makes the first failure abort.
+    pub fn load_verified(checkpoint_dir: &Path) -> Result<Self, String> {
+        let checkpoint_path = checkpoint_dir.join("checkpoint.json");
+        let checkpoint_json = fs::read(&checkpoint_path)
+            .map_err(|e| format!("{}: {e}", checkpoint_path.display()))?;
+        let cp: Value = serde_json::from_slice(&checkpoint_json).map_err(|e| e.to_string())?;
+        let checkpoint_hash = sha256(&checkpoint_path)?;
+        let mut identities = vec![identity_of(&checkpoint_path)?];
+        let abi = cp["emulation_abi"].clone();
+        let lib = recorded_host_path(
+            abi["unicorn_library"]
+                .as_str()
+                .ok_or("missing Unicorn path")?,
+        );
+        if sha256(&lib)?
+            != abi["unicorn_library_sha256"]
+                .as_str()
+                .ok_or("missing Unicorn hash")?
+        {
+            return Err("Unicorn library SHA-256 mismatch".into());
+        }
+        identities.push(identity_of(&lib)?);
+        let source = engine_root().join("analysis/libg-cipher/libg.decrypted.so");
+        if sha256(&source)? != SOURCE_SHA256 || cp["source_sha256"] != SOURCE_SHA256 {
+            return Err("original engine SHA-256 mismatch".into());
+        }
+        identities.push(identity_of(&source)?);
+        let unicorn = unsafe { UnicornApi::load(&lib)? };
+        let heap = GuestHeap::from_json(&cp["native_heap"])?;
+        let registers = cp["registers"].clone();
+        let call_values = cp["call_plan"]["values"].clone();
+        let baseline_clock = cp["import_counts"]
+            .as_object()
+            .and_then(|object| object.get("clock_gettime"))
+            .and_then(Value::as_u64)
+            .unwrap_or(0);
+        let mut region_meta = Vec::new();
+        for region in cp["regions"].as_array().ok_or("checkpoint regions missing")? {
+            region_meta.push((
+                region["file"].as_str().ok_or("region file missing")?.to_string(),
+                num(&region["base"])?,
+                num(&region["size"])?,
+                region["sha256"]
+                    .as_str()
+                    .ok_or("region SHA missing")?
+                    .to_string(),
+            ));
+        }
+        drop(cp);
+        let mut regions = Vec::with_capacity(region_meta.len());
+        for (file, base, size, expected_hash) in region_meta {
+            let path = checkpoint_dir.join(&file);
+            let bytes = fs::read(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+            if sha256(&path)? != expected_hash {
+                return Err(format!("region hash mismatch: {file}"));
+            }
+            if bytes.len() as u64 != size {
+                return Err(format!("region byte count mismatch: {file}"));
+            }
+            identities.push(identity_of(&path)?);
+            regions.push(RegionImage {
+                file,
+                base,
+                size,
+                bytes,
+            });
+        }
+        let checkpoint_id = identities
+            .iter()
+            .find(|id| id.path == checkpoint_path)
+            .ok_or("checkpoint.json identity missing")?;
+        if checkpoint_id.len != checkpoint_json.len() as u64 {
+            return Err("checkpoint.json size changed while verifying".into());
+        }
+        Ok(Self {
+            checkpoint_json,
+            checkpoint_hash,
+            regions,
+            heap,
+            abi,
+            registers,
+            call_values,
+            baseline_clock,
+            identities,
+            unicorn,
+        })
+    }
+
+    /// Stat each verified file. This does not read or hash the contents.
+    pub fn identity_unchanged(&self) -> Result<(), String> {
+        identities_match(&self.identities)?;
+        let checkpoint_len = self
+            .identities
+            .iter()
+            .find(|id| id.path.ends_with("checkpoint.json"))
+            .map(|id| id.len)
+            .ok_or("checkpoint.json identity missing")?;
+        if checkpoint_len != self.checkpoint_json.len() as u64 {
+            return Err(
+                "in-memory checkpoint JSON does not match the verified file size".into(),
+            );
+        }
+        Ok(())
+    }
+
+    fn instantiate(&self) -> Result<NativeSession, String> {
+        open_session(
+            &self.unicorn,
+            self.heap.clone(),
+            &self.regions,
+            &self.abi,
+            &self.registers,
+            &self.call_values,
+            self.baseline_clock,
+            &self.checkpoint_hash,
+        )
+    }
+
+    fn into_session(self) -> Result<NativeSession, String> {
+        let Self {
+            unicorn,
+            heap,
+            regions,
+            abi,
+            registers,
+            call_values,
+            baseline_clock,
+            checkpoint_hash,
+            checkpoint_json: _,
+            identities: _,
+        } = self;
+        open_session(
+            &unicorn,
+            heap,
+            &regions,
+            &abi,
+            &registers,
+            &call_values,
+            baseline_clock,
+            &checkpoint_hash,
+        )
+    }
+}
+
+fn open_session(
+    unicorn: &UnicornApi,
+    heap: GuestHeap,
+    regions: &[RegionImage],
+    abi: &Value,
+    registers: &Value,
+    call_values: &Value,
+    baseline_clock: u64,
+    checkpoint_hash: &str,
+) -> Result<NativeSession, String> {
+    let api = Box::new(unicorn.clone());
+    let mut uc = std::ptr::null_mut();
+    let rc = unsafe { (api.open)(UC_ARCH_ARM64, UC_MODE_ARM, &mut uc) };
+    if rc != 0 {
+        return Err(format!("uc_open: {}", api.err(rc)));
+    }
+    match populate(
+        &api,
+        uc,
+        heap,
+        regions,
+        abi,
+        registers,
+        call_values,
+        baseline_clock,
+    ) {
+        Ok(parts) => {
+            let presentation_start_tick = match read_mem_u32(&api, uc, parts.world + 0x60) {
+                Ok(tick) => tick,
+                Err(error) => {
+                    unsafe { (api.close)(uc) };
+                    return Err(error);
+                }
+            };
+            Ok(NativeSession {
+                api,
+                uc,
+                ids: parts.ids,
+                abi: parts.abi,
+                state: parts.state,
+                world: parts.world,
+                battle: parts.battle,
+                harness: parts.harness,
+                entities: parts.entities,
+                commands: parts.commands,
+                context: parts.context,
+                normal_test_row: parts.normal_test_row,
+                descriptor_scratch: parts.descriptor_scratch,
+                initial_checkpoint_sha256: checkpoint_hash.to_string(),
+                block_profile: None,
+                presentation_start_tick,
+                presentation_names: BTreeMap::new(),
+                presentation_positions: BTreeMap::new(),
+                presentation_first_seen_ticks: BTreeMap::new(),
+            })
+        }
+        Err(error) => {
+            unsafe { (api.close)(uc) };
+            Err(error)
+        }
+    }
+}
+
+fn populate(
+    api: &UnicornApi,
+    uc: *mut c_void,
+    heap: GuestHeap,
+    regions: &[RegionImage],
+    abi_src: &Value,
+    registers: &Value,
+    call_values: &Value,
+    baseline_clock: u64,
+) -> Result<Populated, String> {
+    let mut mapped_bases = BTreeSet::new();
+    for region in regions {
+        let data = &region.bytes;
+        if data.len() as u64 != region.size {
+            return Err(format!("region byte count mismatch: {}", region.file));
+        }
+        let base = region.base;
+        let size = region.size;
+        let map_size = if region.file == "heap.bin" {
+            heap.capacity as usize
+        } else if let Some(extra) = heap.extras.iter().find(|arena| arena.base == base) {
+            extra.capacity as usize
+        } else {
+            usize::try_from(size).map_err(|_| "region too large")?
+        };
+        let rc = unsafe { (api.mem_map)(uc, base, map_size, UC_PROT_ALL) };
+        if rc != 0 {
+            return Err(format!(
+                "uc_mem_map {} at {base:#x}: {}",
+                region.file,
+                api.err(rc)
+            ));
+        }
+        write_mem(api, uc, base, data)?;
+        mapped_bases.insert(base);
+    }
+    for arena in &heap.extras {
+        if !mapped_bases.contains(&arena.base) {
+            let rc = unsafe { (api.mem_map)(uc, arena.base, arena.capacity as usize, UC_PROT_ALL) };
+            if rc != 0 {
+                return Err(format!("map checkpoint extra heap: {}", api.err(rc)));
+            }
+        }
+    }
+    let abi = abi_src.clone();
+    let external = num(&abi["external_base"])?;
+    let external_size = num(&abi["external_size"])?;
+    let rc = unsafe { (api.mem_map)(uc, external, external_size as usize, UC_PROT_ALL) };
+    if rc != 0 {
+        return Err(format!("map externals: {}", api.err(rc)));
+    }
+    let retaddr = num(&abi["return_address"])?;
+    let rc = unsafe { (api.mem_map)(uc, retaddr & !0xfff, 0x1000, UC_PROT_ALL) };
+    if rc != 0 {
+        return Err(format!("map return stub: {}", api.err(rc)));
+    }
+    let ids = abi["register_ids"]
+        .as_object()
+        .ok_or("register IDs missing")?
+        .iter()
+        .map(|(name, id)| {
+            Ok((
+                name.clone(),
+                id.as_i64().ok_or("register id must be number")? as i32,
+            ))
+        })
+        .collect::<Result<BTreeMap<_, _>, String>>()?;
+    for (name, hex) in registers.as_object().ok_or("registers missing")? {
+        let id = *ids
+            .get(name)
+            .ok_or_else(|| format!("missing register ID for {name}"))?;
+        let value = value_u128(hex)?;
+        if name.starts_with('q') {
+            let bytes = value.to_le_bytes();
+            let rc = unsafe { (api.reg_write)(uc, id, bytes.as_ptr().cast()) };
+            if rc != 0 {
+                return Err(format!("restore {name}: {}", api.err(rc)));
+            }
+        } else {
+            let value = value as u64;
+            let rc = unsafe { (api.reg_write)(uc, id, (&value as *const u64).cast()) };
+            if rc != 0 {
+                return Err(format!("restore {name}: {}", api.err(rc)));
+            }
+        }
+    }
+    let context = num(&call_values["context"])?;
+    let normal_test_row = num(&call_values["confirm_original_Normal"])?;
+    let world = num(&call_values["battle_world"])?;
+    let battle = num(&call_values["battle_state"])?;
+    let harness = num(&call_values["battle_harness"])?;
+    let entities = num(&call_values["battle_entities"])?;
+    let commands = num(&call_values["battle_commands"])?;
+    let imports = abi["import_symbols"]
+        .as_object()
+        .ok_or("import symbols missing")?
+        .iter()
+        .filter_map(|(key, value)| {
+            Some((
+                num(&Value::String(key.clone())).ok()?,
+                value.as_str()?.to_string(),
+            ))
+        })
+        .collect::<BTreeMap<_, _>>();
+    let mut state = Box::new(HookState {
+        api: api as *const UnicornApi,
+        uc,
+        imports,
+        ids: ids.clone(),
+        heap,
+        baseline_clock,
+        clock_calls: 0,
+        calls: BTreeMap::new(),
+        error: None,
+        returned: false,
+        return_address: retaddr,
+    });
+    let mut hook = 0usize;
+    let rc = unsafe {
+        (api.hook_add)(
+            uc,
+            &mut hook,
+            UC_HOOK_CODE,
+            code_hook as *const c_void,
+            (&mut *state as *mut HookState).cast(),
+            external,
+            external + external_size - 1,
+        )
+    };
+    if rc != 0 {
+        return Err(format!("uc_hook_add imports: {}", api.err(rc)));
+    }
+    let mut ret_hook = 0usize;
+    let rc = unsafe {
+        (api.hook_add)(
+            uc,
+            &mut ret_hook,
+            UC_HOOK_CODE,
+            code_hook as *const c_void,
+            (&mut *state as *mut HookState).cast(),
+            retaddr,
+            retaddr,
+        )
+    };
+    if rc != 0 {
+        return Err(format!("uc_hook_add return: {}", api.err(rc)));
+    }
+    let descriptor_scratch = state.heap.alloc(24, 16, api, uc)?;
+    write_mem(api, uc, descriptor_scratch, &[0; 24])?;
+    Ok(Populated {
+        ids,
+        abi,
+        state,
+        world,
+        battle,
+        harness,
+        entities,
+        commands,
+        context,
+        normal_test_row,
+        descriptor_scratch,
+    })
+}
+
+
 impl NativeSession {
     /// Collect original basic-block execution counts for selecting source ports.
     /// Profiling is opt-in and the hook is removed before this method returns.
@@ -1612,246 +2069,13 @@ impl NativeSession {
     }
 
     pub fn load(checkpoint_dir: &Path) -> Result<Self, String> {
-        let checkpoint_path = checkpoint_dir.join("checkpoint.json");
-        let raw = fs::read(&checkpoint_path)
-            .map_err(|e| format!("{}: {e}", checkpoint_path.display()))?;
-        let cp: Value = serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
-        let checkpoint_hash = sha256(&checkpoint_path)?;
-        let abi = cp["emulation_abi"].clone();
-        let lib = recorded_host_path(
-            abi["unicorn_library"]
-                .as_str()
-                .ok_or("missing Unicorn path")?,
-        );
-        if sha256(&lib)?
-            != abi["unicorn_library_sha256"]
-                .as_str()
-                .ok_or("missing Unicorn hash")?
-        {
-            return Err("Unicorn library SHA-256 mismatch".into());
-        }
-        let source = engine_root().join("analysis/libg-cipher/libg.decrypted.so");
-        if sha256(&source)? != SOURCE_SHA256 || cp["source_sha256"] != SOURCE_SHA256 {
-            return Err("original engine SHA-256 mismatch".into());
-        }
+        PristineTemplate::load_verified(checkpoint_dir)?.into_session()
+    }
 
-        // Keep this allocation stable: HookState stores `api` as a raw pointer.
-        let api = Box::new(unsafe { UnicornApi::load(&lib)? });
-        let mut uc = std::ptr::null_mut();
-        let rc = unsafe { (api.open)(UC_ARCH_ARM64, UC_MODE_ARM, &mut uc) };
-        if rc != 0 {
-            return Err(format!("uc_open: {}", api.err(rc)));
-        }
-        let initialized = (|| -> Result<_, String> {
-            let heap = GuestHeap::from_json(&cp["native_heap"])?;
-            let mut mapped_bases = BTreeSet::new();
-            for region in cp["regions"]
-                .as_array()
-                .ok_or("checkpoint regions missing")?
-            {
-                let file = region["file"].as_str().ok_or("region file missing")?;
-                let path = checkpoint_dir.join(file);
-                let data = fs::read(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-                if sha256(&path)? != region["sha256"].as_str().ok_or("region SHA missing")? {
-                    return Err(format!("region hash mismatch: {file}"));
-                }
-                let base = num(&region["base"])?;
-                let size = num(&region["size"])?;
-                if data.len() as u64 != size {
-                    return Err(format!("region byte count mismatch: {file}"));
-                }
-                let map_size = if file == "heap.bin" {
-                    num(&cp["native_heap"]["capacity"])? as usize
-                } else if let Some(extra) = heap.extras.iter().find(|a| a.base == base) {
-                    extra.capacity as usize
-                } else {
-                    usize::try_from(size).map_err(|_| "region too large")?
-                };
-                let rc = unsafe { (api.mem_map)(uc, base, map_size, UC_PROT_ALL) };
-                if rc != 0 {
-                    return Err(format!("uc_mem_map {file} at {base:#x}: {}", api.err(rc)));
-                }
-                write_mem(&api, uc, base, &data)?;
-                mapped_bases.insert(base);
-            }
-            for arena in &heap.extras {
-                if !mapped_bases.contains(&arena.base) {
-                    let rc = unsafe {
-                        (api.mem_map)(uc, arena.base, arena.capacity as usize, UC_PROT_ALL)
-                    };
-                    if rc != 0 {
-                        return Err(format!("map checkpoint extra heap: {}", api.err(rc)));
-                    }
-                }
-            }
-            let external = num(&abi["external_base"])?;
-            let external_size = num(&abi["external_size"])?;
-            let rc = unsafe { (api.mem_map)(uc, external, external_size as usize, UC_PROT_ALL) };
-            if rc != 0 {
-                return Err(format!("map externals: {}", api.err(rc)));
-            }
-            let retaddr = num(&abi["return_address"])?;
-            let rc = unsafe { (api.mem_map)(uc, retaddr & !0xfff, 0x1000, UC_PROT_ALL) };
-            if rc != 0 {
-                return Err(format!("map return stub: {}", api.err(rc)));
-            }
-            let ids = abi["register_ids"]
-                .as_object()
-                .ok_or("register IDs missing")?
-                .iter()
-                .map(|(k, v)| {
-                    Ok((
-                        k.clone(),
-                        v.as_i64().ok_or("register id must be number")? as i32,
-                    ))
-                })
-                .collect::<Result<BTreeMap<_, _>, String>>()?;
-            for (name, hex) in cp["registers"].as_object().ok_or("registers missing")? {
-                let id = *ids
-                    .get(name)
-                    .ok_or_else(|| format!("missing register ID for {name}"))?;
-                let value = value_u128(hex)?;
-                if name.starts_with('q') {
-                    let bytes = value.to_le_bytes();
-                    let rc = unsafe { (api.reg_write)(uc, id, bytes.as_ptr().cast()) };
-                    if rc != 0 {
-                        return Err(format!("restore {name}: {}", api.err(rc)));
-                    }
-                } else {
-                    let value = value as u64;
-                    let rc = unsafe { (api.reg_write)(uc, id, (&value as *const u64).cast()) };
-                    if rc != 0 {
-                        return Err(format!("restore {name}: {}", api.err(rc)));
-                    }
-                }
-            }
-            let values = &cp["call_plan"]["values"];
-            let context = num(&values["context"])?;
-            let normal_test_row = num(&values["confirm_original_Normal"])?;
-            let world = num(&values["battle_world"])?;
-            let battle = num(&values["battle_state"])?;
-            let harness = num(&values["battle_harness"])?;
-            let entities = num(&values["battle_entities"])?;
-            let commands = num(&values["battle_commands"])?;
-            let imports = abi["import_symbols"]
-                .as_object()
-                .ok_or("import symbols missing")?
-                .iter()
-                .filter_map(|(k, v)| {
-                    Some((
-                        num(&Value::String(k.clone())).ok()?,
-                        v.as_str()?.to_string(),
-                    ))
-                })
-                .collect::<BTreeMap<_, _>>();
-            let baseline_clock = cp["import_counts"]
-                .as_object()
-                .and_then(|o| o.get("clock_gettime"))
-                .and_then(Value::as_u64)
-                .unwrap_or(0);
-            let mut state = Box::new(HookState {
-                api: &*api,
-                uc,
-                imports,
-                ids: ids.clone(),
-                heap,
-                baseline_clock,
-                clock_calls: 0,
-                calls: BTreeMap::new(),
-                error: None,
-                returned: false,
-                return_address: retaddr,
-            });
-            let mut hook = 0usize;
-            let rc = unsafe {
-                (api.hook_add)(
-                    uc,
-                    &mut hook,
-                    UC_HOOK_CODE,
-                    code_hook as *const c_void,
-                    (&mut *state as *mut HookState).cast(),
-                    external,
-                    external + external_size - 1,
-                )
-            };
-            if rc != 0 {
-                return Err(format!("uc_hook_add imports: {}", api.err(rc)));
-            }
-            let mut ret_hook = 0usize;
-            let rc = unsafe {
-                (api.hook_add)(
-                    uc,
-                    &mut ret_hook,
-                    UC_HOOK_CODE,
-                    code_hook as *const c_void,
-                    (&mut *state as *mut HookState).cast(),
-                    retaddr,
-                    retaddr,
-                )
-            };
-            if rc != 0 {
-                return Err(format!("uc_hook_add return: {}", api.err(rc)));
-            }
-            let descriptor_scratch = state.heap.alloc(24, 16, &api, uc)?;
-            write_mem(&api, uc, descriptor_scratch, &[0; 24])?;
-            Ok((
-                ids,
-                abi,
-                state,
-                world,
-                battle,
-                harness,
-                entities,
-                commands,
-                context,
-                normal_test_row,
-                descriptor_scratch,
-            ))
-        })();
-        match initialized {
-            Ok((
-                ids,
-                abi,
-                state,
-                world,
-                battle,
-                harness,
-                entities,
-                commands,
-                context,
-                normal_test_row,
-                descriptor_scratch,
-            )) => {
-                let presentation_start_tick = read_mem_u32(&api, uc, world + 0x60)?;
-                Ok(Self {
-                    api,
-                    uc,
-                    ids,
-                    abi,
-                    state,
-                    world,
-                    battle,
-                    harness,
-                    entities,
-                    commands,
-                    context,
-                    normal_test_row,
-                    descriptor_scratch,
-                    initial_checkpoint_sha256: checkpoint_hash,
-                    block_profile: None,
-                    presentation_start_tick,
-                    presentation_names: BTreeMap::new(),
-                    presentation_positions: BTreeMap::new(),
-                    presentation_first_seen_ticks: BTreeMap::new(),
-                })
-            }
-            Err(error) => {
-                unsafe {
-                    (api.close)(uc);
-                }
-                Err(error)
-            }
-        }
+    /// Build a session from a verified in-memory template. Does not read or
+    /// hash checkpoint files.
+    pub fn from_template(template: &PristineTemplate) -> Result<Self, String> {
+        template.instantiate()
     }
 
     /// Start counting every executed basic block in the original source ELF.
@@ -3007,5 +3231,35 @@ mod persistent_session_tests {
         let winner = report["winner_side"].as_i64().expect("signed winner side");
         eprintln!("original harness completed with winner_side={winner}");
         assert!((-1..=1).contains(&winner));
+    }
+}
+
+#[cfg(test)]
+mod file_identity_tests {
+    use super::{identities_match, identity_of};
+    use std::fs;
+
+    #[test]
+    fn file_identity_matches_until_the_file_changes() {
+        let dir = std::env::temp_dir().join(format!(
+            "native-watch-identity-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_nanos()
+        ));
+        fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("region.bin");
+        fs::write(&path, b"abc").unwrap();
+        let saved = vec![identity_of(&path).unwrap()];
+        identities_match(&saved).expect("unchanged file");
+        fs::write(&path, b"abcd").unwrap();
+        let error = identities_match(&saved).expect_err("replaced file");
+        assert!(
+            error.contains("identity changed"),
+            "unexpected identity error: {error}"
+        );
+        let _ = fs::remove_dir_all(&dir);
     }
 }

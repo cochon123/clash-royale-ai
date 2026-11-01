@@ -1,0 +1,762 @@
+{
+  "suite": "full",
+  "failures": 0,
+  "scenarios": [
+    {
+      "scenario": "match-cards-000",
+      "capture": "cards-000",
+      "subset_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1181,
+        "texture_files_right": 1181,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "ElectroSpirit",
+        "FireSpirits",
+        "Heal",
+        "IceSpirits",
+        "Mirror",
+        "Skeletons",
+        "BarbLog",
+        "Bats"
+      ],
+      "cards_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1181,
+        "texture_files_right": 1181,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-008",
+      "capture": "cards-008",
+      "subset_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2124,
+        "texture_files_right": 2124,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "Bomber",
+        "Goblins",
+        "IceGolemite",
+        "Rage",
+        "SpearGoblins",
+        "Log",
+        "Wallbreakers",
+        "Zap"
+      ],
+      "cards_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2124,
+        "texture_files_right": 2124,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-016",
+      "capture": "cards-016",
+      "subset_vs_full": {
+        "frames": 1452,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1600,
+        "texture_files_right": 1600,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "Archer",
+        "Arrows",
+        "Assassin",
+        "Cannon",
+        "Clone",
+        "BlowdartGoblin",
+        "Earthquake",
+        "ElixirGolem"
+      ],
+      "cards_vs_full": {
+        "frames": 1452,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1600,
+        "texture_files_right": 1600,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-024",
+      "capture": "cards-024",
+      "subset_vs_full": {
+        "frames": 2331,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2066,
+        "texture_files_right": 2066,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "Firecracker",
+        "Fisherman",
+        "GoblinBarrel",
+        "GoblinGang",
+        "SkeletonWarriors",
+        "IceWizard",
+        "Knight",
+        "LittlePrince"
+      ],
+      "cards_vs_full": {
+        "frames": 2331,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2066,
+        "texture_files_right": 2066,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-032",
+      "capture": "cards-032",
+      "subset_vs_full": {
+        "frames": 2858,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2507,
+        "texture_files_right": 2507,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "MegaMinion",
+        "Miner",
+        "Minions",
+        "Princess",
+        "RoyalDelivery",
+        "Ghost",
+        "SkeletonArmy",
+        "SkeletonBalloon"
+      ],
+      "cards_vs_full": {
+        "frames": 2858,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2507,
+        "texture_files_right": 2507,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-040",
+      "capture": "cards-040",
+      "subset_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2111,
+        "texture_files_right": 2111,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "SuperArcher",
+        "Tombstone",
+        "Tornado",
+        "BabyDragon",
+        "BattleHealer",
+        "BattleRam",
+        "BombTower",
+        "DarkPrince"
+      ],
+      "cards_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2111,
+        "texture_files_right": 2111,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-048",
+      "capture": "cards-048",
+      "subset_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2142,
+        "texture_files_right": 2142,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "ElectroWizard",
+        "Fireball",
+        "DartBarrell",
+        "Freeze",
+        "FirespiritHut",
+        "GoblinCage",
+        "GoblinDrill",
+        "GoldenKnight"
+      ],
+      "cards_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2142,
+        "texture_files_right": 2142,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-056",
+      "capture": "cards-056",
+      "subset_vs_full": {
+        "frames": 1098,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1579,
+        "texture_files_right": 1579,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "HogRider",
+        "Hunter",
+        "InfernoDragon",
+        "RageBarbarian",
+        "EliteArcher",
+        "MightyMiner",
+        "MiniPekka",
+        "Mortar"
+      ],
+      "cards_vs_full": {
+        "frames": 1098,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1579,
+        "texture_files_right": 1579,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-064",
+      "capture": "cards-064",
+      "subset_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1839,
+        "texture_files_right": 1839,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "WitchMother",
+        "Musketeer",
+        "DarkWitch",
+        "Phoenix",
+        "Poison",
+        "SkeletonDragons",
+        "SkeletonKing",
+        "SuperIceGolemite"
+      ],
+      "cards_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1839,
+        "texture_files_right": 1839,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-072",
+      "capture": "cards-072",
+      "subset_vs_full": {
+        "frames": 1195,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1166,
+        "texture_files_right": 1166,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "SuperHogRiderTerry",
+        "Tesla",
+        "Valkyrie",
+        "MiniSparkys",
+        "ArcherQueen",
+        "Balloon",
+        "Barbarians",
+        "Bowler"
+      ],
+      "cards_vs_full": {
+        "frames": 1195,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1166,
+        "texture_files_right": 1166,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-080",
+      "capture": "cards-080",
+      "subset_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2386,
+        "texture_files_right": 2386,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "MovingCannon",
+        "ElectroDragon",
+        "AxeMan",
+        "Giant",
+        "GoblinHut",
+        "Graveyard",
+        "InfernoTower",
+        "MinionHorde"
+      ],
+      "cards_vs_full": {
+        "frames": 3600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2386,
+        "texture_files_right": 2386,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-088",
+      "capture": "cards-088",
+      "subset_vs_full": {
+        "frames": 596,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 965,
+        "texture_files_right": 965,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "Monk",
+        "GoblinPartyHut",
+        "GoblinPartyRocket",
+        "Prince",
+        "PrinceBuff",
+        "RamRider",
+        "Rascals",
+        "RoyalHogs"
+      ],
+      "cards_vs_full": {
+        "frames": 596,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 965,
+        "texture_files_right": 965,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-096",
+      "capture": "cards-096",
+      "subset_vs_full": {
+        "frames": 718,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 782,
+        "texture_files_right": 782,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "SuperHogRider",
+        "SuperEliteArcher",
+        "SuperMiniPekka",
+        "Witch",
+        "Wizard",
+        "AngryBarbarians",
+        "Elixir Collector",
+        "GiantSkeleton"
+      ],
+      "cards_vs_full": {
+        "frames": 718,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 782,
+        "texture_files_right": 782,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-104",
+      "capture": "cards-104",
+      "subset_vs_full": {
+        "frames": 697,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1374,
+        "texture_files_right": 1374,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "GoblinGiant",
+        "Lightning",
+        "Rocket",
+        "RoyalGiant",
+        "ZapMachine",
+        "SuperWitch",
+        "Xbow",
+        "ElectroGiant"
+      ],
+      "cards_vs_full": {
+        "frames": 697,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1374,
+        "texture_files_right": 1374,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-cards-112",
+      "capture": "cards-112",
+      "subset_vs_full": {
+        "frames": 1838,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1484,
+        "texture_files_right": 1484,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "LavaHound",
+        "MegaKnight",
+        "Pekka",
+        "RoyalRecruits",
+        "Golem",
+        "SuperLavaHound",
+        "ThreeMusketeers",
+        "ElectroSpirit"
+      ],
+      "cards_vs_full": {
+        "frames": 1838,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1484,
+        "texture_files_right": 1484,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-custom-mortar",
+      "capture": "custom-mortar",
+      "subset_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1983,
+        "texture_files_right": 1983,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "Mortar",
+        "Knight",
+        "Archer",
+        "Skeletons",
+        "BarbLog",
+        "Arrows",
+        "MiniPekka",
+        "Rocket"
+      ],
+      "cards_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1983,
+        "texture_files_right": 1983,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-golem",
+      "capture": "golem",
+      "subset_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 934,
+        "texture_files_right": 934,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "Golem",
+        "DarkWitch",
+        "BabyDragon",
+        "MegaMinion",
+        "RageBarbarian",
+        "Tornado",
+        "Lightning",
+        "BarbLog"
+      ],
+      "cards_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 934,
+        "texture_files_right": 934,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-hog-mirror",
+      "capture": "hog-mirror",
+      "subset_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1775,
+        "texture_files_right": 1775,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "HogRider",
+        "Musketeer",
+        "IceGolemite",
+        "Skeletons",
+        "IceSpirits",
+        "Cannon",
+        "Fireball",
+        "Log"
+      ],
+      "cards_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1775,
+        "texture_files_right": 1775,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-lava-loon",
+      "capture": "lava-loon",
+      "subset_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1078,
+        "texture_files_right": 1078,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "LavaHound",
+        "Balloon",
+        "Tombstone",
+        "MegaMinion",
+        "Minions",
+        "SkeletonWarriors",
+        "Fireball",
+        "Zap"
+      ],
+      "cards_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 1078,
+        "texture_files_right": 1078,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-log-bait",
+      "capture": "log-bait",
+      "subset_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2078,
+        "texture_files_right": 2078,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "GoblinBarrel",
+        "Princess",
+        "Knight",
+        "GoblinGang",
+        "InfernoTower",
+        "Rocket",
+        "Log",
+        "IceSpirits"
+      ],
+      "cards_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2078,
+        "texture_files_right": 2078,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    },
+    {
+      "scenario": "match-pekka-bridge",
+      "capture": "pekka-bridge",
+      "subset_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2219,
+        "texture_files_right": 2219,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      },
+      "cards": [
+        "Pekka",
+        "BattleRam",
+        "Assassin",
+        "Ghost",
+        "ElectroWizard",
+        "EliteArcher",
+        "Poison",
+        "Zap"
+      ],
+      "cards_vs_full": {
+        "frames": 1600,
+        "draw_frames_differ": 0,
+        "extra_left_frames": 0,
+        "extra_right_frames": 0,
+        "texture_files_left": 2219,
+        "texture_files_right": 2219,
+        "textures_equal": true,
+        "first_draw_difference": null,
+        "equal": true
+      }
+    }
+  ]
+}

@@ -59,6 +59,8 @@ class CompressionUnitTests(unittest.TestCase):
     def test_identity_bytes_stay_compatible_and_closing_compression_closes_source(self):
         expected = b'event: scene\ndata: {"tick":1}\n\ndata: {}\n\n'
         self.assertEqual(b''.join(event_stream_chunks([('scene', {'tick': 1}), (None, {})])), expected)
+        identified = b''.join(event_stream_chunks([('ticks', {'v': 2}, '1:10')]))
+        self.assertEqual(identified, b'id: 1:10\nevent: ticks\ndata: {"v":2}\n\n')
         self.assertEqual(gzip.decompress(b''.join(event_stream_chunks(
             [('scene', {'tick': 1}), (None, {})], gzip=True))), expected)
         closed = []

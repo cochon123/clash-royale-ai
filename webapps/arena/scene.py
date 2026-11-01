@@ -42,6 +42,11 @@ def browser_scene_enabled():
     return os.environ.get("ARENA_BROWSER_SCENE", "1") == "1"
 
 
+def scene_legacy_enabled():
+    """Today's /scene, /textures and eager presenter, for A/B until phase 4."""
+    return os.environ.get("ARENA_SCENE_LEGACY", "0") == "1"
+
+
 def texture_references(draws):
     """Only textures actually referenced by this owner's display lists."""
     result = set()
@@ -351,6 +356,8 @@ def register_routes(app, manager):
         if match.error:
             raise HTTPError(503, match.error)
         if not isinstance(match.renderer, NativeSceneRenderer):
+            if not scene_legacy_enabled():
+                raise HTTPError(503, "the tick stream replaced the scene presenter; set ARENA_SCENE_LEGACY=1 to use /scene")
             raise HTTPError(503, "Preparing original-asset browser scene...")
         return match
 

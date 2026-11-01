@@ -5,17 +5,37 @@
 //! are stored. Later matches and later fights load that file instead of
 //! rendering the SC clip again.
 
+#[cfg(not(feature = "wasm"))]
 use image::codecs::png::PngDecoder;
-use image::{DynamicImage, ImageFormat, RgbaImage};
+#[cfg(not(feature = "wasm"))]
+use image::{DynamicImage, ImageFormat};
+use image::RgbaImage;
+#[cfg(not(feature = "wasm"))]
 use std::fs;
+#[cfg(not(feature = "wasm"))]
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 
 #[derive(Clone)]
 pub struct PoseCache {
+    #[cfg_attr(feature = "wasm", allow(dead_code))]
     root: PathBuf,
 }
 
+#[cfg(feature = "wasm")]
+impl PoseCache {
+    pub fn open(_root: &Path) -> Result<Self, String> {
+        Err("disk pose cache is disabled under wasm".into())
+    }
+
+    pub fn load(&self, _key: &str) -> Option<(RgbaImage, f64, f64)> {
+        None
+    }
+
+    pub fn store(&self, _key: &str, _image: &RgbaImage, _dx: f64, _dy: f64) {}
+}
+
+#[cfg(not(feature = "wasm"))]
 impl PoseCache {
     pub fn open(root: &Path) -> Result<Self, String> {
         fs::create_dir_all(root).map_err(|e| format!("create pose cache: {e}"))?;
@@ -118,7 +138,7 @@ pub fn trim_map<K: Clone + Ord, V>(map: &mut std::collections::BTreeMap<K, V>, l
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, not(feature = "wasm")))]
 mod tests {
     use super::*;
     use image::Rgba;

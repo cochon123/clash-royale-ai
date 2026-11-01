@@ -6,7 +6,9 @@
 use crate::draw::ShownSubject;
 use crate::frame::{BattleFrame, Entity};
 use serde::{Deserialize, Serialize};
+#[cfg(not(feature = "wasm"))]
 use serde_json::Value;
+#[cfg(not(feature = "wasm"))]
 use std::fs;
 use std::path::Path;
 
@@ -148,6 +150,13 @@ pub fn merge_cases(existing: &mut Vec<GalleryCase>, incoming: Vec<GalleryCase>) 
 }
 
 pub fn read_manifest(path: &Path) -> Result<Vec<GalleryCase>, String> {
+    #[cfg(feature = "wasm")]
+    {
+        let _ = path;
+        return Err("filesystem is disabled under wasm".into());
+    }
+    #[cfg(not(feature = "wasm"))]
+    {
     if !path.exists() {
         return Ok(Vec::new());
     }
@@ -158,15 +167,24 @@ pub fn read_manifest(path: &Path) -> Result<Vec<GalleryCase>, String> {
     }
     serde_json::from_value(value.get("cases").cloned().unwrap_or(Value::Array(Vec::new())))
         .map_err(|e| format!("visual gallery cases: {e}"))
+    }
 }
 
 pub fn write_manifest(path: &Path, cases: &[GalleryCase]) -> Result<(), String> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    #[cfg(feature = "wasm")]
+    {
+        let _ = (path, cases);
+        return Err("filesystem is disabled under wasm".into());
     }
-    let body = serde_json::to_string_pretty(&serde_json::json!({"version": 1, "cases": cases}))
-        .map_err(|e| e.to_string())?;
-    fs::write(path, body + "\n").map_err(|e| e.to_string())
+    #[cfg(not(feature = "wasm"))]
+    {
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+        }
+        let body = serde_json::to_string_pretty(&serde_json::json!({"version": 1, "cases": cases}))
+            .map_err(|e| e.to_string())?;
+        fs::write(path, body + "\n").map_err(|e| e.to_string())
+    }
 }
 
 /// A short walk used only when `--synthetic` is requested. Positions change

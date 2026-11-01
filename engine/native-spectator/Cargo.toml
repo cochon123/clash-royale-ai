@@ -5,10 +5,22 @@ edition = "2021"
 default-run = "clash-native-spectator"
 description = "Read-only original-asset battle spectator for the recovered engine"
 
+[lib]
+name = "clash_native_spectator"
+crate-type = ["rlib", "cdylib"]
+
 [features]
-default = []
+default = ["window"]
+window = ["dep:minifb"]
 compiled-engine = ["dep:clash-recompiled"]
 web-jpeg = ["dep:turbojpeg"]
+# Browser painter. Turns off the window, disk pose cache, and wall clock.
+wasm = ["clash-native-ui-viewer/wasm"]
+
+[[bin]]
+name = "clash-native-spectator"
+path = "src/main.rs"
+required-features = ["window"]
 
 [[bin]]
 name = "clash-visual-check"
@@ -25,12 +37,12 @@ path = "src/bin/clash-visual-gallery.rs"
 
 [dependencies]
 clash-recompiled = { path = "../rust-engine", optional = true }
-clash-native-ui-viewer = { path = "../native-ui-viewer" }
+clash-native-ui-viewer = { path = "../native-ui-viewer", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 image = { version = "0.25", default-features = false, features = ["png"] }
 turbojpeg = { version = "1.5.1", optional = true }
-minifb = { version = "0.28", default-features = false, features = ["x11"] }
+minifb = { version = "0.28", optional = true, default-features = false, features = ["x11"] }
 
 [profile.release]
 opt-level = 3

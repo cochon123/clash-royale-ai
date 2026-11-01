@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from email.message import Message
+import hashlib
 import mimetypes
 import os
 from pathlib import Path
@@ -99,6 +100,24 @@ def create_app(*, secret=None, secure=True, base_path="", allowed_hosts=None, ma
         status, value = value if isinstance(value, tuple) else (200, value)
         return JSONResponse(value, status_code=status)
 
+    def static_response(file: Path, path: str, web: WebRequest):
+        """Static files revalidate by ETag instead of downloading again.
+
+        ``no-store`` made every lobby visit fetch about 120 card pictures and
+        every script again. Card art changes only with a release, so it may be
+        reused for a day. The ETag is Starlette's own; nginx may weaken it.
+        """
+        stat = file.stat()
+        etag = '"' + hashlib.md5(f"{stat.st_mtime}-{stat.st_size}".encode(), usedforsecurity=False).hexdigest() + '"'
+        cache = "public, max-age=86400" if path.startswith(("/cards/", "/card-thumbs/")) else "no-cache"
+        sent = [tag.strip().removeprefix("W/") for tag in web.headers.get("if-none-match", "").split(",")]
+        if etag in sent or "*" in sent:
+            return Response(status_code=304, headers={"ETag": etag, "Cache-Control": cache})
+        response = result_response(file, method=web.method)
+        response.headers["ETag"] = etag
+        response.headers["Cache-Control"] = cache
+        return response
+
     async def dispatch(web: WebRequest):
         sid = web.session.get("arena_id")
         if not isinstance(sid, str) or not re.fullmatch(r"[A-Za-z0-9_-]{32}", sid):
@@ -140,7 +159,7 @@ def create_app(*, secret=None, secure=True, base_path="", allowed_hosts=None, ma
                 static = router.resolve_static(path) if web.method in ("GET", "HEAD") else None
                 if static is None:
                     raise HTTPError(404, "not found")
-                response = result_response(static, method=web.method)
+                response = static_response(static, path, web)
             response.headers.setdefault("Cache-Control", "no-store")
             response.headers["X-Content-Type-Options"] = "nosniff"
             return response

@@ -13,8 +13,22 @@ for _ in range(50):
 ws_url = [t for t in tabs if t["type"] == "page"][0]["webSocketDebuggerUrl"]
 MON = r"""
 (() => {
-  window.__mon = {frames: [], packets: [], t0: performance.now()};
-  const r = sceneRenderer; if (!r) return "no renderer";
+  window.__mon = {frames: [], packets: [], t0: performance.now(), source: ""};
+  if (typeof arenaDisplayTrace === "function") {
+    window.__mon.source = "arenaDisplayTrace";
+    const pull = () => {
+      try {
+        const rows = arenaDisplayTrace();
+        if (rows && rows.length) window.__mon.frames = rows;
+      } catch (error) { window.__mon.error = String(error); }
+    };
+    pull();
+    window.__mon.timer = setInterval(pull, 250);
+    return "trace";
+  }
+  const r = typeof sceneRenderer !== "undefined" ? sceneRenderer : null;
+  if (!r) return "no renderer";
+  window.__mon.source = "sceneRenderer";
   const origRender = r.render.bind(r);
   r.render = function(time) {
     const tl = this.timeline, latest = tl[tl.length-1];
@@ -29,7 +43,7 @@ MON = r"""
   };
   const origPush = r.push.bind(r);
   r.push = function(p) { window.__mon.packets.push([Math.round(performance.now()), p.tick, p.display_tick, (p.blobs||[]).length]); return origPush(p); };
-  return "ok";
+  return "hook";
 })()
 """
 async def main():
@@ -54,7 +68,7 @@ async def main():
         await call("Page.navigate", {"url": f"{BASE}/play.html?id={mid}"})
         for _ in range(200):
             await asyncio.sleep(0.1)
-            ok = await ev("typeof sceneRenderer !== 'undefined' && sceneRenderer ? 1 : 0", False)
+            ok = await ev("(typeof arenaDisplayTrace === 'function' || (typeof sceneRenderer !== 'undefined' && sceneRenderer)) ? 1 : 0", False)
             if ok == 1: break
         print("install", await ev(MON, False))
         ready = None

@@ -7,16 +7,26 @@
 //! deliberately single-threaded. No pointer is dereferenced or retained beyond
 //! a draw; the root allocation's address is only compared for target identity.
 use crate::blit::{Affine, Blend};
-use image::{imageops, ImageFormat, Rgba, RgbaImage};
+#[cfg(not(feature = "wasm"))]
+use image::ImageFormat;
+use image::{imageops, Rgba, RgbaImage};
 use serde::Serialize;
 use std::{
-    cell::RefCell,
+    cell::{Cell, RefCell},
     collections::{hash_map::DefaultHasher, BTreeMap, BTreeSet},
-    fs,
     hash::{Hash, Hasher},
-    path::{Path, PathBuf},
+    path::PathBuf,
+};
+#[cfg(not(feature = "wasm"))]
+use std::path::Path;
+use std::{
     rc::Rc,
-    time::{Duration, SystemTime, UNIX_EPOCH},
+    time::Duration,
+};
+#[cfg(not(feature = "wasm"))]
+use std::{
+    fs,
+    time::{SystemTime, UNIX_EPOCH},
 };
 
 #[derive(Clone, Debug, Serialize)]
@@ -79,6 +89,7 @@ struct CacheEntry {
 }
 
 pub struct TextureCache {
+    #[cfg_attr(feature = "wasm", allow(dead_code))]
     root: PathBuf,
     entries: BTreeMap<String, CacheEntry>,
     pub encoded_bytes: u64,
@@ -90,9 +101,18 @@ pub struct TextureCache {
     current: BTreeSet<String>,
     published: BTreeSet<String>,
     evicted: BTreeSet<String>,
+    /// RGBA copies for the wasm painter. Disk mode leaves this empty.
+    memory: bool,
+    pixels: BTreeMap<String, Vec<u8>>,
+    manual_clock: Option<Rc<Cell<Duration>>>,
+    /// Texture ids of buffers drawn before, keyed by allocation and size and
+    /// checked against a fast content digest. Hashing every sprite with
+    /// [`texture_id`] on every frame was the largest cost of a wasm paint.
+    ids: BTreeMap<(usize, usize, u32, u32), (u64, String)>,
 }
 
 impl TextureCache {
+    #[cfg(not(feature = "wasm"))]
     pub fn new(root: &Path) -> Result<Self, String> {
         fs::create_dir_all(root).map_err(|e| format!("create texture cache: {e}"))?;
         let mut cache = Self {
@@ -111,6 +131,10 @@ impl TextureCache {
             current: BTreeSet::new(),
             published: BTreeSet::new(),
             evicted: BTreeSet::new(),
+            memory: false,
+            pixels: BTreeMap::new(),
+            manual_clock: None,
+            ids: BTreeMap::new(),
         };
         // Account for immutable files left by a presenter restart. Ignoring
         // these would make the on-disk budget grow without bound across runs.
@@ -155,11 +179,71 @@ impl TextureCache {
         Ok(cache)
     }
 
+    /// Pose store that keeps RGBA in memory and reads time from [`Self::advance_clock`].
+    pub fn memory() -> Self {
+        let now = Rc::new(Cell::new(Duration::ZERO));
+        let clock_now = now.clone();
+        Self {
+            root: PathBuf::new(),
+            entries: BTreeMap::new(),
+            encoded_bytes: 0,
+            encodes: 0,
+            max_textures: 8192,
+            max_bytes: 256 * 1024 * 1024,
+            grace: Duration::from_secs(30),
+            clock: Rc::new(move || clock_now.get()),
+            current: BTreeSet::new(),
+            published: BTreeSet::new(),
+            evicted: BTreeSet::new(),
+            memory: true,
+            pixels: BTreeMap::new(),
+            manual_clock: Some(now),
+            ids: BTreeMap::new(),
+        }
+    }
+
+    /// Move the injected clock. Disk mode keeps using the wall clock.
+    pub fn advance_clock(&mut self, dt_seconds: f64) {
+        let Some(clock) = &self.manual_clock else {
+            return;
+        };
+        let step = if dt_seconds.is_finite() && dt_seconds > 0. {
+            Duration::from_secs_f64(dt_seconds)
+        } else {
+            Duration::ZERO
+        };
+        clock.set(clock.get().saturating_add(step));
+    }
+
+    pub fn rgba(&self, id: &str) -> Option<&[u8]> {
+        self.pixels.get(id).map(Vec::as_slice)
+    }
+
+    /// Drop the RGBA copy after the page has uploaded it. The id and its byte
+    /// budget stay, so a later draw does not publish the pose again. The budget
+    /// is the set the page is holding: zeroing it here made every released pose
+    /// free, the cap was never reached, and a page that dropped the GPU copy
+    /// could not get the pixels back.
+    pub fn release_rgba(&mut self, id: &str) -> bool {
+        self.pixels.remove(id).is_some()
+    }
+
     pub fn len(&self) -> usize {
         self.entries.len()
     }
     pub fn is_empty(&self) -> bool {
         self.entries.is_empty()
+    }
+
+    /// Drop every pose. The address-gate harness uses this between replays so
+    /// the second pass publishes textures again. `painter_reset` does not.
+    pub fn clear(&mut self) {
+        self.entries.clear();
+        self.pixels.clear();
+        self.current.clear();
+        self.published.clear();
+        self.evicted.clear();
+        self.encoded_bytes = 0;
     }
 
     fn begin_frame(&mut self) {
@@ -189,19 +273,60 @@ impl TextureCache {
             .collect();
         cold.sort();
         let mut cold = cold.into_iter();
-        while self.entries.len().saturating_add(count) > self.max_textures
-            || self.encoded_bytes.saturating_add(bytes) > self.max_bytes
-        {
+        // Leave 1/16 of the budget free. Evicting only the one pose that did
+        // not fit sorted the whole cache again for every new pose once full.
+        let fits = |entries: usize, encoded: u64, max_textures: usize, max_bytes: u64| {
+            entries.saturating_add(count) <= max_textures
+                && encoded.saturating_add(bytes) <= max_bytes
+        };
+        let headroom_textures = self.max_textures - self.max_textures / 16;
+        let headroom_bytes = self.max_bytes - self.max_bytes / 16;
+        while !fits(self.entries.len(), self.encoded_bytes, headroom_textures, headroom_bytes) {
             let Some((_, id)) = cold.next() else {
+                if fits(self.entries.len(), self.encoded_bytes, self.max_textures, self.max_bytes) {
+                    break;
+                }
                 return Err(format!("original texture working set exceeds {} textures / {} bytes within the {}s in-flight grace", self.max_textures, self.max_bytes, self.grace.as_secs()));
             };
-            fs::remove_file(self.root.join(format!("{id}.png")))
-                .map_err(|e| format!("evict cold original texture: {e}"))?;
+            if self.memory {
+                self.pixels.remove(&id);
+            } else {
+                #[cfg(not(feature = "wasm"))]
+                {
+                    fs::remove_file(self.root.join(format!("{id}.png")))
+                        .map_err(|e| format!("evict cold original texture: {e}"))?;
+                }
+                #[cfg(feature = "wasm")]
+                {
+                    return Err("disk texture cache is disabled under wasm".into());
+                }
+            }
             let entry = self.entries.remove(&id).expect("candidate exists");
             self.encoded_bytes = self.encoded_bytes.saturating_sub(entry.bytes);
             self.evicted.insert(id);
         }
         Ok(())
+    }
+
+    /// Same id as [`texture_id`]. A buffer whose address, size and digest are
+    /// unchanged since its last draw keeps its id without hashing it again.
+    /// The id is a function of content only, so a reused address with new
+    /// pixels fails the digest check and is hashed again.
+    fn memo_id(&mut self, image: &RgbaImage) -> String {
+        let raw = image.as_raw();
+        let key = (raw.as_ptr() as usize, raw.len(), image.width(), image.height());
+        let digest = content_digest(raw);
+        if let Some((seen, id)) = self.ids.get(&key) {
+            if *seen == digest {
+                return id.clone();
+            }
+        }
+        let id = texture_id(image);
+        if self.ids.len() >= 32768 {
+            self.ids.clear();
+        }
+        self.ids.insert(key, (digest, id.clone()));
+        id
     }
 
     fn texture(&mut self, image: &RgbaImage) -> Result<(Texture, bool), String> {
@@ -212,27 +337,43 @@ impl TextureCache {
         {
             return Err("original sprite dimensions exceed texture limit".into());
         }
-        let id = texture_id(image);
+        let id = self.memo_id(image);
         self.current.insert(id.clone());
         if let Some(entry) = self.entries.get_mut(&id) {
             entry.last_used = (self.clock)();
             return Ok((entry.texture.clone(), false));
         }
-        let path = self.root.join(format!("{id}.png"));
-        let temp = self.root.join(format!(".{id}.{}.tmp", std::process::id()));
-        let result = image
-            .save_with_format(&temp, ImageFormat::Png)
-            .map_err(|e| format!("encode original texture: {e}"))
-            .and_then(|_| {
-                let bytes = fs::metadata(&temp).map_err(|e| e.to_string())?.len();
-                self.make_room(bytes, 1)?;
-                fs::rename(&temp, &path).map_err(|e| format!("publish original texture: {e}"))?;
-                Ok(bytes)
-            });
-        if result.is_err() {
-            let _ = fs::remove_file(&temp);
-        }
-        let bytes = result?;
+        let bytes = if self.memory {
+            let raw = image.as_raw().clone();
+            let bytes = raw.len() as u64;
+            self.make_room(bytes, 1)?;
+            self.pixels.insert(id.clone(), raw);
+            bytes
+        } else {
+            #[cfg(feature = "wasm")]
+            {
+                return Err("disk texture cache is disabled under wasm".into());
+            }
+            #[cfg(not(feature = "wasm"))]
+            {
+                let path = self.root.join(format!("{id}.png"));
+                let temp = self.root.join(format!(".{id}.{}.tmp", std::process::id()));
+                let result = image
+                    .save_with_format(&temp, ImageFormat::Png)
+                    .map_err(|e| format!("encode original texture: {e}"))
+                    .and_then(|_| {
+                        let bytes = fs::metadata(&temp).map_err(|e| e.to_string())?.len();
+                        self.make_room(bytes, 1)?;
+                        fs::rename(&temp, &path)
+                            .map_err(|e| format!("publish original texture: {e}"))?;
+                        Ok(bytes)
+                    });
+                if result.is_err() {
+                    let _ = fs::remove_file(&temp);
+                }
+                result?
+            }
+        };
         self.encodes += 1;
         self.encoded_bytes += bytes;
         let texture = Texture {
@@ -255,9 +396,83 @@ impl TextureCache {
     }
 }
 
+/// `DefaultHasher` with `usize` and length prefixes forced to 8 bytes.
+///
+/// `Hash` for `[u8]`, `Vec<u8>`, `str` and `usize` writes a `usize` length or
+/// value. That is 8 bytes on x86_64 and 4 on wasm32, so the same pixels hashed
+/// to different texture ids. Forwarding every other write keeps the x86_64
+/// digest, including the variant key of a fitted pose.
+pub(crate) struct Width64Hasher(DefaultHasher);
+
+impl Width64Hasher {
+    pub(crate) fn new() -> Self {
+        Self(DefaultHasher::new())
+    }
+}
+
+impl Hasher for Width64Hasher {
+    fn finish(&self) -> u64 {
+        self.0.finish()
+    }
+
+    fn write(&mut self, bytes: &[u8]) {
+        self.0.write(bytes);
+    }
+
+    fn write_u8(&mut self, value: u8) {
+        self.0.write_u8(value);
+    }
+
+    fn write_u16(&mut self, value: u16) {
+        self.0.write_u16(value);
+    }
+
+    fn write_u32(&mut self, value: u32) {
+        self.0.write_u32(value);
+    }
+
+    fn write_u64(&mut self, value: u64) {
+        self.0.write_u64(value);
+    }
+
+    fn write_u128(&mut self, value: u128) {
+        self.0.write_u128(value);
+    }
+
+    fn write_i8(&mut self, value: i8) {
+        self.0.write_i8(value);
+    }
+
+    fn write_i16(&mut self, value: i16) {
+        self.0.write_i16(value);
+    }
+
+    fn write_i32(&mut self, value: i32) {
+        self.0.write_i32(value);
+    }
+
+    fn write_i64(&mut self, value: i64) {
+        self.0.write_i64(value);
+    }
+
+    fn write_i128(&mut self, value: i128) {
+        self.0.write_i128(value);
+    }
+
+    fn write_usize(&mut self, value: usize) {
+        // `[u8]`/`str` length prefixes call this. x86_64 writes 8 bytes; wasm32
+        // would write 4. `write_u64` is the portable form of the native digest.
+        self.0.write_u64(value as u64);
+    }
+
+    fn write_isize(&mut self, value: isize) {
+        self.0.write_i64(value as i64);
+    }
+}
+
 fn texture_id(image: &RgbaImage) -> String {
     let hash = |salt: u64| {
-        let mut h = DefaultHasher::new();
+        let mut h = Width64Hasher::new();
         salt.hash(&mut h);
         image.width().hash(&mut h);
         image.height().hash(&mut h);
@@ -269,6 +484,75 @@ fn texture_id(image: &RgbaImage) -> String {
         hash(0x7363656e655f7631),
         hash(0x746578747572655f)
     )
+}
+
+/// XXH64 of `bytes`: a fast change check for [`TextureCache::memo_id`], not
+/// a transport id. Four independent lanes keep it several times faster than
+/// SipHash on wasm32.
+fn content_digest(bytes: &[u8]) -> u64 {
+    const P1: u64 = 0x9E37_79B1_85EB_CA87;
+    const P2: u64 = 0xC2B2_AE3D_27D4_EB4F;
+    const P3: u64 = 0x1656_67B1_9E37_79F9;
+    const P4: u64 = 0x85EB_CA77_C2B2_AE63;
+    const P5: u64 = 0x27D4_EB2F_1656_67C5;
+    fn round(acc: u64, lane: u64) -> u64 {
+        acc.wrapping_add(lane.wrapping_mul(P2))
+            .rotate_left(31)
+            .wrapping_mul(P1)
+    }
+    fn merge(acc: u64, lane: u64) -> u64 {
+        (acc ^ round(0, lane)).wrapping_mul(P1).wrapping_add(P4)
+    }
+    let word = |b: &[u8]| u64::from_le_bytes(b.try_into().expect("8 bytes"));
+    let stripes = bytes.chunks_exact(32);
+    let tail = stripes.remainder();
+    let mut hash = if bytes.len() >= 32 {
+        let mut v = [
+            P1.wrapping_add(P2),
+            P2,
+            0,
+            0u64.wrapping_sub(P1),
+        ];
+        for stripe in stripes {
+            v[0] = round(v[0], word(&stripe[0..8]));
+            v[1] = round(v[1], word(&stripe[8..16]));
+            v[2] = round(v[2], word(&stripe[16..24]));
+            v[3] = round(v[3], word(&stripe[24..32]));
+        }
+        let mut h = v[0]
+            .rotate_left(1)
+            .wrapping_add(v[1].rotate_left(7))
+            .wrapping_add(v[2].rotate_left(12))
+            .wrapping_add(v[3].rotate_left(18));
+        for lane in v {
+            h = merge(h, lane);
+        }
+        h
+    } else {
+        P5
+    };
+    hash = hash.wrapping_add(bytes.len() as u64);
+    let mut words = tail.chunks_exact(8);
+    for chunk in &mut words {
+        hash ^= round(0, word(chunk));
+        hash = hash.rotate_left(27).wrapping_mul(P1).wrapping_add(P4);
+    }
+    let mut rest = words.remainder();
+    if rest.len() >= 4 {
+        let half = u32::from_le_bytes(rest[..4].try_into().expect("4 bytes"));
+        hash ^= u64::from(half).wrapping_mul(P1);
+        hash = hash.rotate_left(23).wrapping_mul(P2).wrapping_add(P3);
+        rest = &rest[4..];
+    }
+    for &byte in rest {
+        hash ^= u64::from(byte).wrapping_mul(P5);
+        hash = hash.rotate_left(11).wrapping_mul(P1);
+    }
+    hash ^= hash >> 33;
+    hash = hash.wrapping_mul(P2);
+    hash ^= hash >> 29;
+    hash = hash.wrapping_mul(P3);
+    hash ^ (hash >> 32)
 }
 
 #[derive(Default)]
@@ -641,6 +925,47 @@ pub fn fill_rect(dst: &mut RgbaImage, x: i32, y: i32, w: i32, h: i32, color: Rgb
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn width64_hasher_matches_native_default_hasher() {
+        let image = RgbaImage::from_fn(3, 2, |x, y| Rgba([x as u8, y as u8, 9, 255]));
+        let mut native = DefaultHasher::new();
+        0x7363656e655f7631u64.hash(&mut native);
+        image.width().hash(&mut native);
+        image.height().hash(&mut native);
+        image.as_raw().hash(&mut native);
+        let mut portable = Width64Hasher::new();
+        0x7363656e655f7631u64.hash(&mut portable);
+        image.width().hash(&mut portable);
+        image.height().hash(&mut portable);
+        image.as_raw().hash(&mut portable);
+        assert_eq!(
+            native.finish(),
+            portable.finish(),
+            "texture id prefix must stay the x86_64 digest"
+        );
+
+        let mut frames = BTreeMap::new();
+        frames.insert(4u32, 7usize);
+        let mut hidden = BTreeSet::new();
+        hidden.insert(11u32);
+        let label = Some("attack".to_owned());
+        let mut direct = DefaultHasher::new();
+        frames.hash(&mut direct);
+        hidden.hash(&mut direct);
+        label.hash(&mut direct);
+        true.hash(&mut direct);
+        let mut wrapped = Width64Hasher::new();
+        frames.hash(&mut wrapped);
+        hidden.hash(&mut wrapped);
+        label.hash(&mut wrapped);
+        true.hash(&mut wrapped);
+        assert_eq!(direct.finish(), wrapped.finish());
+    }
+    use image::{Rgba, RgbaImage};
+    use std::collections::hash_map::DefaultHasher;
+    use std::collections::{BTreeMap, BTreeSet};
+    use std::hash::{Hash, Hasher};
     use crate::{
         blit::{self, ShadowMask},
         draw::Painter,
@@ -1092,6 +1417,133 @@ mod tests {
         let restarted = TextureCache::new(&cache.root).unwrap();
         assert_eq!(restarted.encoded_bytes, cache.cache.borrow().encoded_bytes);
         assert_eq!(restarted.len(), cache.cache.borrow().len());
+    }
+
+    #[test]
+    fn memory_cache_releases_rgba_and_evicts_cold_poses() {
+        let mut cache = TextureCache::memory();
+        cache.max_bytes = 8;
+        cache.grace = Duration::from_secs(1);
+        let pixel = |r| {
+            let mut image = RgbaImage::new(1, 1);
+            image.put_pixel(0, 0, Rgba([r, 0, 0, 255]));
+            image
+        };
+        let a = pixel(1);
+        let b = pixel(2);
+        let c = pixel(3);
+        cache.begin_frame();
+        let (first, created) = cache.texture(&a).unwrap();
+        assert!(created);
+        assert!(cache.finish_frame().is_empty());
+        assert_eq!(cache.rgba(&first.id).unwrap().len(), 4);
+        cache.begin_frame();
+        cache.texture(&b).unwrap();
+        cache.finish_frame();
+        cache.advance_clock(2.);
+        cache.begin_frame();
+        cache.texture(&c).unwrap();
+        let evicted = cache.finish_frame();
+        assert!(
+            evicted.contains(&first.id),
+            "cold pose should leave the LRU budget: {evicted:?}"
+        );
+        let mut held = TextureCache::memory();
+        held.begin_frame();
+        let (kept, _) = held.texture(&a).unwrap();
+        held.finish_frame();
+        assert!(held.release_rgba(&kept.id));
+        assert!(held.rgba(&kept.id).is_none());
+        assert_eq!(held.encoded_bytes, 4, "releasing pixels does not free the budget");
+        held.begin_frame();
+        let (_, again) = held.texture(&a).unwrap();
+        assert!(!again, "a released pose stays known");
+        held.finish_frame();
+        held.clear();
+        assert!(held.is_empty());
+        assert_eq!(held.encoded_bytes, 0);
+        assert!(held.rgba(&kept.id).is_none());
+    }
+
+    #[test]
+    fn memoized_ids_match_content_hash_and_follow_in_place_edits() {
+        let mut cache = TextureCache::memory();
+        let mut image = RgbaImage::new(9, 7);
+        image.put_pixel(3, 2, Rgba([1, 2, 3, 4]));
+        cache.begin_frame();
+        let (first, created) = cache.texture(&image).unwrap();
+        assert!(created);
+        assert_eq!(first.id, texture_id(&image));
+        // Same buffer, same pixels: same id, nothing new to publish.
+        let (again, created) = cache.texture(&image).unwrap();
+        assert!(!created);
+        assert_eq!(again.id, first.id);
+        // Same allocation edited in place: a new id, still the content hash.
+        image.put_pixel(8, 6, Rgba([9, 9, 9, 9]));
+        let (edited, created) = cache.texture(&image).unwrap();
+        assert!(created);
+        assert_ne!(edited.id, first.id);
+        assert_eq!(edited.id, texture_id(&image));
+        // A different allocation with the first pixels maps back to the first id.
+        let mut copy = RgbaImage::new(9, 7);
+        copy.put_pixel(3, 2, Rgba([1, 2, 3, 4]));
+        let (back, created) = cache.texture(&copy).unwrap();
+        assert!(!created);
+        assert_eq!(back.id, first.id);
+        cache.finish_frame();
+    }
+
+    #[test]
+    fn content_digest_sees_every_byte_and_length() {
+        let base: Vec<u8> = (0..203u32).map(|i| (i * 31 % 251) as u8).collect();
+        let digest = content_digest(&base);
+        for at in [0, 7, 31, 32, 63, 64, 199, 202] {
+            let mut edited = base.clone();
+            edited[at] ^= 1;
+            assert_ne!(content_digest(&edited), digest, "byte {at}");
+        }
+        assert_ne!(content_digest(&base[..202]), digest);
+        assert_ne!(content_digest(&[]), content_digest(&[0]));
+    }
+
+    #[test]
+    fn released_pose_still_counts_and_republishes_after_eviction() {
+        let mut cache = TextureCache::memory();
+        cache.max_bytes = 8;
+        cache.grace = Duration::from_secs(1);
+        let pixel = |r| {
+            let mut image = RgbaImage::new(1, 1);
+            image.put_pixel(0, 0, Rgba([r, 0, 0, 255]));
+            image
+        };
+        let a = pixel(1);
+        let b = pixel(2);
+        let c = pixel(3);
+        cache.begin_frame();
+        let (first, _) = cache.texture(&a).unwrap();
+        cache.finish_frame();
+        assert!(cache.release_rgba(&first.id));
+        assert_eq!(cache.encoded_bytes, 4);
+        cache.advance_clock(2.);
+        cache.begin_frame();
+        cache.texture(&b).unwrap();
+        cache.finish_frame();
+        cache.advance_clock(2.);
+        cache.begin_frame();
+        cache.texture(&c).unwrap();
+        let evicted = cache.finish_frame();
+        assert!(
+            evicted.contains(&first.id),
+            "a released pose still has to leave once the budget is full: {evicted:?}"
+        );
+        assert!(cache.rgba(&first.id).is_none());
+        cache.advance_clock(2.);
+        cache.begin_frame();
+        let (back, created) = cache.texture(&a).unwrap();
+        assert!(created, "eviction forgets the id, so the next draw publishes pixels again");
+        assert_eq!(back.id, first.id);
+        assert_eq!(cache.rgba(&first.id).map(|bytes| bytes.len()), Some(4));
+        cache.finish_frame();
     }
 
     #[test]
