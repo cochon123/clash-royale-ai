@@ -309,7 +309,9 @@ async def run(args):
             await call("Page.enable", session=page)
             await call("Runtime.enable", session=page)
             await call("Page.addScriptToEvaluateOnNewDocument", {"source": BOOT_HOOK}, page)
-            patterns = [{"urlPattern": "*painter-worker.js*", "requestStage": "Response" if not args.static else "Request"}]
+            stage = "Response" if not args.static else "Request"
+            patterns = [{"urlPattern": "*painter-worker.js*", "requestStage": stage},
+                        {"urlPattern": "*compositor-worker.js*", "requestStage": stage}]
             if args.wasm:
                 patterns.append({"urlPattern": "*/assets/files/*.wasm", "requestStage": "Request"})
             if args.static:
