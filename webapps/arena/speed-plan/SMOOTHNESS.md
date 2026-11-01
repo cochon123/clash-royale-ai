@@ -137,3 +137,40 @@ Tests:
   feature detection, because browsers without wasm SIMD would fail to load the painter.
 - **Server tick stall.** One cold run saw a 3.6 s gap in ticks. Ticks over the VPS's own
   nginx were clean, so it was not reproduced.
+
+## Deployment (2026-11-01 20:18 UTC)
+
+Release `/opt/clash-arena/releases/20261101-01-smooth`. The code is `arena-speed/integration`
+c4b8bbb, merged to main as c9fec6d.
+- Archive sha256 `ff241444e433a76cde2e9409dcecb6afebcc17f79cec9add9660591730b4f256`,
+  1,398 files, every file verified against `arena-runtime-manifest.json`.
+- Painter wasm `files/87aa20ae0db5497a0485.wasm`, manifest `manifest-faa722e3679c.json`.
+- Web assets were copied to `/var/www/clash-arena-assets/20261101-01`; `current` now points
+  there instead of `next`.
+- The service file was replaced; the only change is `--limit-concurrency 256`.
+- `native-watch` and `clash-web-renderer` are byte-identical to the previous release.
+  The JPEG renderer could not be rebuilt here because NASM is missing; the old binary is
+  the stream-view fallback only.
+- The engine identity matches the previous release, so the placement-mask cache stays valid.
+- Activation waited for the single match slot to be free (a visitor's watch match
+  idle-closed first).
+
+Public checks after the switch:
+- Health OK.
+- Scripts are `no-cache` with ETag, and a revalidation returns 304.
+- Thumbnails are `max-age=86400`; all 119 cards have one.
+
+`probe_smooth.py 25` with no overrides:
+- warm: 60 fps, 0% missed vsyncs, longest display gap 24 ms, shown-time error p95 2.2 ms,
+  pace 0.999;
+- cold: first frame 5.5 s after create, assets downloaded in 2.8 s.
+
+Rollback:
+
+```sh
+ssh root@187.124.144.206 '
+  cd /opt/clash-arena && ln -sfn releases/20261024-02-arena-speed current.rb && mv -T current.rb current
+  ln -sfn /var/www/clash-arena-assets/next /var/www/clash-arena-assets/current.rb && mv -T /var/www/clash-arena-assets/current.rb /var/www/clash-arena-assets/current
+  cp /etc/systemd/system/clash-arena.service.bak-20261101-01 /etc/systemd/system/clash-arena.service
+  systemctl daemon-reload && systemctl restart clash-arena'
+```
