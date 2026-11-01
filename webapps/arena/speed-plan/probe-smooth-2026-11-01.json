@@ -1,0 +1,1451 @@
+{
+ "deployed-warm-profiled": {
+  "worker_raf": {
+   "count": 866,
+   "interval_p50": 24.2,
+   "interval_p95": 70.6,
+   "interval_max": 1351.5,
+   "missed_vsync_share": 0.1191,
+   "callback_ms_p50": 0.7,
+   "callback_ms_p95": 1.5
+  },
+  "renders": {
+   "total": 1685,
+   "from_raf": 866,
+   "from_push": 819,
+   "render_ms_p50": 0.8,
+   "render_ms_p95": 2.1,
+   "draws_p50": 114
+  },
+  "motion": {
+   "frames": 829,
+   "abs_err_ms_p50": 2.1,
+   "abs_err_ms_p95": 9.8,
+   "share_err_over_4ms": 0.2955,
+   "share_err_over_8ms": 0.0869,
+   "stuck_frames": 1,
+   "backward_frames": 0
+  },
+  "pace": {
+   "wall_s": 28.47,
+   "shown_game_s": 28.45,
+   "ratio": 0.9991
+  },
+  "painter_step": {
+   "count": 819,
+   "ms_p50": 18.3,
+   "ms_p95": 33.9,
+   "ms_max": 60.8,
+   "new_frames": 819,
+   "result_kb_p50": 24.6
+  },
+  "push": {
+   "ms_p50": 3.7,
+   "ms_p95": 10.9,
+   "uploads_total": 2555
+  },
+  "json_parse": {
+   "count": 1387,
+   "ms_p50": 0.2,
+   "ms_p95": 0.7,
+   "kb_p50": 19.6
+  },
+  "worker_busy_share": 0.778,
+  "step_interval_ms": {
+   "p50": 33.0,
+   "p95": 48.19999999999709,
+   "max": 138.0
+  },
+  "prewarm_ms": 981,
+  "init_ms": 400,
+  "page_longtasks": {
+   "count": 0,
+   "total_ms": 0,
+   "max_ms": 0
+  },
+  "first_frame_s": 6.7,
+  "cpu_rate": 1,
+  "diag": {
+   "mode": "browser",
+   "scene": null,
+   "input": {
+    "sent": 0,
+    "completed": 0,
+    "failed": 0,
+    "coalesced": 0,
+    "dropped": 0,
+    "maxQueued": 0,
+    "queued": 0,
+    "pendingAims": 0,
+    "inFlight": 0,
+    "destroyed": false,
+    "maxEssential": 16
+   },
+   "tick": 700,
+   "status": "running",
+   "painter": {
+    "draw_ms_p50": 21.9,
+    "draw_ms_p95": 50.9,
+    "wasm_mb": 0,
+    "observe_backlog": 0,
+    "display_tick": null,
+    "error": null
+   },
+   "lag_ms": 181.8,
+   "jitter_ms": 131.8,
+   "freezes": {
+    "count": 1,
+    "total_ms": 590
+   },
+   "asset_bytes": 52237086
+  }
+ },
+ "deployed-warm": {
+  "worker_raf": {
+   "count": 773,
+   "interval_p50": 18.7,
+   "interval_p95": 44.8,
+   "interval_max": 1645.0,
+   "missed_vsync_share": 0.2681,
+   "callback_ms_p50": 0.6,
+   "callback_ms_p95": 1.2
+  },
+  "renders": {
+   "total": 1430,
+   "from_raf": 773,
+   "from_push": 657,
+   "render_ms_p50": 0.6,
+   "render_ms_p95": 1.5,
+   "draws_p50": 122
+  },
+  "motion": {
+   "frames": 750,
+   "abs_err_ms_p50": 1.4,
+   "abs_err_ms_p95": 10.9,
+   "share_err_over_4ms": 0.2227,
+   "share_err_over_8ms": 0.092,
+   "stuck_frames": 1,
+   "backward_frames": 0
+  },
+  "pace": {
+   "wall_s": 23.06,
+   "shown_game_s": 23.0,
+   "ratio": 0.9977
+  },
+  "painter_step": {
+   "count": 657,
+   "ms_p50": 16.5,
+   "ms_p95": 37.2,
+   "ms_max": 75.4,
+   "new_frames": 657,
+   "result_kb_p50": 31.6
+  },
+  "push": {
+   "ms_p50": 3.5,
+   "ms_p95": 11.8,
+   "uploads_total": 2039
+  },
+  "json_parse": {
+   "count": 1119,
+   "ms_p50": 0.2,
+   "ms_p95": 0.6,
+   "kb_p50": 17.1
+  },
+  "worker_busy_share": 0.734,
+  "step_interval_ms": {
+   "p50": 33.0,
+   "p95": 49.19999999999709,
+   "max": 101.30000000000109
+  },
+  "prewarm_ms": 912,
+  "init_ms": 307,
+  "page_longtasks": {
+   "count": 0,
+   "total_ms": 0,
+   "max_ms": 0
+  },
+  "first_frame_s": 3.4,
+  "cpu_rate": 1,
+  "diag": {
+   "mode": "browser",
+   "scene": null,
+   "input": {
+    "sent": 0,
+    "completed": 0,
+    "failed": 0,
+    "coalesced": 0,
+    "dropped": 0,
+    "maxQueued": 0,
+    "queued": 0,
+    "pendingAims": 0,
+    "inFlight": 0,
+    "destroyed": false,
+    "maxEssential": 16
+   },
+   "tick": 598,
+   "status": "running",
+   "painter": {
+    "draw_ms_p50": 26.7,
+    "draw_ms_p95": 46.6,
+    "wasm_mb": 0,
+    "observe_backlog": 0,
+    "display_tick": null,
+    "error": null
+   },
+   "lag_ms": 200.8,
+   "jitter_ms": 150.8,
+   "freezes": {
+    "count": 1,
+    "total_ms": 537
+   },
+   "asset_bytes": 52237086
+  }
+ },
+ "deployed-cold": {
+  "worker_raf": {
+   "count": 1042,
+   "interval_p50": 19.0,
+   "interval_p95": 40.4,
+   "interval_max": 2841.4,
+   "missed_vsync_share": 0.2834,
+   "callback_ms_p50": 0.6,
+   "callback_ms_p95": 1.1
+  },
+  "renders": {
+   "total": 1776,
+   "from_raf": 1042,
+   "from_push": 734,
+   "render_ms_p50": 0.6,
+   "render_ms_p95": 1.3,
+   "draws_p50": 142
+  },
+  "motion": {
+   "frames": 1020,
+   "abs_err_ms_p50": 1.6,
+   "abs_err_ms_p95": 13.8,
+   "share_err_over_4ms": 0.2784,
+   "share_err_over_8ms": 0.1196,
+   "stuck_frames": 28,
+   "backward_frames": 1
+  },
+  "pace": {
+   "wall_s": 28.11,
+   "shown_game_s": 24.59,
+   "ratio": 0.8748
+  },
+  "painter_step": {
+   "count": 836,
+   "ms_p50": 15.7,
+   "ms_p95": 28.5,
+   "ms_max": 57.1,
+   "new_frames": 734,
+   "result_kb_p50": 31.4
+  },
+  "push": {
+   "ms_p50": 3.1,
+   "ms_p95": 11.1,
+   "uploads_total": 1939
+  },
+  "json_parse": {
+   "count": 1226,
+   "ms_p50": 0.2,
+   "ms_p95": 0.5,
+   "kb_p50": 20.0
+  },
+  "worker_busy_share": 0.638,
+  "step_interval_ms": {
+   "p50": 33.0,
+   "p95": 40.599999999998545,
+   "max": 109.69999999999709
+  },
+  "prewarm_ms": 906,
+  "init_ms": 380,
+  "page_longtasks": {
+   "count": 0,
+   "total_ms": 0,
+   "max_ms": 0
+  },
+  "first_frame_s": 21.78,
+  "cpu_rate": 1,
+  "diag": {
+   "mode": "browser",
+   "scene": null,
+   "input": {
+    "sent": 0,
+    "completed": 0,
+    "failed": 0,
+    "coalesced": 0,
+    "dropped": 0,
+    "maxQueued": 0,
+    "queued": 0,
+    "pendingAims": 0,
+    "inFlight": 0,
+    "destroyed": false,
+    "maxEssential": 16
+   },
+   "tick": 630,
+   "status": "running",
+   "painter": {
+    "draw_ms_p50": 17.1,
+    "draw_ms_p95": 28.6,
+    "wasm_mb": 0,
+    "observe_backlog": 0,
+    "display_tick": null,
+    "error": null
+   },
+   "lag_ms": 214.5,
+   "jitter_ms": 164.5,
+   "freezes": {
+    "count": 1,
+    "total_ms": 512
+   },
+   "asset_bytes": 52237086
+  }
+ },
+ "deployed-slow-cpu": {
+  "worker_raf": {
+   "count": 449,
+   "interval_p50": 22.85,
+   "interval_p95": 112.5,
+   "interval_max": 4093.0,
+   "missed_vsync_share": 0.2433,
+   "callback_ms_p50": 0.6,
+   "callback_ms_p95": 1.2
+  },
+  "renders": {
+   "total": 1093,
+   "from_raf": 449,
+   "from_push": 644,
+   "render_ms_p50": 0.6,
+   "render_ms_p95": 1.6,
+   "draws_p50": 141
+  },
+  "motion": {
+   "frames": 418,
+   "abs_err_ms_p50": 1.6,
+   "abs_err_ms_p95": 15.2,
+   "share_err_over_4ms": 0.2656,
+   "share_err_over_8ms": 0.1268,
+   "stuck_frames": 1,
+   "backward_frames": 0
+  },
+  "pace": {
+   "wall_s": 28.15,
+   "shown_game_s": 28.12,
+   "ratio": 0.9991
+  },
+  "painter_step": {
+   "count": 643,
+   "ms_p50": 19.9,
+   "ms_p95": 64.1,
+   "ms_max": 112.7,
+   "new_frames": 643,
+   "result_kb_p50": 30.2
+  },
+  "push": {
+   "ms_p50": 3.7,
+   "ms_p95": 33.2,
+   "uploads_total": 2075
+  },
+  "json_parse": {
+   "count": 1207,
+   "ms_p50": 0.2,
+   "ms_p95": 0.6,
+   "kb_p50": 19.2
+  },
+  "worker_busy_share": 0.837,
+  "step_interval_ms": {
+   "p50": 33.20000000000073,
+   "p95": 85.09999999999854,
+   "max": 194.0
+  },
+  "prewarm_ms": 2344,
+  "init_ms": 1301,
+  "page_longtasks": {
+   "count": 1,
+   "total_ms": 71,
+   "max_ms": 71
+  },
+  "first_frame_s": 8.61,
+  "boot": [
+   [
+    0.22,
+    "document"
+   ],
+   [
+    0.63,
+    "worker-created"
+   ],
+   [
+    1.51,
+    "meta"
+   ],
+   [
+    1.61,
+    "progress:assets 787873/52237086"
+   ],
+   [
+    3.31,
+    "assets-complete"
+   ],
+   [
+    4.88,
+    "progress:prewarm 52237086/52237086"
+   ],
+   [
+    7.22,
+    "need-canvas"
+   ],
+   [
+    7.3,
+    "hud"
+   ],
+   [
+    8.53,
+    "trace"
+   ],
+   [
+    8.53,
+    "layout"
+   ],
+   [
+    8.53,
+    "ready"
+   ]
+  ],
+  "cpu_rate": 1,
+  "diag": {
+   "mode": "browser",
+   "scene": null,
+   "input": {
+    "sent": 0,
+    "completed": 0,
+    "failed": 0,
+    "coalesced": 0,
+    "dropped": 0,
+    "maxQueued": 0,
+    "queued": 0,
+    "pendingAims": 0,
+    "inFlight": 0,
+    "destroyed": false,
+    "maxEssential": 16
+   },
+   "tick": 697,
+   "status": "running",
+   "painter": {
+    "draw_ms_p50": 18.2,
+    "draw_ms_p95": 45.9,
+    "wasm_mb": 0,
+    "observe_backlog": 0,
+    "display_tick": null,
+    "error": null
+   },
+   "lag_ms": 208.3,
+   "jitter_ms": 158.3,
+   "freezes": {
+    "count": 1,
+    "total_ms": 845
+   },
+   "asset_bytes": 52237086
+  }
+ },
+ "new-warm": {
+  "worker_raf": {
+   "count": 1679,
+   "interval_p50": 16.7,
+   "interval_p95": 17.0,
+   "interval_max": 108.7,
+   "missed_vsync_share": 0.0024,
+   "callback_ms_p50": 0.8,
+   "callback_ms_p95": 1.6
+  },
+  "renders": {
+   "total": 1679,
+   "from_raf": 1679,
+   "from_push": 0,
+   "render_ms_p50": 0.8,
+   "render_ms_p95": 1.6,
+   "draws_p50": 147
+  },
+  "motion": {
+   "frames": 1677,
+   "abs_err_ms_p50": 1.2,
+   "abs_err_ms_p95": 2.0,
+   "share_err_over_4ms": 0.0197,
+   "share_err_over_8ms": 0.0167,
+   "stuck_frames": 17,
+   "backward_frames": 0
+  },
+  "pace": {
+   "wall_s": 28.05,
+   "shown_game_s": 28.02,
+   "ratio": 0.9988
+  },
+  "painter_step": {
+   "count": 794,
+   "ms_p50": 9,
+   "ms_p95": 12.9,
+   "ms_max": 27.4,
+   "new_frames": 785,
+   "result_kb_p50": 34.1
+  },
+  "push": {
+   "ms_p50": 1.5,
+   "ms_p95": 2.3,
+   "uploads_total": 2772
+  },
+  "json_parse": {
+   "count": 1310,
+   "ms_p50": 0.2,
+   "ms_p95": 0.4,
+   "kb_p50": 22.6
+  },
+  "compositor_busy_share": 0.098,
+  "painter_busy_share": 0.305,
+  "prewarm_ms": 498,
+  "init_ms": 189,
+  "page_longtasks": {
+   "count": 0,
+   "total_ms": 0,
+   "max_ms": 0
+  },
+  "first_frame_s": 2.36,
+  "boot": [
+   [
+    0.77,
+    "document"
+   ],
+   [
+    1.01,
+    "worker-created"
+   ],
+   [
+    1.14,
+    "meta"
+   ],
+   [
+    1.18,
+    "progress:assets 1070576/52237086"
+   ],
+   [
+    1.48,
+    "assets-complete"
+   ],
+   [
+    1.66,
+    "progress:prewarm 52237086/52237086"
+   ],
+   [
+    2.16,
+    "need-canvas"
+   ],
+   [
+    2.17,
+    "worker-created"
+   ],
+   [
+    2.17,
+    "hud"
+   ],
+   [
+    2.2,
+    "compositor-ready"
+   ],
+   [
+    2.36,
+    "trace"
+   ],
+   [
+    2.36,
+    "layout"
+   ],
+   [
+    2.36,
+    "ready"
+   ]
+  ],
+  "cpu_rate": 1,
+  "diag": {
+   "mode": "browser",
+   "scene": {
+    "backend": "webgl2",
+    "fps": 60,
+    "render_ms": 1.2,
+    "draws": 214,
+    "frames": 1741,
+    "error": null,
+    "texture_bytes": 48311692,
+    "texture_count": 2858,
+    "pending_frames": 0,
+    "missing": 0,
+    "loading_textures": 0,
+    "delay_ms": 50,
+    "shown_native_ms": 33626.74152408849
+   },
+   "input": {
+    "sent": 0,
+    "completed": 0,
+    "failed": 0,
+    "coalesced": 0,
+    "dropped": 0,
+    "maxQueued": 0,
+    "queued": 0,
+    "pendingAims": 0,
+    "inFlight": 0,
+    "destroyed": false,
+    "maxEssential": 16
+   },
+   "tick": 699,
+   "status": "running",
+   "painter": {
+    "draw_ms_p50": 10.4,
+    "draw_ms_p95": 13.2,
+    "wasm_mb": 0,
+    "observe_backlog": 0,
+    "display_tick": null,
+    "error": null
+   },
+   "lag_ms": 214.2,
+   "jitter_ms": 164.2,
+   "freezes": {
+    "count": 0,
+    "total_ms": 0
+   },
+   "asset_bytes": 52237086
+  }
+ },
+ "new-cold": {
+  "worker_raf": {
+   "count": 1675,
+   "interval_p50": 16.7,
+   "interval_p95": 17.1,
+   "interval_max": 106.3,
+   "missed_vsync_share": 0.0036,
+   "callback_ms_p50": 0.8,
+   "callback_ms_p95": 1.6
+  },
+  "renders": {
+   "total": 1675,
+   "from_raf": 1675,
+   "from_push": 0,
+   "render_ms_p50": 0.8,
+   "render_ms_p95": 1.6,
+   "draws_p50": 127
+  },
+  "motion": {
+   "frames": 1672,
+   "abs_err_ms_p50": 0.8,
+   "abs_err_ms_p95": 1.9,
+   "share_err_over_4ms": 0.0084,
+   "share_err_over_8ms": 0.0054,
+   "stuck_frames": 0,
+   "backward_frames": 0
+  },
+  "pace": {
+   "wall_s": 28.13,
+   "shown_game_s": 28.16,
+   "ratio": 1.001
+  },
+  "painter_step": {
+   "count": 796,
+   "ms_p50": 8.6,
+   "ms_p95": 13,
+   "ms_max": 26.4,
+   "new_frames": 795,
+   "result_kb_p50": 26.2
+  },
+  "push": {
+   "ms_p50": 1.5,
+   "ms_p95": 2.3,
+   "uploads_total": 2429
+  },
+  "json_parse": {
+   "count": 1321,
+   "ms_p50": 0.2,
+   "ms_p95": 0.3,
+   "kb_p50": 19.5
+  },
+  "compositor_busy_share": 0.093,
+  "painter_busy_share": 0.295,
+  "prewarm_ms": 479,
+  "init_ms": 194,
+  "page_longtasks": {
+   "count": 0,
+   "total_ms": 0,
+   "max_ms": 0
+  },
+  "first_frame_s": 6.53,
+  "boot": [
+   [
+    0.53,
+    "document"
+   ],
+   [
+    0.73,
+    "worker-created"
+   ],
+   [
+    0.85,
+    "meta"
+   ],
+   [
+    1.43,
+    "progress:assets 1622942/52237086"
+   ],
+   [
+    5.57,
+    "assets-complete"
+   ],
+   [
+    5.77,
+    "progress:prewarm 52237086/52237086"
+   ],
+   [
+    6.24,
+    "need-canvas"
+   ],
+   [
+    6.25,
+    "worker-created"
+   ],
+   [
+    6.25,
+    "hud"
+   ],
+   [
+    6.25,
+    "status"
+   ],
+   [
+    6.3,
+    "compositor-ready"
+   ],
+   [
+    6.43,
+    "trace"
+   ],
+   [
+    6.43,
+    "layout"
+   ],
+   [
+    6.43,
+    "ready"
+   ]
+  ],
+  "cpu_rate": 1,
+  "diag": {
+   "mode": "browser",
+   "scene": {
+    "backend": "webgl2",
+    "fps": 60,
+    "render_ms": 0.8,
+    "draws": 305,
+    "frames": 1782,
+    "error": null,
+    "texture_bytes": 47463884,
+    "texture_count": 2494,
+    "pending_frames": 0,
+    "missing": 0,
+    "loading_textures": 0,
+    "delay_ms": 50,
+    "shown_native_ms": 34506.66182650109
+   },
+   "input": {
+    "sent": 0,
+    "completed": 0,
+    "failed": 0,
+    "coalesced": 0,
+    "dropped": 0,
+    "maxQueued": 0,
+    "queued": 0,
+    "pendingAims": 0,
+    "inFlight": 0,
+    "destroyed": false,
+    "maxEssential": 16
+   },
+   "tick": 701,
+   "status": "running",
+   "painter": {
+    "draw_ms_p50": 10.1,
+    "draw_ms_p95": 14.5,
+    "wasm_mb": 0,
+    "observe_backlog": 0,
+    "display_tick": null,
+    "error": null
+   },
+   "lag_ms": 194.6,
+   "jitter_ms": 144.6,
+   "freezes": {
+    "count": 0,
+    "total_ms": 0
+   },
+   "asset_bytes": 52237086
+  }
+ },
+ "new-slow-cpu": {
+  "worker_raf": {
+   "count": 1578,
+   "interval_p50": 16.6,
+   "interval_p95": 31.5,
+   "interval_max": 88.5,
+   "missed_vsync_share": 0.0685,
+   "callback_ms_p50": 0.8,
+   "callback_ms_p95": 2.9
+  },
+  "renders": {
+   "total": 1578,
+   "from_raf": 1578,
+   "from_push": 0,
+   "render_ms_p50": 0.8,
+   "render_ms_p95": 2.9,
+   "draws_p50": 157
+  },
+  "motion": {
+   "frames": 1577,
+   "abs_err_ms_p50": 1.5,
+   "abs_err_ms_p95": 12.5,
+   "share_err_over_4ms": 0.1198,
+   "share_err_over_8ms": 0.0793,
+   "stuck_frames": 5,
+   "backward_frames": 0
+  },
+  "pace": {
+   "wall_s": 28.1,
+   "shown_game_s": 28.1,
+   "ratio": 1.0002
+  },
+  "painter_step": {
+   "count": 798,
+   "ms_p50": 9.5,
+   "ms_p95": 39.3,
+   "ms_max": 68.7,
+   "new_frames": 793,
+   "result_kb_p50": 36.4
+  },
+  "push": {
+   "ms_p50": 1.3,
+   "ms_p95": 4.2,
+   "uploads_total": 2864
+  },
+  "json_parse": {
+   "count": 1329,
+   "ms_p50": 0.2,
+   "ms_p95": 0.4,
+   "kb_p50": 20.5
+  },
+  "compositor_busy_share": 0.134,
+  "painter_busy_share": 0.425,
+  "prewarm_ms": 1239,
+  "init_ms": 861,
+  "page_longtasks": {
+   "count": 0,
+   "total_ms": 0,
+   "max_ms": 0
+  },
+  "first_frame_s": 4.39,
+  "boot": [
+   [
+    0.57,
+    "document"
+   ],
+   [
+    0.75,
+    "worker-created"
+   ],
+   [
+    0.92,
+    "meta"
+   ],
+   [
+    0.96,
+    "progress:assets 787873/52237086"
+   ],
+   [
+    1.68,
+    "assets-complete"
+   ],
+   [
+    2.54,
+    "progress:prewarm 52237086/52237086"
+   ],
+   [
+    3.78,
+    "need-canvas"
+   ],
+   [
+    3.79,
+    "worker-created"
+   ],
+   [
+    3.79,
+    "hud"
+   ],
+   [
+    3.83,
+    "compositor-ready"
+   ],
+   [
+    4.3,
+    "trace"
+   ],
+   [
+    4.3,
+    "layout"
+   ],
+   [
+    4.3,
+    "ready"
+   ]
+  ],
+  "cpu_rate": 1,
+  "diag": {
+   "mode": "browser",
+   "scene": {
+    "backend": "webgl2",
+    "fps": 60,
+    "render_ms": 0.6,
+    "draws": 187,
+    "frames": 1645,
+    "error": null,
+    "texture_bytes": 49287384,
+    "texture_count": 2886,
+    "pending_frames": 0,
+    "missing": 0,
+    "loading_textures": 0,
+    "delay_ms": 51.8,
+    "shown_native_ms": 34013.682075089426
+   },
+   "input": {
+    "sent": 0,
+    "completed": 0,
+    "failed": 0,
+    "coalesced": 0,
+    "dropped": 0,
+    "maxQueued": 0,
+    "queued": 0,
+    "pendingAims": 0,
+    "inFlight": 0,
+    "destroyed": false,
+    "maxEssential": 16
+   },
+   "tick": 700,
+   "status": "running",
+   "painter": {
+    "draw_ms_p50": 11,
+    "draw_ms_p95": 25.6,
+    "wasm_mb": 0,
+    "observe_backlog": 0,
+    "display_tick": null,
+    "error": null
+   },
+   "lag_ms": 199.7,
+   "jitter_ms": 149.7,
+   "freezes": {
+    "count": 0,
+    "total_ms": 0
+   },
+   "asset_bytes": 52237086
+  }
+ },
+ "new-slow-cpu-run1": {
+  "worker_raf": {
+   "count": 1578,
+   "interval_p50": 16.7,
+   "interval_p95": 32.8,
+   "interval_max": 73.3,
+   "missed_vsync_share": 0.0583,
+   "callback_ms_p50": 0.8,
+   "callback_ms_p95": 2.7
+  },
+  "renders": {
+   "total": 1578,
+   "from_raf": 1578,
+   "from_push": 0,
+   "render_ms_p50": 0.8,
+   "render_ms_p95": 2.6,
+   "draws_p50": 146
+  },
+  "motion": {
+   "frames": 1577,
+   "abs_err_ms_p50": 1.4,
+   "abs_err_ms_p95": 4.9,
+   "share_err_over_4ms": 0.0659,
+   "share_err_over_8ms": 0.0228,
+   "stuck_frames": 4,
+   "backward_frames": 0
+  },
+  "pace": {
+   "wall_s": 28.11,
+   "shown_game_s": 28.14,
+   "ratio": 1.0008
+  },
+  "painter_step": {
+   "count": 803,
+   "ms_p50": 9.7,
+   "ms_p95": 36.3,
+   "ms_max": 70.2,
+   "new_frames": 800,
+   "result_kb_p50": 33.5
+  },
+  "push": {
+   "ms_p50": 1.2,
+   "ms_p95": 4.2,
+   "uploads_total": 2388
+  },
+  "json_parse": {
+   "count": 1335,
+   "ms_p50": 0.2,
+   "ms_p95": 0.4,
+   "kb_p50": 22.0
+  },
+  "compositor_busy_share": 0.119,
+  "painter_busy_share": 0.428,
+  "prewarm_ms": 1228,
+  "init_ms": 1027,
+  "page_longtasks": {
+   "count": 1,
+   "total_ms": 52,
+   "max_ms": 52
+  },
+  "first_frame_s": 4.85,
+  "boot": [
+   [
+    0.6,
+    "document"
+   ],
+   [
+    0.79,
+    "worker-created"
+   ],
+   [
+    0.91,
+    "meta"
+   ],
+   [
+    0.95,
+    "progress:assets 787873/52237086"
+   ],
+   [
+    1.55,
+    "assets-complete"
+   ],
+   [
+    2.86,
+    "progress:prewarm 52237086/52237086"
+   ],
+   [
+    4.09,
+    "need-canvas"
+   ],
+   [
+    4.14,
+    "worker-created"
+   ],
+   [
+    4.14,
+    "hud"
+   ],
+   [
+    4.18,
+    "compositor-ready"
+   ],
+   [
+    4.77,
+    "trace"
+   ],
+   [
+    4.77,
+    "layout"
+   ],
+   [
+    4.77,
+    "ready"
+   ]
+  ],
+  "cpu_rate": 1,
+  "diag": {
+   "mode": "browser",
+   "scene": {
+    "backend": "webgl2",
+    "fps": 59,
+    "render_ms": 0.5,
+    "draws": 117,
+    "frames": 1636,
+    "error": null,
+    "texture_bytes": 40262632,
+    "texture_count": 2446,
+    "pending_frames": 0,
+    "missing": 0,
+    "loading_textures": 0,
+    "delay_ms": 51.8,
+    "shown_native_ms": 33764.10241373125
+   },
+   "input": {
+    "sent": 0,
+    "completed": 0,
+    "failed": 0,
+    "coalesced": 0,
+    "dropped": 0,
+    "maxQueued": 0,
+    "queued": 0,
+    "pendingAims": 0,
+    "inFlight": 0,
+    "destroyed": false,
+    "maxEssential": 16
+   },
+   "tick": 697,
+   "status": "running",
+   "painter": {
+    "draw_ms_p50": 10.3,
+    "draw_ms_p95": 27.6,
+    "wasm_mb": 0,
+    "observe_backlog": 0,
+    "display_tick": null,
+    "error": null
+   },
+   "lag_ms": 210.5,
+   "jitter_ms": 160.5,
+   "freezes": {
+    "count": 0,
+    "total_ms": 0
+   },
+   "asset_bytes": 52237086
+  }
+ },
+ "new-human": {
+  "worker_raf": {
+   "count": 1654,
+   "interval_p50": 16.7,
+   "interval_p95": 17.1,
+   "interval_max": 117.9,
+   "missed_vsync_share": 0.0073,
+   "callback_ms_p50": 0.7,
+   "callback_ms_p95": 1.5
+  },
+  "renders": {
+   "total": 1654,
+   "from_raf": 1654,
+   "from_push": 0,
+   "render_ms_p50": 0.7,
+   "render_ms_p95": 1.5,
+   "draws_p50": 114
+  },
+  "motion": {
+   "frames": 1650,
+   "abs_err_ms_p50": 1.0,
+   "abs_err_ms_p95": 2.0,
+   "share_err_over_4ms": 0.0127,
+   "share_err_over_8ms": 0.0061,
+   "stuck_frames": 3,
+   "backward_frames": 0
+  },
+  "pace": {
+   "wall_s": 28.26,
+   "shown_game_s": 28.29,
+   "ratio": 1.0009
+  },
+  "painter_step": {
+   "count": 800,
+   "ms_p50": 6.9,
+   "ms_p95": 11.9,
+   "ms_max": 22.7,
+   "new_frames": 799,
+   "result_kb_p50": 25.6
+  },
+  "push": {
+   "ms_p50": 1.6,
+   "ms_p95": 2.4,
+   "uploads_total": 2602
+  },
+  "json_parse": {
+   "count": 1339,
+   "ms_p50": 0.2,
+   "ms_p95": 0.4,
+   "kb_p50": 15.8
+  },
+  "compositor_busy_share": 0.089,
+  "painter_busy_share": 0.253,
+  "prewarm_ms": 484,
+  "init_ms": 180,
+  "page_longtasks": {
+   "count": 0,
+   "total_ms": 0,
+   "max_ms": 0
+  },
+  "first_frame_s": 2.4,
+  "boot": [
+   [
+    0.59,
+    "document"
+   ],
+   [
+    0.88,
+    "worker-created"
+   ],
+   [
+    1.19,
+    "meta"
+   ],
+   [
+    1.22,
+    "progress:assets 787873/52237086"
+   ],
+   [
+    1.5,
+    "assets-complete"
+   ],
+   [
+    1.68,
+    "progress:prewarm 52237086/52237086"
+   ],
+   [
+    2.16,
+    "need-canvas"
+   ],
+   [
+    2.17,
+    "worker-created"
+   ],
+   [
+    2.17,
+    "hud"
+   ],
+   [
+    2.2,
+    "compositor-ready"
+   ],
+   [
+    2.34,
+    "trace"
+   ],
+   [
+    2.34,
+    "layout"
+   ],
+   [
+    2.34,
+    "ready"
+   ]
+  ],
+  "cpu_rate": 1,
+  "diag": {
+   "mode": "browser",
+   "scene": {
+    "backend": "webgl2",
+    "fps": 60,
+    "render_ms": 0.5,
+    "draws": 117,
+    "frames": 1752,
+    "error": null,
+    "texture_bytes": 42836860,
+    "texture_count": 2685,
+    "pending_frames": 0,
+    "missing": 0,
+    "loading_textures": 0,
+    "delay_ms": 50,
+    "shown_native_ms": 34340.26537592706
+   },
+   "input": {
+    "sent": 14,
+    "completed": 14,
+    "failed": 0,
+    "coalesced": 0,
+    "dropped": 0,
+    "maxQueued": 1,
+    "queued": 0,
+    "pendingAims": 0,
+    "inFlight": 0,
+    "matchId": 1,
+    "destroyed": false,
+    "maxEssential": 16
+   },
+   "tick": 703,
+   "status": "running",
+   "painter": {
+    "draw_ms_p50": 6.7,
+    "draw_ms_p95": 9.6,
+    "wasm_mb": 0,
+    "observe_backlog": 0,
+    "display_tick": null,
+    "error": null
+   },
+   "lag_ms": 224.2,
+   "jitter_ms": 174.2,
+   "freezes": {
+    "count": 0,
+    "total_ms": 0
+   },
+   "asset_bytes": 52237086
+  }
+ },
+ "new-rematch": {
+  "worker_raf": {
+   "count": 1559,
+   "interval_p50": 16.7,
+   "interval_p95": 17,
+   "interval_max": 2249.0,
+   "missed_vsync_share": 0.0026,
+   "callback_ms_p50": 0.7,
+   "callback_ms_p95": 1.5
+  },
+  "renders": {
+   "total": 1560,
+   "from_raf": 1559,
+   "from_push": 1,
+   "render_ms_p50": 0.7,
+   "render_ms_p95": 1.4,
+   "draws_p50": 148
+  },
+  "motion": {
+   "frames": 1557,
+   "abs_err_ms_p50": 1.2,
+   "abs_err_ms_p95": 2.2,
+   "share_err_over_4ms": 0.0302,
+   "share_err_over_8ms": 0.0263,
+   "stuck_frames": 36,
+   "backward_frames": 0
+  },
+  "pace": {
+   "wall_s": 28.33,
+   "shown_game_s": 13.43,
+   "ratio": 0.474
+  },
+  "painter_step": {
+   "count": 803,
+   "ms_p50": 8.5,
+   "ms_p95": 12.4,
+   "ms_max": 20.2,
+   "new_frames": 717,
+   "result_kb_p50": 32.1
+  },
+  "push": {
+   "ms_p50": 1.5,
+   "ms_p95": 2.4,
+   "uploads_total": 2323
+  },
+  "json_parse": {
+   "count": 1190,
+   "ms_p50": 0.2,
+   "ms_p95": 0.4,
+   "kb_p50": 21.9
+  },
+  "compositor_busy_share": 0.084,
+  "painter_busy_share": 0.267,
+  "prewarm_ms": 492,
+  "init_ms": 196,
+  "page_longtasks": {
+   "count": 0,
+   "total_ms": 0,
+   "max_ms": 0
+  },
+  "first_frame_s": 2.05,
+  "boot": [
+   [
+    0.43,
+    "document"
+   ],
+   [
+    0.6,
+    "worker-created"
+   ],
+   [
+    0.73,
+    "meta"
+   ],
+   [
+    0.77,
+    "progress:assets 787873/52237086"
+   ],
+   [
+    1.05,
+    "assets-complete"
+   ],
+   [
+    1.25,
+    "progress:prewarm 52237086/52237086"
+   ],
+   [
+    1.74,
+    "need-canvas"
+   ],
+   [
+    1.75,
+    "worker-created"
+   ],
+   [
+    1.75,
+    "hud"
+   ],
+   [
+    1.75,
+    "status"
+   ],
+   [
+    1.78,
+    "compositor-ready"
+   ],
+   [
+    1.95,
+    "trace"
+   ],
+   [
+    1.95,
+    "layout"
+   ],
+   [
+    1.95,
+    "ready"
+   ]
+  ],
+  "cpu_rate": 1,
+  "diag": {
+   "mode": "browser",
+   "scene": {
+    "backend": "webgl2",
+    "fps": 60,
+    "render_ms": 1.2,
+    "draws": 264,
+    "frames": 1641,
+    "error": null,
+    "texture_bytes": 44768436,
+    "texture_count": 2383,
+    "pending_frames": 0,
+    "missing": 0,
+    "loading_textures": 0,
+    "delay_ms": 50,
+    "shown_native_ms": 19383.485009630243
+   },
+   "input": {
+    "sent": 0,
+    "completed": 0,
+    "failed": 0,
+    "coalesced": 0,
+    "dropped": 0,
+    "maxQueued": 0,
+    "queued": 0,
+    "pendingAims": 0,
+    "inFlight": 0,
+    "destroyed": false,
+    "maxEssential": 16
+   },
+   "tick": 404,
+   "status": "running",
+   "painter": {
+    "draw_ms_p50": 10,
+    "draw_ms_p95": 13.2,
+    "wasm_mb": 0,
+    "observe_backlog": 0,
+    "display_tick": null,
+    "error": null
+   },
+   "lag_ms": 214.5,
+   "jitter_ms": 164.5,
+   "freezes": {
+    "count": 0,
+    "total_ms": 0
+   },
+   "asset_bytes": 52237086
+  }
+ }
+}
