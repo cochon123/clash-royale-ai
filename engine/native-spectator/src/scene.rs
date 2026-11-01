@@ -105,6 +105,10 @@ pub struct TextureCache {
     memory: bool,
     pixels: BTreeMap<String, Vec<u8>>,
     manual_clock: Option<Rc<Cell<Duration>>>,
+    /// Texture ids of buffers drawn before, keyed by allocation and size and
+    /// checked against a fast content digest. Hashing every sprite with
+    /// [`texture_id`] on every frame was the largest cost of a wasm paint.
+    ids: BTreeMap<(usize, usize, u32, u32), (u64, String)>,
 }
 
 impl TextureCache {
@@ -130,6 +134,7 @@ impl TextureCache {
             memory: false,
             pixels: BTreeMap::new(),
             manual_clock: None,
+            ids: BTreeMap::new(),
         };
         // Account for immutable files left by a presenter restart. Ignoring
         // these would make the on-disk budget grow without bound across runs.
@@ -193,6 +198,7 @@ impl TextureCache {
             memory: true,
             pixels: BTreeMap::new(),
             manual_clock: Some(now),
+            ids: BTreeMap::new(),
         }
     }
 
@@ -267,10 +273,19 @@ impl TextureCache {
             .collect();
         cold.sort();
         let mut cold = cold.into_iter();
-        while self.entries.len().saturating_add(count) > self.max_textures
-            || self.encoded_bytes.saturating_add(bytes) > self.max_bytes
-        {
+        // Leave 1/16 of the budget free. Evicting only the one pose that did
+        // not fit sorted the whole cache again for every new pose once full.
+        let fits = |entries: usize, encoded: u64, max_textures: usize, max_bytes: u64| {
+            entries.saturating_add(count) <= max_textures
+                && encoded.saturating_add(bytes) <= max_bytes
+        };
+        let headroom_textures = self.max_textures - self.max_textures / 16;
+        let headroom_bytes = self.max_bytes - self.max_bytes / 16;
+        while !fits(self.entries.len(), self.encoded_bytes, headroom_textures, headroom_bytes) {
             let Some((_, id)) = cold.next() else {
+                if fits(self.entries.len(), self.encoded_bytes, self.max_textures, self.max_bytes) {
+                    break;
+                }
                 return Err(format!("original texture working set exceeds {} textures / {} bytes within the {}s in-flight grace", self.max_textures, self.max_bytes, self.grace.as_secs()));
             };
             if self.memory {
@@ -293,6 +308,27 @@ impl TextureCache {
         Ok(())
     }
 
+    /// Same id as [`texture_id`]. A buffer whose address, size and digest are
+    /// unchanged since its last draw keeps its id without hashing it again.
+    /// The id is a function of content only, so a reused address with new
+    /// pixels fails the digest check and is hashed again.
+    fn memo_id(&mut self, image: &RgbaImage) -> String {
+        let raw = image.as_raw();
+        let key = (raw.as_ptr() as usize, raw.len(), image.width(), image.height());
+        let digest = content_digest(raw);
+        if let Some((seen, id)) = self.ids.get(&key) {
+            if *seen == digest {
+                return id.clone();
+            }
+        }
+        let id = texture_id(image);
+        if self.ids.len() >= 32768 {
+            self.ids.clear();
+        }
+        self.ids.insert(key, (digest, id.clone()));
+        id
+    }
+
     fn texture(&mut self, image: &RgbaImage) -> Result<(Texture, bool), String> {
         if image.width() == 0
             || image.height() == 0
@@ -301,7 +337,7 @@ impl TextureCache {
         {
             return Err("original sprite dimensions exceed texture limit".into());
         }
-        let id = texture_id(image);
+        let id = self.memo_id(image);
         self.current.insert(id.clone());
         if let Some(entry) = self.entries.get_mut(&id) {
             entry.last_used = (self.clock)();
@@ -448,6 +484,75 @@ fn texture_id(image: &RgbaImage) -> String {
         hash(0x7363656e655f7631),
         hash(0x746578747572655f)
     )
+}
+
+/// XXH64 of `bytes`: a fast change check for [`TextureCache::memo_id`], not
+/// a transport id. Four independent lanes keep it several times faster than
+/// SipHash on wasm32.
+fn content_digest(bytes: &[u8]) -> u64 {
+    const P1: u64 = 0x9E37_79B1_85EB_CA87;
+    const P2: u64 = 0xC2B2_AE3D_27D4_EB4F;
+    const P3: u64 = 0x1656_67B1_9E37_79F9;
+    const P4: u64 = 0x85EB_CA77_C2B2_AE63;
+    const P5: u64 = 0x27D4_EB2F_1656_67C5;
+    fn round(acc: u64, lane: u64) -> u64 {
+        acc.wrapping_add(lane.wrapping_mul(P2))
+            .rotate_left(31)
+            .wrapping_mul(P1)
+    }
+    fn merge(acc: u64, lane: u64) -> u64 {
+        (acc ^ round(0, lane)).wrapping_mul(P1).wrapping_add(P4)
+    }
+    let word = |b: &[u8]| u64::from_le_bytes(b.try_into().expect("8 bytes"));
+    let stripes = bytes.chunks_exact(32);
+    let tail = stripes.remainder();
+    let mut hash = if bytes.len() >= 32 {
+        let mut v = [
+            P1.wrapping_add(P2),
+            P2,
+            0,
+            0u64.wrapping_sub(P1),
+        ];
+        for stripe in stripes {
+            v[0] = round(v[0], word(&stripe[0..8]));
+            v[1] = round(v[1], word(&stripe[8..16]));
+            v[2] = round(v[2], word(&stripe[16..24]));
+            v[3] = round(v[3], word(&stripe[24..32]));
+        }
+        let mut h = v[0]
+            .rotate_left(1)
+            .wrapping_add(v[1].rotate_left(7))
+            .wrapping_add(v[2].rotate_left(12))
+            .wrapping_add(v[3].rotate_left(18));
+        for lane in v {
+            h = merge(h, lane);
+        }
+        h
+    } else {
+        P5
+    };
+    hash = hash.wrapping_add(bytes.len() as u64);
+    let mut words = tail.chunks_exact(8);
+    for chunk in &mut words {
+        hash ^= round(0, word(chunk));
+        hash = hash.rotate_left(27).wrapping_mul(P1).wrapping_add(P4);
+    }
+    let mut rest = words.remainder();
+    if rest.len() >= 4 {
+        let half = u32::from_le_bytes(rest[..4].try_into().expect("4 bytes"));
+        hash ^= u64::from(half).wrapping_mul(P1);
+        hash = hash.rotate_left(23).wrapping_mul(P2).wrapping_add(P3);
+        rest = &rest[4..];
+    }
+    for &byte in rest {
+        hash ^= u64::from(byte).wrapping_mul(P5);
+        hash = hash.rotate_left(11).wrapping_mul(P1);
+    }
+    hash ^= hash >> 33;
+    hash = hash.wrapping_mul(P2);
+    hash ^= hash >> 29;
+    hash = hash.wrapping_mul(P3);
+    hash ^ (hash >> 32)
 }
 
 #[derive(Default)]
@@ -1358,6 +1463,47 @@ mod tests {
         assert!(held.is_empty());
         assert_eq!(held.encoded_bytes, 0);
         assert!(held.rgba(&kept.id).is_none());
+    }
+
+    #[test]
+    fn memoized_ids_match_content_hash_and_follow_in_place_edits() {
+        let mut cache = TextureCache::memory();
+        let mut image = RgbaImage::new(9, 7);
+        image.put_pixel(3, 2, Rgba([1, 2, 3, 4]));
+        cache.begin_frame();
+        let (first, created) = cache.texture(&image).unwrap();
+        assert!(created);
+        assert_eq!(first.id, texture_id(&image));
+        // Same buffer, same pixels: same id, nothing new to publish.
+        let (again, created) = cache.texture(&image).unwrap();
+        assert!(!created);
+        assert_eq!(again.id, first.id);
+        // Same allocation edited in place: a new id, still the content hash.
+        image.put_pixel(8, 6, Rgba([9, 9, 9, 9]));
+        let (edited, created) = cache.texture(&image).unwrap();
+        assert!(created);
+        assert_ne!(edited.id, first.id);
+        assert_eq!(edited.id, texture_id(&image));
+        // A different allocation with the first pixels maps back to the first id.
+        let mut copy = RgbaImage::new(9, 7);
+        copy.put_pixel(3, 2, Rgba([1, 2, 3, 4]));
+        let (back, created) = cache.texture(&copy).unwrap();
+        assert!(!created);
+        assert_eq!(back.id, first.id);
+        cache.finish_frame();
+    }
+
+    #[test]
+    fn content_digest_sees_every_byte_and_length() {
+        let base: Vec<u8> = (0..203u32).map(|i| (i * 31 % 251) as u8).collect();
+        let digest = content_digest(&base);
+        for at in [0, 7, 31, 32, 63, 64, 199, 202] {
+            let mut edited = base.clone();
+            edited[at] ^= 1;
+            assert_ne!(content_digest(&edited), digest, "byte {at}");
+        }
+        assert_ne!(content_digest(&base[..202]), digest);
+        assert_ne!(content_digest(&[]), content_digest(&[0]));
     }
 
     #[test]

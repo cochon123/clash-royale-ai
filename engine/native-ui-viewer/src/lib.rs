@@ -681,15 +681,16 @@ impl Scene {
             .unwrap_or(Path::new("."))
             .join("fonts")
             .join(filename);
-        #[cfg(not(feature = "wasm"))]
-        let bytes = std::fs::read(&path)
-            .map_err(|e| format!("Cannot load recovered font {}: {e}", path.display()))?;
-        #[cfg(feature = "wasm")]
-        let bytes = crate::vfs::read(&format!("fonts/{filename}")).map_err(|e| {
-            format!("Cannot load recovered font {}: {e}", path.display())
+        let font = cached_font(&path.display().to_string(), || {
+            #[cfg(not(feature = "wasm"))]
+            let bytes = std::fs::read(&path)
+                .map_err(|e| format!("Cannot load recovered font {}: {e}", path.display()))?;
+            #[cfg(feature = "wasm")]
+            let bytes = crate::vfs::read(&format!("fonts/{filename}")).map_err(|e| {
+                format!("Cannot load recovered font {}: {e}", path.display())
+            })?;
+            Ok(bytes)
         })?;
-        let font = fontdue::Font::from_bytes(bytes, fontdue::FontSettings::default())
-            .map_err(|e| format!("Invalid recovered font: {e}"))?;
         let size = field.font_size.max(1.);
         let mut image = RgbaImage::new(width, height);
         let color = argb(field.font_color);
@@ -765,15 +766,14 @@ pub fn rasterize_text(
     color: u32,
 ) -> Result<RgbaImage> {
     let filename = font_filename(font_name);
-    #[cfg(not(feature = "wasm"))]
-    let bytes = std::fs::read(root.join("fonts").join(filename))?;
-    #[cfg(feature = "wasm")]
-    let bytes = {
-        let _ = root;
-        crate::vfs::read(&format!("fonts/{filename}"))?
-    };
-    let font = fontdue::Font::from_bytes(bytes, fontdue::FontSettings::default())
-        .map_err(|e| format!("Invalid recovered font: {e}"))?;
+    let path = root.join("fonts").join(filename);
+    let font = cached_font(&path.display().to_string(), || {
+        #[cfg(not(feature = "wasm"))]
+        let bytes = std::fs::read(&path)?;
+        #[cfg(feature = "wasm")]
+        let bytes = crate::vfs::read(&format!("fonts/{filename}"))?;
+        Ok(bytes)
+    })?;
     let glyphs: Vec<_> = text
         .chars()
         .map(|ch| font.rasterize(ch, size.max(1.)))
@@ -811,6 +811,26 @@ pub fn rasterize_text(
     }
     Ok(image)
 }
+thread_local! {
+    /// Parsed fonts by path. Parsing the 2 MB SGB font for every new string
+    /// (a timer second, an elixir count) stalled the first frames of a match.
+    static FONTS: RefCell<BTreeMap<String, std::rc::Rc<fontdue::Font>>> = const { RefCell::new(BTreeMap::new()) };
+}
+
+fn cached_font(
+    key: &str,
+    read: impl FnOnce() -> Result<Vec<u8>>,
+) -> Result<std::rc::Rc<fontdue::Font>> {
+    if let Some(font) = FONTS.with(|fonts| fonts.borrow().get(key).cloned()) {
+        return Ok(font);
+    }
+    let font = fontdue::Font::from_bytes(read()?, fontdue::FontSettings::default())
+        .map_err(|e| format!("Invalid recovered font: {e}"))?;
+    let font = std::rc::Rc::new(font);
+    FONTS.with(|fonts| fonts.borrow_mut().insert(key.to_owned(), font.clone()));
+    Ok(font)
+}
+
 fn font_filename(name: &str) -> &'static str {
     match name {
         "Supercell-Magic" => "supercell-magic_0.ttf",
