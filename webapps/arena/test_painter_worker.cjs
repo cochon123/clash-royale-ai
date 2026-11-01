@@ -205,7 +205,8 @@ test("diagnostics name draw percentiles, lag, jitter, freezes and asset bytes", 
   wall = 350 + 500;
   session.stepOnce();
   const diag = session.diagnostics();
-  assert.equal(diag.lag_ms, 0);
+  // A quiet stream keeps its lag; the painter clock stops one tick short itself.
+  assert.equal(diag.lag_ms, live.lag_ms);
   assert.equal(typeof diag.painter.draw_ms_p50, "number");
   assert.equal(typeof diag.painter.draw_ms_p95, "number");
   assert.equal(typeof diag.painter.wasm_mb, "number");
@@ -216,4 +217,33 @@ test("diagnostics name draw percentiles, lag, jitter, freezes and asset bytes", 
   assert.equal(session.displayTrace()[0].length, 4);
   const trace = session.displayTrace();
   assert.ok(trace.at(-1)[1] >= trace[0][1]);
+});
+
+test("a compositor port gets each pose once, stamped with its step time, across a new round", async () => {
+  let wall = 1000;
+  const {session} = harness({now: () => wall});
+  const sent = [];
+  const port = {postMessage: (message) => sent.push(message), close() {}};
+  await session.onMessage({type: "init", base: "", matchId: "demo", painter: "fake", recording: recording(12), port, width: 2, height: 1});
+  await session.onMessage({type: "sse", event: "meta", data: JSON.stringify(meta)});
+  // Like the wasm painter: a released pose's pixels are gone for good.
+  const painter = session.painter();
+  const texture = painter.texture.bind(painter), released = new Set();
+  painter.texture = (id) => released.has(id) ? null : texture(id);
+  painter.textureRelease = (id) => released.add(id);
+  await session.onMessage({type: "sse", event: "ticks", data: ticks(0, 6)});
+  wall += 34; session.stepOnce();
+  wall += 34; session.stepOnce();
+  const frames = sent.filter((message) => message.type === "composite");
+  assert.ok(frames.length >= 2);
+  assert.equal(frames[0].textures.length, 1);
+  assert.equal(frames[1].textures.length, 0);
+  assert.ok(Number.isFinite(frames[0].at));
+  await session.onMessage({type: "sse", event: "round", data: "{}"});
+  assert.equal(sent.at(-1).type, "reset");
+  await session.onMessage({type: "sse", event: "ticks", data: ticks(0, 6)});
+  wall += 34; session.stepOnce();
+  wall += 34; session.stepOnce();
+  const after = sent.filter((message) => message.type === "composite").slice(frames.length);
+  assert.ok(after.length >= 1, "the new round draws with the poses the compositor already holds");
 });

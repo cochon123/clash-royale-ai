@@ -97,17 +97,20 @@ test("painter eviction frees a pose before the replacement is uploaded, and the 
   const pixels = new Map([["aa", red()], ["bb", red()], ["cc", red()]]);
   const {view, errors} = compositor(pixels, {maxTextureBytes: 8});
   const draw = (sequence, tex, extra = {}) => packet(sequence, {draws: [sprite({tex, id: "troop-" + sequence})], ...extra});
+  // Frames 50 ms apart with a 50 ms delay: the timeline keeps 150 ms back.
   view.push(draw(1, "aa"));
   view.push(draw(2, "bb"));
   view.push(draw(3, "bb"));
   view.push(draw(4, "bb"));
-  view.push(draw(5, "cc", {evicted: ["aa"]}));
+  view.push(draw(5, "bb"));
+  view.push(draw(6, "cc", {evicted: ["aa"]}));
   assert.deepEqual(errors, []);
   assert.equal(view.textures.has("aa"), false);
   assert.equal(view.textures.has("cc"), true);
-  view.push(draw(6, "cc"));
   view.push(draw(7, "cc"));
-  view.push(draw(8, "aa", {evicted: ["bb"]}));
+  view.push(draw(8, "cc"));
+  view.push(draw(9, "cc"));
+  view.push(draw(10, "aa", {evicted: ["bb"]}));
   assert.deepEqual(errors, []);
   assert.equal(view.halted, false);
   assert.equal(view.textures.has("aa"), true);
@@ -121,4 +124,49 @@ test("moved interpolation still refuses to lerp a texture change without anchors
   const middle = interpolateDraws(older, newer, 0.5);
   assert.equal(middle[0].tex, "ab");
   assert.deepEqual(middle[0].m, [1, 0, 0, 1, 0, 0]);
+});
+
+test("with frame times from the painter the picture never moves back when a frame is behind its step time", () => {
+  const pixels = new Map([["ab", red()]]);
+  let clock = 1000;
+  const {view} = compositor(pixels, {interpolationDelay: 50, now: () => clock, renderOnPush: false, adaptiveDelay: true});
+  const shown = [];
+  view.painter.paint = () => {};
+  // 30 Hz painter steps; the painter clock holds for two steps (a late snapshot).
+  const native = [0, 33.3, 66.7, 100, 100, 100, 133.3, 166.7, 200, 233.3, 266.7, 300, 333.3, 366.7];
+  for (let i = 0; i < native.length; i++) {
+    clock = 1000 + i * 33.3;
+    view.push(packet(i + 1, {display_tick: native[i] / 50, tick: Math.ceil(native[i] / 50)}), {at: clock - 10});
+    for (let f = 0; f < 2; f++) { view.render(clock + f * 16.7); shown.push(view.shownNativeMs); }
+  }
+  for (let i = 1; i < shown.length; i++) assert.ok(shown[i] >= shown[i - 1] - 1e-9, `frame ${i}: ${shown[i - 1]} -> ${shown[i]}`);
+  assert.ok(shown.at(-1) > 200);
+  view.destroy();
+});
+
+test("frames placed by step time keep their spacing when they arrive late", () => {
+  const pixels = new Map([["ab", red()]]);
+  let clock = 1000;
+  const {view} = compositor(pixels, {interpolationDelay: 50, now: () => clock, renderOnPush: false});
+  view.painter.paint = () => {};
+  view.push(packet(1, {display_tick: 0, tick: 0}), {at: 1000});
+  clock = 1060;  // the second frame stepped at 1033 but took 27 ms to arrive
+  view.push(packet(2, {display_tick: 33.3 / 50, tick: 1}), {at: 1033.3});
+  view.render(1060);
+  assert.ok(Math.abs(view.shownNativeMs - 10) < 1e-6, String(view.shownNativeMs));
+  view.destroy();
+});
+
+test("a pose evicted while a kept frame still draws it is released once that frame leaves", () => {
+  const pixels = new Map([["aa", red()], ["bb", red()]]);
+  const {view, errors} = compositor(pixels);
+  const draw = (sequence, tex, extra = {}) => packet(sequence, {draws: [sprite({tex, id: "troop-" + sequence})], ...extra});
+  view.push(draw(1, "aa"));
+  view.push(draw(2, "bb", {evicted: ["aa"]}));
+  assert.equal(view.textures.has("aa"), true, "still drawn by a kept frame");
+  for (let i = 3; i < 9; i++) view.push(draw(i, "bb"));
+  assert.equal(view.textures.has("aa"), false, "released after its frame left the timeline");
+  assert.equal(view.retired.size, 0);
+  assert.deepEqual(errors, []);
+  view.destroy();
 });

@@ -1,5 +1,7 @@
-/* Painter worker: packs, wasm (or the fake painter), ordered ticks, 30 Hz step, local composite.
-   A tick is observed as soon as it arrives. Compositing never gates that. */
+/* Painter worker: packs, wasm (or the fake painter), ordered ticks, 30 Hz step.
+   Frames go to the compositor worker over a MessagePort (or, without one, to a
+   compositor in this worker or on the page). A tick is observed as soon as it
+   arrives. Compositing never gates that. */
 (function (root) {
   "use strict";
   const STEP_MS = 1000 / 30;
@@ -83,8 +85,10 @@
       speed: 1, flow: "running", assetBytes: 0, drawSamples: [], trace: [], freezes: {count: 0, total_ms: 0},
       lastShown: null, lastAdvanceWall: null, freezeStart: null, timer: 0, lastStep: 0, t0: 0,
       sentTextures: new Set(), pixels: new Map(), destroyed: false, meta: null, viewReady: false,
-      lagMs: 150, jitterMs: 0, appliedLagTicks: 3, booting: null, stepFn: null
+      lagMs: 150, jitterMs: 0, appliedLagTicks: 3, booting: null, stepFn: null,
+      port: null, stepAt: 0
     };
+    const epoch = env.timeOrigin || 0;
     let chain = Promise.resolve();
 
     function fail(error) {
@@ -157,7 +161,8 @@
     function takeTexture(id, descriptor) {
       const tex = state.painter.texture(id);
       if (!tex || !tex.rgba) return null;
-      const rgba = tex.rgba instanceof Uint8Array ? tex.rgba.slice() : new Uint8Array(tex.rgba);
+      // createWasmPainter already copied the pixels out of wasm memory.
+      const rgba = tex.rgba instanceof Uint8Array ? tex.rgba : new Uint8Array(tex.rgba);
       state.painter.textureRelease(id);
       return {id, width: tex.width || descriptor.width, height: tex.height || descriptor.height, rgba};
     }
@@ -172,6 +177,9 @@
     function rememberTexture(id, descriptor) {
       if (state.pixels.has(id)) return true;
       if (state.compositor && state.compositor.textures.has(id)) return true;
+      // A compositor in another worker or on the page holds every pose it was
+      // sent until the painter evicts it. The painter has dropped those pixels.
+      if (!state.compositor && state.sentTextures.has(id)) return true;
       const record = takeTexture(id, descriptor || {});
       if (!record || !record.width || !record.height || !record.rgba) return false;
       state.pixels.set(id, record);
@@ -180,7 +188,12 @@
     }
     function publish(packet) {
       const textures = [];
-      for (const descriptor of packet.textures || []) if (rememberTexture(descriptor.id, descriptor)) textures.push(state.pixels.get(descriptor.id));
+      for (const descriptor of packet.textures || []) {
+        // A pose listed again that the compositor already holds has no pixels here.
+        if (!rememberTexture(descriptor.id, descriptor)) continue;
+        const record = state.pixels.get(descriptor.id);
+        if (record) textures.push(record);
+      }
       const missing = [];
       for (const id of drawTextureIds(packet.draws)) if (!rememberTexture(id, {})) missing.push(id);
       if (missing.length) throw new Error("Texture is not available: " + missing.join(","));
@@ -190,18 +203,20 @@
         state.sentTextures.delete(id);
       }
       if (state.compositor) {
-        state.compositor.push(packet);
+        state.compositor.push(packet, {at: state.stepAt});
         if (state.compositor.halted) throw new Error(state.compositor.metrics.error || "compositor halted");
         for (const record of textures) state.pixels.delete(record.id);
         notePresented(state.compositor.shownNativeMs);
-      } else if (state.fallback) {
+      } else if (state.port || state.fallback) {
         const payload = textures.map((record) => ({id: record.id, width: record.width, height: record.height, buffer: record.rgba.buffer}));
-        post({type: "composite", packet, textures: payload, evicted: packet.evicted || []}, payload.map((item) => item.buffer));
+        const message = {type: "composite", packet, textures: payload, evicted: packet.evicted || [], at: epoch + state.stepAt};
+        if (state.port) state.port.postMessage(message, payload.map((item) => item.buffer));
+        else post(message, payload.map((item) => item.buffer));
         for (const record of textures) state.pixels.delete(record.id);
         notePresented(Number(packet.display_tick) * 50);
       }
       if (packet.layout) post({type: "layout", layout: packet.layout, match_id: packet.match_id});
-      if (!state.viewReady && (state.compositor || state.fallback)) {
+      if (!state.viewReady && (state.compositor || state.port || state.fallback)) {
         state.viewReady = true;
         post({type: "ready"});
       }
@@ -215,6 +230,7 @@
       if (dt > 0.25) dt = 0.25;
       applyLag();
       const started = now();
+      state.stepAt = started;
       const rc = state.painter.step(dt);
       if (rc < 0) throw new Error(state.painter.lastError() || "painter step failed");
       if (rc === 1) publish(JSON.parse(state.painter.result()));
@@ -225,7 +241,7 @@
     }
     function startLoop() {
       if (state.timer || state.destroyed || !state.painter) return;
-      if (!state.compositor && !state.fallback) return;
+      if (!state.compositor && !state.port && !state.fallback) return;
       state.lastStep = now();
       state.stepFn = () => { try { stepOnce(); } catch (error) { fail(error); } };
       state.timer = setTimer(state.stepFn, STEP_MS);
@@ -234,11 +250,13 @@
       if (state.painter) state.painter.reset();
       state.oldestTick = null;
       state.newestTick = null;
-      state.sentTextures.clear();
+      // painter_reset keeps its poses, and a compositor in another worker or on
+      // the page keeps the copies it was sent, so sentTextures stays valid.
       state.pixels.clear();
       state.lastShown = null;
       state.freezeStart = null;
       if (state.compositor) state.compositor.reset();
+      if (state.port) state.port.postMessage({type: "reset"});
       post({type: kind});
     }
     function observeItem(item) {
@@ -285,22 +303,13 @@
       const plan = env.planPackFiles(manifest, meta.cards || []);
       let loaded = 0;
       const total = plan.bytes;
-      let cursor = 0;
-      async function fetchOne() {
-        while (cursor < plan.files.length) {
-          const file = plan.files[cursor++];
-          const bytes = new Uint8Array(await (await getResponse(env.resolveAssetUrl(resolved, file.url))).arrayBuffer());
-          file.bytesLoaded = bytes;
-          loaded += file.bytes || bytes.byteLength;
-          state.assetBytes = loaded;
-          post({type: "progress", loaded, total: total || loaded, phase: "assets"});
+      // The painter compiles while the packs download, and each pack goes into
+      // its file system as it arrives, instead of after the last one.
+      const painterReady = (async () => {
+        if (state.mode === "fake" || state.recording || state.recordingUrl) {
+          const recording = state.recording || await (await getResponse(absolute(state.recordingUrl))).json();
+          return env.createFakePainter(recording);
         }
-      }
-      await Promise.all([fetchOne(), fetchOne(), fetchOne(), fetchOne()]);
-      if (state.mode === "fake" || state.recording || state.recordingUrl) {
-        const recording = state.recording || await (await getResponse(absolute(state.recordingUrl))).json();
-        state.painter = await env.createFakePainter(recording);
-      } else {
         if (!plan.wasm) throw new Error("asset manifest has no painter wasm");
         const wasmUrl = env.resolveAssetUrl(resolved, plan.wasm.url);
         const response = await getResponse(wasmUrl);
@@ -308,22 +317,41 @@
         let compiled;
         try { compiled = await streaming(response.clone(), {}); }
         catch { compiled = await WebAssembly.instantiate(await response.arrayBuffer(), {}); }
-        state.painter = createWasmPainter(compiled.instance || compiled);
         const wasmBytes = plan.wasm.bytes || 0;
         if (wasmBytes) { loaded += wasmBytes; state.assetBytes = loaded; post({type: "progress", loaded, total: total || loaded, phase: "wasm"}); }
-      }
-      for (const file of plan.files) {
-        const rc = state.painter.vfsPut(file.path, file.bytesLoaded);
+        return createWasmPainter(compiled.instance || compiled);
+      })();
+      const waiting = [];
+      const put = (file, bytes) => {
+        const rc = state.painter.vfsPut(file.path, bytes);
         if (rc) throw new Error(state.painter.lastError() || "painter rejected " + file.path);
-        file.bytesLoaded = null;
+      };
+      let cursor = 0;
+      async function fetchOne() {
+        while (cursor < plan.files.length) {
+          const file = plan.files[cursor++];
+          const bytes = new Uint8Array(await (await getResponse(env.resolveAssetUrl(resolved, file.url))).arrayBuffer());
+          loaded += file.bytes || bytes.byteLength;
+          state.assetBytes = loaded;
+          post({type: "progress", loaded, total: total || loaded, phase: "assets"});
+          if (state.painter) put(file, bytes);
+          else waiting.push([file, bytes]);
+        }
       }
+      await Promise.all([
+        painterReady.then((painter) => {
+          state.painter = painter;
+          for (const [file, bytes] of waiting.splice(0)) put(file, bytes);
+        }),
+        fetchOne(), fetchOne(), fetchOne(), fetchOne()
+      ]);
       const rc = state.painter.init(JSON.stringify(meta.cards || []), state.width, state.height);
       if (rc) throw new Error(state.painter.lastError() || "painter_init failed");
       // Unpack every sprite sheet on the loading screen, not when a unit first appears.
       post({type: "progress", loaded, total: total || loaded, phase: "prewarm"});
       if (state.painter.prewarm && state.painter.prewarm()) throw new Error(state.painter.lastError() || "painter_prewarm failed");
       state.ready = true;
-      if (!state.canvas && !state.fallback) post({type: "need-canvas"});
+      if (!state.canvas && !state.port && !state.fallback) post({type: "need-canvas"});
       flushBuffer();
       startLoop();
     }
@@ -344,6 +372,12 @@
       handleReadyEvent(event, data);
     }
     function attachCanvas(message) {
+      if (message.port) {
+        state.port = message.port;
+        state.fallback = false;
+        startLoop();
+        return;
+      }
       state.fallback = !message.canvas || !!message.fallback;
       state.canvas = message.canvas || null;
       if (state.canvas) {
@@ -389,7 +423,7 @@
         state.recording = message.recording || null;
         state.t0 = now();
         state.lastStep = state.t0;
-        if (message.canvas || message.fallback) attachCanvas(message);
+        if (message.canvas || message.port || message.fallback) attachCanvas(message);
         connectStream();
         return;
       }
@@ -408,6 +442,7 @@
       state.timer = 0;
       if (state.eventSource) state.eventSource.close();
       if (state.compositor) state.compositor.destroy();
+      if (state.port) state.port.close();
     }
     return {
       onMessage, stepOnce, destroy, diagnostics,
@@ -437,6 +472,7 @@
       resolveAssetUrl: self.resolveAssetUrl,
       fetch: self.fetch.bind(self),
       now: () => performance.now(),
+      timeOrigin: performance.timeOrigin,
       origin: self.location.href
     });
     self.onmessage = (event) => { session.onMessage(event.data); };

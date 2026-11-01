@@ -4,6 +4,7 @@
 const $ = (id) => document.getElementById(id);
 const BASE = new URL(".", document.currentScript.src).pathname.replace(/\/$/, "");
 const WORKER_URL = new URL("painter-worker.js", document.currentScript.src);
+const COMPOSITOR_URL = new URL("compositor-worker.js", document.currentScript.src);
 const pageParams = new URLSearchParams(location.search);
 const matchId = pageParams.get("id");
 const canvas = $("board"), fallbackCanvas = $("board-fallback"), ctx = fallbackCanvas.getContext("2d");
@@ -16,8 +17,13 @@ let pointer = null, aim = null, running = true, viewReady = false, polling = fal
 let stream = null, sceneStream = null, sceneRenderer = null, imageRequest = null, browserMode = false, viewStarted = false;
 let videoTimer = null, readySceneMatchId = null, sceneRetryTimer = null, sceneFailed = false;
 let painterWorker = null, painterMode = false, painterDiag = null, mainCompositor = null, mainTextures = null;
+let compositorWorker = null, compositorStats = null;
 let canvasTransferred = false, engineStatus = "", legacyStarted = false;
 const displayTrace = [];
+// Accepted plays reach the HUD one display lag (about 200 ms) before the
+// battle view shows the unit. A ring at the landing tile bridges that gap.
+const deployMarks = new Map(), seenPlays = new Set();
+let deployTimer = null;
 const human = () => meta?.mode === "human";
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -81,7 +87,7 @@ function supportsOffscreenWebGL() {
 }
 function stop(message) {
   running = false; clearTimeout(sceneRetryTimer);
-  stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); painterWorker?.terminate(); mainCompositor?.destroy(); inputTransport.destroy();
+  stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); painterWorker?.terminate(); compositorWorker?.terminate(); mainCompositor?.destroy(); inputTransport.destroy();
   imageRequest?.abort();
   stopVideo();
   showLoading(message, true);
@@ -143,11 +149,12 @@ function onFrame(frame) {
 
   }
   if (cur && cur.match_number !== frame.match_number) {
-    selection = null; aim = null; pointer = null;
+    selection = null; aim = null; pointer = null; deployMarks.clear(); seenPlays.clear();
     if (browserMode && readySceneMatchId !== frame.match_number) { viewReady = false; showLoading("Preparing the new battle..."); }
   }
   cur = frame;
   if (frame.human && frame.human.last_serial >= pendingSerial) selection = frame.human.selection;
+  if (human() && browserMode) noteDeploys(frame.plays || []);
   const pause = $("pause");
   if (pause.dataset.state !== frame.status) {
     pause.dataset.state = frame.status;
@@ -222,6 +229,25 @@ function screenPoint(x, y) {
   const [left, top, width, height] = layout.field;
   return [left + x / layout.world[0] * width, top + (60 + (1 - y / layout.world[1]) * 768) / 828 * height];
 }
+function noteDeploys(plays) {
+  const now = performance.now();
+  for (const play of plays) {
+    if (play.side !== 0 || seenPlays.has(play.id)) continue;
+    seenPlays.add(play.id);
+    deployMarks.set(play.id, {x: play.x, y: play.y, until: now + (painterDiag?.lag_ms ?? 200) + 350});
+  }
+  if (seenPlays.size > 200) for (const id of [...seenPlays].slice(0, 100)) seenPlays.delete(id);
+  pruneDeploys();
+}
+function pruneDeploys() {
+  const now = performance.now();
+  for (const [id, mark] of deployMarks) if (mark.until <= now) deployMarks.delete(id);
+  clearTimeout(deployTimer);
+  if (deployMarks.size) {
+    const next = Math.min(...[...deployMarks.values()].map((mark) => mark.until));
+    deployTimer = setTimeout(() => { pruneDeploys(); drawControls(); }, Math.max(16, next - now));
+  }
+}
 let controlsDrawn = "";
 function controlsKey() {
   // Scene packets arrive many times a second. Clearing the overlay when nothing
@@ -230,6 +256,7 @@ function controlsKey() {
   if (!browserMode || !layout || !cur) return "";
   const marks = [];
   if (cur.status === "paused") marks.push("paused");
+  if (deployMarks.size) marks.push("d:" + [...deployMarks.keys()].join(","));
   const feedback = human() ? cur.human?.feedback || "" : "";
   if (feedback) marks.push("f:" + feedback);
   if (human() && selection) {
@@ -280,6 +307,11 @@ function drawControls() {
       if (checked && (!checked.valid || !checked.affordable)) text(!checked.valid ? "Cannot place here" : `Need ${checked.cost} elixir`, x, y + 30);
     }
     if (cur.human?.feedback) text(cur.human.feedback, 270, 110);
+    for (const mark of deployMarks.values()) {
+      const [x, y] = screenPoint(mark.x, mark.y);
+      controls.fillStyle = "#62e8ff33"; controls.strokeStyle = "#62e8ffd0"; controls.lineWidth = 2;
+      controls.beginPath(); controls.arc(x, y, 15, 0, Math.PI * 2); controls.fill(); controls.stroke();
+    }
   }
   if (cur.status === "paused") {
     controls.fillStyle = "#131f2ef0"; controls.fillRect(170, 425, 200, 50);
@@ -289,7 +321,7 @@ function drawControls() {
 // Read-only diagnostics for local profiling and QA.
 window.arenaDiagnostics = () => ({
   mode: browserMode ? "browser" : "stream",
-  scene: sceneRenderer?.stats || mainCompositor?.stats || null,
+  scene: sceneRenderer?.stats || mainCompositor?.stats || compositorStats || null,
   input: inputTransport.stats,
   tick: cur?.tick,
   status: cur?.status,
@@ -419,18 +451,37 @@ function compositeOnMain(message) {
   for (const tex of message.textures || []) mainTextures.set(tex.id, {width: tex.width, height: tex.height, rgba: new Uint8Array(tex.buffer)});
   for (const id of message.evicted || []) mainTextures.delete(id);
   if (!mainCompositor) {
-    mainCompositor = new SceneCompositor(canvas, {textureSource: (id) => mainTextures.get(id) || null, alpha: false});
+    mainCompositor = new SceneCompositor(canvas, {textureSource: (id) => mainTextures.get(id) || null, alpha: false,
+      renderOnPush: false, adaptiveDelay: true});
   }
-  mainCompositor.push(message.packet);
+  mainCompositor.push(message.packet, {at: Number.isFinite(message.at) ? message.at - performance.timeOrigin : undefined});
+  for (const tex of message.textures || []) mainTextures.delete(tex.id);
   notePainterLayout(message.packet.layout, message.packet.match_id);
 }
+function onCompositorMessage(message) {
+  if (!running || !message) return;
+  if (message.type === "stats") { compositorStats = message.stats; return; }
+  if (message.type === "error") { viewReady = false; showLoading(message.message, true); $("fallback-link").hidden = false; }
+}
+// The canvas goes to its own compositor worker, so drawing keeps the display
+// rate while the painter worker is busy stepping. Without a second worker the
+// painter composites itself, as before.
 function attachPainterCanvas() {
   showPainterChrome();
   if (canvasTransferred) return;
   if (supportsOffscreenWebGL()) {
     const offscreen = canvas.transferControlToOffscreen();
     canvasTransferred = true;
-    painterWorker.postMessage({type: "canvas", canvas: offscreen}, [offscreen]);
+    try {
+      compositorWorker = new Worker(COMPOSITOR_URL);
+      compositorWorker.onmessage = (event) => onCompositorMessage(event.data);
+      const channel = new MessageChannel();
+      compositorWorker.postMessage({type: "init", canvas: offscreen, port: channel.port2}, [offscreen, channel.port2]);
+      painterWorker.postMessage({type: "canvas", port: channel.port1}, [channel.port1]);
+    } catch {
+      compositorWorker?.terminate(); compositorWorker = null;
+      painterWorker.postMessage({type: "canvas", canvas: offscreen}, [offscreen]);
+    }
   } else painterWorker.postMessage({type: "canvas", fallback: true});
 }
 function forwardTicks(url) {
@@ -576,14 +627,14 @@ window.addEventListener("keydown", (event) => {
 $("pause").onclick = () => control("pause");
 $("rematch").onclick = () => control("reset");
 $("end-match").onclick = async () => {
-  try { await post(`/api/matches/${matchId}/close`); running = false; clearTimeout(sceneRetryTimer); stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); painterWorker?.terminate(); mainCompositor?.destroy(); inputTransport.destroy(); imageRequest?.abort(); stopVideo(); location.href = `${BASE}/`; }
+  try { await post(`/api/matches/${matchId}/close`); running = false; clearTimeout(sceneRetryTimer); stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); painterWorker?.terminate(); compositorWorker?.terminate(); mainCompositor?.destroy(); inputTransport.destroy(); imageRequest?.abort(); stopVideo(); location.href = `${BASE}/`; }
   catch (error) { $("feedback").textContent = error.message; }
 };
 $("fullscreen").onclick = () => {
   const action = document.fullscreenElement ? document.exitFullscreen() : $("native-wrap").requestFullscreen?.();
   action?.catch(() => {});
 };
-window.addEventListener("pagehide", () => { running = false; clearTimeout(sceneRetryTimer); stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); painterWorker?.terminate(); mainCompositor?.destroy(); inputTransport.destroy(); imageRequest?.abort(); stopVideo(); });
+window.addEventListener("pagehide", () => { running = false; clearTimeout(sceneRetryTimer); stream?.close(); sceneStream?.close(); sceneRenderer?.destroy(); painterWorker?.terminate(); compositorWorker?.terminate(); mainCompositor?.destroy(); inputTransport.destroy(); imageRequest?.abort(); stopVideo(); });
 window.addEventListener("pageshow", event => { if (event.persisted) location.reload(); });
 resize();
 connect();

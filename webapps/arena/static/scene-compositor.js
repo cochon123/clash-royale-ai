@@ -79,6 +79,7 @@
       return {width: image.width, height: image.height, pixels: ctx.getImageData(0, 0, image.width, image.height).data};
     }
     release() {}
+    checkErrors() {}
     resize(w, h) {
       if (this.width === w && this.height === h) return;
       this.width = this.canvas.width = w; this.height = this.canvas.height = h;
@@ -231,19 +232,25 @@
       const attr = gl.getAttribLocation(this.program, "corner"); gl.enableVertexAttribArray(attr); gl.vertexAttribPointer(attr, 2, gl.FLOAT, false, 0, 0);
       this.uniforms = Object.fromEntries(["viewport", "matrix", "size", "border", "image", "opacity", "addColor", "color", "mode", "premultiplied", "replace"].map(name => [name, gl.getUniformLocation(this.program, name)]));
       this.matrix = new Float32Array(9); this.fbo = gl.createFramebuffer(); this.mask = gl.createTexture();
+      this.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
       this.white = this.upload({width: 1, height: 1, pixels: new Uint8Array([255, 255, 255, 255])});
+      this.checkErrors();
+    }
+    // gl.getError() waits for the GPU process. Calling it once per pose made
+    // each upload cost about a millisecond; a frame's uploads share one check.
+    checkErrors() {
+      const error = this.gl.getError();
+      if (error !== this.gl.NO_ERROR) throw new Error("Original texture upload failed (GPU " + error + ")");
     }
     upload(image) {
       const gl = this.gl, texture = gl.createTexture();
-      if (Math.max(image.width, image.height) > gl.getParameter(gl.MAX_TEXTURE_SIZE)) throw new Error("Original texture exceeds this device’s GPU limit");
+      if (Math.max(image.width, image.height) > this.maxTextureSize) throw new Error("Original texture exceeds this device’s GPU limit");
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
       if (image.pixels) gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, image.width, image.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image.pixels);
       else gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, image);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      const error = gl.getError();
-      if (error !== gl.NO_ERROR) {gl.deleteTexture(texture); throw new Error("Original texture upload failed (GPU " + error + ")");}
       return {texture, width: image.width, height: image.height};
     }
     release(resource) { this.gl.deleteTexture(resource.texture); }
@@ -310,6 +317,14 @@
       this.options = options;
       this.textureSource = options.textureSource;
       this.delay = clamp(number(options.interpolationDelay, 50), 0, 250);
+      // A worker compositor draws only on display frames. Drawing on every
+      // push as well committed two frames in one vsync at uneven times.
+      this.renderOnPush = options.renderOnPush !== false;
+      // With frame times from the painter, the delay has to cover a step and
+      // its delivery. It follows the measured p95, moving 0.5 ms per frame.
+      this.adaptiveDelay = !!options.adaptiveDelay;
+      this.minDelay = this.delay;
+      this.lateness = [];
       // The painter's pose budget is 256 MB / 8192. This cache has to hold that
       // set plus poses from the last three frames that the painter has already
       // retired. The painter is the only one that can rebuild a pose.
@@ -320,6 +335,7 @@
         : Math.max(4, number(options.maxTextureBytes, 384 * 1024 * 1024));
       this.maxTextures = clamp(number(options.maxTextures, 8192), 32, 8192);
       this.textures = new Map();
+      this.retired = new Set();
       this.timeline = [];
       this.bytes = 0;
       this.destroyed = false;
@@ -353,6 +369,7 @@
         pending_frames: 0,
         missing: 0,
         loading_textures: 0,
+        delay_ms: Math.round(this.delay * 10) / 10,
         shown_native_ms: this.shownNativeMs
       });
     }
@@ -366,6 +383,8 @@
       if (this.frameHandle && root.cancelAnimationFrame) root.cancelAnimationFrame(this.frameHandle);
       this.frameHandle = 0;
       this.timeline = [];
+      this.smooth = null;
+      this.smoothTime = null;
       this.ready = false;
       this.halted = !!(this.painter.gl && this.painter.gl.isContextLost());
       this.metrics.error = null;
@@ -406,31 +425,75 @@
       return this.bytes + extraBytes <= this.maxBytes && this.textures.size + 1 <= this.maxTextures;
     }
     // A local pose is painted in this turn. Nothing stays pending on a texture fetch.
-    push(packet) {
+    // timing.at is when the painter stepped this frame, on this thread's clock.
+    // The timeline is placed by step time, so a slow or late step does not
+    // move the picture; arrival time is only used without it.
+    push(packet, timing = {}) {
       if (this.destroyed || this.halted) return;
       try {
         if (!packet || packet.v !== 1 || !dimensions(packet.width) || !dimensions(packet.height) || !finite(packet.sequence) || !finite(packet.tick)) throw new Error("Unsupported scene packet");
         const ids = collectTextures(packet.draws);
         if (ids.size > 1024) throw new Error("Scene uses too many textures");
+        const nativeTime = number(packet.display_tick, packet.tick) * 50;
+        const received = this.now();
+        const readyAt = finite(timing.at) ? Math.min(timing.at, received) : received;
+        const previous = this.timeline[this.timeline.length - 1];
+        if (previous && (previous.packet.match_id !== packet.match_id || nativeTime < previous.nativeTime)) {
+          this.timeline = [];
+          this.smooth = null;
+        }
+        if (this.adaptiveDelay) this.noteLateness(received - readyAt, this.timeline.length ? readyAt - this.timeline[this.timeline.length - 1].readyAt : 0);
+        // Keep every frame the delayed picture can still reach, and one before
+        // it. Three frames were 66 ms at 30 Hz, shorter than a slow device's
+        // delay, so the picture stuck on the oldest kept frame. Trimming first
+        // lets the poses of dropped frames go before this frame uploads.
+        const reach = (this.delay + 100) * clamp(number(packet.playback_speed, 1), .1, 16);
+        while (this.timeline.length > 2 && (this.timeline.length > 15 || this.timeline[1].nativeTime < nativeTime - reach)) this.timeline.shift();
         // Free poses the painter has forgotten before uploading the replacement.
-        // Poses still on screen stay until the frame that uses them scrolls off.
+        // Poses a kept frame still draws leave when the last such frame does.
         const retain = new Set(ids);
         for (const frame of this.timeline) for (const id of frame.ids) retain.add(id);
-        for (const id of packet.evicted || []) if (!retain.has(id)) this.releaseTexture(id);
+        for (const id of ids) this.retired.delete(id);
+        for (const id of packet.evicted || []) this.retired.add(id);
+        for (const id of [...this.retired]) if (!retain.has(id)) { this.retired.delete(id); this.releaseTexture(id); }
+        const before = this.textures.size;
         for (const id of ids) this.ensureTexture(id);
-        const nativeTime = number(packet.display_tick, packet.tick) * 50;
-        const frame = {packet, ids, received: this.now(), readyAt: this.now(), nativeTime};
-        const previous = this.timeline[this.timeline.length - 1];
-        if (previous && (previous.packet.match_id !== packet.match_id || frame.nativeTime < previous.nativeTime)) this.timeline = [];
-        this.timeline.push(frame);
-        while (this.timeline.length > 3) this.timeline.shift();
-        const keep = this.protectedIds();
-        for (const id of packet.evicted || []) if (!keep.has(id)) this.releaseTexture(id);
-        this.render(this.now());
+        if (this.textures.size !== before) this.painter.checkErrors();
+        this.timeline.push({packet, ids, received, readyAt, nativeTime});
+        if (this.renderOnPush || !this.ready) this.render(this.now());
+        else this.schedule();
       } catch (error) {
         this.halted = true;
         this.fail(error);
       }
+    }
+    // The picture runs on its own clock at wall speed and leans at most 10%
+    // toward where the newest frame says it should be. Re-anchoring on every
+    // frame moved the picture back whenever a frame's game time advanced less
+    // than its step time. It never moves back and only jumps for gaps > 100 ms,
+    // which also keeps it inside the frames the timeline holds.
+    smoothTarget(anchor, time, speed, newest) {
+      if (this.smooth == null || Math.abs(anchor - this.smooth) > 100 * speed) this.smooth = anchor;
+      else if (time > this.smoothTime) {
+        const dt = Math.min(100, time - this.smoothTime);
+        const free = this.smooth + dt * speed;
+        const lean = 0.1 * dt * speed;
+        this.smooth = Math.max(this.smooth, free + clamp(anchor - free, -lean, lean));
+      }
+      // Hold at the newest frame through an underrun instead of running ahead.
+      this.smooth = Math.min(this.smooth, newest);
+      this.smoothTime = time;
+      return this.smooth;
+    }
+    // late: arrival minus step time. gap: step time since the previous frame.
+    noteLateness(late, gap) {
+      this.lateness.push(Math.max(0, late) + Math.max(0, gap));
+      if (this.lateness.length > 90) this.lateness.shift();
+    }
+    targetDelay() {
+      if (this.lateness.length < 8) return Math.max(this.delay, this.minDelay);
+      const sorted = this.lateness.slice().sort((a, b) => a - b);
+      return clamp(sorted[Math.floor(sorted.length * 0.95)] + 6, this.minDelay, 200);
     }
     schedule() {
       if (this.frameHandle || this.destroyed || this.halted || !this.timeline.length || !root.requestAnimationFrame) return;
@@ -441,10 +504,15 @@
       try {
         const latest = this.timeline[this.timeline.length - 1];
         const readyAt = latest.readyAt ?? latest.received;
+        if (this.adaptiveDelay) {
+          const goal = this.targetDelay();
+          this.delay += clamp(goal - this.delay, -0.5, 0.5);
+        }
         let packet = latest.packet, draws = packet.draws, shown = latest.nativeTime;
         if (!stopped(packet) && this.timeline.length > 1) {
           const speed = clamp(number(packet.playback_speed, 1), .1, 16);
-          const target = latest.nativeTime + (Math.max(0, time - readyAt) - this.delay) * speed;
+          let target = latest.nativeTime + (Math.max(0, time - readyAt) - this.delay) * speed;
+          if (this.adaptiveDelay) target = this.smoothTarget(target, time, speed, latest.nativeTime);
           let older = this.timeline[0], newer = latest;
           for (let i = 1; i < this.timeline.length; i++) if (this.timeline[i].nativeTime >= target) { newer = this.timeline[i]; older = this.timeline[i - 1]; break; }
           const distance = newer.nativeTime - older.nativeTime;

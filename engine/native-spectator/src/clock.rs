@@ -99,16 +99,37 @@ impl PlaybackClock {
 /// been observed. It does not predict combat past that snapshot.
 pub const SCENE_LAG_TICKS: f64 = 1.;
 
+/// Behind its target by more than this (200 ms), the scene clock plays faster
+/// until it is back within [`SCENE_CATCH_UP_UNTIL_TICKS`]. Arrival jitter of
+/// one tick does not start it.
+const SCENE_CATCH_UP_FROM_TICKS: f64 = 4.;
+const SCENE_CATCH_UP_UNTIL_TICKS: f64 = 1.;
+/// Ticks behind at which the scene clock plays at 2x (the cap).
+const SCENE_CATCH_UP_TICKS: f64 = 20.;
+/// Further behind than this (5 s), the scene clock jumps to its target.
+const SCENE_SNAP_TICKS: f64 = 100.;
+/// Slowest rate while the buffer refills after the display got ahead of its
+/// lag target.
+const SCENE_MIN_RATE: f64 = 0.75;
+
 /// Fractional display clock for the browser scene presenter.
 ///
-/// Wall time advances the clock at `TICKS_PER_SECOND * speed`, capped one
-/// engine tick behind the newest observed snapshot while the match is running.
+/// Wall time advances the clock at about `TICKS_PER_SECOND * speed` while the
+/// match is running. The rate follows the distance to the lag target: up to
+/// 25% slower when the display is closer to the newest snapshot than the lag,
+/// up to 10% faster when it is up to 200 ms behind, and up to 2x after a
+/// longer stall. More than 5 s behind it jumps. It never passes one tick
+/// before the newest snapshot (the interval it draws has to be observed) and
+/// it never moves backwards. A hard stop at the lag target froze the picture
+/// whenever a snapshot arrived late, then played the backlog at 1x for the
+/// rest of the match.
 /// Pause holds, unless a single step moved the lag target forward. The ended
 /// match plays out to the final snapshot. A reset clears `display` so the next
 /// step starts at the new oldest snapshot.
 pub struct SceneDisplayClock {
     display: Option<f64>,
     lag_ticks: f64,
+    catching_up: bool,
 }
 
 impl Default for SceneDisplayClock {
@@ -122,6 +143,7 @@ impl SceneDisplayClock {
         Self {
             display: None,
             lag_ticks: SCENE_LAG_TICKS,
+            catching_up: false,
         }
     }
 
@@ -139,6 +161,7 @@ impl SceneDisplayClock {
 
     pub fn reset(&mut self) {
         self.display = None;
+        self.catching_up = false;
     }
 
     pub fn display(&self) -> Option<f64> {
@@ -155,9 +178,33 @@ impl SceneDisplayClock {
             Some(d) if (oldest_f - 0.5..=latest_f + 0.5).contains(&d) => d,
             _ => oldest_f,
         };
-        let advance = dt.max(0.).min(0.25) * TICKS_PER_SECOND * speed.clamp(0., 16.);
+        let speed = speed.clamp(0., 16.);
+        let advance = dt.max(0.).min(0.25) * TICKS_PER_SECOND * speed;
         match flow {
-            Flow::Running | Flow::Finished => display = (display + advance).min(target),
+            Flow::Running => {
+                let behind = target - display;
+                if behind < SCENE_CATCH_UP_UNTIL_TICKS {
+                    self.catching_up = false;
+                }
+                let rate = if behind > SCENE_SNAP_TICKS {
+                    display = target;
+                    1.
+                } else if self.catching_up || behind > SCENE_CATCH_UP_FROM_TICKS {
+                    self.catching_up = true;
+                    1. + (behind / (SCENE_CATCH_UP_TICKS * speed.max(1.))).min(1.)
+                } else if behind > 1. {
+                    1. + (behind - 1.) / 30.
+                } else if behind < 0. {
+                    (1. + behind / 10.).max(SCENE_MIN_RATE)
+                } else {
+                    1.
+                };
+                let limit = running_limit(oldest, latest, self.lag_ticks);
+                if display < limit {
+                    display = (display + advance * rate).min(limit);
+                }
+            }
+            Flow::Finished => display = (display + advance).min(target),
             Flow::Paused if display < target => display = (display + advance).min(target),
             Flow::Paused => {}
         }
@@ -169,9 +216,18 @@ impl SceneDisplayClock {
     /// True when another wall step cannot move the clock without a new snapshot
     /// or a flow change. Callers use this to stop emitting duplicate poses.
     pub fn caught_up(&self, oldest: u32, latest: u32, flow: Flow) -> bool {
-        self.display
-            .is_some_and(|display| display + 1e-6 >= scene_target(oldest, latest, flow, self.lag_ticks))
+        let stop = match flow {
+            Flow::Running => running_limit(oldest, latest, self.lag_ticks),
+            _ => scene_target(oldest, latest, flow, self.lag_ticks),
+        };
+        self.display.is_some_and(|display| display + 1e-6 >= stop)
     }
+}
+
+/// How far a running display may go: one tick before the newest snapshot, or
+/// the lag target when the lag is shorter than a tick.
+fn running_limit(oldest: u32, latest: u32, lag_ticks: f64) -> f64 {
+    (latest as f64 - lag_ticks.min(1.)).max(oldest as f64)
 }
 
 fn scene_target(oldest: u32, latest: u32, flow: Flow, lag_ticks: f64) -> f64 {
@@ -251,11 +307,79 @@ mod tests {
         assert!(shown.iter().all(|t| (100.0..=101.0).contains(t)));
         assert!(clock.caught_up(100, 102, Flow::Running));
         // Speed scales wall advance, still without leaving the lag target.
+        // Starting 9 ticks behind it also adds the catch-up share: 9 / (20 * 2).
         clock.reset();
         clock.step(0, 10, 2., Flow::Running, 0.);
         let fast = clock.step(0, 10, 2., Flow::Running, 0.05);
-        assert!((fast - 2.).abs() < 1e-9, "{fast}");
+        assert!((fast - 2. * (1. + 9. / 40.)).abs() < 1e-9, "{fast}");
         assert!(fast <= 9.);
+    }
+
+    #[test]
+    fn scene_clock_catches_up_after_a_stall_and_jumps_when_far_behind() {
+        let mut clock = SceneDisplayClock::new();
+        clock.set_lag_ticks(3.);
+        let dt = 1. / 30.;
+        // Steady 20 Hz stream: the display sits on its target and plays at 1x.
+        let mut wall = 0.;
+        let mut latest = 100u32;
+        clock.step(100, latest, 1., Flow::Running, 0.);
+        let mut last = 100.;
+        for _ in 0..60 {
+            wall += dt;
+            latest = 100 + (wall * 20.) as u32;
+            let shown = clock.step(100, latest, 1., Flow::Running, dt);
+            assert!(shown - last <= dt * 20. + 1e-9, "never faster than 1x in steady state");
+            last = shown;
+        }
+        // One second without snapshots, then the 20 missing ticks arrive at once.
+        for _ in 0..30 {
+            clock.step(100, latest, 1., Flow::Running, dt);
+        }
+        latest += 40;
+        let target = latest as f64 - 3.;
+        let behind = target - clock.display().unwrap();
+        assert!(behind > 15., "{behind}");
+        let mut steps = 0;
+        let mut previous = clock.display().unwrap();
+        while clock.display().unwrap() < target - 0.5 {
+            let shown = clock.step(100, latest, 1., Flow::Running, dt);
+            assert!(shown - previous <= 2. * dt * 20. + 1e-9, "at most 2x");
+            previous = shown;
+            steps += 1;
+            assert!(steps < 90, "caught up within 3 s");
+        }
+        // More than 5 s behind: jump to the target, then play on from there.
+        let shown = clock.step(100, latest + 200, 1., Flow::Running, dt);
+        let jumped = (latest + 200) as f64 - 3.;
+        assert!((shown - (jumped + dt * 20.)).abs() < 1e-9, "{shown}");
+    }
+
+    #[test]
+    fn scene_clock_slows_instead_of_freezing_when_a_snapshot_is_late() {
+        let mut clock = SceneDisplayClock::new();
+        clock.set_lag_ticks(3.);
+        let dt = 1. / 30.;
+        let mut latest = 0u32;
+        let mut wall = 0.;
+        clock.step(0, 0, 1., Flow::Running, 0.);
+        let mut previous = 0.;
+        for frame in 0..300 {
+            wall += dt;
+            // 20 Hz, but every 40th tick is 150 ms late and arrives with the next one.
+            let due = (wall * 20.) as u32;
+            if due % 40 != 1 || frame % 2 == 0 {
+                latest = due;
+            }
+            let shown = clock.step(0, latest, 1., Flow::Running, dt);
+            let moved = shown - previous;
+            if frame > 60 {
+                assert!(moved > 0.7 * dt * 20., "frame {frame} froze: {moved}");
+                assert!(moved < 1.11 * dt * 20., "frame {frame} jumped: {moved}");
+                assert!(latest as f64 - shown >= 1. - 1e-9, "never past the last interval");
+            }
+            previous = shown;
+        }
     }
 
     #[test]
@@ -279,13 +403,26 @@ mod tests {
         let mut clock = SceneDisplayClock::new();
         assert!((clock.lag_ticks() - 1.).abs() < 1e-12);
         clock.set_lag_ticks(3.);
-        // Each step accepts at most 0.25s, which is 5 native ticks. The lag
-        // target is latest - 3 = 7, so the second quarter-second reaches it.
+        // Each step accepts at most 0.25s, which is 5 native ticks. Seven ticks
+        // behind the target (latest - 3 = 7) adds 7/20 to that.
         assert_eq!(clock.step(0, 10, 1., Flow::Running, 0.), 0.);
         let mid = clock.step(0, 10, 1., Flow::Running, 0.25);
-        assert!((mid - 5.).abs() < 1e-9, "{mid}");
+        assert!((mid - 5. * (1. + 7. / 20.)).abs() < 1e-9, "{mid}");
+        // With no newer snapshot it may pass the target, but stops one tick
+        // before the newest snapshot and does not move back.
         let shown = clock.step(0, 10, 1., Flow::Running, 0.25);
-        assert!((shown - 7.).abs() < 1e-9, "{shown}");
+        assert!((shown - 9.).abs() < 1e-9, "{shown}");
         assert!(clock.caught_up(0, 10, Flow::Running));
+        assert_eq!(clock.step(0, 10, 1., Flow::Running, 0.25), 9.);
+        // A steady 20 Hz stream settles on the injected distance.
+        let dt = 1. / 30.;
+        let mut wall = 0.5;
+        for _ in 0..240 {
+            wall += dt;
+            clock.step(0, (wall * 20.) as u32, 1., Flow::Running, dt);
+        }
+        let behind = (wall * 20.) as u32 as f64 - clock.display().unwrap();
+        // Integer snapshot ticks sampled at 30 Hz: latest - shown spans [2.3, 3].
+        assert!((2.0..=3.5).contains(&behind), "{behind}");
     }
 }
