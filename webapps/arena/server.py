@@ -118,7 +118,7 @@ def get_catalog(_request):
     return {"models": catalog.engine_models(), "presets": catalog.presets(),
             "defaults": catalog.DEFAULT_MATCHUP,
             "public": os.environ.get("ARENA_PUBLIC", "0") == "1",
-            "cards": list(catalog.cards().values()),
+            "cards": [_with_thumb(card) for card in catalog.cards().values()],
             "rendering": {
                 "default": "ticks" if not scene_legacy_enabled() else ("browser" if browser_scene_enabled() else "stream"),
                 "scene_available": SCENE_BINARY.is_file(), "stream_available": BINARY.is_file()},
@@ -128,6 +128,15 @@ def get_catalog(_request):
                 "custom": "Custom 8-card decks run in the original engine. Specialist models may play "
                           "less well outside their training deck.",
             }}
+
+
+THUMBS = HERE / "static" / "card-thumbs"
+
+
+def _with_thumb(card: dict) -> dict:
+    """Add the small lobby picture (deploy/arena/build_card_thumbs.py) when present."""
+    thumb = THUMBS / (card["art"].rsplit("/", 1)[-1].rsplit(".", 1)[0] + ".webp")
+    return {**card, "thumb": "/card-thumbs/" + thumb.name} if thumb.is_file() else card
 
 
 def _side(spec: dict, index: int, human_allowed: bool) -> dict:

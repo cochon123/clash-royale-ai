@@ -242,7 +242,6 @@ function render() {
   prefetchSelectedDecks();
 }
 
-let prefetchToken = 0;
 function selectedNatives() {
   const natives = [];
   for (const side of [state.sides.red, state.sides.blue]) {
@@ -255,33 +254,55 @@ function selectedNatives() {
   }
   return natives;
 }
-function prefetchFetch(url) {
-  return fetch(url, {priority: "low", credentials: "same-origin"});
+// Battle art is fetched while the player picks decks, so play.html finds it in
+// the HTTP cache. A body that is never read is not cached in full: the old
+// prefetch left partial entries that play.html had to download again.
+const prefetched = new Set();
+const prefetchQueue = [];
+let prefetchRunning = 0;
+function prefetchUrl(url) {
+  if (prefetched.has(url)) return;
+  prefetched.add(url);
+  prefetchQueue.push(url);
+  pumpPrefetch();
+}
+function pumpPrefetch() {
+  while (prefetchRunning < 3 && prefetchQueue.length) {
+    const url = prefetchQueue.shift();
+    prefetchRunning++;
+    fetch(url, {priority: "low", credentials: "same-origin"})
+      .then((response) => response.ok ? response.arrayBuffer() : null)
+      .catch(() => { prefetched.delete(url); })
+      .finally(() => { prefetchRunning--; pumpPrefetch(); });
+  }
+}
+let prefetchManifest = null;
+function loadPrefetchManifest() {
+  if (prefetchManifest) return prefetchManifest;
+  const manifestUrl = `${BASE}/assets/manifest.json`;
+  prefetchManifest = (async () => {
+    const first = await fetch(manifestUrl, {credentials: "same-origin"});
+    if (!first.ok) throw new Error("manifest");
+    let manifest = await first.json(), resolved = manifestUrl;
+    if (manifest.current && !manifest.v) {
+      resolved = resolveAssetUrl(manifestUrl, manifest.current);
+      const second = await fetch(resolved, {credentials: "same-origin"});
+      if (!second.ok) throw new Error("manifest");
+      manifest = await second.json();
+    }
+    return {manifest, resolved};
+  })();
+  prefetchManifest.catch(() => { prefetchManifest = null; });
+  return prefetchManifest;
 }
 async function prefetchSelectedDecks() {
   if (typeof planPackFiles !== "function" || typeof resolveAssetUrl !== "function") return;
-  const natives = selectedNatives();
-  if (!natives || !natives.length) return;
-  const key = natives.slice().sort().join("|");
-  if (key === state.prefetchKey) return;
-  state.prefetchKey = key;
-  const token = ++prefetchToken;
-  const manifestUrl = `${BASE}/assets/manifest.json`;
   try {
-    const first = await prefetchFetch(manifestUrl);
-    if (!first.ok || token !== prefetchToken) return;
-    let manifest = await first.json();
-    let resolved = manifestUrl;
-    if (manifest.current && !manifest.v) {
-      resolved = resolveAssetUrl(manifestUrl, manifest.current);
-      const second = await prefetchFetch(resolved);
-      if (!second.ok || token !== prefetchToken) return;
-      manifest = await second.json();
-    }
-    const plan = planPackFiles(manifest, natives);
-    const jobs = plan.files.map((file) => prefetchFetch(resolveAssetUrl(resolved, file.url)));
-    if (plan.wasm) jobs.push(prefetchFetch(resolveAssetUrl(resolved, plan.wasm.url)));
-    await Promise.all(jobs);
+    const {manifest, resolved} = await loadPrefetchManifest();
+    // The painter and the arena, towers and HUD are needed by every match.
+    const plan = planPackFiles(manifest, selectedNatives() || []);
+    if (plan.wasm) prefetchUrl(resolveAssetUrl(resolved, plan.wasm.url));
+    for (const file of plan.files) prefetchUrl(resolveAssetUrl(resolved, file.url));
   } catch { /* packs are optional until a match starts */ }
 }
 
@@ -315,6 +336,15 @@ $("start").addEventListener("click", async () => {
   $("start").disabled = true;
   $("start").textContent = "Starting...";
   try {
+    // Leaving a battle page does not end that match, and the server allows one
+    // per browser. Starting a new one ends this browser's previous match first
+    // instead of failing with "end it first".
+    const { matches } = await api("/api/matches").catch(() => ({ matches: [] }));
+    for (const old of matches || []) {
+      $("start").textContent = "Ending your previous match...";
+      await api(`/api/matches/${old.id}/close`, { method: "POST" }).catch(() => {});
+    }
+    $("start").textContent = "Starting...";
     const match = await api("/api/matches", { method: "POST", body });
     location.href = `${BASE}/play.html?id=${match.id}`;
   } catch (error) {
@@ -333,7 +363,8 @@ $("start").addEventListener("click", async () => {
     $("error").style.display = "block";
     return;
   }
-  for (const card of state.catalog.cards) { card.art = BASE + card.art; state.cards[card.id] = card; }
+  // The lobby shows small pictures; full art is 960 px and about 140 KB each.
+  for (const card of state.catalog.cards) { card.art = BASE + (card.thumb || card.art); state.cards[card.id] = card; }
   $("lab-link").hidden = !!state.catalog.public;
   // Drop saved custom decks that reference cards no longer offered.
   state.customDecks = state.customDecks.filter((d) => d.cards.length === 8 && d.cards.every((c) => state.cards[c]));

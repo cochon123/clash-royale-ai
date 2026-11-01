@@ -52,6 +52,26 @@ class PublicServingTests(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn("error", response.json())
 
+    def test_static_files_revalidate_and_card_pictures_are_cached(self):
+        with self.client("/clashroyale") as client:
+            script = client.get("/clashroyale/compositor-worker.js")
+            self.assertEqual(script.status_code, 200)
+            self.assertEqual(script.headers["cache-control"], "no-cache")
+            etag = script.headers["etag"]
+            again = client.get("/clashroyale/compositor-worker.js", headers={"If-None-Match": "W/" + etag})
+            self.assertEqual(again.status_code, 304)
+            self.assertEqual(again.content, b"")
+            page = client.get("/clashroyale/play.html", headers={"If-None-Match": '"stale"'})
+            self.assertEqual(page.status_code, 200)
+            self.assertIn('src="/clashroyale/play.js"', page.text)
+            cards = client.get("/clashroyale/api/catalog").json()["cards"]
+            thumb = next(card["thumb"] for card in cards if "thumb" in card)
+            picture = client.get("/clashroyale" + thumb)
+            self.assertEqual(picture.status_code, 200)
+            self.assertIn("max-age=86400", picture.headers["cache-control"])
+            self.assertLess(len(picture.content), 40_000)
+            self.assertEqual(client.get("/clashroyale/api/health").headers["cache-control"], "no-store")
+
     def test_admission_attempts_are_throttled_per_browser(self):
         with self.client() as client:
             self.assertEqual(client.post("/api/matches", json={}).status_code, 400)
